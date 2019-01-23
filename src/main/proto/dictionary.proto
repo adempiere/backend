@@ -1,0 +1,52 @@
+/*************************************************************************************
+ * Copyright (C) 2012-2018 E.R.P. Consultores y Asociados, C.A.                      *
+ * Contributor(s): Yamel Senih ysenih@erpya.com                                      *
+ * This program is free software: you can redistribute it and/or modify              *
+ * it under the terms of the GNU General Public License as published by              *
+ * the Free Software Foundation, either version 3 of the License, or                 *
+ * (at your option) any later version.                                               *
+ * This program is distributed in the hope that it will be useful,                   *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of                    *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                     *
+ * GNU General Public License for more details.                                      *
+ * You should have received a copy of the GNU General Public License                 *
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.            *
+ ************************************************************************************/
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "org.spin.grpc.util";
+option java_outer_classname = "ADempiereDictionary";
+option objc_class_prefix = "HLW";
+
+package dictionary;
+
+// The greeting service definition.
+service DictionaryService {
+  // Request a Window
+  rpc RequestWindow(ClientRequest) returns (WindowDefinition) {}
+}
+
+// The client request contains client info for request.
+message ClientRequest {
+	string uuid = 1;
+	string language = 2;
+}
+
+// Window definition
+message WindowDefinition {
+	string uuid = 1;
+  	string name = 2;
+  	string description = 3;
+  	string contextInfo = 4;
+  	bool isSOTrx = 5;
+}
+
+// Tab definition
+message TabDefinition {
+	string uuid = 1;
+  	string name = 2;
+  	string description = 3;
+  	string contextInfo = 4;
+  	bool isSOTrx = 5;
+}
