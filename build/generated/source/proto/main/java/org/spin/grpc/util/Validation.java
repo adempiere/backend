@@ -5,26 +5,25 @@ package org.spin.grpc.util;
 
 /**
  * <pre>
- * Tab definition
+ * Validation
  * </pre>
  *
- * Protobuf type {@code dictionary.TabDefinition}
+ * Protobuf type {@code dictionary.Validation}
  */
-public  final class TabDefinition extends
+public  final class Validation extends
     com.google.protobuf.GeneratedMessageV3 implements
-    // @@protoc_insertion_point(message_implements:dictionary.TabDefinition)
-    TabDefinitionOrBuilder {
+    // @@protoc_insertion_point(message_implements:dictionary.Validation)
+    ValidationOrBuilder {
 private static final long serialVersionUID = 0L;
-  // Use TabDefinition.newBuilder() to construct.
-  private TabDefinition(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+  // Use Validation.newBuilder() to construct.
+  private Validation(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
   }
-  private TabDefinition() {
+  private Validation() {
     uuid_ = "";
     name_ = "";
-    description_ = "";
-    contextInfo_ = "";
-    isSOTrx_ = false;
+    validationType_ = "";
+    code_ = "";
   }
 
   @java.lang.Override
@@ -32,7 +31,7 @@ private static final long serialVersionUID = 0L;
   getUnknownFields() {
     return this.unknownFields;
   }
-  private TabDefinition(
+  private Validation(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -59,32 +58,40 @@ private static final long serialVersionUID = 0L;
             break;
           }
           case 10: {
-            java.lang.String s = input.readStringRequireUtf8();
+            org.spin.grpc.util.ErrorMessage.Builder subBuilder = null;
+            if (errorMessage_ != null) {
+              subBuilder = errorMessage_.toBuilder();
+            }
+            errorMessage_ = input.readMessage(org.spin.grpc.util.ErrorMessage.parser(), extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom(errorMessage_);
+              errorMessage_ = subBuilder.buildPartial();
+            }
 
-            uuid_ = s;
             break;
           }
           case 18: {
             java.lang.String s = input.readStringRequireUtf8();
 
-            name_ = s;
+            uuid_ = s;
             break;
           }
           case 26: {
             java.lang.String s = input.readStringRequireUtf8();
 
-            description_ = s;
+            name_ = s;
             break;
           }
           case 34: {
             java.lang.String s = input.readStringRequireUtf8();
 
-            contextInfo_ = s;
+            validationType_ = s;
             break;
           }
-          case 40: {
+          case 42: {
+            java.lang.String s = input.readStringRequireUtf8();
 
-            isSOTrx_ = input.readBool();
+            code_ = s;
             break;
           }
         }
@@ -101,20 +108,41 @@ private static final long serialVersionUID = 0L;
   }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-    return org.spin.grpc.util.ADempiereDictionary.internal_static_dictionary_TabDefinition_descriptor;
+    return org.spin.grpc.util.ADempiereDictionary.internal_static_dictionary_Validation_descriptor;
   }
 
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
-    return org.spin.grpc.util.ADempiereDictionary.internal_static_dictionary_TabDefinition_fieldAccessorTable
+    return org.spin.grpc.util.ADempiereDictionary.internal_static_dictionary_Validation_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
-            org.spin.grpc.util.TabDefinition.class, org.spin.grpc.util.TabDefinition.Builder.class);
+            org.spin.grpc.util.Validation.class, org.spin.grpc.util.Validation.Builder.class);
   }
 
-  public static final int UUID_FIELD_NUMBER = 1;
+  public static final int ERRORMESSAGE_FIELD_NUMBER = 1;
+  private org.spin.grpc.util.ErrorMessage errorMessage_;
+  /**
+   * <code>.dictionary.ErrorMessage errorMessage = 1;</code>
+   */
+  public boolean hasErrorMessage() {
+    return errorMessage_ != null;
+  }
+  /**
+   * <code>.dictionary.ErrorMessage errorMessage = 1;</code>
+   */
+  public org.spin.grpc.util.ErrorMessage getErrorMessage() {
+    return errorMessage_ == null ? org.spin.grpc.util.ErrorMessage.getDefaultInstance() : errorMessage_;
+  }
+  /**
+   * <code>.dictionary.ErrorMessage errorMessage = 1;</code>
+   */
+  public org.spin.grpc.util.ErrorMessageOrBuilder getErrorMessageOrBuilder() {
+    return getErrorMessage();
+  }
+
+  public static final int UUID_FIELD_NUMBER = 2;
   private volatile java.lang.Object uuid_;
   /**
-   * <code>string uuid = 1;</code>
+   * <code>string uuid = 2;</code>
    */
   public java.lang.String getUuid() {
     java.lang.Object ref = uuid_;
@@ -129,7 +157,7 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <code>string uuid = 1;</code>
+   * <code>string uuid = 2;</code>
    */
   public com.google.protobuf.ByteString
       getUuidBytes() {
@@ -145,10 +173,10 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int NAME_FIELD_NUMBER = 2;
+  public static final int NAME_FIELD_NUMBER = 3;
   private volatile java.lang.Object name_;
   /**
-   * <code>string name = 2;</code>
+   * <code>string name = 3;</code>
    */
   public java.lang.String getName() {
     java.lang.Object ref = name_;
@@ -163,7 +191,7 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <code>string name = 2;</code>
+   * <code>string name = 3;</code>
    */
   public com.google.protobuf.ByteString
       getNameBytes() {
@@ -179,81 +207,72 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int DESCRIPTION_FIELD_NUMBER = 3;
-  private volatile java.lang.Object description_;
+  public static final int VALIDATIONTYPE_FIELD_NUMBER = 4;
+  private volatile java.lang.Object validationType_;
   /**
-   * <code>string description = 3;</code>
+   * <code>string validationType = 4;</code>
    */
-  public java.lang.String getDescription() {
-    java.lang.Object ref = description_;
+  public java.lang.String getValidationType() {
+    java.lang.Object ref = validationType_;
     if (ref instanceof java.lang.String) {
       return (java.lang.String) ref;
     } else {
       com.google.protobuf.ByteString bs = 
           (com.google.protobuf.ByteString) ref;
       java.lang.String s = bs.toStringUtf8();
-      description_ = s;
+      validationType_ = s;
       return s;
     }
   }
   /**
-   * <code>string description = 3;</code>
+   * <code>string validationType = 4;</code>
    */
   public com.google.protobuf.ByteString
-      getDescriptionBytes() {
-    java.lang.Object ref = description_;
+      getValidationTypeBytes() {
+    java.lang.Object ref = validationType_;
     if (ref instanceof java.lang.String) {
       com.google.protobuf.ByteString b = 
           com.google.protobuf.ByteString.copyFromUtf8(
               (java.lang.String) ref);
-      description_ = b;
+      validationType_ = b;
       return b;
     } else {
       return (com.google.protobuf.ByteString) ref;
     }
   }
 
-  public static final int CONTEXTINFO_FIELD_NUMBER = 4;
-  private volatile java.lang.Object contextInfo_;
+  public static final int CODE_FIELD_NUMBER = 5;
+  private volatile java.lang.Object code_;
   /**
-   * <code>string contextInfo = 4;</code>
+   * <code>string code = 5;</code>
    */
-  public java.lang.String getContextInfo() {
-    java.lang.Object ref = contextInfo_;
+  public java.lang.String getCode() {
+    java.lang.Object ref = code_;
     if (ref instanceof java.lang.String) {
       return (java.lang.String) ref;
     } else {
       com.google.protobuf.ByteString bs = 
           (com.google.protobuf.ByteString) ref;
       java.lang.String s = bs.toStringUtf8();
-      contextInfo_ = s;
+      code_ = s;
       return s;
     }
   }
   /**
-   * <code>string contextInfo = 4;</code>
+   * <code>string code = 5;</code>
    */
   public com.google.protobuf.ByteString
-      getContextInfoBytes() {
-    java.lang.Object ref = contextInfo_;
+      getCodeBytes() {
+    java.lang.Object ref = code_;
     if (ref instanceof java.lang.String) {
       com.google.protobuf.ByteString b = 
           com.google.protobuf.ByteString.copyFromUtf8(
               (java.lang.String) ref);
-      contextInfo_ = b;
+      code_ = b;
       return b;
     } else {
       return (com.google.protobuf.ByteString) ref;
     }
-  }
-
-  public static final int ISSOTRX_FIELD_NUMBER = 5;
-  private boolean isSOTrx_;
-  /**
-   * <code>bool isSOTrx = 5;</code>
-   */
-  public boolean getIsSOTrx() {
-    return isSOTrx_;
   }
 
   private byte memoizedIsInitialized = -1;
@@ -268,20 +287,20 @@ private static final long serialVersionUID = 0L;
 
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
+    if (errorMessage_ != null) {
+      output.writeMessage(1, getErrorMessage());
+    }
     if (!getUuidBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, uuid_);
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, uuid_);
     }
     if (!getNameBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, name_);
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 3, name_);
     }
-    if (!getDescriptionBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 3, description_);
+    if (!getValidationTypeBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 4, validationType_);
     }
-    if (!getContextInfoBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 4, contextInfo_);
-    }
-    if (isSOTrx_ != false) {
-      output.writeBool(5, isSOTrx_);
+    if (!getCodeBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 5, code_);
     }
     unknownFields.writeTo(output);
   }
@@ -291,21 +310,21 @@ private static final long serialVersionUID = 0L;
     if (size != -1) return size;
 
     size = 0;
+    if (errorMessage_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(1, getErrorMessage());
+    }
     if (!getUuidBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, uuid_);
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, uuid_);
     }
     if (!getNameBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, name_);
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, name_);
     }
-    if (!getDescriptionBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, description_);
+    if (!getValidationTypeBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, validationType_);
     }
-    if (!getContextInfoBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, contextInfo_);
-    }
-    if (isSOTrx_ != false) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeBoolSize(5, isSOTrx_);
+    if (!getCodeBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, code_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -317,22 +336,25 @@ private static final long serialVersionUID = 0L;
     if (obj == this) {
      return true;
     }
-    if (!(obj instanceof org.spin.grpc.util.TabDefinition)) {
+    if (!(obj instanceof org.spin.grpc.util.Validation)) {
       return super.equals(obj);
     }
-    org.spin.grpc.util.TabDefinition other = (org.spin.grpc.util.TabDefinition) obj;
+    org.spin.grpc.util.Validation other = (org.spin.grpc.util.Validation) obj;
 
     boolean result = true;
+    result = result && (hasErrorMessage() == other.hasErrorMessage());
+    if (hasErrorMessage()) {
+      result = result && getErrorMessage()
+          .equals(other.getErrorMessage());
+    }
     result = result && getUuid()
         .equals(other.getUuid());
     result = result && getName()
         .equals(other.getName());
-    result = result && getDescription()
-        .equals(other.getDescription());
-    result = result && getContextInfo()
-        .equals(other.getContextInfo());
-    result = result && (getIsSOTrx()
-        == other.getIsSOTrx());
+    result = result && getValidationType()
+        .equals(other.getValidationType());
+    result = result && getCode()
+        .equals(other.getCode());
     result = result && unknownFields.equals(other.unknownFields);
     return result;
   }
@@ -344,85 +366,86 @@ private static final long serialVersionUID = 0L;
     }
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
+    if (hasErrorMessage()) {
+      hash = (37 * hash) + ERRORMESSAGE_FIELD_NUMBER;
+      hash = (53 * hash) + getErrorMessage().hashCode();
+    }
     hash = (37 * hash) + UUID_FIELD_NUMBER;
     hash = (53 * hash) + getUuid().hashCode();
     hash = (37 * hash) + NAME_FIELD_NUMBER;
     hash = (53 * hash) + getName().hashCode();
-    hash = (37 * hash) + DESCRIPTION_FIELD_NUMBER;
-    hash = (53 * hash) + getDescription().hashCode();
-    hash = (37 * hash) + CONTEXTINFO_FIELD_NUMBER;
-    hash = (53 * hash) + getContextInfo().hashCode();
-    hash = (37 * hash) + ISSOTRX_FIELD_NUMBER;
-    hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
-        getIsSOTrx());
+    hash = (37 * hash) + VALIDATIONTYPE_FIELD_NUMBER;
+    hash = (53 * hash) + getValidationType().hashCode();
+    hash = (37 * hash) + CODE_FIELD_NUMBER;
+    hash = (53 * hash) + getCode().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
   }
 
-  public static org.spin.grpc.util.TabDefinition parseFrom(
+  public static org.spin.grpc.util.Validation parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.spin.grpc.util.TabDefinition parseFrom(
+  public static org.spin.grpc.util.Validation parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.spin.grpc.util.TabDefinition parseFrom(
+  public static org.spin.grpc.util.Validation parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.spin.grpc.util.TabDefinition parseFrom(
+  public static org.spin.grpc.util.Validation parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.spin.grpc.util.TabDefinition parseFrom(byte[] data)
+  public static org.spin.grpc.util.Validation parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.spin.grpc.util.TabDefinition parseFrom(
+  public static org.spin.grpc.util.Validation parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.spin.grpc.util.TabDefinition parseFrom(java.io.InputStream input)
+  public static org.spin.grpc.util.Validation parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static org.spin.grpc.util.TabDefinition parseFrom(
+  public static org.spin.grpc.util.Validation parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input, extensionRegistry);
   }
-  public static org.spin.grpc.util.TabDefinition parseDelimitedFrom(java.io.InputStream input)
+  public static org.spin.grpc.util.Validation parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input);
   }
-  public static org.spin.grpc.util.TabDefinition parseDelimitedFrom(
+  public static org.spin.grpc.util.Validation parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
   }
-  public static org.spin.grpc.util.TabDefinition parseFrom(
+  public static org.spin.grpc.util.Validation parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static org.spin.grpc.util.TabDefinition parseFrom(
+  public static org.spin.grpc.util.Validation parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -434,7 +457,7 @@ private static final long serialVersionUID = 0L;
   public static Builder newBuilder() {
     return DEFAULT_INSTANCE.toBuilder();
   }
-  public static Builder newBuilder(org.spin.grpc.util.TabDefinition prototype) {
+  public static Builder newBuilder(org.spin.grpc.util.Validation prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
   public Builder toBuilder() {
@@ -450,28 +473,28 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * Tab definition
+   * Validation
    * </pre>
    *
-   * Protobuf type {@code dictionary.TabDefinition}
+   * Protobuf type {@code dictionary.Validation}
    */
   public static final class Builder extends
       com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-      // @@protoc_insertion_point(builder_implements:dictionary.TabDefinition)
-      org.spin.grpc.util.TabDefinitionOrBuilder {
+      // @@protoc_insertion_point(builder_implements:dictionary.Validation)
+      org.spin.grpc.util.ValidationOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.spin.grpc.util.ADempiereDictionary.internal_static_dictionary_TabDefinition_descriptor;
+      return org.spin.grpc.util.ADempiereDictionary.internal_static_dictionary_Validation_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.spin.grpc.util.ADempiereDictionary.internal_static_dictionary_TabDefinition_fieldAccessorTable
+      return org.spin.grpc.util.ADempiereDictionary.internal_static_dictionary_Validation_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.spin.grpc.util.TabDefinition.class, org.spin.grpc.util.TabDefinition.Builder.class);
+              org.spin.grpc.util.Validation.class, org.spin.grpc.util.Validation.Builder.class);
     }
 
-    // Construct using org.spin.grpc.util.TabDefinition.newBuilder()
+    // Construct using org.spin.grpc.util.Validation.newBuilder()
     private Builder() {
       maybeForceBuilderInitialization();
     }
@@ -488,43 +511,51 @@ private static final long serialVersionUID = 0L;
     }
     public Builder clear() {
       super.clear();
+      if (errorMessageBuilder_ == null) {
+        errorMessage_ = null;
+      } else {
+        errorMessage_ = null;
+        errorMessageBuilder_ = null;
+      }
       uuid_ = "";
 
       name_ = "";
 
-      description_ = "";
+      validationType_ = "";
 
-      contextInfo_ = "";
-
-      isSOTrx_ = false;
+      code_ = "";
 
       return this;
     }
 
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
-      return org.spin.grpc.util.ADempiereDictionary.internal_static_dictionary_TabDefinition_descriptor;
+      return org.spin.grpc.util.ADempiereDictionary.internal_static_dictionary_Validation_descriptor;
     }
 
-    public org.spin.grpc.util.TabDefinition getDefaultInstanceForType() {
-      return org.spin.grpc.util.TabDefinition.getDefaultInstance();
+    public org.spin.grpc.util.Validation getDefaultInstanceForType() {
+      return org.spin.grpc.util.Validation.getDefaultInstance();
     }
 
-    public org.spin.grpc.util.TabDefinition build() {
-      org.spin.grpc.util.TabDefinition result = buildPartial();
+    public org.spin.grpc.util.Validation build() {
+      org.spin.grpc.util.Validation result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
       return result;
     }
 
-    public org.spin.grpc.util.TabDefinition buildPartial() {
-      org.spin.grpc.util.TabDefinition result = new org.spin.grpc.util.TabDefinition(this);
+    public org.spin.grpc.util.Validation buildPartial() {
+      org.spin.grpc.util.Validation result = new org.spin.grpc.util.Validation(this);
+      if (errorMessageBuilder_ == null) {
+        result.errorMessage_ = errorMessage_;
+      } else {
+        result.errorMessage_ = errorMessageBuilder_.build();
+      }
       result.uuid_ = uuid_;
       result.name_ = name_;
-      result.description_ = description_;
-      result.contextInfo_ = contextInfo_;
-      result.isSOTrx_ = isSOTrx_;
+      result.validationType_ = validationType_;
+      result.code_ = code_;
       onBuilt();
       return result;
     }
@@ -556,16 +587,19 @@ private static final long serialVersionUID = 0L;
       return (Builder) super.addRepeatedField(field, value);
     }
     public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof org.spin.grpc.util.TabDefinition) {
-        return mergeFrom((org.spin.grpc.util.TabDefinition)other);
+      if (other instanceof org.spin.grpc.util.Validation) {
+        return mergeFrom((org.spin.grpc.util.Validation)other);
       } else {
         super.mergeFrom(other);
         return this;
       }
     }
 
-    public Builder mergeFrom(org.spin.grpc.util.TabDefinition other) {
-      if (other == org.spin.grpc.util.TabDefinition.getDefaultInstance()) return this;
+    public Builder mergeFrom(org.spin.grpc.util.Validation other) {
+      if (other == org.spin.grpc.util.Validation.getDefaultInstance()) return this;
+      if (other.hasErrorMessage()) {
+        mergeErrorMessage(other.getErrorMessage());
+      }
       if (!other.getUuid().isEmpty()) {
         uuid_ = other.uuid_;
         onChanged();
@@ -574,16 +608,13 @@ private static final long serialVersionUID = 0L;
         name_ = other.name_;
         onChanged();
       }
-      if (!other.getDescription().isEmpty()) {
-        description_ = other.description_;
+      if (!other.getValidationType().isEmpty()) {
+        validationType_ = other.validationType_;
         onChanged();
       }
-      if (!other.getContextInfo().isEmpty()) {
-        contextInfo_ = other.contextInfo_;
+      if (!other.getCode().isEmpty()) {
+        code_ = other.code_;
         onChanged();
-      }
-      if (other.getIsSOTrx() != false) {
-        setIsSOTrx(other.getIsSOTrx());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -598,11 +629,11 @@ private static final long serialVersionUID = 0L;
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      org.spin.grpc.util.TabDefinition parsedMessage = null;
+      org.spin.grpc.util.Validation parsedMessage = null;
       try {
         parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (org.spin.grpc.util.TabDefinition) e.getUnfinishedMessage();
+        parsedMessage = (org.spin.grpc.util.Validation) e.getUnfinishedMessage();
         throw e.unwrapIOException();
       } finally {
         if (parsedMessage != null) {
@@ -612,9 +643,126 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
+    private org.spin.grpc.util.ErrorMessage errorMessage_ = null;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        org.spin.grpc.util.ErrorMessage, org.spin.grpc.util.ErrorMessage.Builder, org.spin.grpc.util.ErrorMessageOrBuilder> errorMessageBuilder_;
+    /**
+     * <code>.dictionary.ErrorMessage errorMessage = 1;</code>
+     */
+    public boolean hasErrorMessage() {
+      return errorMessageBuilder_ != null || errorMessage_ != null;
+    }
+    /**
+     * <code>.dictionary.ErrorMessage errorMessage = 1;</code>
+     */
+    public org.spin.grpc.util.ErrorMessage getErrorMessage() {
+      if (errorMessageBuilder_ == null) {
+        return errorMessage_ == null ? org.spin.grpc.util.ErrorMessage.getDefaultInstance() : errorMessage_;
+      } else {
+        return errorMessageBuilder_.getMessage();
+      }
+    }
+    /**
+     * <code>.dictionary.ErrorMessage errorMessage = 1;</code>
+     */
+    public Builder setErrorMessage(org.spin.grpc.util.ErrorMessage value) {
+      if (errorMessageBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        errorMessage_ = value;
+        onChanged();
+      } else {
+        errorMessageBuilder_.setMessage(value);
+      }
+
+      return this;
+    }
+    /**
+     * <code>.dictionary.ErrorMessage errorMessage = 1;</code>
+     */
+    public Builder setErrorMessage(
+        org.spin.grpc.util.ErrorMessage.Builder builderForValue) {
+      if (errorMessageBuilder_ == null) {
+        errorMessage_ = builderForValue.build();
+        onChanged();
+      } else {
+        errorMessageBuilder_.setMessage(builderForValue.build());
+      }
+
+      return this;
+    }
+    /**
+     * <code>.dictionary.ErrorMessage errorMessage = 1;</code>
+     */
+    public Builder mergeErrorMessage(org.spin.grpc.util.ErrorMessage value) {
+      if (errorMessageBuilder_ == null) {
+        if (errorMessage_ != null) {
+          errorMessage_ =
+            org.spin.grpc.util.ErrorMessage.newBuilder(errorMessage_).mergeFrom(value).buildPartial();
+        } else {
+          errorMessage_ = value;
+        }
+        onChanged();
+      } else {
+        errorMessageBuilder_.mergeFrom(value);
+      }
+
+      return this;
+    }
+    /**
+     * <code>.dictionary.ErrorMessage errorMessage = 1;</code>
+     */
+    public Builder clearErrorMessage() {
+      if (errorMessageBuilder_ == null) {
+        errorMessage_ = null;
+        onChanged();
+      } else {
+        errorMessage_ = null;
+        errorMessageBuilder_ = null;
+      }
+
+      return this;
+    }
+    /**
+     * <code>.dictionary.ErrorMessage errorMessage = 1;</code>
+     */
+    public org.spin.grpc.util.ErrorMessage.Builder getErrorMessageBuilder() {
+      
+      onChanged();
+      return getErrorMessageFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.dictionary.ErrorMessage errorMessage = 1;</code>
+     */
+    public org.spin.grpc.util.ErrorMessageOrBuilder getErrorMessageOrBuilder() {
+      if (errorMessageBuilder_ != null) {
+        return errorMessageBuilder_.getMessageOrBuilder();
+      } else {
+        return errorMessage_ == null ?
+            org.spin.grpc.util.ErrorMessage.getDefaultInstance() : errorMessage_;
+      }
+    }
+    /**
+     * <code>.dictionary.ErrorMessage errorMessage = 1;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        org.spin.grpc.util.ErrorMessage, org.spin.grpc.util.ErrorMessage.Builder, org.spin.grpc.util.ErrorMessageOrBuilder> 
+        getErrorMessageFieldBuilder() {
+      if (errorMessageBuilder_ == null) {
+        errorMessageBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            org.spin.grpc.util.ErrorMessage, org.spin.grpc.util.ErrorMessage.Builder, org.spin.grpc.util.ErrorMessageOrBuilder>(
+                getErrorMessage(),
+                getParentForChildren(),
+                isClean());
+        errorMessage_ = null;
+      }
+      return errorMessageBuilder_;
+    }
+
     private java.lang.Object uuid_ = "";
     /**
-     * <code>string uuid = 1;</code>
+     * <code>string uuid = 2;</code>
      */
     public java.lang.String getUuid() {
       java.lang.Object ref = uuid_;
@@ -629,7 +777,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string uuid = 1;</code>
+     * <code>string uuid = 2;</code>
      */
     public com.google.protobuf.ByteString
         getUuidBytes() {
@@ -645,7 +793,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string uuid = 1;</code>
+     * <code>string uuid = 2;</code>
      */
     public Builder setUuid(
         java.lang.String value) {
@@ -658,7 +806,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string uuid = 1;</code>
+     * <code>string uuid = 2;</code>
      */
     public Builder clearUuid() {
       
@@ -667,7 +815,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string uuid = 1;</code>
+     * <code>string uuid = 2;</code>
      */
     public Builder setUuidBytes(
         com.google.protobuf.ByteString value) {
@@ -683,7 +831,7 @@ private static final long serialVersionUID = 0L;
 
     private java.lang.Object name_ = "";
     /**
-     * <code>string name = 2;</code>
+     * <code>string name = 3;</code>
      */
     public java.lang.String getName() {
       java.lang.Object ref = name_;
@@ -698,7 +846,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string name = 2;</code>
+     * <code>string name = 3;</code>
      */
     public com.google.protobuf.ByteString
         getNameBytes() {
@@ -714,7 +862,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string name = 2;</code>
+     * <code>string name = 3;</code>
      */
     public Builder setName(
         java.lang.String value) {
@@ -727,7 +875,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string name = 2;</code>
+     * <code>string name = 3;</code>
      */
     public Builder clearName() {
       
@@ -736,7 +884,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string name = 2;</code>
+     * <code>string name = 3;</code>
      */
     public Builder setNameBytes(
         com.google.protobuf.ByteString value) {
@@ -750,166 +898,140 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private java.lang.Object description_ = "";
+    private java.lang.Object validationType_ = "";
     /**
-     * <code>string description = 3;</code>
+     * <code>string validationType = 4;</code>
      */
-    public java.lang.String getDescription() {
-      java.lang.Object ref = description_;
+    public java.lang.String getValidationType() {
+      java.lang.Object ref = validationType_;
       if (!(ref instanceof java.lang.String)) {
         com.google.protobuf.ByteString bs =
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        description_ = s;
+        validationType_ = s;
         return s;
       } else {
         return (java.lang.String) ref;
       }
     }
     /**
-     * <code>string description = 3;</code>
+     * <code>string validationType = 4;</code>
      */
     public com.google.protobuf.ByteString
-        getDescriptionBytes() {
-      java.lang.Object ref = description_;
+        getValidationTypeBytes() {
+      java.lang.Object ref = validationType_;
       if (ref instanceof String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
-        description_ = b;
+        validationType_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
     /**
-     * <code>string description = 3;</code>
+     * <code>string validationType = 4;</code>
      */
-    public Builder setDescription(
+    public Builder setValidationType(
         java.lang.String value) {
       if (value == null) {
     throw new NullPointerException();
   }
   
-      description_ = value;
+      validationType_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>string description = 3;</code>
+     * <code>string validationType = 4;</code>
      */
-    public Builder clearDescription() {
+    public Builder clearValidationType() {
       
-      description_ = getDefaultInstance().getDescription();
+      validationType_ = getDefaultInstance().getValidationType();
       onChanged();
       return this;
     }
     /**
-     * <code>string description = 3;</code>
+     * <code>string validationType = 4;</code>
      */
-    public Builder setDescriptionBytes(
+    public Builder setValidationTypeBytes(
         com.google.protobuf.ByteString value) {
       if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
       
-      description_ = value;
+      validationType_ = value;
       onChanged();
       return this;
     }
 
-    private java.lang.Object contextInfo_ = "";
+    private java.lang.Object code_ = "";
     /**
-     * <code>string contextInfo = 4;</code>
+     * <code>string code = 5;</code>
      */
-    public java.lang.String getContextInfo() {
-      java.lang.Object ref = contextInfo_;
+    public java.lang.String getCode() {
+      java.lang.Object ref = code_;
       if (!(ref instanceof java.lang.String)) {
         com.google.protobuf.ByteString bs =
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        contextInfo_ = s;
+        code_ = s;
         return s;
       } else {
         return (java.lang.String) ref;
       }
     }
     /**
-     * <code>string contextInfo = 4;</code>
+     * <code>string code = 5;</code>
      */
     public com.google.protobuf.ByteString
-        getContextInfoBytes() {
-      java.lang.Object ref = contextInfo_;
+        getCodeBytes() {
+      java.lang.Object ref = code_;
       if (ref instanceof String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
-        contextInfo_ = b;
+        code_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
     /**
-     * <code>string contextInfo = 4;</code>
+     * <code>string code = 5;</code>
      */
-    public Builder setContextInfo(
+    public Builder setCode(
         java.lang.String value) {
       if (value == null) {
     throw new NullPointerException();
   }
   
-      contextInfo_ = value;
+      code_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>string contextInfo = 4;</code>
+     * <code>string code = 5;</code>
      */
-    public Builder clearContextInfo() {
+    public Builder clearCode() {
       
-      contextInfo_ = getDefaultInstance().getContextInfo();
+      code_ = getDefaultInstance().getCode();
       onChanged();
       return this;
     }
     /**
-     * <code>string contextInfo = 4;</code>
+     * <code>string code = 5;</code>
      */
-    public Builder setContextInfoBytes(
+    public Builder setCodeBytes(
         com.google.protobuf.ByteString value) {
       if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
       
-      contextInfo_ = value;
-      onChanged();
-      return this;
-    }
-
-    private boolean isSOTrx_ ;
-    /**
-     * <code>bool isSOTrx = 5;</code>
-     */
-    public boolean getIsSOTrx() {
-      return isSOTrx_;
-    }
-    /**
-     * <code>bool isSOTrx = 5;</code>
-     */
-    public Builder setIsSOTrx(boolean value) {
-      
-      isSOTrx_ = value;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>bool isSOTrx = 5;</code>
-     */
-    public Builder clearIsSOTrx() {
-      
-      isSOTrx_ = false;
+      code_ = value;
       onChanged();
       return this;
     }
@@ -924,39 +1046,39 @@ private static final long serialVersionUID = 0L;
     }
 
 
-    // @@protoc_insertion_point(builder_scope:dictionary.TabDefinition)
+    // @@protoc_insertion_point(builder_scope:dictionary.Validation)
   }
 
-  // @@protoc_insertion_point(class_scope:dictionary.TabDefinition)
-  private static final org.spin.grpc.util.TabDefinition DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:dictionary.Validation)
+  private static final org.spin.grpc.util.Validation DEFAULT_INSTANCE;
   static {
-    DEFAULT_INSTANCE = new org.spin.grpc.util.TabDefinition();
+    DEFAULT_INSTANCE = new org.spin.grpc.util.Validation();
   }
 
-  public static org.spin.grpc.util.TabDefinition getDefaultInstance() {
+  public static org.spin.grpc.util.Validation getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<TabDefinition>
-      PARSER = new com.google.protobuf.AbstractParser<TabDefinition>() {
-    public TabDefinition parsePartialFrom(
+  private static final com.google.protobuf.Parser<Validation>
+      PARSER = new com.google.protobuf.AbstractParser<Validation>() {
+    public Validation parsePartialFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return new TabDefinition(input, extensionRegistry);
+      return new Validation(input, extensionRegistry);
     }
   };
 
-  public static com.google.protobuf.Parser<TabDefinition> parser() {
+  public static com.google.protobuf.Parser<Validation> parser() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.protobuf.Parser<TabDefinition> getParserForType() {
+  public com.google.protobuf.Parser<Validation> getParserForType() {
     return PARSER;
   }
 
-  public org.spin.grpc.util.TabDefinition getDefaultInstanceForType() {
+  public org.spin.grpc.util.Validation getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }
 

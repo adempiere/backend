@@ -47,5 +47,6 @@
 	<classpathentry kind="lib" path="build/install/adempiere-gRPC-Server/lib/proto-google-common-protos-1.0.0.jar"/>
 	<classpathentry kind="lib" path="build/install/adempiere-gRPC-Server/lib/protobuf-java-3.5.1.jar"/>
 	<classpathentry kind="lib" path="build/install/adempiere-gRPC-Server/lib/protobuf-java-util-3.5.1.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/adempiere_390_Fork"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

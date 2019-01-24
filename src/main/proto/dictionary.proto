@@ -3,7 +3,7 @@
  * Contributor(s): Yamel Senih ysenih@erpya.com                                      *
  * This program is free software: you can redistribute it and/or modify              *
  * it under the terms of the GNU General Public License as published by              *
- * the Free Software Foundation, either version 3 of the License, or                 *
+ * the Free Software Foundation, either version 2 of the License, or                 *
  * (at your option) any later version.                                               *
  * This program is distributed in the hope that it will be useful,                   *
  * but WITHOUT ANY WARRANTY; without even the implied warranty of                    *
@@ -23,8 +23,18 @@ package dictionary;
 
 // The greeting service definition.
 service DictionaryService {
+  // Request Menu from Parent UUID
+  rpc RequestMenuFromParentUuid(ObjectRequest) returns (Menu) {}
   // Request a Window
-  rpc RequestWindow(ClientRequest) returns (WindowDefinition) {}
+  rpc RequestWindow(ObjectRequest) returns (Window) {}
+  // Request Window and tabs
+  rpc RequestWindowAndTabs(ObjectRequest) returns (Window) {}
+  // Request a Tab
+  rpc RequestTab(ObjectRequest) returns (Tab) {}
+  // Request a Tab and Fields
+  rpc RequestTabAndFields(ObjectRequest) returns (Tab) {}
+  // Request a Field
+  rpc RequestField(ObjectRequest) returns (Field) {}
 }
 
 // The client request contains client info for request.
@@ -33,20 +43,274 @@ message ClientRequest {
 	string language = 2;
 }
 
-// Window definition
-message WindowDefinition {
+//	Object request
+message ObjectRequest {
 	string uuid = 1;
-  	string name = 2;
-  	string description = 3;
-  	string contextInfo = 4;
-  	bool isSOTrx = 5;
+	ClientRequest clientRequest = 3;
 }
 
-// Tab definition
-message TabDefinition {
-	string uuid = 1;
-  	string name = 2;
-  	string description = 3;
-  	string contextInfo = 4;
-  	bool isSOTrx = 5;
+message ErrorMessage {
+	string errorMessage = 1;
+	int32 errorCode = 2;
 }
+
+// Window
+message Window {
+	ErrorMessage errorMessage = 1;
+	string uuid = 2;
+	string name = 4;
+  	string description = 5;
+  	string help = 6;
+  	bool isSOTrx = 7;
+  	//	External Info
+  	ContextInfo contextInfo = 8;
+  	repeated Tab tabs = 9;
+}
+
+// Tab
+message Tab {
+	ErrorMessage errorMessage = 1;
+	string uuid = 2;
+	string name = 4;
+  	string description = 5;
+  	string help = 6;
+  	//	Attributes
+  	string tableName = 7;
+  	int32 sequence = 8;
+  	int32 tabLevel = 9;
+  	//	
+  	bool isSingleRow = 10;
+  	bool isAdvancedTab = 11;
+  	bool isHasTree = 12;
+  	bool isInfoTab = 13;
+  	bool isSortTab = 14;
+  	bool isTranslationTab = 15;
+  	bool isReadOnly = 16;
+  	bool isInsertRecord = 17;
+  	bool isView = 18;
+  	bool isDeleteable = 19;
+  	bool isDocument = 20;
+  	int32 accessLevel = 21;
+  	string linkColumnName = 22;
+  	string parentColumnName = 23;
+  	string displayLogic = 24;
+  	string commitWarning = 25;
+  	string orderByClause = 26;
+  	//	External Info
+  	ContextInfo contextInfo = 27;
+  	Process process = 28;
+  	repeated Field fields = 29;
+}
+
+// Field
+message Field {
+	ErrorMessage errorMessage = 1;
+	string uuid = 2;
+	string name = 3;
+  	string description = 4;
+  	string help = 5;
+  	int32 sequence = 6;
+  	string columnName = 7;
+  	bool isDisplayed = 8;
+  	bool isDisplayedGrid = 9;
+  	bool isReadOnly = 10;
+  	bool isAllowCopy = 11;
+  	bool isEncrypted = 12;
+  	bool isSameLine = 13;
+  	bool isHeading = 14;
+  	bool isFieldOnly = 15;
+  	bool isQuickEntry = 16;
+  	bool isMandatory = 17;
+  	bool isKey = 18;
+  	bool isParent = 19;
+  	bool isUpdateable = 20;
+  	bool isIdentifier = 21;
+  	bool isAllowLogging = 22;
+  	bool isSelectionColumn = 23;
+  	bool isRange = 24;
+  	bool isAlwaysUpdateable = 25;
+  	bool isTranslated = 26;
+  	int32 identifierSequence = 77;
+  	string displayLogic = 28;
+  	int32 displayType = 29;
+  	string defaultValue = 30;
+  	string readOnlyLogic = 31;
+  	string mandatoryLogic = 32;
+  	string callout = 33;
+  	string columnSQL = 34;
+  	string vFormat = 35;
+  	double valueMin = 36;
+  	double valueMax = 37;
+  	string formatPattern = 38;
+  	//	External Info
+  	ContextInfo contextInfo = 39;
+  	FieldGroup fieldGroup = 40;
+  	Validation validation = 41;
+  	FieldDefinition fieldDefinition = 42;
+  	Reference reference = 43;
+  	Process process = 44;
+  	//	Smart Browser Field Compatibility
+	bool isQueryCriteria = 45;
+	bool isOrderBy = 46;
+	int32 seqNoGrid = 47;
+	int32 sortNo = 48;
+	bool isInfoOnly = 49;
+  	//	Process Parameter Compatibility
+  	string defaultValueTo = 50;
+}
+
+// Context Info
+message ContextInfo {
+	ErrorMessage errorMessage = 1;
+	string uuid = 2;
+	string name = 3;
+  	string description = 4;
+  	MessageText messageText = 5;
+  	string sqlStatement = 6;
+}
+
+// Message
+message MessageText {
+	ErrorMessage errorMessage = 1;
+	string uuid = 2;
+	string value = 3;
+  	string msgType = 4;
+  	string msgText = 5;
+  	string msgTip = 6;
+}
+
+// Context Info
+message FieldGroup {
+	ErrorMessage errorMessage = 1;
+	string uuid = 2;
+	string name = 3;
+  	string fieldGroupType = 4;
+}
+
+// Context Info
+message FieldDefinition {
+	ErrorMessage errorMessage = 1;
+	string uuid = 2;
+	string value = 3;
+	string name = 4;
+  	string fieldGroupType = 5;
+  	repeated FieldCondition conditions = 6;
+}
+
+//	Field Condition
+message FieldCondition {
+	ErrorMessage errorMessage = 1;
+	string uuid = 2;
+	string condition = 3;
+  	string Stylesheet = 4;
+}
+
+// Process
+message Process {
+	ErrorMessage errorMessage = 1;
+	string uuid = 2;
+	string value = 3;
+	string name = 4;
+  	string description = 5;
+  	string help = 6;
+  	bool isReport = 7;
+  	int32 accessLevel = 8;
+  	string showHelp = 9;
+  	bool isDirectPrint = 10;
+  	repeated Field parameters = 11;
+}
+
+// Form
+message Form {
+	ErrorMessage errorMessage = 1;
+	string uuid = 2;
+	string name = 3;
+  	string description = 4;
+  	string help = 5;
+  	int32 accessLevel = 6;
+  	string className = 7;
+}
+
+// Smart Browser
+message SmartBrowser {
+	ErrorMessage errorMessage = 1;
+	string uuid = 2;
+	string value = 3;
+	string name = 4;
+  	string description = 5;
+  	string help = 6;
+  	int32 accessLevel = 8;
+  	string whereClause = 9;
+  	bool isUpdateable = 10;
+  	bool IsDeleteable = 11;
+  	bool IsSelectedByDefault = 12;
+  	bool IsCollapsibleByDefault = 13;
+  	bool IsExecutedQueryByDefault = 14;
+  	bool IsShowTotal = 15;
+  	string viewUuid = 16;
+  	//	External Reference
+  	Window window = 17;
+  	Process process = 18;
+  	repeated Field fields = 19;
+}
+
+// Validation
+message Validation {
+	ErrorMessage errorMessage = 1;
+	string uuid = 2;
+	string name = 3;
+  	string validationType = 4;
+  	string code = 5;
+}
+
+// Foreign Reference
+message Reference {
+	ErrorMessage errorMessage = 1;
+	string uuid = 2;
+	string name = 3;
+  	string validationType = 4;
+  	//	External Info
+  	ReferenceTable referenceTable = 5;
+  	repeated ReferenceValue values = 6;
+}
+
+// Foreign Reference Value
+message ReferenceValue {
+	ErrorMessage errorMessage = 1;
+	string uuid = 2;
+	string value = 3;
+  	string name = 4;
+  	string description = 5;
+}
+
+// Foreign Reference Table
+message ReferenceTable {
+	ErrorMessage errorMessage = 1;
+	string uuid = 2;
+	string tableName = 3;
+  	string keyColumnName = 4;
+  	string displayColumnName = 5;
+  	bool isDisplayIdentifier = 6;
+  	bool isValueDisplayed = 7;
+  	string displaySQL = 8;
+  	string whereClause = 9;
+}
+
+// Menu
+message Menu {
+	ErrorMessage errorMessage = 1;
+	string uuid = 2;
+	string parentUuid = 3;
+	string name = 4;
+  	string description = 5;
+  	string sequence = 6;
+  	bool isReadOnly = 7;
+  	bool isSummary = 8;
+  	bool isSOTrx = 9;
+  	string action = 10;
+  	//	Supported References
+  	string windowUuid = 11;
+  	string processUuid = 12;
+  	string smartBrowserUuid = 13;
+}
+
