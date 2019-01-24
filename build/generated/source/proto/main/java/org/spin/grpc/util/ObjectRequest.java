@@ -5,7 +5,7 @@ package org.spin.grpc.util;
 
 /**
  * <pre>
- *	Object request
+ * Object request
  * </pre>
  *
  * Protobuf type {@code dictionary.ObjectRequest}
@@ -60,7 +60,7 @@ private static final long serialVersionUID = 0L;
             uuid_ = s;
             break;
           }
-          case 26: {
+          case 18: {
             org.spin.grpc.util.ClientRequest.Builder subBuilder = null;
             if (clientRequest_ != null) {
               subBuilder = clientRequest_.toBuilder();
@@ -131,22 +131,22 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int CLIENTREQUEST_FIELD_NUMBER = 3;
+  public static final int CLIENTREQUEST_FIELD_NUMBER = 2;
   private org.spin.grpc.util.ClientRequest clientRequest_;
   /**
-   * <code>.dictionary.ClientRequest clientRequest = 3;</code>
+   * <code>.dictionary.ClientRequest clientRequest = 2;</code>
    */
   public boolean hasClientRequest() {
     return clientRequest_ != null;
   }
   /**
-   * <code>.dictionary.ClientRequest clientRequest = 3;</code>
+   * <code>.dictionary.ClientRequest clientRequest = 2;</code>
    */
   public org.spin.grpc.util.ClientRequest getClientRequest() {
     return clientRequest_ == null ? org.spin.grpc.util.ClientRequest.getDefaultInstance() : clientRequest_;
   }
   /**
-   * <code>.dictionary.ClientRequest clientRequest = 3;</code>
+   * <code>.dictionary.ClientRequest clientRequest = 2;</code>
    */
   public org.spin.grpc.util.ClientRequestOrBuilder getClientRequestOrBuilder() {
     return getClientRequest();
@@ -168,7 +168,7 @@ private static final long serialVersionUID = 0L;
       com.google.protobuf.GeneratedMessageV3.writeString(output, 1, uuid_);
     }
     if (clientRequest_ != null) {
-      output.writeMessage(3, getClientRequest());
+      output.writeMessage(2, getClientRequest());
     }
     unknownFields.writeTo(output);
   }
@@ -183,7 +183,7 @@ private static final long serialVersionUID = 0L;
     }
     if (clientRequest_ != null) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(3, getClientRequest());
+        .computeMessageSize(2, getClientRequest());
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -320,7 +320,7 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   *	Object request
+   * Object request
    * </pre>
    *
    * Protobuf type {@code dictionary.ObjectRequest}
@@ -542,13 +542,13 @@ private static final long serialVersionUID = 0L;
     private com.google.protobuf.SingleFieldBuilderV3<
         org.spin.grpc.util.ClientRequest, org.spin.grpc.util.ClientRequest.Builder, org.spin.grpc.util.ClientRequestOrBuilder> clientRequestBuilder_;
     /**
-     * <code>.dictionary.ClientRequest clientRequest = 3;</code>
+     * <code>.dictionary.ClientRequest clientRequest = 2;</code>
      */
     public boolean hasClientRequest() {
       return clientRequestBuilder_ != null || clientRequest_ != null;
     }
     /**
-     * <code>.dictionary.ClientRequest clientRequest = 3;</code>
+     * <code>.dictionary.ClientRequest clientRequest = 2;</code>
      */
     public org.spin.grpc.util.ClientRequest getClientRequest() {
       if (clientRequestBuilder_ == null) {
@@ -558,7 +558,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>.dictionary.ClientRequest clientRequest = 3;</code>
+     * <code>.dictionary.ClientRequest clientRequest = 2;</code>
      */
     public Builder setClientRequest(org.spin.grpc.util.ClientRequest value) {
       if (clientRequestBuilder_ == null) {
@@ -574,7 +574,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.dictionary.ClientRequest clientRequest = 3;</code>
+     * <code>.dictionary.ClientRequest clientRequest = 2;</code>
      */
     public Builder setClientRequest(
         org.spin.grpc.util.ClientRequest.Builder builderForValue) {
@@ -588,7 +588,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.dictionary.ClientRequest clientRequest = 3;</code>
+     * <code>.dictionary.ClientRequest clientRequest = 2;</code>
      */
     public Builder mergeClientRequest(org.spin.grpc.util.ClientRequest value) {
       if (clientRequestBuilder_ == null) {
@@ -606,7 +606,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.dictionary.ClientRequest clientRequest = 3;</code>
+     * <code>.dictionary.ClientRequest clientRequest = 2;</code>
      */
     public Builder clearClientRequest() {
       if (clientRequestBuilder_ == null) {
@@ -620,7 +620,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.dictionary.ClientRequest clientRequest = 3;</code>
+     * <code>.dictionary.ClientRequest clientRequest = 2;</code>
      */
     public org.spin.grpc.util.ClientRequest.Builder getClientRequestBuilder() {
       
@@ -628,7 +628,7 @@ private static final long serialVersionUID = 0L;
       return getClientRequestFieldBuilder().getBuilder();
     }
     /**
-     * <code>.dictionary.ClientRequest clientRequest = 3;</code>
+     * <code>.dictionary.ClientRequest clientRequest = 2;</code>
      */
     public org.spin.grpc.util.ClientRequestOrBuilder getClientRequestOrBuilder() {
       if (clientRequestBuilder_ != null) {
@@ -639,7 +639,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>.dictionary.ClientRequest clientRequest = 3;</code>
+     * <code>.dictionary.ClientRequest clientRequest = 2;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
         org.spin.grpc.util.ClientRequest, org.spin.grpc.util.ClientRequest.Builder, org.spin.grpc.util.ClientRequestOrBuilder> 

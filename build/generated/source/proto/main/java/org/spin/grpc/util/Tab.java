@@ -445,7 +445,7 @@ private static final long serialVersionUID = 0L;
   private volatile java.lang.Object tableName_;
   /**
    * <pre>
-   *	Attributes
+   * Attributes
    * </pre>
    *
    * <code>string tableName = 7;</code>
@@ -464,7 +464,7 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   *	Attributes
+   * Attributes
    * </pre>
    *
    * <code>string tableName = 7;</code>
@@ -505,7 +505,6 @@ private static final long serialVersionUID = 0L;
   private boolean isSingleRow_;
   /**
    * <pre>
-   *	
    * </pre>
    *
    * <code>bool isSingleRow = 10;</code>
@@ -787,7 +786,7 @@ private static final long serialVersionUID = 0L;
   private org.spin.grpc.util.ContextInfo contextInfo_;
   /**
    * <pre>
-   *	External Info
+   * External Info
    * </pre>
    *
    * <code>.dictionary.ContextInfo contextInfo = 27;</code>
@@ -797,7 +796,7 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   *	External Info
+   * External Info
    * </pre>
    *
    * <code>.dictionary.ContextInfo contextInfo = 27;</code>
@@ -807,7 +806,7 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   *	External Info
+   * External Info
    * </pre>
    *
    * <code>.dictionary.ContextInfo contextInfo = 27;</code>
@@ -2106,7 +2105,7 @@ private static final long serialVersionUID = 0L;
     private java.lang.Object tableName_ = "";
     /**
      * <pre>
-     *	Attributes
+     * Attributes
      * </pre>
      *
      * <code>string tableName = 7;</code>
@@ -2125,7 +2124,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     *	Attributes
+     * Attributes
      * </pre>
      *
      * <code>string tableName = 7;</code>
@@ -2145,7 +2144,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     *	Attributes
+     * Attributes
      * </pre>
      *
      * <code>string tableName = 7;</code>
@@ -2162,7 +2161,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     *	Attributes
+     * Attributes
      * </pre>
      *
      * <code>string tableName = 7;</code>
@@ -2175,7 +2174,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     *	Attributes
+     * Attributes
      * </pre>
      *
      * <code>string tableName = 7;</code>
@@ -2247,7 +2246,6 @@ private static final long serialVersionUID = 0L;
     private boolean isSingleRow_ ;
     /**
      * <pre>
-     *	
      * </pre>
      *
      * <code>bool isSingleRow = 10;</code>
@@ -2257,7 +2255,6 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     *	
      * </pre>
      *
      * <code>bool isSingleRow = 10;</code>
@@ -2270,7 +2267,6 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     *	
      * </pre>
      *
      * <code>bool isSingleRow = 10;</code>
@@ -2918,7 +2914,7 @@ private static final long serialVersionUID = 0L;
         org.spin.grpc.util.ContextInfo, org.spin.grpc.util.ContextInfo.Builder, org.spin.grpc.util.ContextInfoOrBuilder> contextInfoBuilder_;
     /**
      * <pre>
-     *	External Info
+     * External Info
      * </pre>
      *
      * <code>.dictionary.ContextInfo contextInfo = 27;</code>
@@ -2928,7 +2924,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     *	External Info
+     * External Info
      * </pre>
      *
      * <code>.dictionary.ContextInfo contextInfo = 27;</code>
@@ -2942,7 +2938,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     *	External Info
+     * External Info
      * </pre>
      *
      * <code>.dictionary.ContextInfo contextInfo = 27;</code>
@@ -2962,7 +2958,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     *	External Info
+     * External Info
      * </pre>
      *
      * <code>.dictionary.ContextInfo contextInfo = 27;</code>
@@ -2980,7 +2976,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     *	External Info
+     * External Info
      * </pre>
      *
      * <code>.dictionary.ContextInfo contextInfo = 27;</code>
@@ -3002,7 +2998,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     *	External Info
+     * External Info
      * </pre>
      *
      * <code>.dictionary.ContextInfo contextInfo = 27;</code>
@@ -3020,7 +3016,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     *	External Info
+     * External Info
      * </pre>
      *
      * <code>.dictionary.ContextInfo contextInfo = 27;</code>
@@ -3032,7 +3028,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     *	External Info
+     * External Info
      * </pre>
      *
      * <code>.dictionary.ContextInfo contextInfo = 27;</code>
@@ -3047,7 +3043,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     *	External Info
+     * External Info
      * </pre>
      *
      * <code>.dictionary.ContextInfo contextInfo = 27;</code>

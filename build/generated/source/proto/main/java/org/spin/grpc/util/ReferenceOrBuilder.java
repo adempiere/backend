@@ -52,7 +52,7 @@ public interface ReferenceOrBuilder extends
 
   /**
    * <pre>
-   *	External Info
+   * External Info
    * </pre>
    *
    * <code>.dictionary.ReferenceTable referenceTable = 5;</code>
@@ -60,7 +60,7 @@ public interface ReferenceOrBuilder extends
   boolean hasReferenceTable();
   /**
    * <pre>
-   *	External Info
+   * External Info
    * </pre>
    *
    * <code>.dictionary.ReferenceTable referenceTable = 5;</code>
@@ -68,7 +68,7 @@ public interface ReferenceOrBuilder extends
   org.spin.grpc.util.ReferenceTable getReferenceTable();
   /**
    * <pre>
-   *	External Info
+   * External Info
    * </pre>
    *
    * <code>.dictionary.ReferenceTable referenceTable = 5;</code>

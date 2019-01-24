@@ -127,7 +127,7 @@ public interface SmartBrowserOrBuilder extends
 
   /**
    * <pre>
-   *	External Reference
+   * External Reference
    * </pre>
    *
    * <code>.dictionary.Window window = 17;</code>
@@ -135,7 +135,7 @@ public interface SmartBrowserOrBuilder extends
   boolean hasWindow();
   /**
    * <pre>
-   *	External Reference
+   * External Reference
    * </pre>
    *
    * <code>.dictionary.Window window = 17;</code>
@@ -143,7 +143,7 @@ public interface SmartBrowserOrBuilder extends
   org.spin.grpc.util.Window getWindow();
   /**
    * <pre>
-   *	External Reference
+   * External Reference
    * </pre>
    *
    * <code>.dictionary.Window window = 17;</code>

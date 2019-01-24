@@ -62,7 +62,7 @@ public interface TabOrBuilder extends
 
   /**
    * <pre>
-   *	Attributes
+   * Attributes
    * </pre>
    *
    * <code>string tableName = 7;</code>
@@ -70,7 +70,7 @@ public interface TabOrBuilder extends
   java.lang.String getTableName();
   /**
    * <pre>
-   *	Attributes
+   * Attributes
    * </pre>
    *
    * <code>string tableName = 7;</code>
@@ -90,7 +90,6 @@ public interface TabOrBuilder extends
 
   /**
    * <pre>
-   *	
    * </pre>
    *
    * <code>bool isSingleRow = 10;</code>
@@ -204,7 +203,7 @@ public interface TabOrBuilder extends
 
   /**
    * <pre>
-   *	External Info
+   * External Info
    * </pre>
    *
    * <code>.dictionary.ContextInfo contextInfo = 27;</code>
@@ -212,7 +211,7 @@ public interface TabOrBuilder extends
   boolean hasContextInfo();
   /**
    * <pre>
-   *	External Info
+   * External Info
    * </pre>
    *
    * <code>.dictionary.ContextInfo contextInfo = 27;</code>
@@ -220,7 +219,7 @@ public interface TabOrBuilder extends
   org.spin.grpc.util.ContextInfo getContextInfo();
   /**
    * <pre>
-   *	External Info
+   * External Info
    * </pre>
    *
    * <code>.dictionary.ContextInfo contextInfo = 27;</code>

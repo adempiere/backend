@@ -18,15 +18,15 @@ public interface ObjectRequestOrBuilder extends
       getUuidBytes();
 
   /**
-   * <code>.dictionary.ClientRequest clientRequest = 3;</code>
+   * <code>.dictionary.ClientRequest clientRequest = 2;</code>
    */
   boolean hasClientRequest();
   /**
-   * <code>.dictionary.ClientRequest clientRequest = 3;</code>
+   * <code>.dictionary.ClientRequest clientRequest = 2;</code>
    */
   org.spin.grpc.util.ClientRequest getClientRequest();
   /**
-   * <code>.dictionary.ClientRequest clientRequest = 3;</code>
+   * <code>.dictionary.ClientRequest clientRequest = 2;</code>
    */
   org.spin.grpc.util.ClientRequestOrBuilder getClientRequestOrBuilder();
 }

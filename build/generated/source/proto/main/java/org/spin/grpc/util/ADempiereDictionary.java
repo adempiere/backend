@@ -121,7 +121,7 @@ public final class ADempiereDictionary {
       "\n\020dictionary.proto\022\ndictionary\"/\n\rClient" +
       "Request\022\014\n\004uuid\030\001 \001(\t\022\020\n\010language\030\002 \001(\t\"" +
       "O\n\rObjectRequest\022\014\n\004uuid\030\001 \001(\t\0220\n\rclient" +
-      "Request\030\003 \001(\0132\031.dictionary.ClientRequest" +
+      "Request\030\002 \001(\0132\031.dictionary.ClientRequest" +
       "\"7\n\014ErrorMessage\022\024\n\014errorMessage\030\001 \001(\t\022\021" +
       "\n\terrorCode\030\002 \001(\005\"\325\001\n\006Window\022.\n\014errorMes" +
       "sage\030\001 \001(\0132\030.dictionary.ErrorMessage\022\014\n\004" +
@@ -234,26 +234,29 @@ public final class ADempiereDictionary {
       "\001(\t\022\031\n\021displayColumnName\030\005 \001(\t\022\033\n\023isDisp" +
       "layIdentifier\030\006 \001(\010\022\030\n\020isValueDisplayed\030" +
       "\007 \001(\010\022\022\n\ndisplaySQL\030\010 \001(\t\022\023\n\013whereClause" +
-      "\030\t \001(\t\"\230\002\n\004Menu\022.\n\014errorMessage\030\001 \001(\0132\030." +
+      "\030\t \001(\t\"\314\002\n\004Menu\022.\n\014errorMessage\030\001 \001(\0132\030." +
       "dictionary.ErrorMessage\022\014\n\004uuid\030\002 \001(\t\022\022\n" +
-      "\nparentUuid\030\003 \001(\t\022\014\n\004name\030\004 \001(\t\022\023\n\013descr" +
-      "iption\030\005 \001(\t\022\020\n\010sequence\030\006 \001(\t\022\022\n\nisRead" +
-      "Only\030\007 \001(\010\022\021\n\tisSummary\030\010 \001(\010\022\017\n\007isSOTrx" +
-      "\030\t \001(\010\022\016\n\006action\030\n \001(\t\022\022\n\nwindowUuid\030\013 \001" +
-      "(\t\022\023\n\013processUuid\030\014 \001(\t\022\030\n\020smartBrowserU" +
-      "uid\030\r \001(\t2\253\003\n\021DictionaryService\022J\n\031Reque" +
-      "stMenuFromParentUuid\022\031.dictionary.Object" +
-      "Request\032\020.dictionary.Menu\"\000\022@\n\rRequestWi" +
-      "ndow\022\031.dictionary.ObjectRequest\032\022.dictio" +
-      "nary.Window\"\000\022G\n\024RequestWindowAndTabs\022\031." +
-      "dictionary.ObjectRequest\032\022.dictionary.Wi" +
-      "ndow\"\000\022:\n\nRequestTab\022\031.dictionary.Object" +
-      "Request\032\017.dictionary.Tab\"\000\022C\n\023RequestTab" +
-      "AndFields\022\031.dictionary.ObjectRequest\032\017.d" +
-      "ictionary.Tab\"\000\022>\n\014RequestField\022\031.dictio" +
-      "nary.ObjectRequest\032\021.dictionary.Field\"\000B" +
-      "1\n\022org.spin.grpc.utilB\023ADempiereDictiona" +
-      "ryP\001\242\002\003HLWb\006proto3"
+      "\nparentUuid\030\004 \001(\t\022\014\n\004name\030\005 \001(\t\022\023\n\013descr" +
+      "iption\030\006 \001(\t\022\020\n\010sequence\030\007 \001(\t\022\022\n\nisRead" +
+      "Only\030\010 \001(\010\022\021\n\tisSummary\030\t \001(\010\022\017\n\007isSOTrx" +
+      "\030\n \001(\010\022\016\n\006action\030\013 \001(\t\022\020\n\010formUuid\030\014 \001(\t" +
+      "\022\022\n\nwindowUuid\030\r \001(\t\022\023\n\013processUuid\030\016 \001(" +
+      "\t\022\030\n\020smartBrowserUuid\030\017 \001(\t\022 \n\006childs\030\020 " +
+      "\003(\0132\020.dictionary.Menu2\343\003\n\021DictionaryServ" +
+      "ice\022D\n\023RequestMenuAndChild\022\031.dictionary." +
+      "ObjectRequest\032\020.dictionary.Menu\"\000\022<\n\013Req" +
+      "uestMenu\022\031.dictionary.ObjectRequest\032\020.di" +
+      "ctionary.Menu\"\000\022@\n\rRequestWindow\022\031.dicti" +
+      "onary.ObjectRequest\032\022.dictionary.Window\"" +
+      "\000\022G\n\024RequestWindowAndTabs\022\031.dictionary.O" +
+      "bjectRequest\032\022.dictionary.Window\"\000\022:\n\nRe" +
+      "questTab\022\031.dictionary.ObjectRequest\032\017.di" +
+      "ctionary.Tab\"\000\022C\n\023RequestTabAndFields\022\031." +
+      "dictionary.ObjectRequest\032\017.dictionary.Ta" +
+      "b\"\000\022>\n\014RequestField\022\031.dictionary.ObjectR" +
+      "equest\032\021.dictionary.Field\"\000B1\n\022org.spin." +
+      "grpc.utilB\023ADempiereDictionaryP\001\242\002\003HLWb\006" +
+      "proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -380,7 +383,7 @@ public final class ADempiereDictionary {
     internal_static_dictionary_Menu_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dictionary_Menu_descriptor,
-        new java.lang.String[] { "ErrorMessage", "Uuid", "ParentUuid", "Name", "Description", "Sequence", "IsReadOnly", "IsSummary", "IsSOTrx", "Action", "WindowUuid", "ProcessUuid", "SmartBrowserUuid", });
+        new java.lang.String[] { "ErrorMessage", "Uuid", "ParentUuid", "Name", "Description", "Sequence", "IsReadOnly", "IsSummary", "IsSOTrx", "Action", "FormUuid", "WindowUuid", "ProcessUuid", "SmartBrowserUuid", "Childs", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

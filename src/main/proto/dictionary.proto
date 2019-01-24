@@ -24,7 +24,9 @@ package dictionary;
 // The greeting service definition.
 service DictionaryService {
   // Request Menu from Parent UUID
-  rpc RequestMenuFromParentUuid(ObjectRequest) returns (Menu) {}
+  rpc RequestMenuAndChild(ObjectRequest) returns (Menu) {}
+  // Request Menu
+  rpc RequestMenu(ObjectRequest) returns (Menu) {}
   // Request a Window
   rpc RequestWindow(ObjectRequest) returns (Window) {}
   // Request Window and tabs
@@ -43,10 +45,10 @@ message ClientRequest {
 	string language = 2;
 }
 
-//	Object request
+// Object request
 message ObjectRequest {
 	string uuid = 1;
-	ClientRequest clientRequest = 3;
+	ClientRequest clientRequest = 2;
 }
 
 message ErrorMessage {
@@ -74,11 +76,11 @@ message Tab {
 	string name = 4;
   	string description = 5;
   	string help = 6;
-  	//	Attributes
+  	// Attributes
   	string tableName = 7;
   	int32 sequence = 8;
   	int32 tabLevel = 9;
-  	//	
+  	//
   	bool isSingleRow = 10;
   	bool isAdvancedTab = 11;
   	bool isHasTree = 12;
@@ -96,7 +98,7 @@ message Tab {
   	string displayLogic = 24;
   	string commitWarning = 25;
   	string orderByClause = 26;
-  	//	External Info
+  	// External Info
   	ContextInfo contextInfo = 27;
   	Process process = 28;
   	repeated Field fields = 29;
@@ -142,20 +144,20 @@ message Field {
   	double valueMin = 36;
   	double valueMax = 37;
   	string formatPattern = 38;
-  	//	External Info
+  	// External Info
   	ContextInfo contextInfo = 39;
   	FieldGroup fieldGroup = 40;
   	Validation validation = 41;
   	FieldDefinition fieldDefinition = 42;
   	Reference reference = 43;
   	Process process = 44;
-  	//	Smart Browser Field Compatibility
+  	// Smart Browser Field Compatibility
 	bool isQueryCriteria = 45;
 	bool isOrderBy = 46;
 	int32 seqNoGrid = 47;
 	int32 sortNo = 48;
 	bool isInfoOnly = 49;
-  	//	Process Parameter Compatibility
+  	// Process Parameter Compatibility
   	string defaultValueTo = 50;
 }
 
@@ -197,7 +199,7 @@ message FieldDefinition {
   	repeated FieldCondition conditions = 6;
 }
 
-//	Field Condition
+// Field Condition
 message FieldCondition {
 	ErrorMessage errorMessage = 1;
 	string uuid = 2;
@@ -248,7 +250,7 @@ message SmartBrowser {
   	bool IsExecutedQueryByDefault = 14;
   	bool IsShowTotal = 15;
   	string viewUuid = 16;
-  	//	External Reference
+  	// External Reference
   	Window window = 17;
   	Process process = 18;
   	repeated Field fields = 19;
@@ -269,7 +271,7 @@ message Reference {
 	string uuid = 2;
 	string name = 3;
   	string validationType = 4;
-  	//	External Info
+  	// External Info
   	ReferenceTable referenceTable = 5;
   	repeated ReferenceValue values = 6;
 }
@@ -300,17 +302,19 @@ message ReferenceTable {
 message Menu {
 	ErrorMessage errorMessage = 1;
 	string uuid = 2;
-	string parentUuid = 3;
-	string name = 4;
-  	string description = 5;
-  	string sequence = 6;
-  	bool isReadOnly = 7;
-  	bool isSummary = 8;
-  	bool isSOTrx = 9;
-  	string action = 10;
-  	//	Supported References
-  	string windowUuid = 11;
-  	string processUuid = 12;
-  	string smartBrowserUuid = 13;
+	string parentUuid = 4;
+	string name = 5;
+  	string description = 6;
+  	string sequence = 7;
+  	bool isReadOnly = 8;
+  	bool isSummary = 9;
+  	bool isSOTrx = 10;
+  	string action = 11;
+  	// Supported References
+  	string formUuid = 12;
+  	string windowUuid = 13;
+  	string processUuid = 14;
+  	string smartBrowserUuid = 15;
+  	repeated Menu childs = 16;
 }
 

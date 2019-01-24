@@ -2,8 +2,10 @@ package org.spin.grpc.util;
 
 import java.util.List;
 
+import org.adempiere.model.MBrowse;
 import org.compiere.model.I_AD_Field;
 import org.compiere.model.I_AD_FieldGroup;
+import org.compiere.model.I_AD_Menu;
 import org.compiere.model.I_AD_Message;
 import org.compiere.model.I_AD_Process;
 import org.compiere.model.I_AD_Ref_List;
@@ -11,12 +13,16 @@ import org.compiere.model.I_AD_Tab;
 import org.compiere.model.I_AD_Window;
 import org.compiere.model.MColumn;
 import org.compiere.model.MField;
+import org.compiere.model.MForm;
+import org.compiere.model.MMenu;
 import org.compiere.model.MMessage;
 import org.compiere.model.MProcess;
 import org.compiere.model.MRefList;
 import org.compiere.model.MRefTable;
 import org.compiere.model.MTab;
 import org.compiere.model.MTable;
+import org.compiere.model.MTree;
+import org.compiere.model.MTree_NodeMM;
 import org.compiere.model.MWindow;
 import org.compiere.model.Query;
 import org.compiere.model.X_AD_FieldGroup;
@@ -57,6 +63,16 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	}
 	
 	@Override
+	public void requestMenu(ObjectRequest request, StreamObserver<Menu> responseObserver) {
+		requestMenu(request, responseObserver, false);
+	}
+	
+	@Override
+	public void requestMenuAndChild(ObjectRequest request, StreamObserver<Menu> responseObserver) {
+		requestMenu(request, responseObserver, true);
+	}
+	
+	@Override
 	public void requestField(ObjectRequest request, StreamObserver<Field> responseObserver) {
 		if(request == null
 				|| Util.isEmpty(request.getUuid())) {
@@ -69,14 +85,43 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		if(clientInfo != null) {
 			language = clientInfo.getLanguage();
 		}
-		Field.Builder fieldBuilder = convertField(request.getUuid(), language);
-		if(fieldBuilder != null) {
+		try {
+			Field.Builder fieldBuilder = convertField(request.getUuid(), language);
 			responseObserver.onNext(fieldBuilder.build());
-		} else {
-			responseObserver.onNext(null);
+		} catch (Exception e) {
+			responseObserver.onError(e);
 		}
 	    responseObserver.onCompleted();
 	}
+	
+	/**
+	 * Request Menu
+	 * @param request
+	 * @param responseObserver
+	 * @param withChild
+	 */
+	public void requestMenu(ObjectRequest request, StreamObserver<Menu> responseObserver, boolean withChild) {
+		if(request == null
+				|| Util.isEmpty(request.getUuid())) {
+			log.fine("Object Request Null");
+			return;
+		}
+		log.fine("Field Requested = " + request.getUuid());
+		ClientRequest clientInfo = request.getClientRequest();
+		String language = null;
+		if(clientInfo != null) {
+			language = clientInfo.getLanguage();
+		}
+		Menu.Builder menuBuilder = convertMenu(request.getUuid(), language, withChild);
+		try {
+			responseObserver.onNext(menuBuilder.build());
+		} catch (Exception e) {
+			responseObserver.onError(e);
+		}
+	    responseObserver.onCompleted();
+	}
+	
+	
 	/**
 	 * Request with parameters
 	 */
@@ -92,11 +137,11 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		if(clientInfo != null) {
 			language = clientInfo.getLanguage();
 		}
-		Window.Builder windowBuilder = convertWindow(request.getUuid(), language, withTabs);
-		if(windowBuilder != null) {
+		try {
+			Window.Builder windowBuilder = convertWindow(request.getUuid(), language, withTabs);
 			responseObserver.onNext(windowBuilder.build());
-		} else {
-			responseObserver.onNext(null);
+		} catch (Exception e) {
+			responseObserver.onError(e);
 		}
 	    responseObserver.onCompleted();
 	}
@@ -119,11 +164,11 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		if(clientInfo != null) {
 			language = clientInfo.getLanguage();
 		}
-		Tab.Builder tabBuilder = convertTab(request.getUuid(), language, withFields);
-		if(tabBuilder != null) {
+		try {
+			Tab.Builder tabBuilder = convertTab(request.getUuid(), language, withFields);
 			responseObserver.onNext(tabBuilder.build());
-		} else {
-			responseObserver.onNext(null);
+		} catch (Exception e) {
+			responseObserver.onError(e);
 		}
 	    responseObserver.onCompleted();
 	}
@@ -637,6 +682,103 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setDisplayColumnName(validateNull(displayColumn.getColumnName()))
 				.setKeyColumnName(validateNull(keyColumn.getColumnName()));
 		//	
+		return builder;
+	}
+	
+	/**
+	 * Convert Menu to Builder
+	 * @param uuid
+	 * @param language
+	 * @param withChild
+	 * @return
+	 */
+	private Menu.Builder convertMenu(String uuid, String language, boolean withChild) {
+		MMenu menu = new Query(Env.getCtx(), I_AD_Menu.Table_Name, I_AD_Menu.COLUMNNAME_UUID + " = ?", null)
+				.setParameters(uuid)
+				.setOnlyActiveRecords(true)
+				.first();
+		//	Convert
+		return convertMenu(menu, language, withChild);
+	}
+	
+	/**
+	 * Convert Menu to builder
+	 * @param menu
+	 * @param language
+	 * @param withChild
+	 * @return
+	 */
+	private Menu.Builder convertMenu(MMenu menu, String language, boolean withChild) {
+		String name = null;
+		String description = null;
+		if(!Util.isEmpty(language)) {
+			name = menu.get_Translation(I_AD_Menu.COLUMNNAME_Name, language);
+			description = menu.get_Translation(I_AD_Menu.COLUMNNAME_Description, language);
+		}
+		//	Validate for default
+		if(Util.isEmpty(name)) {
+			name = menu.getName();
+		}
+		if(Util.isEmpty(description)) {
+			description = menu.getDescription();
+		}
+		Menu.Builder builder = Menu.newBuilder()
+				.setUuid(menu.getUUID())
+				.setName(validateNull(name))
+				.setDescription(validateNull(description))
+				.setAction(validateNull(menu.getAction()))
+				.setIsSOTrx(menu.isSOTrx())
+				.setIsSummary(menu.isSummary())
+				.setIsReadOnly(menu.isReadOnly());
+		//	Supported actions
+		if(!Util.isEmpty(menu.getAction())) {
+			if(menu.getAction().equals(MMenu.ACTION_Form)) {
+				if(menu.getAD_Form_ID() > 0) {
+					MForm form = new MForm(Env.getCtx(), menu.getAD_Form_ID(), null);
+					builder.setFormUuid(form.getUUID());
+				}
+			} else if(menu.getAction().equals(MMenu.ACTION_Window)) {
+				if(menu.getAD_Window_ID() > 0) {
+					MWindow window = new MWindow(Env.getCtx(), menu.getAD_Window_ID(), null);
+					builder.setWindowUuid(window.getUUID());
+				}
+			} else if(menu.getAction().equals(MMenu.ACTION_Process)) {
+				if(menu.getAD_Process_ID() > 0) {
+					MProcess process = MProcess.get(Env.getCtx(), menu.getAD_Process_ID());
+					builder.setProcessUuid(process.getUUID());
+				}
+			} else if(menu.getAction().equals(MMenu.ACTION_SmartBrowse)) {
+				if(menu.getAD_Browse_ID() > 0) {
+					MBrowse smartBrowser = MBrowse.get(Env.getCtx(), menu.getAD_Browse_ID());
+					builder.setSmartBrowserUuid(smartBrowser.getUUID());
+				}
+			}
+		}
+		//	Get Reference
+		int treeId = MTree.getDefaultTreeIdFromTableId(menu.getAD_Client_ID(), I_AD_Menu.Table_ID);
+		if(treeId != 0) {
+			MTree tree = MTree.get(Env.getCtx(), treeId, null);
+			MTree_NodeMM menuNode = new MTree_NodeMM(tree, menu.getAD_Menu_ID());
+			//	
+			if(menuNode.getParent_ID() > 0) {
+				MMenu pareentMenu = MMenu.getFromId(Env.getCtx(), menuNode.getParent_ID());
+				builder.setParentUuid(validateNull(pareentMenu.getUUID()));
+			}
+		}
+		//	Load child
+		if(withChild) {
+			List<MMenu> childList = new Query(Env.getCtx(), I_AD_Menu.Table_Name, "EXISTS(SELECT 1 FROM AD_TreeNodeMM tnm "
+					+ "WHERE tnm.Node_ID = AD_Menu.AD_Menu_ID "
+					+ "AND tnm.Parent_ID = ?)", null)
+				.setParameters(menu.getAD_Menu_ID())
+				.setOnlyActiveRecords(true)
+				.list();
+			//	Convert Child
+			for(MMenu child : childList) {
+				Menu.Builder childBuilder = convertMenu(child, language, false);
+				builder.addChilds(childBuilder.build());
+			}
+		}
 		return builder;
 	}
 	

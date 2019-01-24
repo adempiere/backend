@@ -29,9 +29,11 @@ private static final long serialVersionUID = 0L;
     isSummary_ = false;
     isSOTrx_ = false;
     action_ = "";
+    formUuid_ = "";
     windowUuid_ = "";
     processUuid_ = "";
     smartBrowserUuid_ = "";
+    childs_ = java.util.Collections.emptyList();
   }
 
   @java.lang.Override
@@ -84,67 +86,82 @@ private static final long serialVersionUID = 0L;
             uuid_ = s;
             break;
           }
-          case 26: {
+          case 34: {
             java.lang.String s = input.readStringRequireUtf8();
 
             parentUuid_ = s;
             break;
           }
-          case 34: {
+          case 42: {
             java.lang.String s = input.readStringRequireUtf8();
 
             name_ = s;
             break;
           }
-          case 42: {
+          case 50: {
             java.lang.String s = input.readStringRequireUtf8();
 
             description_ = s;
             break;
           }
-          case 50: {
+          case 58: {
             java.lang.String s = input.readStringRequireUtf8();
 
             sequence_ = s;
             break;
           }
-          case 56: {
+          case 64: {
 
             isReadOnly_ = input.readBool();
             break;
           }
-          case 64: {
+          case 72: {
 
             isSummary_ = input.readBool();
             break;
           }
-          case 72: {
+          case 80: {
 
             isSOTrx_ = input.readBool();
-            break;
-          }
-          case 82: {
-            java.lang.String s = input.readStringRequireUtf8();
-
-            action_ = s;
             break;
           }
           case 90: {
             java.lang.String s = input.readStringRequireUtf8();
 
-            windowUuid_ = s;
+            action_ = s;
             break;
           }
           case 98: {
             java.lang.String s = input.readStringRequireUtf8();
 
-            processUuid_ = s;
+            formUuid_ = s;
             break;
           }
           case 106: {
             java.lang.String s = input.readStringRequireUtf8();
 
+            windowUuid_ = s;
+            break;
+          }
+          case 114: {
+            java.lang.String s = input.readStringRequireUtf8();
+
+            processUuid_ = s;
+            break;
+          }
+          case 122: {
+            java.lang.String s = input.readStringRequireUtf8();
+
             smartBrowserUuid_ = s;
+            break;
+          }
+          case 130: {
+            if (!((mutable_bitField0_ & 0x00004000) == 0x00004000)) {
+              childs_ = new java.util.ArrayList<org.spin.grpc.util.Menu>();
+              mutable_bitField0_ |= 0x00004000;
+            }
+            childs_.add(
+                input.readMessage(org.spin.grpc.util.Menu.parser(), extensionRegistry));
             break;
           }
         }
@@ -155,6 +172,9 @@ private static final long serialVersionUID = 0L;
       throw new com.google.protobuf.InvalidProtocolBufferException(
           e).setUnfinishedMessage(this);
     } finally {
+      if (((mutable_bitField0_ & 0x00004000) == 0x00004000)) {
+        childs_ = java.util.Collections.unmodifiableList(childs_);
+      }
       this.unknownFields = unknownFields.build();
       makeExtensionsImmutable();
     }
@@ -171,6 +191,7 @@ private static final long serialVersionUID = 0L;
             org.spin.grpc.util.Menu.class, org.spin.grpc.util.Menu.Builder.class);
   }
 
+  private int bitField0_;
   public static final int ERRORMESSAGE_FIELD_NUMBER = 1;
   private org.spin.grpc.util.ErrorMessage errorMessage_;
   /**
@@ -226,10 +247,10 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int PARENTUUID_FIELD_NUMBER = 3;
+  public static final int PARENTUUID_FIELD_NUMBER = 4;
   private volatile java.lang.Object parentUuid_;
   /**
-   * <code>string parentUuid = 3;</code>
+   * <code>string parentUuid = 4;</code>
    */
   public java.lang.String getParentUuid() {
     java.lang.Object ref = parentUuid_;
@@ -244,7 +265,7 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <code>string parentUuid = 3;</code>
+   * <code>string parentUuid = 4;</code>
    */
   public com.google.protobuf.ByteString
       getParentUuidBytes() {
@@ -260,10 +281,10 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int NAME_FIELD_NUMBER = 4;
+  public static final int NAME_FIELD_NUMBER = 5;
   private volatile java.lang.Object name_;
   /**
-   * <code>string name = 4;</code>
+   * <code>string name = 5;</code>
    */
   public java.lang.String getName() {
     java.lang.Object ref = name_;
@@ -278,7 +299,7 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <code>string name = 4;</code>
+   * <code>string name = 5;</code>
    */
   public com.google.protobuf.ByteString
       getNameBytes() {
@@ -294,10 +315,10 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int DESCRIPTION_FIELD_NUMBER = 5;
+  public static final int DESCRIPTION_FIELD_NUMBER = 6;
   private volatile java.lang.Object description_;
   /**
-   * <code>string description = 5;</code>
+   * <code>string description = 6;</code>
    */
   public java.lang.String getDescription() {
     java.lang.Object ref = description_;
@@ -312,7 +333,7 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <code>string description = 5;</code>
+   * <code>string description = 6;</code>
    */
   public com.google.protobuf.ByteString
       getDescriptionBytes() {
@@ -328,10 +349,10 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int SEQUENCE_FIELD_NUMBER = 6;
+  public static final int SEQUENCE_FIELD_NUMBER = 7;
   private volatile java.lang.Object sequence_;
   /**
-   * <code>string sequence = 6;</code>
+   * <code>string sequence = 7;</code>
    */
   public java.lang.String getSequence() {
     java.lang.Object ref = sequence_;
@@ -346,7 +367,7 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <code>string sequence = 6;</code>
+   * <code>string sequence = 7;</code>
    */
   public com.google.protobuf.ByteString
       getSequenceBytes() {
@@ -362,37 +383,37 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int ISREADONLY_FIELD_NUMBER = 7;
+  public static final int ISREADONLY_FIELD_NUMBER = 8;
   private boolean isReadOnly_;
   /**
-   * <code>bool isReadOnly = 7;</code>
+   * <code>bool isReadOnly = 8;</code>
    */
   public boolean getIsReadOnly() {
     return isReadOnly_;
   }
 
-  public static final int ISSUMMARY_FIELD_NUMBER = 8;
+  public static final int ISSUMMARY_FIELD_NUMBER = 9;
   private boolean isSummary_;
   /**
-   * <code>bool isSummary = 8;</code>
+   * <code>bool isSummary = 9;</code>
    */
   public boolean getIsSummary() {
     return isSummary_;
   }
 
-  public static final int ISSOTRX_FIELD_NUMBER = 9;
+  public static final int ISSOTRX_FIELD_NUMBER = 10;
   private boolean isSOTrx_;
   /**
-   * <code>bool isSOTrx = 9;</code>
+   * <code>bool isSOTrx = 10;</code>
    */
   public boolean getIsSOTrx() {
     return isSOTrx_;
   }
 
-  public static final int ACTION_FIELD_NUMBER = 10;
+  public static final int ACTION_FIELD_NUMBER = 11;
   private volatile java.lang.Object action_;
   /**
-   * <code>string action = 10;</code>
+   * <code>string action = 11;</code>
    */
   public java.lang.String getAction() {
     java.lang.Object ref = action_;
@@ -407,7 +428,7 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <code>string action = 10;</code>
+   * <code>string action = 11;</code>
    */
   public com.google.protobuf.ByteString
       getActionBytes() {
@@ -423,14 +444,52 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int WINDOWUUID_FIELD_NUMBER = 11;
-  private volatile java.lang.Object windowUuid_;
+  public static final int FORMUUID_FIELD_NUMBER = 12;
+  private volatile java.lang.Object formUuid_;
   /**
    * <pre>
-   *	Supported References
+   * Supported References
    * </pre>
    *
-   * <code>string windowUuid = 11;</code>
+   * <code>string formUuid = 12;</code>
+   */
+  public java.lang.String getFormUuid() {
+    java.lang.Object ref = formUuid_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      formUuid_ = s;
+      return s;
+    }
+  }
+  /**
+   * <pre>
+   * Supported References
+   * </pre>
+   *
+   * <code>string formUuid = 12;</code>
+   */
+  public com.google.protobuf.ByteString
+      getFormUuidBytes() {
+    java.lang.Object ref = formUuid_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      formUuid_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int WINDOWUUID_FIELD_NUMBER = 13;
+  private volatile java.lang.Object windowUuid_;
+  /**
+   * <code>string windowUuid = 13;</code>
    */
   public java.lang.String getWindowUuid() {
     java.lang.Object ref = windowUuid_;
@@ -445,11 +504,7 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <pre>
-   *	Supported References
-   * </pre>
-   *
-   * <code>string windowUuid = 11;</code>
+   * <code>string windowUuid = 13;</code>
    */
   public com.google.protobuf.ByteString
       getWindowUuidBytes() {
@@ -465,10 +520,10 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int PROCESSUUID_FIELD_NUMBER = 12;
+  public static final int PROCESSUUID_FIELD_NUMBER = 14;
   private volatile java.lang.Object processUuid_;
   /**
-   * <code>string processUuid = 12;</code>
+   * <code>string processUuid = 14;</code>
    */
   public java.lang.String getProcessUuid() {
     java.lang.Object ref = processUuid_;
@@ -483,7 +538,7 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <code>string processUuid = 12;</code>
+   * <code>string processUuid = 14;</code>
    */
   public com.google.protobuf.ByteString
       getProcessUuidBytes() {
@@ -499,10 +554,10 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int SMARTBROWSERUUID_FIELD_NUMBER = 13;
+  public static final int SMARTBROWSERUUID_FIELD_NUMBER = 15;
   private volatile java.lang.Object smartBrowserUuid_;
   /**
-   * <code>string smartBrowserUuid = 13;</code>
+   * <code>string smartBrowserUuid = 15;</code>
    */
   public java.lang.String getSmartBrowserUuid() {
     java.lang.Object ref = smartBrowserUuid_;
@@ -517,7 +572,7 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <code>string smartBrowserUuid = 13;</code>
+   * <code>string smartBrowserUuid = 15;</code>
    */
   public com.google.protobuf.ByteString
       getSmartBrowserUuidBytes() {
@@ -531,6 +586,41 @@ private static final long serialVersionUID = 0L;
     } else {
       return (com.google.protobuf.ByteString) ref;
     }
+  }
+
+  public static final int CHILDS_FIELD_NUMBER = 16;
+  private java.util.List<org.spin.grpc.util.Menu> childs_;
+  /**
+   * <code>repeated .dictionary.Menu childs = 16;</code>
+   */
+  public java.util.List<org.spin.grpc.util.Menu> getChildsList() {
+    return childs_;
+  }
+  /**
+   * <code>repeated .dictionary.Menu childs = 16;</code>
+   */
+  public java.util.List<? extends org.spin.grpc.util.MenuOrBuilder> 
+      getChildsOrBuilderList() {
+    return childs_;
+  }
+  /**
+   * <code>repeated .dictionary.Menu childs = 16;</code>
+   */
+  public int getChildsCount() {
+    return childs_.size();
+  }
+  /**
+   * <code>repeated .dictionary.Menu childs = 16;</code>
+   */
+  public org.spin.grpc.util.Menu getChilds(int index) {
+    return childs_.get(index);
+  }
+  /**
+   * <code>repeated .dictionary.Menu childs = 16;</code>
+   */
+  public org.spin.grpc.util.MenuOrBuilder getChildsOrBuilder(
+      int index) {
+    return childs_.get(index);
   }
 
   private byte memoizedIsInitialized = -1;
@@ -552,37 +642,43 @@ private static final long serialVersionUID = 0L;
       com.google.protobuf.GeneratedMessageV3.writeString(output, 2, uuid_);
     }
     if (!getParentUuidBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 3, parentUuid_);
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 4, parentUuid_);
     }
     if (!getNameBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 4, name_);
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 5, name_);
     }
     if (!getDescriptionBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 5, description_);
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 6, description_);
     }
     if (!getSequenceBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 6, sequence_);
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 7, sequence_);
     }
     if (isReadOnly_ != false) {
-      output.writeBool(7, isReadOnly_);
+      output.writeBool(8, isReadOnly_);
     }
     if (isSummary_ != false) {
-      output.writeBool(8, isSummary_);
+      output.writeBool(9, isSummary_);
     }
     if (isSOTrx_ != false) {
-      output.writeBool(9, isSOTrx_);
+      output.writeBool(10, isSOTrx_);
     }
     if (!getActionBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 10, action_);
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 11, action_);
+    }
+    if (!getFormUuidBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 12, formUuid_);
     }
     if (!getWindowUuidBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 11, windowUuid_);
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 13, windowUuid_);
     }
     if (!getProcessUuidBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 12, processUuid_);
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 14, processUuid_);
     }
     if (!getSmartBrowserUuidBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 13, smartBrowserUuid_);
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 15, smartBrowserUuid_);
+    }
+    for (int i = 0; i < childs_.size(); i++) {
+      output.writeMessage(16, childs_.get(i));
     }
     unknownFields.writeTo(output);
   }
@@ -600,40 +696,47 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, uuid_);
     }
     if (!getParentUuidBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, parentUuid_);
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, parentUuid_);
     }
     if (!getNameBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, name_);
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, name_);
     }
     if (!getDescriptionBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, description_);
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, description_);
     }
     if (!getSequenceBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, sequence_);
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, sequence_);
     }
     if (isReadOnly_ != false) {
       size += com.google.protobuf.CodedOutputStream
-        .computeBoolSize(7, isReadOnly_);
+        .computeBoolSize(8, isReadOnly_);
     }
     if (isSummary_ != false) {
       size += com.google.protobuf.CodedOutputStream
-        .computeBoolSize(8, isSummary_);
+        .computeBoolSize(9, isSummary_);
     }
     if (isSOTrx_ != false) {
       size += com.google.protobuf.CodedOutputStream
-        .computeBoolSize(9, isSOTrx_);
+        .computeBoolSize(10, isSOTrx_);
     }
     if (!getActionBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(10, action_);
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(11, action_);
+    }
+    if (!getFormUuidBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(12, formUuid_);
     }
     if (!getWindowUuidBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(11, windowUuid_);
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(13, windowUuid_);
     }
     if (!getProcessUuidBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(12, processUuid_);
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(14, processUuid_);
     }
     if (!getSmartBrowserUuidBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(13, smartBrowserUuid_);
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(15, smartBrowserUuid_);
+    }
+    for (int i = 0; i < childs_.size(); i++) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(16, childs_.get(i));
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -674,12 +777,16 @@ private static final long serialVersionUID = 0L;
         == other.getIsSOTrx());
     result = result && getAction()
         .equals(other.getAction());
+    result = result && getFormUuid()
+        .equals(other.getFormUuid());
     result = result && getWindowUuid()
         .equals(other.getWindowUuid());
     result = result && getProcessUuid()
         .equals(other.getProcessUuid());
     result = result && getSmartBrowserUuid()
         .equals(other.getSmartBrowserUuid());
+    result = result && getChildsList()
+        .equals(other.getChildsList());
     result = result && unknownFields.equals(other.unknownFields);
     return result;
   }
@@ -716,12 +823,18 @@ private static final long serialVersionUID = 0L;
         getIsSOTrx());
     hash = (37 * hash) + ACTION_FIELD_NUMBER;
     hash = (53 * hash) + getAction().hashCode();
+    hash = (37 * hash) + FORMUUID_FIELD_NUMBER;
+    hash = (53 * hash) + getFormUuid().hashCode();
     hash = (37 * hash) + WINDOWUUID_FIELD_NUMBER;
     hash = (53 * hash) + getWindowUuid().hashCode();
     hash = (37 * hash) + PROCESSUUID_FIELD_NUMBER;
     hash = (53 * hash) + getProcessUuid().hashCode();
     hash = (37 * hash) + SMARTBROWSERUUID_FIELD_NUMBER;
     hash = (53 * hash) + getSmartBrowserUuid().hashCode();
+    if (getChildsCount() > 0) {
+      hash = (37 * hash) + CHILDS_FIELD_NUMBER;
+      hash = (53 * hash) + getChildsList().hashCode();
+    }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -851,6 +964,7 @@ private static final long serialVersionUID = 0L;
     private void maybeForceBuilderInitialization() {
       if (com.google.protobuf.GeneratedMessageV3
               .alwaysUseFieldBuilders) {
+        getChildsFieldBuilder();
       }
     }
     public Builder clear() {
@@ -879,12 +993,20 @@ private static final long serialVersionUID = 0L;
 
       action_ = "";
 
+      formUuid_ = "";
+
       windowUuid_ = "";
 
       processUuid_ = "";
 
       smartBrowserUuid_ = "";
 
+      if (childsBuilder_ == null) {
+        childs_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00004000);
+      } else {
+        childsBuilder_.clear();
+      }
       return this;
     }
 
@@ -907,6 +1029,8 @@ private static final long serialVersionUID = 0L;
 
     public org.spin.grpc.util.Menu buildPartial() {
       org.spin.grpc.util.Menu result = new org.spin.grpc.util.Menu(this);
+      int from_bitField0_ = bitField0_;
+      int to_bitField0_ = 0;
       if (errorMessageBuilder_ == null) {
         result.errorMessage_ = errorMessage_;
       } else {
@@ -921,9 +1045,20 @@ private static final long serialVersionUID = 0L;
       result.isSummary_ = isSummary_;
       result.isSOTrx_ = isSOTrx_;
       result.action_ = action_;
+      result.formUuid_ = formUuid_;
       result.windowUuid_ = windowUuid_;
       result.processUuid_ = processUuid_;
       result.smartBrowserUuid_ = smartBrowserUuid_;
+      if (childsBuilder_ == null) {
+        if (((bitField0_ & 0x00004000) == 0x00004000)) {
+          childs_ = java.util.Collections.unmodifiableList(childs_);
+          bitField0_ = (bitField0_ & ~0x00004000);
+        }
+        result.childs_ = childs_;
+      } else {
+        result.childs_ = childsBuilder_.build();
+      }
+      result.bitField0_ = to_bitField0_;
       onBuilt();
       return result;
     }
@@ -1001,6 +1136,10 @@ private static final long serialVersionUID = 0L;
         action_ = other.action_;
         onChanged();
       }
+      if (!other.getFormUuid().isEmpty()) {
+        formUuid_ = other.formUuid_;
+        onChanged();
+      }
       if (!other.getWindowUuid().isEmpty()) {
         windowUuid_ = other.windowUuid_;
         onChanged();
@@ -1012,6 +1151,32 @@ private static final long serialVersionUID = 0L;
       if (!other.getSmartBrowserUuid().isEmpty()) {
         smartBrowserUuid_ = other.smartBrowserUuid_;
         onChanged();
+      }
+      if (childsBuilder_ == null) {
+        if (!other.childs_.isEmpty()) {
+          if (childs_.isEmpty()) {
+            childs_ = other.childs_;
+            bitField0_ = (bitField0_ & ~0x00004000);
+          } else {
+            ensureChildsIsMutable();
+            childs_.addAll(other.childs_);
+          }
+          onChanged();
+        }
+      } else {
+        if (!other.childs_.isEmpty()) {
+          if (childsBuilder_.isEmpty()) {
+            childsBuilder_.dispose();
+            childsBuilder_ = null;
+            childs_ = other.childs_;
+            bitField0_ = (bitField0_ & ~0x00004000);
+            childsBuilder_ = 
+              com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                 getChildsFieldBuilder() : null;
+          } else {
+            childsBuilder_.addAllMessages(other.childs_);
+          }
+        }
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -1039,6 +1204,7 @@ private static final long serialVersionUID = 0L;
       }
       return this;
     }
+    private int bitField0_;
 
     private org.spin.grpc.util.ErrorMessage errorMessage_ = null;
     private com.google.protobuf.SingleFieldBuilderV3<
@@ -1228,7 +1394,7 @@ private static final long serialVersionUID = 0L;
 
     private java.lang.Object parentUuid_ = "";
     /**
-     * <code>string parentUuid = 3;</code>
+     * <code>string parentUuid = 4;</code>
      */
     public java.lang.String getParentUuid() {
       java.lang.Object ref = parentUuid_;
@@ -1243,7 +1409,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string parentUuid = 3;</code>
+     * <code>string parentUuid = 4;</code>
      */
     public com.google.protobuf.ByteString
         getParentUuidBytes() {
@@ -1259,7 +1425,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string parentUuid = 3;</code>
+     * <code>string parentUuid = 4;</code>
      */
     public Builder setParentUuid(
         java.lang.String value) {
@@ -1272,7 +1438,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string parentUuid = 3;</code>
+     * <code>string parentUuid = 4;</code>
      */
     public Builder clearParentUuid() {
       
@@ -1281,7 +1447,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string parentUuid = 3;</code>
+     * <code>string parentUuid = 4;</code>
      */
     public Builder setParentUuidBytes(
         com.google.protobuf.ByteString value) {
@@ -1297,7 +1463,7 @@ private static final long serialVersionUID = 0L;
 
     private java.lang.Object name_ = "";
     /**
-     * <code>string name = 4;</code>
+     * <code>string name = 5;</code>
      */
     public java.lang.String getName() {
       java.lang.Object ref = name_;
@@ -1312,7 +1478,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string name = 4;</code>
+     * <code>string name = 5;</code>
      */
     public com.google.protobuf.ByteString
         getNameBytes() {
@@ -1328,7 +1494,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string name = 4;</code>
+     * <code>string name = 5;</code>
      */
     public Builder setName(
         java.lang.String value) {
@@ -1341,7 +1507,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string name = 4;</code>
+     * <code>string name = 5;</code>
      */
     public Builder clearName() {
       
@@ -1350,7 +1516,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string name = 4;</code>
+     * <code>string name = 5;</code>
      */
     public Builder setNameBytes(
         com.google.protobuf.ByteString value) {
@@ -1366,7 +1532,7 @@ private static final long serialVersionUID = 0L;
 
     private java.lang.Object description_ = "";
     /**
-     * <code>string description = 5;</code>
+     * <code>string description = 6;</code>
      */
     public java.lang.String getDescription() {
       java.lang.Object ref = description_;
@@ -1381,7 +1547,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string description = 5;</code>
+     * <code>string description = 6;</code>
      */
     public com.google.protobuf.ByteString
         getDescriptionBytes() {
@@ -1397,7 +1563,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string description = 5;</code>
+     * <code>string description = 6;</code>
      */
     public Builder setDescription(
         java.lang.String value) {
@@ -1410,7 +1576,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string description = 5;</code>
+     * <code>string description = 6;</code>
      */
     public Builder clearDescription() {
       
@@ -1419,7 +1585,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string description = 5;</code>
+     * <code>string description = 6;</code>
      */
     public Builder setDescriptionBytes(
         com.google.protobuf.ByteString value) {
@@ -1435,7 +1601,7 @@ private static final long serialVersionUID = 0L;
 
     private java.lang.Object sequence_ = "";
     /**
-     * <code>string sequence = 6;</code>
+     * <code>string sequence = 7;</code>
      */
     public java.lang.String getSequence() {
       java.lang.Object ref = sequence_;
@@ -1450,7 +1616,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string sequence = 6;</code>
+     * <code>string sequence = 7;</code>
      */
     public com.google.protobuf.ByteString
         getSequenceBytes() {
@@ -1466,7 +1632,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string sequence = 6;</code>
+     * <code>string sequence = 7;</code>
      */
     public Builder setSequence(
         java.lang.String value) {
@@ -1479,7 +1645,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string sequence = 6;</code>
+     * <code>string sequence = 7;</code>
      */
     public Builder clearSequence() {
       
@@ -1488,7 +1654,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string sequence = 6;</code>
+     * <code>string sequence = 7;</code>
      */
     public Builder setSequenceBytes(
         com.google.protobuf.ByteString value) {
@@ -1504,13 +1670,13 @@ private static final long serialVersionUID = 0L;
 
     private boolean isReadOnly_ ;
     /**
-     * <code>bool isReadOnly = 7;</code>
+     * <code>bool isReadOnly = 8;</code>
      */
     public boolean getIsReadOnly() {
       return isReadOnly_;
     }
     /**
-     * <code>bool isReadOnly = 7;</code>
+     * <code>bool isReadOnly = 8;</code>
      */
     public Builder setIsReadOnly(boolean value) {
       
@@ -1519,7 +1685,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>bool isReadOnly = 7;</code>
+     * <code>bool isReadOnly = 8;</code>
      */
     public Builder clearIsReadOnly() {
       
@@ -1530,13 +1696,13 @@ private static final long serialVersionUID = 0L;
 
     private boolean isSummary_ ;
     /**
-     * <code>bool isSummary = 8;</code>
+     * <code>bool isSummary = 9;</code>
      */
     public boolean getIsSummary() {
       return isSummary_;
     }
     /**
-     * <code>bool isSummary = 8;</code>
+     * <code>bool isSummary = 9;</code>
      */
     public Builder setIsSummary(boolean value) {
       
@@ -1545,7 +1711,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>bool isSummary = 8;</code>
+     * <code>bool isSummary = 9;</code>
      */
     public Builder clearIsSummary() {
       
@@ -1556,13 +1722,13 @@ private static final long serialVersionUID = 0L;
 
     private boolean isSOTrx_ ;
     /**
-     * <code>bool isSOTrx = 9;</code>
+     * <code>bool isSOTrx = 10;</code>
      */
     public boolean getIsSOTrx() {
       return isSOTrx_;
     }
     /**
-     * <code>bool isSOTrx = 9;</code>
+     * <code>bool isSOTrx = 10;</code>
      */
     public Builder setIsSOTrx(boolean value) {
       
@@ -1571,7 +1737,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>bool isSOTrx = 9;</code>
+     * <code>bool isSOTrx = 10;</code>
      */
     public Builder clearIsSOTrx() {
       
@@ -1582,7 +1748,7 @@ private static final long serialVersionUID = 0L;
 
     private java.lang.Object action_ = "";
     /**
-     * <code>string action = 10;</code>
+     * <code>string action = 11;</code>
      */
     public java.lang.String getAction() {
       java.lang.Object ref = action_;
@@ -1597,7 +1763,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string action = 10;</code>
+     * <code>string action = 11;</code>
      */
     public com.google.protobuf.ByteString
         getActionBytes() {
@@ -1613,7 +1779,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string action = 10;</code>
+     * <code>string action = 11;</code>
      */
     public Builder setAction(
         java.lang.String value) {
@@ -1626,7 +1792,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string action = 10;</code>
+     * <code>string action = 11;</code>
      */
     public Builder clearAction() {
       
@@ -1635,7 +1801,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string action = 10;</code>
+     * <code>string action = 11;</code>
      */
     public Builder setActionBytes(
         com.google.protobuf.ByteString value) {
@@ -1649,13 +1815,98 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private java.lang.Object windowUuid_ = "";
+    private java.lang.Object formUuid_ = "";
     /**
      * <pre>
-     *	Supported References
+     * Supported References
      * </pre>
      *
-     * <code>string windowUuid = 11;</code>
+     * <code>string formUuid = 12;</code>
+     */
+    public java.lang.String getFormUuid() {
+      java.lang.Object ref = formUuid_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        formUuid_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <pre>
+     * Supported References
+     * </pre>
+     *
+     * <code>string formUuid = 12;</code>
+     */
+    public com.google.protobuf.ByteString
+        getFormUuidBytes() {
+      java.lang.Object ref = formUuid_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        formUuid_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <pre>
+     * Supported References
+     * </pre>
+     *
+     * <code>string formUuid = 12;</code>
+     */
+    public Builder setFormUuid(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
+      formUuid_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Supported References
+     * </pre>
+     *
+     * <code>string formUuid = 12;</code>
+     */
+    public Builder clearFormUuid() {
+      
+      formUuid_ = getDefaultInstance().getFormUuid();
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Supported References
+     * </pre>
+     *
+     * <code>string formUuid = 12;</code>
+     */
+    public Builder setFormUuidBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      
+      formUuid_ = value;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object windowUuid_ = "";
+    /**
+     * <code>string windowUuid = 13;</code>
      */
     public java.lang.String getWindowUuid() {
       java.lang.Object ref = windowUuid_;
@@ -1670,11 +1921,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <pre>
-     *	Supported References
-     * </pre>
-     *
-     * <code>string windowUuid = 11;</code>
+     * <code>string windowUuid = 13;</code>
      */
     public com.google.protobuf.ByteString
         getWindowUuidBytes() {
@@ -1690,11 +1937,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <pre>
-     *	Supported References
-     * </pre>
-     *
-     * <code>string windowUuid = 11;</code>
+     * <code>string windowUuid = 13;</code>
      */
     public Builder setWindowUuid(
         java.lang.String value) {
@@ -1707,11 +1950,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <pre>
-     *	Supported References
-     * </pre>
-     *
-     * <code>string windowUuid = 11;</code>
+     * <code>string windowUuid = 13;</code>
      */
     public Builder clearWindowUuid() {
       
@@ -1720,11 +1959,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <pre>
-     *	Supported References
-     * </pre>
-     *
-     * <code>string windowUuid = 11;</code>
+     * <code>string windowUuid = 13;</code>
      */
     public Builder setWindowUuidBytes(
         com.google.protobuf.ByteString value) {
@@ -1740,7 +1975,7 @@ private static final long serialVersionUID = 0L;
 
     private java.lang.Object processUuid_ = "";
     /**
-     * <code>string processUuid = 12;</code>
+     * <code>string processUuid = 14;</code>
      */
     public java.lang.String getProcessUuid() {
       java.lang.Object ref = processUuid_;
@@ -1755,7 +1990,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string processUuid = 12;</code>
+     * <code>string processUuid = 14;</code>
      */
     public com.google.protobuf.ByteString
         getProcessUuidBytes() {
@@ -1771,7 +2006,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string processUuid = 12;</code>
+     * <code>string processUuid = 14;</code>
      */
     public Builder setProcessUuid(
         java.lang.String value) {
@@ -1784,7 +2019,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string processUuid = 12;</code>
+     * <code>string processUuid = 14;</code>
      */
     public Builder clearProcessUuid() {
       
@@ -1793,7 +2028,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string processUuid = 12;</code>
+     * <code>string processUuid = 14;</code>
      */
     public Builder setProcessUuidBytes(
         com.google.protobuf.ByteString value) {
@@ -1809,7 +2044,7 @@ private static final long serialVersionUID = 0L;
 
     private java.lang.Object smartBrowserUuid_ = "";
     /**
-     * <code>string smartBrowserUuid = 13;</code>
+     * <code>string smartBrowserUuid = 15;</code>
      */
     public java.lang.String getSmartBrowserUuid() {
       java.lang.Object ref = smartBrowserUuid_;
@@ -1824,7 +2059,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string smartBrowserUuid = 13;</code>
+     * <code>string smartBrowserUuid = 15;</code>
      */
     public com.google.protobuf.ByteString
         getSmartBrowserUuidBytes() {
@@ -1840,7 +2075,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string smartBrowserUuid = 13;</code>
+     * <code>string smartBrowserUuid = 15;</code>
      */
     public Builder setSmartBrowserUuid(
         java.lang.String value) {
@@ -1853,7 +2088,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string smartBrowserUuid = 13;</code>
+     * <code>string smartBrowserUuid = 15;</code>
      */
     public Builder clearSmartBrowserUuid() {
       
@@ -1862,7 +2097,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string smartBrowserUuid = 13;</code>
+     * <code>string smartBrowserUuid = 15;</code>
      */
     public Builder setSmartBrowserUuidBytes(
         com.google.protobuf.ByteString value) {
@@ -1874,6 +2109,246 @@ private static final long serialVersionUID = 0L;
       smartBrowserUuid_ = value;
       onChanged();
       return this;
+    }
+
+    private java.util.List<org.spin.grpc.util.Menu> childs_ =
+      java.util.Collections.emptyList();
+    private void ensureChildsIsMutable() {
+      if (!((bitField0_ & 0x00004000) == 0x00004000)) {
+        childs_ = new java.util.ArrayList<org.spin.grpc.util.Menu>(childs_);
+        bitField0_ |= 0x00004000;
+       }
+    }
+
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+        org.spin.grpc.util.Menu, org.spin.grpc.util.Menu.Builder, org.spin.grpc.util.MenuOrBuilder> childsBuilder_;
+
+    /**
+     * <code>repeated .dictionary.Menu childs = 16;</code>
+     */
+    public java.util.List<org.spin.grpc.util.Menu> getChildsList() {
+      if (childsBuilder_ == null) {
+        return java.util.Collections.unmodifiableList(childs_);
+      } else {
+        return childsBuilder_.getMessageList();
+      }
+    }
+    /**
+     * <code>repeated .dictionary.Menu childs = 16;</code>
+     */
+    public int getChildsCount() {
+      if (childsBuilder_ == null) {
+        return childs_.size();
+      } else {
+        return childsBuilder_.getCount();
+      }
+    }
+    /**
+     * <code>repeated .dictionary.Menu childs = 16;</code>
+     */
+    public org.spin.grpc.util.Menu getChilds(int index) {
+      if (childsBuilder_ == null) {
+        return childs_.get(index);
+      } else {
+        return childsBuilder_.getMessage(index);
+      }
+    }
+    /**
+     * <code>repeated .dictionary.Menu childs = 16;</code>
+     */
+    public Builder setChilds(
+        int index, org.spin.grpc.util.Menu value) {
+      if (childsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureChildsIsMutable();
+        childs_.set(index, value);
+        onChanged();
+      } else {
+        childsBuilder_.setMessage(index, value);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .dictionary.Menu childs = 16;</code>
+     */
+    public Builder setChilds(
+        int index, org.spin.grpc.util.Menu.Builder builderForValue) {
+      if (childsBuilder_ == null) {
+        ensureChildsIsMutable();
+        childs_.set(index, builderForValue.build());
+        onChanged();
+      } else {
+        childsBuilder_.setMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .dictionary.Menu childs = 16;</code>
+     */
+    public Builder addChilds(org.spin.grpc.util.Menu value) {
+      if (childsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureChildsIsMutable();
+        childs_.add(value);
+        onChanged();
+      } else {
+        childsBuilder_.addMessage(value);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .dictionary.Menu childs = 16;</code>
+     */
+    public Builder addChilds(
+        int index, org.spin.grpc.util.Menu value) {
+      if (childsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureChildsIsMutable();
+        childs_.add(index, value);
+        onChanged();
+      } else {
+        childsBuilder_.addMessage(index, value);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .dictionary.Menu childs = 16;</code>
+     */
+    public Builder addChilds(
+        org.spin.grpc.util.Menu.Builder builderForValue) {
+      if (childsBuilder_ == null) {
+        ensureChildsIsMutable();
+        childs_.add(builderForValue.build());
+        onChanged();
+      } else {
+        childsBuilder_.addMessage(builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .dictionary.Menu childs = 16;</code>
+     */
+    public Builder addChilds(
+        int index, org.spin.grpc.util.Menu.Builder builderForValue) {
+      if (childsBuilder_ == null) {
+        ensureChildsIsMutable();
+        childs_.add(index, builderForValue.build());
+        onChanged();
+      } else {
+        childsBuilder_.addMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .dictionary.Menu childs = 16;</code>
+     */
+    public Builder addAllChilds(
+        java.lang.Iterable<? extends org.spin.grpc.util.Menu> values) {
+      if (childsBuilder_ == null) {
+        ensureChildsIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, childs_);
+        onChanged();
+      } else {
+        childsBuilder_.addAllMessages(values);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .dictionary.Menu childs = 16;</code>
+     */
+    public Builder clearChilds() {
+      if (childsBuilder_ == null) {
+        childs_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00004000);
+        onChanged();
+      } else {
+        childsBuilder_.clear();
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .dictionary.Menu childs = 16;</code>
+     */
+    public Builder removeChilds(int index) {
+      if (childsBuilder_ == null) {
+        ensureChildsIsMutable();
+        childs_.remove(index);
+        onChanged();
+      } else {
+        childsBuilder_.remove(index);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .dictionary.Menu childs = 16;</code>
+     */
+    public org.spin.grpc.util.Menu.Builder getChildsBuilder(
+        int index) {
+      return getChildsFieldBuilder().getBuilder(index);
+    }
+    /**
+     * <code>repeated .dictionary.Menu childs = 16;</code>
+     */
+    public org.spin.grpc.util.MenuOrBuilder getChildsOrBuilder(
+        int index) {
+      if (childsBuilder_ == null) {
+        return childs_.get(index);  } else {
+        return childsBuilder_.getMessageOrBuilder(index);
+      }
+    }
+    /**
+     * <code>repeated .dictionary.Menu childs = 16;</code>
+     */
+    public java.util.List<? extends org.spin.grpc.util.MenuOrBuilder> 
+         getChildsOrBuilderList() {
+      if (childsBuilder_ != null) {
+        return childsBuilder_.getMessageOrBuilderList();
+      } else {
+        return java.util.Collections.unmodifiableList(childs_);
+      }
+    }
+    /**
+     * <code>repeated .dictionary.Menu childs = 16;</code>
+     */
+    public org.spin.grpc.util.Menu.Builder addChildsBuilder() {
+      return getChildsFieldBuilder().addBuilder(
+          org.spin.grpc.util.Menu.getDefaultInstance());
+    }
+    /**
+     * <code>repeated .dictionary.Menu childs = 16;</code>
+     */
+    public org.spin.grpc.util.Menu.Builder addChildsBuilder(
+        int index) {
+      return getChildsFieldBuilder().addBuilder(
+          index, org.spin.grpc.util.Menu.getDefaultInstance());
+    }
+    /**
+     * <code>repeated .dictionary.Menu childs = 16;</code>
+     */
+    public java.util.List<org.spin.grpc.util.Menu.Builder> 
+         getChildsBuilderList() {
+      return getChildsFieldBuilder().getBuilderList();
+    }
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+        org.spin.grpc.util.Menu, org.spin.grpc.util.Menu.Builder, org.spin.grpc.util.MenuOrBuilder> 
+        getChildsFieldBuilder() {
+      if (childsBuilder_ == null) {
+        childsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+            org.spin.grpc.util.Menu, org.spin.grpc.util.Menu.Builder, org.spin.grpc.util.MenuOrBuilder>(
+                childs_,
+                ((bitField0_ & 0x00004000) == 0x00004000),
+                getParentForChildren(),
+                isClean());
+        childs_ = null;
+      }
+      return childsBuilder_;
     }
     public final Builder setUnknownFields(
         final com.google.protobuf.UnknownFieldSet unknownFields) {

@@ -547,7 +547,7 @@ private static final long serialVersionUID = 0L;
   private org.spin.grpc.util.Window window_;
   /**
    * <pre>
-   *	External Reference
+   * External Reference
    * </pre>
    *
    * <code>.dictionary.Window window = 17;</code>
@@ -557,7 +557,7 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   *	External Reference
+   * External Reference
    * </pre>
    *
    * <code>.dictionary.Window window = 17;</code>
@@ -567,7 +567,7 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   *	External Reference
+   * External Reference
    * </pre>
    *
    * <code>.dictionary.Window window = 17;</code>
@@ -2082,7 +2082,7 @@ private static final long serialVersionUID = 0L;
         org.spin.grpc.util.Window, org.spin.grpc.util.Window.Builder, org.spin.grpc.util.WindowOrBuilder> windowBuilder_;
     /**
      * <pre>
-     *	External Reference
+     * External Reference
      * </pre>
      *
      * <code>.dictionary.Window window = 17;</code>
@@ -2092,7 +2092,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     *	External Reference
+     * External Reference
      * </pre>
      *
      * <code>.dictionary.Window window = 17;</code>
@@ -2106,7 +2106,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     *	External Reference
+     * External Reference
      * </pre>
      *
      * <code>.dictionary.Window window = 17;</code>
@@ -2126,7 +2126,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     *	External Reference
+     * External Reference
      * </pre>
      *
      * <code>.dictionary.Window window = 17;</code>
@@ -2144,7 +2144,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     *	External Reference
+     * External Reference
      * </pre>
      *
      * <code>.dictionary.Window window = 17;</code>
@@ -2166,7 +2166,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     *	External Reference
+     * External Reference
      * </pre>
      *
      * <code>.dictionary.Window window = 17;</code>
@@ -2184,7 +2184,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     *	External Reference
+     * External Reference
      * </pre>
      *
      * <code>.dictionary.Window window = 17;</code>
@@ -2196,7 +2196,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     *	External Reference
+     * External Reference
      * </pre>
      *
      * <code>.dictionary.Window window = 17;</code>
@@ -2211,7 +2211,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     *	External Reference
+     * External Reference
      * </pre>
      *
      * <code>.dictionary.Window window = 17;</code>

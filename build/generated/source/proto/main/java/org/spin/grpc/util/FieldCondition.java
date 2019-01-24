@@ -5,7 +5,7 @@ package org.spin.grpc.util;
 
 /**
  * <pre>
- *	Field Condition
+ * Field Condition
  * </pre>
  *
  * Protobuf type {@code dictionary.FieldCondition}
@@ -422,7 +422,7 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   *	Field Condition
+   * Field Condition
    * </pre>
    *
    * Protobuf type {@code dictionary.FieldCondition}

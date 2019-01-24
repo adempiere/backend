@@ -49,17 +49,47 @@ public class DictionaryClient {
 			  if(withTabs) {
 				  response = blockingStub.requestWindowAndTabs(request);
 				  for(Tab tab : response.getTabsList()) {
-					  logger.info("Tab Name: " + tab.getName());
+					  logger.info("Tab: " + tab);
 				  }
 			  } else {
 				  response = blockingStub.requestWindow(request);
 			  }
-			  logger.info("Window Name: " + response.getName());
+			  logger.info("Window: " + response);
 		  } catch (StatusRuntimeException e) {
 			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
 		      return;
 		  }
 	  }
+	  
+	  
+	  /** 
+	   * Request Window. 
+	   */
+	  public void requestMenu(boolean withTabs) {
+		  ClientRequest clientRequest = ClientRequest.newBuilder()
+				  .setLanguage("es_MX")
+				  .build();
+		  ObjectRequest request = ObjectRequest.newBuilder()
+	    		.setUuid("8e4fd396-fb40-11e8-a479-7a0060f0aa01")
+	    		.setClientRequest(clientRequest)
+	    		.build();
+		  Menu response;
+		  try {
+			  if(withTabs) {
+				  response = blockingStub.requestMenuAndChild(request);
+				  for(Menu child : response.getChildsList()) {
+					  logger.info("Menu Child: " + child);
+				  }
+			  } else {
+				  response = blockingStub.requestMenu(request);
+			  }
+			  logger.info("Menu: " + response);
+		  } catch (StatusRuntimeException e) {
+			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
+		      return;
+		  }
+	  }
+	  
 	  
 	  /**
 	   * Request Tab
@@ -77,12 +107,12 @@ public class DictionaryClient {
 			  if(withFields) {
 				  response = blockingStub.requestTabAndFields(request);
 				  for(Field field : response.getFieldsList()) {
-					  logger.info("Field: " + field.getName());
+					  logger.info("Field: " + field);
 				  }
 			  } else {
 				  response = blockingStub.requestTab(request);
 			  }
-			  logger.info("Tab Name: " + response.getName());
+			  logger.info("Tab: " + response);
 		  } catch (StatusRuntimeException e) {
 			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
 		      return;
@@ -103,7 +133,7 @@ public class DictionaryClient {
 		  Field response;
 		  try {
 			  response = blockingStub.requestField(request);
-			  logger.info("Field " + response.getName());
+			  logger.info("Field " + response);
 		  } catch (StatusRuntimeException e) {
 			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
 		      return;
@@ -117,10 +147,19 @@ public class DictionaryClient {
 	  public static void main(String[] args) throws Exception {
 		DictionaryClient client = new DictionaryClient("localhost", 50051);
 	    try {
+	    	logger.info("####################### Menu Only #####################");
+	    	client.requestMenu(false);
+	    	logger.info("####################### Menu + Child #####################");
+	    	client.requestMenu(true);
+	    	logger.info("####################### Window Only #####################");
 	    	client.requestWindow(false);
+	    	logger.info("####################### Window + Tabs #####################");
 	    	client.requestWindow(true);
+	    	logger.info("####################### Tab Only #####################");
 	    	client.requestTab(false);
+	    	logger.info("####################### Tab + Fields #####################");
 	    	client.requestTab(true);
+	    	logger.info("####################### Field Only #####################");
 	    	client.requestField();
 	    } finally {
 	      client.shutdown();

@@ -272,7 +272,7 @@ public interface FieldOrBuilder extends
 
   /**
    * <pre>
-   *	External Info
+   * External Info
    * </pre>
    *
    * <code>.dictionary.ContextInfo contextInfo = 39;</code>
@@ -280,7 +280,7 @@ public interface FieldOrBuilder extends
   boolean hasContextInfo();
   /**
    * <pre>
-   *	External Info
+   * External Info
    * </pre>
    *
    * <code>.dictionary.ContextInfo contextInfo = 39;</code>
@@ -288,7 +288,7 @@ public interface FieldOrBuilder extends
   org.spin.grpc.util.ContextInfo getContextInfo();
   /**
    * <pre>
-   *	External Info
+   * External Info
    * </pre>
    *
    * <code>.dictionary.ContextInfo contextInfo = 39;</code>
@@ -362,7 +362,7 @@ public interface FieldOrBuilder extends
 
   /**
    * <pre>
-   *	Smart Browser Field Compatibility
+   * Smart Browser Field Compatibility
    * </pre>
    *
    * <code>bool isQueryCriteria = 45;</code>
@@ -391,7 +391,7 @@ public interface FieldOrBuilder extends
 
   /**
    * <pre>
-   *	Process Parameter Compatibility
+   * Process Parameter Compatibility
    * </pre>
    *
    * <code>string defaultValueTo = 50;</code>
@@ -399,7 +399,7 @@ public interface FieldOrBuilder extends
   java.lang.String getDefaultValueTo();
   /**
    * <pre>
-   *	Process Parameter Compatibility
+   * Process Parameter Compatibility
    * </pre>
    *
    * <code>string defaultValueTo = 50;</code>

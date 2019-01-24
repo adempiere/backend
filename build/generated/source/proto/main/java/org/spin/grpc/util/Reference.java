@@ -265,7 +265,7 @@ private static final long serialVersionUID = 0L;
   private org.spin.grpc.util.ReferenceTable referenceTable_;
   /**
    * <pre>
-   *	External Info
+   * External Info
    * </pre>
    *
    * <code>.dictionary.ReferenceTable referenceTable = 5;</code>
@@ -275,7 +275,7 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   *	External Info
+   * External Info
    * </pre>
    *
    * <code>.dictionary.ReferenceTable referenceTable = 5;</code>
@@ -285,7 +285,7 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   *	External Info
+   * External Info
    * </pre>
    *
    * <code>.dictionary.ReferenceTable referenceTable = 5;</code>
@@ -1098,7 +1098,7 @@ private static final long serialVersionUID = 0L;
         org.spin.grpc.util.ReferenceTable, org.spin.grpc.util.ReferenceTable.Builder, org.spin.grpc.util.ReferenceTableOrBuilder> referenceTableBuilder_;
     /**
      * <pre>
-     *	External Info
+     * External Info
      * </pre>
      *
      * <code>.dictionary.ReferenceTable referenceTable = 5;</code>
@@ -1108,7 +1108,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     *	External Info
+     * External Info
      * </pre>
      *
      * <code>.dictionary.ReferenceTable referenceTable = 5;</code>
@@ -1122,7 +1122,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     *	External Info
+     * External Info
      * </pre>
      *
      * <code>.dictionary.ReferenceTable referenceTable = 5;</code>
@@ -1142,7 +1142,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     *	External Info
+     * External Info
      * </pre>
      *
      * <code>.dictionary.ReferenceTable referenceTable = 5;</code>
@@ -1160,7 +1160,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     *	External Info
+     * External Info
      * </pre>
      *
      * <code>.dictionary.ReferenceTable referenceTable = 5;</code>
@@ -1182,7 +1182,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     *	External Info
+     * External Info
      * </pre>
      *
      * <code>.dictionary.ReferenceTable referenceTable = 5;</code>
@@ -1200,7 +1200,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     *	External Info
+     * External Info
      * </pre>
      *
      * <code>.dictionary.ReferenceTable referenceTable = 5;</code>
@@ -1212,7 +1212,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     *	External Info
+     * External Info
      * </pre>
      *
      * <code>.dictionary.ReferenceTable referenceTable = 5;</code>
@@ -1227,7 +1227,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     *	External Info
+     * External Info
      * </pre>
      *
      * <code>.dictionary.ReferenceTable referenceTable = 5;</code>
