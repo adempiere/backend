@@ -51,7 +51,7 @@ public class DictionaryServer {
 	   * Main launches the server from the command line.
 	   */
 	  public static void main(String[] args) throws IOException, InterruptedException {
-		Adempiere.startup(true);
+		Adempiere.startup(false);
 	    final DictionaryServer server = new DictionaryServer();
 	    server.start();
 	    server.blockUntilShutdown();
