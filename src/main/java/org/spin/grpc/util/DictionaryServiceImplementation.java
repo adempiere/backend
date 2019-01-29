@@ -88,10 +88,10 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		try {
 			Field.Builder fieldBuilder = convertField(request.getUuid(), language);
 			responseObserver.onNext(fieldBuilder.build());
+			responseObserver.onCompleted();
 		} catch (Exception e) {
 			responseObserver.onError(e);
 		}
-	    responseObserver.onCompleted();
 	}
 	
 	/**
@@ -115,10 +115,10 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		Menu.Builder menuBuilder = convertMenu(request.getUuid(), language, withChild);
 		try {
 			responseObserver.onNext(menuBuilder.build());
+			responseObserver.onCompleted();
 		} catch (Exception e) {
 			responseObserver.onError(e);
 		}
-	    responseObserver.onCompleted();
 	}
 	
 	
@@ -140,10 +140,10 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		try {
 			Window.Builder windowBuilder = convertWindow(request.getUuid(), language, withTabs);
 			responseObserver.onNext(windowBuilder.build());
+			responseObserver.onCompleted();
 		} catch (Exception e) {
 			responseObserver.onError(e);
 		}
-	    responseObserver.onCompleted();
 	}
 	
 	/**
@@ -167,10 +167,10 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		try {
 			Tab.Builder tabBuilder = convertTab(request.getUuid(), language, withFields);
 			responseObserver.onNext(tabBuilder.build());
+			responseObserver.onCompleted();
 		} catch (Exception e) {
 			responseObserver.onError(e);
 		}
-	    responseObserver.onCompleted();
 	}
 	
 	/**
@@ -287,7 +287,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		//	create build
 		Tab.Builder builder = Tab.newBuilder()
 				.setUuid(tab.getUUID())
-				.setName(name)
+				.setName(validateNull(name))
 				.setDescription(validateNull(description))
 				.setHelp(validateNull(help))
 				.setCommitWarning(validateNull(commitWarning))
@@ -475,7 +475,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		//	Convert
 		Field.Builder builder = Field.newBuilder()
 				.setUuid(field.getUUID())
-				.setName(name)
+				.setName(validateNull(name))
 				.setDescription(validateNull(description))
 				.setHelp(validateNull(help))
 				.setCallout(validateNull(column.getCallout()))
@@ -654,8 +654,8 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			description = referenceValue.getDescription();
 		}
 		ReferenceValue.Builder builder = ReferenceValue.newBuilder()
-				.setUuid(referenceValue.getUUID())
-				.setValue(referenceValue.getValue())
+				.setUuid(validateNull(validateNull(referenceValue.getUUID())))
+				.setValue(validateNull(referenceValue.getValue()))
 				.setName(validateNull(name))
 				.setDescription(validateNull(description));
 		//	
@@ -673,7 +673,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		MColumn displayColumn = MColumn.get(Env.getCtx(), referenceTable.getAD_Display());
 		MColumn keyColumn = MColumn.get(Env.getCtx(), referenceTable.getAD_Key());
 		ReferenceTable.Builder builder = ReferenceTable.newBuilder()
-				.setUuid(referenceTable.getUUID())
+				.setUuid(validateNull(referenceTable.getUUID()))
 				.setIsDisplayIdentifier(referenceTable.isDisplayIdentifier())
 				.setIsValueDisplayed(referenceTable.isValueDisplayed())
 				.setDisplaySQL(validateNull(referenceTable.getDisplaySQL()))

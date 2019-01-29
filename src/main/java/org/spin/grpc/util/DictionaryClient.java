@@ -145,7 +145,7 @@ public class DictionaryClient {
 	   * greeting.
 	   */
 	  public static void main(String[] args) throws Exception {
-		DictionaryClient client = new DictionaryClient("localhost", 50051);
+		DictionaryClient client = new DictionaryClient("elcamino", 50051);
 	    try {
 	    	logger.info("####################### Menu Only #####################");
 	    	client.requestMenu(false);
