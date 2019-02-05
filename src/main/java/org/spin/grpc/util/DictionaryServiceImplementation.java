@@ -291,7 +291,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		//	create build
 		Tab.Builder builder = Tab.newBuilder()
 				.setId(tab.getAD_Tab_ID())
-				.setUuid(tab.getUUID())
+				.setUuid(validateNull(tab.getUUID()))
 				.setName(validateNull(name))
 				.setDescription(validateNull(description))
 				.setHelp(validateNull(help))
@@ -471,8 +471,8 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setIsRange(processParameter.isRange())
 				.setReadOnlyLogic(validateNull(processParameter.getReadOnlyLogic()))
 				.setSequence(processParameter.getSeqNo())
-				.setValueMax(processParameter.getValueMax())
-				.setValueMin(processParameter.getValueMin());
+				.setValueMax(validateNull(processParameter.getValueMax()))
+				.setValueMin(validateNull(processParameter.getValueMin()));
 		//	Reference Value
 		int referenceValueId = processParameter.getAD_Reference_Value_ID();
 		if(processParameter.getAD_Reference_Value_ID() > 0) {
@@ -580,8 +580,8 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setMandatoryLogic(validateNull(column.getMandatoryLogic()))
 				.setReadOnlyLogic(validateNull(column.getReadOnlyLogic()))
 				.setSequence(field.getSeqNo())
-				.setValueMax(column.getValueMax())
-				.setValueMin(column.getValueMin());
+				.setValueMax(validateNull(column.getValueMax()))
+				.setValueMin(validateNull(column.getValueMin()));
 		//	Context Info
 		if(field.getAD_ContextInfo_ID() > 0) {
 			ContextInfo.Builder contextInfoBuilder = convertContextInfo(field.getAD_ContextInfo_ID(), language);
