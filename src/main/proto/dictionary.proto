@@ -18,91 +18,74 @@ option java_multiple_files = true;
 option java_package = "org.spin.grpc.util";
 option java_outer_classname = "ADempiereDictionary";
 option objc_class_prefix = "HLW";
+import "access.proto";
 
 package dictionary;
 
 // The greeting service definition.
 service DictionaryService {
   // Request Menu from Parent UUID
-  rpc RequestMenuAndChild(ObjectRequest) returns (Menu) {}
+  rpc RequestMenuAndChild(access.ObjectRequest) returns (Menu) {}
   // Request Menu
-  rpc RequestMenu(ObjectRequest) returns (Menu) {}
+  rpc RequestMenu(access.ObjectRequest) returns (Menu) {}
   // Request a Window
-  rpc RequestWindow(ObjectRequest) returns (Window) {}
+  rpc RequestWindow(access.ObjectRequest) returns (Window) {}
   // Request Window and tabs
-  rpc RequestWindowAndTabs(ObjectRequest) returns (Window) {}
+  rpc RequestWindowAndTabs(access.ObjectRequest) returns (Window) {}
   // Request a Tab
-  rpc RequestTab(ObjectRequest) returns (Tab) {}
+  rpc RequestTab(access.ObjectRequest) returns (Tab) {}
   // Request a Tab and Fields
-  rpc RequestTabAndFields(ObjectRequest) returns (Tab) {}
+  rpc RequestTabAndFields(access.ObjectRequest) returns (Tab) {}
   // Request a Field
-  rpc RequestField(ObjectRequest) returns (Field) {}
-}
-
-// The client request contains client info for request.
-message ClientRequest {
-	int32 id = 1;
-	string uuid = 2;
-	string language = 3;
-}
-
-// Object request
-message ObjectRequest {
-	string uuid = 1;
-	ClientRequest clientRequest = 2;
-}
-
-message ErrorMessage {
-	string errorMessage = 1;
-	int32 errorCode = 2;
+  rpc RequestField(access.ObjectRequest) returns (Field) {}
 }
 
 // Window
 message Window {
 	int32 id = 1;
 	string uuid = 2;
-	string name = 4;
-  	string description = 5;
-  	string help = 6;
-  	bool isSOTrx = 7;
+	string name = 3;
+  	string description = 4;
+  	string help = 5;
+  	bool isSOTrx = 6;
   	//	External Info
-  	ContextInfo contextInfo = 8;
-  	repeated Tab tabs = 9;
+  	ContextInfo contextInfo = 7;
+  	repeated Tab tabs = 8;
 }
 
 // Tab
 message Tab {
 	int32 id = 1;
 	string uuid = 2;
-	string name = 4;
-  	string description = 5;
-  	string help = 6;
+	string name = 3;
+  	string description = 4;
+  	string help = 5;
   	// Attributes
-  	string tableName = 7;
-  	int32 sequence = 8;
-  	int32 tabLevel = 9;
+  	string tableName = 6;
+  	int32 sequence = 7;
+  	int32 tabLevel = 8;
   	//
-  	bool isSingleRow = 10;
-  	bool isAdvancedTab = 11;
-  	bool isHasTree = 12;
-  	bool isInfoTab = 13;
-  	bool isSortTab = 14;
-  	bool isTranslationTab = 15;
-  	bool isReadOnly = 16;
-  	bool isInsertRecord = 17;
-  	bool isView = 18;
-  	bool isDeleteable = 19;
-  	bool isDocument = 20;
-  	int32 accessLevel = 21;
-  	string linkColumnName = 22;
-  	string parentColumnName = 23;
-  	string displayLogic = 24;
-  	string commitWarning = 25;
-  	string orderByClause = 26;
+  	bool isSingleRow = 9;
+  	bool isAdvancedTab = 10;
+  	bool isHasTree = 11;
+  	bool isInfoTab = 12;
+  	bool isSortTab = 13;
+  	bool isTranslationTab = 14;
+  	bool isReadOnly = 15;
+  	bool isInsertRecord = 16;
+  	bool isView = 17;
+  	bool isDeleteable = 18;
+  	bool isDocument = 19;
+  	int32 accessLevel = 20;
+  	string linkColumnName = 21;
+  	string parentColumnName = 22;
+  	string displayLogic = 23;
+  	string commitWarning = 24;
+  	string orderByClause = 25;
   	// External Info
-  	ContextInfo contextInfo = 27;
-  	Process process = 28;
-  	repeated Field fields = 29;
+  	ContextInfo contextInfo = 26;
+  	Process process = 27;
+  	repeated Field fields = 28;
 }
 
 // Field
@@ -318,4 +301,3 @@ message Menu {
   	string smartBrowserUuid = 15;
   	repeated Menu childs = 16;
 }
-

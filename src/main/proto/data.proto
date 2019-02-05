@@ -1,0 +1,118 @@
+/*************************************************************************************
+ * Copyright (C) 2012-2018 E.R.P. Consultores y Asociados, C.A.                      *
+ * Contributor(s): Yamel Senih ysenih@erpya.com                                      *
+ * This program is free software: you can redistribute it and/or modify              *
+ * it under the terms of the GNU General Public License as published by              *
+ * the Free Software Foundation, either version 2 of the License, or                 *
+ * (at your option) any later version.                                               *
+ * This program is distributed in the hope that it will be useful,                   *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of                    *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                     *
+ * GNU General Public License for more details.                                      *
+ * You should have received a copy of the GNU General Public License                 *
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.            *
+ ************************************************************************************/
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "org.spin.grpc.util";
+option java_outer_classname = "ADempiereData";
+option objc_class_prefix = "HLW";
+import "access.proto";
+
+package data;
+
+// The greeting service definition.
+service DataService {
+  // Request PO entity from UUID (Optional ID)
+  rpc RequestPO(ValueObjectRequest) returns (ValueObject) {}
+  // Request PO List
+  rpc RequestPOList(ValueObjectRequest) returns (ValueObjectList) {}
+  // Request Callout
+  rpc RequestCallout(CalloutRequest) returns (CalloutResponse) {}
+}
+
+// PO List
+message ValueObjectList {
+	int64 recordCount = 1;
+	repeated ValueObject records = 2;
+}
+
+// Value Object from ADempiere
+message ValueObject {
+	int32 id = 1;
+	string uuid = 2;
+	string tableName = 3;
+	map<string, Value> values = 4;
+}
+
+// Define value for object
+message Value {
+	int32 intValue = 1;
+	int64 longValue = 2;
+	double doubleValue = 3;
+	bool booleanValue = 4;
+	string stringValue = 5;
+	enum ValueType {
+		INTEGER = 0;
+		LONG = 1;
+		DOUBLE = 2;
+		BOOLEAN = 3;
+		STRING = 4;
+		DATE = 5;
+	}
+	ValueType valueType = 6;
+}
+
+// PO request
+message ValueObjectRequest {
+	int32 id = 1;
+	string uuid = 2;
+	access.ClientRequest clientRequest = 3;
+	// Query
+	Criteria criteria = 4;
+}
+
+// Query for Request Object
+message Criteria {
+	string tableName = 1;
+	int64 limit = 2;
+	repeated Condition conditions = 3;
+}
+
+// Condition for query data
+message Condition {
+	Value value = 1;
+	Value valueTo = 2;
+	repeated Value values = 3;
+	enum Operator {
+		EQUAL = 0;
+    	NOT_EQUAL = 1;
+    	LIKE = 2;
+    	NOT_LIKE = 3;
+    	GREATER = 4;
+    	GREATER_EQUAL = 5;
+    	LESS = 6;
+    	LESS_EQUAL = 7;
+    	BETWEEN = 8;
+    	NOT_NULL = 9;
+    	NULL = 10;
+    	IN = 11;
+    	NOT_IN = 12;
+	}
+	//	Operators
+	Operator operator = 4;
+}
+
+// Callout Request
+message CalloutRequest {
+	access.ClientRequest clientRequest = 1;
+	string callout = 2;
+	ValueObject valueObject = 3;
+}
+
+// Callout response with data from server
+message CalloutResponse {
+	string result = 1;
+	repeated Value values = 2;
+}
