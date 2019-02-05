@@ -20,6 +20,7 @@ private static final long serialVersionUID = 0L;
     super(builder);
   }
   private ClientRequest() {
+    id_ = 0;
     uuid_ = "";
     language_ = "";
   }
@@ -55,13 +56,18 @@ private static final long serialVersionUID = 0L;
             }
             break;
           }
-          case 10: {
+          case 8: {
+
+            id_ = input.readInt32();
+            break;
+          }
+          case 18: {
             java.lang.String s = input.readStringRequireUtf8();
 
             uuid_ = s;
             break;
           }
-          case 18: {
+          case 26: {
             java.lang.String s = input.readStringRequireUtf8();
 
             language_ = s;
@@ -91,10 +97,19 @@ private static final long serialVersionUID = 0L;
             org.spin.grpc.util.ClientRequest.class, org.spin.grpc.util.ClientRequest.Builder.class);
   }
 
-  public static final int UUID_FIELD_NUMBER = 1;
+  public static final int ID_FIELD_NUMBER = 1;
+  private int id_;
+  /**
+   * <code>int32 id = 1;</code>
+   */
+  public int getId() {
+    return id_;
+  }
+
+  public static final int UUID_FIELD_NUMBER = 2;
   private volatile java.lang.Object uuid_;
   /**
-   * <code>string uuid = 1;</code>
+   * <code>string uuid = 2;</code>
    */
   public java.lang.String getUuid() {
     java.lang.Object ref = uuid_;
@@ -109,7 +124,7 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <code>string uuid = 1;</code>
+   * <code>string uuid = 2;</code>
    */
   public com.google.protobuf.ByteString
       getUuidBytes() {
@@ -125,10 +140,10 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int LANGUAGE_FIELD_NUMBER = 2;
+  public static final int LANGUAGE_FIELD_NUMBER = 3;
   private volatile java.lang.Object language_;
   /**
-   * <code>string language = 2;</code>
+   * <code>string language = 3;</code>
    */
   public java.lang.String getLanguage() {
     java.lang.Object ref = language_;
@@ -143,7 +158,7 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <code>string language = 2;</code>
+   * <code>string language = 3;</code>
    */
   public com.google.protobuf.ByteString
       getLanguageBytes() {
@@ -171,11 +186,14 @@ private static final long serialVersionUID = 0L;
 
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
+    if (id_ != 0) {
+      output.writeInt32(1, id_);
+    }
     if (!getUuidBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, uuid_);
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, uuid_);
     }
     if (!getLanguageBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, language_);
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 3, language_);
     }
     unknownFields.writeTo(output);
   }
@@ -185,11 +203,15 @@ private static final long serialVersionUID = 0L;
     if (size != -1) return size;
 
     size = 0;
+    if (id_ != 0) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeInt32Size(1, id_);
+    }
     if (!getUuidBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, uuid_);
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, uuid_);
     }
     if (!getLanguageBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, language_);
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, language_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -207,6 +229,8 @@ private static final long serialVersionUID = 0L;
     org.spin.grpc.util.ClientRequest other = (org.spin.grpc.util.ClientRequest) obj;
 
     boolean result = true;
+    result = result && (getId()
+        == other.getId());
     result = result && getUuid()
         .equals(other.getUuid());
     result = result && getLanguage()
@@ -222,6 +246,8 @@ private static final long serialVersionUID = 0L;
     }
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
+    hash = (37 * hash) + ID_FIELD_NUMBER;
+    hash = (53 * hash) + getId();
     hash = (37 * hash) + UUID_FIELD_NUMBER;
     hash = (53 * hash) + getUuid().hashCode();
     hash = (37 * hash) + LANGUAGE_FIELD_NUMBER;
@@ -359,6 +385,8 @@ private static final long serialVersionUID = 0L;
     }
     public Builder clear() {
       super.clear();
+      id_ = 0;
+
       uuid_ = "";
 
       language_ = "";
@@ -385,6 +413,7 @@ private static final long serialVersionUID = 0L;
 
     public org.spin.grpc.util.ClientRequest buildPartial() {
       org.spin.grpc.util.ClientRequest result = new org.spin.grpc.util.ClientRequest(this);
+      result.id_ = id_;
       result.uuid_ = uuid_;
       result.language_ = language_;
       onBuilt();
@@ -428,6 +457,9 @@ private static final long serialVersionUID = 0L;
 
     public Builder mergeFrom(org.spin.grpc.util.ClientRequest other) {
       if (other == org.spin.grpc.util.ClientRequest.getDefaultInstance()) return this;
+      if (other.getId() != 0) {
+        setId(other.getId());
+      }
       if (!other.getUuid().isEmpty()) {
         uuid_ = other.uuid_;
         onChanged();
@@ -463,9 +495,35 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
+    private int id_ ;
+    /**
+     * <code>int32 id = 1;</code>
+     */
+    public int getId() {
+      return id_;
+    }
+    /**
+     * <code>int32 id = 1;</code>
+     */
+    public Builder setId(int value) {
+      
+      id_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>int32 id = 1;</code>
+     */
+    public Builder clearId() {
+      
+      id_ = 0;
+      onChanged();
+      return this;
+    }
+
     private java.lang.Object uuid_ = "";
     /**
-     * <code>string uuid = 1;</code>
+     * <code>string uuid = 2;</code>
      */
     public java.lang.String getUuid() {
       java.lang.Object ref = uuid_;
@@ -480,7 +538,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string uuid = 1;</code>
+     * <code>string uuid = 2;</code>
      */
     public com.google.protobuf.ByteString
         getUuidBytes() {
@@ -496,7 +554,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string uuid = 1;</code>
+     * <code>string uuid = 2;</code>
      */
     public Builder setUuid(
         java.lang.String value) {
@@ -509,7 +567,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string uuid = 1;</code>
+     * <code>string uuid = 2;</code>
      */
     public Builder clearUuid() {
       
@@ -518,7 +576,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string uuid = 1;</code>
+     * <code>string uuid = 2;</code>
      */
     public Builder setUuidBytes(
         com.google.protobuf.ByteString value) {
@@ -534,7 +592,7 @@ private static final long serialVersionUID = 0L;
 
     private java.lang.Object language_ = "";
     /**
-     * <code>string language = 2;</code>
+     * <code>string language = 3;</code>
      */
     public java.lang.String getLanguage() {
       java.lang.Object ref = language_;
@@ -549,7 +607,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string language = 2;</code>
+     * <code>string language = 3;</code>
      */
     public com.google.protobuf.ByteString
         getLanguageBytes() {
@@ -565,7 +623,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string language = 2;</code>
+     * <code>string language = 3;</code>
      */
     public Builder setLanguage(
         java.lang.String value) {
@@ -578,7 +636,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string language = 2;</code>
+     * <code>string language = 3;</code>
      */
     public Builder clearLanguage() {
       
@@ -587,7 +645,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string language = 2;</code>
+     * <code>string language = 3;</code>
      */
     public Builder setLanguageBytes(
         com.google.protobuf.ByteString value) {

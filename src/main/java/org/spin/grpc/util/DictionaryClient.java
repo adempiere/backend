@@ -70,7 +70,7 @@ public class DictionaryClient {
 				  .setLanguage("es_MX")
 				  .build();
 		  ObjectRequest request = ObjectRequest.newBuilder()
-	    		.setUuid("8e4fd396-fb40-11e8-a479-7a0060f0aa01")
+	    		//.setUuid("8e4fd396-fb40-11e8-a479-7a0060f0aa01")
 	    		.setClientRequest(clientRequest)
 	    		.build();
 		  Menu response;
@@ -145,7 +145,7 @@ public class DictionaryClient {
 	   * greeting.
 	   */
 	  public static void main(String[] args) throws Exception {
-		DictionaryClient client = new DictionaryClient("elcamino", 50051);
+		DictionaryClient client = new DictionaryClient("localhost", 50051);
 	    try {
 	    	logger.info("####################### Menu Only #####################");
 	    	client.requestMenu(false);

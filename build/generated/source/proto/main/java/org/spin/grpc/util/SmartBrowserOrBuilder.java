@@ -8,17 +8,9 @@ public interface SmartBrowserOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
   /**
-   * <code>.dictionary.ErrorMessage errorMessage = 1;</code>
+   * <code>int32 id = 1;</code>
    */
-  boolean hasErrorMessage();
-  /**
-   * <code>.dictionary.ErrorMessage errorMessage = 1;</code>
-   */
-  org.spin.grpc.util.ErrorMessage getErrorMessage();
-  /**
-   * <code>.dictionary.ErrorMessage errorMessage = 1;</code>
-   */
-  org.spin.grpc.util.ErrorMessageOrBuilder getErrorMessageOrBuilder();
+  int getId();
 
   /**
    * <code>string uuid = 2;</code>

@@ -41,8 +41,9 @@ service DictionaryService {
 
 // The client request contains client info for request.
 message ClientRequest {
-	string uuid = 1;
-	string language = 2;
+	int32 id = 1;
+	string uuid = 2;
+	string language = 3;
 }
 
 // Object request
@@ -58,7 +59,7 @@ message ErrorMessage {
 
 // Window
 message Window {
-	ErrorMessage errorMessage = 1;
+	int32 id = 1;
 	string uuid = 2;
 	string name = 4;
   	string description = 5;
@@ -71,7 +72,7 @@ message Window {
 
 // Tab
 message Tab {
-	ErrorMessage errorMessage = 1;
+	int32 id = 1;
 	string uuid = 2;
 	string name = 4;
   	string description = 5;
@@ -106,7 +107,7 @@ message Tab {
 
 // Field
 message Field {
-	ErrorMessage errorMessage = 1;
+	int32 id = 1;
 	string uuid = 2;
 	string name = 3;
   	string description = 4;
@@ -141,8 +142,8 @@ message Field {
   	string callout = 33;
   	string columnSQL = 34;
   	string vFormat = 35;
-  	double valueMin = 36;
-  	double valueMax = 37;
+  	string valueMin = 36;
+  	string valueMax = 37;
   	string formatPattern = 38;
   	// External Info
   	ContextInfo contextInfo = 39;
@@ -163,7 +164,7 @@ message Field {
 
 // Context Info
 message ContextInfo {
-	ErrorMessage errorMessage = 1;
+	int32 id = 1;
 	string uuid = 2;
 	string name = 3;
   	string description = 4;
@@ -173,7 +174,7 @@ message ContextInfo {
 
 // Message
 message MessageText {
-	ErrorMessage errorMessage = 1;
+	int32 id = 1;
 	string uuid = 2;
 	string value = 3;
   	string msgType = 4;
@@ -183,7 +184,7 @@ message MessageText {
 
 // Context Info
 message FieldGroup {
-	ErrorMessage errorMessage = 1;
+	int32 id = 1;
 	string uuid = 2;
 	string name = 3;
   	string fieldGroupType = 4;
@@ -191,7 +192,7 @@ message FieldGroup {
 
 // Context Info
 message FieldDefinition {
-	ErrorMessage errorMessage = 1;
+	int32 id = 1;
 	string uuid = 2;
 	string value = 3;
 	string name = 4;
@@ -201,7 +202,7 @@ message FieldDefinition {
 
 // Field Condition
 message FieldCondition {
-	ErrorMessage errorMessage = 1;
+	int32 id = 1;
 	string uuid = 2;
 	string condition = 3;
   	string Stylesheet = 4;
@@ -209,7 +210,7 @@ message FieldCondition {
 
 // Process
 message Process {
-	ErrorMessage errorMessage = 1;
+	int32 id = 1;
 	string uuid = 2;
 	string value = 3;
 	string name = 4;
@@ -224,7 +225,7 @@ message Process {
 
 // Form
 message Form {
-	ErrorMessage errorMessage = 1;
+	int32 id = 1;
 	string uuid = 2;
 	string name = 3;
   	string description = 4;
@@ -235,7 +236,7 @@ message Form {
 
 // Smart Browser
 message SmartBrowser {
-	ErrorMessage errorMessage = 1;
+	int32 id = 1;
 	string uuid = 2;
 	string value = 3;
 	string name = 4;
@@ -258,7 +259,7 @@ message SmartBrowser {
 
 // Validation
 message Validation {
-	ErrorMessage errorMessage = 1;
+	int32 id = 1;
 	string uuid = 2;
 	string name = 3;
   	string validationType = 4;
@@ -267,7 +268,7 @@ message Validation {
 
 // Foreign Reference
 message Reference {
-	ErrorMessage errorMessage = 1;
+	int32 id = 1;
 	string uuid = 2;
 	string name = 3;
   	string validationType = 4;
@@ -278,7 +279,7 @@ message Reference {
 
 // Foreign Reference Value
 message ReferenceValue {
-	ErrorMessage errorMessage = 1;
+	int32 id = 1;
 	string uuid = 2;
 	string value = 3;
   	string name = 4;
@@ -287,7 +288,7 @@ message ReferenceValue {
 
 // Foreign Reference Table
 message ReferenceTable {
-	ErrorMessage errorMessage = 1;
+	int32 id = 1;
 	string uuid = 2;
 	string tableName = 3;
   	string keyColumnName = 4;
@@ -300,7 +301,7 @@ message ReferenceTable {
 
 // Menu
 message Menu {
-	ErrorMessage errorMessage = 1;
+	int32 id = 1;
 	string uuid = 2;
 	string parentUuid = 4;
 	string name = 5;

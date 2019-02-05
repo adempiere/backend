@@ -1,5 +1,6 @@
 package org.spin.grpc.util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.adempiere.model.MBrowse;
@@ -8,6 +9,7 @@ import org.compiere.model.I_AD_FieldGroup;
 import org.compiere.model.I_AD_Menu;
 import org.compiere.model.I_AD_Message;
 import org.compiere.model.I_AD_Process;
+import org.compiere.model.I_AD_Process_Para;
 import org.compiere.model.I_AD_Ref_List;
 import org.compiere.model.I_AD_Tab;
 import org.compiere.model.I_AD_Window;
@@ -17,6 +19,7 @@ import org.compiere.model.MForm;
 import org.compiere.model.MMenu;
 import org.compiere.model.MMessage;
 import org.compiere.model.MProcess;
+import org.compiere.model.MProcessPara;
 import org.compiere.model.MRefList;
 import org.compiere.model.MRefTable;
 import org.compiere.model.MTab;
@@ -29,6 +32,7 @@ import org.compiere.model.X_AD_FieldGroup;
 import org.compiere.model.X_AD_Reference;
 import org.compiere.util.CLogger;
 import org.compiere.util.Env;
+import org.compiere.util.Msg;
 import org.compiere.util.Util;
 import org.spin.grpc.util.DictionaryServiceGrpc.DictionaryServiceImplBase;
 import org.spin.model.MADContextInfo;
@@ -101,8 +105,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	 * @param withChild
 	 */
 	public void requestMenu(ObjectRequest request, StreamObserver<Menu> responseObserver, boolean withChild) {
-		if(request == null
-				|| Util.isEmpty(request.getUuid())) {
+		if(request == null) {
 			log.fine("Object Request Null");
 			return;
 		}
@@ -211,6 +214,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			}
 			//	
 			builder = Window.newBuilder()
+					.setId(window.getAD_Window_ID())
 					.setUuid(window.getUUID())
 					.setName(name)
 					.setDescription(validateNull(description))
@@ -286,6 +290,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		}
 		//	create build
 		Tab.Builder builder = Tab.newBuilder()
+				.setId(tab.getAD_Tab_ID())
 				.setUuid(tab.getUUID())
 				.setName(validateNull(name))
 				.setDescription(validateNull(description))
@@ -366,12 +371,14 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			}
 			//	Add message text
 			MessageText messageText = MessageText.newBuilder()
+					.setId(message.getAD_Message_ID())
 					.setUuid(message.getUUID())
 					.setValue(message.getValue())
 					.setMsgText(validateNull(msgText))
 					.setMsgTip(validateNull(msgTip))
 					.build();
 			builder = ContextInfo.newBuilder()
+					.setId(contextInfoValue.getAD_ContextInfo_ID())
 					.setUuid(contextInfoValue.getUUID())
 					.setName(contextInfoValue.getName())
 					.setDescription(validateNull(contextInfoValue.getDescription()))
@@ -406,12 +413,76 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			help = process.getHelp();
 		}
 		Process.Builder builder = Process.newBuilder()
+				.setId(process.getAD_Process_ID())
 				.setUuid(process.getUUID())
 				.setName(name)
 				.setDescription(validateNull(description))
 				.setHelp(validateNull(help))
 				.setIsDirectPrint(process.isDirectPrint())
 				.setIsReport(process.isReport());
+		//	For parameters
+		for(MProcessPara parameter : process.getParameters()) {
+			Field.Builder fieldBuilder = convertProcessParameter(parameter, language);
+			builder.addParameters(fieldBuilder.build());
+		}
+		return builder;
+	}
+	
+	/**
+	 * Convert Process Parameter
+	 * @param processParameter
+	 * @param language
+	 * @return
+	 */
+	private Field.Builder convertProcessParameter(MProcessPara processParameter, String language) {
+		String name = null;
+		String description = null;
+		String help = null;
+		if(!Util.isEmpty(language)) {
+			name = processParameter.get_Translation(I_AD_Process_Para.COLUMNNAME_Name, language);
+			description = processParameter.get_Translation(I_AD_Process_Para.COLUMNNAME_Description, language);
+			help = processParameter.get_Translation(I_AD_Process_Para.COLUMNNAME_Help, language);
+		}
+		//	Validate for default
+		if(Util.isEmpty(name)) {
+			name = processParameter.getName();
+		}
+		if(Util.isEmpty(description)) {
+			description = processParameter.getDescription();
+		}
+		if(Util.isEmpty(help)) {
+			help = processParameter.getHelp();
+		}
+		//	Convert
+		Field.Builder builder = Field.newBuilder()
+				.setId(processParameter.getAD_Process_ID())
+				.setUuid(processParameter.getUUID())
+				.setName(validateNull(name))
+				.setDescription(validateNull(description))
+				.setHelp(validateNull(help))
+				.setColumnName(validateNull(processParameter.getColumnName()))
+				.setDefaultValue(validateNull(processParameter.getDefaultValue()))
+				.setDefaultValueTo(validateNull(processParameter.getDefaultValue2()))
+				.setDisplayLogic(validateNull(processParameter.getDisplayLogic()))
+				.setDisplayType(processParameter.getAD_Reference_ID())
+				.setIsDisplayed(true)
+				.setIsInfoOnly(processParameter.isInfoOnly())
+				.setIsMandatory(processParameter.isMandatory())
+				.setIsRange(processParameter.isRange())
+				.setReadOnlyLogic(validateNull(processParameter.getReadOnlyLogic()))
+				.setSequence(processParameter.getSeqNo())
+				.setValueMax(processParameter.getValueMax())
+				.setValueMin(processParameter.getValueMin());
+		//	Reference Value
+		int referenceValueId = processParameter.getAD_Reference_Value_ID();
+		if(processParameter.getAD_Reference_Value_ID() > 0) {
+			referenceValueId = processParameter.getAD_Reference_Value_ID();
+		}
+		//	Set reference
+		if(referenceValueId > 0) {
+			Reference.Builder reference = convertReference(referenceValueId, language);
+			builder.setReference(reference.build());
+		}
 		
 		return builder;
 	}
@@ -474,6 +545,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		}
 		//	Convert
 		Field.Builder builder = Field.newBuilder()
+				.setId(field.getAD_Field_ID())
 				.setUuid(field.getUUID())
 				.setName(validateNull(name))
 				.setDescription(validateNull(description))
@@ -507,7 +579,9 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setIsUpdateable(column.isUpdateable())
 				.setMandatoryLogic(validateNull(column.getMandatoryLogic()))
 				.setReadOnlyLogic(validateNull(column.getReadOnlyLogic()))
-				.setSequence(field.getSeqNo());
+				.setSequence(field.getSeqNo())
+				.setValueMax(column.getValueMax())
+				.setValueMin(column.getValueMin());
 		//	Context Info
 		if(field.getAD_ContextInfo_ID() > 0) {
 			ContextInfo.Builder contextInfoBuilder = convertContextInfo(field.getAD_ContextInfo_ID(), language);
@@ -554,12 +628,14 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			MADFieldDefinition fieldDefinition  = new MADFieldDefinition(Env.getCtx(), fieldDefinitionId, null);
 			//	Reference
 			builder = FieldDefinition.newBuilder()
+					.setId(fieldDefinition.getAD_FieldDefinition_ID())
 					.setUuid(fieldDefinition.getUUID())
 					.setValue(fieldDefinition.getValue())
 					.setName(fieldDefinition.getName());
 			//	Get conditions
 			for(MADFieldCondition condition : fieldDefinition.getConditions()) {
 				FieldCondition.Builder fieldConditionBuilder = FieldCondition.newBuilder()
+						.setId(fieldDefinition.getAD_FieldDefinition_ID())
 						.setUuid(condition.getUUID())
 						.setCondition(validateNull(condition.getCondition()))
 						.setStylesheet(validateNull(condition.getStylesheet()));
@@ -591,6 +667,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			}
 			//	Field Group
 			builder = FieldGroup.newBuilder()
+					.setId(fieldGroup.getAD_FieldGroup_ID())
 					.setUuid(fieldGroup.getUUID())
 					.setName(validateNull(name))
 					.setFieldGroupType(fieldGroup.getFieldGroupType());
@@ -610,6 +687,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			X_AD_Reference reference = new X_AD_Reference(Env.getCtx(), referenceId, null);
 			//	Reference
 			builder = Reference.newBuilder()
+					.setId(reference.getAD_Reference_ID())
 					.setUuid(reference.getUUID())
 					.setName(reference.getName())
 					.setValidationType(reference.getValidationType());
@@ -654,6 +732,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			description = referenceValue.getDescription();
 		}
 		ReferenceValue.Builder builder = ReferenceValue.newBuilder()
+				.setId(referenceValue.getAD_Ref_List_ID())
 				.setUuid(validateNull(validateNull(referenceValue.getUUID())))
 				.setValue(validateNull(referenceValue.getValue()))
 				.setName(validateNull(name))
@@ -693,10 +772,16 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	 * @return
 	 */
 	private Menu.Builder convertMenu(String uuid, String language, boolean withChild) {
-		MMenu menu = new Query(Env.getCtx(), I_AD_Menu.Table_Name, I_AD_Menu.COLUMNNAME_UUID + " = ?", null)
-				.setParameters(uuid)
-				.setOnlyActiveRecords(true)
-				.first();
+		MMenu menu = null;
+		if(!Util.isEmpty(uuid)) {
+			menu = new Query(Env.getCtx(), I_AD_Menu.Table_Name, I_AD_Menu.COLUMNNAME_UUID + " = ?", null)
+					.setParameters(uuid)
+					.setOnlyActiveRecords(true)
+					.first();
+		} else {
+			menu = new MMenu(Env.getCtx(), 0, null);
+			menu.setName(Msg.getMsg(Env.getCtx(), "Menu"));
+		}
 		//	Convert
 		return convertMenu(menu, language, withChild);
 	}
@@ -723,7 +808,8 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			description = menu.getDescription();
 		}
 		Menu.Builder builder = Menu.newBuilder()
-				.setUuid(menu.getUUID())
+				.setId(menu.getAD_Menu_ID())
+				.setUuid(validateNull(menu.getUUID()))
 				.setName(validateNull(name))
 				.setDescription(validateNull(description))
 				.setAction(validateNull(menu.getAction()))
@@ -767,10 +853,17 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		}
 		//	Load child
 		if(withChild) {
+			String whereAdded = "AND tnm.Parent_ID = ?";
+			List<Object> params = new ArrayList<>();
+			if(menu.getAD_Menu_ID() <= 0) {
+				whereAdded = "AND (COALESCE(tnm.Parent_ID, 0) = 0)";
+			} else {
+				params.add(menu.getAD_Menu_ID());
+			}
 			List<MMenu> childList = new Query(Env.getCtx(), I_AD_Menu.Table_Name, "EXISTS(SELECT 1 FROM AD_TreeNodeMM tnm "
 					+ "WHERE tnm.Node_ID = AD_Menu.AD_Menu_ID "
-					+ "AND tnm.Parent_ID = ?)", null)
-				.setParameters(menu.getAD_Menu_ID())
+					+ whereAdded + ")", null)
+				.setParameters(params)
 				.setOnlyActiveRecords(true)
 				.list();
 			//	Convert Child

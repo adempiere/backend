@@ -20,6 +20,7 @@ private static final long serialVersionUID = 0L;
     super(builder);
   }
   private Reference() {
+    id_ = 0;
     uuid_ = "";
     name_ = "";
     validationType_ = "";
@@ -57,17 +58,9 @@ private static final long serialVersionUID = 0L;
             }
             break;
           }
-          case 10: {
-            org.spin.grpc.util.ErrorMessage.Builder subBuilder = null;
-            if (errorMessage_ != null) {
-              subBuilder = errorMessage_.toBuilder();
-            }
-            errorMessage_ = input.readMessage(org.spin.grpc.util.ErrorMessage.parser(), extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(errorMessage_);
-              errorMessage_ = subBuilder.buildPartial();
-            }
+          case 8: {
 
+            id_ = input.readInt32();
             break;
           }
           case 18: {
@@ -138,25 +131,13 @@ private static final long serialVersionUID = 0L;
   }
 
   private int bitField0_;
-  public static final int ERRORMESSAGE_FIELD_NUMBER = 1;
-  private org.spin.grpc.util.ErrorMessage errorMessage_;
+  public static final int ID_FIELD_NUMBER = 1;
+  private int id_;
   /**
-   * <code>.dictionary.ErrorMessage errorMessage = 1;</code>
+   * <code>int32 id = 1;</code>
    */
-  public boolean hasErrorMessage() {
-    return errorMessage_ != null;
-  }
-  /**
-   * <code>.dictionary.ErrorMessage errorMessage = 1;</code>
-   */
-  public org.spin.grpc.util.ErrorMessage getErrorMessage() {
-    return errorMessage_ == null ? org.spin.grpc.util.ErrorMessage.getDefaultInstance() : errorMessage_;
-  }
-  /**
-   * <code>.dictionary.ErrorMessage errorMessage = 1;</code>
-   */
-  public org.spin.grpc.util.ErrorMessageOrBuilder getErrorMessageOrBuilder() {
-    return getErrorMessage();
+  public int getId() {
+    return id_;
   }
 
   public static final int UUID_FIELD_NUMBER = 2;
@@ -341,8 +322,8 @@ private static final long serialVersionUID = 0L;
 
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
-    if (errorMessage_ != null) {
-      output.writeMessage(1, getErrorMessage());
+    if (id_ != 0) {
+      output.writeInt32(1, id_);
     }
     if (!getUuidBytes().isEmpty()) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 2, uuid_);
@@ -367,9 +348,9 @@ private static final long serialVersionUID = 0L;
     if (size != -1) return size;
 
     size = 0;
-    if (errorMessage_ != null) {
+    if (id_ != 0) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(1, getErrorMessage());
+        .computeInt32Size(1, id_);
     }
     if (!getUuidBytes().isEmpty()) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, uuid_);
@@ -404,11 +385,8 @@ private static final long serialVersionUID = 0L;
     org.spin.grpc.util.Reference other = (org.spin.grpc.util.Reference) obj;
 
     boolean result = true;
-    result = result && (hasErrorMessage() == other.hasErrorMessage());
-    if (hasErrorMessage()) {
-      result = result && getErrorMessage()
-          .equals(other.getErrorMessage());
-    }
+    result = result && (getId()
+        == other.getId());
     result = result && getUuid()
         .equals(other.getUuid());
     result = result && getName()
@@ -433,10 +411,8 @@ private static final long serialVersionUID = 0L;
     }
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
-    if (hasErrorMessage()) {
-      hash = (37 * hash) + ERRORMESSAGE_FIELD_NUMBER;
-      hash = (53 * hash) + getErrorMessage().hashCode();
-    }
+    hash = (37 * hash) + ID_FIELD_NUMBER;
+    hash = (53 * hash) + getId();
     hash = (37 * hash) + UUID_FIELD_NUMBER;
     hash = (53 * hash) + getUuid().hashCode();
     hash = (37 * hash) + NAME_FIELD_NUMBER;
@@ -585,12 +561,8 @@ private static final long serialVersionUID = 0L;
     }
     public Builder clear() {
       super.clear();
-      if (errorMessageBuilder_ == null) {
-        errorMessage_ = null;
-      } else {
-        errorMessage_ = null;
-        errorMessageBuilder_ = null;
-      }
+      id_ = 0;
+
       uuid_ = "";
 
       name_ = "";
@@ -633,11 +605,7 @@ private static final long serialVersionUID = 0L;
       org.spin.grpc.util.Reference result = new org.spin.grpc.util.Reference(this);
       int from_bitField0_ = bitField0_;
       int to_bitField0_ = 0;
-      if (errorMessageBuilder_ == null) {
-        result.errorMessage_ = errorMessage_;
-      } else {
-        result.errorMessage_ = errorMessageBuilder_.build();
-      }
+      result.id_ = id_;
       result.uuid_ = uuid_;
       result.name_ = name_;
       result.validationType_ = validationType_;
@@ -697,8 +665,8 @@ private static final long serialVersionUID = 0L;
 
     public Builder mergeFrom(org.spin.grpc.util.Reference other) {
       if (other == org.spin.grpc.util.Reference.getDefaultInstance()) return this;
-      if (other.hasErrorMessage()) {
-        mergeErrorMessage(other.getErrorMessage());
+      if (other.getId() != 0) {
+        setId(other.getId());
       }
       if (!other.getUuid().isEmpty()) {
         uuid_ = other.uuid_;
@@ -769,121 +737,30 @@ private static final long serialVersionUID = 0L;
     }
     private int bitField0_;
 
-    private org.spin.grpc.util.ErrorMessage errorMessage_ = null;
-    private com.google.protobuf.SingleFieldBuilderV3<
-        org.spin.grpc.util.ErrorMessage, org.spin.grpc.util.ErrorMessage.Builder, org.spin.grpc.util.ErrorMessageOrBuilder> errorMessageBuilder_;
+    private int id_ ;
     /**
-     * <code>.dictionary.ErrorMessage errorMessage = 1;</code>
+     * <code>int32 id = 1;</code>
      */
-    public boolean hasErrorMessage() {
-      return errorMessageBuilder_ != null || errorMessage_ != null;
+    public int getId() {
+      return id_;
     }
     /**
-     * <code>.dictionary.ErrorMessage errorMessage = 1;</code>
+     * <code>int32 id = 1;</code>
      */
-    public org.spin.grpc.util.ErrorMessage getErrorMessage() {
-      if (errorMessageBuilder_ == null) {
-        return errorMessage_ == null ? org.spin.grpc.util.ErrorMessage.getDefaultInstance() : errorMessage_;
-      } else {
-        return errorMessageBuilder_.getMessage();
-      }
-    }
-    /**
-     * <code>.dictionary.ErrorMessage errorMessage = 1;</code>
-     */
-    public Builder setErrorMessage(org.spin.grpc.util.ErrorMessage value) {
-      if (errorMessageBuilder_ == null) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        errorMessage_ = value;
-        onChanged();
-      } else {
-        errorMessageBuilder_.setMessage(value);
-      }
-
-      return this;
-    }
-    /**
-     * <code>.dictionary.ErrorMessage errorMessage = 1;</code>
-     */
-    public Builder setErrorMessage(
-        org.spin.grpc.util.ErrorMessage.Builder builderForValue) {
-      if (errorMessageBuilder_ == null) {
-        errorMessage_ = builderForValue.build();
-        onChanged();
-      } else {
-        errorMessageBuilder_.setMessage(builderForValue.build());
-      }
-
-      return this;
-    }
-    /**
-     * <code>.dictionary.ErrorMessage errorMessage = 1;</code>
-     */
-    public Builder mergeErrorMessage(org.spin.grpc.util.ErrorMessage value) {
-      if (errorMessageBuilder_ == null) {
-        if (errorMessage_ != null) {
-          errorMessage_ =
-            org.spin.grpc.util.ErrorMessage.newBuilder(errorMessage_).mergeFrom(value).buildPartial();
-        } else {
-          errorMessage_ = value;
-        }
-        onChanged();
-      } else {
-        errorMessageBuilder_.mergeFrom(value);
-      }
-
-      return this;
-    }
-    /**
-     * <code>.dictionary.ErrorMessage errorMessage = 1;</code>
-     */
-    public Builder clearErrorMessage() {
-      if (errorMessageBuilder_ == null) {
-        errorMessage_ = null;
-        onChanged();
-      } else {
-        errorMessage_ = null;
-        errorMessageBuilder_ = null;
-      }
-
-      return this;
-    }
-    /**
-     * <code>.dictionary.ErrorMessage errorMessage = 1;</code>
-     */
-    public org.spin.grpc.util.ErrorMessage.Builder getErrorMessageBuilder() {
+    public Builder setId(int value) {
       
+      id_ = value;
       onChanged();
-      return getErrorMessageFieldBuilder().getBuilder();
+      return this;
     }
     /**
-     * <code>.dictionary.ErrorMessage errorMessage = 1;</code>
+     * <code>int32 id = 1;</code>
      */
-    public org.spin.grpc.util.ErrorMessageOrBuilder getErrorMessageOrBuilder() {
-      if (errorMessageBuilder_ != null) {
-        return errorMessageBuilder_.getMessageOrBuilder();
-      } else {
-        return errorMessage_ == null ?
-            org.spin.grpc.util.ErrorMessage.getDefaultInstance() : errorMessage_;
-      }
-    }
-    /**
-     * <code>.dictionary.ErrorMessage errorMessage = 1;</code>
-     */
-    private com.google.protobuf.SingleFieldBuilderV3<
-        org.spin.grpc.util.ErrorMessage, org.spin.grpc.util.ErrorMessage.Builder, org.spin.grpc.util.ErrorMessageOrBuilder> 
-        getErrorMessageFieldBuilder() {
-      if (errorMessageBuilder_ == null) {
-        errorMessageBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-            org.spin.grpc.util.ErrorMessage, org.spin.grpc.util.ErrorMessage.Builder, org.spin.grpc.util.ErrorMessageOrBuilder>(
-                getErrorMessage(),
-                getParentForChildren(),
-                isClean());
-        errorMessage_ = null;
-      }
-      return errorMessageBuilder_;
+    public Builder clearId() {
+      
+      id_ = 0;
+      onChanged();
+      return this;
     }
 
     private java.lang.Object uuid_ = "";

@@ -118,145 +118,130 @@ public final class ADempiereDictionary {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\020dictionary.proto\022\ndictionary\"/\n\rClient" +
-      "Request\022\014\n\004uuid\030\001 \001(\t\022\020\n\010language\030\002 \001(\t\"" +
-      "O\n\rObjectRequest\022\014\n\004uuid\030\001 \001(\t\0220\n\rclient" +
-      "Request\030\002 \001(\0132\031.dictionary.ClientRequest" +
-      "\"7\n\014ErrorMessage\022\024\n\014errorMessage\030\001 \001(\t\022\021" +
-      "\n\terrorCode\030\002 \001(\005\"\325\001\n\006Window\022.\n\014errorMes" +
-      "sage\030\001 \001(\0132\030.dictionary.ErrorMessage\022\014\n\004" +
-      "uuid\030\002 \001(\t\022\014\n\004name\030\004 \001(\t\022\023\n\013description\030" +
-      "\005 \001(\t\022\014\n\004help\030\006 \001(\t\022\017\n\007isSOTrx\030\007 \001(\010\022,\n\013" +
-      "contextInfo\030\010 \001(\0132\027.dictionary.ContextIn" +
-      "fo\022\035\n\004tabs\030\t \003(\0132\017.dictionary.Tab\"\222\005\n\003Ta" +
-      "b\022.\n\014errorMessage\030\001 \001(\0132\030.dictionary.Err" +
-      "orMessage\022\014\n\004uuid\030\002 \001(\t\022\014\n\004name\030\004 \001(\t\022\023\n" +
-      "\013description\030\005 \001(\t\022\014\n\004help\030\006 \001(\t\022\021\n\ttabl" +
-      "eName\030\007 \001(\t\022\020\n\010sequence\030\010 \001(\005\022\020\n\010tabLeve" +
-      "l\030\t \001(\005\022\023\n\013isSingleRow\030\n \001(\010\022\025\n\risAdvanc" +
-      "edTab\030\013 \001(\010\022\021\n\tisHasTree\030\014 \001(\010\022\021\n\tisInfo" +
-      "Tab\030\r \001(\010\022\021\n\tisSortTab\030\016 \001(\010\022\030\n\020isTransl" +
-      "ationTab\030\017 \001(\010\022\022\n\nisReadOnly\030\020 \001(\010\022\026\n\016is" +
-      "InsertRecord\030\021 \001(\010\022\016\n\006isView\030\022 \001(\010\022\024\n\014is" +
-      "Deleteable\030\023 \001(\010\022\022\n\nisDocument\030\024 \001(\010\022\023\n\013" +
-      "accessLevel\030\025 \001(\005\022\026\n\016linkColumnName\030\026 \001(" +
-      "\t\022\030\n\020parentColumnName\030\027 \001(\t\022\024\n\014displayLo" +
-      "gic\030\030 \001(\t\022\025\n\rcommitWarning\030\031 \001(\t\022\025\n\rorde" +
-      "rByClause\030\032 \001(\t\022,\n\013contextInfo\030\033 \001(\0132\027.d" +
-      "ictionary.ContextInfo\022$\n\007process\030\034 \001(\0132\023" +
-      ".dictionary.Process\022!\n\006fields\030\035 \003(\0132\021.di" +
-      "ctionary.Field\"\265\t\n\005Field\022.\n\014errorMessage" +
-      "\030\001 \001(\0132\030.dictionary.ErrorMessage\022\014\n\004uuid" +
-      "\030\002 \001(\t\022\014\n\004name\030\003 \001(\t\022\023\n\013description\030\004 \001(" +
-      "\t\022\014\n\004help\030\005 \001(\t\022\020\n\010sequence\030\006 \001(\005\022\022\n\ncol" +
-      "umnName\030\007 \001(\t\022\023\n\013isDisplayed\030\010 \001(\010\022\027\n\017is" +
-      "DisplayedGrid\030\t \001(\010\022\022\n\nisReadOnly\030\n \001(\010\022" +
-      "\023\n\013isAllowCopy\030\013 \001(\010\022\023\n\013isEncrypted\030\014 \001(" +
-      "\010\022\022\n\nisSameLine\030\r \001(\010\022\021\n\tisHeading\030\016 \001(\010" +
-      "\022\023\n\013isFieldOnly\030\017 \001(\010\022\024\n\014isQuickEntry\030\020 " +
-      "\001(\010\022\023\n\013isMandatory\030\021 \001(\010\022\r\n\005isKey\030\022 \001(\010\022" +
-      "\020\n\010isParent\030\023 \001(\010\022\024\n\014isUpdateable\030\024 \001(\010\022" +
-      "\024\n\014isIdentifier\030\025 \001(\010\022\026\n\016isAllowLogging\030" +
-      "\026 \001(\010\022\031\n\021isSelectionColumn\030\027 \001(\010\022\017\n\007isRa" +
-      "nge\030\030 \001(\010\022\032\n\022isAlwaysUpdateable\030\031 \001(\010\022\024\n" +
-      "\014isTranslated\030\032 \001(\010\022\032\n\022identifierSequenc" +
-      "e\030M \001(\005\022\024\n\014displayLogic\030\034 \001(\t\022\023\n\013display" +
-      "Type\030\035 \001(\005\022\024\n\014defaultValue\030\036 \001(\t\022\025\n\rread" +
-      "OnlyLogic\030\037 \001(\t\022\026\n\016mandatoryLogic\030  \001(\t\022" +
-      "\017\n\007callout\030! \001(\t\022\021\n\tcolumnSQL\030\" \001(\t\022\017\n\007v" +
-      "Format\030# \001(\t\022\020\n\010valueMin\030$ \001(\001\022\020\n\010valueM" +
-      "ax\030% \001(\001\022\025\n\rformatPattern\030& \001(\t\022,\n\013conte" +
-      "xtInfo\030\' \001(\0132\027.dictionary.ContextInfo\022*\n" +
-      "\nfieldGroup\030( \001(\0132\026.dictionary.FieldGrou" +
-      "p\022*\n\nvalidation\030) \001(\0132\026.dictionary.Valid" +
-      "ation\0224\n\017fieldDefinition\030* \001(\0132\033.diction" +
-      "ary.FieldDefinition\022(\n\treference\030+ \001(\0132\025" +
-      ".dictionary.Reference\022$\n\007process\030, \001(\0132\023" +
-      ".dictionary.Process\022\027\n\017isQueryCriteria\030-" +
-      " \001(\010\022\021\n\tisOrderBy\030. \001(\010\022\021\n\tseqNoGrid\030/ \001" +
-      "(\005\022\016\n\006sortNo\0300 \001(\005\022\022\n\nisInfoOnly\0301 \001(\010\022\026" +
-      "\n\016defaultValueTo\0302 \001(\t\"\262\001\n\013ContextInfo\022." +
-      "\n\014errorMessage\030\001 \001(\0132\030.dictionary.ErrorM" +
-      "essage\022\014\n\004uuid\030\002 \001(\t\022\014\n\004name\030\003 \001(\t\022\023\n\013de" +
-      "scription\030\004 \001(\t\022,\n\013messageText\030\005 \001(\0132\027.d" +
-      "ictionary.MessageText\022\024\n\014sqlStatement\030\006 " +
-      "\001(\t\"\214\001\n\013MessageText\022.\n\014errorMessage\030\001 \001(" +
-      "\0132\030.dictionary.ErrorMessage\022\014\n\004uuid\030\002 \001(" +
-      "\t\022\r\n\005value\030\003 \001(\t\022\017\n\007msgType\030\004 \001(\t\022\017\n\007msg" +
-      "Text\030\005 \001(\t\022\016\n\006msgTip\030\006 \001(\t\"p\n\nFieldGroup" +
-      "\022.\n\014errorMessage\030\001 \001(\0132\030.dictionary.Erro" +
-      "rMessage\022\014\n\004uuid\030\002 \001(\t\022\014\n\004name\030\003 \001(\t\022\026\n\016" +
-      "fieldGroupType\030\004 \001(\t\"\264\001\n\017FieldDefinition" +
-      "\022.\n\014errorMessage\030\001 \001(\0132\030.dictionary.Erro" +
-      "rMessage\022\014\n\004uuid\030\002 \001(\t\022\r\n\005value\030\003 \001(\t\022\014\n" +
-      "\004name\030\004 \001(\t\022\026\n\016fieldGroupType\030\005 \001(\t\022.\n\nc" +
-      "onditions\030\006 \003(\0132\032.dictionary.FieldCondit" +
-      "ion\"u\n\016FieldCondition\022.\n\014errorMessage\030\001 " +
-      "\001(\0132\030.dictionary.ErrorMessage\022\014\n\004uuid\030\002 " +
-      "\001(\t\022\021\n\tcondition\030\003 \001(\t\022\022\n\nStylesheet\030\004 \001" +
-      "(\t\"\376\001\n\007Process\022.\n\014errorMessage\030\001 \001(\0132\030.d" +
-      "ictionary.ErrorMessage\022\014\n\004uuid\030\002 \001(\t\022\r\n\005" +
-      "value\030\003 \001(\t\022\014\n\004name\030\004 \001(\t\022\023\n\013description" +
-      "\030\005 \001(\t\022\014\n\004help\030\006 \001(\t\022\020\n\010isReport\030\007 \001(\010\022\023" +
-      "\n\013accessLevel\030\010 \001(\005\022\020\n\010showHelp\030\t \001(\t\022\025\n" +
-      "\risDirectPrint\030\n \001(\010\022%\n\nparameters\030\013 \003(\013" +
-      "2\021.dictionary.Field\"\235\001\n\004Form\022.\n\014errorMes" +
-      "sage\030\001 \001(\0132\030.dictionary.ErrorMessage\022\014\n\004" +
-      "uuid\030\002 \001(\t\022\014\n\004name\030\003 \001(\t\022\023\n\013description\030" +
-      "\004 \001(\t\022\014\n\004help\030\005 \001(\t\022\023\n\013accessLevel\030\006 \001(\005" +
-      "\022\021\n\tclassName\030\007 \001(\t\"\325\003\n\014SmartBrowser\022.\n\014" +
-      "errorMessage\030\001 \001(\0132\030.dictionary.ErrorMes" +
-      "sage\022\014\n\004uuid\030\002 \001(\t\022\r\n\005value\030\003 \001(\t\022\014\n\004nam" +
-      "e\030\004 \001(\t\022\023\n\013description\030\005 \001(\t\022\014\n\004help\030\006 \001" +
-      "(\t\022\023\n\013accessLevel\030\010 \001(\005\022\023\n\013whereClause\030\t" +
-      " \001(\t\022\024\n\014isUpdateable\030\n \001(\010\022\024\n\014IsDeleteab" +
-      "le\030\013 \001(\010\022\033\n\023IsSelectedByDefault\030\014 \001(\010\022\036\n" +
-      "\026IsCollapsibleByDefault\030\r \001(\010\022 \n\030IsExecu" +
-      "tedQueryByDefault\030\016 \001(\010\022\023\n\013IsShowTotal\030\017" +
-      " \001(\010\022\020\n\010viewUuid\030\020 \001(\t\022\"\n\006window\030\021 \001(\0132\022" +
-      ".dictionary.Window\022$\n\007process\030\022 \001(\0132\023.di" +
-      "ctionary.Process\022!\n\006fields\030\023 \003(\0132\021.dicti" +
-      "onary.Field\"~\n\nValidation\022.\n\014errorMessag" +
-      "e\030\001 \001(\0132\030.dictionary.ErrorMessage\022\014\n\004uui" +
-      "d\030\002 \001(\t\022\014\n\004name\030\003 \001(\t\022\026\n\016validationType\030" +
-      "\004 \001(\t\022\014\n\004code\030\005 \001(\t\"\317\001\n\tReference\022.\n\014err" +
-      "orMessage\030\001 \001(\0132\030.dictionary.ErrorMessag" +
-      "e\022\014\n\004uuid\030\002 \001(\t\022\014\n\004name\030\003 \001(\t\022\026\n\016validat" +
-      "ionType\030\004 \001(\t\0222\n\016referenceTable\030\005 \001(\0132\032." +
-      "dictionary.ReferenceTable\022*\n\006values\030\006 \003(" +
-      "\0132\032.dictionary.ReferenceValue\"\200\001\n\016Refere" +
-      "nceValue\022.\n\014errorMessage\030\001 \001(\0132\030.diction" +
-      "ary.ErrorMessage\022\014\n\004uuid\030\002 \001(\t\022\r\n\005value\030" +
-      "\003 \001(\t\022\014\n\004name\030\004 \001(\t\022\023\n\013description\030\005 \001(\t" +
-      "\"\363\001\n\016ReferenceTable\022.\n\014errorMessage\030\001 \001(" +
-      "\0132\030.dictionary.ErrorMessage\022\014\n\004uuid\030\002 \001(" +
-      "\t\022\021\n\ttableName\030\003 \001(\t\022\025\n\rkeyColumnName\030\004 " +
-      "\001(\t\022\031\n\021displayColumnName\030\005 \001(\t\022\033\n\023isDisp" +
-      "layIdentifier\030\006 \001(\010\022\030\n\020isValueDisplayed\030" +
-      "\007 \001(\010\022\022\n\ndisplaySQL\030\010 \001(\t\022\023\n\013whereClause" +
-      "\030\t \001(\t\"\314\002\n\004Menu\022.\n\014errorMessage\030\001 \001(\0132\030." +
-      "dictionary.ErrorMessage\022\014\n\004uuid\030\002 \001(\t\022\022\n" +
-      "\nparentUuid\030\004 \001(\t\022\014\n\004name\030\005 \001(\t\022\023\n\013descr" +
-      "iption\030\006 \001(\t\022\020\n\010sequence\030\007 \001(\t\022\022\n\nisRead" +
-      "Only\030\010 \001(\010\022\021\n\tisSummary\030\t \001(\010\022\017\n\007isSOTrx" +
-      "\030\n \001(\010\022\016\n\006action\030\013 \001(\t\022\020\n\010formUuid\030\014 \001(\t" +
-      "\022\022\n\nwindowUuid\030\r \001(\t\022\023\n\013processUuid\030\016 \001(" +
-      "\t\022\030\n\020smartBrowserUuid\030\017 \001(\t\022 \n\006childs\030\020 " +
-      "\003(\0132\020.dictionary.Menu2\343\003\n\021DictionaryServ" +
-      "ice\022D\n\023RequestMenuAndChild\022\031.dictionary." +
-      "ObjectRequest\032\020.dictionary.Menu\"\000\022<\n\013Req" +
-      "uestMenu\022\031.dictionary.ObjectRequest\032\020.di" +
-      "ctionary.Menu\"\000\022@\n\rRequestWindow\022\031.dicti" +
-      "onary.ObjectRequest\032\022.dictionary.Window\"" +
-      "\000\022G\n\024RequestWindowAndTabs\022\031.dictionary.O" +
-      "bjectRequest\032\022.dictionary.Window\"\000\022:\n\nRe" +
-      "questTab\022\031.dictionary.ObjectRequest\032\017.di" +
-      "ctionary.Tab\"\000\022C\n\023RequestTabAndFields\022\031." +
-      "dictionary.ObjectRequest\032\017.dictionary.Ta" +
-      "b\"\000\022>\n\014RequestField\022\031.dictionary.ObjectR" +
-      "equest\032\021.dictionary.Field\"\000B1\n\022org.spin." +
-      "grpc.utilB\023ADempiereDictionaryP\001\242\002\003HLWb\006" +
-      "proto3"
+      "\n\020dictionary.proto\022\ndictionary\";\n\rClient" +
+      "Request\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(\t\022\020\n\010lan" +
+      "guage\030\003 \001(\t\"O\n\rObjectRequest\022\014\n\004uuid\030\001 \001" +
+      "(\t\0220\n\rclientRequest\030\002 \001(\0132\031.dictionary.C" +
+      "lientRequest\"7\n\014ErrorMessage\022\024\n\014errorMes" +
+      "sage\030\001 \001(\t\022\021\n\terrorCode\030\002 \001(\005\"\261\001\n\006Window" +
+      "\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(\t\022\014\n\004name\030\004 \001(\t" +
+      "\022\023\n\013description\030\005 \001(\t\022\014\n\004help\030\006 \001(\t\022\017\n\007i" +
+      "sSOTrx\030\007 \001(\010\022,\n\013contextInfo\030\010 \001(\0132\027.dict" +
+      "ionary.ContextInfo\022\035\n\004tabs\030\t \003(\0132\017.dicti" +
+      "onary.Tab\"\356\004\n\003Tab\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 " +
+      "\001(\t\022\014\n\004name\030\004 \001(\t\022\023\n\013description\030\005 \001(\t\022\014" +
+      "\n\004help\030\006 \001(\t\022\021\n\ttableName\030\007 \001(\t\022\020\n\010seque" +
+      "nce\030\010 \001(\005\022\020\n\010tabLevel\030\t \001(\005\022\023\n\013isSingleR" +
+      "ow\030\n \001(\010\022\025\n\risAdvancedTab\030\013 \001(\010\022\021\n\tisHas" +
+      "Tree\030\014 \001(\010\022\021\n\tisInfoTab\030\r \001(\010\022\021\n\tisSortT" +
+      "ab\030\016 \001(\010\022\030\n\020isTranslationTab\030\017 \001(\010\022\022\n\nis" +
+      "ReadOnly\030\020 \001(\010\022\026\n\016isInsertRecord\030\021 \001(\010\022\016" +
+      "\n\006isView\030\022 \001(\010\022\024\n\014isDeleteable\030\023 \001(\010\022\022\n\n" +
+      "isDocument\030\024 \001(\010\022\023\n\013accessLevel\030\025 \001(\005\022\026\n" +
+      "\016linkColumnName\030\026 \001(\t\022\030\n\020parentColumnNam" +
+      "e\030\027 \001(\t\022\024\n\014displayLogic\030\030 \001(\t\022\025\n\rcommitW" +
+      "arning\030\031 \001(\t\022\025\n\rorderByClause\030\032 \001(\t\022,\n\013c" +
+      "ontextInfo\030\033 \001(\0132\027.dictionary.ContextInf" +
+      "o\022$\n\007process\030\034 \001(\0132\023.dictionary.Process\022" +
+      "!\n\006fields\030\035 \003(\0132\021.dictionary.Field\"\221\t\n\005F" +
+      "ield\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(\t\022\014\n\004name\030\003" +
+      " \001(\t\022\023\n\013description\030\004 \001(\t\022\014\n\004help\030\005 \001(\t\022" +
+      "\020\n\010sequence\030\006 \001(\005\022\022\n\ncolumnName\030\007 \001(\t\022\023\n" +
+      "\013isDisplayed\030\010 \001(\010\022\027\n\017isDisplayedGrid\030\t " +
+      "\001(\010\022\022\n\nisReadOnly\030\n \001(\010\022\023\n\013isAllowCopy\030\013" +
+      " \001(\010\022\023\n\013isEncrypted\030\014 \001(\010\022\022\n\nisSameLine\030" +
+      "\r \001(\010\022\021\n\tisHeading\030\016 \001(\010\022\023\n\013isFieldOnly\030" +
+      "\017 \001(\010\022\024\n\014isQuickEntry\030\020 \001(\010\022\023\n\013isMandato" +
+      "ry\030\021 \001(\010\022\r\n\005isKey\030\022 \001(\010\022\020\n\010isParent\030\023 \001(" +
+      "\010\022\024\n\014isUpdateable\030\024 \001(\010\022\024\n\014isIdentifier\030" +
+      "\025 \001(\010\022\026\n\016isAllowLogging\030\026 \001(\010\022\031\n\021isSelec" +
+      "tionColumn\030\027 \001(\010\022\017\n\007isRange\030\030 \001(\010\022\032\n\022isA" +
+      "lwaysUpdateable\030\031 \001(\010\022\024\n\014isTranslated\030\032 " +
+      "\001(\010\022\032\n\022identifierSequence\030M \001(\005\022\024\n\014displ" +
+      "ayLogic\030\034 \001(\t\022\023\n\013displayType\030\035 \001(\005\022\024\n\014de" +
+      "faultValue\030\036 \001(\t\022\025\n\rreadOnlyLogic\030\037 \001(\t\022" +
+      "\026\n\016mandatoryLogic\030  \001(\t\022\017\n\007callout\030! \001(\t" +
+      "\022\021\n\tcolumnSQL\030\" \001(\t\022\017\n\007vFormat\030# \001(\t\022\020\n\010" +
+      "valueMin\030$ \001(\t\022\020\n\010valueMax\030% \001(\t\022\025\n\rform" +
+      "atPattern\030& \001(\t\022,\n\013contextInfo\030\' \001(\0132\027.d" +
+      "ictionary.ContextInfo\022*\n\nfieldGroup\030( \001(" +
+      "\0132\026.dictionary.FieldGroup\022*\n\nvalidation\030" +
+      ") \001(\0132\026.dictionary.Validation\0224\n\017fieldDe" +
+      "finition\030* \001(\0132\033.dictionary.FieldDefinit" +
+      "ion\022(\n\treference\030+ \001(\0132\025.dictionary.Refe" +
+      "rence\022$\n\007process\030, \001(\0132\023.dictionary.Proc" +
+      "ess\022\027\n\017isQueryCriteria\030- \001(\010\022\021\n\tisOrderB" +
+      "y\030. \001(\010\022\021\n\tseqNoGrid\030/ \001(\005\022\016\n\006sortNo\0300 \001" +
+      "(\005\022\022\n\nisInfoOnly\0301 \001(\010\022\026\n\016defaultValueTo" +
+      "\0302 \001(\t\"\216\001\n\013ContextInfo\022\n\n\002id\030\001 \001(\005\022\014\n\004uu" +
+      "id\030\002 \001(\t\022\014\n\004name\030\003 \001(\t\022\023\n\013description\030\004 " +
+      "\001(\t\022,\n\013messageText\030\005 \001(\0132\027.dictionary.Me" +
+      "ssageText\022\024\n\014sqlStatement\030\006 \001(\t\"h\n\013Messa" +
+      "geText\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(\t\022\r\n\005valu" +
+      "e\030\003 \001(\t\022\017\n\007msgType\030\004 \001(\t\022\017\n\007msgText\030\005 \001(" +
+      "\t\022\016\n\006msgTip\030\006 \001(\t\"L\n\nFieldGroup\022\n\n\002id\030\001 " +
+      "\001(\005\022\014\n\004uuid\030\002 \001(\t\022\014\n\004name\030\003 \001(\t\022\026\n\016field" +
+      "GroupType\030\004 \001(\t\"\220\001\n\017FieldDefinition\022\n\n\002i" +
+      "d\030\001 \001(\005\022\014\n\004uuid\030\002 \001(\t\022\r\n\005value\030\003 \001(\t\022\014\n\004" +
+      "name\030\004 \001(\t\022\026\n\016fieldGroupType\030\005 \001(\t\022.\n\nco" +
+      "nditions\030\006 \003(\0132\032.dictionary.FieldConditi" +
+      "on\"Q\n\016FieldCondition\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid" +
+      "\030\002 \001(\t\022\021\n\tcondition\030\003 \001(\t\022\022\n\nStylesheet\030" +
+      "\004 \001(\t\"\332\001\n\007Process\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 " +
+      "\001(\t\022\r\n\005value\030\003 \001(\t\022\014\n\004name\030\004 \001(\t\022\023\n\013desc" +
+      "ription\030\005 \001(\t\022\014\n\004help\030\006 \001(\t\022\020\n\010isReport\030" +
+      "\007 \001(\010\022\023\n\013accessLevel\030\010 \001(\005\022\020\n\010showHelp\030\t" +
+      " \001(\t\022\025\n\risDirectPrint\030\n \001(\010\022%\n\nparameter" +
+      "s\030\013 \003(\0132\021.dictionary.Field\"y\n\004Form\022\n\n\002id" +
+      "\030\001 \001(\005\022\014\n\004uuid\030\002 \001(\t\022\014\n\004name\030\003 \001(\t\022\023\n\013de" +
+      "scription\030\004 \001(\t\022\014\n\004help\030\005 \001(\t\022\023\n\013accessL" +
+      "evel\030\006 \001(\005\022\021\n\tclassName\030\007 \001(\t\"\261\003\n\014SmartB" +
+      "rowser\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(\t\022\r\n\005valu" +
+      "e\030\003 \001(\t\022\014\n\004name\030\004 \001(\t\022\023\n\013description\030\005 \001" +
+      "(\t\022\014\n\004help\030\006 \001(\t\022\023\n\013accessLevel\030\010 \001(\005\022\023\n" +
+      "\013whereClause\030\t \001(\t\022\024\n\014isUpdateable\030\n \001(\010" +
+      "\022\024\n\014IsDeleteable\030\013 \001(\010\022\033\n\023IsSelectedByDe" +
+      "fault\030\014 \001(\010\022\036\n\026IsCollapsibleByDefault\030\r " +
+      "\001(\010\022 \n\030IsExecutedQueryByDefault\030\016 \001(\010\022\023\n" +
+      "\013IsShowTotal\030\017 \001(\010\022\020\n\010viewUuid\030\020 \001(\t\022\"\n\006" +
+      "window\030\021 \001(\0132\022.dictionary.Window\022$\n\007proc" +
+      "ess\030\022 \001(\0132\023.dictionary.Process\022!\n\006fields" +
+      "\030\023 \003(\0132\021.dictionary.Field\"Z\n\nValidation\022" +
+      "\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(\t\022\014\n\004name\030\003 \001(\t\022" +
+      "\026\n\016validationType\030\004 \001(\t\022\014\n\004code\030\005 \001(\t\"\253\001" +
+      "\n\tReference\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(\t\022\014\n" +
+      "\004name\030\003 \001(\t\022\026\n\016validationType\030\004 \001(\t\0222\n\016r" +
+      "eferenceTable\030\005 \001(\0132\032.dictionary.Referen" +
+      "ceTable\022*\n\006values\030\006 \003(\0132\032.dictionary.Ref" +
+      "erenceValue\"\\\n\016ReferenceValue\022\n\n\002id\030\001 \001(" +
+      "\005\022\014\n\004uuid\030\002 \001(\t\022\r\n\005value\030\003 \001(\t\022\014\n\004name\030\004" +
+      " \001(\t\022\023\n\013description\030\005 \001(\t\"\317\001\n\016ReferenceT" +
+      "able\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(\t\022\021\n\ttableN" +
+      "ame\030\003 \001(\t\022\025\n\rkeyColumnName\030\004 \001(\t\022\031\n\021disp" +
+      "layColumnName\030\005 \001(\t\022\033\n\023isDisplayIdentifi" +
+      "er\030\006 \001(\010\022\030\n\020isValueDisplayed\030\007 \001(\010\022\022\n\ndi" +
+      "splaySQL\030\010 \001(\t\022\023\n\013whereClause\030\t \001(\t\"\250\002\n\004" +
+      "Menu\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(\t\022\022\n\nparent" +
+      "Uuid\030\004 \001(\t\022\014\n\004name\030\005 \001(\t\022\023\n\013description\030" +
+      "\006 \001(\t\022\020\n\010sequence\030\007 \001(\t\022\022\n\nisReadOnly\030\010 " +
+      "\001(\010\022\021\n\tisSummary\030\t \001(\010\022\017\n\007isSOTrx\030\n \001(\010\022" +
+      "\016\n\006action\030\013 \001(\t\022\020\n\010formUuid\030\014 \001(\t\022\022\n\nwin" +
+      "dowUuid\030\r \001(\t\022\023\n\013processUuid\030\016 \001(\t\022\030\n\020sm" +
+      "artBrowserUuid\030\017 \001(\t\022 \n\006childs\030\020 \003(\0132\020.d" +
+      "ictionary.Menu2\343\003\n\021DictionaryService\022D\n\023" +
+      "RequestMenuAndChild\022\031.dictionary.ObjectR" +
+      "equest\032\020.dictionary.Menu\"\000\022<\n\013RequestMen" +
+      "u\022\031.dictionary.ObjectRequest\032\020.dictionar" +
+      "y.Menu\"\000\022@\n\rRequestWindow\022\031.dictionary.O" +
+      "bjectRequest\032\022.dictionary.Window\"\000\022G\n\024Re" +
+      "questWindowAndTabs\022\031.dictionary.ObjectRe" +
+      "quest\032\022.dictionary.Window\"\000\022:\n\nRequestTa" +
+      "b\022\031.dictionary.ObjectRequest\032\017.dictionar" +
+      "y.Tab\"\000\022C\n\023RequestTabAndFields\022\031.diction" +
+      "ary.ObjectRequest\032\017.dictionary.Tab\"\000\022>\n\014" +
+      "RequestField\022\031.dictionary.ObjectRequest\032" +
+      "\021.dictionary.Field\"\000B1\n\022org.spin.grpc.ut" +
+      "ilB\023ADempiereDictionaryP\001\242\002\003HLWb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -275,7 +260,7 @@ public final class ADempiereDictionary {
     internal_static_dictionary_ClientRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dictionary_ClientRequest_descriptor,
-        new java.lang.String[] { "Uuid", "Language", });
+        new java.lang.String[] { "Id", "Uuid", "Language", });
     internal_static_dictionary_ObjectRequest_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_dictionary_ObjectRequest_fieldAccessorTable = new
@@ -293,97 +278,97 @@ public final class ADempiereDictionary {
     internal_static_dictionary_Window_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dictionary_Window_descriptor,
-        new java.lang.String[] { "ErrorMessage", "Uuid", "Name", "Description", "Help", "IsSOTrx", "ContextInfo", "Tabs", });
+        new java.lang.String[] { "Id", "Uuid", "Name", "Description", "Help", "IsSOTrx", "ContextInfo", "Tabs", });
     internal_static_dictionary_Tab_descriptor =
       getDescriptor().getMessageTypes().get(4);
     internal_static_dictionary_Tab_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dictionary_Tab_descriptor,
-        new java.lang.String[] { "ErrorMessage", "Uuid", "Name", "Description", "Help", "TableName", "Sequence", "TabLevel", "IsSingleRow", "IsAdvancedTab", "IsHasTree", "IsInfoTab", "IsSortTab", "IsTranslationTab", "IsReadOnly", "IsInsertRecord", "IsView", "IsDeleteable", "IsDocument", "AccessLevel", "LinkColumnName", "ParentColumnName", "DisplayLogic", "CommitWarning", "OrderByClause", "ContextInfo", "Process", "Fields", });
+        new java.lang.String[] { "Id", "Uuid", "Name", "Description", "Help", "TableName", "Sequence", "TabLevel", "IsSingleRow", "IsAdvancedTab", "IsHasTree", "IsInfoTab", "IsSortTab", "IsTranslationTab", "IsReadOnly", "IsInsertRecord", "IsView", "IsDeleteable", "IsDocument", "AccessLevel", "LinkColumnName", "ParentColumnName", "DisplayLogic", "CommitWarning", "OrderByClause", "ContextInfo", "Process", "Fields", });
     internal_static_dictionary_Field_descriptor =
       getDescriptor().getMessageTypes().get(5);
     internal_static_dictionary_Field_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dictionary_Field_descriptor,
-        new java.lang.String[] { "ErrorMessage", "Uuid", "Name", "Description", "Help", "Sequence", "ColumnName", "IsDisplayed", "IsDisplayedGrid", "IsReadOnly", "IsAllowCopy", "IsEncrypted", "IsSameLine", "IsHeading", "IsFieldOnly", "IsQuickEntry", "IsMandatory", "IsKey", "IsParent", "IsUpdateable", "IsIdentifier", "IsAllowLogging", "IsSelectionColumn", "IsRange", "IsAlwaysUpdateable", "IsTranslated", "IdentifierSequence", "DisplayLogic", "DisplayType", "DefaultValue", "ReadOnlyLogic", "MandatoryLogic", "Callout", "ColumnSQL", "VFormat", "ValueMin", "ValueMax", "FormatPattern", "ContextInfo", "FieldGroup", "Validation", "FieldDefinition", "Reference", "Process", "IsQueryCriteria", "IsOrderBy", "SeqNoGrid", "SortNo", "IsInfoOnly", "DefaultValueTo", });
+        new java.lang.String[] { "Id", "Uuid", "Name", "Description", "Help", "Sequence", "ColumnName", "IsDisplayed", "IsDisplayedGrid", "IsReadOnly", "IsAllowCopy", "IsEncrypted", "IsSameLine", "IsHeading", "IsFieldOnly", "IsQuickEntry", "IsMandatory", "IsKey", "IsParent", "IsUpdateable", "IsIdentifier", "IsAllowLogging", "IsSelectionColumn", "IsRange", "IsAlwaysUpdateable", "IsTranslated", "IdentifierSequence", "DisplayLogic", "DisplayType", "DefaultValue", "ReadOnlyLogic", "MandatoryLogic", "Callout", "ColumnSQL", "VFormat", "ValueMin", "ValueMax", "FormatPattern", "ContextInfo", "FieldGroup", "Validation", "FieldDefinition", "Reference", "Process", "IsQueryCriteria", "IsOrderBy", "SeqNoGrid", "SortNo", "IsInfoOnly", "DefaultValueTo", });
     internal_static_dictionary_ContextInfo_descriptor =
       getDescriptor().getMessageTypes().get(6);
     internal_static_dictionary_ContextInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dictionary_ContextInfo_descriptor,
-        new java.lang.String[] { "ErrorMessage", "Uuid", "Name", "Description", "MessageText", "SqlStatement", });
+        new java.lang.String[] { "Id", "Uuid", "Name", "Description", "MessageText", "SqlStatement", });
     internal_static_dictionary_MessageText_descriptor =
       getDescriptor().getMessageTypes().get(7);
     internal_static_dictionary_MessageText_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dictionary_MessageText_descriptor,
-        new java.lang.String[] { "ErrorMessage", "Uuid", "Value", "MsgType", "MsgText", "MsgTip", });
+        new java.lang.String[] { "Id", "Uuid", "Value", "MsgType", "MsgText", "MsgTip", });
     internal_static_dictionary_FieldGroup_descriptor =
       getDescriptor().getMessageTypes().get(8);
     internal_static_dictionary_FieldGroup_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dictionary_FieldGroup_descriptor,
-        new java.lang.String[] { "ErrorMessage", "Uuid", "Name", "FieldGroupType", });
+        new java.lang.String[] { "Id", "Uuid", "Name", "FieldGroupType", });
     internal_static_dictionary_FieldDefinition_descriptor =
       getDescriptor().getMessageTypes().get(9);
     internal_static_dictionary_FieldDefinition_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dictionary_FieldDefinition_descriptor,
-        new java.lang.String[] { "ErrorMessage", "Uuid", "Value", "Name", "FieldGroupType", "Conditions", });
+        new java.lang.String[] { "Id", "Uuid", "Value", "Name", "FieldGroupType", "Conditions", });
     internal_static_dictionary_FieldCondition_descriptor =
       getDescriptor().getMessageTypes().get(10);
     internal_static_dictionary_FieldCondition_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dictionary_FieldCondition_descriptor,
-        new java.lang.String[] { "ErrorMessage", "Uuid", "Condition", "Stylesheet", });
+        new java.lang.String[] { "Id", "Uuid", "Condition", "Stylesheet", });
     internal_static_dictionary_Process_descriptor =
       getDescriptor().getMessageTypes().get(11);
     internal_static_dictionary_Process_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dictionary_Process_descriptor,
-        new java.lang.String[] { "ErrorMessage", "Uuid", "Value", "Name", "Description", "Help", "IsReport", "AccessLevel", "ShowHelp", "IsDirectPrint", "Parameters", });
+        new java.lang.String[] { "Id", "Uuid", "Value", "Name", "Description", "Help", "IsReport", "AccessLevel", "ShowHelp", "IsDirectPrint", "Parameters", });
     internal_static_dictionary_Form_descriptor =
       getDescriptor().getMessageTypes().get(12);
     internal_static_dictionary_Form_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dictionary_Form_descriptor,
-        new java.lang.String[] { "ErrorMessage", "Uuid", "Name", "Description", "Help", "AccessLevel", "ClassName", });
+        new java.lang.String[] { "Id", "Uuid", "Name", "Description", "Help", "AccessLevel", "ClassName", });
     internal_static_dictionary_SmartBrowser_descriptor =
       getDescriptor().getMessageTypes().get(13);
     internal_static_dictionary_SmartBrowser_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dictionary_SmartBrowser_descriptor,
-        new java.lang.String[] { "ErrorMessage", "Uuid", "Value", "Name", "Description", "Help", "AccessLevel", "WhereClause", "IsUpdateable", "IsDeleteable", "IsSelectedByDefault", "IsCollapsibleByDefault", "IsExecutedQueryByDefault", "IsShowTotal", "ViewUuid", "Window", "Process", "Fields", });
+        new java.lang.String[] { "Id", "Uuid", "Value", "Name", "Description", "Help", "AccessLevel", "WhereClause", "IsUpdateable", "IsDeleteable", "IsSelectedByDefault", "IsCollapsibleByDefault", "IsExecutedQueryByDefault", "IsShowTotal", "ViewUuid", "Window", "Process", "Fields", });
     internal_static_dictionary_Validation_descriptor =
       getDescriptor().getMessageTypes().get(14);
     internal_static_dictionary_Validation_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dictionary_Validation_descriptor,
-        new java.lang.String[] { "ErrorMessage", "Uuid", "Name", "ValidationType", "Code", });
+        new java.lang.String[] { "Id", "Uuid", "Name", "ValidationType", "Code", });
     internal_static_dictionary_Reference_descriptor =
       getDescriptor().getMessageTypes().get(15);
     internal_static_dictionary_Reference_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dictionary_Reference_descriptor,
-        new java.lang.String[] { "ErrorMessage", "Uuid", "Name", "ValidationType", "ReferenceTable", "Values", });
+        new java.lang.String[] { "Id", "Uuid", "Name", "ValidationType", "ReferenceTable", "Values", });
     internal_static_dictionary_ReferenceValue_descriptor =
       getDescriptor().getMessageTypes().get(16);
     internal_static_dictionary_ReferenceValue_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dictionary_ReferenceValue_descriptor,
-        new java.lang.String[] { "ErrorMessage", "Uuid", "Value", "Name", "Description", });
+        new java.lang.String[] { "Id", "Uuid", "Value", "Name", "Description", });
     internal_static_dictionary_ReferenceTable_descriptor =
       getDescriptor().getMessageTypes().get(17);
     internal_static_dictionary_ReferenceTable_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dictionary_ReferenceTable_descriptor,
-        new java.lang.String[] { "ErrorMessage", "Uuid", "TableName", "KeyColumnName", "DisplayColumnName", "IsDisplayIdentifier", "IsValueDisplayed", "DisplaySQL", "WhereClause", });
+        new java.lang.String[] { "Id", "Uuid", "TableName", "KeyColumnName", "DisplayColumnName", "IsDisplayIdentifier", "IsValueDisplayed", "DisplaySQL", "WhereClause", });
     internal_static_dictionary_Menu_descriptor =
       getDescriptor().getMessageTypes().get(18);
     internal_static_dictionary_Menu_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dictionary_Menu_descriptor,
-        new java.lang.String[] { "ErrorMessage", "Uuid", "ParentUuid", "Name", "Description", "Sequence", "IsReadOnly", "IsSummary", "IsSOTrx", "Action", "FormUuid", "WindowUuid", "ProcessUuid", "SmartBrowserUuid", "Childs", });
+        new java.lang.String[] { "Id", "Uuid", "ParentUuid", "Name", "Description", "Sequence", "IsReadOnly", "IsSummary", "IsSOTrx", "Action", "FormUuid", "WindowUuid", "ProcessUuid", "SmartBrowserUuid", "Childs", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

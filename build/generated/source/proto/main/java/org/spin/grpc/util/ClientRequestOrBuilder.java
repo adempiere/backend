@@ -8,21 +8,26 @@ public interface ClientRequestOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
   /**
-   * <code>string uuid = 1;</code>
+   * <code>int32 id = 1;</code>
+   */
+  int getId();
+
+  /**
+   * <code>string uuid = 2;</code>
    */
   java.lang.String getUuid();
   /**
-   * <code>string uuid = 1;</code>
+   * <code>string uuid = 2;</code>
    */
   com.google.protobuf.ByteString
       getUuidBytes();
 
   /**
-   * <code>string language = 2;</code>
+   * <code>string language = 3;</code>
    */
   java.lang.String getLanguage();
   /**
-   * <code>string language = 2;</code>
+   * <code>string language = 3;</code>
    */
   com.google.protobuf.ByteString
       getLanguageBytes();

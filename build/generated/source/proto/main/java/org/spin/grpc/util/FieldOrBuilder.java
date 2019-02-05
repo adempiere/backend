@@ -8,17 +8,9 @@ public interface FieldOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
   /**
-   * <code>.dictionary.ErrorMessage errorMessage = 1;</code>
+   * <code>int32 id = 1;</code>
    */
-  boolean hasErrorMessage();
-  /**
-   * <code>.dictionary.ErrorMessage errorMessage = 1;</code>
-   */
-  org.spin.grpc.util.ErrorMessage getErrorMessage();
-  /**
-   * <code>.dictionary.ErrorMessage errorMessage = 1;</code>
-   */
-  org.spin.grpc.util.ErrorMessageOrBuilder getErrorMessageOrBuilder();
+  int getId();
 
   /**
    * <code>string uuid = 2;</code>
@@ -251,14 +243,24 @@ public interface FieldOrBuilder extends
       getVFormatBytes();
 
   /**
-   * <code>double valueMin = 36;</code>
+   * <code>string valueMin = 36;</code>
    */
-  double getValueMin();
+  java.lang.String getValueMin();
+  /**
+   * <code>string valueMin = 36;</code>
+   */
+  com.google.protobuf.ByteString
+      getValueMinBytes();
 
   /**
-   * <code>double valueMax = 37;</code>
+   * <code>string valueMax = 37;</code>
    */
-  double getValueMax();
+  java.lang.String getValueMax();
+  /**
+   * <code>string valueMax = 37;</code>
+   */
+  com.google.protobuf.ByteString
+      getValueMaxBytes();
 
   /**
    * <code>string formatPattern = 38;</code>
