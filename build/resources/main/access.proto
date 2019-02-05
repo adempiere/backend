@@ -1,0 +1,122 @@
+/*************************************************************************************
+ * Copyright (C) 2012-2018 E.R.P. Consultores y Asociados, C.A.                      *
+ * Contributor(s): Yamel Senih ysenih@erpya.com                                      *
+ * This program is free software: you can redistribute it and/or modify              *
+ * it under the terms of the GNU General Public License as published by              *
+ * the Free Software Foundation, either version 2 of the License, or                 *
+ * (at your option) any later version.                                               *
+ * This program is distributed in the hope that it will be useful,                   *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of                    *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                     *
+ * GNU General Public License for more details.                                      *
+ * You should have received a copy of the GNU General Public License                 *
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.            *
+ ************************************************************************************/
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "org.spin.grpc.util";
+option java_outer_classname = "ADempiereAccess";
+option objc_class_prefix = "HLW";
+
+package access;
+
+// The greeting service definition.
+service AccessService {
+  // Request user roles
+  rpc RequestUserRoles(UserRequest) returns (UserRoles) {}
+  // Request a Role from uuid
+  rpc RequestRole(ObjectRequest) returns (Role) {}  
+}
+
+// The client request contains client info for request.
+message UserRequest {
+	string userName = 1;
+	string userPass = 2;
+	string token = 3;
+	string clientVersion = 4;
+}
+
+// The client request contains client info for request.
+message ClientRequest {
+	string uuid = 1;
+	string language = 2;
+	string clientVersion = 3;
+	string clientUuid = 4;
+	string orgUuid = 5;
+}
+
+// Object request
+message ObjectRequest {
+	int32 id = 1;
+	string uuid = 2;
+	ClientRequest clientRequest = 3;
+}
+
+// Role list from user
+message UserRoles {
+	string uuid = 1;
+	repeated Role roles = 2;
+}
+
+// Role Definition
+message Role {
+	int32 id = 1;
+	string uuid = 2;
+	string name = 3;
+	string description = 4;
+	// Entity Access
+	repeated Access organizations = 5;
+	repeated Access windows = 6;
+	repeated Access process = 7;
+	repeated Access forms = 8;
+	repeated Access browsers = 9;
+	repeated Access workflows = 10;
+	repeated Access tasks = 11;
+	repeated Access dashboards = 12;
+	repeated Access documentActions = 13;
+	repeated TableAccess tables = 14;
+	repeated ColumnAccess columns = 15;
+	repeated RecordAccess records = 16;
+}
+
+// Access for distinct entity
+message Access {
+	string uuid = 1;
+	bool isReadOnly = 2;
+	// Optional for Document Action Access
+	string action = 3;
+}
+
+// Access for Table
+message TableAccess {
+	string tableName = 1;
+	bool isExclude = 2;
+	bool isCanReport = 3;
+	bool isCanExport = 4;
+	enum AccessTypeRule {
+		ACCESSING = 0;
+		EXPORTING = 1;
+		REPORTING = 2;
+	}
+	AccessTypeRule accessTypeRules = 5;
+}
+
+// Access for Column
+message ColumnAccess {
+	string tableName = 1;
+	string columnName = 2;
+	bool isExclude = 3;
+	bool isReadOnly = 4;
+}
+
+// Access for Record
+message RecordAccess {
+	string tableName = 1;
+	int32 recordId = 2;
+	string recordUuid = 3;
+	bool isExclude = 4;
+	bool isReadOnly = 5;
+	bool isDependentEntities = 6;
+}
+
