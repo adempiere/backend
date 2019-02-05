@@ -37,12 +37,12 @@ public class DictionaryClient {
 	   * Request Window. 
 	   */
 	  public void requestWindow(boolean withTabs) {
-		  ClientRequest clientRequest = ClientRequest.newBuilder()
+		  ApplicationRequest applicationRequest = ApplicationRequest.newBuilder()
 				  .setLanguage("es_MX")
 				  .build();
-		  ObjectRequest request = ObjectRequest.newBuilder()
+		  EntityRequest request = EntityRequest.newBuilder()
 	    		.setUuid("a520de12-fb40-11e8-a479-7a0060f0aa01")
-	    		.setClientRequest(clientRequest)
+	    		.setApplicationRequest(applicationRequest)
 	    		.build();
 		  Window response;
 		  try {
@@ -66,12 +66,12 @@ public class DictionaryClient {
 	   * Request Window. 
 	   */
 	  public void requestMenu(boolean withTabs) {
-		  ClientRequest clientRequest = ClientRequest.newBuilder()
+		  ApplicationRequest applicationRequest = ApplicationRequest.newBuilder()
 				  .setLanguage("es_MX")
 				  .build();
-		  ObjectRequest request = ObjectRequest.newBuilder()
+		  EntityRequest request = EntityRequest.newBuilder()
 	    		//.setUuid("8e4fd396-fb40-11e8-a479-7a0060f0aa01")
-	    		.setClientRequest(clientRequest)
+	    		.setApplicationRequest(applicationRequest)
 	    		.build();
 		  Menu response;
 		  try {
@@ -95,12 +95,12 @@ public class DictionaryClient {
 	   * Request Tab
 	   */
 	  public void requestTab(boolean withFields) {
-		  ClientRequest clientRequest = ClientRequest.newBuilder()
+		  ApplicationRequest applicationRequest = ApplicationRequest.newBuilder()
 				  .setLanguage("es_MX")
 				  .build();
-		  ObjectRequest request = ObjectRequest.newBuilder()
+		  EntityRequest request = EntityRequest.newBuilder()
 	    		.setUuid("a49fb4e0-fb40-11e8-a479-7a0060f0aa01")
-	    		.setClientRequest(clientRequest)
+	    		.setApplicationRequest(applicationRequest)
 	    		.build();
 		  Tab response;
 		  try {
@@ -123,12 +123,12 @@ public class DictionaryClient {
 	   * Request Field
 	   */
 	  public void requestField() {
-		  ClientRequest clientRequest = ClientRequest.newBuilder()
+		  ApplicationRequest applicationRequest = ApplicationRequest.newBuilder()
 				  .setLanguage("es_MX")
 				  .build();
-		  ObjectRequest request = ObjectRequest.newBuilder()
+		  EntityRequest request = EntityRequest.newBuilder()
 	    		.setUuid("8cecee3a-fb40-11e8-a479-7a0060f0aa01")
-	    		.setClientRequest(clientRequest)
+	    		.setApplicationRequest(applicationRequest)
 	    		.build();
 		  Field response;
 		  try {
@@ -145,7 +145,7 @@ public class DictionaryClient {
 	   * greeting.
 	   */
 	  public static void main(String[] args) throws Exception {
-		DictionaryClient client = new DictionaryClient("localhost", 50053);
+		DictionaryClient client = new DictionaryClient("localhost", 50051);
 	    try {
 	    	logger.info("####################### Menu Only #####################");
 	    	client.requestMenu(false);

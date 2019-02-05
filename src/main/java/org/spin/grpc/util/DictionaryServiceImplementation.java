@@ -47,47 +47,47 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 
 	
 	@Override
-	public void requestWindow(ObjectRequest request, StreamObserver<Window> responseObserver) {
+	public void requestWindow(EntityRequest request, StreamObserver<Window> responseObserver) {
 		requestWindow(request, responseObserver, false);
 	}
 	
 	@Override
-	public void requestWindowAndTabs(ObjectRequest request, StreamObserver<Window> responseObserver) {
+	public void requestWindowAndTabs(EntityRequest request, StreamObserver<Window> responseObserver) {
 		requestWindow(request, responseObserver, true);
 	}
 	
 	@Override
-	public void requestTab(ObjectRequest request, StreamObserver<Tab> responseObserver) {
+	public void requestTab(EntityRequest request, StreamObserver<Tab> responseObserver) {
 		requestTab(request, responseObserver, false);
 	}
 	
 	@Override
-	public void requestTabAndFields(ObjectRequest request, StreamObserver<Tab> responseObserver) {
+	public void requestTabAndFields(EntityRequest request, StreamObserver<Tab> responseObserver) {
 		requestTab(request, responseObserver, true);
 	}
 	
 	@Override
-	public void requestMenu(ObjectRequest request, StreamObserver<Menu> responseObserver) {
+	public void requestMenu(EntityRequest request, StreamObserver<Menu> responseObserver) {
 		requestMenu(request, responseObserver, false);
 	}
 	
 	@Override
-	public void requestMenuAndChild(ObjectRequest request, StreamObserver<Menu> responseObserver) {
+	public void requestMenuAndChild(EntityRequest request, StreamObserver<Menu> responseObserver) {
 		requestMenu(request, responseObserver, true);
 	}
 	
 	@Override
-	public void requestField(ObjectRequest request, StreamObserver<Field> responseObserver) {
+	public void requestField(EntityRequest request, StreamObserver<Field> responseObserver) {
 		if(request == null
 				|| Util.isEmpty(request.getUuid())) {
 			log.fine("Object Request Null");
 			return;
 		}
 		log.fine("Field Requested = " + request.getUuid());
-		ClientRequest clientInfo = request.getClientRequest();
+		ApplicationRequest applicationInfo = request.getApplicationRequest();
 		String language = null;
-		if(clientInfo != null) {
-			language = clientInfo.getLanguage();
+		if(applicationInfo != null) {
+			language = applicationInfo.getLanguage();
 		}
 		try {
 			Field.Builder fieldBuilder = convertField(request.getUuid(), language);
@@ -104,16 +104,16 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	 * @param responseObserver
 	 * @param withChild
 	 */
-	public void requestMenu(ObjectRequest request, StreamObserver<Menu> responseObserver, boolean withChild) {
+	public void requestMenu(EntityRequest request, StreamObserver<Menu> responseObserver, boolean withChild) {
 		if(request == null) {
 			log.fine("Object Request Null");
 			return;
 		}
 		log.fine("Menu Requested = " + request.getUuid());
-		ClientRequest clientInfo = request.getClientRequest();
+		ApplicationRequest applicationInfo = request.getApplicationRequest();
 		String language = null;
-		if(clientInfo != null) {
-			language = clientInfo.getLanguage();
+		if(applicationInfo != null) {
+			language = applicationInfo.getLanguage();
 		}
 		Menu.Builder menuBuilder = convertMenu(request.getUuid(), language, withChild);
 		try {
@@ -128,17 +128,17 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	/**
 	 * Request with parameters
 	 */
-	public void requestWindow(ObjectRequest request, StreamObserver<Window> responseObserver, boolean withTabs) {
+	public void requestWindow(EntityRequest request, StreamObserver<Window> responseObserver, boolean withTabs) {
 		if(request == null
 				|| Util.isEmpty(request.getUuid())) {
 			log.fine("Object Request Null");
 			return;
 		}
 		log.fine("Window Requested = " + request.getUuid());
-		ClientRequest clientInfo = request.getClientRequest();
+		ApplicationRequest applicationInfo = request.getApplicationRequest();
 		String language = null;
-		if(clientInfo != null) {
-			language = clientInfo.getLanguage();
+		if(applicationInfo != null) {
+			language = applicationInfo.getLanguage();
 		}
 		try {
 			Window.Builder windowBuilder = convertWindow(request.getUuid(), language, withTabs);
@@ -155,14 +155,14 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	 * @param responseObserver
 	 * @param withFields
 	 */
-	public void requestTab(ObjectRequest request, StreamObserver<Tab> responseObserver, boolean withFields) {
+	public void requestTab(EntityRequest request, StreamObserver<Tab> responseObserver, boolean withFields) {
 		if(request == null
 				|| Util.isEmpty(request.getUuid())) {
 			log.fine("Object Request Null");
 			return;
 		}
 		log.fine("Tab Requested = " + request.getUuid());
-		ClientRequest clientInfo = request.getClientRequest();
+		ApplicationRequest clientInfo = request.getApplicationRequest();
 		String language = null;
 		if(clientInfo != null) {
 			language = clientInfo.getLanguage();

@@ -15,6 +15,11 @@ public final class ADempiereData {
         (com.google.protobuf.ExtensionRegistryLite) registry);
   }
   static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_data_ClientRequest_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_data_ClientRequest_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
     internal_static_data_ValueObjectList_descriptor;
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -68,44 +73,46 @@ public final class ADempiereData {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\ndata.proto\022\004data\032\014access.proto\"J\n\017Valu" +
-      "eObjectList\022\023\n\013recordCount\030\001 \001(\003\022\"\n\007reco" +
-      "rds\030\002 \003(\0132\021.data.ValueObject\"\245\001\n\013ValueOb" +
-      "ject\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(\t\022\021\n\ttableN" +
-      "ame\030\003 \001(\t\022-\n\006values\030\004 \003(\0132\035.data.ValueOb" +
-      "ject.ValuesEntry\032:\n\013ValuesEntry\022\013\n\003key\030\001" +
-      " \001(\t\022\032\n\005value\030\002 \001(\0132\013.data.Value:\0028\001\"\351\001\n" +
-      "\005Value\022\020\n\010intValue\030\001 \001(\005\022\021\n\tlongValue\030\002 " +
-      "\001(\003\022\023\n\013doubleValue\030\003 \001(\001\022\024\n\014booleanValue" +
-      "\030\004 \001(\010\022\023\n\013stringValue\030\005 \001(\t\022(\n\tvalueType" +
-      "\030\006 \001(\0162\025.data.Value.ValueType\"Q\n\tValueTy" +
-      "pe\022\013\n\007INTEGER\020\000\022\010\n\004LONG\020\001\022\n\n\006DOUBLE\020\002\022\013\n" +
-      "\007BOOLEAN\020\003\022\n\n\006STRING\020\004\022\010\n\004DATE\020\005\"~\n\022Valu" +
-      "eObjectRequest\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(\t" +
-      "\022,\n\rclientRequest\030\003 \001(\0132\025.access.ClientR" +
-      "equest\022 \n\010criteria\030\004 \001(\0132\016.data.Criteria" +
-      "\"Q\n\010Criteria\022\021\n\ttableName\030\001 \001(\t\022\r\n\005limit" +
-      "\030\002 \001(\003\022#\n\nconditions\030\003 \003(\0132\017.data.Condit" +
-      "ion\"\300\002\n\tCondition\022\032\n\005value\030\001 \001(\0132\013.data." +
-      "Value\022\034\n\007valueTo\030\002 \001(\0132\013.data.Value\022\033\n\006v" +
-      "alues\030\003 \003(\0132\013.data.Value\022*\n\010operator\030\004 \001" +
-      "(\0162\030.data.Condition.Operator\"\257\001\n\010Operato" +
-      "r\022\t\n\005EQUAL\020\000\022\r\n\tNOT_EQUAL\020\001\022\010\n\004LIKE\020\002\022\014\n" +
-      "\010NOT_LIKE\020\003\022\013\n\007GREATER\020\004\022\021\n\rGREATER_EQUA" +
-      "L\020\005\022\010\n\004LESS\020\006\022\016\n\nLESS_EQUAL\020\007\022\013\n\007BETWEEN" +
-      "\020\010\022\014\n\010NOT_NULL\020\t\022\010\n\004NULL\020\n\022\006\n\002IN\020\013\022\n\n\006NO" +
-      "T_IN\020\014\"w\n\016CalloutRequest\022,\n\rclientReques" +
-      "t\030\001 \001(\0132\025.access.ClientRequest\022\017\n\007callou" +
-      "t\030\002 \001(\t\022&\n\013valueObject\030\003 \001(\0132\021.data.Valu" +
-      "eObject\">\n\017CalloutResponse\022\016\n\006result\030\001 \001" +
-      "(\t\022\033\n\006values\030\002 \003(\0132\013.data.Value2\316\001\n\013Data" +
-      "Service\022:\n\tRequestPO\022\030.data.ValueObjectR" +
-      "equest\032\021.data.ValueObject\"\000\022B\n\rRequestPO" +
-      "List\022\030.data.ValueObjectRequest\032\025.data.Va" +
-      "lueObjectList\"\000\022?\n\016RequestCallout\022\024.data" +
-      ".CalloutRequest\032\025.data.CalloutResponse\"\000" +
-      "B+\n\022org.spin.grpc.utilB\rADempiereDataP\001\242" +
-      "\002\003HLWb\006proto3"
+      "\n\ndata.proto\022\004data\"k\n\rClientRequest\022\014\n\004u" +
+      "uid\030\001 \001(\t\022\020\n\010language\030\002 \001(\t\022\025\n\rclientVer" +
+      "sion\030\003 \001(\t\022\022\n\nclientUuid\030\004 \001(\t\022\017\n\007orgUui" +
+      "d\030\005 \001(\t\"J\n\017ValueObjectList\022\023\n\013recordCoun" +
+      "t\030\001 \001(\003\022\"\n\007records\030\002 \003(\0132\021.data.ValueObj" +
+      "ect\"\245\001\n\013ValueObject\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030" +
+      "\002 \001(\t\022\021\n\ttableName\030\003 \001(\t\022-\n\006values\030\004 \003(\013" +
+      "2\035.data.ValueObject.ValuesEntry\032:\n\013Value" +
+      "sEntry\022\013\n\003key\030\001 \001(\t\022\032\n\005value\030\002 \001(\0132\013.dat" +
+      "a.Value:\0028\001\"\351\001\n\005Value\022\020\n\010intValue\030\001 \001(\005\022" +
+      "\021\n\tlongValue\030\002 \001(\003\022\023\n\013doubleValue\030\003 \001(\001\022" +
+      "\024\n\014booleanValue\030\004 \001(\010\022\023\n\013stringValue\030\005 \001" +
+      "(\t\022(\n\tvalueType\030\006 \001(\0162\025.data.Value.Value" +
+      "Type\"Q\n\tValueType\022\013\n\007INTEGER\020\000\022\010\n\004LONG\020\001" +
+      "\022\n\n\006DOUBLE\020\002\022\013\n\007BOOLEAN\020\003\022\n\n\006STRING\020\004\022\010\n" +
+      "\004DATE\020\005\"|\n\022ValueObjectRequest\022\n\n\002id\030\001 \001(" +
+      "\005\022\014\n\004uuid\030\002 \001(\t\022*\n\rclientRequest\030\003 \001(\0132\023" +
+      ".data.ClientRequest\022 \n\010criteria\030\004 \001(\0132\016." +
+      "data.Criteria\"Q\n\010Criteria\022\021\n\ttableName\030\001" +
+      " \001(\t\022\r\n\005limit\030\002 \001(\003\022#\n\nconditions\030\003 \003(\0132" +
+      "\017.data.Condition\"\300\002\n\tCondition\022\032\n\005value\030" +
+      "\001 \001(\0132\013.data.Value\022\034\n\007valueTo\030\002 \001(\0132\013.da" +
+      "ta.Value\022\033\n\006values\030\003 \003(\0132\013.data.Value\022*\n" +
+      "\010operator\030\004 \001(\0162\030.data.Condition.Operato" +
+      "r\"\257\001\n\010Operator\022\t\n\005EQUAL\020\000\022\r\n\tNOT_EQUAL\020\001" +
+      "\022\010\n\004LIKE\020\002\022\014\n\010NOT_LIKE\020\003\022\013\n\007GREATER\020\004\022\021\n" +
+      "\rGREATER_EQUAL\020\005\022\010\n\004LESS\020\006\022\016\n\nLESS_EQUAL" +
+      "\020\007\022\013\n\007BETWEEN\020\010\022\014\n\010NOT_NULL\020\t\022\010\n\004NULL\020\n\022" +
+      "\006\n\002IN\020\013\022\n\n\006NOT_IN\020\014\"u\n\016CalloutRequest\022*\n" +
+      "\rclientRequest\030\001 \001(\0132\023.data.ClientReques" +
+      "t\022\017\n\007callout\030\002 \001(\t\022&\n\013valueObject\030\003 \001(\0132" +
+      "\021.data.ValueObject\">\n\017CalloutResponse\022\016\n" +
+      "\006result\030\001 \001(\t\022\033\n\006values\030\002 \003(\0132\013.data.Val" +
+      "ue2\316\001\n\013DataService\022:\n\tRequestPO\022\030.data.V" +
+      "alueObjectRequest\032\021.data.ValueObject\"\000\022B" +
+      "\n\rRequestPOList\022\030.data.ValueObjectReques" +
+      "t\032\025.data.ValueObjectList\"\000\022?\n\016RequestCal" +
+      "lout\022\024.data.CalloutRequest\032\025.data.Callou" +
+      "tResponse\"\000B+\n\022org.spin.grpc.utilB\rADemp" +
+      "iereDataP\001\242\002\003HLWb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -118,16 +125,21 @@ public final class ADempiereData {
     com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
-          org.spin.grpc.util.ADempiereAccess.getDescriptor(),
         }, assigner);
-    internal_static_data_ValueObjectList_descriptor =
+    internal_static_data_ClientRequest_descriptor =
       getDescriptor().getMessageTypes().get(0);
+    internal_static_data_ClientRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_data_ClientRequest_descriptor,
+        new java.lang.String[] { "Uuid", "Language", "ClientVersion", "ClientUuid", "OrgUuid", });
+    internal_static_data_ValueObjectList_descriptor =
+      getDescriptor().getMessageTypes().get(1);
     internal_static_data_ValueObjectList_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_data_ValueObjectList_descriptor,
         new java.lang.String[] { "RecordCount", "Records", });
     internal_static_data_ValueObject_descriptor =
-      getDescriptor().getMessageTypes().get(1);
+      getDescriptor().getMessageTypes().get(2);
     internal_static_data_ValueObject_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_data_ValueObject_descriptor,
@@ -139,42 +151,41 @@ public final class ADempiereData {
         internal_static_data_ValueObject_ValuesEntry_descriptor,
         new java.lang.String[] { "Key", "Value", });
     internal_static_data_Value_descriptor =
-      getDescriptor().getMessageTypes().get(2);
+      getDescriptor().getMessageTypes().get(3);
     internal_static_data_Value_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_data_Value_descriptor,
         new java.lang.String[] { "IntValue", "LongValue", "DoubleValue", "BooleanValue", "StringValue", "ValueType", });
     internal_static_data_ValueObjectRequest_descriptor =
-      getDescriptor().getMessageTypes().get(3);
+      getDescriptor().getMessageTypes().get(4);
     internal_static_data_ValueObjectRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_data_ValueObjectRequest_descriptor,
         new java.lang.String[] { "Id", "Uuid", "ClientRequest", "Criteria", });
     internal_static_data_Criteria_descriptor =
-      getDescriptor().getMessageTypes().get(4);
+      getDescriptor().getMessageTypes().get(5);
     internal_static_data_Criteria_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_data_Criteria_descriptor,
         new java.lang.String[] { "TableName", "Limit", "Conditions", });
     internal_static_data_Condition_descriptor =
-      getDescriptor().getMessageTypes().get(5);
+      getDescriptor().getMessageTypes().get(6);
     internal_static_data_Condition_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_data_Condition_descriptor,
         new java.lang.String[] { "Value", "ValueTo", "Values", "Operator", });
     internal_static_data_CalloutRequest_descriptor =
-      getDescriptor().getMessageTypes().get(6);
+      getDescriptor().getMessageTypes().get(7);
     internal_static_data_CalloutRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_data_CalloutRequest_descriptor,
         new java.lang.String[] { "ClientRequest", "Callout", "ValueObject", });
     internal_static_data_CalloutResponse_descriptor =
-      getDescriptor().getMessageTypes().get(7);
+      getDescriptor().getMessageTypes().get(8);
     internal_static_data_CalloutResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_data_CalloutResponse_descriptor,
         new java.lang.String[] { "Result", "Values", });
-    org.spin.grpc.util.ADempiereAccess.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

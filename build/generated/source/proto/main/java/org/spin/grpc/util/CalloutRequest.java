@@ -113,19 +113,19 @@ private static final long serialVersionUID = 0L;
   public static final int CLIENTREQUEST_FIELD_NUMBER = 1;
   private org.spin.grpc.util.ClientRequest clientRequest_;
   /**
-   * <code>.access.ClientRequest clientRequest = 1;</code>
+   * <code>.data.ClientRequest clientRequest = 1;</code>
    */
   public boolean hasClientRequest() {
     return clientRequest_ != null;
   }
   /**
-   * <code>.access.ClientRequest clientRequest = 1;</code>
+   * <code>.data.ClientRequest clientRequest = 1;</code>
    */
   public org.spin.grpc.util.ClientRequest getClientRequest() {
     return clientRequest_ == null ? org.spin.grpc.util.ClientRequest.getDefaultInstance() : clientRequest_;
   }
   /**
-   * <code>.access.ClientRequest clientRequest = 1;</code>
+   * <code>.data.ClientRequest clientRequest = 1;</code>
    */
   public org.spin.grpc.util.ClientRequestOrBuilder getClientRequestOrBuilder() {
     return getClientRequest();
@@ -537,13 +537,13 @@ private static final long serialVersionUID = 0L;
     private com.google.protobuf.SingleFieldBuilderV3<
         org.spin.grpc.util.ClientRequest, org.spin.grpc.util.ClientRequest.Builder, org.spin.grpc.util.ClientRequestOrBuilder> clientRequestBuilder_;
     /**
-     * <code>.access.ClientRequest clientRequest = 1;</code>
+     * <code>.data.ClientRequest clientRequest = 1;</code>
      */
     public boolean hasClientRequest() {
       return clientRequestBuilder_ != null || clientRequest_ != null;
     }
     /**
-     * <code>.access.ClientRequest clientRequest = 1;</code>
+     * <code>.data.ClientRequest clientRequest = 1;</code>
      */
     public org.spin.grpc.util.ClientRequest getClientRequest() {
       if (clientRequestBuilder_ == null) {
@@ -553,7 +553,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>.access.ClientRequest clientRequest = 1;</code>
+     * <code>.data.ClientRequest clientRequest = 1;</code>
      */
     public Builder setClientRequest(org.spin.grpc.util.ClientRequest value) {
       if (clientRequestBuilder_ == null) {
@@ -569,7 +569,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.access.ClientRequest clientRequest = 1;</code>
+     * <code>.data.ClientRequest clientRequest = 1;</code>
      */
     public Builder setClientRequest(
         org.spin.grpc.util.ClientRequest.Builder builderForValue) {
@@ -583,7 +583,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.access.ClientRequest clientRequest = 1;</code>
+     * <code>.data.ClientRequest clientRequest = 1;</code>
      */
     public Builder mergeClientRequest(org.spin.grpc.util.ClientRequest value) {
       if (clientRequestBuilder_ == null) {
@@ -601,7 +601,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.access.ClientRequest clientRequest = 1;</code>
+     * <code>.data.ClientRequest clientRequest = 1;</code>
      */
     public Builder clearClientRequest() {
       if (clientRequestBuilder_ == null) {
@@ -615,7 +615,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.access.ClientRequest clientRequest = 1;</code>
+     * <code>.data.ClientRequest clientRequest = 1;</code>
      */
     public org.spin.grpc.util.ClientRequest.Builder getClientRequestBuilder() {
       
@@ -623,7 +623,7 @@ private static final long serialVersionUID = 0L;
       return getClientRequestFieldBuilder().getBuilder();
     }
     /**
-     * <code>.access.ClientRequest clientRequest = 1;</code>
+     * <code>.data.ClientRequest clientRequest = 1;</code>
      */
     public org.spin.grpc.util.ClientRequestOrBuilder getClientRequestOrBuilder() {
       if (clientRequestBuilder_ != null) {
@@ -634,7 +634,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>.access.ClientRequest clientRequest = 1;</code>
+     * <code>.data.ClientRequest clientRequest = 1;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
         org.spin.grpc.util.ClientRequest, org.spin.grpc.util.ClientRequest.Builder, org.spin.grpc.util.ClientRequestOrBuilder> 

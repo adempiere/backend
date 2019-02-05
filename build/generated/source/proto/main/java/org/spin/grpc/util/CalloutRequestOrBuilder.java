@@ -8,15 +8,15 @@ public interface CalloutRequestOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
   /**
-   * <code>.access.ClientRequest clientRequest = 1;</code>
+   * <code>.data.ClientRequest clientRequest = 1;</code>
    */
   boolean hasClientRequest();
   /**
-   * <code>.access.ClientRequest clientRequest = 1;</code>
+   * <code>.data.ClientRequest clientRequest = 1;</code>
    */
   org.spin.grpc.util.ClientRequest getClientRequest();
   /**
-   * <code>.access.ClientRequest clientRequest = 1;</code>
+   * <code>.data.ClientRequest clientRequest = 1;</code>
    */
   org.spin.grpc.util.ClientRequestOrBuilder getClientRequestOrBuilder();
 

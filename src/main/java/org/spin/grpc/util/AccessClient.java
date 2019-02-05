@@ -54,10 +54,7 @@ public class AccessClient {
 	   * Request Role. 
 	   */
 	  public void requestRole() {
-		  ClientRequest clientRequest = ClientRequest.newBuilder()
-				  .build();
-		  ObjectRequest request = ObjectRequest.newBuilder()
-	    		.setClientRequest(clientRequest)
+		  UserRequest request = UserRequest.newBuilder()
 	    		.setUuid("a48d2596-fb40-11e8-a479-7a0060f0aa01")
 	    		.build();
 		  Role response;

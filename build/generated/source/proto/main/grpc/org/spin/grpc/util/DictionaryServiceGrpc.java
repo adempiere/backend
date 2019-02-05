@@ -30,28 +30,28 @@ public final class DictionaryServiceGrpc {
   public static final String SERVICE_NAME = "dictionary.DictionaryService";
 
   // Static method descriptors that strictly reflect the proto.
-  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.ObjectRequest,
+  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.EntityRequest,
       org.spin.grpc.util.Menu> getRequestMenuAndChildMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "RequestMenuAndChild",
-      requestType = org.spin.grpc.util.ObjectRequest.class,
+      requestType = org.spin.grpc.util.EntityRequest.class,
       responseType = org.spin.grpc.util.Menu.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<org.spin.grpc.util.ObjectRequest,
+  public static io.grpc.MethodDescriptor<org.spin.grpc.util.EntityRequest,
       org.spin.grpc.util.Menu> getRequestMenuAndChildMethod() {
-    io.grpc.MethodDescriptor<org.spin.grpc.util.ObjectRequest, org.spin.grpc.util.Menu> getRequestMenuAndChildMethod;
+    io.grpc.MethodDescriptor<org.spin.grpc.util.EntityRequest, org.spin.grpc.util.Menu> getRequestMenuAndChildMethod;
     if ((getRequestMenuAndChildMethod = DictionaryServiceGrpc.getRequestMenuAndChildMethod) == null) {
       synchronized (DictionaryServiceGrpc.class) {
         if ((getRequestMenuAndChildMethod = DictionaryServiceGrpc.getRequestMenuAndChildMethod) == null) {
           DictionaryServiceGrpc.getRequestMenuAndChildMethod = getRequestMenuAndChildMethod = 
-              io.grpc.MethodDescriptor.<org.spin.grpc.util.ObjectRequest, org.spin.grpc.util.Menu>newBuilder()
+              io.grpc.MethodDescriptor.<org.spin.grpc.util.EntityRequest, org.spin.grpc.util.Menu>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
                   "dictionary.DictionaryService", "RequestMenuAndChild"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  org.spin.grpc.util.ObjectRequest.getDefaultInstance()))
+                  org.spin.grpc.util.EntityRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.Menu.getDefaultInstance()))
                   .setSchemaDescriptor(new DictionaryServiceMethodDescriptorSupplier("RequestMenuAndChild"))
@@ -62,28 +62,28 @@ public final class DictionaryServiceGrpc {
      return getRequestMenuAndChildMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.ObjectRequest,
+  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.EntityRequest,
       org.spin.grpc.util.Menu> getRequestMenuMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "RequestMenu",
-      requestType = org.spin.grpc.util.ObjectRequest.class,
+      requestType = org.spin.grpc.util.EntityRequest.class,
       responseType = org.spin.grpc.util.Menu.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<org.spin.grpc.util.ObjectRequest,
+  public static io.grpc.MethodDescriptor<org.spin.grpc.util.EntityRequest,
       org.spin.grpc.util.Menu> getRequestMenuMethod() {
-    io.grpc.MethodDescriptor<org.spin.grpc.util.ObjectRequest, org.spin.grpc.util.Menu> getRequestMenuMethod;
+    io.grpc.MethodDescriptor<org.spin.grpc.util.EntityRequest, org.spin.grpc.util.Menu> getRequestMenuMethod;
     if ((getRequestMenuMethod = DictionaryServiceGrpc.getRequestMenuMethod) == null) {
       synchronized (DictionaryServiceGrpc.class) {
         if ((getRequestMenuMethod = DictionaryServiceGrpc.getRequestMenuMethod) == null) {
           DictionaryServiceGrpc.getRequestMenuMethod = getRequestMenuMethod = 
-              io.grpc.MethodDescriptor.<org.spin.grpc.util.ObjectRequest, org.spin.grpc.util.Menu>newBuilder()
+              io.grpc.MethodDescriptor.<org.spin.grpc.util.EntityRequest, org.spin.grpc.util.Menu>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
                   "dictionary.DictionaryService", "RequestMenu"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  org.spin.grpc.util.ObjectRequest.getDefaultInstance()))
+                  org.spin.grpc.util.EntityRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.Menu.getDefaultInstance()))
                   .setSchemaDescriptor(new DictionaryServiceMethodDescriptorSupplier("RequestMenu"))
@@ -94,28 +94,28 @@ public final class DictionaryServiceGrpc {
      return getRequestMenuMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.ObjectRequest,
+  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.EntityRequest,
       org.spin.grpc.util.Window> getRequestWindowMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "RequestWindow",
-      requestType = org.spin.grpc.util.ObjectRequest.class,
+      requestType = org.spin.grpc.util.EntityRequest.class,
       responseType = org.spin.grpc.util.Window.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<org.spin.grpc.util.ObjectRequest,
+  public static io.grpc.MethodDescriptor<org.spin.grpc.util.EntityRequest,
       org.spin.grpc.util.Window> getRequestWindowMethod() {
-    io.grpc.MethodDescriptor<org.spin.grpc.util.ObjectRequest, org.spin.grpc.util.Window> getRequestWindowMethod;
+    io.grpc.MethodDescriptor<org.spin.grpc.util.EntityRequest, org.spin.grpc.util.Window> getRequestWindowMethod;
     if ((getRequestWindowMethod = DictionaryServiceGrpc.getRequestWindowMethod) == null) {
       synchronized (DictionaryServiceGrpc.class) {
         if ((getRequestWindowMethod = DictionaryServiceGrpc.getRequestWindowMethod) == null) {
           DictionaryServiceGrpc.getRequestWindowMethod = getRequestWindowMethod = 
-              io.grpc.MethodDescriptor.<org.spin.grpc.util.ObjectRequest, org.spin.grpc.util.Window>newBuilder()
+              io.grpc.MethodDescriptor.<org.spin.grpc.util.EntityRequest, org.spin.grpc.util.Window>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
                   "dictionary.DictionaryService", "RequestWindow"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  org.spin.grpc.util.ObjectRequest.getDefaultInstance()))
+                  org.spin.grpc.util.EntityRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.Window.getDefaultInstance()))
                   .setSchemaDescriptor(new DictionaryServiceMethodDescriptorSupplier("RequestWindow"))
@@ -126,28 +126,28 @@ public final class DictionaryServiceGrpc {
      return getRequestWindowMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.ObjectRequest,
+  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.EntityRequest,
       org.spin.grpc.util.Window> getRequestWindowAndTabsMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "RequestWindowAndTabs",
-      requestType = org.spin.grpc.util.ObjectRequest.class,
+      requestType = org.spin.grpc.util.EntityRequest.class,
       responseType = org.spin.grpc.util.Window.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<org.spin.grpc.util.ObjectRequest,
+  public static io.grpc.MethodDescriptor<org.spin.grpc.util.EntityRequest,
       org.spin.grpc.util.Window> getRequestWindowAndTabsMethod() {
-    io.grpc.MethodDescriptor<org.spin.grpc.util.ObjectRequest, org.spin.grpc.util.Window> getRequestWindowAndTabsMethod;
+    io.grpc.MethodDescriptor<org.spin.grpc.util.EntityRequest, org.spin.grpc.util.Window> getRequestWindowAndTabsMethod;
     if ((getRequestWindowAndTabsMethod = DictionaryServiceGrpc.getRequestWindowAndTabsMethod) == null) {
       synchronized (DictionaryServiceGrpc.class) {
         if ((getRequestWindowAndTabsMethod = DictionaryServiceGrpc.getRequestWindowAndTabsMethod) == null) {
           DictionaryServiceGrpc.getRequestWindowAndTabsMethod = getRequestWindowAndTabsMethod = 
-              io.grpc.MethodDescriptor.<org.spin.grpc.util.ObjectRequest, org.spin.grpc.util.Window>newBuilder()
+              io.grpc.MethodDescriptor.<org.spin.grpc.util.EntityRequest, org.spin.grpc.util.Window>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
                   "dictionary.DictionaryService", "RequestWindowAndTabs"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  org.spin.grpc.util.ObjectRequest.getDefaultInstance()))
+                  org.spin.grpc.util.EntityRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.Window.getDefaultInstance()))
                   .setSchemaDescriptor(new DictionaryServiceMethodDescriptorSupplier("RequestWindowAndTabs"))
@@ -158,28 +158,28 @@ public final class DictionaryServiceGrpc {
      return getRequestWindowAndTabsMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.ObjectRequest,
+  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.EntityRequest,
       org.spin.grpc.util.Tab> getRequestTabMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "RequestTab",
-      requestType = org.spin.grpc.util.ObjectRequest.class,
+      requestType = org.spin.grpc.util.EntityRequest.class,
       responseType = org.spin.grpc.util.Tab.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<org.spin.grpc.util.ObjectRequest,
+  public static io.grpc.MethodDescriptor<org.spin.grpc.util.EntityRequest,
       org.spin.grpc.util.Tab> getRequestTabMethod() {
-    io.grpc.MethodDescriptor<org.spin.grpc.util.ObjectRequest, org.spin.grpc.util.Tab> getRequestTabMethod;
+    io.grpc.MethodDescriptor<org.spin.grpc.util.EntityRequest, org.spin.grpc.util.Tab> getRequestTabMethod;
     if ((getRequestTabMethod = DictionaryServiceGrpc.getRequestTabMethod) == null) {
       synchronized (DictionaryServiceGrpc.class) {
         if ((getRequestTabMethod = DictionaryServiceGrpc.getRequestTabMethod) == null) {
           DictionaryServiceGrpc.getRequestTabMethod = getRequestTabMethod = 
-              io.grpc.MethodDescriptor.<org.spin.grpc.util.ObjectRequest, org.spin.grpc.util.Tab>newBuilder()
+              io.grpc.MethodDescriptor.<org.spin.grpc.util.EntityRequest, org.spin.grpc.util.Tab>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
                   "dictionary.DictionaryService", "RequestTab"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  org.spin.grpc.util.ObjectRequest.getDefaultInstance()))
+                  org.spin.grpc.util.EntityRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.Tab.getDefaultInstance()))
                   .setSchemaDescriptor(new DictionaryServiceMethodDescriptorSupplier("RequestTab"))
@@ -190,28 +190,28 @@ public final class DictionaryServiceGrpc {
      return getRequestTabMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.ObjectRequest,
+  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.EntityRequest,
       org.spin.grpc.util.Tab> getRequestTabAndFieldsMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "RequestTabAndFields",
-      requestType = org.spin.grpc.util.ObjectRequest.class,
+      requestType = org.spin.grpc.util.EntityRequest.class,
       responseType = org.spin.grpc.util.Tab.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<org.spin.grpc.util.ObjectRequest,
+  public static io.grpc.MethodDescriptor<org.spin.grpc.util.EntityRequest,
       org.spin.grpc.util.Tab> getRequestTabAndFieldsMethod() {
-    io.grpc.MethodDescriptor<org.spin.grpc.util.ObjectRequest, org.spin.grpc.util.Tab> getRequestTabAndFieldsMethod;
+    io.grpc.MethodDescriptor<org.spin.grpc.util.EntityRequest, org.spin.grpc.util.Tab> getRequestTabAndFieldsMethod;
     if ((getRequestTabAndFieldsMethod = DictionaryServiceGrpc.getRequestTabAndFieldsMethod) == null) {
       synchronized (DictionaryServiceGrpc.class) {
         if ((getRequestTabAndFieldsMethod = DictionaryServiceGrpc.getRequestTabAndFieldsMethod) == null) {
           DictionaryServiceGrpc.getRequestTabAndFieldsMethod = getRequestTabAndFieldsMethod = 
-              io.grpc.MethodDescriptor.<org.spin.grpc.util.ObjectRequest, org.spin.grpc.util.Tab>newBuilder()
+              io.grpc.MethodDescriptor.<org.spin.grpc.util.EntityRequest, org.spin.grpc.util.Tab>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
                   "dictionary.DictionaryService", "RequestTabAndFields"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  org.spin.grpc.util.ObjectRequest.getDefaultInstance()))
+                  org.spin.grpc.util.EntityRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.Tab.getDefaultInstance()))
                   .setSchemaDescriptor(new DictionaryServiceMethodDescriptorSupplier("RequestTabAndFields"))
@@ -222,28 +222,28 @@ public final class DictionaryServiceGrpc {
      return getRequestTabAndFieldsMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.ObjectRequest,
+  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.EntityRequest,
       org.spin.grpc.util.Field> getRequestFieldMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "RequestField",
-      requestType = org.spin.grpc.util.ObjectRequest.class,
+      requestType = org.spin.grpc.util.EntityRequest.class,
       responseType = org.spin.grpc.util.Field.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<org.spin.grpc.util.ObjectRequest,
+  public static io.grpc.MethodDescriptor<org.spin.grpc.util.EntityRequest,
       org.spin.grpc.util.Field> getRequestFieldMethod() {
-    io.grpc.MethodDescriptor<org.spin.grpc.util.ObjectRequest, org.spin.grpc.util.Field> getRequestFieldMethod;
+    io.grpc.MethodDescriptor<org.spin.grpc.util.EntityRequest, org.spin.grpc.util.Field> getRequestFieldMethod;
     if ((getRequestFieldMethod = DictionaryServiceGrpc.getRequestFieldMethod) == null) {
       synchronized (DictionaryServiceGrpc.class) {
         if ((getRequestFieldMethod = DictionaryServiceGrpc.getRequestFieldMethod) == null) {
           DictionaryServiceGrpc.getRequestFieldMethod = getRequestFieldMethod = 
-              io.grpc.MethodDescriptor.<org.spin.grpc.util.ObjectRequest, org.spin.grpc.util.Field>newBuilder()
+              io.grpc.MethodDescriptor.<org.spin.grpc.util.EntityRequest, org.spin.grpc.util.Field>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
                   "dictionary.DictionaryService", "RequestField"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  org.spin.grpc.util.ObjectRequest.getDefaultInstance()))
+                  org.spin.grpc.util.EntityRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.Field.getDefaultInstance()))
                   .setSchemaDescriptor(new DictionaryServiceMethodDescriptorSupplier("RequestField"))
@@ -289,7 +289,7 @@ public final class DictionaryServiceGrpc {
      * Request Menu from Parent UUID
      * </pre>
      */
-    public void requestMenuAndChild(org.spin.grpc.util.ObjectRequest request,
+    public void requestMenuAndChild(org.spin.grpc.util.EntityRequest request,
         io.grpc.stub.StreamObserver<org.spin.grpc.util.Menu> responseObserver) {
       asyncUnimplementedUnaryCall(getRequestMenuAndChildMethod(), responseObserver);
     }
@@ -299,7 +299,7 @@ public final class DictionaryServiceGrpc {
      * Request Menu
      * </pre>
      */
-    public void requestMenu(org.spin.grpc.util.ObjectRequest request,
+    public void requestMenu(org.spin.grpc.util.EntityRequest request,
         io.grpc.stub.StreamObserver<org.spin.grpc.util.Menu> responseObserver) {
       asyncUnimplementedUnaryCall(getRequestMenuMethod(), responseObserver);
     }
@@ -309,7 +309,7 @@ public final class DictionaryServiceGrpc {
      * Request a Window
      * </pre>
      */
-    public void requestWindow(org.spin.grpc.util.ObjectRequest request,
+    public void requestWindow(org.spin.grpc.util.EntityRequest request,
         io.grpc.stub.StreamObserver<org.spin.grpc.util.Window> responseObserver) {
       asyncUnimplementedUnaryCall(getRequestWindowMethod(), responseObserver);
     }
@@ -319,7 +319,7 @@ public final class DictionaryServiceGrpc {
      * Request Window and tabs
      * </pre>
      */
-    public void requestWindowAndTabs(org.spin.grpc.util.ObjectRequest request,
+    public void requestWindowAndTabs(org.spin.grpc.util.EntityRequest request,
         io.grpc.stub.StreamObserver<org.spin.grpc.util.Window> responseObserver) {
       asyncUnimplementedUnaryCall(getRequestWindowAndTabsMethod(), responseObserver);
     }
@@ -329,7 +329,7 @@ public final class DictionaryServiceGrpc {
      * Request a Tab
      * </pre>
      */
-    public void requestTab(org.spin.grpc.util.ObjectRequest request,
+    public void requestTab(org.spin.grpc.util.EntityRequest request,
         io.grpc.stub.StreamObserver<org.spin.grpc.util.Tab> responseObserver) {
       asyncUnimplementedUnaryCall(getRequestTabMethod(), responseObserver);
     }
@@ -339,7 +339,7 @@ public final class DictionaryServiceGrpc {
      * Request a Tab and Fields
      * </pre>
      */
-    public void requestTabAndFields(org.spin.grpc.util.ObjectRequest request,
+    public void requestTabAndFields(org.spin.grpc.util.EntityRequest request,
         io.grpc.stub.StreamObserver<org.spin.grpc.util.Tab> responseObserver) {
       asyncUnimplementedUnaryCall(getRequestTabAndFieldsMethod(), responseObserver);
     }
@@ -349,7 +349,7 @@ public final class DictionaryServiceGrpc {
      * Request a Field
      * </pre>
      */
-    public void requestField(org.spin.grpc.util.ObjectRequest request,
+    public void requestField(org.spin.grpc.util.EntityRequest request,
         io.grpc.stub.StreamObserver<org.spin.grpc.util.Field> responseObserver) {
       asyncUnimplementedUnaryCall(getRequestFieldMethod(), responseObserver);
     }
@@ -360,49 +360,49 @@ public final class DictionaryServiceGrpc {
             getRequestMenuAndChildMethod(),
             asyncUnaryCall(
               new MethodHandlers<
-                org.spin.grpc.util.ObjectRequest,
+                org.spin.grpc.util.EntityRequest,
                 org.spin.grpc.util.Menu>(
                   this, METHODID_REQUEST_MENU_AND_CHILD)))
           .addMethod(
             getRequestMenuMethod(),
             asyncUnaryCall(
               new MethodHandlers<
-                org.spin.grpc.util.ObjectRequest,
+                org.spin.grpc.util.EntityRequest,
                 org.spin.grpc.util.Menu>(
                   this, METHODID_REQUEST_MENU)))
           .addMethod(
             getRequestWindowMethod(),
             asyncUnaryCall(
               new MethodHandlers<
-                org.spin.grpc.util.ObjectRequest,
+                org.spin.grpc.util.EntityRequest,
                 org.spin.grpc.util.Window>(
                   this, METHODID_REQUEST_WINDOW)))
           .addMethod(
             getRequestWindowAndTabsMethod(),
             asyncUnaryCall(
               new MethodHandlers<
-                org.spin.grpc.util.ObjectRequest,
+                org.spin.grpc.util.EntityRequest,
                 org.spin.grpc.util.Window>(
                   this, METHODID_REQUEST_WINDOW_AND_TABS)))
           .addMethod(
             getRequestTabMethod(),
             asyncUnaryCall(
               new MethodHandlers<
-                org.spin.grpc.util.ObjectRequest,
+                org.spin.grpc.util.EntityRequest,
                 org.spin.grpc.util.Tab>(
                   this, METHODID_REQUEST_TAB)))
           .addMethod(
             getRequestTabAndFieldsMethod(),
             asyncUnaryCall(
               new MethodHandlers<
-                org.spin.grpc.util.ObjectRequest,
+                org.spin.grpc.util.EntityRequest,
                 org.spin.grpc.util.Tab>(
                   this, METHODID_REQUEST_TAB_AND_FIELDS)))
           .addMethod(
             getRequestFieldMethod(),
             asyncUnaryCall(
               new MethodHandlers<
-                org.spin.grpc.util.ObjectRequest,
+                org.spin.grpc.util.EntityRequest,
                 org.spin.grpc.util.Field>(
                   this, METHODID_REQUEST_FIELD)))
           .build();
@@ -435,7 +435,7 @@ public final class DictionaryServiceGrpc {
      * Request Menu from Parent UUID
      * </pre>
      */
-    public void requestMenuAndChild(org.spin.grpc.util.ObjectRequest request,
+    public void requestMenuAndChild(org.spin.grpc.util.EntityRequest request,
         io.grpc.stub.StreamObserver<org.spin.grpc.util.Menu> responseObserver) {
       asyncUnaryCall(
           getChannel().newCall(getRequestMenuAndChildMethod(), getCallOptions()), request, responseObserver);
@@ -446,7 +446,7 @@ public final class DictionaryServiceGrpc {
      * Request Menu
      * </pre>
      */
-    public void requestMenu(org.spin.grpc.util.ObjectRequest request,
+    public void requestMenu(org.spin.grpc.util.EntityRequest request,
         io.grpc.stub.StreamObserver<org.spin.grpc.util.Menu> responseObserver) {
       asyncUnaryCall(
           getChannel().newCall(getRequestMenuMethod(), getCallOptions()), request, responseObserver);
@@ -457,7 +457,7 @@ public final class DictionaryServiceGrpc {
      * Request a Window
      * </pre>
      */
-    public void requestWindow(org.spin.grpc.util.ObjectRequest request,
+    public void requestWindow(org.spin.grpc.util.EntityRequest request,
         io.grpc.stub.StreamObserver<org.spin.grpc.util.Window> responseObserver) {
       asyncUnaryCall(
           getChannel().newCall(getRequestWindowMethod(), getCallOptions()), request, responseObserver);
@@ -468,7 +468,7 @@ public final class DictionaryServiceGrpc {
      * Request Window and tabs
      * </pre>
      */
-    public void requestWindowAndTabs(org.spin.grpc.util.ObjectRequest request,
+    public void requestWindowAndTabs(org.spin.grpc.util.EntityRequest request,
         io.grpc.stub.StreamObserver<org.spin.grpc.util.Window> responseObserver) {
       asyncUnaryCall(
           getChannel().newCall(getRequestWindowAndTabsMethod(), getCallOptions()), request, responseObserver);
@@ -479,7 +479,7 @@ public final class DictionaryServiceGrpc {
      * Request a Tab
      * </pre>
      */
-    public void requestTab(org.spin.grpc.util.ObjectRequest request,
+    public void requestTab(org.spin.grpc.util.EntityRequest request,
         io.grpc.stub.StreamObserver<org.spin.grpc.util.Tab> responseObserver) {
       asyncUnaryCall(
           getChannel().newCall(getRequestTabMethod(), getCallOptions()), request, responseObserver);
@@ -490,7 +490,7 @@ public final class DictionaryServiceGrpc {
      * Request a Tab and Fields
      * </pre>
      */
-    public void requestTabAndFields(org.spin.grpc.util.ObjectRequest request,
+    public void requestTabAndFields(org.spin.grpc.util.EntityRequest request,
         io.grpc.stub.StreamObserver<org.spin.grpc.util.Tab> responseObserver) {
       asyncUnaryCall(
           getChannel().newCall(getRequestTabAndFieldsMethod(), getCallOptions()), request, responseObserver);
@@ -501,7 +501,7 @@ public final class DictionaryServiceGrpc {
      * Request a Field
      * </pre>
      */
-    public void requestField(org.spin.grpc.util.ObjectRequest request,
+    public void requestField(org.spin.grpc.util.EntityRequest request,
         io.grpc.stub.StreamObserver<org.spin.grpc.util.Field> responseObserver) {
       asyncUnaryCall(
           getChannel().newCall(getRequestFieldMethod(), getCallOptions()), request, responseObserver);
@@ -534,7 +534,7 @@ public final class DictionaryServiceGrpc {
      * Request Menu from Parent UUID
      * </pre>
      */
-    public org.spin.grpc.util.Menu requestMenuAndChild(org.spin.grpc.util.ObjectRequest request) {
+    public org.spin.grpc.util.Menu requestMenuAndChild(org.spin.grpc.util.EntityRequest request) {
       return blockingUnaryCall(
           getChannel(), getRequestMenuAndChildMethod(), getCallOptions(), request);
     }
@@ -544,7 +544,7 @@ public final class DictionaryServiceGrpc {
      * Request Menu
      * </pre>
      */
-    public org.spin.grpc.util.Menu requestMenu(org.spin.grpc.util.ObjectRequest request) {
+    public org.spin.grpc.util.Menu requestMenu(org.spin.grpc.util.EntityRequest request) {
       return blockingUnaryCall(
           getChannel(), getRequestMenuMethod(), getCallOptions(), request);
     }
@@ -554,7 +554,7 @@ public final class DictionaryServiceGrpc {
      * Request a Window
      * </pre>
      */
-    public org.spin.grpc.util.Window requestWindow(org.spin.grpc.util.ObjectRequest request) {
+    public org.spin.grpc.util.Window requestWindow(org.spin.grpc.util.EntityRequest request) {
       return blockingUnaryCall(
           getChannel(), getRequestWindowMethod(), getCallOptions(), request);
     }
@@ -564,7 +564,7 @@ public final class DictionaryServiceGrpc {
      * Request Window and tabs
      * </pre>
      */
-    public org.spin.grpc.util.Window requestWindowAndTabs(org.spin.grpc.util.ObjectRequest request) {
+    public org.spin.grpc.util.Window requestWindowAndTabs(org.spin.grpc.util.EntityRequest request) {
       return blockingUnaryCall(
           getChannel(), getRequestWindowAndTabsMethod(), getCallOptions(), request);
     }
@@ -574,7 +574,7 @@ public final class DictionaryServiceGrpc {
      * Request a Tab
      * </pre>
      */
-    public org.spin.grpc.util.Tab requestTab(org.spin.grpc.util.ObjectRequest request) {
+    public org.spin.grpc.util.Tab requestTab(org.spin.grpc.util.EntityRequest request) {
       return blockingUnaryCall(
           getChannel(), getRequestTabMethod(), getCallOptions(), request);
     }
@@ -584,7 +584,7 @@ public final class DictionaryServiceGrpc {
      * Request a Tab and Fields
      * </pre>
      */
-    public org.spin.grpc.util.Tab requestTabAndFields(org.spin.grpc.util.ObjectRequest request) {
+    public org.spin.grpc.util.Tab requestTabAndFields(org.spin.grpc.util.EntityRequest request) {
       return blockingUnaryCall(
           getChannel(), getRequestTabAndFieldsMethod(), getCallOptions(), request);
     }
@@ -594,7 +594,7 @@ public final class DictionaryServiceGrpc {
      * Request a Field
      * </pre>
      */
-    public org.spin.grpc.util.Field requestField(org.spin.grpc.util.ObjectRequest request) {
+    public org.spin.grpc.util.Field requestField(org.spin.grpc.util.EntityRequest request) {
       return blockingUnaryCall(
           getChannel(), getRequestFieldMethod(), getCallOptions(), request);
     }
@@ -627,7 +627,7 @@ public final class DictionaryServiceGrpc {
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.Menu> requestMenuAndChild(
-        org.spin.grpc.util.ObjectRequest request) {
+        org.spin.grpc.util.EntityRequest request) {
       return futureUnaryCall(
           getChannel().newCall(getRequestMenuAndChildMethod(), getCallOptions()), request);
     }
@@ -638,7 +638,7 @@ public final class DictionaryServiceGrpc {
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.Menu> requestMenu(
-        org.spin.grpc.util.ObjectRequest request) {
+        org.spin.grpc.util.EntityRequest request) {
       return futureUnaryCall(
           getChannel().newCall(getRequestMenuMethod(), getCallOptions()), request);
     }
@@ -649,7 +649,7 @@ public final class DictionaryServiceGrpc {
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.Window> requestWindow(
-        org.spin.grpc.util.ObjectRequest request) {
+        org.spin.grpc.util.EntityRequest request) {
       return futureUnaryCall(
           getChannel().newCall(getRequestWindowMethod(), getCallOptions()), request);
     }
@@ -660,7 +660,7 @@ public final class DictionaryServiceGrpc {
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.Window> requestWindowAndTabs(
-        org.spin.grpc.util.ObjectRequest request) {
+        org.spin.grpc.util.EntityRequest request) {
       return futureUnaryCall(
           getChannel().newCall(getRequestWindowAndTabsMethod(), getCallOptions()), request);
     }
@@ -671,7 +671,7 @@ public final class DictionaryServiceGrpc {
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.Tab> requestTab(
-        org.spin.grpc.util.ObjectRequest request) {
+        org.spin.grpc.util.EntityRequest request) {
       return futureUnaryCall(
           getChannel().newCall(getRequestTabMethod(), getCallOptions()), request);
     }
@@ -682,7 +682,7 @@ public final class DictionaryServiceGrpc {
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.Tab> requestTabAndFields(
-        org.spin.grpc.util.ObjectRequest request) {
+        org.spin.grpc.util.EntityRequest request) {
       return futureUnaryCall(
           getChannel().newCall(getRequestTabAndFieldsMethod(), getCallOptions()), request);
     }
@@ -693,7 +693,7 @@ public final class DictionaryServiceGrpc {
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.Field> requestField(
-        org.spin.grpc.util.ObjectRequest request) {
+        org.spin.grpc.util.EntityRequest request) {
       return futureUnaryCall(
           getChannel().newCall(getRequestFieldMethod(), getCallOptions()), request);
     }
@@ -725,31 +725,31 @@ public final class DictionaryServiceGrpc {
     public void invoke(Req request, io.grpc.stub.StreamObserver<Resp> responseObserver) {
       switch (methodId) {
         case METHODID_REQUEST_MENU_AND_CHILD:
-          serviceImpl.requestMenuAndChild((org.spin.grpc.util.ObjectRequest) request,
+          serviceImpl.requestMenuAndChild((org.spin.grpc.util.EntityRequest) request,
               (io.grpc.stub.StreamObserver<org.spin.grpc.util.Menu>) responseObserver);
           break;
         case METHODID_REQUEST_MENU:
-          serviceImpl.requestMenu((org.spin.grpc.util.ObjectRequest) request,
+          serviceImpl.requestMenu((org.spin.grpc.util.EntityRequest) request,
               (io.grpc.stub.StreamObserver<org.spin.grpc.util.Menu>) responseObserver);
           break;
         case METHODID_REQUEST_WINDOW:
-          serviceImpl.requestWindow((org.spin.grpc.util.ObjectRequest) request,
+          serviceImpl.requestWindow((org.spin.grpc.util.EntityRequest) request,
               (io.grpc.stub.StreamObserver<org.spin.grpc.util.Window>) responseObserver);
           break;
         case METHODID_REQUEST_WINDOW_AND_TABS:
-          serviceImpl.requestWindowAndTabs((org.spin.grpc.util.ObjectRequest) request,
+          serviceImpl.requestWindowAndTabs((org.spin.grpc.util.EntityRequest) request,
               (io.grpc.stub.StreamObserver<org.spin.grpc.util.Window>) responseObserver);
           break;
         case METHODID_REQUEST_TAB:
-          serviceImpl.requestTab((org.spin.grpc.util.ObjectRequest) request,
+          serviceImpl.requestTab((org.spin.grpc.util.EntityRequest) request,
               (io.grpc.stub.StreamObserver<org.spin.grpc.util.Tab>) responseObserver);
           break;
         case METHODID_REQUEST_TAB_AND_FIELDS:
-          serviceImpl.requestTabAndFields((org.spin.grpc.util.ObjectRequest) request,
+          serviceImpl.requestTabAndFields((org.spin.grpc.util.EntityRequest) request,
               (io.grpc.stub.StreamObserver<org.spin.grpc.util.Tab>) responseObserver);
           break;
         case METHODID_REQUEST_FIELD:
-          serviceImpl.requestField((org.spin.grpc.util.ObjectRequest) request,
+          serviceImpl.requestField((org.spin.grpc.util.EntityRequest) request,
               (io.grpc.stub.StreamObserver<org.spin.grpc.util.Field>) responseObserver);
           break;
         default:

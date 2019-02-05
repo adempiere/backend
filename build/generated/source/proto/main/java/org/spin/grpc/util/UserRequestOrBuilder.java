@@ -8,42 +8,62 @@ public interface UserRequestOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
   /**
-   * <code>string userName = 1;</code>
+   * <code>string uuid = 1;</code>
+   */
+  java.lang.String getUuid();
+  /**
+   * <code>string uuid = 1;</code>
+   */
+  com.google.protobuf.ByteString
+      getUuidBytes();
+
+  /**
+   * <code>string userName = 2;</code>
    */
   java.lang.String getUserName();
   /**
-   * <code>string userName = 1;</code>
+   * <code>string userName = 2;</code>
    */
   com.google.protobuf.ByteString
       getUserNameBytes();
 
   /**
-   * <code>string userPass = 2;</code>
+   * <code>string userPass = 3;</code>
    */
   java.lang.String getUserPass();
   /**
-   * <code>string userPass = 2;</code>
+   * <code>string userPass = 3;</code>
    */
   com.google.protobuf.ByteString
       getUserPassBytes();
 
   /**
-   * <code>string token = 3;</code>
+   * <code>string token = 4;</code>
    */
   java.lang.String getToken();
   /**
-   * <code>string token = 3;</code>
+   * <code>string token = 4;</code>
    */
   com.google.protobuf.ByteString
       getTokenBytes();
 
   /**
-   * <code>string clientVersion = 4;</code>
+   * <code>string clientVersion = 5;</code>
    */
   java.lang.String getClientVersion();
   /**
-   * <code>string clientVersion = 4;</code>
+   * <code>string clientVersion = 5;</code>
    */
   com.google.protobuf.ByteString
       getClientVersionBytes();
+
+  /**
+   * <code>string language = 6;</code>
+   */
+  java.lang.String getLanguage();
+  /**
+   * <code>string language = 6;</code>
+   */
+  com.google.protobuf.ByteString
+      getLanguageBytes();
 }

@@ -23,15 +23,15 @@ public interface ValueObjectRequestOrBuilder extends
       getUuidBytes();
 
   /**
-   * <code>.access.ClientRequest clientRequest = 3;</code>
+   * <code>.data.ClientRequest clientRequest = 3;</code>
    */
   boolean hasClientRequest();
   /**
-   * <code>.access.ClientRequest clientRequest = 3;</code>
+   * <code>.data.ClientRequest clientRequest = 3;</code>
    */
   org.spin.grpc.util.ClientRequest getClientRequest();
   /**
-   * <code>.access.ClientRequest clientRequest = 3;</code>
+   * <code>.data.ClientRequest clientRequest = 3;</code>
    */
   org.spin.grpc.util.ClientRequestOrBuilder getClientRequestOrBuilder();
 

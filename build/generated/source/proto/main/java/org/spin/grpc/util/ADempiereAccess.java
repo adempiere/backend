@@ -20,16 +20,6 @@ public final class ADempiereAccess {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_access_UserRequest_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_access_ClientRequest_descriptor;
-  static final 
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_access_ClientRequest_fieldAccessorTable;
-  static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_access_ObjectRequest_descriptor;
-  static final 
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_access_ObjectRequest_fieldAccessorTable;
-  static final com.google.protobuf.Descriptors.Descriptor
     internal_static_access_UserRoles_descriptor;
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -68,46 +58,41 @@ public final class ADempiereAccess {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\014access.proto\022\006access\"W\n\013UserRequest\022\020\n" +
-      "\010userName\030\001 \001(\t\022\020\n\010userPass\030\002 \001(\t\022\r\n\005tok" +
-      "en\030\003 \001(\t\022\025\n\rclientVersion\030\004 \001(\t\"k\n\rClien" +
-      "tRequest\022\014\n\004uuid\030\001 \001(\t\022\020\n\010language\030\002 \001(\t" +
-      "\022\025\n\rclientVersion\030\003 \001(\t\022\022\n\nclientUuid\030\004 " +
-      "\001(\t\022\017\n\007orgUuid\030\005 \001(\t\"W\n\rObjectRequest\022\n\n" +
-      "\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(\t\022,\n\rclientRequest" +
-      "\030\003 \001(\0132\025.access.ClientRequest\"6\n\tUserRol" +
-      "es\022\014\n\004uuid\030\001 \001(\t\022\033\n\005roles\030\002 \003(\0132\014.access" +
-      ".Role\"\357\003\n\004Role\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(\t" +
-      "\022\014\n\004name\030\003 \001(\t\022\023\n\013description\030\004 \001(\t\022%\n\ro" +
-      "rganizations\030\005 \003(\0132\016.access.Access\022\037\n\007wi" +
-      "ndows\030\006 \003(\0132\016.access.Access\022\037\n\007process\030\007" +
-      " \003(\0132\016.access.Access\022\035\n\005forms\030\010 \003(\0132\016.ac" +
-      "cess.Access\022 \n\010browsers\030\t \003(\0132\016.access.A" +
-      "ccess\022!\n\tworkflows\030\n \003(\0132\016.access.Access" +
-      "\022\035\n\005tasks\030\013 \003(\0132\016.access.Access\022\"\n\ndashb" +
-      "oards\030\014 \003(\0132\016.access.Access\022\'\n\017documentA" +
-      "ctions\030\r \003(\0132\016.access.Access\022#\n\006tables\030\016" +
-      " \003(\0132\023.access.TableAccess\022%\n\007columns\030\017 \003" +
-      "(\0132\024.access.ColumnAccess\022%\n\007records\030\020 \003(" +
-      "\0132\024.access.RecordAccess\":\n\006Access\022\014\n\004uui" +
-      "d\030\001 \001(\t\022\022\n\nisReadOnly\030\002 \001(\010\022\016\n\006action\030\003 " +
-      "\001(\t\"\331\001\n\013TableAccess\022\021\n\ttableName\030\001 \001(\t\022\021" +
-      "\n\tisExclude\030\002 \001(\010\022\023\n\013isCanReport\030\003 \001(\010\022\023" +
-      "\n\013isCanExport\030\004 \001(\010\022;\n\017accessTypeRules\030\005" +
-      " \001(\0162\".access.TableAccess.AccessTypeRule" +
-      "\"=\n\016AccessTypeRule\022\r\n\tACCESSING\020\000\022\r\n\tEXP" +
-      "ORTING\020\001\022\r\n\tREPORTING\020\002\"\\\n\014ColumnAccess\022" +
-      "\021\n\ttableName\030\001 \001(\t\022\022\n\ncolumnName\030\002 \001(\t\022\021" +
-      "\n\tisExclude\030\003 \001(\010\022\022\n\nisReadOnly\030\004 \001(\010\"\213\001" +
-      "\n\014RecordAccess\022\021\n\ttableName\030\001 \001(\t\022\020\n\010rec" +
-      "ordId\030\002 \001(\005\022\022\n\nrecordUuid\030\003 \001(\t\022\021\n\tisExc" +
-      "lude\030\004 \001(\010\022\022\n\nisReadOnly\030\005 \001(\010\022\033\n\023isDepe" +
-      "ndentEntities\030\006 \001(\0102\203\001\n\rAccessService\022<\n" +
-      "\020RequestUserRoles\022\023.access.UserRequest\032\021" +
-      ".access.UserRoles\"\000\0224\n\013RequestRole\022\025.acc" +
-      "ess.ObjectRequest\032\014.access.Role\"\000B-\n\022org" +
-      ".spin.grpc.utilB\017ADempiereAccessP\001\242\002\003HLW" +
-      "b\006proto3"
+      "\n\014access.proto\022\006access\"w\n\013UserRequest\022\014\n" +
+      "\004uuid\030\001 \001(\t\022\020\n\010userName\030\002 \001(\t\022\020\n\010userPas" +
+      "s\030\003 \001(\t\022\r\n\005token\030\004 \001(\t\022\025\n\rclientVersion\030" +
+      "\005 \001(\t\022\020\n\010language\030\006 \001(\t\"6\n\tUserRoles\022\014\n\004" +
+      "uuid\030\001 \001(\t\022\033\n\005roles\030\002 \003(\0132\014.access.Role\"" +
+      "\357\003\n\004Role\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(\t\022\014\n\004na" +
+      "me\030\003 \001(\t\022\023\n\013description\030\004 \001(\t\022%\n\rorganiz" +
+      "ations\030\005 \003(\0132\016.access.Access\022\037\n\007windows\030" +
+      "\006 \003(\0132\016.access.Access\022\037\n\007process\030\007 \003(\0132\016" +
+      ".access.Access\022\035\n\005forms\030\010 \003(\0132\016.access.A" +
+      "ccess\022 \n\010browsers\030\t \003(\0132\016.access.Access\022" +
+      "!\n\tworkflows\030\n \003(\0132\016.access.Access\022\035\n\005ta" +
+      "sks\030\013 \003(\0132\016.access.Access\022\"\n\ndashboards\030" +
+      "\014 \003(\0132\016.access.Access\022\'\n\017documentActions" +
+      "\030\r \003(\0132\016.access.Access\022#\n\006tables\030\016 \003(\0132\023" +
+      ".access.TableAccess\022%\n\007columns\030\017 \003(\0132\024.a" +
+      "ccess.ColumnAccess\022%\n\007records\030\020 \003(\0132\024.ac" +
+      "cess.RecordAccess\":\n\006Access\022\014\n\004uuid\030\001 \001(" +
+      "\t\022\022\n\nisReadOnly\030\002 \001(\010\022\016\n\006action\030\003 \001(\t\"\331\001" +
+      "\n\013TableAccess\022\021\n\ttableName\030\001 \001(\t\022\021\n\tisEx" +
+      "clude\030\002 \001(\010\022\023\n\013isCanReport\030\003 \001(\010\022\023\n\013isCa" +
+      "nExport\030\004 \001(\010\022;\n\017accessTypeRules\030\005 \001(\0162\"" +
+      ".access.TableAccess.AccessTypeRule\"=\n\016Ac" +
+      "cessTypeRule\022\r\n\tACCESSING\020\000\022\r\n\tEXPORTING" +
+      "\020\001\022\r\n\tREPORTING\020\002\"\\\n\014ColumnAccess\022\021\n\ttab" +
+      "leName\030\001 \001(\t\022\022\n\ncolumnName\030\002 \001(\t\022\021\n\tisEx" +
+      "clude\030\003 \001(\010\022\022\n\nisReadOnly\030\004 \001(\010\"\213\001\n\014Reco" +
+      "rdAccess\022\021\n\ttableName\030\001 \001(\t\022\020\n\010recordId\030" +
+      "\002 \001(\005\022\022\n\nrecordUuid\030\003 \001(\t\022\021\n\tisExclude\030\004" +
+      " \001(\010\022\022\n\nisReadOnly\030\005 \001(\010\022\033\n\023isDependentE" +
+      "ntities\030\006 \001(\0102\201\001\n\rAccessService\022<\n\020Reque" +
+      "stUserRoles\022\023.access.UserRequest\032\021.acces" +
+      "s.UserRoles\"\000\0222\n\013RequestRole\022\023.access.Us" +
+      "erRequest\032\014.access.Role\"\000B-\n\022org.spin.gr" +
+      "pc.utilB\017ADempiereAccessP\001\242\002\003HLWb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -126,51 +111,39 @@ public final class ADempiereAccess {
     internal_static_access_UserRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_access_UserRequest_descriptor,
-        new java.lang.String[] { "UserName", "UserPass", "Token", "ClientVersion", });
-    internal_static_access_ClientRequest_descriptor =
-      getDescriptor().getMessageTypes().get(1);
-    internal_static_access_ClientRequest_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_access_ClientRequest_descriptor,
-        new java.lang.String[] { "Uuid", "Language", "ClientVersion", "ClientUuid", "OrgUuid", });
-    internal_static_access_ObjectRequest_descriptor =
-      getDescriptor().getMessageTypes().get(2);
-    internal_static_access_ObjectRequest_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_access_ObjectRequest_descriptor,
-        new java.lang.String[] { "Id", "Uuid", "ClientRequest", });
+        new java.lang.String[] { "Uuid", "UserName", "UserPass", "Token", "ClientVersion", "Language", });
     internal_static_access_UserRoles_descriptor =
-      getDescriptor().getMessageTypes().get(3);
+      getDescriptor().getMessageTypes().get(1);
     internal_static_access_UserRoles_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_access_UserRoles_descriptor,
         new java.lang.String[] { "Uuid", "Roles", });
     internal_static_access_Role_descriptor =
-      getDescriptor().getMessageTypes().get(4);
+      getDescriptor().getMessageTypes().get(2);
     internal_static_access_Role_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_access_Role_descriptor,
         new java.lang.String[] { "Id", "Uuid", "Name", "Description", "Organizations", "Windows", "Process", "Forms", "Browsers", "Workflows", "Tasks", "Dashboards", "DocumentActions", "Tables", "Columns", "Records", });
     internal_static_access_Access_descriptor =
-      getDescriptor().getMessageTypes().get(5);
+      getDescriptor().getMessageTypes().get(3);
     internal_static_access_Access_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_access_Access_descriptor,
         new java.lang.String[] { "Uuid", "IsReadOnly", "Action", });
     internal_static_access_TableAccess_descriptor =
-      getDescriptor().getMessageTypes().get(6);
+      getDescriptor().getMessageTypes().get(4);
     internal_static_access_TableAccess_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_access_TableAccess_descriptor,
         new java.lang.String[] { "TableName", "IsExclude", "IsCanReport", "IsCanExport", "AccessTypeRules", });
     internal_static_access_ColumnAccess_descriptor =
-      getDescriptor().getMessageTypes().get(7);
+      getDescriptor().getMessageTypes().get(5);
     internal_static_access_ColumnAccess_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_access_ColumnAccess_descriptor,
         new java.lang.String[] { "TableName", "ColumnName", "IsExclude", "IsReadOnly", });
     internal_static_access_RecordAccess_descriptor =
-      getDescriptor().getMessageTypes().get(8);
+      getDescriptor().getMessageTypes().get(6);
     internal_static_access_RecordAccess_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_access_RecordAccess_descriptor,

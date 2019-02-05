@@ -63,7 +63,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 	}
 	
 	@Override
-	public void requestRole(ObjectRequest request, StreamObserver<Role> responseObserver) {
+	public void requestRole(UserRequest request, StreamObserver<Role> responseObserver) {
 		if(request == null) {
 			log.fine("Object Request Null");
 			return;

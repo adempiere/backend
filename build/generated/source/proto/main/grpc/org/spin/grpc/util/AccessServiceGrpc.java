@@ -62,28 +62,28 @@ public final class AccessServiceGrpc {
      return getRequestUserRolesMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.ObjectRequest,
+  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.UserRequest,
       org.spin.grpc.util.Role> getRequestRoleMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "RequestRole",
-      requestType = org.spin.grpc.util.ObjectRequest.class,
+      requestType = org.spin.grpc.util.UserRequest.class,
       responseType = org.spin.grpc.util.Role.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<org.spin.grpc.util.ObjectRequest,
+  public static io.grpc.MethodDescriptor<org.spin.grpc.util.UserRequest,
       org.spin.grpc.util.Role> getRequestRoleMethod() {
-    io.grpc.MethodDescriptor<org.spin.grpc.util.ObjectRequest, org.spin.grpc.util.Role> getRequestRoleMethod;
+    io.grpc.MethodDescriptor<org.spin.grpc.util.UserRequest, org.spin.grpc.util.Role> getRequestRoleMethod;
     if ((getRequestRoleMethod = AccessServiceGrpc.getRequestRoleMethod) == null) {
       synchronized (AccessServiceGrpc.class) {
         if ((getRequestRoleMethod = AccessServiceGrpc.getRequestRoleMethod) == null) {
           AccessServiceGrpc.getRequestRoleMethod = getRequestRoleMethod = 
-              io.grpc.MethodDescriptor.<org.spin.grpc.util.ObjectRequest, org.spin.grpc.util.Role>newBuilder()
+              io.grpc.MethodDescriptor.<org.spin.grpc.util.UserRequest, org.spin.grpc.util.Role>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
                   "access.AccessService", "RequestRole"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  org.spin.grpc.util.ObjectRequest.getDefaultInstance()))
+                  org.spin.grpc.util.UserRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.Role.getDefaultInstance()))
                   .setSchemaDescriptor(new AccessServiceMethodDescriptorSupplier("RequestRole"))
@@ -139,7 +139,7 @@ public final class AccessServiceGrpc {
      * Request a Role from uuid
      * </pre>
      */
-    public void requestRole(org.spin.grpc.util.ObjectRequest request,
+    public void requestRole(org.spin.grpc.util.UserRequest request,
         io.grpc.stub.StreamObserver<org.spin.grpc.util.Role> responseObserver) {
       asyncUnimplementedUnaryCall(getRequestRoleMethod(), responseObserver);
     }
@@ -157,7 +157,7 @@ public final class AccessServiceGrpc {
             getRequestRoleMethod(),
             asyncUnaryCall(
               new MethodHandlers<
-                org.spin.grpc.util.ObjectRequest,
+                org.spin.grpc.util.UserRequest,
                 org.spin.grpc.util.Role>(
                   this, METHODID_REQUEST_ROLE)))
           .build();
@@ -201,7 +201,7 @@ public final class AccessServiceGrpc {
      * Request a Role from uuid
      * </pre>
      */
-    public void requestRole(org.spin.grpc.util.ObjectRequest request,
+    public void requestRole(org.spin.grpc.util.UserRequest request,
         io.grpc.stub.StreamObserver<org.spin.grpc.util.Role> responseObserver) {
       asyncUnaryCall(
           getChannel().newCall(getRequestRoleMethod(), getCallOptions()), request, responseObserver);
@@ -244,7 +244,7 @@ public final class AccessServiceGrpc {
      * Request a Role from uuid
      * </pre>
      */
-    public org.spin.grpc.util.Role requestRole(org.spin.grpc.util.ObjectRequest request) {
+    public org.spin.grpc.util.Role requestRole(org.spin.grpc.util.UserRequest request) {
       return blockingUnaryCall(
           getChannel(), getRequestRoleMethod(), getCallOptions(), request);
     }
@@ -288,7 +288,7 @@ public final class AccessServiceGrpc {
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.Role> requestRole(
-        org.spin.grpc.util.ObjectRequest request) {
+        org.spin.grpc.util.UserRequest request) {
       return futureUnaryCall(
           getChannel().newCall(getRequestRoleMethod(), getCallOptions()), request);
     }
@@ -319,7 +319,7 @@ public final class AccessServiceGrpc {
               (io.grpc.stub.StreamObserver<org.spin.grpc.util.UserRoles>) responseObserver);
           break;
         case METHODID_REQUEST_ROLE:
-          serviceImpl.requestRole((org.spin.grpc.util.ObjectRequest) request,
+          serviceImpl.requestRole((org.spin.grpc.util.UserRequest) request,
               (io.grpc.stub.StreamObserver<org.spin.grpc.util.Role>) responseObserver);
           break;
         default:
