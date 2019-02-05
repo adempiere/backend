@@ -26,31 +26,17 @@ service AccessService {
   // Request user roles
   rpc RequestUserRoles(UserRequest) returns (UserRoles) {}
   // Request a Role from uuid
-  rpc RequestRole(ObjectRequest) returns (Role) {}  
+  rpc RequestRole(UserRequest) returns (Role) {}  
 }
 
 // The client request contains client info for request.
 message UserRequest {
-	string userName = 1;
-	string userPass = 2;
-	string token = 3;
-	string clientVersion = 4;
-}
-
-// The client request contains client info for request.
-message ClientRequest {
 	string uuid = 1;
-	string language = 2;
-	string clientVersion = 3;
-	string clientUuid = 4;
-	string orgUuid = 5;
-}
-
-// Object request
-message ObjectRequest {
-	int32 id = 1;
-	string uuid = 2;
-	ClientRequest clientRequest = 3;
+	string userName = 2;
+	string userPass = 3;
+	string token = 4;
+	string clientVersion = 5;
+	string language = 6;
 }
 
 // Role list from user

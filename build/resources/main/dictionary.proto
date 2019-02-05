@@ -18,26 +18,40 @@ option java_multiple_files = true;
 option java_package = "org.spin.grpc.util";
 option java_outer_classname = "ADempiereDictionary";
 option objc_class_prefix = "HLW";
-import "access.proto";
 
 package dictionary;
 
 // The greeting service definition.
 service DictionaryService {
   // Request Menu from Parent UUID
-  rpc RequestMenuAndChild(access.ObjectRequest) returns (Menu) {}
+  rpc RequestMenuAndChild(EntityRequest) returns (Menu) {}
   // Request Menu
-  rpc RequestMenu(access.ObjectRequest) returns (Menu) {}
+  rpc RequestMenu(EntityRequest) returns (Menu) {}
   // Request a Window
-  rpc RequestWindow(access.ObjectRequest) returns (Window) {}
+  rpc RequestWindow(EntityRequest) returns (Window) {}
   // Request Window and tabs
-  rpc RequestWindowAndTabs(access.ObjectRequest) returns (Window) {}
+  rpc RequestWindowAndTabs(EntityRequest) returns (Window) {}
   // Request a Tab
-  rpc RequestTab(access.ObjectRequest) returns (Tab) {}
+  rpc RequestTab(EntityRequest) returns (Tab) {}
   // Request a Tab and Fields
-  rpc RequestTabAndFields(access.ObjectRequest) returns (Tab) {}
+  rpc RequestTabAndFields(EntityRequest) returns (Tab) {}
   // Request a Field
-  rpc RequestField(access.ObjectRequest) returns (Field) {}
+  rpc RequestField(EntityRequest) returns (Field) {}
+}
+
+
+// The client request contains client info for request.
+message ApplicationRequest {
+	string uuid = 1;
+	string language = 2;
+	string clientVersion = 3;
+}
+
+// Object request
+message EntityRequest {
+	int32 id = 1;
+	string uuid = 2;
+	ApplicationRequest applicationRequest = 3;
 }
 
 // Window
