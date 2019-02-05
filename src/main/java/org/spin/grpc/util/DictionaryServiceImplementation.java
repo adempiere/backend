@@ -109,7 +109,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			log.fine("Object Request Null");
 			return;
 		}
-		log.fine("Field Requested = " + request.getUuid());
+		log.fine("Menu Requested = " + request.getUuid());
 		ClientRequest clientInfo = request.getClientRequest();
 		String language = null;
 		if(clientInfo != null) {
@@ -215,7 +215,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			//	
 			builder = Window.newBuilder()
 					.setId(window.getAD_Window_ID())
-					.setUuid(window.getUUID())
+					.setUuid(validateNull(window.getUUID()))
 					.setName(name)
 					.setDescription(validateNull(description))
 					.setHelp(validateNull(help))

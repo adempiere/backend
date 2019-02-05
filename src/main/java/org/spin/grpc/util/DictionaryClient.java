@@ -137,7 +137,7 @@ public class DictionaryClient {
 		  } catch (StatusRuntimeException e) {
 			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
 		      return;
-		  }		  
+		  }
 	  }
 
 	  /**
@@ -145,7 +145,7 @@ public class DictionaryClient {
 	   * greeting.
 	   */
 	  public static void main(String[] args) throws Exception {
-		DictionaryClient client = new DictionaryClient("localhost", 50051);
+		DictionaryClient client = new DictionaryClient("localhost", 50053);
 	    try {
 	    	logger.info("####################### Menu Only #####################");
 	    	client.requestMenu(false);

@@ -8,23 +8,22 @@ package org.spin.grpc.util;
  * The client request contains client info for request.
  * </pre>
  *
- * Protobuf type {@code access.ClientRequest}
+ * Protobuf type {@code access.UserRequest}
  */
-public  final class ClientRequest extends
+public  final class UserRequest extends
     com.google.protobuf.GeneratedMessageV3 implements
-    // @@protoc_insertion_point(message_implements:access.ClientRequest)
-    ClientRequestOrBuilder {
+    // @@protoc_insertion_point(message_implements:access.UserRequest)
+    UserRequestOrBuilder {
 private static final long serialVersionUID = 0L;
-  // Use ClientRequest.newBuilder() to construct.
-  private ClientRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+  // Use UserRequest.newBuilder() to construct.
+  private UserRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
   }
-  private ClientRequest() {
-    uuid_ = "";
-    language_ = "";
+  private UserRequest() {
+    userName_ = "";
+    userPass_ = "";
+    token_ = "";
     clientVersion_ = "";
-    clientUuid_ = "";
-    orgUuid_ = "";
   }
 
   @java.lang.Override
@@ -32,7 +31,7 @@ private static final long serialVersionUID = 0L;
   getUnknownFields() {
     return this.unknownFields;
   }
-  private ClientRequest(
+  private UserRequest(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -61,31 +60,25 @@ private static final long serialVersionUID = 0L;
           case 10: {
             java.lang.String s = input.readStringRequireUtf8();
 
-            uuid_ = s;
+            userName_ = s;
             break;
           }
           case 18: {
             java.lang.String s = input.readStringRequireUtf8();
 
-            language_ = s;
+            userPass_ = s;
             break;
           }
           case 26: {
             java.lang.String s = input.readStringRequireUtf8();
 
-            clientVersion_ = s;
+            token_ = s;
             break;
           }
           case 34: {
             java.lang.String s = input.readStringRequireUtf8();
 
-            clientUuid_ = s;
-            break;
-          }
-          case 42: {
-            java.lang.String s = input.readStringRequireUtf8();
-
-            orgUuid_ = s;
+            clientVersion_ = s;
             break;
           }
         }
@@ -102,88 +95,122 @@ private static final long serialVersionUID = 0L;
   }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-    return org.spin.grpc.util.ADempiereAccess.internal_static_access_ClientRequest_descriptor;
+    return org.spin.grpc.util.ADempiereAccess.internal_static_access_UserRequest_descriptor;
   }
 
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
-    return org.spin.grpc.util.ADempiereAccess.internal_static_access_ClientRequest_fieldAccessorTable
+    return org.spin.grpc.util.ADempiereAccess.internal_static_access_UserRequest_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
-            org.spin.grpc.util.ClientRequest.class, org.spin.grpc.util.ClientRequest.Builder.class);
+            org.spin.grpc.util.UserRequest.class, org.spin.grpc.util.UserRequest.Builder.class);
   }
 
-  public static final int UUID_FIELD_NUMBER = 1;
-  private volatile java.lang.Object uuid_;
+  public static final int USERNAME_FIELD_NUMBER = 1;
+  private volatile java.lang.Object userName_;
   /**
-   * <code>string uuid = 1;</code>
+   * <code>string userName = 1;</code>
    */
-  public java.lang.String getUuid() {
-    java.lang.Object ref = uuid_;
+  public java.lang.String getUserName() {
+    java.lang.Object ref = userName_;
     if (ref instanceof java.lang.String) {
       return (java.lang.String) ref;
     } else {
       com.google.protobuf.ByteString bs = 
           (com.google.protobuf.ByteString) ref;
       java.lang.String s = bs.toStringUtf8();
-      uuid_ = s;
+      userName_ = s;
       return s;
     }
   }
   /**
-   * <code>string uuid = 1;</code>
+   * <code>string userName = 1;</code>
    */
   public com.google.protobuf.ByteString
-      getUuidBytes() {
-    java.lang.Object ref = uuid_;
+      getUserNameBytes() {
+    java.lang.Object ref = userName_;
     if (ref instanceof java.lang.String) {
       com.google.protobuf.ByteString b = 
           com.google.protobuf.ByteString.copyFromUtf8(
               (java.lang.String) ref);
-      uuid_ = b;
+      userName_ = b;
       return b;
     } else {
       return (com.google.protobuf.ByteString) ref;
     }
   }
 
-  public static final int LANGUAGE_FIELD_NUMBER = 2;
-  private volatile java.lang.Object language_;
+  public static final int USERPASS_FIELD_NUMBER = 2;
+  private volatile java.lang.Object userPass_;
   /**
-   * <code>string language = 2;</code>
+   * <code>string userPass = 2;</code>
    */
-  public java.lang.String getLanguage() {
-    java.lang.Object ref = language_;
+  public java.lang.String getUserPass() {
+    java.lang.Object ref = userPass_;
     if (ref instanceof java.lang.String) {
       return (java.lang.String) ref;
     } else {
       com.google.protobuf.ByteString bs = 
           (com.google.protobuf.ByteString) ref;
       java.lang.String s = bs.toStringUtf8();
-      language_ = s;
+      userPass_ = s;
       return s;
     }
   }
   /**
-   * <code>string language = 2;</code>
+   * <code>string userPass = 2;</code>
    */
   public com.google.protobuf.ByteString
-      getLanguageBytes() {
-    java.lang.Object ref = language_;
+      getUserPassBytes() {
+    java.lang.Object ref = userPass_;
     if (ref instanceof java.lang.String) {
       com.google.protobuf.ByteString b = 
           com.google.protobuf.ByteString.copyFromUtf8(
               (java.lang.String) ref);
-      language_ = b;
+      userPass_ = b;
       return b;
     } else {
       return (com.google.protobuf.ByteString) ref;
     }
   }
 
-  public static final int CLIENTVERSION_FIELD_NUMBER = 3;
+  public static final int TOKEN_FIELD_NUMBER = 3;
+  private volatile java.lang.Object token_;
+  /**
+   * <code>string token = 3;</code>
+   */
+  public java.lang.String getToken() {
+    java.lang.Object ref = token_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      token_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string token = 3;</code>
+   */
+  public com.google.protobuf.ByteString
+      getTokenBytes() {
+    java.lang.Object ref = token_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      token_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int CLIENTVERSION_FIELD_NUMBER = 4;
   private volatile java.lang.Object clientVersion_;
   /**
-   * <code>string clientVersion = 3;</code>
+   * <code>string clientVersion = 4;</code>
    */
   public java.lang.String getClientVersion() {
     java.lang.Object ref = clientVersion_;
@@ -198,7 +225,7 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <code>string clientVersion = 3;</code>
+   * <code>string clientVersion = 4;</code>
    */
   public com.google.protobuf.ByteString
       getClientVersionBytes() {
@@ -208,74 +235,6 @@ private static final long serialVersionUID = 0L;
           com.google.protobuf.ByteString.copyFromUtf8(
               (java.lang.String) ref);
       clientVersion_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
-  }
-
-  public static final int CLIENTUUID_FIELD_NUMBER = 4;
-  private volatile java.lang.Object clientUuid_;
-  /**
-   * <code>string clientUuid = 4;</code>
-   */
-  public java.lang.String getClientUuid() {
-    java.lang.Object ref = clientUuid_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = 
-          (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      clientUuid_ = s;
-      return s;
-    }
-  }
-  /**
-   * <code>string clientUuid = 4;</code>
-   */
-  public com.google.protobuf.ByteString
-      getClientUuidBytes() {
-    java.lang.Object ref = clientUuid_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
-          com.google.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      clientUuid_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
-  }
-
-  public static final int ORGUUID_FIELD_NUMBER = 5;
-  private volatile java.lang.Object orgUuid_;
-  /**
-   * <code>string orgUuid = 5;</code>
-   */
-  public java.lang.String getOrgUuid() {
-    java.lang.Object ref = orgUuid_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = 
-          (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      orgUuid_ = s;
-      return s;
-    }
-  }
-  /**
-   * <code>string orgUuid = 5;</code>
-   */
-  public com.google.protobuf.ByteString
-      getOrgUuidBytes() {
-    java.lang.Object ref = orgUuid_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
-          com.google.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      orgUuid_ = b;
       return b;
     } else {
       return (com.google.protobuf.ByteString) ref;
@@ -294,20 +253,17 @@ private static final long serialVersionUID = 0L;
 
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
-    if (!getUuidBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, uuid_);
+    if (!getUserNameBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, userName_);
     }
-    if (!getLanguageBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, language_);
+    if (!getUserPassBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, userPass_);
+    }
+    if (!getTokenBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 3, token_);
     }
     if (!getClientVersionBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 3, clientVersion_);
-    }
-    if (!getClientUuidBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 4, clientUuid_);
-    }
-    if (!getOrgUuidBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 5, orgUuid_);
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 4, clientVersion_);
     }
     unknownFields.writeTo(output);
   }
@@ -317,20 +273,17 @@ private static final long serialVersionUID = 0L;
     if (size != -1) return size;
 
     size = 0;
-    if (!getUuidBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, uuid_);
+    if (!getUserNameBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, userName_);
     }
-    if (!getLanguageBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, language_);
+    if (!getUserPassBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, userPass_);
+    }
+    if (!getTokenBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, token_);
     }
     if (!getClientVersionBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, clientVersion_);
-    }
-    if (!getClientUuidBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, clientUuid_);
-    }
-    if (!getOrgUuidBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, orgUuid_);
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, clientVersion_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -342,22 +295,20 @@ private static final long serialVersionUID = 0L;
     if (obj == this) {
      return true;
     }
-    if (!(obj instanceof org.spin.grpc.util.ClientRequest)) {
+    if (!(obj instanceof org.spin.grpc.util.UserRequest)) {
       return super.equals(obj);
     }
-    org.spin.grpc.util.ClientRequest other = (org.spin.grpc.util.ClientRequest) obj;
+    org.spin.grpc.util.UserRequest other = (org.spin.grpc.util.UserRequest) obj;
 
     boolean result = true;
-    result = result && getUuid()
-        .equals(other.getUuid());
-    result = result && getLanguage()
-        .equals(other.getLanguage());
+    result = result && getUserName()
+        .equals(other.getUserName());
+    result = result && getUserPass()
+        .equals(other.getUserPass());
+    result = result && getToken()
+        .equals(other.getToken());
     result = result && getClientVersion()
         .equals(other.getClientVersion());
-    result = result && getClientUuid()
-        .equals(other.getClientUuid());
-    result = result && getOrgUuid()
-        .equals(other.getOrgUuid());
     result = result && unknownFields.equals(other.unknownFields);
     return result;
   }
@@ -369,84 +320,82 @@ private static final long serialVersionUID = 0L;
     }
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
-    hash = (37 * hash) + UUID_FIELD_NUMBER;
-    hash = (53 * hash) + getUuid().hashCode();
-    hash = (37 * hash) + LANGUAGE_FIELD_NUMBER;
-    hash = (53 * hash) + getLanguage().hashCode();
+    hash = (37 * hash) + USERNAME_FIELD_NUMBER;
+    hash = (53 * hash) + getUserName().hashCode();
+    hash = (37 * hash) + USERPASS_FIELD_NUMBER;
+    hash = (53 * hash) + getUserPass().hashCode();
+    hash = (37 * hash) + TOKEN_FIELD_NUMBER;
+    hash = (53 * hash) + getToken().hashCode();
     hash = (37 * hash) + CLIENTVERSION_FIELD_NUMBER;
     hash = (53 * hash) + getClientVersion().hashCode();
-    hash = (37 * hash) + CLIENTUUID_FIELD_NUMBER;
-    hash = (53 * hash) + getClientUuid().hashCode();
-    hash = (37 * hash) + ORGUUID_FIELD_NUMBER;
-    hash = (53 * hash) + getOrgUuid().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
   }
 
-  public static org.spin.grpc.util.ClientRequest parseFrom(
+  public static org.spin.grpc.util.UserRequest parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.spin.grpc.util.ClientRequest parseFrom(
+  public static org.spin.grpc.util.UserRequest parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.spin.grpc.util.ClientRequest parseFrom(
+  public static org.spin.grpc.util.UserRequest parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.spin.grpc.util.ClientRequest parseFrom(
+  public static org.spin.grpc.util.UserRequest parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.spin.grpc.util.ClientRequest parseFrom(byte[] data)
+  public static org.spin.grpc.util.UserRequest parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.spin.grpc.util.ClientRequest parseFrom(
+  public static org.spin.grpc.util.UserRequest parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.spin.grpc.util.ClientRequest parseFrom(java.io.InputStream input)
+  public static org.spin.grpc.util.UserRequest parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static org.spin.grpc.util.ClientRequest parseFrom(
+  public static org.spin.grpc.util.UserRequest parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input, extensionRegistry);
   }
-  public static org.spin.grpc.util.ClientRequest parseDelimitedFrom(java.io.InputStream input)
+  public static org.spin.grpc.util.UserRequest parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input);
   }
-  public static org.spin.grpc.util.ClientRequest parseDelimitedFrom(
+  public static org.spin.grpc.util.UserRequest parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
   }
-  public static org.spin.grpc.util.ClientRequest parseFrom(
+  public static org.spin.grpc.util.UserRequest parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static org.spin.grpc.util.ClientRequest parseFrom(
+  public static org.spin.grpc.util.UserRequest parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -458,7 +407,7 @@ private static final long serialVersionUID = 0L;
   public static Builder newBuilder() {
     return DEFAULT_INSTANCE.toBuilder();
   }
-  public static Builder newBuilder(org.spin.grpc.util.ClientRequest prototype) {
+  public static Builder newBuilder(org.spin.grpc.util.UserRequest prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
   public Builder toBuilder() {
@@ -477,25 +426,25 @@ private static final long serialVersionUID = 0L;
    * The client request contains client info for request.
    * </pre>
    *
-   * Protobuf type {@code access.ClientRequest}
+   * Protobuf type {@code access.UserRequest}
    */
   public static final class Builder extends
       com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-      // @@protoc_insertion_point(builder_implements:access.ClientRequest)
-      org.spin.grpc.util.ClientRequestOrBuilder {
+      // @@protoc_insertion_point(builder_implements:access.UserRequest)
+      org.spin.grpc.util.UserRequestOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.spin.grpc.util.ADempiereAccess.internal_static_access_ClientRequest_descriptor;
+      return org.spin.grpc.util.ADempiereAccess.internal_static_access_UserRequest_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.spin.grpc.util.ADempiereAccess.internal_static_access_ClientRequest_fieldAccessorTable
+      return org.spin.grpc.util.ADempiereAccess.internal_static_access_UserRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.spin.grpc.util.ClientRequest.class, org.spin.grpc.util.ClientRequest.Builder.class);
+              org.spin.grpc.util.UserRequest.class, org.spin.grpc.util.UserRequest.Builder.class);
     }
 
-    // Construct using org.spin.grpc.util.ClientRequest.newBuilder()
+    // Construct using org.spin.grpc.util.UserRequest.newBuilder()
     private Builder() {
       maybeForceBuilderInitialization();
     }
@@ -512,43 +461,40 @@ private static final long serialVersionUID = 0L;
     }
     public Builder clear() {
       super.clear();
-      uuid_ = "";
+      userName_ = "";
 
-      language_ = "";
+      userPass_ = "";
+
+      token_ = "";
 
       clientVersion_ = "";
-
-      clientUuid_ = "";
-
-      orgUuid_ = "";
 
       return this;
     }
 
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
-      return org.spin.grpc.util.ADempiereAccess.internal_static_access_ClientRequest_descriptor;
+      return org.spin.grpc.util.ADempiereAccess.internal_static_access_UserRequest_descriptor;
     }
 
-    public org.spin.grpc.util.ClientRequest getDefaultInstanceForType() {
-      return org.spin.grpc.util.ClientRequest.getDefaultInstance();
+    public org.spin.grpc.util.UserRequest getDefaultInstanceForType() {
+      return org.spin.grpc.util.UserRequest.getDefaultInstance();
     }
 
-    public org.spin.grpc.util.ClientRequest build() {
-      org.spin.grpc.util.ClientRequest result = buildPartial();
+    public org.spin.grpc.util.UserRequest build() {
+      org.spin.grpc.util.UserRequest result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
       return result;
     }
 
-    public org.spin.grpc.util.ClientRequest buildPartial() {
-      org.spin.grpc.util.ClientRequest result = new org.spin.grpc.util.ClientRequest(this);
-      result.uuid_ = uuid_;
-      result.language_ = language_;
+    public org.spin.grpc.util.UserRequest buildPartial() {
+      org.spin.grpc.util.UserRequest result = new org.spin.grpc.util.UserRequest(this);
+      result.userName_ = userName_;
+      result.userPass_ = userPass_;
+      result.token_ = token_;
       result.clientVersion_ = clientVersion_;
-      result.clientUuid_ = clientUuid_;
-      result.orgUuid_ = orgUuid_;
       onBuilt();
       return result;
     }
@@ -580,34 +526,30 @@ private static final long serialVersionUID = 0L;
       return (Builder) super.addRepeatedField(field, value);
     }
     public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof org.spin.grpc.util.ClientRequest) {
-        return mergeFrom((org.spin.grpc.util.ClientRequest)other);
+      if (other instanceof org.spin.grpc.util.UserRequest) {
+        return mergeFrom((org.spin.grpc.util.UserRequest)other);
       } else {
         super.mergeFrom(other);
         return this;
       }
     }
 
-    public Builder mergeFrom(org.spin.grpc.util.ClientRequest other) {
-      if (other == org.spin.grpc.util.ClientRequest.getDefaultInstance()) return this;
-      if (!other.getUuid().isEmpty()) {
-        uuid_ = other.uuid_;
+    public Builder mergeFrom(org.spin.grpc.util.UserRequest other) {
+      if (other == org.spin.grpc.util.UserRequest.getDefaultInstance()) return this;
+      if (!other.getUserName().isEmpty()) {
+        userName_ = other.userName_;
         onChanged();
       }
-      if (!other.getLanguage().isEmpty()) {
-        language_ = other.language_;
+      if (!other.getUserPass().isEmpty()) {
+        userPass_ = other.userPass_;
+        onChanged();
+      }
+      if (!other.getToken().isEmpty()) {
+        token_ = other.token_;
         onChanged();
       }
       if (!other.getClientVersion().isEmpty()) {
         clientVersion_ = other.clientVersion_;
-        onChanged();
-      }
-      if (!other.getClientUuid().isEmpty()) {
-        clientUuid_ = other.clientUuid_;
-        onChanged();
-      }
-      if (!other.getOrgUuid().isEmpty()) {
-        orgUuid_ = other.orgUuid_;
         onChanged();
       }
       this.mergeUnknownFields(other.unknownFields);
@@ -623,11 +565,11 @@ private static final long serialVersionUID = 0L;
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      org.spin.grpc.util.ClientRequest parsedMessage = null;
+      org.spin.grpc.util.UserRequest parsedMessage = null;
       try {
         parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (org.spin.grpc.util.ClientRequest) e.getUnfinishedMessage();
+        parsedMessage = (org.spin.grpc.util.UserRequest) e.getUnfinishedMessage();
         throw e.unwrapIOException();
       } finally {
         if (parsedMessage != null) {
@@ -637,147 +579,216 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private java.lang.Object uuid_ = "";
+    private java.lang.Object userName_ = "";
     /**
-     * <code>string uuid = 1;</code>
+     * <code>string userName = 1;</code>
      */
-    public java.lang.String getUuid() {
-      java.lang.Object ref = uuid_;
+    public java.lang.String getUserName() {
+      java.lang.Object ref = userName_;
       if (!(ref instanceof java.lang.String)) {
         com.google.protobuf.ByteString bs =
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        uuid_ = s;
+        userName_ = s;
         return s;
       } else {
         return (java.lang.String) ref;
       }
     }
     /**
-     * <code>string uuid = 1;</code>
+     * <code>string userName = 1;</code>
      */
     public com.google.protobuf.ByteString
-        getUuidBytes() {
-      java.lang.Object ref = uuid_;
+        getUserNameBytes() {
+      java.lang.Object ref = userName_;
       if (ref instanceof String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
-        uuid_ = b;
+        userName_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
     /**
-     * <code>string uuid = 1;</code>
+     * <code>string userName = 1;</code>
      */
-    public Builder setUuid(
+    public Builder setUserName(
         java.lang.String value) {
       if (value == null) {
     throw new NullPointerException();
   }
   
-      uuid_ = value;
+      userName_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>string uuid = 1;</code>
+     * <code>string userName = 1;</code>
      */
-    public Builder clearUuid() {
+    public Builder clearUserName() {
       
-      uuid_ = getDefaultInstance().getUuid();
+      userName_ = getDefaultInstance().getUserName();
       onChanged();
       return this;
     }
     /**
-     * <code>string uuid = 1;</code>
+     * <code>string userName = 1;</code>
      */
-    public Builder setUuidBytes(
+    public Builder setUserNameBytes(
         com.google.protobuf.ByteString value) {
       if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
       
-      uuid_ = value;
+      userName_ = value;
       onChanged();
       return this;
     }
 
-    private java.lang.Object language_ = "";
+    private java.lang.Object userPass_ = "";
     /**
-     * <code>string language = 2;</code>
+     * <code>string userPass = 2;</code>
      */
-    public java.lang.String getLanguage() {
-      java.lang.Object ref = language_;
+    public java.lang.String getUserPass() {
+      java.lang.Object ref = userPass_;
       if (!(ref instanceof java.lang.String)) {
         com.google.protobuf.ByteString bs =
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        language_ = s;
+        userPass_ = s;
         return s;
       } else {
         return (java.lang.String) ref;
       }
     }
     /**
-     * <code>string language = 2;</code>
+     * <code>string userPass = 2;</code>
      */
     public com.google.protobuf.ByteString
-        getLanguageBytes() {
-      java.lang.Object ref = language_;
+        getUserPassBytes() {
+      java.lang.Object ref = userPass_;
       if (ref instanceof String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
-        language_ = b;
+        userPass_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
     /**
-     * <code>string language = 2;</code>
+     * <code>string userPass = 2;</code>
      */
-    public Builder setLanguage(
+    public Builder setUserPass(
         java.lang.String value) {
       if (value == null) {
     throw new NullPointerException();
   }
   
-      language_ = value;
+      userPass_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>string language = 2;</code>
+     * <code>string userPass = 2;</code>
      */
-    public Builder clearLanguage() {
+    public Builder clearUserPass() {
       
-      language_ = getDefaultInstance().getLanguage();
+      userPass_ = getDefaultInstance().getUserPass();
       onChanged();
       return this;
     }
     /**
-     * <code>string language = 2;</code>
+     * <code>string userPass = 2;</code>
      */
-    public Builder setLanguageBytes(
+    public Builder setUserPassBytes(
         com.google.protobuf.ByteString value) {
       if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
       
-      language_ = value;
+      userPass_ = value;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object token_ = "";
+    /**
+     * <code>string token = 3;</code>
+     */
+    public java.lang.String getToken() {
+      java.lang.Object ref = token_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        token_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string token = 3;</code>
+     */
+    public com.google.protobuf.ByteString
+        getTokenBytes() {
+      java.lang.Object ref = token_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        token_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string token = 3;</code>
+     */
+    public Builder setToken(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
+      token_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string token = 3;</code>
+     */
+    public Builder clearToken() {
+      
+      token_ = getDefaultInstance().getToken();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string token = 3;</code>
+     */
+    public Builder setTokenBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      
+      token_ = value;
       onChanged();
       return this;
     }
 
     private java.lang.Object clientVersion_ = "";
     /**
-     * <code>string clientVersion = 3;</code>
+     * <code>string clientVersion = 4;</code>
      */
     public java.lang.String getClientVersion() {
       java.lang.Object ref = clientVersion_;
@@ -792,7 +803,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string clientVersion = 3;</code>
+     * <code>string clientVersion = 4;</code>
      */
     public com.google.protobuf.ByteString
         getClientVersionBytes() {
@@ -808,7 +819,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string clientVersion = 3;</code>
+     * <code>string clientVersion = 4;</code>
      */
     public Builder setClientVersion(
         java.lang.String value) {
@@ -821,7 +832,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string clientVersion = 3;</code>
+     * <code>string clientVersion = 4;</code>
      */
     public Builder clearClientVersion() {
       
@@ -830,7 +841,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string clientVersion = 3;</code>
+     * <code>string clientVersion = 4;</code>
      */
     public Builder setClientVersionBytes(
         com.google.protobuf.ByteString value) {
@@ -840,144 +851,6 @@ private static final long serialVersionUID = 0L;
   checkByteStringIsUtf8(value);
       
       clientVersion_ = value;
-      onChanged();
-      return this;
-    }
-
-    private java.lang.Object clientUuid_ = "";
-    /**
-     * <code>string clientUuid = 4;</code>
-     */
-    public java.lang.String getClientUuid() {
-      java.lang.Object ref = clientUuid_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        clientUuid_ = s;
-        return s;
-      } else {
-        return (java.lang.String) ref;
-      }
-    }
-    /**
-     * <code>string clientUuid = 4;</code>
-     */
-    public com.google.protobuf.ByteString
-        getClientUuidBytes() {
-      java.lang.Object ref = clientUuid_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        clientUuid_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-    /**
-     * <code>string clientUuid = 4;</code>
-     */
-    public Builder setClientUuid(
-        java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
-      clientUuid_ = value;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string clientUuid = 4;</code>
-     */
-    public Builder clearClientUuid() {
-      
-      clientUuid_ = getDefaultInstance().getClientUuid();
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string clientUuid = 4;</code>
-     */
-    public Builder setClientUuidBytes(
-        com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-      
-      clientUuid_ = value;
-      onChanged();
-      return this;
-    }
-
-    private java.lang.Object orgUuid_ = "";
-    /**
-     * <code>string orgUuid = 5;</code>
-     */
-    public java.lang.String getOrgUuid() {
-      java.lang.Object ref = orgUuid_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        orgUuid_ = s;
-        return s;
-      } else {
-        return (java.lang.String) ref;
-      }
-    }
-    /**
-     * <code>string orgUuid = 5;</code>
-     */
-    public com.google.protobuf.ByteString
-        getOrgUuidBytes() {
-      java.lang.Object ref = orgUuid_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        orgUuid_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-    /**
-     * <code>string orgUuid = 5;</code>
-     */
-    public Builder setOrgUuid(
-        java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
-      orgUuid_ = value;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string orgUuid = 5;</code>
-     */
-    public Builder clearOrgUuid() {
-      
-      orgUuid_ = getDefaultInstance().getOrgUuid();
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string orgUuid = 5;</code>
-     */
-    public Builder setOrgUuidBytes(
-        com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-      
-      orgUuid_ = value;
       onChanged();
       return this;
     }
@@ -992,39 +865,39 @@ private static final long serialVersionUID = 0L;
     }
 
 
-    // @@protoc_insertion_point(builder_scope:access.ClientRequest)
+    // @@protoc_insertion_point(builder_scope:access.UserRequest)
   }
 
-  // @@protoc_insertion_point(class_scope:access.ClientRequest)
-  private static final org.spin.grpc.util.ClientRequest DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:access.UserRequest)
+  private static final org.spin.grpc.util.UserRequest DEFAULT_INSTANCE;
   static {
-    DEFAULT_INSTANCE = new org.spin.grpc.util.ClientRequest();
+    DEFAULT_INSTANCE = new org.spin.grpc.util.UserRequest();
   }
 
-  public static org.spin.grpc.util.ClientRequest getDefaultInstance() {
+  public static org.spin.grpc.util.UserRequest getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<ClientRequest>
-      PARSER = new com.google.protobuf.AbstractParser<ClientRequest>() {
-    public ClientRequest parsePartialFrom(
+  private static final com.google.protobuf.Parser<UserRequest>
+      PARSER = new com.google.protobuf.AbstractParser<UserRequest>() {
+    public UserRequest parsePartialFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return new ClientRequest(input, extensionRegistry);
+      return new UserRequest(input, extensionRegistry);
     }
   };
 
-  public static com.google.protobuf.Parser<ClientRequest> parser() {
+  public static com.google.protobuf.Parser<UserRequest> parser() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.protobuf.Parser<ClientRequest> getParserForType() {
+  public com.google.protobuf.Parser<UserRequest> getParserForType() {
     return PARSER;
   }
 
-  public org.spin.grpc.util.ClientRequest getDefaultInstanceForType() {
+  public org.spin.grpc.util.UserRequest getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }
 

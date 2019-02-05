@@ -23,31 +23,31 @@ public interface TabOrBuilder extends
       getUuidBytes();
 
   /**
-   * <code>string name = 4;</code>
+   * <code>string name = 3;</code>
    */
   java.lang.String getName();
   /**
-   * <code>string name = 4;</code>
+   * <code>string name = 3;</code>
    */
   com.google.protobuf.ByteString
       getNameBytes();
 
   /**
-   * <code>string description = 5;</code>
+   * <code>string description = 4;</code>
    */
   java.lang.String getDescription();
   /**
-   * <code>string description = 5;</code>
+   * <code>string description = 4;</code>
    */
   com.google.protobuf.ByteString
       getDescriptionBytes();
 
   /**
-   * <code>string help = 6;</code>
+   * <code>string help = 5;</code>
    */
   java.lang.String getHelp();
   /**
-   * <code>string help = 6;</code>
+   * <code>string help = 5;</code>
    */
   com.google.protobuf.ByteString
       getHelpBytes();
@@ -57,7 +57,7 @@ public interface TabOrBuilder extends
    * Attributes
    * </pre>
    *
-   * <code>string tableName = 7;</code>
+   * <code>string tableName = 6;</code>
    */
   java.lang.String getTableName();
   /**
@@ -65,18 +65,18 @@ public interface TabOrBuilder extends
    * Attributes
    * </pre>
    *
-   * <code>string tableName = 7;</code>
+   * <code>string tableName = 6;</code>
    */
   com.google.protobuf.ByteString
       getTableNameBytes();
 
   /**
-   * <code>int32 sequence = 8;</code>
+   * <code>int32 sequence = 7;</code>
    */
   int getSequence();
 
   /**
-   * <code>int32 tabLevel = 9;</code>
+   * <code>int32 tabLevel = 8;</code>
    */
   int getTabLevel();
 
@@ -84,111 +84,111 @@ public interface TabOrBuilder extends
    * <pre>
    * </pre>
    *
-   * <code>bool isSingleRow = 10;</code>
+   * <code>bool isSingleRow = 9;</code>
    */
   boolean getIsSingleRow();
 
   /**
-   * <code>bool isAdvancedTab = 11;</code>
+   * <code>bool isAdvancedTab = 10;</code>
    */
   boolean getIsAdvancedTab();
 
   /**
-   * <code>bool isHasTree = 12;</code>
+   * <code>bool isHasTree = 11;</code>
    */
   boolean getIsHasTree();
 
   /**
-   * <code>bool isInfoTab = 13;</code>
+   * <code>bool isInfoTab = 12;</code>
    */
   boolean getIsInfoTab();
 
   /**
-   * <code>bool isSortTab = 14;</code>
+   * <code>bool isSortTab = 13;</code>
    */
   boolean getIsSortTab();
 
   /**
-   * <code>bool isTranslationTab = 15;</code>
+   * <code>bool isTranslationTab = 14;</code>
    */
   boolean getIsTranslationTab();
 
   /**
-   * <code>bool isReadOnly = 16;</code>
+   * <code>bool isReadOnly = 15;</code>
    */
   boolean getIsReadOnly();
 
   /**
-   * <code>bool isInsertRecord = 17;</code>
+   * <code>bool isInsertRecord = 16;</code>
    */
   boolean getIsInsertRecord();
 
   /**
-   * <code>bool isView = 18;</code>
+   * <code>bool isView = 17;</code>
    */
   boolean getIsView();
 
   /**
-   * <code>bool isDeleteable = 19;</code>
+   * <code>bool isDeleteable = 18;</code>
    */
   boolean getIsDeleteable();
 
   /**
-   * <code>bool isDocument = 20;</code>
+   * <code>bool isDocument = 19;</code>
    */
   boolean getIsDocument();
 
   /**
-   * <code>int32 accessLevel = 21;</code>
+   * <code>int32 accessLevel = 20;</code>
    */
   int getAccessLevel();
 
   /**
-   * <code>string linkColumnName = 22;</code>
+   * <code>string linkColumnName = 21;</code>
    */
   java.lang.String getLinkColumnName();
   /**
-   * <code>string linkColumnName = 22;</code>
+   * <code>string linkColumnName = 21;</code>
    */
   com.google.protobuf.ByteString
       getLinkColumnNameBytes();
 
   /**
-   * <code>string parentColumnName = 23;</code>
+   * <code>string parentColumnName = 22;</code>
    */
   java.lang.String getParentColumnName();
   /**
-   * <code>string parentColumnName = 23;</code>
+   * <code>string parentColumnName = 22;</code>
    */
   com.google.protobuf.ByteString
       getParentColumnNameBytes();
 
   /**
-   * <code>string displayLogic = 24;</code>
+   * <code>string displayLogic = 23;</code>
    */
   java.lang.String getDisplayLogic();
   /**
-   * <code>string displayLogic = 24;</code>
+   * <code>string displayLogic = 23;</code>
    */
   com.google.protobuf.ByteString
       getDisplayLogicBytes();
 
   /**
-   * <code>string commitWarning = 25;</code>
+   * <code>string commitWarning = 24;</code>
    */
   java.lang.String getCommitWarning();
   /**
-   * <code>string commitWarning = 25;</code>
+   * <code>string commitWarning = 24;</code>
    */
   com.google.protobuf.ByteString
       getCommitWarningBytes();
 
   /**
-   * <code>string orderByClause = 26;</code>
+   * <code>string orderByClause = 25;</code>
    */
   java.lang.String getOrderByClause();
   /**
-   * <code>string orderByClause = 26;</code>
+   * <code>string orderByClause = 25;</code>
    */
   com.google.protobuf.ByteString
       getOrderByClauseBytes();
@@ -198,7 +198,7 @@ public interface TabOrBuilder extends
    * External Info
    * </pre>
    *
-   * <code>.dictionary.ContextInfo contextInfo = 27;</code>
+   * <code>.dictionary.ContextInfo contextInfo = 26;</code>
    */
   boolean hasContextInfo();
   /**
@@ -206,7 +206,7 @@ public interface TabOrBuilder extends
    * External Info
    * </pre>
    *
-   * <code>.dictionary.ContextInfo contextInfo = 27;</code>
+   * <code>.dictionary.ContextInfo contextInfo = 26;</code>
    */
   org.spin.grpc.util.ContextInfo getContextInfo();
   /**
@@ -214,43 +214,43 @@ public interface TabOrBuilder extends
    * External Info
    * </pre>
    *
-   * <code>.dictionary.ContextInfo contextInfo = 27;</code>
+   * <code>.dictionary.ContextInfo contextInfo = 26;</code>
    */
   org.spin.grpc.util.ContextInfoOrBuilder getContextInfoOrBuilder();
 
   /**
-   * <code>.dictionary.Process process = 28;</code>
+   * <code>.dictionary.Process process = 27;</code>
    */
   boolean hasProcess();
   /**
-   * <code>.dictionary.Process process = 28;</code>
+   * <code>.dictionary.Process process = 27;</code>
    */
   org.spin.grpc.util.Process getProcess();
   /**
-   * <code>.dictionary.Process process = 28;</code>
+   * <code>.dictionary.Process process = 27;</code>
    */
   org.spin.grpc.util.ProcessOrBuilder getProcessOrBuilder();
 
   /**
-   * <code>repeated .dictionary.Field fields = 29;</code>
+   * <code>repeated .dictionary.Field fields = 28;</code>
    */
   java.util.List<org.spin.grpc.util.Field> 
       getFieldsList();
   /**
-   * <code>repeated .dictionary.Field fields = 29;</code>
+   * <code>repeated .dictionary.Field fields = 28;</code>
    */
   org.spin.grpc.util.Field getFields(int index);
   /**
-   * <code>repeated .dictionary.Field fields = 29;</code>
+   * <code>repeated .dictionary.Field fields = 28;</code>
    */
   int getFieldsCount();
   /**
-   * <code>repeated .dictionary.Field fields = 29;</code>
+   * <code>repeated .dictionary.Field fields = 28;</code>
    */
   java.util.List<? extends org.spin.grpc.util.FieldOrBuilder> 
       getFieldsOrBuilderList();
   /**
-   * <code>repeated .dictionary.Field fields = 29;</code>
+   * <code>repeated .dictionary.Field fields = 28;</code>
    */
   org.spin.grpc.util.FieldOrBuilder getFieldsOrBuilder(
       int index);
