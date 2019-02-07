@@ -226,6 +226,9 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			//	With Tabs
 			if(withTabs) {
 				for(MTab tab : window.getTabs(false, null)) {
+					if(!tab.isActive()) {
+						continue;
+					}
 					Tab.Builder tabBuilder = convertTab(tab, language, false);
 					builder.addTabs(tabBuilder.build());
 				}
@@ -336,6 +339,9 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		}
 		if(withFields) {
 			for(MField field : tab.getFields(false, null)) {
+				if(!field.isActive()) {
+					continue;
+				}
 				Field.Builder fieldBuilder = convertField(field, language);
 				builder.addFields(fieldBuilder.build());
 			}
@@ -422,6 +428,9 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setIsReport(process.isReport());
 		//	For parameters
 		for(MProcessPara parameter : process.getParameters()) {
+			if(!parameter.isActive()) {
+				continue;
+			}
 			Field.Builder fieldBuilder = convertProcessParameter(parameter, language);
 			builder.addParameters(fieldBuilder.build());
 		}
@@ -634,6 +643,9 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 					.setName(fieldDefinition.getName());
 			//	Get conditions
 			for(MADFieldCondition condition : fieldDefinition.getConditions()) {
+				if(!condition.isActive()) {
+					continue;
+				}
 				FieldCondition.Builder fieldConditionBuilder = FieldCondition.newBuilder()
 						.setId(fieldDefinition.getAD_FieldDefinition_ID())
 						.setUuid(condition.getUUID())

@@ -23,10 +23,10 @@ package data;
 
 // The greeting service definition.
 service DataService {
-  // Request PO entity from UUID (Optional ID)
-  rpc RequestPO(ValueObjectRequest) returns (ValueObject) {}
-  // Request PO List
-  rpc RequestPOList(ValueObjectRequest) returns (ValueObjectList) {}
+  // Request Object entity from UUID (Optional ID)
+  rpc RequestObject(ValueObjectRequest) returns (ValueObject) {}
+  // Request Object List
+  rpc RequestObjectList(ValueObjectRequest) returns (ValueObjectList) {}
   // Request Callout
   rpc RequestCallout(CalloutRequest) returns (CalloutResponse) {}
 }
@@ -40,7 +40,7 @@ message ClientRequest {
 	string orgUuid = 5;
 }
 
-// PO List
+// Object List
 message ValueObjectList {
 	int64 recordCount = 1;
 	repeated ValueObject records = 2;
@@ -72,7 +72,7 @@ message Value {
 	ValueType valueType = 6;
 }
 
-// PO request
+// Object request
 message ValueObjectRequest {
 	int32 id = 1;
 	string uuid = 2;
