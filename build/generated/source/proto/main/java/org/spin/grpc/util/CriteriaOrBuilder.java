@@ -23,26 +23,70 @@ public interface CriteriaOrBuilder extends
   long getLimit();
 
   /**
-   * <code>repeated .data.Condition conditions = 3;</code>
+   * <code>string whereClause = 3;</code>
+   */
+  java.lang.String getWhereClause();
+  /**
+   * <code>string whereClause = 3;</code>
+   */
+  com.google.protobuf.ByteString
+      getWhereClauseBytes();
+
+  /**
+   * <code>string orderByClause = 4;</code>
+   */
+  java.lang.String getOrderByClause();
+  /**
+   * <code>string orderByClause = 4;</code>
+   */
+  com.google.protobuf.ByteString
+      getOrderByClauseBytes();
+
+  /**
+   * <code>repeated .data.Condition conditions = 5;</code>
    */
   java.util.List<org.spin.grpc.util.Condition> 
       getConditionsList();
   /**
-   * <code>repeated .data.Condition conditions = 3;</code>
+   * <code>repeated .data.Condition conditions = 5;</code>
    */
   org.spin.grpc.util.Condition getConditions(int index);
   /**
-   * <code>repeated .data.Condition conditions = 3;</code>
+   * <code>repeated .data.Condition conditions = 5;</code>
    */
   int getConditionsCount();
   /**
-   * <code>repeated .data.Condition conditions = 3;</code>
+   * <code>repeated .data.Condition conditions = 5;</code>
    */
   java.util.List<? extends org.spin.grpc.util.ConditionOrBuilder> 
       getConditionsOrBuilderList();
   /**
-   * <code>repeated .data.Condition conditions = 3;</code>
+   * <code>repeated .data.Condition conditions = 5;</code>
    */
   org.spin.grpc.util.ConditionOrBuilder getConditionsOrBuilder(
+      int index);
+
+  /**
+   * <code>repeated .data.OrderByProperty orderByColumn = 6;</code>
+   */
+  java.util.List<org.spin.grpc.util.OrderByProperty> 
+      getOrderByColumnList();
+  /**
+   * <code>repeated .data.OrderByProperty orderByColumn = 6;</code>
+   */
+  org.spin.grpc.util.OrderByProperty getOrderByColumn(int index);
+  /**
+   * <code>repeated .data.OrderByProperty orderByColumn = 6;</code>
+   */
+  int getOrderByColumnCount();
+  /**
+   * <code>repeated .data.OrderByProperty orderByColumn = 6;</code>
+   */
+  java.util.List<? extends org.spin.grpc.util.OrderByPropertyOrBuilder> 
+      getOrderByColumnOrBuilderList();
+  /**
+   * <code>repeated .data.OrderByProperty orderByColumn = 6;</code>
+   */
+  org.spin.grpc.util.OrderByPropertyOrBuilder getOrderByColumnOrBuilder(
       int index);
 }

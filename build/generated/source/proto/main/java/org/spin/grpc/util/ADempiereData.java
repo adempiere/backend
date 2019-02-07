@@ -50,6 +50,11 @@ public final class ADempiereData {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_data_Criteria_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_data_OrderByProperty_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_data_OrderByProperty_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
     internal_static_data_Condition_descriptor;
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -91,28 +96,34 @@ public final class ADempiereData {
       "\004DATE\020\005\"|\n\022ValueObjectRequest\022\n\n\002id\030\001 \001(" +
       "\005\022\014\n\004uuid\030\002 \001(\t\022*\n\rclientRequest\030\003 \001(\0132\023" +
       ".data.ClientRequest\022 \n\010criteria\030\004 \001(\0132\016." +
-      "data.Criteria\"Q\n\010Criteria\022\021\n\ttableName\030\001" +
-      " \001(\t\022\r\n\005limit\030\002 \001(\003\022#\n\nconditions\030\003 \003(\0132" +
-      "\017.data.Condition\"\300\002\n\tCondition\022\032\n\005value\030" +
-      "\001 \001(\0132\013.data.Value\022\034\n\007valueTo\030\002 \001(\0132\013.da" +
-      "ta.Value\022\033\n\006values\030\003 \003(\0132\013.data.Value\022*\n" +
-      "\010operator\030\004 \001(\0162\030.data.Condition.Operato" +
-      "r\"\257\001\n\010Operator\022\t\n\005EQUAL\020\000\022\r\n\tNOT_EQUAL\020\001" +
-      "\022\010\n\004LIKE\020\002\022\014\n\010NOT_LIKE\020\003\022\013\n\007GREATER\020\004\022\021\n" +
-      "\rGREATER_EQUAL\020\005\022\010\n\004LESS\020\006\022\016\n\nLESS_EQUAL" +
-      "\020\007\022\013\n\007BETWEEN\020\010\022\014\n\010NOT_NULL\020\t\022\010\n\004NULL\020\n\022" +
-      "\006\n\002IN\020\013\022\n\n\006NOT_IN\020\014\"u\n\016CalloutRequest\022*\n" +
-      "\rclientRequest\030\001 \001(\0132\023.data.ClientReques" +
-      "t\022\017\n\007callout\030\002 \001(\t\022&\n\013valueObject\030\003 \001(\0132" +
-      "\021.data.ValueObject\">\n\017CalloutResponse\022\016\n" +
-      "\006result\030\001 \001(\t\022\033\n\006values\030\002 \003(\0132\013.data.Val" +
-      "ue2\326\001\n\013DataService\022>\n\rRequestObject\022\030.da" +
-      "ta.ValueObjectRequest\032\021.data.ValueObject" +
-      "\"\000\022F\n\021RequestObjectList\022\030.data.ValueObje" +
-      "ctRequest\032\025.data.ValueObjectList\"\000\022?\n\016Re" +
-      "questCallout\022\024.data.CalloutRequest\032\025.dat" +
-      "a.CalloutResponse\"\000B+\n\022org.spin.grpc.uti" +
-      "lB\rADempiereDataP\001\242\002\003HLWb\006proto3"
+      "data.Criteria\"\253\001\n\010Criteria\022\021\n\ttableName\030" +
+      "\001 \001(\t\022\r\n\005limit\030\002 \001(\003\022\023\n\013whereClause\030\003 \001(" +
+      "\t\022\025\n\rorderByClause\030\004 \001(\t\022#\n\nconditions\030\005" +
+      " \003(\0132\017.data.Condition\022,\n\rorderByColumn\030\006" +
+      " \003(\0132\025.data.OrderByProperty\"\205\001\n\017OrderByP" +
+      "roperty\022\022\n\ncolumnName\030\001 \001(\t\0222\n\torderType" +
+      "\030\002 \001(\0162\037.data.OrderByProperty.OrderType\"" +
+      "*\n\tOrderType\022\r\n\tASCENDING\020\000\022\016\n\nDESCENDIN" +
+      "G\020\001\"\300\002\n\tCondition\022\032\n\005value\030\001 \001(\0132\013.data." +
+      "Value\022\034\n\007valueTo\030\002 \001(\0132\013.data.Value\022\033\n\006v" +
+      "alues\030\003 \003(\0132\013.data.Value\022*\n\010operator\030\004 \001" +
+      "(\0162\030.data.Condition.Operator\"\257\001\n\010Operato" +
+      "r\022\t\n\005EQUAL\020\000\022\r\n\tNOT_EQUAL\020\001\022\010\n\004LIKE\020\002\022\014\n" +
+      "\010NOT_LIKE\020\003\022\013\n\007GREATER\020\004\022\021\n\rGREATER_EQUA" +
+      "L\020\005\022\010\n\004LESS\020\006\022\016\n\nLESS_EQUAL\020\007\022\013\n\007BETWEEN" +
+      "\020\010\022\014\n\010NOT_NULL\020\t\022\010\n\004NULL\020\n\022\006\n\002IN\020\013\022\n\n\006NO" +
+      "T_IN\020\014\"u\n\016CalloutRequest\022*\n\rclientReques" +
+      "t\030\001 \001(\0132\023.data.ClientRequest\022\017\n\007callout\030" +
+      "\002 \001(\t\022&\n\013valueObject\030\003 \001(\0132\021.data.ValueO" +
+      "bject\">\n\017CalloutResponse\022\016\n\006result\030\001 \001(\t" +
+      "\022\033\n\006values\030\002 \003(\0132\013.data.Value2\326\001\n\013DataSe" +
+      "rvice\022>\n\rRequestObject\022\030.data.ValueObjec" +
+      "tRequest\032\021.data.ValueObject\"\000\022F\n\021Request" +
+      "ObjectList\022\030.data.ValueObjectRequest\032\025.d" +
+      "ata.ValueObjectList\"\000\022?\n\016RequestCallout\022" +
+      "\024.data.CalloutRequest\032\025.data.CalloutResp" +
+      "onse\"\000B+\n\022org.spin.grpc.utilB\rADempiereD" +
+      "ataP\001\242\002\003HLWb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -167,21 +178,27 @@ public final class ADempiereData {
     internal_static_data_Criteria_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_data_Criteria_descriptor,
-        new java.lang.String[] { "TableName", "Limit", "Conditions", });
-    internal_static_data_Condition_descriptor =
+        new java.lang.String[] { "TableName", "Limit", "WhereClause", "OrderByClause", "Conditions", "OrderByColumn", });
+    internal_static_data_OrderByProperty_descriptor =
       getDescriptor().getMessageTypes().get(6);
+    internal_static_data_OrderByProperty_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_data_OrderByProperty_descriptor,
+        new java.lang.String[] { "ColumnName", "OrderType", });
+    internal_static_data_Condition_descriptor =
+      getDescriptor().getMessageTypes().get(7);
     internal_static_data_Condition_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_data_Condition_descriptor,
         new java.lang.String[] { "Value", "ValueTo", "Values", "Operator", });
     internal_static_data_CalloutRequest_descriptor =
-      getDescriptor().getMessageTypes().get(7);
+      getDescriptor().getMessageTypes().get(8);
     internal_static_data_CalloutRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_data_CalloutRequest_descriptor,
         new java.lang.String[] { "ClientRequest", "Callout", "ValueObject", });
     internal_static_data_CalloutResponse_descriptor =
-      getDescriptor().getMessageTypes().get(8);
+      getDescriptor().getMessageTypes().get(9);
     internal_static_data_CalloutResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_data_CalloutResponse_descriptor,

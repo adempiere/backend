@@ -22,7 +22,10 @@ private static final long serialVersionUID = 0L;
   private Criteria() {
     tableName_ = "";
     limit_ = 0L;
+    whereClause_ = "";
+    orderByClause_ = "";
     conditions_ = java.util.Collections.emptyList();
+    orderByColumn_ = java.util.Collections.emptyList();
   }
 
   @java.lang.Override
@@ -68,12 +71,33 @@ private static final long serialVersionUID = 0L;
             break;
           }
           case 26: {
-            if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+            java.lang.String s = input.readStringRequireUtf8();
+
+            whereClause_ = s;
+            break;
+          }
+          case 34: {
+            java.lang.String s = input.readStringRequireUtf8();
+
+            orderByClause_ = s;
+            break;
+          }
+          case 42: {
+            if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
               conditions_ = new java.util.ArrayList<org.spin.grpc.util.Condition>();
-              mutable_bitField0_ |= 0x00000004;
+              mutable_bitField0_ |= 0x00000010;
             }
             conditions_.add(
                 input.readMessage(org.spin.grpc.util.Condition.parser(), extensionRegistry));
+            break;
+          }
+          case 50: {
+            if (!((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
+              orderByColumn_ = new java.util.ArrayList<org.spin.grpc.util.OrderByProperty>();
+              mutable_bitField0_ |= 0x00000020;
+            }
+            orderByColumn_.add(
+                input.readMessage(org.spin.grpc.util.OrderByProperty.parser(), extensionRegistry));
             break;
           }
         }
@@ -84,8 +108,11 @@ private static final long serialVersionUID = 0L;
       throw new com.google.protobuf.InvalidProtocolBufferException(
           e).setUnfinishedMessage(this);
     } finally {
-      if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+      if (((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
         conditions_ = java.util.Collections.unmodifiableList(conditions_);
+      }
+      if (((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
+        orderByColumn_ = java.util.Collections.unmodifiableList(orderByColumn_);
       }
       this.unknownFields = unknownFields.build();
       makeExtensionsImmutable();
@@ -147,39 +174,142 @@ private static final long serialVersionUID = 0L;
     return limit_;
   }
 
-  public static final int CONDITIONS_FIELD_NUMBER = 3;
+  public static final int WHERECLAUSE_FIELD_NUMBER = 3;
+  private volatile java.lang.Object whereClause_;
+  /**
+   * <code>string whereClause = 3;</code>
+   */
+  public java.lang.String getWhereClause() {
+    java.lang.Object ref = whereClause_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      whereClause_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string whereClause = 3;</code>
+   */
+  public com.google.protobuf.ByteString
+      getWhereClauseBytes() {
+    java.lang.Object ref = whereClause_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      whereClause_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int ORDERBYCLAUSE_FIELD_NUMBER = 4;
+  private volatile java.lang.Object orderByClause_;
+  /**
+   * <code>string orderByClause = 4;</code>
+   */
+  public java.lang.String getOrderByClause() {
+    java.lang.Object ref = orderByClause_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      orderByClause_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string orderByClause = 4;</code>
+   */
+  public com.google.protobuf.ByteString
+      getOrderByClauseBytes() {
+    java.lang.Object ref = orderByClause_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      orderByClause_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int CONDITIONS_FIELD_NUMBER = 5;
   private java.util.List<org.spin.grpc.util.Condition> conditions_;
   /**
-   * <code>repeated .data.Condition conditions = 3;</code>
+   * <code>repeated .data.Condition conditions = 5;</code>
    */
   public java.util.List<org.spin.grpc.util.Condition> getConditionsList() {
     return conditions_;
   }
   /**
-   * <code>repeated .data.Condition conditions = 3;</code>
+   * <code>repeated .data.Condition conditions = 5;</code>
    */
   public java.util.List<? extends org.spin.grpc.util.ConditionOrBuilder> 
       getConditionsOrBuilderList() {
     return conditions_;
   }
   /**
-   * <code>repeated .data.Condition conditions = 3;</code>
+   * <code>repeated .data.Condition conditions = 5;</code>
    */
   public int getConditionsCount() {
     return conditions_.size();
   }
   /**
-   * <code>repeated .data.Condition conditions = 3;</code>
+   * <code>repeated .data.Condition conditions = 5;</code>
    */
   public org.spin.grpc.util.Condition getConditions(int index) {
     return conditions_.get(index);
   }
   /**
-   * <code>repeated .data.Condition conditions = 3;</code>
+   * <code>repeated .data.Condition conditions = 5;</code>
    */
   public org.spin.grpc.util.ConditionOrBuilder getConditionsOrBuilder(
       int index) {
     return conditions_.get(index);
+  }
+
+  public static final int ORDERBYCOLUMN_FIELD_NUMBER = 6;
+  private java.util.List<org.spin.grpc.util.OrderByProperty> orderByColumn_;
+  /**
+   * <code>repeated .data.OrderByProperty orderByColumn = 6;</code>
+   */
+  public java.util.List<org.spin.grpc.util.OrderByProperty> getOrderByColumnList() {
+    return orderByColumn_;
+  }
+  /**
+   * <code>repeated .data.OrderByProperty orderByColumn = 6;</code>
+   */
+  public java.util.List<? extends org.spin.grpc.util.OrderByPropertyOrBuilder> 
+      getOrderByColumnOrBuilderList() {
+    return orderByColumn_;
+  }
+  /**
+   * <code>repeated .data.OrderByProperty orderByColumn = 6;</code>
+   */
+  public int getOrderByColumnCount() {
+    return orderByColumn_.size();
+  }
+  /**
+   * <code>repeated .data.OrderByProperty orderByColumn = 6;</code>
+   */
+  public org.spin.grpc.util.OrderByProperty getOrderByColumn(int index) {
+    return orderByColumn_.get(index);
+  }
+  /**
+   * <code>repeated .data.OrderByProperty orderByColumn = 6;</code>
+   */
+  public org.spin.grpc.util.OrderByPropertyOrBuilder getOrderByColumnOrBuilder(
+      int index) {
+    return orderByColumn_.get(index);
   }
 
   private byte memoizedIsInitialized = -1;
@@ -200,8 +330,17 @@ private static final long serialVersionUID = 0L;
     if (limit_ != 0L) {
       output.writeInt64(2, limit_);
     }
+    if (!getWhereClauseBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 3, whereClause_);
+    }
+    if (!getOrderByClauseBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 4, orderByClause_);
+    }
     for (int i = 0; i < conditions_.size(); i++) {
-      output.writeMessage(3, conditions_.get(i));
+      output.writeMessage(5, conditions_.get(i));
+    }
+    for (int i = 0; i < orderByColumn_.size(); i++) {
+      output.writeMessage(6, orderByColumn_.get(i));
     }
     unknownFields.writeTo(output);
   }
@@ -218,9 +357,19 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeInt64Size(2, limit_);
     }
+    if (!getWhereClauseBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, whereClause_);
+    }
+    if (!getOrderByClauseBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, orderByClause_);
+    }
     for (int i = 0; i < conditions_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(3, conditions_.get(i));
+        .computeMessageSize(5, conditions_.get(i));
+    }
+    for (int i = 0; i < orderByColumn_.size(); i++) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(6, orderByColumn_.get(i));
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -242,8 +391,14 @@ private static final long serialVersionUID = 0L;
         .equals(other.getTableName());
     result = result && (getLimit()
         == other.getLimit());
+    result = result && getWhereClause()
+        .equals(other.getWhereClause());
+    result = result && getOrderByClause()
+        .equals(other.getOrderByClause());
     result = result && getConditionsList()
         .equals(other.getConditionsList());
+    result = result && getOrderByColumnList()
+        .equals(other.getOrderByColumnList());
     result = result && unknownFields.equals(other.unknownFields);
     return result;
   }
@@ -260,9 +415,17 @@ private static final long serialVersionUID = 0L;
     hash = (37 * hash) + LIMIT_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
         getLimit());
+    hash = (37 * hash) + WHERECLAUSE_FIELD_NUMBER;
+    hash = (53 * hash) + getWhereClause().hashCode();
+    hash = (37 * hash) + ORDERBYCLAUSE_FIELD_NUMBER;
+    hash = (53 * hash) + getOrderByClause().hashCode();
     if (getConditionsCount() > 0) {
       hash = (37 * hash) + CONDITIONS_FIELD_NUMBER;
       hash = (53 * hash) + getConditionsList().hashCode();
+    }
+    if (getOrderByColumnCount() > 0) {
+      hash = (37 * hash) + ORDERBYCOLUMN_FIELD_NUMBER;
+      hash = (53 * hash) + getOrderByColumnList().hashCode();
     }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
@@ -394,6 +557,7 @@ private static final long serialVersionUID = 0L;
       if (com.google.protobuf.GeneratedMessageV3
               .alwaysUseFieldBuilders) {
         getConditionsFieldBuilder();
+        getOrderByColumnFieldBuilder();
       }
     }
     public Builder clear() {
@@ -402,11 +566,21 @@ private static final long serialVersionUID = 0L;
 
       limit_ = 0L;
 
+      whereClause_ = "";
+
+      orderByClause_ = "";
+
       if (conditionsBuilder_ == null) {
         conditions_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000004);
+        bitField0_ = (bitField0_ & ~0x00000010);
       } else {
         conditionsBuilder_.clear();
+      }
+      if (orderByColumnBuilder_ == null) {
+        orderByColumn_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000020);
+      } else {
+        orderByColumnBuilder_.clear();
       }
       return this;
     }
@@ -434,14 +608,25 @@ private static final long serialVersionUID = 0L;
       int to_bitField0_ = 0;
       result.tableName_ = tableName_;
       result.limit_ = limit_;
+      result.whereClause_ = whereClause_;
+      result.orderByClause_ = orderByClause_;
       if (conditionsBuilder_ == null) {
-        if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        if (((bitField0_ & 0x00000010) == 0x00000010)) {
           conditions_ = java.util.Collections.unmodifiableList(conditions_);
-          bitField0_ = (bitField0_ & ~0x00000004);
+          bitField0_ = (bitField0_ & ~0x00000010);
         }
         result.conditions_ = conditions_;
       } else {
         result.conditions_ = conditionsBuilder_.build();
+      }
+      if (orderByColumnBuilder_ == null) {
+        if (((bitField0_ & 0x00000020) == 0x00000020)) {
+          orderByColumn_ = java.util.Collections.unmodifiableList(orderByColumn_);
+          bitField0_ = (bitField0_ & ~0x00000020);
+        }
+        result.orderByColumn_ = orderByColumn_;
+      } else {
+        result.orderByColumn_ = orderByColumnBuilder_.build();
       }
       result.bitField0_ = to_bitField0_;
       onBuilt();
@@ -492,11 +677,19 @@ private static final long serialVersionUID = 0L;
       if (other.getLimit() != 0L) {
         setLimit(other.getLimit());
       }
+      if (!other.getWhereClause().isEmpty()) {
+        whereClause_ = other.whereClause_;
+        onChanged();
+      }
+      if (!other.getOrderByClause().isEmpty()) {
+        orderByClause_ = other.orderByClause_;
+        onChanged();
+      }
       if (conditionsBuilder_ == null) {
         if (!other.conditions_.isEmpty()) {
           if (conditions_.isEmpty()) {
             conditions_ = other.conditions_;
-            bitField0_ = (bitField0_ & ~0x00000004);
+            bitField0_ = (bitField0_ & ~0x00000010);
           } else {
             ensureConditionsIsMutable();
             conditions_.addAll(other.conditions_);
@@ -509,12 +702,38 @@ private static final long serialVersionUID = 0L;
             conditionsBuilder_.dispose();
             conditionsBuilder_ = null;
             conditions_ = other.conditions_;
-            bitField0_ = (bitField0_ & ~0x00000004);
+            bitField0_ = (bitField0_ & ~0x00000010);
             conditionsBuilder_ = 
               com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                  getConditionsFieldBuilder() : null;
           } else {
             conditionsBuilder_.addAllMessages(other.conditions_);
+          }
+        }
+      }
+      if (orderByColumnBuilder_ == null) {
+        if (!other.orderByColumn_.isEmpty()) {
+          if (orderByColumn_.isEmpty()) {
+            orderByColumn_ = other.orderByColumn_;
+            bitField0_ = (bitField0_ & ~0x00000020);
+          } else {
+            ensureOrderByColumnIsMutable();
+            orderByColumn_.addAll(other.orderByColumn_);
+          }
+          onChanged();
+        }
+      } else {
+        if (!other.orderByColumn_.isEmpty()) {
+          if (orderByColumnBuilder_.isEmpty()) {
+            orderByColumnBuilder_.dispose();
+            orderByColumnBuilder_ = null;
+            orderByColumn_ = other.orderByColumn_;
+            bitField0_ = (bitField0_ & ~0x00000020);
+            orderByColumnBuilder_ = 
+              com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                 getOrderByColumnFieldBuilder() : null;
+          } else {
+            orderByColumnBuilder_.addAllMessages(other.orderByColumn_);
           }
         }
       }
@@ -641,12 +860,150 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
+    private java.lang.Object whereClause_ = "";
+    /**
+     * <code>string whereClause = 3;</code>
+     */
+    public java.lang.String getWhereClause() {
+      java.lang.Object ref = whereClause_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        whereClause_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string whereClause = 3;</code>
+     */
+    public com.google.protobuf.ByteString
+        getWhereClauseBytes() {
+      java.lang.Object ref = whereClause_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        whereClause_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string whereClause = 3;</code>
+     */
+    public Builder setWhereClause(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
+      whereClause_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string whereClause = 3;</code>
+     */
+    public Builder clearWhereClause() {
+      
+      whereClause_ = getDefaultInstance().getWhereClause();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string whereClause = 3;</code>
+     */
+    public Builder setWhereClauseBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      
+      whereClause_ = value;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object orderByClause_ = "";
+    /**
+     * <code>string orderByClause = 4;</code>
+     */
+    public java.lang.String getOrderByClause() {
+      java.lang.Object ref = orderByClause_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        orderByClause_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string orderByClause = 4;</code>
+     */
+    public com.google.protobuf.ByteString
+        getOrderByClauseBytes() {
+      java.lang.Object ref = orderByClause_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        orderByClause_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string orderByClause = 4;</code>
+     */
+    public Builder setOrderByClause(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
+      orderByClause_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string orderByClause = 4;</code>
+     */
+    public Builder clearOrderByClause() {
+      
+      orderByClause_ = getDefaultInstance().getOrderByClause();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string orderByClause = 4;</code>
+     */
+    public Builder setOrderByClauseBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      
+      orderByClause_ = value;
+      onChanged();
+      return this;
+    }
+
     private java.util.List<org.spin.grpc.util.Condition> conditions_ =
       java.util.Collections.emptyList();
     private void ensureConditionsIsMutable() {
-      if (!((bitField0_ & 0x00000004) == 0x00000004)) {
+      if (!((bitField0_ & 0x00000010) == 0x00000010)) {
         conditions_ = new java.util.ArrayList<org.spin.grpc.util.Condition>(conditions_);
-        bitField0_ |= 0x00000004;
+        bitField0_ |= 0x00000010;
        }
     }
 
@@ -654,7 +1011,7 @@ private static final long serialVersionUID = 0L;
         org.spin.grpc.util.Condition, org.spin.grpc.util.Condition.Builder, org.spin.grpc.util.ConditionOrBuilder> conditionsBuilder_;
 
     /**
-     * <code>repeated .data.Condition conditions = 3;</code>
+     * <code>repeated .data.Condition conditions = 5;</code>
      */
     public java.util.List<org.spin.grpc.util.Condition> getConditionsList() {
       if (conditionsBuilder_ == null) {
@@ -664,7 +1021,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.Condition conditions = 3;</code>
+     * <code>repeated .data.Condition conditions = 5;</code>
      */
     public int getConditionsCount() {
       if (conditionsBuilder_ == null) {
@@ -674,7 +1031,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.Condition conditions = 3;</code>
+     * <code>repeated .data.Condition conditions = 5;</code>
      */
     public org.spin.grpc.util.Condition getConditions(int index) {
       if (conditionsBuilder_ == null) {
@@ -684,7 +1041,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.Condition conditions = 3;</code>
+     * <code>repeated .data.Condition conditions = 5;</code>
      */
     public Builder setConditions(
         int index, org.spin.grpc.util.Condition value) {
@@ -701,7 +1058,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.Condition conditions = 3;</code>
+     * <code>repeated .data.Condition conditions = 5;</code>
      */
     public Builder setConditions(
         int index, org.spin.grpc.util.Condition.Builder builderForValue) {
@@ -715,7 +1072,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.Condition conditions = 3;</code>
+     * <code>repeated .data.Condition conditions = 5;</code>
      */
     public Builder addConditions(org.spin.grpc.util.Condition value) {
       if (conditionsBuilder_ == null) {
@@ -731,7 +1088,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.Condition conditions = 3;</code>
+     * <code>repeated .data.Condition conditions = 5;</code>
      */
     public Builder addConditions(
         int index, org.spin.grpc.util.Condition value) {
@@ -748,7 +1105,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.Condition conditions = 3;</code>
+     * <code>repeated .data.Condition conditions = 5;</code>
      */
     public Builder addConditions(
         org.spin.grpc.util.Condition.Builder builderForValue) {
@@ -762,7 +1119,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.Condition conditions = 3;</code>
+     * <code>repeated .data.Condition conditions = 5;</code>
      */
     public Builder addConditions(
         int index, org.spin.grpc.util.Condition.Builder builderForValue) {
@@ -776,7 +1133,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.Condition conditions = 3;</code>
+     * <code>repeated .data.Condition conditions = 5;</code>
      */
     public Builder addAllConditions(
         java.lang.Iterable<? extends org.spin.grpc.util.Condition> values) {
@@ -791,12 +1148,12 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.Condition conditions = 3;</code>
+     * <code>repeated .data.Condition conditions = 5;</code>
      */
     public Builder clearConditions() {
       if (conditionsBuilder_ == null) {
         conditions_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000004);
+        bitField0_ = (bitField0_ & ~0x00000010);
         onChanged();
       } else {
         conditionsBuilder_.clear();
@@ -804,7 +1161,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.Condition conditions = 3;</code>
+     * <code>repeated .data.Condition conditions = 5;</code>
      */
     public Builder removeConditions(int index) {
       if (conditionsBuilder_ == null) {
@@ -817,14 +1174,14 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.Condition conditions = 3;</code>
+     * <code>repeated .data.Condition conditions = 5;</code>
      */
     public org.spin.grpc.util.Condition.Builder getConditionsBuilder(
         int index) {
       return getConditionsFieldBuilder().getBuilder(index);
     }
     /**
-     * <code>repeated .data.Condition conditions = 3;</code>
+     * <code>repeated .data.Condition conditions = 5;</code>
      */
     public org.spin.grpc.util.ConditionOrBuilder getConditionsOrBuilder(
         int index) {
@@ -834,7 +1191,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.Condition conditions = 3;</code>
+     * <code>repeated .data.Condition conditions = 5;</code>
      */
     public java.util.List<? extends org.spin.grpc.util.ConditionOrBuilder> 
          getConditionsOrBuilderList() {
@@ -845,14 +1202,14 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.Condition conditions = 3;</code>
+     * <code>repeated .data.Condition conditions = 5;</code>
      */
     public org.spin.grpc.util.Condition.Builder addConditionsBuilder() {
       return getConditionsFieldBuilder().addBuilder(
           org.spin.grpc.util.Condition.getDefaultInstance());
     }
     /**
-     * <code>repeated .data.Condition conditions = 3;</code>
+     * <code>repeated .data.Condition conditions = 5;</code>
      */
     public org.spin.grpc.util.Condition.Builder addConditionsBuilder(
         int index) {
@@ -860,7 +1217,7 @@ private static final long serialVersionUID = 0L;
           index, org.spin.grpc.util.Condition.getDefaultInstance());
     }
     /**
-     * <code>repeated .data.Condition conditions = 3;</code>
+     * <code>repeated .data.Condition conditions = 5;</code>
      */
     public java.util.List<org.spin.grpc.util.Condition.Builder> 
          getConditionsBuilderList() {
@@ -873,12 +1230,252 @@ private static final long serialVersionUID = 0L;
         conditionsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
             org.spin.grpc.util.Condition, org.spin.grpc.util.Condition.Builder, org.spin.grpc.util.ConditionOrBuilder>(
                 conditions_,
-                ((bitField0_ & 0x00000004) == 0x00000004),
+                ((bitField0_ & 0x00000010) == 0x00000010),
                 getParentForChildren(),
                 isClean());
         conditions_ = null;
       }
       return conditionsBuilder_;
+    }
+
+    private java.util.List<org.spin.grpc.util.OrderByProperty> orderByColumn_ =
+      java.util.Collections.emptyList();
+    private void ensureOrderByColumnIsMutable() {
+      if (!((bitField0_ & 0x00000020) == 0x00000020)) {
+        orderByColumn_ = new java.util.ArrayList<org.spin.grpc.util.OrderByProperty>(orderByColumn_);
+        bitField0_ |= 0x00000020;
+       }
+    }
+
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+        org.spin.grpc.util.OrderByProperty, org.spin.grpc.util.OrderByProperty.Builder, org.spin.grpc.util.OrderByPropertyOrBuilder> orderByColumnBuilder_;
+
+    /**
+     * <code>repeated .data.OrderByProperty orderByColumn = 6;</code>
+     */
+    public java.util.List<org.spin.grpc.util.OrderByProperty> getOrderByColumnList() {
+      if (orderByColumnBuilder_ == null) {
+        return java.util.Collections.unmodifiableList(orderByColumn_);
+      } else {
+        return orderByColumnBuilder_.getMessageList();
+      }
+    }
+    /**
+     * <code>repeated .data.OrderByProperty orderByColumn = 6;</code>
+     */
+    public int getOrderByColumnCount() {
+      if (orderByColumnBuilder_ == null) {
+        return orderByColumn_.size();
+      } else {
+        return orderByColumnBuilder_.getCount();
+      }
+    }
+    /**
+     * <code>repeated .data.OrderByProperty orderByColumn = 6;</code>
+     */
+    public org.spin.grpc.util.OrderByProperty getOrderByColumn(int index) {
+      if (orderByColumnBuilder_ == null) {
+        return orderByColumn_.get(index);
+      } else {
+        return orderByColumnBuilder_.getMessage(index);
+      }
+    }
+    /**
+     * <code>repeated .data.OrderByProperty orderByColumn = 6;</code>
+     */
+    public Builder setOrderByColumn(
+        int index, org.spin.grpc.util.OrderByProperty value) {
+      if (orderByColumnBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureOrderByColumnIsMutable();
+        orderByColumn_.set(index, value);
+        onChanged();
+      } else {
+        orderByColumnBuilder_.setMessage(index, value);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.OrderByProperty orderByColumn = 6;</code>
+     */
+    public Builder setOrderByColumn(
+        int index, org.spin.grpc.util.OrderByProperty.Builder builderForValue) {
+      if (orderByColumnBuilder_ == null) {
+        ensureOrderByColumnIsMutable();
+        orderByColumn_.set(index, builderForValue.build());
+        onChanged();
+      } else {
+        orderByColumnBuilder_.setMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.OrderByProperty orderByColumn = 6;</code>
+     */
+    public Builder addOrderByColumn(org.spin.grpc.util.OrderByProperty value) {
+      if (orderByColumnBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureOrderByColumnIsMutable();
+        orderByColumn_.add(value);
+        onChanged();
+      } else {
+        orderByColumnBuilder_.addMessage(value);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.OrderByProperty orderByColumn = 6;</code>
+     */
+    public Builder addOrderByColumn(
+        int index, org.spin.grpc.util.OrderByProperty value) {
+      if (orderByColumnBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureOrderByColumnIsMutable();
+        orderByColumn_.add(index, value);
+        onChanged();
+      } else {
+        orderByColumnBuilder_.addMessage(index, value);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.OrderByProperty orderByColumn = 6;</code>
+     */
+    public Builder addOrderByColumn(
+        org.spin.grpc.util.OrderByProperty.Builder builderForValue) {
+      if (orderByColumnBuilder_ == null) {
+        ensureOrderByColumnIsMutable();
+        orderByColumn_.add(builderForValue.build());
+        onChanged();
+      } else {
+        orderByColumnBuilder_.addMessage(builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.OrderByProperty orderByColumn = 6;</code>
+     */
+    public Builder addOrderByColumn(
+        int index, org.spin.grpc.util.OrderByProperty.Builder builderForValue) {
+      if (orderByColumnBuilder_ == null) {
+        ensureOrderByColumnIsMutable();
+        orderByColumn_.add(index, builderForValue.build());
+        onChanged();
+      } else {
+        orderByColumnBuilder_.addMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.OrderByProperty orderByColumn = 6;</code>
+     */
+    public Builder addAllOrderByColumn(
+        java.lang.Iterable<? extends org.spin.grpc.util.OrderByProperty> values) {
+      if (orderByColumnBuilder_ == null) {
+        ensureOrderByColumnIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, orderByColumn_);
+        onChanged();
+      } else {
+        orderByColumnBuilder_.addAllMessages(values);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.OrderByProperty orderByColumn = 6;</code>
+     */
+    public Builder clearOrderByColumn() {
+      if (orderByColumnBuilder_ == null) {
+        orderByColumn_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000020);
+        onChanged();
+      } else {
+        orderByColumnBuilder_.clear();
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.OrderByProperty orderByColumn = 6;</code>
+     */
+    public Builder removeOrderByColumn(int index) {
+      if (orderByColumnBuilder_ == null) {
+        ensureOrderByColumnIsMutable();
+        orderByColumn_.remove(index);
+        onChanged();
+      } else {
+        orderByColumnBuilder_.remove(index);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.OrderByProperty orderByColumn = 6;</code>
+     */
+    public org.spin.grpc.util.OrderByProperty.Builder getOrderByColumnBuilder(
+        int index) {
+      return getOrderByColumnFieldBuilder().getBuilder(index);
+    }
+    /**
+     * <code>repeated .data.OrderByProperty orderByColumn = 6;</code>
+     */
+    public org.spin.grpc.util.OrderByPropertyOrBuilder getOrderByColumnOrBuilder(
+        int index) {
+      if (orderByColumnBuilder_ == null) {
+        return orderByColumn_.get(index);  } else {
+        return orderByColumnBuilder_.getMessageOrBuilder(index);
+      }
+    }
+    /**
+     * <code>repeated .data.OrderByProperty orderByColumn = 6;</code>
+     */
+    public java.util.List<? extends org.spin.grpc.util.OrderByPropertyOrBuilder> 
+         getOrderByColumnOrBuilderList() {
+      if (orderByColumnBuilder_ != null) {
+        return orderByColumnBuilder_.getMessageOrBuilderList();
+      } else {
+        return java.util.Collections.unmodifiableList(orderByColumn_);
+      }
+    }
+    /**
+     * <code>repeated .data.OrderByProperty orderByColumn = 6;</code>
+     */
+    public org.spin.grpc.util.OrderByProperty.Builder addOrderByColumnBuilder() {
+      return getOrderByColumnFieldBuilder().addBuilder(
+          org.spin.grpc.util.OrderByProperty.getDefaultInstance());
+    }
+    /**
+     * <code>repeated .data.OrderByProperty orderByColumn = 6;</code>
+     */
+    public org.spin.grpc.util.OrderByProperty.Builder addOrderByColumnBuilder(
+        int index) {
+      return getOrderByColumnFieldBuilder().addBuilder(
+          index, org.spin.grpc.util.OrderByProperty.getDefaultInstance());
+    }
+    /**
+     * <code>repeated .data.OrderByProperty orderByColumn = 6;</code>
+     */
+    public java.util.List<org.spin.grpc.util.OrderByProperty.Builder> 
+         getOrderByColumnBuilderList() {
+      return getOrderByColumnFieldBuilder().getBuilderList();
+    }
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+        org.spin.grpc.util.OrderByProperty, org.spin.grpc.util.OrderByProperty.Builder, org.spin.grpc.util.OrderByPropertyOrBuilder> 
+        getOrderByColumnFieldBuilder() {
+      if (orderByColumnBuilder_ == null) {
+        orderByColumnBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+            org.spin.grpc.util.OrderByProperty, org.spin.grpc.util.OrderByProperty.Builder, org.spin.grpc.util.OrderByPropertyOrBuilder>(
+                orderByColumn_,
+                ((bitField0_ & 0x00000020) == 0x00000020),
+                getParentForChildren(),
+                isClean());
+        orderByColumn_ = null;
+      }
+      return orderByColumnBuilder_;
     }
     public final Builder setUnknownFields(
         final com.google.protobuf.UnknownFieldSet unknownFields) {
