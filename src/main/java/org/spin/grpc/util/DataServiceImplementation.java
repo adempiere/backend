@@ -27,7 +27,7 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	private CLogger log = CLogger.getCLogger(DataServiceImplementation.class);
 	
 	@Override
-	public void requestPO(ValueObjectRequest request, StreamObserver<ValueObject> responseObserver) {
+	public void requestObject(ValueObjectRequest request, StreamObserver<ValueObject> responseObserver) {
 		if(request == null
 				|| Util.isEmpty(request.getUuid())
 				|| request.getCriteria() == null) {

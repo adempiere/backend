@@ -5,7 +5,7 @@ package org.spin.grpc.util;
 
 /**
  * <pre>
- * PO request
+ * Object request
  * </pre>
  *
  * Protobuf type {@code data.ValueObjectRequest}
@@ -408,7 +408,7 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * PO request
+   * Object request
    * </pre>
    *
    * Protobuf type {@code data.ValueObjectRequest}

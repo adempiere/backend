@@ -44,7 +44,7 @@ public class DataClient {
 	    		.build();
 		  ValueObjectList response;
 		  try {
-			  response = blockingStub.requestPOList(request);
+			  response = blockingStub.requestObjectList(request);
 			  logger.info("PO List: " + response);
 		  } catch (StatusRuntimeException e) {	
 			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
@@ -66,7 +66,7 @@ public class DataClient {
 	    		.build();
 		  ValueObject response;
 		  try {
-			  response = blockingStub.requestPO(request);
+			  response = blockingStub.requestObject(request);
 			  logger.info("PO: " + response);
 		  } catch (StatusRuntimeException e) {
 			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());

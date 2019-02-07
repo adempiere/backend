@@ -106,13 +106,13 @@ public final class ADempiereData {
       "t\022\017\n\007callout\030\002 \001(\t\022&\n\013valueObject\030\003 \001(\0132" +
       "\021.data.ValueObject\">\n\017CalloutResponse\022\016\n" +
       "\006result\030\001 \001(\t\022\033\n\006values\030\002 \003(\0132\013.data.Val" +
-      "ue2\316\001\n\013DataService\022:\n\tRequestPO\022\030.data.V" +
-      "alueObjectRequest\032\021.data.ValueObject\"\000\022B" +
-      "\n\rRequestPOList\022\030.data.ValueObjectReques" +
-      "t\032\025.data.ValueObjectList\"\000\022?\n\016RequestCal" +
-      "lout\022\024.data.CalloutRequest\032\025.data.Callou" +
-      "tResponse\"\000B+\n\022org.spin.grpc.utilB\rADemp" +
-      "iereDataP\001\242\002\003HLWb\006proto3"
+      "ue2\326\001\n\013DataService\022>\n\rRequestObject\022\030.da" +
+      "ta.ValueObjectRequest\032\021.data.ValueObject" +
+      "\"\000\022F\n\021RequestObjectList\022\030.data.ValueObje" +
+      "ctRequest\032\025.data.ValueObjectList\"\000\022?\n\016Re" +
+      "questCallout\022\024.data.CalloutRequest\032\025.dat" +
+      "a.CalloutResponse\"\000B+\n\022org.spin.grpc.uti" +
+      "lB\rADempiereDataP\001\242\002\003HLWb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {

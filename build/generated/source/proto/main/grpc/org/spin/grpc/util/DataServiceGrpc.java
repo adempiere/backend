@@ -31,67 +31,67 @@ public final class DataServiceGrpc {
 
   // Static method descriptors that strictly reflect the proto.
   private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.ValueObjectRequest,
-      org.spin.grpc.util.ValueObject> getRequestPOMethod;
+      org.spin.grpc.util.ValueObject> getRequestObjectMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "RequestPO",
+      fullMethodName = SERVICE_NAME + '/' + "RequestObject",
       requestType = org.spin.grpc.util.ValueObjectRequest.class,
       responseType = org.spin.grpc.util.ValueObject.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
   public static io.grpc.MethodDescriptor<org.spin.grpc.util.ValueObjectRequest,
-      org.spin.grpc.util.ValueObject> getRequestPOMethod() {
-    io.grpc.MethodDescriptor<org.spin.grpc.util.ValueObjectRequest, org.spin.grpc.util.ValueObject> getRequestPOMethod;
-    if ((getRequestPOMethod = DataServiceGrpc.getRequestPOMethod) == null) {
+      org.spin.grpc.util.ValueObject> getRequestObjectMethod() {
+    io.grpc.MethodDescriptor<org.spin.grpc.util.ValueObjectRequest, org.spin.grpc.util.ValueObject> getRequestObjectMethod;
+    if ((getRequestObjectMethod = DataServiceGrpc.getRequestObjectMethod) == null) {
       synchronized (DataServiceGrpc.class) {
-        if ((getRequestPOMethod = DataServiceGrpc.getRequestPOMethod) == null) {
-          DataServiceGrpc.getRequestPOMethod = getRequestPOMethod = 
+        if ((getRequestObjectMethod = DataServiceGrpc.getRequestObjectMethod) == null) {
+          DataServiceGrpc.getRequestObjectMethod = getRequestObjectMethod = 
               io.grpc.MethodDescriptor.<org.spin.grpc.util.ValueObjectRequest, org.spin.grpc.util.ValueObject>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
-                  "data.DataService", "RequestPO"))
+                  "data.DataService", "RequestObject"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.ValueObjectRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.ValueObject.getDefaultInstance()))
-                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("RequestPO"))
+                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("RequestObject"))
                   .build();
           }
         }
      }
-     return getRequestPOMethod;
+     return getRequestObjectMethod;
   }
 
   private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.ValueObjectRequest,
-      org.spin.grpc.util.ValueObjectList> getRequestPOListMethod;
+      org.spin.grpc.util.ValueObjectList> getRequestObjectListMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "RequestPOList",
+      fullMethodName = SERVICE_NAME + '/' + "RequestObjectList",
       requestType = org.spin.grpc.util.ValueObjectRequest.class,
       responseType = org.spin.grpc.util.ValueObjectList.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
   public static io.grpc.MethodDescriptor<org.spin.grpc.util.ValueObjectRequest,
-      org.spin.grpc.util.ValueObjectList> getRequestPOListMethod() {
-    io.grpc.MethodDescriptor<org.spin.grpc.util.ValueObjectRequest, org.spin.grpc.util.ValueObjectList> getRequestPOListMethod;
-    if ((getRequestPOListMethod = DataServiceGrpc.getRequestPOListMethod) == null) {
+      org.spin.grpc.util.ValueObjectList> getRequestObjectListMethod() {
+    io.grpc.MethodDescriptor<org.spin.grpc.util.ValueObjectRequest, org.spin.grpc.util.ValueObjectList> getRequestObjectListMethod;
+    if ((getRequestObjectListMethod = DataServiceGrpc.getRequestObjectListMethod) == null) {
       synchronized (DataServiceGrpc.class) {
-        if ((getRequestPOListMethod = DataServiceGrpc.getRequestPOListMethod) == null) {
-          DataServiceGrpc.getRequestPOListMethod = getRequestPOListMethod = 
+        if ((getRequestObjectListMethod = DataServiceGrpc.getRequestObjectListMethod) == null) {
+          DataServiceGrpc.getRequestObjectListMethod = getRequestObjectListMethod = 
               io.grpc.MethodDescriptor.<org.spin.grpc.util.ValueObjectRequest, org.spin.grpc.util.ValueObjectList>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
-                  "data.DataService", "RequestPOList"))
+                  "data.DataService", "RequestObjectList"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.ValueObjectRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.ValueObjectList.getDefaultInstance()))
-                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("RequestPOList"))
+                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("RequestObjectList"))
                   .build();
           }
         }
      }
-     return getRequestPOListMethod;
+     return getRequestObjectListMethod;
   }
 
   private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.CalloutRequest,
@@ -158,22 +158,22 @@ public final class DataServiceGrpc {
 
     /**
      * <pre>
-     * Request PO entity from UUID (Optional ID)
+     * Request Object entity from UUID (Optional ID)
      * </pre>
      */
-    public void requestPO(org.spin.grpc.util.ValueObjectRequest request,
+    public void requestObject(org.spin.grpc.util.ValueObjectRequest request,
         io.grpc.stub.StreamObserver<org.spin.grpc.util.ValueObject> responseObserver) {
-      asyncUnimplementedUnaryCall(getRequestPOMethod(), responseObserver);
+      asyncUnimplementedUnaryCall(getRequestObjectMethod(), responseObserver);
     }
 
     /**
      * <pre>
-     * Request PO List
+     * Request Object List
      * </pre>
      */
-    public void requestPOList(org.spin.grpc.util.ValueObjectRequest request,
+    public void requestObjectList(org.spin.grpc.util.ValueObjectRequest request,
         io.grpc.stub.StreamObserver<org.spin.grpc.util.ValueObjectList> responseObserver) {
-      asyncUnimplementedUnaryCall(getRequestPOListMethod(), responseObserver);
+      asyncUnimplementedUnaryCall(getRequestObjectListMethod(), responseObserver);
     }
 
     /**
@@ -189,19 +189,19 @@ public final class DataServiceGrpc {
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
-            getRequestPOMethod(),
+            getRequestObjectMethod(),
             asyncUnaryCall(
               new MethodHandlers<
                 org.spin.grpc.util.ValueObjectRequest,
                 org.spin.grpc.util.ValueObject>(
-                  this, METHODID_REQUEST_PO)))
+                  this, METHODID_REQUEST_OBJECT)))
           .addMethod(
-            getRequestPOListMethod(),
+            getRequestObjectListMethod(),
             asyncUnaryCall(
               new MethodHandlers<
                 org.spin.grpc.util.ValueObjectRequest,
                 org.spin.grpc.util.ValueObjectList>(
-                  this, METHODID_REQUEST_POLIST)))
+                  this, METHODID_REQUEST_OBJECT_LIST)))
           .addMethod(
             getRequestCalloutMethod(),
             asyncUnaryCall(
@@ -236,24 +236,24 @@ public final class DataServiceGrpc {
 
     /**
      * <pre>
-     * Request PO entity from UUID (Optional ID)
+     * Request Object entity from UUID (Optional ID)
      * </pre>
      */
-    public void requestPO(org.spin.grpc.util.ValueObjectRequest request,
+    public void requestObject(org.spin.grpc.util.ValueObjectRequest request,
         io.grpc.stub.StreamObserver<org.spin.grpc.util.ValueObject> responseObserver) {
       asyncUnaryCall(
-          getChannel().newCall(getRequestPOMethod(), getCallOptions()), request, responseObserver);
+          getChannel().newCall(getRequestObjectMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
      * <pre>
-     * Request PO List
+     * Request Object List
      * </pre>
      */
-    public void requestPOList(org.spin.grpc.util.ValueObjectRequest request,
+    public void requestObjectList(org.spin.grpc.util.ValueObjectRequest request,
         io.grpc.stub.StreamObserver<org.spin.grpc.util.ValueObjectList> responseObserver) {
       asyncUnaryCall(
-          getChannel().newCall(getRequestPOListMethod(), getCallOptions()), request, responseObserver);
+          getChannel().newCall(getRequestObjectListMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
@@ -291,22 +291,22 @@ public final class DataServiceGrpc {
 
     /**
      * <pre>
-     * Request PO entity from UUID (Optional ID)
+     * Request Object entity from UUID (Optional ID)
      * </pre>
      */
-    public org.spin.grpc.util.ValueObject requestPO(org.spin.grpc.util.ValueObjectRequest request) {
+    public org.spin.grpc.util.ValueObject requestObject(org.spin.grpc.util.ValueObjectRequest request) {
       return blockingUnaryCall(
-          getChannel(), getRequestPOMethod(), getCallOptions(), request);
+          getChannel(), getRequestObjectMethod(), getCallOptions(), request);
     }
 
     /**
      * <pre>
-     * Request PO List
+     * Request Object List
      * </pre>
      */
-    public org.spin.grpc.util.ValueObjectList requestPOList(org.spin.grpc.util.ValueObjectRequest request) {
+    public org.spin.grpc.util.ValueObjectList requestObjectList(org.spin.grpc.util.ValueObjectRequest request) {
       return blockingUnaryCall(
-          getChannel(), getRequestPOListMethod(), getCallOptions(), request);
+          getChannel(), getRequestObjectListMethod(), getCallOptions(), request);
     }
 
     /**
@@ -343,24 +343,24 @@ public final class DataServiceGrpc {
 
     /**
      * <pre>
-     * Request PO entity from UUID (Optional ID)
+     * Request Object entity from UUID (Optional ID)
      * </pre>
      */
-    public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.ValueObject> requestPO(
+    public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.ValueObject> requestObject(
         org.spin.grpc.util.ValueObjectRequest request) {
       return futureUnaryCall(
-          getChannel().newCall(getRequestPOMethod(), getCallOptions()), request);
+          getChannel().newCall(getRequestObjectMethod(), getCallOptions()), request);
     }
 
     /**
      * <pre>
-     * Request PO List
+     * Request Object List
      * </pre>
      */
-    public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.ValueObjectList> requestPOList(
+    public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.ValueObjectList> requestObjectList(
         org.spin.grpc.util.ValueObjectRequest request) {
       return futureUnaryCall(
-          getChannel().newCall(getRequestPOListMethod(), getCallOptions()), request);
+          getChannel().newCall(getRequestObjectListMethod(), getCallOptions()), request);
     }
 
     /**
@@ -375,8 +375,8 @@ public final class DataServiceGrpc {
     }
   }
 
-  private static final int METHODID_REQUEST_PO = 0;
-  private static final int METHODID_REQUEST_POLIST = 1;
+  private static final int METHODID_REQUEST_OBJECT = 0;
+  private static final int METHODID_REQUEST_OBJECT_LIST = 1;
   private static final int METHODID_REQUEST_CALLOUT = 2;
 
   private static final class MethodHandlers<Req, Resp> implements
@@ -396,12 +396,12 @@ public final class DataServiceGrpc {
     @java.lang.SuppressWarnings("unchecked")
     public void invoke(Req request, io.grpc.stub.StreamObserver<Resp> responseObserver) {
       switch (methodId) {
-        case METHODID_REQUEST_PO:
-          serviceImpl.requestPO((org.spin.grpc.util.ValueObjectRequest) request,
+        case METHODID_REQUEST_OBJECT:
+          serviceImpl.requestObject((org.spin.grpc.util.ValueObjectRequest) request,
               (io.grpc.stub.StreamObserver<org.spin.grpc.util.ValueObject>) responseObserver);
           break;
-        case METHODID_REQUEST_POLIST:
-          serviceImpl.requestPOList((org.spin.grpc.util.ValueObjectRequest) request,
+        case METHODID_REQUEST_OBJECT_LIST:
+          serviceImpl.requestObjectList((org.spin.grpc.util.ValueObjectRequest) request,
               (io.grpc.stub.StreamObserver<org.spin.grpc.util.ValueObjectList>) responseObserver);
           break;
         case METHODID_REQUEST_CALLOUT:
@@ -469,8 +469,8 @@ public final class DataServiceGrpc {
         if (result == null) {
           serviceDescriptor = result = io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
               .setSchemaDescriptor(new DataServiceFileDescriptorSupplier())
-              .addMethod(getRequestPOMethod())
-              .addMethod(getRequestPOListMethod())
+              .addMethod(getRequestObjectMethod())
+              .addMethod(getRequestObjectListMethod())
               .addMethod(getRequestCalloutMethod())
               .build();
         }
