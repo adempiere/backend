@@ -254,4 +254,17 @@ public interface TabOrBuilder extends
    */
   org.spin.grpc.util.FieldOrBuilder getFieldsOrBuilder(
       int index);
+
+  /**
+   * <code>.dictionary.FieldGroup fieldGroup = 29;</code>
+   */
+  boolean hasFieldGroup();
+  /**
+   * <code>.dictionary.FieldGroup fieldGroup = 29;</code>
+   */
+  org.spin.grpc.util.FieldGroup getFieldGroup();
+  /**
+   * <code>.dictionary.FieldGroup fieldGroup = 29;</code>
+   */
+  org.spin.grpc.util.FieldGroupOrBuilder getFieldGroupOrBuilder();
 }

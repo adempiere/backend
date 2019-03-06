@@ -1,6 +1,8 @@
 package org.spin.grpc.util;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 
@@ -28,14 +30,12 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	
 	@Override
 	public void requestObject(ValueObjectRequest request, StreamObserver<ValueObject> responseObserver) {
-		if(request == null
-				|| Util.isEmpty(request.getUuid())
-				|| request.getCriteria() == null) {
+		if(request == null) {
 			log.fine("Object Request Null");
 			return;
 		}
-		log.fine("PO Requested = " + request.getUuid());
-		ValueObject.Builder poValue = convertPO(request);
+		log.fine("Object Requested = " + request.getUuid());
+		ValueObject.Builder poValue = convertObject(request);
 		try {
 			responseObserver.onNext(poValue.build());
 			responseObserver.onCompleted();
@@ -60,18 +60,74 @@ public class DataServiceImplementation extends DataServiceImplBase {
 		}
 	}
 	
+	@Override
+	public void requestObjectList(ValueObjectRequest request, StreamObserver<ValueObjectList> responseObserver) {
+		if(request == null) {
+			log.fine("Object Request Null");
+			return;
+		}
+		log.fine("Object List Requested = " + request.getUuid());
+		ValueObjectList.Builder poValueList = convertObjectList(request);
+		try {
+			responseObserver.onNext(poValueList.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			responseObserver.onError(e);
+		}
+	}
+	
 	/**
 	 * Request a PO from query
 	 * @param request
 	 * @return
 	 */
-	private ValueObject.Builder convertPO(ValueObjectRequest request) {
+	private ValueObject.Builder convertObject(ValueObjectRequest request) {
+		Criteria criteria = request.getCriteria();
+		StringBuffer whereClause = new StringBuffer();
+		List<Object> params = new ArrayList<>();
+		if(!Util.isEmpty(request.getUuid())) {
+			whereClause.append(I_AD_Element.COLUMNNAME_UUID + " = ?");
+			params.add(request.getUuid());
+		} else if(!Util.isEmpty(criteria.getWhereClause())) {
+			whereClause.append("(").append(criteria.getWhereClause()).append(")");
+		}
 		//	TODO: From query
-		PO entity = new Query(Env.getCtx(), request.getCriteria().getTableName(), I_AD_Element.COLUMNNAME_UUID + " = ?", null)
-				.setParameters(request.getUuid())
+		PO entity = new Query(Env.getCtx(), request.getCriteria().getTableName(), whereClause.toString(), null)
+				.setParameters(params)
 				.first();
 		//	Return
-		return convertPO(entity);
+		return convertObject(entity);
+	}
+	
+	/**
+	 * Convert Object to list
+	 * @param request
+	 * @return
+	 */
+	private ValueObjectList.Builder convertObjectList(ValueObjectRequest request) {
+		Criteria criteria = request.getCriteria();
+		StringBuffer whereClause = new StringBuffer();
+		List<Object> params = new ArrayList<>();
+		if(!Util.isEmpty(request.getUuid())) {
+			whereClause.append(I_AD_Element.COLUMNNAME_UUID + " = ?");
+			params.add(request.getUuid());
+		} else if(!Util.isEmpty(criteria.getWhereClause())) {
+			whereClause.append("(").append(criteria.getWhereClause()).append(")");
+		}
+		//	
+		List<PO> entityList = new Query(Env.getCtx(), criteria.getTableName(), whereClause.toString(), null)
+				.setParameters(params)
+				.<PO>list();
+		//	
+		ValueObjectList.Builder builder = ValueObjectList.newBuilder()
+				.setRecordCount(entityList.size());
+		//	Convert List
+		for(PO entity : entityList) {
+			ValueObject.Builder valueObject = convertObject(entity);
+			builder.addRecords(valueObject.build());
+		}
+		//	Return
+		return builder;
 	}
 	
 	/**
@@ -188,7 +244,7 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	 * @param entity
 	 * @return
 	 */
-	private ValueObject.Builder convertPO(PO entity) {
+	private ValueObject.Builder convertObject(PO entity) {
 		ValueObject.Builder builder = ValueObject.newBuilder()
 				.setUuid(validateNull(entity.get_ValueAsString(I_AD_Element.COLUMNNAME_UUID)))
 				.setId(entity.get_ID());

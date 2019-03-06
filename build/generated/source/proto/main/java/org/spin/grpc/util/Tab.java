@@ -249,6 +249,19 @@ private static final long serialVersionUID = 0L;
                 input.readMessage(org.spin.grpc.util.Field.parser(), extensionRegistry));
             break;
           }
+          case 234: {
+            org.spin.grpc.util.FieldGroup.Builder subBuilder = null;
+            if (fieldGroup_ != null) {
+              subBuilder = fieldGroup_.toBuilder();
+            }
+            fieldGroup_ = input.readMessage(org.spin.grpc.util.FieldGroup.parser(), extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom(fieldGroup_);
+              fieldGroup_ = subBuilder.buildPartial();
+            }
+
+            break;
+          }
         }
       }
     } catch (com.google.protobuf.InvalidProtocolBufferException e) {
@@ -852,6 +865,27 @@ private static final long serialVersionUID = 0L;
     return fields_.get(index);
   }
 
+  public static final int FIELDGROUP_FIELD_NUMBER = 29;
+  private org.spin.grpc.util.FieldGroup fieldGroup_;
+  /**
+   * <code>.dictionary.FieldGroup fieldGroup = 29;</code>
+   */
+  public boolean hasFieldGroup() {
+    return fieldGroup_ != null;
+  }
+  /**
+   * <code>.dictionary.FieldGroup fieldGroup = 29;</code>
+   */
+  public org.spin.grpc.util.FieldGroup getFieldGroup() {
+    return fieldGroup_ == null ? org.spin.grpc.util.FieldGroup.getDefaultInstance() : fieldGroup_;
+  }
+  /**
+   * <code>.dictionary.FieldGroup fieldGroup = 29;</code>
+   */
+  public org.spin.grpc.util.FieldGroupOrBuilder getFieldGroupOrBuilder() {
+    return getFieldGroup();
+  }
+
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
     byte isInitialized = memoizedIsInitialized;
@@ -947,6 +981,9 @@ private static final long serialVersionUID = 0L;
     }
     for (int i = 0; i < fields_.size(); i++) {
       output.writeMessage(28, fields_.get(i));
+    }
+    if (fieldGroup_ != null) {
+      output.writeMessage(29, getFieldGroup());
     }
     unknownFields.writeTo(output);
   }
@@ -1058,6 +1095,10 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(28, fields_.get(i));
     }
+    if (fieldGroup_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(29, getFieldGroup());
+    }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
     return size;
@@ -1136,6 +1177,11 @@ private static final long serialVersionUID = 0L;
     }
     result = result && getFieldsList()
         .equals(other.getFieldsList());
+    result = result && (hasFieldGroup() == other.hasFieldGroup());
+    if (hasFieldGroup()) {
+      result = result && getFieldGroup()
+          .equals(other.getFieldGroup());
+    }
     result = result && unknownFields.equals(other.unknownFields);
     return result;
   }
@@ -1219,6 +1265,10 @@ private static final long serialVersionUID = 0L;
     if (getFieldsCount() > 0) {
       hash = (37 * hash) + FIELDS_FIELD_NUMBER;
       hash = (53 * hash) + getFieldsList().hashCode();
+    }
+    if (hasFieldGroup()) {
+      hash = (37 * hash) + FIELDGROUP_FIELD_NUMBER;
+      hash = (53 * hash) + getFieldGroup().hashCode();
     }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
@@ -1422,6 +1472,12 @@ private static final long serialVersionUID = 0L;
       } else {
         fieldsBuilder_.clear();
       }
+      if (fieldGroupBuilder_ == null) {
+        fieldGroup_ = null;
+      } else {
+        fieldGroup_ = null;
+        fieldGroupBuilder_ = null;
+      }
       return this;
     }
 
@@ -1489,6 +1545,11 @@ private static final long serialVersionUID = 0L;
         result.fields_ = fields_;
       } else {
         result.fields_ = fieldsBuilder_.build();
+      }
+      if (fieldGroupBuilder_ == null) {
+        result.fieldGroup_ = fieldGroup_;
+      } else {
+        result.fieldGroup_ = fieldGroupBuilder_.build();
       }
       result.bitField0_ = to_bitField0_;
       onBuilt();
@@ -1648,6 +1709,9 @@ private static final long serialVersionUID = 0L;
             fieldsBuilder_.addAllMessages(other.fields_);
           }
         }
+      }
+      if (other.hasFieldGroup()) {
+        mergeFieldGroup(other.getFieldGroup());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -3294,6 +3358,123 @@ private static final long serialVersionUID = 0L;
         fields_ = null;
       }
       return fieldsBuilder_;
+    }
+
+    private org.spin.grpc.util.FieldGroup fieldGroup_ = null;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        org.spin.grpc.util.FieldGroup, org.spin.grpc.util.FieldGroup.Builder, org.spin.grpc.util.FieldGroupOrBuilder> fieldGroupBuilder_;
+    /**
+     * <code>.dictionary.FieldGroup fieldGroup = 29;</code>
+     */
+    public boolean hasFieldGroup() {
+      return fieldGroupBuilder_ != null || fieldGroup_ != null;
+    }
+    /**
+     * <code>.dictionary.FieldGroup fieldGroup = 29;</code>
+     */
+    public org.spin.grpc.util.FieldGroup getFieldGroup() {
+      if (fieldGroupBuilder_ == null) {
+        return fieldGroup_ == null ? org.spin.grpc.util.FieldGroup.getDefaultInstance() : fieldGroup_;
+      } else {
+        return fieldGroupBuilder_.getMessage();
+      }
+    }
+    /**
+     * <code>.dictionary.FieldGroup fieldGroup = 29;</code>
+     */
+    public Builder setFieldGroup(org.spin.grpc.util.FieldGroup value) {
+      if (fieldGroupBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        fieldGroup_ = value;
+        onChanged();
+      } else {
+        fieldGroupBuilder_.setMessage(value);
+      }
+
+      return this;
+    }
+    /**
+     * <code>.dictionary.FieldGroup fieldGroup = 29;</code>
+     */
+    public Builder setFieldGroup(
+        org.spin.grpc.util.FieldGroup.Builder builderForValue) {
+      if (fieldGroupBuilder_ == null) {
+        fieldGroup_ = builderForValue.build();
+        onChanged();
+      } else {
+        fieldGroupBuilder_.setMessage(builderForValue.build());
+      }
+
+      return this;
+    }
+    /**
+     * <code>.dictionary.FieldGroup fieldGroup = 29;</code>
+     */
+    public Builder mergeFieldGroup(org.spin.grpc.util.FieldGroup value) {
+      if (fieldGroupBuilder_ == null) {
+        if (fieldGroup_ != null) {
+          fieldGroup_ =
+            org.spin.grpc.util.FieldGroup.newBuilder(fieldGroup_).mergeFrom(value).buildPartial();
+        } else {
+          fieldGroup_ = value;
+        }
+        onChanged();
+      } else {
+        fieldGroupBuilder_.mergeFrom(value);
+      }
+
+      return this;
+    }
+    /**
+     * <code>.dictionary.FieldGroup fieldGroup = 29;</code>
+     */
+    public Builder clearFieldGroup() {
+      if (fieldGroupBuilder_ == null) {
+        fieldGroup_ = null;
+        onChanged();
+      } else {
+        fieldGroup_ = null;
+        fieldGroupBuilder_ = null;
+      }
+
+      return this;
+    }
+    /**
+     * <code>.dictionary.FieldGroup fieldGroup = 29;</code>
+     */
+    public org.spin.grpc.util.FieldGroup.Builder getFieldGroupBuilder() {
+      
+      onChanged();
+      return getFieldGroupFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.dictionary.FieldGroup fieldGroup = 29;</code>
+     */
+    public org.spin.grpc.util.FieldGroupOrBuilder getFieldGroupOrBuilder() {
+      if (fieldGroupBuilder_ != null) {
+        return fieldGroupBuilder_.getMessageOrBuilder();
+      } else {
+        return fieldGroup_ == null ?
+            org.spin.grpc.util.FieldGroup.getDefaultInstance() : fieldGroup_;
+      }
+    }
+    /**
+     * <code>.dictionary.FieldGroup fieldGroup = 29;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        org.spin.grpc.util.FieldGroup, org.spin.grpc.util.FieldGroup.Builder, org.spin.grpc.util.FieldGroupOrBuilder> 
+        getFieldGroupFieldBuilder() {
+      if (fieldGroupBuilder_ == null) {
+        fieldGroupBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            org.spin.grpc.util.FieldGroup, org.spin.grpc.util.FieldGroup.Builder, org.spin.grpc.util.FieldGroupOrBuilder>(
+                getFieldGroup(),
+                getParentForChildren(),
+                isClean());
+        fieldGroup_ = null;
+      }
+      return fieldGroupBuilder_;
     }
     public final Builder setUnknownFields(
         final com.google.protobuf.UnknownFieldSet unknownFields) {

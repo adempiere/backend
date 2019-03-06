@@ -31,6 +31,7 @@ import org.compiere.model.Query;
 import org.compiere.model.X_AD_FieldGroup;
 import org.compiere.model.X_AD_Reference;
 import org.compiere.util.CLogger;
+import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
 import org.compiere.util.Util;
@@ -225,17 +226,48 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			}
 			//	With Tabs
 			if(withTabs) {
+				List<Tab.Builder> tabListForGroup = new ArrayList<>();
 				for(MTab tab : window.getTabs(false, null)) {
 					if(!tab.isActive()) {
 						continue;
 					}
 					Tab.Builder tabBuilder = convertTab(tab, language, false);
 					builder.addTabs(tabBuilder.build());
+					//	Get field group
+					int [] fieldGroupIdArray = getFieldGroupIdsFromTab(tab.getAD_Tab_ID());
+					if(fieldGroupIdArray != null) {
+						for(int fieldGroupId : fieldGroupIdArray) {
+							Tab.Builder tabFieldGroup = convertTab(tab, language, false);
+							FieldGroup.Builder fieldGroup = convertFieldGroup(fieldGroupId, language);
+							tabFieldGroup.setFieldGroup(fieldGroup);
+							tabFieldGroup.setName(fieldGroup.getName());
+							//	Add to list
+							tabListForGroup.add(tabFieldGroup);
+						}
+					}
+				}
+				//	Add Field Group Tabs
+				for(Tab.Builder tabFieldGroup : tabListForGroup) {
+					builder.addTabs(tabFieldGroup.build());
 				}
 			}
 		}
 		//	return
 		return builder;
+	}
+	
+	/**
+	 * Get Field group from Tab
+	 * @param tabId
+	 * @return
+	 */
+	private int[] getFieldGroupIdsFromTab(int tabId) {
+		return DB.getIDsEx(null, "SELECT f.AD_FieldGroup_ID "
+				+ "FROM AD_Field f "
+				+ "INNER JOIN AD_FieldGroup fg ON(fg.AD_FieldGroup_ID = f.AD_FieldGroup_ID) "
+				+ "WHERE f.AD_Tab_ID = ? "
+				+ "AND fg.FieldGroupType = ? "
+				+ "GROUP BY f.AD_FieldGroup_ID", tabId, X_AD_FieldGroup.FIELDGROUPTYPE_Tab);
 	}
 	
 	/**
