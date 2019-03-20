@@ -100,6 +100,7 @@ message Tab {
   	ContextInfo contextInfo = 26;
   	Process process = 27;
   	repeated Field fields = 28;
+  	FieldGroup fieldGroup = 29;
 }
 
 // Field
