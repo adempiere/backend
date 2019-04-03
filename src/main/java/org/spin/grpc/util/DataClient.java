@@ -75,6 +75,51 @@ public class DataClient {
 	  }
 	  
 	  /** 
+	   * Request PO. 
+	   */
+	  public void requestPOWithSQL() {
+		  ClientRequest clientRequest = ClientRequest.newBuilder()
+				  .build();
+		  Criteria.Builder criteria = Criteria.newBuilder().setTableName("C_BPartner");
+		  criteria.setWhereClause("C_BPartner.IsCustomer = 'Y'");
+		  ValueObjectRequest request = ValueObjectRequest.newBuilder()
+	    		.setClientRequest(clientRequest)
+	    		.setCriteria(criteria.build())
+	    		.build();
+		  ValueObject response;
+		  try {
+			  response = blockingStub.requestObject(request);
+			  logger.info("PO With SQL: " + response);
+		  } catch (StatusRuntimeException e) {
+			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
+		      return;
+		  }
+	  }
+	  
+	  /** 
+	   * Request PO List. 
+	   */
+	  public void requestPOListWithSQL() {
+		  ClientRequest clientRequest = ClientRequest.newBuilder()
+				  .build();
+		  Criteria.Builder criteria = Criteria.newBuilder().setTableName("C_Invoice");
+		  criteria.setWhereClause("C_Invoice.DocStatus IN('CO', 'CL')");
+		  criteria.setOrderByClause("C_Invoice.DateInvoiced DESC");
+		  ValueObjectRequest request = ValueObjectRequest.newBuilder()
+	    		.setClientRequest(clientRequest)
+	    		.setCriteria(criteria.build())
+	    		.build();
+		  ValueObjectList response;
+		  try {
+			  response = blockingStub.requestObjectList(request);
+			  logger.info("PO List With SQL: " + response);
+		  } catch (StatusRuntimeException e) {	
+			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
+		      return;
+		  }
+	  }
+	  
+	  /** 
 	   * Request Callout. 
 	   */
 	  public void requestCallout() {
@@ -100,8 +145,12 @@ public class DataClient {
 	  public static void main(String[] args) throws Exception {
 		DataClient client = new DataClient("localhost", 50052);
 	    try {
-	    	logger.info("####################### PO #####################");
-	    	client.requestPO();
+//	    	logger.info("####################### PO #####################");
+//	    	client.requestPO();
+	    	//	
+//	    	client.requestPOWithSQL();
+	    	//	
+	    	client.requestPOListWithSQL();
 //	    	logger.info("####################### PO List #####################");
 //	    	client.requestPOList();
 //	    	logger.info("####################### Callout #####################");
