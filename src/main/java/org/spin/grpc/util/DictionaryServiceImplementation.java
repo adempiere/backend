@@ -99,6 +99,28 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		}
 	}
 	
+	@Override
+	public void requestProcess(EntityRequest request, StreamObserver<Process> responseObserver) {
+		if(request == null
+				|| Util.isEmpty(request.getUuid())) {
+			log.fine("Object Request Null");
+			return;
+		}
+		log.fine("Process Requested = " + request.getUuid());
+		ApplicationRequest clientInfo = request.getApplicationRequest();
+		String language = null;
+		if(clientInfo != null) {
+			language = clientInfo.getLanguage();
+		}
+		try {
+			Process.Builder tabBuilder = convertProcess(request.getUuid(), language, true);
+			responseObserver.onNext(tabBuilder.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			responseObserver.onError(e);
+		}
+	}
+	
 	/**
 	 * Request Menu
 	 * @param request
@@ -284,6 +306,22 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.first();
 		//	Convert
 		return convertTab(tab, language, withFields);
+	}
+	
+	/**
+	 * Convert Process from UUID
+	 * @param uuid
+	 * @param language
+	 * @param withParameters
+	 * @return
+	 */
+	private Process.Builder convertProcess(String uuid, String language, boolean withParameters) {
+		MProcess process = new Query(Env.getCtx(), I_AD_Process.Table_Name, I_AD_Process.COLUMNNAME_UUID + " = ?", null)
+				.setParameters(uuid)
+				.setOnlyActiveRecords(true)
+				.first();
+		//	Convert
+		return convertProcess(process, language, withParameters);
 	}
 	
 	/**

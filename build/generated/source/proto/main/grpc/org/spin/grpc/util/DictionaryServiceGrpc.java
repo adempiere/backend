@@ -254,6 +254,38 @@ public final class DictionaryServiceGrpc {
      return getRequestFieldMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.EntityRequest,
+      org.spin.grpc.util.Process> getRequestProcessMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "RequestProcess",
+      requestType = org.spin.grpc.util.EntityRequest.class,
+      responseType = org.spin.grpc.util.Process.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<org.spin.grpc.util.EntityRequest,
+      org.spin.grpc.util.Process> getRequestProcessMethod() {
+    io.grpc.MethodDescriptor<org.spin.grpc.util.EntityRequest, org.spin.grpc.util.Process> getRequestProcessMethod;
+    if ((getRequestProcessMethod = DictionaryServiceGrpc.getRequestProcessMethod) == null) {
+      synchronized (DictionaryServiceGrpc.class) {
+        if ((getRequestProcessMethod = DictionaryServiceGrpc.getRequestProcessMethod) == null) {
+          DictionaryServiceGrpc.getRequestProcessMethod = getRequestProcessMethod = 
+              io.grpc.MethodDescriptor.<org.spin.grpc.util.EntityRequest, org.spin.grpc.util.Process>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(
+                  "dictionary.DictionaryService", "RequestProcess"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  org.spin.grpc.util.EntityRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  org.spin.grpc.util.Process.getDefaultInstance()))
+                  .setSchemaDescriptor(new DictionaryServiceMethodDescriptorSupplier("RequestProcess"))
+                  .build();
+          }
+        }
+     }
+     return getRequestProcessMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -354,6 +386,16 @@ public final class DictionaryServiceGrpc {
       asyncUnimplementedUnaryCall(getRequestFieldMethod(), responseObserver);
     }
 
+    /**
+     * <pre>
+     * Request Process
+     * </pre>
+     */
+    public void requestProcess(org.spin.grpc.util.EntityRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.Process> responseObserver) {
+      asyncUnimplementedUnaryCall(getRequestProcessMethod(), responseObserver);
+    }
+
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
@@ -405,6 +447,13 @@ public final class DictionaryServiceGrpc {
                 org.spin.grpc.util.EntityRequest,
                 org.spin.grpc.util.Field>(
                   this, METHODID_REQUEST_FIELD)))
+          .addMethod(
+            getRequestProcessMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                org.spin.grpc.util.EntityRequest,
+                org.spin.grpc.util.Process>(
+                  this, METHODID_REQUEST_PROCESS)))
           .build();
     }
   }
@@ -506,6 +555,17 @@ public final class DictionaryServiceGrpc {
       asyncUnaryCall(
           getChannel().newCall(getRequestFieldMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     * <pre>
+     * Request Process
+     * </pre>
+     */
+    public void requestProcess(org.spin.grpc.util.EntityRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.Process> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getRequestProcessMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -597,6 +657,16 @@ public final class DictionaryServiceGrpc {
     public org.spin.grpc.util.Field requestField(org.spin.grpc.util.EntityRequest request) {
       return blockingUnaryCall(
           getChannel(), getRequestFieldMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * Request Process
+     * </pre>
+     */
+    public org.spin.grpc.util.Process requestProcess(org.spin.grpc.util.EntityRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getRequestProcessMethod(), getCallOptions(), request);
     }
   }
 
@@ -697,6 +767,17 @@ public final class DictionaryServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getRequestFieldMethod(), getCallOptions()), request);
     }
+
+    /**
+     * <pre>
+     * Request Process
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.Process> requestProcess(
+        org.spin.grpc.util.EntityRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getRequestProcessMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_REQUEST_MENU_AND_CHILD = 0;
@@ -706,6 +787,7 @@ public final class DictionaryServiceGrpc {
   private static final int METHODID_REQUEST_TAB = 4;
   private static final int METHODID_REQUEST_TAB_AND_FIELDS = 5;
   private static final int METHODID_REQUEST_FIELD = 6;
+  private static final int METHODID_REQUEST_PROCESS = 7;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -751,6 +833,10 @@ public final class DictionaryServiceGrpc {
         case METHODID_REQUEST_FIELD:
           serviceImpl.requestField((org.spin.grpc.util.EntityRequest) request,
               (io.grpc.stub.StreamObserver<org.spin.grpc.util.Field>) responseObserver);
+          break;
+        case METHODID_REQUEST_PROCESS:
+          serviceImpl.requestProcess((org.spin.grpc.util.EntityRequest) request,
+              (io.grpc.stub.StreamObserver<org.spin.grpc.util.Process>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -820,6 +906,7 @@ public final class DictionaryServiceGrpc {
               .addMethod(getRequestTabMethod())
               .addMethod(getRequestTabAndFieldsMethod())
               .addMethod(getRequestFieldMethod())
+              .addMethod(getRequestProcessMethod())
               .build();
         }
       }

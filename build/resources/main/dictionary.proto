@@ -37,6 +37,8 @@ service DictionaryService {
   rpc RequestTabAndFields(EntityRequest) returns (Tab) {}
   // Request a Field
   rpc RequestField(EntityRequest) returns (Field) {}
+  // Request Process
+  rpc RequestProcess(EntityRequest) returns (Process) {}
 }
 
 

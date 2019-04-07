@@ -224,7 +224,7 @@ public final class ADempiereDictionary {
       "\022\020\n\010formUuid\030\014 \001(\t\022\022\n\nwindowUuid\030\r \001(\t\022\023" +
       "\n\013processUuid\030\016 \001(\t\022\030\n\020smartBrowserUuid\030" +
       "\017 \001(\t\022 \n\006childs\030\020 \003(\0132\020.dictionary.Menu2" +
-      "\343\003\n\021DictionaryService\022D\n\023RequestMenuAndC" +
+      "\247\004\n\021DictionaryService\022D\n\023RequestMenuAndC" +
       "hild\022\031.dictionary.EntityRequest\032\020.dictio" +
       "nary.Menu\"\000\022<\n\013RequestMenu\022\031.dictionary." +
       "EntityRequest\032\020.dictionary.Menu\"\000\022@\n\rReq" +
@@ -236,8 +236,10 @@ public final class ADempiereDictionary {
       "estTabAndFields\022\031.dictionary.EntityReque" +
       "st\032\017.dictionary.Tab\"\000\022>\n\014RequestField\022\031." +
       "dictionary.EntityRequest\032\021.dictionary.Fi" +
-      "eld\"\000B1\n\022org.spin.grpc.utilB\023ADempiereDi" +
-      "ctionaryP\001\242\002\003HLWb\006proto3"
+      "eld\"\000\022B\n\016RequestProcess\022\031.dictionary.Ent" +
+      "ityRequest\032\023.dictionary.Process\"\000B1\n\022org" +
+      ".spin.grpc.utilB\023ADempiereDictionaryP\001\242\002" +
+      "\003HLWb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
