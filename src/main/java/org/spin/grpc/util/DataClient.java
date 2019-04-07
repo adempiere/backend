@@ -143,7 +143,7 @@ public class DataClient {
 	   * greeting.
 	   */
 	  public static void main(String[] args) throws Exception {
-		DataClient client = new DataClient("localhost", 50052);
+		DataClient client = new DataClient("localhost", 50051);
 	    try {
 //	    	logger.info("####################### PO #####################");
 //	    	client.requestPO();
