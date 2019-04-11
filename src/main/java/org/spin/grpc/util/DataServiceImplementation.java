@@ -245,9 +245,12 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	 * @return
 	 */
 	private ValueObject.Builder convertObject(PO entity) {
-		ValueObject.Builder builder = ValueObject.newBuilder()
-				.setUuid(validateNull(entity.get_ValueAsString(I_AD_Element.COLUMNNAME_UUID)))
-				.setId(entity.get_ID());
+		ValueObject.Builder builder = ValueObject.newBuilder();
+		if(entity == null) {
+			return builder;
+		}
+		builder.setUuid(validateNull(entity.get_ValueAsString(I_AD_Element.COLUMNNAME_UUID)))
+			.setId(entity.get_ID());
 		//	Convert attributes
 		POInfo poInfo = POInfo.getPOInfo(Env.getCtx(), entity.get_Table_ID());
 		for(int index = 0; index < poInfo.getColumnCount(); index++) {
