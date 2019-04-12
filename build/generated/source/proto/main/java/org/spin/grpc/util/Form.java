@@ -27,6 +27,7 @@ private static final long serialVersionUID = 0L;
     help_ = "";
     accessLevel_ = 0;
     className_ = "";
+    isActive_ = false;
   }
 
   @java.lang.Override
@@ -98,6 +99,11 @@ private static final long serialVersionUID = 0L;
             java.lang.String s = input.readStringRequireUtf8();
 
             className_ = s;
+            break;
+          }
+          case 64: {
+
+            isActive_ = input.readBool();
             break;
           }
         }
@@ -312,6 +318,15 @@ private static final long serialVersionUID = 0L;
     }
   }
 
+  public static final int ISACTIVE_FIELD_NUMBER = 8;
+  private boolean isActive_;
+  /**
+   * <code>bool isActive = 8;</code>
+   */
+  public boolean getIsActive() {
+    return isActive_;
+  }
+
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
     byte isInitialized = memoizedIsInitialized;
@@ -345,6 +360,9 @@ private static final long serialVersionUID = 0L;
     if (!getClassNameBytes().isEmpty()) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 7, className_);
     }
+    if (isActive_ != false) {
+      output.writeBool(8, isActive_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -376,6 +394,10 @@ private static final long serialVersionUID = 0L;
     if (!getClassNameBytes().isEmpty()) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, className_);
     }
+    if (isActive_ != false) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeBoolSize(8, isActive_);
+    }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
     return size;
@@ -406,6 +428,8 @@ private static final long serialVersionUID = 0L;
         == other.getAccessLevel());
     result = result && getClassName()
         .equals(other.getClassName());
+    result = result && (getIsActive()
+        == other.getIsActive());
     result = result && unknownFields.equals(other.unknownFields);
     return result;
   }
@@ -431,6 +455,9 @@ private static final long serialVersionUID = 0L;
     hash = (53 * hash) + getAccessLevel();
     hash = (37 * hash) + CLASSNAME_FIELD_NUMBER;
     hash = (53 * hash) + getClassName().hashCode();
+    hash = (37 * hash) + ISACTIVE_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
+        getIsActive());
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -578,6 +605,8 @@ private static final long serialVersionUID = 0L;
 
       className_ = "";
 
+      isActive_ = false;
+
       return this;
     }
 
@@ -607,6 +636,7 @@ private static final long serialVersionUID = 0L;
       result.help_ = help_;
       result.accessLevel_ = accessLevel_;
       result.className_ = className_;
+      result.isActive_ = isActive_;
       onBuilt();
       return result;
     }
@@ -673,6 +703,9 @@ private static final long serialVersionUID = 0L;
       if (!other.getClassName().isEmpty()) {
         className_ = other.className_;
         onChanged();
+      }
+      if (other.getIsActive() != false) {
+        setIsActive(other.getIsActive());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -1094,6 +1127,32 @@ private static final long serialVersionUID = 0L;
   checkByteStringIsUtf8(value);
       
       className_ = value;
+      onChanged();
+      return this;
+    }
+
+    private boolean isActive_ ;
+    /**
+     * <code>bool isActive = 8;</code>
+     */
+    public boolean getIsActive() {
+      return isActive_;
+    }
+    /**
+     * <code>bool isActive = 8;</code>
+     */
+    public Builder setIsActive(boolean value) {
+      
+      isActive_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>bool isActive = 8;</code>
+     */
+    public Builder clearIsActive() {
+      
+      isActive_ = false;
       onChanged();
       return this;
     }

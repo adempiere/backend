@@ -81,4 +81,9 @@ public interface ReferenceTableOrBuilder extends
    */
   com.google.protobuf.ByteString
       getWhereClauseBytes();
+
+  /**
+   * <code>bool isActive = 10;</code>
+   */
+  boolean getIsActive();
 }

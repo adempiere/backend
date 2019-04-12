@@ -158,4 +158,9 @@ public interface MenuOrBuilder extends
    */
   org.spin.grpc.util.MenuOrBuilder getChildsOrBuilder(
       int index);
+
+  /**
+   * <code>bool isActive = 17;</code>
+   */
+  boolean getIsActive();
 }

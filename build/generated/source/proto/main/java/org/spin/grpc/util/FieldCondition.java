@@ -24,6 +24,7 @@ private static final long serialVersionUID = 0L;
     uuid_ = "";
     condition_ = "";
     stylesheet_ = "";
+    isActive_ = false;
   }
 
   @java.lang.Override
@@ -78,6 +79,11 @@ private static final long serialVersionUID = 0L;
             java.lang.String s = input.readStringRequireUtf8();
 
             stylesheet_ = s;
+            break;
+          }
+          case 40: {
+
+            isActive_ = input.readBool();
             break;
           }
         }
@@ -184,7 +190,7 @@ private static final long serialVersionUID = 0L;
   public static final int STYLESHEET_FIELD_NUMBER = 4;
   private volatile java.lang.Object stylesheet_;
   /**
-   * <code>string Stylesheet = 4;</code>
+   * <code>string stylesheet = 4;</code>
    */
   public java.lang.String getStylesheet() {
     java.lang.Object ref = stylesheet_;
@@ -199,7 +205,7 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <code>string Stylesheet = 4;</code>
+   * <code>string stylesheet = 4;</code>
    */
   public com.google.protobuf.ByteString
       getStylesheetBytes() {
@@ -213,6 +219,15 @@ private static final long serialVersionUID = 0L;
     } else {
       return (com.google.protobuf.ByteString) ref;
     }
+  }
+
+  public static final int ISACTIVE_FIELD_NUMBER = 5;
+  private boolean isActive_;
+  /**
+   * <code>bool isActive = 5;</code>
+   */
+  public boolean getIsActive() {
+    return isActive_;
   }
 
   private byte memoizedIsInitialized = -1;
@@ -239,6 +254,9 @@ private static final long serialVersionUID = 0L;
     if (!getStylesheetBytes().isEmpty()) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 4, stylesheet_);
     }
+    if (isActive_ != false) {
+      output.writeBool(5, isActive_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -259,6 +277,10 @@ private static final long serialVersionUID = 0L;
     }
     if (!getStylesheetBytes().isEmpty()) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, stylesheet_);
+    }
+    if (isActive_ != false) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeBoolSize(5, isActive_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -284,6 +306,8 @@ private static final long serialVersionUID = 0L;
         .equals(other.getCondition());
     result = result && getStylesheet()
         .equals(other.getStylesheet());
+    result = result && (getIsActive()
+        == other.getIsActive());
     result = result && unknownFields.equals(other.unknownFields);
     return result;
   }
@@ -303,6 +327,9 @@ private static final long serialVersionUID = 0L;
     hash = (53 * hash) + getCondition().hashCode();
     hash = (37 * hash) + STYLESHEET_FIELD_NUMBER;
     hash = (53 * hash) + getStylesheet().hashCode();
+    hash = (37 * hash) + ISACTIVE_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
+        getIsActive());
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -444,6 +471,8 @@ private static final long serialVersionUID = 0L;
 
       stylesheet_ = "";
 
+      isActive_ = false;
+
       return this;
     }
 
@@ -470,6 +499,7 @@ private static final long serialVersionUID = 0L;
       result.uuid_ = uuid_;
       result.condition_ = condition_;
       result.stylesheet_ = stylesheet_;
+      result.isActive_ = isActive_;
       onBuilt();
       return result;
     }
@@ -525,6 +555,9 @@ private static final long serialVersionUID = 0L;
       if (!other.getStylesheet().isEmpty()) {
         stylesheet_ = other.stylesheet_;
         onChanged();
+      }
+      if (other.getIsActive() != false) {
+        setIsActive(other.getIsActive());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -719,7 +752,7 @@ private static final long serialVersionUID = 0L;
 
     private java.lang.Object stylesheet_ = "";
     /**
-     * <code>string Stylesheet = 4;</code>
+     * <code>string stylesheet = 4;</code>
      */
     public java.lang.String getStylesheet() {
       java.lang.Object ref = stylesheet_;
@@ -734,7 +767,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string Stylesheet = 4;</code>
+     * <code>string stylesheet = 4;</code>
      */
     public com.google.protobuf.ByteString
         getStylesheetBytes() {
@@ -750,7 +783,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string Stylesheet = 4;</code>
+     * <code>string stylesheet = 4;</code>
      */
     public Builder setStylesheet(
         java.lang.String value) {
@@ -763,7 +796,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string Stylesheet = 4;</code>
+     * <code>string stylesheet = 4;</code>
      */
     public Builder clearStylesheet() {
       
@@ -772,7 +805,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string Stylesheet = 4;</code>
+     * <code>string stylesheet = 4;</code>
      */
     public Builder setStylesheetBytes(
         com.google.protobuf.ByteString value) {
@@ -782,6 +815,32 @@ private static final long serialVersionUID = 0L;
   checkByteStringIsUtf8(value);
       
       stylesheet_ = value;
+      onChanged();
+      return this;
+    }
+
+    private boolean isActive_ ;
+    /**
+     * <code>bool isActive = 5;</code>
+     */
+    public boolean getIsActive() {
+      return isActive_;
+    }
+    /**
+     * <code>bool isActive = 5;</code>
+     */
+    public Builder setIsActive(boolean value) {
+      
+      isActive_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>bool isActive = 5;</code>
+     */
+    public Builder clearIsActive() {
+      
+      isActive_ = false;
       onChanged();
       return this;
     }

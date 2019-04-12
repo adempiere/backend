@@ -392,11 +392,16 @@ public interface FieldOrBuilder extends
   boolean getIsInfoOnly();
 
   /**
+   * <code>bool isActive = 50;</code>
+   */
+  boolean getIsActive();
+
+  /**
    * <pre>
    * Process Parameter Compatibility
    * </pre>
    *
-   * <code>string defaultValueTo = 50;</code>
+   * <code>string defaultValueTo = 51;</code>
    */
   java.lang.String getDefaultValueTo();
   /**
@@ -404,7 +409,7 @@ public interface FieldOrBuilder extends
    * Process Parameter Compatibility
    * </pre>
    *
-   * <code>string defaultValueTo = 50;</code>
+   * <code>string defaultValueTo = 51;</code>
    */
   com.google.protobuf.ByteString
       getDefaultValueToBytes();

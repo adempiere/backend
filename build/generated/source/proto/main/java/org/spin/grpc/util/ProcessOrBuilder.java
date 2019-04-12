@@ -110,4 +110,9 @@ public interface ProcessOrBuilder extends
    */
   org.spin.grpc.util.FieldOrBuilder getParametersOrBuilder(
       int index);
+
+  /**
+   * <code>bool isActive = 12;</code>
+   */
+  boolean getIsActive();
 }

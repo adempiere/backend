@@ -61,4 +61,9 @@ public interface MessageTextOrBuilder extends
    */
   com.google.protobuf.ByteString
       getMsgTipBytes();
+
+  /**
+   * <code>bool isActive = 7;</code>
+   */
+  boolean getIsActive();
 }

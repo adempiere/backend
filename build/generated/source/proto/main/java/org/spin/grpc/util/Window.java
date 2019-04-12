@@ -25,6 +25,7 @@ private static final long serialVersionUID = 0L;
     name_ = "";
     description_ = "";
     help_ = "";
+    isActive_ = false;
     isSOTrx_ = false;
     tabs_ = java.util.Collections.emptyList();
   }
@@ -91,10 +92,15 @@ private static final long serialVersionUID = 0L;
           }
           case 48: {
 
+            isActive_ = input.readBool();
+            break;
+          }
+          case 56: {
+
             isSOTrx_ = input.readBool();
             break;
           }
-          case 58: {
+          case 66: {
             org.spin.grpc.util.ContextInfo.Builder subBuilder = null;
             if (contextInfo_ != null) {
               subBuilder = contextInfo_.toBuilder();
@@ -107,10 +113,10 @@ private static final long serialVersionUID = 0L;
 
             break;
           }
-          case 66: {
-            if (!((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
+          case 74: {
+            if (!((mutable_bitField0_ & 0x00000100) == 0x00000100)) {
               tabs_ = new java.util.ArrayList<org.spin.grpc.util.Tab>();
-              mutable_bitField0_ |= 0x00000080;
+              mutable_bitField0_ |= 0x00000100;
             }
             tabs_.add(
                 input.readMessage(org.spin.grpc.util.Tab.parser(), extensionRegistry));
@@ -124,7 +130,7 @@ private static final long serialVersionUID = 0L;
       throw new com.google.protobuf.InvalidProtocolBufferException(
           e).setUnfinishedMessage(this);
     } finally {
-      if (((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
+      if (((mutable_bitField0_ & 0x00000100) == 0x00000100)) {
         tabs_ = java.util.Collections.unmodifiableList(tabs_);
       }
       this.unknownFields = unknownFields.build();
@@ -289,23 +295,32 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int ISSOTRX_FIELD_NUMBER = 6;
+  public static final int ISACTIVE_FIELD_NUMBER = 6;
+  private boolean isActive_;
+  /**
+   * <code>bool isActive = 6;</code>
+   */
+  public boolean getIsActive() {
+    return isActive_;
+  }
+
+  public static final int ISSOTRX_FIELD_NUMBER = 7;
   private boolean isSOTrx_;
   /**
-   * <code>bool isSOTrx = 6;</code>
+   * <code>bool isSOTrx = 7;</code>
    */
   public boolean getIsSOTrx() {
     return isSOTrx_;
   }
 
-  public static final int CONTEXTINFO_FIELD_NUMBER = 7;
+  public static final int CONTEXTINFO_FIELD_NUMBER = 8;
   private org.spin.grpc.util.ContextInfo contextInfo_;
   /**
    * <pre>
    *	External Info
    * </pre>
    *
-   * <code>.dictionary.ContextInfo contextInfo = 7;</code>
+   * <code>.dictionary.ContextInfo contextInfo = 8;</code>
    */
   public boolean hasContextInfo() {
     return contextInfo_ != null;
@@ -315,7 +330,7 @@ private static final long serialVersionUID = 0L;
    *	External Info
    * </pre>
    *
-   * <code>.dictionary.ContextInfo contextInfo = 7;</code>
+   * <code>.dictionary.ContextInfo contextInfo = 8;</code>
    */
   public org.spin.grpc.util.ContextInfo getContextInfo() {
     return contextInfo_ == null ? org.spin.grpc.util.ContextInfo.getDefaultInstance() : contextInfo_;
@@ -325,41 +340,41 @@ private static final long serialVersionUID = 0L;
    *	External Info
    * </pre>
    *
-   * <code>.dictionary.ContextInfo contextInfo = 7;</code>
+   * <code>.dictionary.ContextInfo contextInfo = 8;</code>
    */
   public org.spin.grpc.util.ContextInfoOrBuilder getContextInfoOrBuilder() {
     return getContextInfo();
   }
 
-  public static final int TABS_FIELD_NUMBER = 8;
+  public static final int TABS_FIELD_NUMBER = 9;
   private java.util.List<org.spin.grpc.util.Tab> tabs_;
   /**
-   * <code>repeated .dictionary.Tab tabs = 8;</code>
+   * <code>repeated .dictionary.Tab tabs = 9;</code>
    */
   public java.util.List<org.spin.grpc.util.Tab> getTabsList() {
     return tabs_;
   }
   /**
-   * <code>repeated .dictionary.Tab tabs = 8;</code>
+   * <code>repeated .dictionary.Tab tabs = 9;</code>
    */
   public java.util.List<? extends org.spin.grpc.util.TabOrBuilder> 
       getTabsOrBuilderList() {
     return tabs_;
   }
   /**
-   * <code>repeated .dictionary.Tab tabs = 8;</code>
+   * <code>repeated .dictionary.Tab tabs = 9;</code>
    */
   public int getTabsCount() {
     return tabs_.size();
   }
   /**
-   * <code>repeated .dictionary.Tab tabs = 8;</code>
+   * <code>repeated .dictionary.Tab tabs = 9;</code>
    */
   public org.spin.grpc.util.Tab getTabs(int index) {
     return tabs_.get(index);
   }
   /**
-   * <code>repeated .dictionary.Tab tabs = 8;</code>
+   * <code>repeated .dictionary.Tab tabs = 9;</code>
    */
   public org.spin.grpc.util.TabOrBuilder getTabsOrBuilder(
       int index) {
@@ -393,14 +408,17 @@ private static final long serialVersionUID = 0L;
     if (!getHelpBytes().isEmpty()) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 5, help_);
     }
+    if (isActive_ != false) {
+      output.writeBool(6, isActive_);
+    }
     if (isSOTrx_ != false) {
-      output.writeBool(6, isSOTrx_);
+      output.writeBool(7, isSOTrx_);
     }
     if (contextInfo_ != null) {
-      output.writeMessage(7, getContextInfo());
+      output.writeMessage(8, getContextInfo());
     }
     for (int i = 0; i < tabs_.size(); i++) {
-      output.writeMessage(8, tabs_.get(i));
+      output.writeMessage(9, tabs_.get(i));
     }
     unknownFields.writeTo(output);
   }
@@ -426,17 +444,21 @@ private static final long serialVersionUID = 0L;
     if (!getHelpBytes().isEmpty()) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, help_);
     }
+    if (isActive_ != false) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeBoolSize(6, isActive_);
+    }
     if (isSOTrx_ != false) {
       size += com.google.protobuf.CodedOutputStream
-        .computeBoolSize(6, isSOTrx_);
+        .computeBoolSize(7, isSOTrx_);
     }
     if (contextInfo_ != null) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(7, getContextInfo());
+        .computeMessageSize(8, getContextInfo());
     }
     for (int i = 0; i < tabs_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(8, tabs_.get(i));
+        .computeMessageSize(9, tabs_.get(i));
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -464,6 +486,8 @@ private static final long serialVersionUID = 0L;
         .equals(other.getDescription());
     result = result && getHelp()
         .equals(other.getHelp());
+    result = result && (getIsActive()
+        == other.getIsActive());
     result = result && (getIsSOTrx()
         == other.getIsSOTrx());
     result = result && (hasContextInfo() == other.hasContextInfo());
@@ -494,6 +518,9 @@ private static final long serialVersionUID = 0L;
     hash = (53 * hash) + getDescription().hashCode();
     hash = (37 * hash) + HELP_FIELD_NUMBER;
     hash = (53 * hash) + getHelp().hashCode();
+    hash = (37 * hash) + ISACTIVE_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
+        getIsActive());
     hash = (37 * hash) + ISSOTRX_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
         getIsSOTrx());
@@ -649,6 +676,8 @@ private static final long serialVersionUID = 0L;
 
       help_ = "";
 
+      isActive_ = false;
+
       isSOTrx_ = false;
 
       if (contextInfoBuilder_ == null) {
@@ -659,7 +688,7 @@ private static final long serialVersionUID = 0L;
       }
       if (tabsBuilder_ == null) {
         tabs_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000080);
+        bitField0_ = (bitField0_ & ~0x00000100);
       } else {
         tabsBuilder_.clear();
       }
@@ -692,6 +721,7 @@ private static final long serialVersionUID = 0L;
       result.name_ = name_;
       result.description_ = description_;
       result.help_ = help_;
+      result.isActive_ = isActive_;
       result.isSOTrx_ = isSOTrx_;
       if (contextInfoBuilder_ == null) {
         result.contextInfo_ = contextInfo_;
@@ -699,9 +729,9 @@ private static final long serialVersionUID = 0L;
         result.contextInfo_ = contextInfoBuilder_.build();
       }
       if (tabsBuilder_ == null) {
-        if (((bitField0_ & 0x00000080) == 0x00000080)) {
+        if (((bitField0_ & 0x00000100) == 0x00000100)) {
           tabs_ = java.util.Collections.unmodifiableList(tabs_);
-          bitField0_ = (bitField0_ & ~0x00000080);
+          bitField0_ = (bitField0_ & ~0x00000100);
         }
         result.tabs_ = tabs_;
       } else {
@@ -768,6 +798,9 @@ private static final long serialVersionUID = 0L;
         help_ = other.help_;
         onChanged();
       }
+      if (other.getIsActive() != false) {
+        setIsActive(other.getIsActive());
+      }
       if (other.getIsSOTrx() != false) {
         setIsSOTrx(other.getIsSOTrx());
       }
@@ -778,7 +811,7 @@ private static final long serialVersionUID = 0L;
         if (!other.tabs_.isEmpty()) {
           if (tabs_.isEmpty()) {
             tabs_ = other.tabs_;
-            bitField0_ = (bitField0_ & ~0x00000080);
+            bitField0_ = (bitField0_ & ~0x00000100);
           } else {
             ensureTabsIsMutable();
             tabs_.addAll(other.tabs_);
@@ -791,7 +824,7 @@ private static final long serialVersionUID = 0L;
             tabsBuilder_.dispose();
             tabsBuilder_ = null;
             tabs_ = other.tabs_;
-            bitField0_ = (bitField0_ & ~0x00000080);
+            bitField0_ = (bitField0_ & ~0x00000100);
             tabsBuilder_ = 
               com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                  getTabsFieldBuilder() : null;
@@ -1130,15 +1163,41 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
+    private boolean isActive_ ;
+    /**
+     * <code>bool isActive = 6;</code>
+     */
+    public boolean getIsActive() {
+      return isActive_;
+    }
+    /**
+     * <code>bool isActive = 6;</code>
+     */
+    public Builder setIsActive(boolean value) {
+      
+      isActive_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>bool isActive = 6;</code>
+     */
+    public Builder clearIsActive() {
+      
+      isActive_ = false;
+      onChanged();
+      return this;
+    }
+
     private boolean isSOTrx_ ;
     /**
-     * <code>bool isSOTrx = 6;</code>
+     * <code>bool isSOTrx = 7;</code>
      */
     public boolean getIsSOTrx() {
       return isSOTrx_;
     }
     /**
-     * <code>bool isSOTrx = 6;</code>
+     * <code>bool isSOTrx = 7;</code>
      */
     public Builder setIsSOTrx(boolean value) {
       
@@ -1147,7 +1206,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>bool isSOTrx = 6;</code>
+     * <code>bool isSOTrx = 7;</code>
      */
     public Builder clearIsSOTrx() {
       
@@ -1164,7 +1223,7 @@ private static final long serialVersionUID = 0L;
      *	External Info
      * </pre>
      *
-     * <code>.dictionary.ContextInfo contextInfo = 7;</code>
+     * <code>.dictionary.ContextInfo contextInfo = 8;</code>
      */
     public boolean hasContextInfo() {
       return contextInfoBuilder_ != null || contextInfo_ != null;
@@ -1174,7 +1233,7 @@ private static final long serialVersionUID = 0L;
      *	External Info
      * </pre>
      *
-     * <code>.dictionary.ContextInfo contextInfo = 7;</code>
+     * <code>.dictionary.ContextInfo contextInfo = 8;</code>
      */
     public org.spin.grpc.util.ContextInfo getContextInfo() {
       if (contextInfoBuilder_ == null) {
@@ -1188,7 +1247,7 @@ private static final long serialVersionUID = 0L;
      *	External Info
      * </pre>
      *
-     * <code>.dictionary.ContextInfo contextInfo = 7;</code>
+     * <code>.dictionary.ContextInfo contextInfo = 8;</code>
      */
     public Builder setContextInfo(org.spin.grpc.util.ContextInfo value) {
       if (contextInfoBuilder_ == null) {
@@ -1208,7 +1267,7 @@ private static final long serialVersionUID = 0L;
      *	External Info
      * </pre>
      *
-     * <code>.dictionary.ContextInfo contextInfo = 7;</code>
+     * <code>.dictionary.ContextInfo contextInfo = 8;</code>
      */
     public Builder setContextInfo(
         org.spin.grpc.util.ContextInfo.Builder builderForValue) {
@@ -1226,7 +1285,7 @@ private static final long serialVersionUID = 0L;
      *	External Info
      * </pre>
      *
-     * <code>.dictionary.ContextInfo contextInfo = 7;</code>
+     * <code>.dictionary.ContextInfo contextInfo = 8;</code>
      */
     public Builder mergeContextInfo(org.spin.grpc.util.ContextInfo value) {
       if (contextInfoBuilder_ == null) {
@@ -1248,7 +1307,7 @@ private static final long serialVersionUID = 0L;
      *	External Info
      * </pre>
      *
-     * <code>.dictionary.ContextInfo contextInfo = 7;</code>
+     * <code>.dictionary.ContextInfo contextInfo = 8;</code>
      */
     public Builder clearContextInfo() {
       if (contextInfoBuilder_ == null) {
@@ -1266,7 +1325,7 @@ private static final long serialVersionUID = 0L;
      *	External Info
      * </pre>
      *
-     * <code>.dictionary.ContextInfo contextInfo = 7;</code>
+     * <code>.dictionary.ContextInfo contextInfo = 8;</code>
      */
     public org.spin.grpc.util.ContextInfo.Builder getContextInfoBuilder() {
       
@@ -1278,7 +1337,7 @@ private static final long serialVersionUID = 0L;
      *	External Info
      * </pre>
      *
-     * <code>.dictionary.ContextInfo contextInfo = 7;</code>
+     * <code>.dictionary.ContextInfo contextInfo = 8;</code>
      */
     public org.spin.grpc.util.ContextInfoOrBuilder getContextInfoOrBuilder() {
       if (contextInfoBuilder_ != null) {
@@ -1293,7 +1352,7 @@ private static final long serialVersionUID = 0L;
      *	External Info
      * </pre>
      *
-     * <code>.dictionary.ContextInfo contextInfo = 7;</code>
+     * <code>.dictionary.ContextInfo contextInfo = 8;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
         org.spin.grpc.util.ContextInfo, org.spin.grpc.util.ContextInfo.Builder, org.spin.grpc.util.ContextInfoOrBuilder> 
@@ -1312,9 +1371,9 @@ private static final long serialVersionUID = 0L;
     private java.util.List<org.spin.grpc.util.Tab> tabs_ =
       java.util.Collections.emptyList();
     private void ensureTabsIsMutable() {
-      if (!((bitField0_ & 0x00000080) == 0x00000080)) {
+      if (!((bitField0_ & 0x00000100) == 0x00000100)) {
         tabs_ = new java.util.ArrayList<org.spin.grpc.util.Tab>(tabs_);
-        bitField0_ |= 0x00000080;
+        bitField0_ |= 0x00000100;
        }
     }
 
@@ -1322,7 +1381,7 @@ private static final long serialVersionUID = 0L;
         org.spin.grpc.util.Tab, org.spin.grpc.util.Tab.Builder, org.spin.grpc.util.TabOrBuilder> tabsBuilder_;
 
     /**
-     * <code>repeated .dictionary.Tab tabs = 8;</code>
+     * <code>repeated .dictionary.Tab tabs = 9;</code>
      */
     public java.util.List<org.spin.grpc.util.Tab> getTabsList() {
       if (tabsBuilder_ == null) {
@@ -1332,7 +1391,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .dictionary.Tab tabs = 8;</code>
+     * <code>repeated .dictionary.Tab tabs = 9;</code>
      */
     public int getTabsCount() {
       if (tabsBuilder_ == null) {
@@ -1342,7 +1401,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .dictionary.Tab tabs = 8;</code>
+     * <code>repeated .dictionary.Tab tabs = 9;</code>
      */
     public org.spin.grpc.util.Tab getTabs(int index) {
       if (tabsBuilder_ == null) {
@@ -1352,7 +1411,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .dictionary.Tab tabs = 8;</code>
+     * <code>repeated .dictionary.Tab tabs = 9;</code>
      */
     public Builder setTabs(
         int index, org.spin.grpc.util.Tab value) {
@@ -1369,7 +1428,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .dictionary.Tab tabs = 8;</code>
+     * <code>repeated .dictionary.Tab tabs = 9;</code>
      */
     public Builder setTabs(
         int index, org.spin.grpc.util.Tab.Builder builderForValue) {
@@ -1383,7 +1442,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .dictionary.Tab tabs = 8;</code>
+     * <code>repeated .dictionary.Tab tabs = 9;</code>
      */
     public Builder addTabs(org.spin.grpc.util.Tab value) {
       if (tabsBuilder_ == null) {
@@ -1399,7 +1458,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .dictionary.Tab tabs = 8;</code>
+     * <code>repeated .dictionary.Tab tabs = 9;</code>
      */
     public Builder addTabs(
         int index, org.spin.grpc.util.Tab value) {
@@ -1416,7 +1475,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .dictionary.Tab tabs = 8;</code>
+     * <code>repeated .dictionary.Tab tabs = 9;</code>
      */
     public Builder addTabs(
         org.spin.grpc.util.Tab.Builder builderForValue) {
@@ -1430,7 +1489,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .dictionary.Tab tabs = 8;</code>
+     * <code>repeated .dictionary.Tab tabs = 9;</code>
      */
     public Builder addTabs(
         int index, org.spin.grpc.util.Tab.Builder builderForValue) {
@@ -1444,7 +1503,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .dictionary.Tab tabs = 8;</code>
+     * <code>repeated .dictionary.Tab tabs = 9;</code>
      */
     public Builder addAllTabs(
         java.lang.Iterable<? extends org.spin.grpc.util.Tab> values) {
@@ -1459,12 +1518,12 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .dictionary.Tab tabs = 8;</code>
+     * <code>repeated .dictionary.Tab tabs = 9;</code>
      */
     public Builder clearTabs() {
       if (tabsBuilder_ == null) {
         tabs_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000080);
+        bitField0_ = (bitField0_ & ~0x00000100);
         onChanged();
       } else {
         tabsBuilder_.clear();
@@ -1472,7 +1531,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .dictionary.Tab tabs = 8;</code>
+     * <code>repeated .dictionary.Tab tabs = 9;</code>
      */
     public Builder removeTabs(int index) {
       if (tabsBuilder_ == null) {
@@ -1485,14 +1544,14 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .dictionary.Tab tabs = 8;</code>
+     * <code>repeated .dictionary.Tab tabs = 9;</code>
      */
     public org.spin.grpc.util.Tab.Builder getTabsBuilder(
         int index) {
       return getTabsFieldBuilder().getBuilder(index);
     }
     /**
-     * <code>repeated .dictionary.Tab tabs = 8;</code>
+     * <code>repeated .dictionary.Tab tabs = 9;</code>
      */
     public org.spin.grpc.util.TabOrBuilder getTabsOrBuilder(
         int index) {
@@ -1502,7 +1561,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .dictionary.Tab tabs = 8;</code>
+     * <code>repeated .dictionary.Tab tabs = 9;</code>
      */
     public java.util.List<? extends org.spin.grpc.util.TabOrBuilder> 
          getTabsOrBuilderList() {
@@ -1513,14 +1572,14 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .dictionary.Tab tabs = 8;</code>
+     * <code>repeated .dictionary.Tab tabs = 9;</code>
      */
     public org.spin.grpc.util.Tab.Builder addTabsBuilder() {
       return getTabsFieldBuilder().addBuilder(
           org.spin.grpc.util.Tab.getDefaultInstance());
     }
     /**
-     * <code>repeated .dictionary.Tab tabs = 8;</code>
+     * <code>repeated .dictionary.Tab tabs = 9;</code>
      */
     public org.spin.grpc.util.Tab.Builder addTabsBuilder(
         int index) {
@@ -1528,7 +1587,7 @@ private static final long serialVersionUID = 0L;
           index, org.spin.grpc.util.Tab.getDefaultInstance());
     }
     /**
-     * <code>repeated .dictionary.Tab tabs = 8;</code>
+     * <code>repeated .dictionary.Tab tabs = 9;</code>
      */
     public java.util.List<org.spin.grpc.util.Tab.Builder> 
          getTabsBuilderList() {
@@ -1541,7 +1600,7 @@ private static final long serialVersionUID = 0L;
         tabsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
             org.spin.grpc.util.Tab, org.spin.grpc.util.Tab.Builder, org.spin.grpc.util.TabOrBuilder>(
                 tabs_,
-                ((bitField0_ & 0x00000080) == 0x00000080),
+                ((bitField0_ & 0x00000100) == 0x00000100),
                 getParentForChildren(),
                 isClean());
         tabs_ = null;

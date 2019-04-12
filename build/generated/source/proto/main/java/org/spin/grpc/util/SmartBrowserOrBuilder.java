@@ -178,4 +178,9 @@ public interface SmartBrowserOrBuilder extends
    */
   org.spin.grpc.util.FieldOrBuilder getFieldsOrBuilder(
       int index);
+
+  /**
+   * <code>bool isActive = 20;</code>
+   */
+  boolean getIsActive();
 }

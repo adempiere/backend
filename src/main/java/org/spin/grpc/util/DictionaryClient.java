@@ -177,13 +177,13 @@ public class DictionaryClient {
 	    	logger.info("####################### Window + Tabs #####################");
 	    	client.requestWindow(true);
 	    	logger.info("####################### Tab Only #####################");
-	    	client.requestTab(false);
+	    	*/client.requestTab(false);
 	    	logger.info("####################### Tab + Fields #####################");
-	    	client.requestTab(true);
+	    	/*client.requestTab(true);
 	    	logger.info("####################### Field Only #####################");
-	    	client.requestField();*/
+	    	client.requestField();
 	    	logger.info("####################### Process Only #####################");
-	    	client.requestProcess();
+	    	client.requestProcess();*/
 	    } finally {
 	      client.shutdown();
 	    }

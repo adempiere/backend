@@ -51,4 +51,9 @@ public interface ValidationOrBuilder extends
    */
   com.google.protobuf.ByteString
       getCodeBytes();
+
+  /**
+   * <code>bool isActive = 6;</code>
+   */
+  boolean getIsActive();
 }

@@ -66,4 +66,9 @@ public interface FormOrBuilder extends
    */
   com.google.protobuf.ByteString
       getClassNameBytes();
+
+  /**
+   * <code>bool isActive = 8;</code>
+   */
+  boolean getIsActive();
 }

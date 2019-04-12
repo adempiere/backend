@@ -90,4 +90,9 @@ public interface ReferenceOrBuilder extends
    */
   org.spin.grpc.util.ReferenceValueOrBuilder getValuesOrBuilder(
       int index);
+
+  /**
+   * <code>bool isActive = 7;</code>
+   */
+  boolean getIsActive();
 }

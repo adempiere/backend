@@ -64,4 +64,9 @@ public interface ContextInfoOrBuilder extends
    */
   com.google.protobuf.ByteString
       getSqlStatementBytes();
+
+  /**
+   * <code>bool isActive = 7;</code>
+   */
+  boolean getIsActive();
 }

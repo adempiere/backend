@@ -75,4 +75,9 @@ public interface FieldDefinitionOrBuilder extends
    */
   org.spin.grpc.util.FieldConditionOrBuilder getConditionsOrBuilder(
       int index);
+
+  /**
+   * <code>bool isActive = 7;</code>
+   */
+  boolean getIsActive();
 }

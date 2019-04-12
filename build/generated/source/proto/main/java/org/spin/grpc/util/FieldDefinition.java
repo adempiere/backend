@@ -26,6 +26,7 @@ private static final long serialVersionUID = 0L;
     name_ = "";
     fieldGroupType_ = "";
     conditions_ = java.util.Collections.emptyList();
+    isActive_ = false;
   }
 
   @java.lang.Override
@@ -95,6 +96,11 @@ private static final long serialVersionUID = 0L;
             }
             conditions_.add(
                 input.readMessage(org.spin.grpc.util.FieldCondition.parser(), extensionRegistry));
+            break;
+          }
+          case 56: {
+
+            isActive_ = input.readBool();
             break;
           }
         }
@@ -305,6 +311,15 @@ private static final long serialVersionUID = 0L;
     return conditions_.get(index);
   }
 
+  public static final int ISACTIVE_FIELD_NUMBER = 7;
+  private boolean isActive_;
+  /**
+   * <code>bool isActive = 7;</code>
+   */
+  public boolean getIsActive() {
+    return isActive_;
+  }
+
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
     byte isInitialized = memoizedIsInitialized;
@@ -335,6 +350,9 @@ private static final long serialVersionUID = 0L;
     for (int i = 0; i < conditions_.size(); i++) {
       output.writeMessage(6, conditions_.get(i));
     }
+    if (isActive_ != false) {
+      output.writeBool(7, isActive_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -362,6 +380,10 @@ private static final long serialVersionUID = 0L;
     for (int i = 0; i < conditions_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(6, conditions_.get(i));
+    }
+    if (isActive_ != false) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeBoolSize(7, isActive_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -391,6 +413,8 @@ private static final long serialVersionUID = 0L;
         .equals(other.getFieldGroupType());
     result = result && getConditionsList()
         .equals(other.getConditionsList());
+    result = result && (getIsActive()
+        == other.getIsActive());
     result = result && unknownFields.equals(other.unknownFields);
     return result;
   }
@@ -416,6 +440,9 @@ private static final long serialVersionUID = 0L;
       hash = (37 * hash) + CONDITIONS_FIELD_NUMBER;
       hash = (53 * hash) + getConditionsList().hashCode();
     }
+    hash = (37 * hash) + ISACTIVE_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
+        getIsActive());
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -566,6 +593,8 @@ private static final long serialVersionUID = 0L;
       } else {
         conditionsBuilder_.clear();
       }
+      isActive_ = false;
+
       return this;
     }
 
@@ -604,6 +633,7 @@ private static final long serialVersionUID = 0L;
       } else {
         result.conditions_ = conditionsBuilder_.build();
       }
+      result.isActive_ = isActive_;
       result.bitField0_ = to_bitField0_;
       onBuilt();
       return result;
@@ -690,6 +720,9 @@ private static final long serialVersionUID = 0L;
             conditionsBuilder_.addAllMessages(other.conditions_);
           }
         }
+      }
+      if (other.getIsActive() != false) {
+        setIsActive(other.getIsActive());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -1259,6 +1292,32 @@ private static final long serialVersionUID = 0L;
         conditions_ = null;
       }
       return conditionsBuilder_;
+    }
+
+    private boolean isActive_ ;
+    /**
+     * <code>bool isActive = 7;</code>
+     */
+    public boolean getIsActive() {
+      return isActive_;
+    }
+    /**
+     * <code>bool isActive = 7;</code>
+     */
+    public Builder setIsActive(boolean value) {
+      
+      isActive_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>bool isActive = 7;</code>
+     */
+    public Builder clearIsActive() {
+      
+      isActive_ = false;
+      onChanged();
+      return this;
     }
     public final Builder setUnknownFields(
         final com.google.protobuf.UnknownFieldSet unknownFields) {

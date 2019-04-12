@@ -33,12 +33,17 @@ public interface FieldConditionOrBuilder extends
       getConditionBytes();
 
   /**
-   * <code>string Stylesheet = 4;</code>
+   * <code>string stylesheet = 4;</code>
    */
   java.lang.String getStylesheet();
   /**
-   * <code>string Stylesheet = 4;</code>
+   * <code>string stylesheet = 4;</code>
    */
   com.google.protobuf.ByteString
       getStylesheetBytes();
+
+  /**
+   * <code>bool isActive = 5;</code>
+   */
+  boolean getIsActive();
 }

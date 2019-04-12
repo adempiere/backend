@@ -63,6 +63,7 @@ private static final long serialVersionUID = 0L;
     seqNoGrid_ = 0;
     sortNo_ = 0;
     isInfoOnly_ = false;
+    isActive_ = false;
     defaultValueTo_ = "";
   }
 
@@ -401,7 +402,12 @@ private static final long serialVersionUID = 0L;
             isInfoOnly_ = input.readBool();
             break;
           }
-          case 402: {
+          case 400: {
+
+            isActive_ = input.readBool();
+            break;
+          }
+          case 410: {
             java.lang.String s = input.readStringRequireUtf8();
 
             defaultValueTo_ = s;
@@ -1340,14 +1346,23 @@ private static final long serialVersionUID = 0L;
     return isInfoOnly_;
   }
 
-  public static final int DEFAULTVALUETO_FIELD_NUMBER = 50;
+  public static final int ISACTIVE_FIELD_NUMBER = 50;
+  private boolean isActive_;
+  /**
+   * <code>bool isActive = 50;</code>
+   */
+  public boolean getIsActive() {
+    return isActive_;
+  }
+
+  public static final int DEFAULTVALUETO_FIELD_NUMBER = 51;
   private volatile java.lang.Object defaultValueTo_;
   /**
    * <pre>
    * Process Parameter Compatibility
    * </pre>
    *
-   * <code>string defaultValueTo = 50;</code>
+   * <code>string defaultValueTo = 51;</code>
    */
   public java.lang.String getDefaultValueTo() {
     java.lang.Object ref = defaultValueTo_;
@@ -1366,7 +1381,7 @@ private static final long serialVersionUID = 0L;
    * Process Parameter Compatibility
    * </pre>
    *
-   * <code>string defaultValueTo = 50;</code>
+   * <code>string defaultValueTo = 51;</code>
    */
   public com.google.protobuf.ByteString
       getDefaultValueToBytes() {
@@ -1538,8 +1553,11 @@ private static final long serialVersionUID = 0L;
     if (isInfoOnly_ != false) {
       output.writeBool(49, isInfoOnly_);
     }
+    if (isActive_ != false) {
+      output.writeBool(50, isActive_);
+    }
     if (!getDefaultValueToBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 50, defaultValueTo_);
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 51, defaultValueTo_);
     }
     if (identifierSequence_ != 0) {
       output.writeInt32(77, identifierSequence_);
@@ -1729,8 +1747,12 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeBoolSize(49, isInfoOnly_);
     }
+    if (isActive_ != false) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeBoolSize(50, isActive_);
+    }
     if (!getDefaultValueToBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(50, defaultValueTo_);
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(51, defaultValueTo_);
     }
     if (identifierSequence_ != 0) {
       size += com.google.protobuf.CodedOutputStream
@@ -1868,6 +1890,8 @@ private static final long serialVersionUID = 0L;
         == other.getSortNo());
     result = result && (getIsInfoOnly()
         == other.getIsInfoOnly());
+    result = result && (getIsActive()
+        == other.getIsActive());
     result = result && getDefaultValueTo()
         .equals(other.getDefaultValueTo());
     result = result && unknownFields.equals(other.unknownFields);
@@ -2013,6 +2037,9 @@ private static final long serialVersionUID = 0L;
     hash = (37 * hash) + ISINFOONLY_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
         getIsInfoOnly());
+    hash = (37 * hash) + ISACTIVE_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
+        getIsActive());
     hash = (37 * hash) + DEFAULTVALUETO_FIELD_NUMBER;
     hash = (53 * hash) + getDefaultValueTo().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
@@ -2270,6 +2297,8 @@ private static final long serialVersionUID = 0L;
 
       isInfoOnly_ = false;
 
+      isActive_ = false;
+
       defaultValueTo_ = "";
 
       return this;
@@ -2367,6 +2396,7 @@ private static final long serialVersionUID = 0L;
       result.seqNoGrid_ = seqNoGrid_;
       result.sortNo_ = sortNo_;
       result.isInfoOnly_ = isInfoOnly_;
+      result.isActive_ = isActive_;
       result.defaultValueTo_ = defaultValueTo_;
       onBuilt();
       return result;
@@ -2570,6 +2600,9 @@ private static final long serialVersionUID = 0L;
       }
       if (other.getIsInfoOnly() != false) {
         setIsInfoOnly(other.getIsInfoOnly());
+      }
+      if (other.getIsActive() != false) {
+        setIsActive(other.getIsActive());
       }
       if (!other.getDefaultValueTo().isEmpty()) {
         defaultValueTo_ = other.defaultValueTo_;
@@ -5115,13 +5148,39 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
+    private boolean isActive_ ;
+    /**
+     * <code>bool isActive = 50;</code>
+     */
+    public boolean getIsActive() {
+      return isActive_;
+    }
+    /**
+     * <code>bool isActive = 50;</code>
+     */
+    public Builder setIsActive(boolean value) {
+      
+      isActive_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>bool isActive = 50;</code>
+     */
+    public Builder clearIsActive() {
+      
+      isActive_ = false;
+      onChanged();
+      return this;
+    }
+
     private java.lang.Object defaultValueTo_ = "";
     /**
      * <pre>
      * Process Parameter Compatibility
      * </pre>
      *
-     * <code>string defaultValueTo = 50;</code>
+     * <code>string defaultValueTo = 51;</code>
      */
     public java.lang.String getDefaultValueTo() {
       java.lang.Object ref = defaultValueTo_;
@@ -5140,7 +5199,7 @@ private static final long serialVersionUID = 0L;
      * Process Parameter Compatibility
      * </pre>
      *
-     * <code>string defaultValueTo = 50;</code>
+     * <code>string defaultValueTo = 51;</code>
      */
     public com.google.protobuf.ByteString
         getDefaultValueToBytes() {
@@ -5160,7 +5219,7 @@ private static final long serialVersionUID = 0L;
      * Process Parameter Compatibility
      * </pre>
      *
-     * <code>string defaultValueTo = 50;</code>
+     * <code>string defaultValueTo = 51;</code>
      */
     public Builder setDefaultValueTo(
         java.lang.String value) {
@@ -5177,7 +5236,7 @@ private static final long serialVersionUID = 0L;
      * Process Parameter Compatibility
      * </pre>
      *
-     * <code>string defaultValueTo = 50;</code>
+     * <code>string defaultValueTo = 51;</code>
      */
     public Builder clearDefaultValueTo() {
       
@@ -5190,7 +5249,7 @@ private static final long serialVersionUID = 0L;
      * Process Parameter Compatibility
      * </pre>
      *
-     * <code>string defaultValueTo = 50;</code>
+     * <code>string defaultValueTo = 51;</code>
      */
     public Builder setDefaultValueToBytes(
         com.google.protobuf.ByteString value) {

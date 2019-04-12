@@ -41,4 +41,9 @@ public interface FieldGroupOrBuilder extends
    */
   com.google.protobuf.ByteString
       getFieldGroupTypeBytes();
+
+  /**
+   * <code>bool isActive = 5;</code>
+   */
+  boolean getIsActive();
 }

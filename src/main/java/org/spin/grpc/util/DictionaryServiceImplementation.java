@@ -242,7 +242,8 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 					.setName(name)
 					.setDescription(validateNull(description))
 					.setHelp(validateNull(help))
-					.setIsSOTrx(window.isSOTrx());
+					.setIsSOTrx(window.isSOTrx())
+					.setIsActive(window.isActive());
 			if(contextInfoBuilder != null) {
 				builder.setContextInfo(contextInfoBuilder.build());
 			}
@@ -384,7 +385,8 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setIsView(table.isView())
 				.setTabLevel(tab.getTabLevel())
 				.setTableName(validateNull(table.getTableName()))
-				.setOrderByClause(validateNull(tab.getOrderByClause()));
+				.setOrderByClause(validateNull(tab.getOrderByClause()))
+				.setIsActive(tab.isActive());
 		//	For link
 		if(contextInfoId > 0) {
 			ContextInfo.Builder contextInfoBuilder = convertContextInfo(contextInfoId, language);
@@ -401,17 +403,16 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			builder.setLinkColumnName(column.getColumnName());
 		}
 		//	Process
-		if(tab.getAD_Process_ID() > 0) {
-			Process.Builder processBuilder = convertProcess(MProcess.get(Env.getCtx(), tab.getAD_Process_ID()), language, false);
-			if(processBuilder != null) {
-				builder.setProcess(processBuilder.build());
+		List<MProcess> processList = getProcessActionFromTab(tab);
+		if(processList != null
+				&& processList.size() > 0) {
+			for(MProcess process : processList) {
+				Process.Builder processBuilder = convertProcess(process, language, false);
+				builder.addProcesses(processBuilder.build());
 			}
 		}
 		if(withFields) {
 			for(MField field : tab.getFields(false, null)) {
-				if(!field.isActive()) {
-					continue;
-				}
 				Field.Builder fieldBuilder = convertField(field, language);
 				builder.addFields(fieldBuilder.build());
 			}
@@ -495,16 +496,51 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setDescription(validateNull(description))
 				.setHelp(validateNull(help))
 				.setIsDirectPrint(process.isDirectPrint())
-				.setIsReport(process.isReport());
+				.setIsReport(process.isReport())
+				.setIsActive(process.isActive());
 		//	For parameters
-		for(MProcessPara parameter : process.getParameters()) {
-			if(!parameter.isActive()) {
-				continue;
+		if(withParams) {
+			for(MProcessPara parameter : process.getParameters()) {
+				Field.Builder fieldBuilder = convertProcessParameter(parameter, language);
+				builder.addParameters(fieldBuilder.build());
 			}
-			Field.Builder fieldBuilder = convertProcessParameter(parameter, language);
-			builder.addParameters(fieldBuilder.build());
 		}
 		return builder;
+	}
+	
+	/**
+	 * Get process action from tab
+	 * @param tab
+	 * @return
+	 */
+	private List<MProcess> getProcessActionFromTab(MTab tab) {
+		//	First Process Tab
+		List<MProcess> processList = new ArrayList<>();
+		if(tab.getAD_Process_ID() > 0) {
+			processList.add(MProcess.get(Env.getCtx(), tab.getAD_Process_ID()));
+		}
+		//	Process from tab
+		List<MProcess> processFromTabList = new Query(tab.getCtx(), I_AD_Process.Table_Name, "EXISTS(SELECT 1 FROM AD_Field f "
+				+ "INNER JOIN AD_Column c ON(c.AD_Column_ID = f.AD_Column_ID) "
+				+ "WHERE c.AD_Process_ID = AD_Process.AD_Process_ID "
+				+ "AND f.AD_Tab_ID = ? "
+				+ "AND f.IsActive = 'Y')", null)
+				.setParameters(tab.getAD_Tab_ID())
+				.setOnlyActiveRecords(true)
+				.<MProcess>list();
+		for(MProcess process : processFromTabList) {
+			processList.add(process);
+		}
+		//	Process from table
+		List<MProcess> processFromTableList = new Query(tab.getCtx(), I_AD_Process.Table_Name, 
+				"EXISTS(SELECT 1 FROM AD_Table_Process WHERE AD_Process_ID = AD_Process.AD_Process_ID AND AD_Table_ID = ?)", null)
+				.setParameters(tab.getAD_Table_ID())
+				.setOnlyActiveRecords(true)
+				.<MProcess>list();
+		for(MProcess process : processFromTableList) {
+			processList.add(process);
+		}
+		return processList;
 	}
 	
 	/**
@@ -551,7 +587,8 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setReadOnlyLogic(validateNull(processParameter.getReadOnlyLogic()))
 				.setSequence(processParameter.getSeqNo())
 				.setValueMax(validateNull(processParameter.getValueMax()))
-				.setValueMin(validateNull(processParameter.getValueMin()));
+				.setValueMin(validateNull(processParameter.getValueMin()))
+				.setIsActive(processParameter.isActive());
 		//	Reference Value
 		int referenceValueId = processParameter.getAD_Reference_Value_ID();
 		if(processParameter.getAD_Reference_Value_ID() > 0) {
@@ -660,7 +697,8 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setReadOnlyLogic(validateNull(column.getReadOnlyLogic()))
 				.setSequence(field.getSeqNo())
 				.setValueMax(validateNull(column.getValueMax()))
-				.setValueMin(validateNull(column.getValueMin()));
+				.setValueMin(validateNull(column.getValueMin()))
+				.setIsActive(field.isActive());
 		//	Context Info
 		if(field.getAD_ContextInfo_ID() > 0) {
 			ContextInfo.Builder contextInfoBuilder = convertContextInfo(field.getAD_ContextInfo_ID(), language);
@@ -720,7 +758,8 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 						.setId(fieldDefinition.getAD_FieldDefinition_ID())
 						.setUuid(condition.getUUID())
 						.setCondition(validateNull(condition.getCondition()))
-						.setStylesheet(validateNull(condition.getStylesheet()));
+						.setStylesheet(validateNull(condition.getStylesheet()))
+						.setIsActive(fieldDefinition.isActive());
 				//	Add to parent
 				builder.addConditions(fieldConditionBuilder);
 			}
@@ -752,7 +791,8 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 					.setId(fieldGroup.getAD_FieldGroup_ID())
 					.setUuid(fieldGroup.getUUID())
 					.setName(validateNull(name))
-					.setFieldGroupType(fieldGroup.getFieldGroupType());
+					.setFieldGroupType(fieldGroup.getFieldGroupType())
+					.setIsActive(fieldGroup.isActive());
 		}
 		return builder;
 	}
@@ -772,7 +812,8 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 					.setId(reference.getAD_Reference_ID())
 					.setUuid(reference.getUUID())
 					.setName(reference.getName())
-					.setValidationType(reference.getValidationType());
+					.setValidationType(reference.getValidationType())
+					.setIsActive(reference.isActive());
 			//	For Value
 			if(reference.getValidationType().equals(X_AD_Reference.VALIDATIONTYPE_ListValidation)) {
 				List<MRefList> referenceValueList = new Query(Env.getCtx(), I_AD_Ref_List.Table_Name, I_AD_Ref_List.COLUMNNAME_AD_Reference_ID + " = ?", null)
@@ -818,7 +859,8 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setUuid(validateNull(validateNull(referenceValue.getUUID())))
 				.setValue(validateNull(referenceValue.getValue()))
 				.setName(validateNull(name))
-				.setDescription(validateNull(description));
+				.setDescription(validateNull(description))
+				.setIsActive(referenceValue.isActive());
 		//	
 		return builder;
 	}
@@ -841,7 +883,8 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setWhereClause(validateNull(referenceTable.getWhereClause()))
 				.setTableName(validateNull(table.getTableName()))
 				.setDisplayColumnName(validateNull(displayColumn.getColumnName()))
-				.setKeyColumnName(validateNull(keyColumn.getColumnName()));
+				.setKeyColumnName(validateNull(keyColumn.getColumnName()))
+				.setIsActive(referenceTable.isActive());
 		//	
 		return builder;
 	}
@@ -897,7 +940,8 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setAction(validateNull(menu.getAction()))
 				.setIsSOTrx(menu.isSOTrx())
 				.setIsSummary(menu.isSummary())
-				.setIsReadOnly(menu.isReadOnly());
+				.setIsReadOnly(menu.isReadOnly())
+				.setIsActive(menu.isActive());
 		//	Supported actions
 		if(!Util.isEmpty(menu.getAction())) {
 			if(menu.getAction().equals(MMenu.ACTION_Form)) {

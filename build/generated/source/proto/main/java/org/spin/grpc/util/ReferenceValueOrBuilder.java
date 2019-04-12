@@ -51,4 +51,9 @@ public interface ReferenceValueOrBuilder extends
    */
   com.google.protobuf.ByteString
       getDescriptionBytes();
+
+  /**
+   * <code>bool isActive = 6;</code>
+   */
+  boolean getIsActive();
 }

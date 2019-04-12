@@ -63,10 +63,11 @@ message Window {
 	string name = 3;
   	string description = 4;
   	string help = 5;
-  	bool isSOTrx = 6;
+  	bool isActive = 6;
+  	bool isSOTrx = 7;
   	//	External Info
-  	ContextInfo contextInfo = 7;
-  	repeated Tab tabs = 8;
+  	ContextInfo contextInfo = 8;
+  	repeated Tab tabs = 9;
 }
 
 // Tab
@@ -81,28 +82,29 @@ message Tab {
   	int32 sequence = 7;
   	int32 tabLevel = 8;
   	//
-  	bool isSingleRow = 9;
-  	bool isAdvancedTab = 10;
-  	bool isHasTree = 11;
-  	bool isInfoTab = 12;
-  	bool isSortTab = 13;
-  	bool isTranslationTab = 14;
-  	bool isReadOnly = 15;
-  	bool isInsertRecord = 16;
-  	bool isView = 17;
-  	bool isDeleteable = 18;
-  	bool isDocument = 19;
-  	int32 accessLevel = 20;
-  	string linkColumnName = 21;
-  	string parentColumnName = 22;
-  	string displayLogic = 23;
-  	string commitWarning = 24;
-  	string orderByClause = 25;
+  	bool isActive = 9;
+  	bool isSingleRow = 10;
+  	bool isAdvancedTab = 11;
+  	bool isHasTree = 12;
+  	bool isInfoTab = 13;
+  	bool isSortTab = 14;
+  	bool isTranslationTab = 15;
+  	bool isReadOnly = 16;
+  	bool isInsertRecord = 17;
+  	bool isView = 18;
+  	bool isDeleteable = 19;
+  	bool isDocument = 20;
+  	int32 accessLevel = 21;
+  	string linkColumnName = 22;
+  	string parentColumnName = 23;
+  	string displayLogic = 24;
+  	string commitWarning = 25;
+  	string orderByClause = 26;
   	// External Info
-  	ContextInfo contextInfo = 26;
-  	Process process = 27;
-  	repeated Field fields = 28;
-  	FieldGroup fieldGroup = 29;
+  	ContextInfo contextInfo = 27;
+  	repeated Process processes = 28;
+  	repeated Field fields = 29;
+  	FieldGroup fieldGroup = 30;
 }
 
 // Field
@@ -158,8 +160,9 @@ message Field {
 	int32 seqNoGrid = 47;
 	int32 sortNo = 48;
 	bool isInfoOnly = 49;
+	bool isActive = 50;
   	// Process Parameter Compatibility
-  	string defaultValueTo = 50;
+  	string defaultValueTo = 51;
 }
 
 // Context Info
@@ -170,6 +173,7 @@ message ContextInfo {
   	string description = 4;
   	MessageText messageText = 5;
   	string sqlStatement = 6;
+  	bool isActive = 7;
 }
 
 // Message
@@ -180,6 +184,7 @@ message MessageText {
   	string msgType = 4;
   	string msgText = 5;
   	string msgTip = 6;
+  	bool isActive = 7;
 }
 
 // Context Info
@@ -188,6 +193,7 @@ message FieldGroup {
 	string uuid = 2;
 	string name = 3;
   	string fieldGroupType = 4;
+  	bool isActive = 5;
 }
 
 // Context Info
@@ -198,6 +204,7 @@ message FieldDefinition {
 	string name = 4;
   	string fieldGroupType = 5;
   	repeated FieldCondition conditions = 6;
+  	bool isActive = 7;
 }
 
 // Field Condition
@@ -205,7 +212,8 @@ message FieldCondition {
 	int32 id = 1;
 	string uuid = 2;
 	string condition = 3;
-  	string Stylesheet = 4;
+  	string stylesheet = 4;
+  	bool isActive = 5;
 }
 
 // Process
@@ -221,6 +229,7 @@ message Process {
   	string showHelp = 9;
   	bool isDirectPrint = 10;
   	repeated Field parameters = 11;
+  	bool isActive = 12;
 }
 
 // Form
@@ -232,6 +241,7 @@ message Form {
   	string help = 5;
   	int32 accessLevel = 6;
   	string className = 7;
+  	bool isActive = 8;
 }
 
 // Smart Browser
@@ -255,6 +265,7 @@ message SmartBrowser {
   	Window window = 17;
   	Process process = 18;
   	repeated Field fields = 19;
+  	bool isActive = 20;
 }
 
 // Validation
@@ -264,6 +275,7 @@ message Validation {
 	string name = 3;
   	string validationType = 4;
   	string code = 5;
+  	bool isActive = 6;
 }
 
 // Foreign Reference
@@ -275,6 +287,7 @@ message Reference {
   	// External Info
   	ReferenceTable referenceTable = 5;
   	repeated ReferenceValue values = 6;
+  	bool isActive = 7;
 }
 
 // Foreign Reference Value
@@ -284,6 +297,7 @@ message ReferenceValue {
 	string value = 3;
   	string name = 4;
   	string description = 5;
+  	bool isActive = 6;
 }
 
 // Foreign Reference Table
@@ -297,6 +311,7 @@ message ReferenceTable {
   	bool isValueDisplayed = 7;
   	string displaySQL = 8;
   	string whereClause = 9;
+  	bool isActive = 10;
 }
 
 // Menu
@@ -317,4 +332,5 @@ message Menu {
   	string processUuid = 14;
   	string smartBrowserUuid = 15;
   	repeated Menu childs = 16;
+  	bool isActive = 17;
 }
