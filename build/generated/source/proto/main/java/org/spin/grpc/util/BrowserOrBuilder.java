@@ -3,8 +3,8 @@
 
 package org.spin.grpc.util;
 
-public interface SmartBrowserOrBuilder extends
-    // @@protoc_insertion_point(interface_extends:dictionary.SmartBrowser)
+public interface BrowserOrBuilder extends
+    // @@protoc_insertion_point(interface_extends:dictionary.Browser)
     com.google.protobuf.MessageOrBuilder {
 
   /**

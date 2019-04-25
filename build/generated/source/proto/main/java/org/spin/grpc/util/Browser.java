@@ -8,18 +8,18 @@ package org.spin.grpc.util;
  * Smart Browser
  * </pre>
  *
- * Protobuf type {@code dictionary.SmartBrowser}
+ * Protobuf type {@code dictionary.Browser}
  */
-public  final class SmartBrowser extends
+public  final class Browser extends
     com.google.protobuf.GeneratedMessageV3 implements
-    // @@protoc_insertion_point(message_implements:dictionary.SmartBrowser)
-    SmartBrowserOrBuilder {
+    // @@protoc_insertion_point(message_implements:dictionary.Browser)
+    BrowserOrBuilder {
 private static final long serialVersionUID = 0L;
-  // Use SmartBrowser.newBuilder() to construct.
-  private SmartBrowser(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+  // Use Browser.newBuilder() to construct.
+  private Browser(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
   }
-  private SmartBrowser() {
+  private Browser() {
     id_ = 0;
     uuid_ = "";
     value_ = "";
@@ -44,7 +44,7 @@ private static final long serialVersionUID = 0L;
   getUnknownFields() {
     return this.unknownFields;
   }
-  private SmartBrowser(
+  private Browser(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -209,14 +209,14 @@ private static final long serialVersionUID = 0L;
   }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-    return org.spin.grpc.util.ADempiereDictionary.internal_static_dictionary_SmartBrowser_descriptor;
+    return org.spin.grpc.util.ADempiereDictionary.internal_static_dictionary_Browser_descriptor;
   }
 
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
-    return org.spin.grpc.util.ADempiereDictionary.internal_static_dictionary_SmartBrowser_fieldAccessorTable
+    return org.spin.grpc.util.ADempiereDictionary.internal_static_dictionary_Browser_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
-            org.spin.grpc.util.SmartBrowser.class, org.spin.grpc.util.SmartBrowser.Builder.class);
+            org.spin.grpc.util.Browser.class, org.spin.grpc.util.Browser.Builder.class);
   }
 
   private int bitField0_;
@@ -784,10 +784,10 @@ private static final long serialVersionUID = 0L;
     if (obj == this) {
      return true;
     }
-    if (!(obj instanceof org.spin.grpc.util.SmartBrowser)) {
+    if (!(obj instanceof org.spin.grpc.util.Browser)) {
       return super.equals(obj);
     }
-    org.spin.grpc.util.SmartBrowser other = (org.spin.grpc.util.SmartBrowser) obj;
+    org.spin.grpc.util.Browser other = (org.spin.grpc.util.Browser) obj;
 
     boolean result = true;
     result = result && (getId()
@@ -901,69 +901,69 @@ private static final long serialVersionUID = 0L;
     return hash;
   }
 
-  public static org.spin.grpc.util.SmartBrowser parseFrom(
+  public static org.spin.grpc.util.Browser parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.spin.grpc.util.SmartBrowser parseFrom(
+  public static org.spin.grpc.util.Browser parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.spin.grpc.util.SmartBrowser parseFrom(
+  public static org.spin.grpc.util.Browser parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.spin.grpc.util.SmartBrowser parseFrom(
+  public static org.spin.grpc.util.Browser parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.spin.grpc.util.SmartBrowser parseFrom(byte[] data)
+  public static org.spin.grpc.util.Browser parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.spin.grpc.util.SmartBrowser parseFrom(
+  public static org.spin.grpc.util.Browser parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.spin.grpc.util.SmartBrowser parseFrom(java.io.InputStream input)
+  public static org.spin.grpc.util.Browser parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static org.spin.grpc.util.SmartBrowser parseFrom(
+  public static org.spin.grpc.util.Browser parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input, extensionRegistry);
   }
-  public static org.spin.grpc.util.SmartBrowser parseDelimitedFrom(java.io.InputStream input)
+  public static org.spin.grpc.util.Browser parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input);
   }
-  public static org.spin.grpc.util.SmartBrowser parseDelimitedFrom(
+  public static org.spin.grpc.util.Browser parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
   }
-  public static org.spin.grpc.util.SmartBrowser parseFrom(
+  public static org.spin.grpc.util.Browser parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static org.spin.grpc.util.SmartBrowser parseFrom(
+  public static org.spin.grpc.util.Browser parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -975,7 +975,7 @@ private static final long serialVersionUID = 0L;
   public static Builder newBuilder() {
     return DEFAULT_INSTANCE.toBuilder();
   }
-  public static Builder newBuilder(org.spin.grpc.util.SmartBrowser prototype) {
+  public static Builder newBuilder(org.spin.grpc.util.Browser prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
   public Builder toBuilder() {
@@ -994,25 +994,25 @@ private static final long serialVersionUID = 0L;
    * Smart Browser
    * </pre>
    *
-   * Protobuf type {@code dictionary.SmartBrowser}
+   * Protobuf type {@code dictionary.Browser}
    */
   public static final class Builder extends
       com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-      // @@protoc_insertion_point(builder_implements:dictionary.SmartBrowser)
-      org.spin.grpc.util.SmartBrowserOrBuilder {
+      // @@protoc_insertion_point(builder_implements:dictionary.Browser)
+      org.spin.grpc.util.BrowserOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.spin.grpc.util.ADempiereDictionary.internal_static_dictionary_SmartBrowser_descriptor;
+      return org.spin.grpc.util.ADempiereDictionary.internal_static_dictionary_Browser_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.spin.grpc.util.ADempiereDictionary.internal_static_dictionary_SmartBrowser_fieldAccessorTable
+      return org.spin.grpc.util.ADempiereDictionary.internal_static_dictionary_Browser_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.spin.grpc.util.SmartBrowser.class, org.spin.grpc.util.SmartBrowser.Builder.class);
+              org.spin.grpc.util.Browser.class, org.spin.grpc.util.Browser.Builder.class);
     }
 
-    // Construct using org.spin.grpc.util.SmartBrowser.newBuilder()
+    // Construct using org.spin.grpc.util.Browser.newBuilder()
     private Builder() {
       maybeForceBuilderInitialization();
     }
@@ -1085,23 +1085,23 @@ private static final long serialVersionUID = 0L;
 
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
-      return org.spin.grpc.util.ADempiereDictionary.internal_static_dictionary_SmartBrowser_descriptor;
+      return org.spin.grpc.util.ADempiereDictionary.internal_static_dictionary_Browser_descriptor;
     }
 
-    public org.spin.grpc.util.SmartBrowser getDefaultInstanceForType() {
-      return org.spin.grpc.util.SmartBrowser.getDefaultInstance();
+    public org.spin.grpc.util.Browser getDefaultInstanceForType() {
+      return org.spin.grpc.util.Browser.getDefaultInstance();
     }
 
-    public org.spin.grpc.util.SmartBrowser build() {
-      org.spin.grpc.util.SmartBrowser result = buildPartial();
+    public org.spin.grpc.util.Browser build() {
+      org.spin.grpc.util.Browser result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
       return result;
     }
 
-    public org.spin.grpc.util.SmartBrowser buildPartial() {
-      org.spin.grpc.util.SmartBrowser result = new org.spin.grpc.util.SmartBrowser(this);
+    public org.spin.grpc.util.Browser buildPartial() {
+      org.spin.grpc.util.Browser result = new org.spin.grpc.util.Browser(this);
       int from_bitField0_ = bitField0_;
       int to_bitField0_ = 0;
       result.id_ = id_;
@@ -1171,16 +1171,16 @@ private static final long serialVersionUID = 0L;
       return (Builder) super.addRepeatedField(field, value);
     }
     public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof org.spin.grpc.util.SmartBrowser) {
-        return mergeFrom((org.spin.grpc.util.SmartBrowser)other);
+      if (other instanceof org.spin.grpc.util.Browser) {
+        return mergeFrom((org.spin.grpc.util.Browser)other);
       } else {
         super.mergeFrom(other);
         return this;
       }
     }
 
-    public Builder mergeFrom(org.spin.grpc.util.SmartBrowser other) {
-      if (other == org.spin.grpc.util.SmartBrowser.getDefaultInstance()) return this;
+    public Builder mergeFrom(org.spin.grpc.util.Browser other) {
+      if (other == org.spin.grpc.util.Browser.getDefaultInstance()) return this;
       if (other.getId() != 0) {
         setId(other.getId());
       }
@@ -1281,11 +1281,11 @@ private static final long serialVersionUID = 0L;
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      org.spin.grpc.util.SmartBrowser parsedMessage = null;
+      org.spin.grpc.util.Browser parsedMessage = null;
       try {
         parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (org.spin.grpc.util.SmartBrowser) e.getUnfinishedMessage();
+        parsedMessage = (org.spin.grpc.util.Browser) e.getUnfinishedMessage();
         throw e.unwrapIOException();
       } finally {
         if (parsedMessage != null) {
@@ -2533,39 +2533,39 @@ private static final long serialVersionUID = 0L;
     }
 
 
-    // @@protoc_insertion_point(builder_scope:dictionary.SmartBrowser)
+    // @@protoc_insertion_point(builder_scope:dictionary.Browser)
   }
 
-  // @@protoc_insertion_point(class_scope:dictionary.SmartBrowser)
-  private static final org.spin.grpc.util.SmartBrowser DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:dictionary.Browser)
+  private static final org.spin.grpc.util.Browser DEFAULT_INSTANCE;
   static {
-    DEFAULT_INSTANCE = new org.spin.grpc.util.SmartBrowser();
+    DEFAULT_INSTANCE = new org.spin.grpc.util.Browser();
   }
 
-  public static org.spin.grpc.util.SmartBrowser getDefaultInstance() {
+  public static org.spin.grpc.util.Browser getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<SmartBrowser>
-      PARSER = new com.google.protobuf.AbstractParser<SmartBrowser>() {
-    public SmartBrowser parsePartialFrom(
+  private static final com.google.protobuf.Parser<Browser>
+      PARSER = new com.google.protobuf.AbstractParser<Browser>() {
+    public Browser parsePartialFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return new SmartBrowser(input, extensionRegistry);
+      return new Browser(input, extensionRegistry);
     }
   };
 
-  public static com.google.protobuf.Parser<SmartBrowser> parser() {
+  public static com.google.protobuf.Parser<Browser> parser() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.protobuf.Parser<SmartBrowser> getParserForType() {
+  public com.google.protobuf.Parser<Browser> getParserForType() {
     return PARSER;
   }
 
-  public org.spin.grpc.util.SmartBrowser getDefaultInstanceForType() {
+  public org.spin.grpc.util.Browser getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }
 

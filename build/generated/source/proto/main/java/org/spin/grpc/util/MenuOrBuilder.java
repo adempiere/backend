@@ -126,14 +126,14 @@ public interface MenuOrBuilder extends
       getProcessUuidBytes();
 
   /**
-   * <code>string smartBrowserUuid = 15;</code>
+   * <code>string browserUuid = 15;</code>
    */
-  java.lang.String getSmartBrowserUuid();
+  java.lang.String getBrowserUuid();
   /**
-   * <code>string smartBrowserUuid = 15;</code>
+   * <code>string browserUuid = 15;</code>
    */
   com.google.protobuf.ByteString
-      getSmartBrowserUuidBytes();
+      getBrowserUuidBytes();
 
   /**
    * <code>repeated .dictionary.Menu childs = 16;</code>

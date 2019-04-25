@@ -162,6 +162,27 @@ public class DictionaryClient {
 	  }
 	  
 	  /**
+	   * Request Browser
+	   */
+	  public void requestBrowser() {
+		  ApplicationRequest applicationRequest = ApplicationRequest.newBuilder()
+				  .setLanguage("es_MX")
+				  .build();
+		  EntityRequest request = EntityRequest.newBuilder()
+	    		.setUuid("8aaef794-fb40-11e8-a479-7a0060f0aa01")
+	    		.setApplicationRequest(applicationRequest)
+	    		.build();
+		  Browser response;
+		  try {
+			  response = blockingStub.requestBrowser(request);
+			  logger.info("Browser " + response);
+		  } catch (StatusRuntimeException e) {
+			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
+		      return;
+		  }
+	  }
+	  
+	  /**
 	   * Greet server. If provided, the first element of {@code args} is the name to use in the
 	   * greeting.
 	   */
@@ -177,13 +198,16 @@ public class DictionaryClient {
 	    	logger.info("####################### Window + Tabs #####################");
 	    	client.requestWindow(true);
 	    	logger.info("####################### Tab Only #####################");
-	    	*/client.requestTab(false);
+	    	client.requestTab(false);
 	    	logger.info("####################### Tab + Fields #####################");
-	    	/*client.requestTab(true);
+	    	client.requestTab(true);
 	    	logger.info("####################### Field Only #####################");
 	    	client.requestField();
 	    	logger.info("####################### Process Only #####################");
 	    	client.requestProcess();*/
+	    	logger.info("####################### Browser Only #####################");
+	    	client.requestBrowser();
+	    	
 	    } finally {
 	      client.shutdown();
 	    }

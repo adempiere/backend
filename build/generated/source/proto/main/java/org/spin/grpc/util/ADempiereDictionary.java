@@ -75,10 +75,10 @@ public final class ADempiereDictionary {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_dictionary_Form_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_dictionary_SmartBrowser_descriptor;
+    internal_static_dictionary_Browser_descriptor;
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_dictionary_SmartBrowser_fieldAccessorTable;
+      internal_static_dictionary_Browser_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
     internal_static_dictionary_Validation_descriptor;
   static final 
@@ -195,58 +195,60 @@ public final class ADempiereDictionary {
       "\010isActive\030\014 \001(\010\"\213\001\n\004Form\022\n\n\002id\030\001 \001(\005\022\014\n\004" +
       "uuid\030\002 \001(\t\022\014\n\004name\030\003 \001(\t\022\023\n\013description\030" +
       "\004 \001(\t\022\014\n\004help\030\005 \001(\t\022\023\n\013accessLevel\030\006 \001(\005" +
-      "\022\021\n\tclassName\030\007 \001(\t\022\020\n\010isActive\030\010 \001(\010\"\303\003" +
-      "\n\014SmartBrowser\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(\t" +
-      "\022\r\n\005value\030\003 \001(\t\022\014\n\004name\030\004 \001(\t\022\023\n\013descrip" +
-      "tion\030\005 \001(\t\022\014\n\004help\030\006 \001(\t\022\023\n\013accessLevel\030" +
-      "\010 \001(\005\022\023\n\013whereClause\030\t \001(\t\022\024\n\014isUpdateab" +
-      "le\030\n \001(\010\022\024\n\014IsDeleteable\030\013 \001(\010\022\033\n\023IsSele" +
-      "ctedByDefault\030\014 \001(\010\022\036\n\026IsCollapsibleByDe" +
-      "fault\030\r \001(\010\022 \n\030IsExecutedQueryByDefault\030" +
-      "\016 \001(\010\022\023\n\013IsShowTotal\030\017 \001(\010\022\020\n\010viewUuid\030\020" +
-      " \001(\t\022\"\n\006window\030\021 \001(\0132\022.dictionary.Window" +
-      "\022$\n\007process\030\022 \001(\0132\023.dictionary.Process\022!" +
-      "\n\006fields\030\023 \003(\0132\021.dictionary.Field\022\020\n\010isA" +
-      "ctive\030\024 \001(\010\"l\n\nValidation\022\n\n\002id\030\001 \001(\005\022\014\n" +
-      "\004uuid\030\002 \001(\t\022\014\n\004name\030\003 \001(\t\022\026\n\016validationT" +
-      "ype\030\004 \001(\t\022\014\n\004code\030\005 \001(\t\022\020\n\010isActive\030\006 \001(" +
-      "\010\"\275\001\n\tReference\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(" +
-      "\t\022\014\n\004name\030\003 \001(\t\022\026\n\016validationType\030\004 \001(\t\022" +
-      "2\n\016referenceTable\030\005 \001(\0132\032.dictionary.Ref" +
-      "erenceTable\022*\n\006values\030\006 \003(\0132\032.dictionary" +
-      ".ReferenceValue\022\020\n\010isActive\030\007 \001(\010\"n\n\016Ref" +
-      "erenceValue\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(\t\022\r\n" +
-      "\005value\030\003 \001(\t\022\014\n\004name\030\004 \001(\t\022\023\n\013descriptio" +
-      "n\030\005 \001(\t\022\020\n\010isActive\030\006 \001(\010\"\341\001\n\016ReferenceT" +
-      "able\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(\t\022\021\n\ttableN" +
-      "ame\030\003 \001(\t\022\025\n\rkeyColumnName\030\004 \001(\t\022\031\n\021disp" +
-      "layColumnName\030\005 \001(\t\022\033\n\023isDisplayIdentifi" +
-      "er\030\006 \001(\010\022\030\n\020isValueDisplayed\030\007 \001(\010\022\022\n\ndi" +
-      "splaySQL\030\010 \001(\t\022\023\n\013whereClause\030\t \001(\t\022\020\n\010i" +
-      "sActive\030\n \001(\010\"\272\002\n\004Menu\022\n\n\002id\030\001 \001(\005\022\014\n\004uu" +
-      "id\030\002 \001(\t\022\022\n\nparentUuid\030\004 \001(\t\022\014\n\004name\030\005 \001" +
-      "(\t\022\023\n\013description\030\006 \001(\t\022\020\n\010sequence\030\007 \001(" +
-      "\t\022\022\n\nisReadOnly\030\010 \001(\010\022\021\n\tisSummary\030\t \001(\010" +
-      "\022\017\n\007isSOTrx\030\n \001(\010\022\016\n\006action\030\013 \001(\t\022\020\n\010for" +
-      "mUuid\030\014 \001(\t\022\022\n\nwindowUuid\030\r \001(\t\022\023\n\013proce" +
-      "ssUuid\030\016 \001(\t\022\030\n\020smartBrowserUuid\030\017 \001(\t\022 " +
-      "\n\006childs\030\020 \003(\0132\020.dictionary.Menu\022\020\n\010isAc" +
-      "tive\030\021 \001(\0102\247\004\n\021DictionaryService\022D\n\023Requ" +
-      "estMenuAndChild\022\031.dictionary.EntityReque" +
-      "st\032\020.dictionary.Menu\"\000\022<\n\013RequestMenu\022\031." +
-      "dictionary.EntityRequest\032\020.dictionary.Me" +
-      "nu\"\000\022@\n\rRequestWindow\022\031.dictionary.Entit" +
-      "yRequest\032\022.dictionary.Window\"\000\022G\n\024Reques" +
-      "tWindowAndTabs\022\031.dictionary.EntityReques" +
-      "t\032\022.dictionary.Window\"\000\022:\n\nRequestTab\022\031." +
-      "dictionary.EntityRequest\032\017.dictionary.Ta" +
-      "b\"\000\022C\n\023RequestTabAndFields\022\031.dictionary." +
-      "EntityRequest\032\017.dictionary.Tab\"\000\022>\n\014Requ" +
-      "estField\022\031.dictionary.EntityRequest\032\021.di" +
-      "ctionary.Field\"\000\022B\n\016RequestProcess\022\031.dic" +
-      "tionary.EntityRequest\032\023.dictionary.Proce" +
-      "ss\"\000B1\n\022org.spin.grpc.utilB\023ADempiereDic" +
-      "tionaryP\001\242\002\003HLWb\006proto3"
+      "\022\021\n\tclassName\030\007 \001(\t\022\020\n\010isActive\030\010 \001(\010\"\276\003" +
+      "\n\007Browser\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(\t\022\r\n\005v" +
+      "alue\030\003 \001(\t\022\014\n\004name\030\004 \001(\t\022\023\n\013description\030" +
+      "\005 \001(\t\022\014\n\004help\030\006 \001(\t\022\023\n\013accessLevel\030\010 \001(\005" +
+      "\022\023\n\013whereClause\030\t \001(\t\022\024\n\014isUpdateable\030\n " +
+      "\001(\010\022\024\n\014IsDeleteable\030\013 \001(\010\022\033\n\023IsSelectedB" +
+      "yDefault\030\014 \001(\010\022\036\n\026IsCollapsibleByDefault" +
+      "\030\r \001(\010\022 \n\030IsExecutedQueryByDefault\030\016 \001(\010" +
+      "\022\023\n\013IsShowTotal\030\017 \001(\010\022\020\n\010viewUuid\030\020 \001(\t\022" +
+      "\"\n\006window\030\021 \001(\0132\022.dictionary.Window\022$\n\007p" +
+      "rocess\030\022 \001(\0132\023.dictionary.Process\022!\n\006fie" +
+      "lds\030\023 \003(\0132\021.dictionary.Field\022\020\n\010isActive" +
+      "\030\024 \001(\010\"l\n\nValidation\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid" +
+      "\030\002 \001(\t\022\014\n\004name\030\003 \001(\t\022\026\n\016validationType\030\004" +
+      " \001(\t\022\014\n\004code\030\005 \001(\t\022\020\n\010isActive\030\006 \001(\010\"\275\001\n" +
+      "\tReference\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(\t\022\014\n\004" +
+      "name\030\003 \001(\t\022\026\n\016validationType\030\004 \001(\t\0222\n\016re" +
+      "ferenceTable\030\005 \001(\0132\032.dictionary.Referenc" +
+      "eTable\022*\n\006values\030\006 \003(\0132\032.dictionary.Refe" +
+      "renceValue\022\020\n\010isActive\030\007 \001(\010\"n\n\016Referenc" +
+      "eValue\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(\t\022\r\n\005valu" +
+      "e\030\003 \001(\t\022\014\n\004name\030\004 \001(\t\022\023\n\013description\030\005 \001" +
+      "(\t\022\020\n\010isActive\030\006 \001(\010\"\341\001\n\016ReferenceTable\022" +
+      "\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(\t\022\021\n\ttableName\030\003" +
+      " \001(\t\022\025\n\rkeyColumnName\030\004 \001(\t\022\031\n\021displayCo" +
+      "lumnName\030\005 \001(\t\022\033\n\023isDisplayIdentifier\030\006 " +
+      "\001(\010\022\030\n\020isValueDisplayed\030\007 \001(\010\022\022\n\ndisplay" +
+      "SQL\030\010 \001(\t\022\023\n\013whereClause\030\t \001(\t\022\020\n\010isActi" +
+      "ve\030\n \001(\010\"\265\002\n\004Menu\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 " +
+      "\001(\t\022\022\n\nparentUuid\030\004 \001(\t\022\014\n\004name\030\005 \001(\t\022\023\n" +
+      "\013description\030\006 \001(\t\022\020\n\010sequence\030\007 \001(\t\022\022\n\n" +
+      "isReadOnly\030\010 \001(\010\022\021\n\tisSummary\030\t \001(\010\022\017\n\007i" +
+      "sSOTrx\030\n \001(\010\022\016\n\006action\030\013 \001(\t\022\020\n\010formUuid" +
+      "\030\014 \001(\t\022\022\n\nwindowUuid\030\r \001(\t\022\023\n\013processUui" +
+      "d\030\016 \001(\t\022\023\n\013browserUuid\030\017 \001(\t\022 \n\006childs\030\020" +
+      " \003(\0132\020.dictionary.Menu\022\020\n\010isActive\030\021 \001(\010" +
+      "2\353\004\n\021DictionaryService\022D\n\023RequestMenuAnd" +
+      "Child\022\031.dictionary.EntityRequest\032\020.dicti" +
+      "onary.Menu\"\000\022<\n\013RequestMenu\022\031.dictionary" +
+      ".EntityRequest\032\020.dictionary.Menu\"\000\022@\n\rRe" +
+      "questWindow\022\031.dictionary.EntityRequest\032\022" +
+      ".dictionary.Window\"\000\022G\n\024RequestWindowAnd" +
+      "Tabs\022\031.dictionary.EntityRequest\032\022.dictio" +
+      "nary.Window\"\000\022:\n\nRequestTab\022\031.dictionary" +
+      ".EntityRequest\032\017.dictionary.Tab\"\000\022C\n\023Req" +
+      "uestTabAndFields\022\031.dictionary.EntityRequ" +
+      "est\032\017.dictionary.Tab\"\000\022>\n\014RequestField\022\031" +
+      ".dictionary.EntityRequest\032\021.dictionary.F" +
+      "ield\"\000\022B\n\016RequestProcess\022\031.dictionary.En" +
+      "tityRequest\032\023.dictionary.Process\"\000\022B\n\016Re" +
+      "questBrowser\022\031.dictionary.EntityRequest\032" +
+      "\023.dictionary.Browser\"\000B1\n\022org.spin.grpc." +
+      "utilB\023ADempiereDictionaryP\001\242\002\003HLWb\006proto" +
+      "3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -332,11 +334,11 @@ public final class ADempiereDictionary {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dictionary_Form_descriptor,
         new java.lang.String[] { "Id", "Uuid", "Name", "Description", "Help", "AccessLevel", "ClassName", "IsActive", });
-    internal_static_dictionary_SmartBrowser_descriptor =
+    internal_static_dictionary_Browser_descriptor =
       getDescriptor().getMessageTypes().get(12);
-    internal_static_dictionary_SmartBrowser_fieldAccessorTable = new
+    internal_static_dictionary_Browser_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_dictionary_SmartBrowser_descriptor,
+        internal_static_dictionary_Browser_descriptor,
         new java.lang.String[] { "Id", "Uuid", "Value", "Name", "Description", "Help", "AccessLevel", "WhereClause", "IsUpdateable", "IsDeleteable", "IsSelectedByDefault", "IsCollapsibleByDefault", "IsExecutedQueryByDefault", "IsShowTotal", "ViewUuid", "Window", "Process", "Fields", "IsActive", });
     internal_static_dictionary_Validation_descriptor =
       getDescriptor().getMessageTypes().get(13);
@@ -367,7 +369,7 @@ public final class ADempiereDictionary {
     internal_static_dictionary_Menu_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dictionary_Menu_descriptor,
-        new java.lang.String[] { "Id", "Uuid", "ParentUuid", "Name", "Description", "Sequence", "IsReadOnly", "IsSummary", "IsSOTrx", "Action", "FormUuid", "WindowUuid", "ProcessUuid", "SmartBrowserUuid", "Childs", "IsActive", });
+        new java.lang.String[] { "Id", "Uuid", "ParentUuid", "Name", "Description", "Sequence", "IsReadOnly", "IsSummary", "IsSOTrx", "Action", "FormUuid", "WindowUuid", "ProcessUuid", "BrowserUuid", "Childs", "IsActive", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

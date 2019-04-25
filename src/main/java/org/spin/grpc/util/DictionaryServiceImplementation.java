@@ -3,7 +3,10 @@ package org.spin.grpc.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.adempiere.model.I_AD_Browse;
+import org.adempiere.model.I_AD_Browse_Field;
 import org.adempiere.model.MBrowse;
+import org.adempiere.model.MBrowseField;
 import org.compiere.model.I_AD_Field;
 import org.compiere.model.I_AD_FieldGroup;
 import org.compiere.model.I_AD_Menu;
@@ -113,8 +116,30 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			language = clientInfo.getLanguage();
 		}
 		try {
-			Process.Builder tabBuilder = convertProcess(request.getUuid(), language, true);
-			responseObserver.onNext(tabBuilder.build());
+			Process.Builder processBuilder = convertProcess(request.getUuid(), language, true);
+			responseObserver.onNext(processBuilder.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			responseObserver.onError(e);
+		}
+	}
+	
+	@Override
+	public void requestBrowser(EntityRequest request, StreamObserver<Browser> responseObserver) {
+		if(request == null
+				|| Util.isEmpty(request.getUuid())) {
+			log.fine("Object Request Null");
+			return;
+		}
+		log.fine("Smart Browser Requested = " + request.getUuid());
+		ApplicationRequest clientInfo = request.getApplicationRequest();
+		String language = null;
+		if(clientInfo != null) {
+			language = clientInfo.getLanguage();
+		}
+		try {
+			Browser.Builder browserBuilder = convertBrowser(request.getUuid(), language, true);
+			responseObserver.onNext(browserBuilder.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			responseObserver.onError(e);
@@ -206,12 +231,23 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	 * @param withTabs
 	 */
 	private Window.Builder convertWindow(String uuid, String language, boolean withTabs) {
-		//	
-		Window.Builder builder = null;
 		MWindow window = new Query(Env.getCtx(), I_AD_Window.Table_Name, I_AD_Window.COLUMNNAME_UUID + " = ?", null)
 				.setParameters(uuid)
 				.setOnlyActiveRecords(true)
 				.first();
+		return convertWindow(window, language, withTabs);
+	}
+	
+	/**
+	 * Convert Window from Window Model
+	 * @param window
+	 * @param language
+	 * @param withTabs
+	 * @return
+	 */
+	private Window.Builder convertWindow(MWindow window, String language, boolean withTabs) {
+		//	
+		Window.Builder builder = null;
 		//	Validate
 		if(window != null) {
 			//	
@@ -326,6 +362,22 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	}
 	
 	/**
+	 * Convert Browser from UUID
+	 * @param uuid
+	 * @param language
+	 * @param withFields
+	 * @return
+	 */
+	private Browser.Builder convertBrowser(String uuid, String language, boolean withFields) {
+		MBrowse browser = new Query(Env.getCtx(), I_AD_Browse.Table_Name, I_AD_Process.COLUMNNAME_UUID + " = ?", null)
+				.setParameters(uuid)
+				.setOnlyActiveRecords(true)
+				.first();
+		//	Convert
+		return convertBrowser(browser, language, withFields);
+	}
+	
+	/**
 	 * Convert Model tab to builder tab
 	 * @param tab
 	 * @return
@@ -369,6 +421,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setName(validateNull(name))
 				.setDescription(validateNull(description))
 				.setHelp(validateNull(help))
+				.setAccessLevel(Integer.parseInt(table.getAccessLevel()))
 				.setCommitWarning(validateNull(commitWarning))
 				.setSequence(tab.getSeqNo())
 				.setDisplayLogic(validateNull(tab.getDisplayLogic()))
@@ -492,9 +545,11 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		Process.Builder builder = Process.newBuilder()
 				.setId(process.getAD_Process_ID())
 				.setUuid(process.getUUID())
+				.setValue(validateNull(process.getValue()))
 				.setName(name)
 				.setDescription(validateNull(description))
 				.setHelp(validateNull(help))
+				.setAccessLevel(Integer.parseInt(process.getAccessLevel()))
 				.setIsDirectPrint(process.isDirectPrint())
 				.setIsReport(process.isReport())
 				.setIsActive(process.isActive());
@@ -503,6 +558,73 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			for(MProcessPara parameter : process.getParameters()) {
 				Field.Builder fieldBuilder = convertProcessParameter(parameter, language);
 				builder.addParameters(fieldBuilder.build());
+			}
+		}
+		return builder;
+	}
+	
+	/**
+	 * Convert process to builder
+	 * @param browser
+	 * @param language
+	 * @param withFields
+	 * @return
+	 */
+	private Browser.Builder convertBrowser(MBrowse browser, String language, boolean withFields) {
+		String name = null;
+		String description = null;
+		String help = null;
+		if(!Util.isEmpty(language)) {
+			name = browser.get_Translation(I_AD_Browse.COLUMNNAME_Name, language);
+			description = browser.get_Translation(I_AD_Browse.COLUMNNAME_Description, language);
+			help = browser.get_Translation(I_AD_Browse.COLUMNNAME_Help, language);
+		}
+		//	Validate for default
+		if(Util.isEmpty(name)) {
+			name = browser.getName();
+		}
+		if(Util.isEmpty(description)) {
+			description = browser.getDescription();
+		}
+		if(Util.isEmpty(help)) {
+			help = browser.getHelp();
+		}
+		Browser.Builder builder = Browser.newBuilder()
+				.setId(browser.getAD_Process_ID())
+				.setUuid(browser.getUUID())
+				.setValue(validateNull(browser.getValue()))
+				.setName(name)
+				.setDescription(validateNull(description))
+				.setHelp(validateNull(help))
+				.setAccessLevel(Integer.parseInt(browser.getAccessLevel()))
+				.setIsActive(browser.isActive())
+				.setIsCollapsibleByDefault(browser.isCollapsibleByDefault())
+				.setIsDeleteable(browser.isDeleteable())
+				.setIsExecutedQueryByDefault(browser.isExecutedQueryByDefault())
+				.setIsSelectedByDefault(browser.isSelectedByDefault())
+				.setIsShowTotal(browser.isShowTotal())
+				.setIsUpdateable(browser.isUpdateable())
+				.setWhereClause(validateNull(browser.getWhereClause()));
+		//	Set View UUID
+		if(browser.getAD_View_ID() > 0) {
+			builder.setViewUuid(validateNull(browser.getAD_View().getUUID()));
+		}
+		//	Window Reference
+		if(browser.getAD_Window_ID() > 0) {
+			MWindow window = new MWindow(Env.getCtx(), browser.getAD_Window_ID(), null);
+			Window.Builder windowBuilder = convertWindow(window, language, false);
+			builder.setWindow(windowBuilder.build());
+		}
+		//	Process Reference
+		if(browser.getAD_Process_ID() > 0) {
+			Process.Builder processBuilder = convertProcess(MProcess.get(Env.getCtx(), browser.getAD_Process_ID()), language, false);
+			builder.setProcess(processBuilder.build());
+		}
+		//	For parameters
+		if(withFields) {
+			for(MBrowseField field : browser.getFields()) {
+				Field.Builder fieldBuilder = convertBrowseField(field, language);
+				builder.addFields(fieldBuilder.build());
 			}
 		}
 		return builder;
@@ -570,7 +692,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		}
 		//	Convert
 		Field.Builder builder = Field.newBuilder()
-				.setId(processParameter.getAD_Process_ID())
+				.setId(processParameter.getAD_Process_Para_ID())
 				.setUuid(processParameter.getUUID())
 				.setName(validateNull(name))
 				.setDescription(validateNull(description))
@@ -588,11 +710,78 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setSequence(processParameter.getSeqNo())
 				.setValueMax(validateNull(processParameter.getValueMax()))
 				.setValueMin(validateNull(processParameter.getValueMin()))
+				.setVFormat(validateNull(processParameter.getVFormat()))
 				.setIsActive(processParameter.isActive());
 		//	Reference Value
 		int referenceValueId = processParameter.getAD_Reference_Value_ID();
 		if(processParameter.getAD_Reference_Value_ID() > 0) {
 			referenceValueId = processParameter.getAD_Reference_Value_ID();
+		}
+		//	Set reference
+		if(referenceValueId > 0) {
+			Reference.Builder reference = convertReference(referenceValueId, language);
+			builder.setReference(reference.build());
+		}
+		
+		return builder;
+	}
+	
+	/**
+	 * Convert Browse Field
+	 * @param browseField
+	 * @param language
+	 * @return
+	 */
+	private Field.Builder convertBrowseField(MBrowseField browseField, String language) {
+		String name = null;
+		String description = null;
+		String help = null;
+		if(!Util.isEmpty(language)) {
+			name = browseField.get_Translation(I_AD_Browse_Field.COLUMNNAME_Name, language);
+			description = browseField.get_Translation(I_AD_Browse_Field.COLUMNNAME_Description, language);
+			help = browseField.get_Translation(I_AD_Browse_Field.COLUMNNAME_Help, language);
+		}
+		//	Validate for default
+		if(Util.isEmpty(name)) {
+			name = browseField.getName();
+		}
+		if(Util.isEmpty(description)) {
+			description = browseField.getDescription();
+		}
+		if(Util.isEmpty(help)) {
+			help = browseField.getHelp();
+		}
+		//	Convert
+		Field.Builder builder = Field.newBuilder()
+				.setId(browseField.getAD_Browse_Field_ID())
+				.setUuid(browseField.getUUID())
+				.setName(validateNull(name))
+				.setDescription(validateNull(description))
+				.setHelp(validateNull(help))
+				.setDefaultValue(validateNull(browseField.getDefaultValue()))
+				.setDefaultValueTo(validateNull(browseField.getDefaultValue2()))
+				.setDisplayLogic(validateNull(browseField.getDisplayLogic()))
+				.setDisplayType(browseField.getAD_Reference_ID())
+				.setIsDisplayed(true)
+				.setIsInfoOnly(browseField.isInfoOnly())
+				.setIsMandatory(browseField.isMandatory())
+				.setIsRange(browseField.isRange())
+				.setReadOnlyLogic(validateNull(browseField.getReadOnlyLogic()))
+				.setSequence(browseField.getSeqNo())
+				.setValueMax(validateNull(browseField.getValueMax()))
+				.setValueMin(validateNull(browseField.getValueMin()))
+				.setVFormat(validateNull(browseField.getVFormat()))
+				.setIsActive(browseField.isActive())
+				.setCallout(validateNull(browseField.getCallout()));
+		if(browseField.getAD_View_Column().getAD_Column_ID() > 0) {
+			builder.setColumnName(validateNull(browseField.getAD_View_Column().getAD_Column().getColumnName()));
+		} else {
+			builder.setColumnName(validateNull(browseField.getAD_View_Column().getColumnSQL()));
+		}
+		//	Reference Value
+		int referenceValueId = browseField.getAD_Reference_Value_ID();
+		if(browseField.getAD_Reference_Value_ID() > 0) {
+			referenceValueId = browseField.getAD_Reference_Value_ID();
 		}
 		//	Set reference
 		if(referenceValueId > 0) {
@@ -962,7 +1151,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			} else if(menu.getAction().equals(MMenu.ACTION_SmartBrowse)) {
 				if(menu.getAD_Browse_ID() > 0) {
 					MBrowse smartBrowser = MBrowse.get(Env.getCtx(), menu.getAD_Browse_ID());
-					builder.setSmartBrowserUuid(smartBrowser.getUUID());
+					builder.setBrowserUuid(smartBrowser.getUUID());
 				}
 			}
 		}

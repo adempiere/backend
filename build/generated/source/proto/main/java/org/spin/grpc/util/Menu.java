@@ -33,7 +33,7 @@ private static final long serialVersionUID = 0L;
     formUuid_ = "";
     windowUuid_ = "";
     processUuid_ = "";
-    smartBrowserUuid_ = "";
+    browserUuid_ = "";
     childs_ = java.util.Collections.emptyList();
     isActive_ = false;
   }
@@ -146,7 +146,7 @@ private static final long serialVersionUID = 0L;
           case 122: {
             java.lang.String s = input.readStringRequireUtf8();
 
-            smartBrowserUuid_ = s;
+            browserUuid_ = s;
             break;
           }
           case 130: {
@@ -541,34 +541,34 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int SMARTBROWSERUUID_FIELD_NUMBER = 15;
-  private volatile java.lang.Object smartBrowserUuid_;
+  public static final int BROWSERUUID_FIELD_NUMBER = 15;
+  private volatile java.lang.Object browserUuid_;
   /**
-   * <code>string smartBrowserUuid = 15;</code>
+   * <code>string browserUuid = 15;</code>
    */
-  public java.lang.String getSmartBrowserUuid() {
-    java.lang.Object ref = smartBrowserUuid_;
+  public java.lang.String getBrowserUuid() {
+    java.lang.Object ref = browserUuid_;
     if (ref instanceof java.lang.String) {
       return (java.lang.String) ref;
     } else {
       com.google.protobuf.ByteString bs = 
           (com.google.protobuf.ByteString) ref;
       java.lang.String s = bs.toStringUtf8();
-      smartBrowserUuid_ = s;
+      browserUuid_ = s;
       return s;
     }
   }
   /**
-   * <code>string smartBrowserUuid = 15;</code>
+   * <code>string browserUuid = 15;</code>
    */
   public com.google.protobuf.ByteString
-      getSmartBrowserUuidBytes() {
-    java.lang.Object ref = smartBrowserUuid_;
+      getBrowserUuidBytes() {
+    java.lang.Object ref = browserUuid_;
     if (ref instanceof java.lang.String) {
       com.google.protobuf.ByteString b = 
           com.google.protobuf.ByteString.copyFromUtf8(
               (java.lang.String) ref);
-      smartBrowserUuid_ = b;
+      browserUuid_ = b;
       return b;
     } else {
       return (com.google.protobuf.ByteString) ref;
@@ -670,8 +670,8 @@ private static final long serialVersionUID = 0L;
     if (!getProcessUuidBytes().isEmpty()) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 14, processUuid_);
     }
-    if (!getSmartBrowserUuidBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 15, smartBrowserUuid_);
+    if (!getBrowserUuidBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 15, browserUuid_);
     }
     for (int i = 0; i < childs_.size(); i++) {
       output.writeMessage(16, childs_.get(i));
@@ -730,8 +730,8 @@ private static final long serialVersionUID = 0L;
     if (!getProcessUuidBytes().isEmpty()) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(14, processUuid_);
     }
-    if (!getSmartBrowserUuidBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(15, smartBrowserUuid_);
+    if (!getBrowserUuidBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(15, browserUuid_);
     }
     for (int i = 0; i < childs_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
@@ -783,8 +783,8 @@ private static final long serialVersionUID = 0L;
         .equals(other.getWindowUuid());
     result = result && getProcessUuid()
         .equals(other.getProcessUuid());
-    result = result && getSmartBrowserUuid()
-        .equals(other.getSmartBrowserUuid());
+    result = result && getBrowserUuid()
+        .equals(other.getBrowserUuid());
     result = result && getChildsList()
         .equals(other.getChildsList());
     result = result && (getIsActive()
@@ -829,8 +829,8 @@ private static final long serialVersionUID = 0L;
     hash = (53 * hash) + getWindowUuid().hashCode();
     hash = (37 * hash) + PROCESSUUID_FIELD_NUMBER;
     hash = (53 * hash) + getProcessUuid().hashCode();
-    hash = (37 * hash) + SMARTBROWSERUUID_FIELD_NUMBER;
-    hash = (53 * hash) + getSmartBrowserUuid().hashCode();
+    hash = (37 * hash) + BROWSERUUID_FIELD_NUMBER;
+    hash = (53 * hash) + getBrowserUuid().hashCode();
     if (getChildsCount() > 0) {
       hash = (37 * hash) + CHILDS_FIELD_NUMBER;
       hash = (53 * hash) + getChildsList().hashCode();
@@ -998,7 +998,7 @@ private static final long serialVersionUID = 0L;
 
       processUuid_ = "";
 
-      smartBrowserUuid_ = "";
+      browserUuid_ = "";
 
       if (childsBuilder_ == null) {
         childs_ = java.util.Collections.emptyList();
@@ -1045,7 +1045,7 @@ private static final long serialVersionUID = 0L;
       result.formUuid_ = formUuid_;
       result.windowUuid_ = windowUuid_;
       result.processUuid_ = processUuid_;
-      result.smartBrowserUuid_ = smartBrowserUuid_;
+      result.browserUuid_ = browserUuid_;
       if (childsBuilder_ == null) {
         if (((bitField0_ & 0x00004000) == 0x00004000)) {
           childs_ = java.util.Collections.unmodifiableList(childs_);
@@ -1146,8 +1146,8 @@ private static final long serialVersionUID = 0L;
         processUuid_ = other.processUuid_;
         onChanged();
       }
-      if (!other.getSmartBrowserUuid().isEmpty()) {
-        smartBrowserUuid_ = other.smartBrowserUuid_;
+      if (!other.getBrowserUuid().isEmpty()) {
+        browserUuid_ = other.browserUuid_;
         onChanged();
       }
       if (childsBuilder_ == null) {
@@ -1952,71 +1952,71 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private java.lang.Object smartBrowserUuid_ = "";
+    private java.lang.Object browserUuid_ = "";
     /**
-     * <code>string smartBrowserUuid = 15;</code>
+     * <code>string browserUuid = 15;</code>
      */
-    public java.lang.String getSmartBrowserUuid() {
-      java.lang.Object ref = smartBrowserUuid_;
+    public java.lang.String getBrowserUuid() {
+      java.lang.Object ref = browserUuid_;
       if (!(ref instanceof java.lang.String)) {
         com.google.protobuf.ByteString bs =
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        smartBrowserUuid_ = s;
+        browserUuid_ = s;
         return s;
       } else {
         return (java.lang.String) ref;
       }
     }
     /**
-     * <code>string smartBrowserUuid = 15;</code>
+     * <code>string browserUuid = 15;</code>
      */
     public com.google.protobuf.ByteString
-        getSmartBrowserUuidBytes() {
-      java.lang.Object ref = smartBrowserUuid_;
+        getBrowserUuidBytes() {
+      java.lang.Object ref = browserUuid_;
       if (ref instanceof String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
-        smartBrowserUuid_ = b;
+        browserUuid_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
     /**
-     * <code>string smartBrowserUuid = 15;</code>
+     * <code>string browserUuid = 15;</code>
      */
-    public Builder setSmartBrowserUuid(
+    public Builder setBrowserUuid(
         java.lang.String value) {
       if (value == null) {
     throw new NullPointerException();
   }
   
-      smartBrowserUuid_ = value;
+      browserUuid_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>string smartBrowserUuid = 15;</code>
+     * <code>string browserUuid = 15;</code>
      */
-    public Builder clearSmartBrowserUuid() {
+    public Builder clearBrowserUuid() {
       
-      smartBrowserUuid_ = getDefaultInstance().getSmartBrowserUuid();
+      browserUuid_ = getDefaultInstance().getBrowserUuid();
       onChanged();
       return this;
     }
     /**
-     * <code>string smartBrowserUuid = 15;</code>
+     * <code>string browserUuid = 15;</code>
      */
-    public Builder setSmartBrowserUuidBytes(
+    public Builder setBrowserUuidBytes(
         com.google.protobuf.ByteString value) {
       if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
       
-      smartBrowserUuid_ = value;
+      browserUuid_ = value;
       onChanged();
       return this;
     }
