@@ -1143,7 +1143,8 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 					MWindow window = new MWindow(Env.getCtx(), menu.getAD_Window_ID(), null);
 					builder.setWindowUuid(window.getUUID());
 				}
-			} else if(menu.getAction().equals(MMenu.ACTION_Process)) {
+			} else if(menu.getAction().equals(MMenu.ACTION_Process)
+				|| menu.getAction().equals(MMenu.ACTION_Report)) {
 				if(menu.getAD_Process_ID() > 0) {
 					MProcess process = MProcess.get(Env.getCtx(), menu.getAD_Process_ID());
 					builder.setProcessUuid(process.getUUID());
