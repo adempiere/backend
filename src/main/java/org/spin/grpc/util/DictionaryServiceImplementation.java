@@ -13,29 +13,30 @@ import org.compiere.model.I_AD_Menu;
 import org.compiere.model.I_AD_Message;
 import org.compiere.model.I_AD_Process;
 import org.compiere.model.I_AD_Process_Para;
-import org.compiere.model.I_AD_Ref_List;
 import org.compiere.model.I_AD_Tab;
 import org.compiere.model.I_AD_Window;
 import org.compiere.model.MColumn;
 import org.compiere.model.MField;
 import org.compiere.model.MForm;
+import org.compiere.model.MLookupFactory;
+import org.compiere.model.MLookupInfo;
 import org.compiere.model.MMenu;
 import org.compiere.model.MMessage;
 import org.compiere.model.MProcess;
 import org.compiere.model.MProcessPara;
-import org.compiere.model.MRefList;
-import org.compiere.model.MRefTable;
 import org.compiere.model.MTab;
 import org.compiere.model.MTable;
 import org.compiere.model.MTree;
 import org.compiere.model.MTree_NodeMM;
+import org.compiere.model.MValRule;
 import org.compiere.model.MWindow;
 import org.compiere.model.Query;
 import org.compiere.model.X_AD_FieldGroup;
-import org.compiere.model.X_AD_Reference;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
+import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
+import org.compiere.util.Language;
 import org.compiere.util.Msg;
 import org.compiere.util.Util;
 import org.spin.grpc.util.DictionaryServiceGrpc.DictionaryServiceImplBase;
@@ -712,17 +713,24 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setValueMin(validateNull(processParameter.getValueMin()))
 				.setVFormat(validateNull(processParameter.getVFormat()))
 				.setIsActive(processParameter.isActive());
-		//	Reference Value
-		int referenceValueId = processParameter.getAD_Reference_Value_ID();
-		if(processParameter.getAD_Reference_Value_ID() > 0) {
-			referenceValueId = processParameter.getAD_Reference_Value_ID();
+		//	
+		int displayTypeId = processParameter.getAD_Reference_ID();
+		if(DisplayType.isLookup(displayTypeId)) {
+			//	Reference Value
+			int referenceValueId = processParameter.getAD_Reference_Value_ID();
+			//	Validation Code
+			int validationRuleId = processParameter.getAD_Val_Rule_ID();
+			//	Set Validation Code
+			String validationCode = null;
+			if(validationRuleId > 0) {
+				MValRule validationRule = MValRule.get(Env.getCtx(), validationRuleId);
+				validationCode = validationRule.getCode();
+			}
+			String columnName = processParameter.getAD_Element().getColumnName();
+			MLookupInfo info = MLookupFactory.getLookupInfo(Env.getCtx(), 0, 0, displayTypeId, Language.getLanguage(language), columnName, referenceValueId, false, validationCode);
+			Reference.Builder referenceBuilder = convertReference(info, language);
+			builder.setReference(referenceBuilder.build());
 		}
-		//	Set reference
-		if(referenceValueId > 0) {
-			Reference.Builder reference = convertReference(referenceValueId, language);
-			builder.setReference(reference.build());
-		}
-		
 		return builder;
 	}
 	
@@ -772,23 +780,35 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setValueMin(validateNull(browseField.getValueMin()))
 				.setVFormat(validateNull(browseField.getVFormat()))
 				.setIsActive(browseField.isActive())
-				.setCallout(validateNull(browseField.getCallout()));
+				.setCallout(validateNull(browseField.getCallout()))
+				.setDisplayType(browseField.getAD_Reference_ID());
 		if(browseField.getAD_View_Column().getAD_Column_ID() > 0) {
 			builder.setColumnName(validateNull(browseField.getAD_View_Column().getAD_Column().getColumnName()));
 		} else {
 			builder.setColumnName(validateNull(browseField.getAD_View_Column().getColumnSQL()));
 		}
-		//	Reference Value
-		int referenceValueId = browseField.getAD_Reference_Value_ID();
-		if(browseField.getAD_Reference_Value_ID() > 0) {
-			referenceValueId = browseField.getAD_Reference_Value_ID();
+		//	
+		int displayTypeId = browseField.getAD_Reference_ID();
+		if(DisplayType.isLookup(displayTypeId)) {
+			//	Reference Value
+			int referenceValueId = browseField.getAD_Reference_Value_ID();
+			//	Validation Code
+			int validationRuleId = browseField.getAD_Val_Rule_ID();
+			//	Set Validation Code
+			String validationCode = null;
+			if(validationRuleId > 0) {
+				MValRule validationRule = MValRule.get(Env.getCtx(), validationRuleId);
+				validationCode = validationRule.getCode();
+			}
+			String columnName = browseField.getAD_Element().getColumnName();
+			if(browseField.getAD_View_Column().getAD_Column_ID() > 0) {
+				columnName = browseField.getAD_View_Column().getAD_Column().getColumnName();
+			}
+			
+			MLookupInfo info = MLookupFactory.getLookupInfo(Env.getCtx(), 0, 0, displayTypeId, Language.getLanguage(language), columnName, referenceValueId, false, validationCode);
+			Reference.Builder referenceBuilder = convertReference(info, language);
+			builder.setReference(referenceBuilder.build());
 		}
-		//	Set reference
-		if(referenceValueId > 0) {
-			Reference.Builder reference = convertReference(referenceValueId, language);
-			builder.setReference(reference.build());
-		}
-		
 		return builder;
 	}
 	
@@ -899,16 +919,29 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			Process.Builder processBuilder = convertProcess(process, language, false);
 			builder.setProcess(processBuilder.build());
 		}
-		//	Reference Value
-		int referenceValueId = column.getAD_Reference_Value_ID();
-		if(field.getAD_Reference_Value_ID() > 0) {
-			referenceValueId = field.getAD_Reference_Value_ID();
+		//	
+		if(DisplayType.isLookup(displayTypeId)) {
+			//	Reference Value
+			int referenceValueId = column.getAD_Reference_Value_ID();
+			if(field.getAD_Reference_Value_ID() > 0) {
+				referenceValueId = field.getAD_Reference_Value_ID();
+			}
+			//	Validation Code
+			int validationRuleId = column.getAD_Val_Rule_ID();
+			if(field.getAD_Val_Rule_ID() > 0) {
+				validationRuleId = field.getAD_Val_Rule_ID();
+			}
+			//	Set Validation Code
+			String validationCode = null;
+			if(validationRuleId > 0) {
+				MValRule validationRule = MValRule.get(Env.getCtx(), validationRuleId);
+				validationCode = validationRule.getCode();
+			}
+			MLookupInfo info = MLookupFactory.getLookupInfo(Env.getCtx(), 0, column.getAD_Column_ID(), displayTypeId, Language.getLanguage(language), column.getColumnName(), referenceValueId, false, validationCode);
+			Reference.Builder referenceBuilder = convertReference(info, language);
+			builder.setReference(referenceBuilder.build());
 		}
-		//	Set reference
-		if(referenceValueId > 0) {
-			Reference.Builder reference = convertReference(referenceValueId, language);
-			builder.setReference(reference.build());
-		}
+		
 		//	Field Definition
 		if(field.getAD_FieldDefinition_ID() > 0) {
 			FieldDefinition.Builder fieldDefinitionBuilder = convertFieldDefinition(field.getAD_FieldDefinition_ID(), language);
@@ -987,95 +1020,59 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	}
 	
 	/**
-	 * Convert Reference Value to builder
-	 * @param referenceId
+	 * Convert Reference to builder
+	 * @param info
 	 * @param language
 	 * @return
 	 */
-	private Reference.Builder convertReference(int referenceId, String language) {
-		Reference.Builder builder = null;
-		if(referenceId > 0) {
-			X_AD_Reference reference = new X_AD_Reference(Env.getCtx(), referenceId, null);
-			//	Reference
-			builder = Reference.newBuilder()
-					.setId(reference.getAD_Reference_ID())
-					.setUuid(reference.getUUID())
-					.setName(reference.getName())
-					.setValidationType(reference.getValidationType())
-					.setIsActive(reference.isActive());
-			//	For Value
-			if(reference.getValidationType().equals(X_AD_Reference.VALIDATIONTYPE_ListValidation)) {
-				List<MRefList> referenceValueList = new Query(Env.getCtx(), I_AD_Ref_List.Table_Name, I_AD_Ref_List.COLUMNNAME_AD_Reference_ID + " = ?", null)
-					.setParameters(reference.getAD_Reference_ID())
-					.setOnlyActiveRecords(true)
-					.<MRefList>list();
-				for(MRefList referenceValue : referenceValueList) {
-					ReferenceValue.Builder referenceValueBuilder = convertReferenceValue(referenceValue, language);
-					builder.addValues(referenceValueBuilder.build());
-				}
-			} else if(reference.getValidationType().equals(X_AD_Reference.VALIDATIONTYPE_TableValidation)) {
-				MRefTable referenceTable = MRefTable.getById(Env.getCtx(), referenceId);
-				ReferenceTable.Builder referenceTableBuilder = convertReferenceTable(referenceTable, language);
-				builder.setReferenceTable(referenceTableBuilder.build());
-			}
-			
+	private Reference.Builder convertReference(MLookupInfo info, String language) {
+		Reference.Builder builder = Reference.newBuilder()
+				.setTableName(validateNull(info.TableName))
+				.setKeyColumnName(validateNull(info.KeyColumn))
+				.setDisplayColumnName(validateNull(info.DisplayColumn))
+				.setQuery(validateNull(info.Query))
+				.setDirectQuery(validateNull(info.QueryDirect))
+				.setValidationCode(validateNull(info.ValidationCode));
+		//	Window Reference
+		if(info.ZoomWindow > 0) {
+			builder.addWindows(convertZoomWindow(info.ZoomWindow, language).build());
 		}
+		if(info.ZoomWindowPO > 0) {
+			builder.addWindows(convertZoomWindow(info.ZoomWindowPO, language).build());
+		}
+		//	Return
 		return builder;
 	}
 	
 	/**
-	 * Convert reference Value to builder
-	 * @param referenceValue
+	 * Convert Zoom Window from ID
+	 * @param windowId
 	 * @param language
 	 * @return
 	 */
-	private ReferenceValue.Builder convertReferenceValue(MRefList referenceValue, String language) {
+	private ZoomWindow.Builder convertZoomWindow(int windowId, String language) {
+		MWindow window = new MWindow(Env.getCtx(), windowId, null);
+		//	Get translation
 		String name = null;
 		String description = null;
 		if(!Util.isEmpty(language)) {
-			name = referenceValue.get_Translation(I_AD_Ref_List.COLUMNNAME_Name, language);
-			description = referenceValue.get_Translation(I_AD_Ref_List.COLUMNNAME_Description, language);
+			name = window.get_Translation(I_AD_Window.COLUMNNAME_Name, language);
+			description = window.get_Translation(I_AD_Window.COLUMNNAME_Description, language);
 		}
 		//	Validate for default
 		if(Util.isEmpty(name)) {
-			name = referenceValue.getName();
+			name = window.getName();
 		}
 		if(Util.isEmpty(description)) {
-			description = referenceValue.getDescription();
+			description = window.getDescription();
 		}
-		ReferenceValue.Builder builder = ReferenceValue.newBuilder()
-				.setId(referenceValue.getAD_Ref_List_ID())
-				.setUuid(validateNull(validateNull(referenceValue.getUUID())))
-				.setValue(validateNull(referenceValue.getValue()))
+		//	Return
+		return ZoomWindow.newBuilder()
+				.setId(window.getAD_Window_ID())
+				.setUuid(validateNull(window.getUUID()))
 				.setName(validateNull(name))
 				.setDescription(validateNull(description))
-				.setIsActive(referenceValue.isActive());
-		//	
-		return builder;
-	}
-	
-	/**
-	 * Convert Reference Table to builder
-	 * @param referenceTable
-	 * @param language
-	 * @return
-	 */
-	private ReferenceTable.Builder convertReferenceTable(MRefTable referenceTable, String language) {
-		MTable table = MTable.get(Env.getCtx(), referenceTable.getAD_Table_ID());
-		MColumn displayColumn = MColumn.get(Env.getCtx(), referenceTable.getAD_Display());
-		MColumn keyColumn = MColumn.get(Env.getCtx(), referenceTable.getAD_Key());
-		ReferenceTable.Builder builder = ReferenceTable.newBuilder()
-				.setUuid(validateNull(referenceTable.getUUID()))
-				.setIsDisplayIdentifier(referenceTable.isDisplayIdentifier())
-				.setIsValueDisplayed(referenceTable.isValueDisplayed())
-				.setDisplaySQL(validateNull(referenceTable.getDisplaySQL()))
-				.setWhereClause(validateNull(referenceTable.getWhereClause()))
-				.setTableName(validateNull(table.getTableName()))
-				.setDisplayColumnName(validateNull(displayColumn.getColumnName()))
-				.setKeyColumnName(validateNull(keyColumn.getColumnName()))
-				.setIsActive(referenceTable.isActive());
-		//	
-		return builder;
+				.setIsSOTrx(window.isSOTrx());
 	}
 	
 	/**

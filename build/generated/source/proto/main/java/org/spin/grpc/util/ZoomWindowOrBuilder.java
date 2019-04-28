@@ -3,8 +3,8 @@
 
 package org.spin.grpc.util;
 
-public interface ReferenceValueOrBuilder extends
-    // @@protoc_insertion_point(interface_extends:dictionary.ReferenceValue)
+public interface ZoomWindowOrBuilder extends
+    // @@protoc_insertion_point(interface_extends:dictionary.ZoomWindow)
     com.google.protobuf.MessageOrBuilder {
 
   /**
@@ -23,34 +23,29 @@ public interface ReferenceValueOrBuilder extends
       getUuidBytes();
 
   /**
-   * <code>string value = 3;</code>
-   */
-  java.lang.String getValue();
-  /**
-   * <code>string value = 3;</code>
-   */
-  com.google.protobuf.ByteString
-      getValueBytes();
-
-  /**
-   * <code>string name = 4;</code>
+   * <code>string name = 3;</code>
    */
   java.lang.String getName();
   /**
-   * <code>string name = 4;</code>
+   * <code>string name = 3;</code>
    */
   com.google.protobuf.ByteString
       getNameBytes();
 
   /**
-   * <code>string description = 5;</code>
+   * <code>string description = 4;</code>
    */
   java.lang.String getDescription();
   /**
-   * <code>string description = 5;</code>
+   * <code>string description = 4;</code>
    */
   com.google.protobuf.ByteString
       getDescriptionBytes();
+
+  /**
+   * <code>bool isSOTrx = 5;</code>
+   */
+  boolean getIsSOTrx();
 
   /**
    * <code>bool isActive = 6;</code>

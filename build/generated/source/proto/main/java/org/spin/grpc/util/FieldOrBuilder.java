@@ -311,54 +311,41 @@ public interface FieldOrBuilder extends
   org.spin.grpc.util.FieldGroupOrBuilder getFieldGroupOrBuilder();
 
   /**
-   * <code>.dictionary.Validation validation = 41;</code>
-   */
-  boolean hasValidation();
-  /**
-   * <code>.dictionary.Validation validation = 41;</code>
-   */
-  org.spin.grpc.util.Validation getValidation();
-  /**
-   * <code>.dictionary.Validation validation = 41;</code>
-   */
-  org.spin.grpc.util.ValidationOrBuilder getValidationOrBuilder();
-
-  /**
-   * <code>.dictionary.FieldDefinition fieldDefinition = 42;</code>
+   * <code>.dictionary.FieldDefinition fieldDefinition = 41;</code>
    */
   boolean hasFieldDefinition();
   /**
-   * <code>.dictionary.FieldDefinition fieldDefinition = 42;</code>
+   * <code>.dictionary.FieldDefinition fieldDefinition = 41;</code>
    */
   org.spin.grpc.util.FieldDefinition getFieldDefinition();
   /**
-   * <code>.dictionary.FieldDefinition fieldDefinition = 42;</code>
+   * <code>.dictionary.FieldDefinition fieldDefinition = 41;</code>
    */
   org.spin.grpc.util.FieldDefinitionOrBuilder getFieldDefinitionOrBuilder();
 
   /**
-   * <code>.dictionary.Reference reference = 43;</code>
+   * <code>.dictionary.Reference reference = 42;</code>
    */
   boolean hasReference();
   /**
-   * <code>.dictionary.Reference reference = 43;</code>
+   * <code>.dictionary.Reference reference = 42;</code>
    */
   org.spin.grpc.util.Reference getReference();
   /**
-   * <code>.dictionary.Reference reference = 43;</code>
+   * <code>.dictionary.Reference reference = 42;</code>
    */
   org.spin.grpc.util.ReferenceOrBuilder getReferenceOrBuilder();
 
   /**
-   * <code>.dictionary.Process process = 44;</code>
+   * <code>.dictionary.Process process = 43;</code>
    */
   boolean hasProcess();
   /**
-   * <code>.dictionary.Process process = 44;</code>
+   * <code>.dictionary.Process process = 43;</code>
    */
   org.spin.grpc.util.Process getProcess();
   /**
-   * <code>.dictionary.Process process = 44;</code>
+   * <code>.dictionary.Process process = 43;</code>
    */
   org.spin.grpc.util.ProcessOrBuilder getProcessOrBuilder();
 
@@ -367,32 +354,32 @@ public interface FieldOrBuilder extends
    * Smart Browser Field Compatibility
    * </pre>
    *
-   * <code>bool isQueryCriteria = 45;</code>
+   * <code>bool isQueryCriteria = 44;</code>
    */
   boolean getIsQueryCriteria();
 
   /**
-   * <code>bool isOrderBy = 46;</code>
+   * <code>bool isOrderBy = 45;</code>
    */
   boolean getIsOrderBy();
 
   /**
-   * <code>int32 seqNoGrid = 47;</code>
+   * <code>int32 seqNoGrid = 46;</code>
    */
   int getSeqNoGrid();
 
   /**
-   * <code>int32 sortNo = 48;</code>
+   * <code>int32 sortNo = 47;</code>
    */
   int getSortNo();
 
   /**
-   * <code>bool isInfoOnly = 49;</code>
+   * <code>bool isInfoOnly = 48;</code>
    */
   boolean getIsInfoOnly();
 
   /**
-   * <code>bool isActive = 50;</code>
+   * <code>bool isActive = 49;</code>
    */
   boolean getIsActive();
 
@@ -401,7 +388,7 @@ public interface FieldOrBuilder extends
    * Process Parameter Compatibility
    * </pre>
    *
-   * <code>string defaultValueTo = 51;</code>
+   * <code>string defaultValueTo = 50;</code>
    */
   java.lang.String getDefaultValueTo();
   /**
@@ -409,7 +396,7 @@ public interface FieldOrBuilder extends
    * Process Parameter Compatibility
    * </pre>
    *
-   * <code>string defaultValueTo = 51;</code>
+   * <code>string defaultValueTo = 50;</code>
    */
   com.google.protobuf.ByteString
       getDefaultValueToBytes();

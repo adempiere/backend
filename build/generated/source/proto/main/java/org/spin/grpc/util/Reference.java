@@ -20,12 +20,13 @@ private static final long serialVersionUID = 0L;
     super(builder);
   }
   private Reference() {
-    id_ = 0;
-    uuid_ = "";
-    name_ = "";
-    validationType_ = "";
-    values_ = java.util.Collections.emptyList();
-    isActive_ = false;
+    tableName_ = "";
+    keyColumnName_ = "";
+    displayColumnName_ = "";
+    query_ = "";
+    directQuery_ = "";
+    validationCode_ = "";
+    windows_ = java.util.Collections.emptyList();
   }
 
   @java.lang.Override
@@ -59,54 +60,49 @@ private static final long serialVersionUID = 0L;
             }
             break;
           }
-          case 8: {
+          case 10: {
+            java.lang.String s = input.readStringRequireUtf8();
 
-            id_ = input.readInt32();
+            tableName_ = s;
             break;
           }
           case 18: {
             java.lang.String s = input.readStringRequireUtf8();
 
-            uuid_ = s;
+            keyColumnName_ = s;
             break;
           }
           case 26: {
             java.lang.String s = input.readStringRequireUtf8();
 
-            name_ = s;
+            displayColumnName_ = s;
             break;
           }
           case 34: {
             java.lang.String s = input.readStringRequireUtf8();
 
-            validationType_ = s;
+            query_ = s;
             break;
           }
           case 42: {
-            org.spin.grpc.util.ReferenceTable.Builder subBuilder = null;
-            if (referenceTable_ != null) {
-              subBuilder = referenceTable_.toBuilder();
-            }
-            referenceTable_ = input.readMessage(org.spin.grpc.util.ReferenceTable.parser(), extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(referenceTable_);
-              referenceTable_ = subBuilder.buildPartial();
-            }
+            java.lang.String s = input.readStringRequireUtf8();
 
+            directQuery_ = s;
             break;
           }
           case 50: {
-            if (!((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
-              values_ = new java.util.ArrayList<org.spin.grpc.util.ReferenceValue>();
-              mutable_bitField0_ |= 0x00000020;
-            }
-            values_.add(
-                input.readMessage(org.spin.grpc.util.ReferenceValue.parser(), extensionRegistry));
+            java.lang.String s = input.readStringRequireUtf8();
+
+            validationCode_ = s;
             break;
           }
-          case 56: {
-
-            isActive_ = input.readBool();
+          case 58: {
+            if (!((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
+              windows_ = new java.util.ArrayList<org.spin.grpc.util.ZoomWindow>();
+              mutable_bitField0_ |= 0x00000040;
+            }
+            windows_.add(
+                input.readMessage(org.spin.grpc.util.ZoomWindow.parser(), extensionRegistry));
             break;
           }
         }
@@ -117,8 +113,8 @@ private static final long serialVersionUID = 0L;
       throw new com.google.protobuf.InvalidProtocolBufferException(
           e).setUnfinishedMessage(this);
     } finally {
-      if (((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
-        values_ = java.util.Collections.unmodifiableList(values_);
+      if (((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
+        windows_ = java.util.Collections.unmodifiableList(windows_);
       }
       this.unknownFields = unknownFields.build();
       makeExtensionsImmutable();
@@ -137,192 +133,263 @@ private static final long serialVersionUID = 0L;
   }
 
   private int bitField0_;
-  public static final int ID_FIELD_NUMBER = 1;
-  private int id_;
+  public static final int TABLENAME_FIELD_NUMBER = 1;
+  private volatile java.lang.Object tableName_;
   /**
-   * <code>int32 id = 1;</code>
+   * <code>string tableName = 1;</code>
    */
-  public int getId() {
-    return id_;
-  }
-
-  public static final int UUID_FIELD_NUMBER = 2;
-  private volatile java.lang.Object uuid_;
-  /**
-   * <code>string uuid = 2;</code>
-   */
-  public java.lang.String getUuid() {
-    java.lang.Object ref = uuid_;
+  public java.lang.String getTableName() {
+    java.lang.Object ref = tableName_;
     if (ref instanceof java.lang.String) {
       return (java.lang.String) ref;
     } else {
       com.google.protobuf.ByteString bs = 
           (com.google.protobuf.ByteString) ref;
       java.lang.String s = bs.toStringUtf8();
-      uuid_ = s;
+      tableName_ = s;
       return s;
     }
   }
   /**
-   * <code>string uuid = 2;</code>
+   * <code>string tableName = 1;</code>
    */
   public com.google.protobuf.ByteString
-      getUuidBytes() {
-    java.lang.Object ref = uuid_;
+      getTableNameBytes() {
+    java.lang.Object ref = tableName_;
     if (ref instanceof java.lang.String) {
       com.google.protobuf.ByteString b = 
           com.google.protobuf.ByteString.copyFromUtf8(
               (java.lang.String) ref);
-      uuid_ = b;
+      tableName_ = b;
       return b;
     } else {
       return (com.google.protobuf.ByteString) ref;
     }
   }
 
-  public static final int NAME_FIELD_NUMBER = 3;
-  private volatile java.lang.Object name_;
+  public static final int KEYCOLUMNNAME_FIELD_NUMBER = 2;
+  private volatile java.lang.Object keyColumnName_;
   /**
-   * <code>string name = 3;</code>
+   * <code>string keyColumnName = 2;</code>
    */
-  public java.lang.String getName() {
-    java.lang.Object ref = name_;
+  public java.lang.String getKeyColumnName() {
+    java.lang.Object ref = keyColumnName_;
     if (ref instanceof java.lang.String) {
       return (java.lang.String) ref;
     } else {
       com.google.protobuf.ByteString bs = 
           (com.google.protobuf.ByteString) ref;
       java.lang.String s = bs.toStringUtf8();
-      name_ = s;
+      keyColumnName_ = s;
       return s;
     }
   }
   /**
-   * <code>string name = 3;</code>
+   * <code>string keyColumnName = 2;</code>
    */
   public com.google.protobuf.ByteString
-      getNameBytes() {
-    java.lang.Object ref = name_;
+      getKeyColumnNameBytes() {
+    java.lang.Object ref = keyColumnName_;
     if (ref instanceof java.lang.String) {
       com.google.protobuf.ByteString b = 
           com.google.protobuf.ByteString.copyFromUtf8(
               (java.lang.String) ref);
-      name_ = b;
+      keyColumnName_ = b;
       return b;
     } else {
       return (com.google.protobuf.ByteString) ref;
     }
   }
 
-  public static final int VALIDATIONTYPE_FIELD_NUMBER = 4;
-  private volatile java.lang.Object validationType_;
+  public static final int DISPLAYCOLUMNNAME_FIELD_NUMBER = 3;
+  private volatile java.lang.Object displayColumnName_;
   /**
-   * <code>string validationType = 4;</code>
+   * <code>string displayColumnName = 3;</code>
    */
-  public java.lang.String getValidationType() {
-    java.lang.Object ref = validationType_;
+  public java.lang.String getDisplayColumnName() {
+    java.lang.Object ref = displayColumnName_;
     if (ref instanceof java.lang.String) {
       return (java.lang.String) ref;
     } else {
       com.google.protobuf.ByteString bs = 
           (com.google.protobuf.ByteString) ref;
       java.lang.String s = bs.toStringUtf8();
-      validationType_ = s;
+      displayColumnName_ = s;
       return s;
     }
   }
   /**
-   * <code>string validationType = 4;</code>
+   * <code>string displayColumnName = 3;</code>
    */
   public com.google.protobuf.ByteString
-      getValidationTypeBytes() {
-    java.lang.Object ref = validationType_;
+      getDisplayColumnNameBytes() {
+    java.lang.Object ref = displayColumnName_;
     if (ref instanceof java.lang.String) {
       com.google.protobuf.ByteString b = 
           com.google.protobuf.ByteString.copyFromUtf8(
               (java.lang.String) ref);
-      validationType_ = b;
+      displayColumnName_ = b;
       return b;
     } else {
       return (com.google.protobuf.ByteString) ref;
     }
   }
 
-  public static final int REFERENCETABLE_FIELD_NUMBER = 5;
-  private org.spin.grpc.util.ReferenceTable referenceTable_;
+  public static final int QUERY_FIELD_NUMBER = 4;
+  private volatile java.lang.Object query_;
   /**
-   * <pre>
-   * External Info
-   * </pre>
-   *
-   * <code>.dictionary.ReferenceTable referenceTable = 5;</code>
+   * <code>string query = 4;</code>
    */
-  public boolean hasReferenceTable() {
-    return referenceTable_ != null;
+  public java.lang.String getQuery() {
+    java.lang.Object ref = query_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      query_ = s;
+      return s;
+    }
   }
   /**
-   * <pre>
-   * External Info
-   * </pre>
-   *
-   * <code>.dictionary.ReferenceTable referenceTable = 5;</code>
+   * <code>string query = 4;</code>
    */
-  public org.spin.grpc.util.ReferenceTable getReferenceTable() {
-    return referenceTable_ == null ? org.spin.grpc.util.ReferenceTable.getDefaultInstance() : referenceTable_;
-  }
-  /**
-   * <pre>
-   * External Info
-   * </pre>
-   *
-   * <code>.dictionary.ReferenceTable referenceTable = 5;</code>
-   */
-  public org.spin.grpc.util.ReferenceTableOrBuilder getReferenceTableOrBuilder() {
-    return getReferenceTable();
+  public com.google.protobuf.ByteString
+      getQueryBytes() {
+    java.lang.Object ref = query_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      query_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
   }
 
-  public static final int VALUES_FIELD_NUMBER = 6;
-  private java.util.List<org.spin.grpc.util.ReferenceValue> values_;
+  public static final int DIRECTQUERY_FIELD_NUMBER = 5;
+  private volatile java.lang.Object directQuery_;
   /**
-   * <code>repeated .dictionary.ReferenceValue values = 6;</code>
+   * <code>string directQuery = 5;</code>
    */
-  public java.util.List<org.spin.grpc.util.ReferenceValue> getValuesList() {
-    return values_;
+  public java.lang.String getDirectQuery() {
+    java.lang.Object ref = directQuery_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      directQuery_ = s;
+      return s;
+    }
   }
   /**
-   * <code>repeated .dictionary.ReferenceValue values = 6;</code>
+   * <code>string directQuery = 5;</code>
    */
-  public java.util.List<? extends org.spin.grpc.util.ReferenceValueOrBuilder> 
-      getValuesOrBuilderList() {
-    return values_;
+  public com.google.protobuf.ByteString
+      getDirectQueryBytes() {
+    java.lang.Object ref = directQuery_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      directQuery_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int VALIDATIONCODE_FIELD_NUMBER = 6;
+  private volatile java.lang.Object validationCode_;
+  /**
+   * <code>string validationCode = 6;</code>
+   */
+  public java.lang.String getValidationCode() {
+    java.lang.Object ref = validationCode_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      validationCode_ = s;
+      return s;
+    }
   }
   /**
-   * <code>repeated .dictionary.ReferenceValue values = 6;</code>
+   * <code>string validationCode = 6;</code>
    */
-  public int getValuesCount() {
-    return values_.size();
+  public com.google.protobuf.ByteString
+      getValidationCodeBytes() {
+    java.lang.Object ref = validationCode_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      validationCode_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int WINDOWS_FIELD_NUMBER = 7;
+  private java.util.List<org.spin.grpc.util.ZoomWindow> windows_;
+  /**
+   * <pre>
+   * External Info
+   * </pre>
+   *
+   * <code>repeated .dictionary.ZoomWindow windows = 7;</code>
+   */
+  public java.util.List<org.spin.grpc.util.ZoomWindow> getWindowsList() {
+    return windows_;
   }
   /**
-   * <code>repeated .dictionary.ReferenceValue values = 6;</code>
+   * <pre>
+   * External Info
+   * </pre>
+   *
+   * <code>repeated .dictionary.ZoomWindow windows = 7;</code>
    */
-  public org.spin.grpc.util.ReferenceValue getValues(int index) {
-    return values_.get(index);
+  public java.util.List<? extends org.spin.grpc.util.ZoomWindowOrBuilder> 
+      getWindowsOrBuilderList() {
+    return windows_;
   }
   /**
-   * <code>repeated .dictionary.ReferenceValue values = 6;</code>
+   * <pre>
+   * External Info
+   * </pre>
+   *
+   * <code>repeated .dictionary.ZoomWindow windows = 7;</code>
    */
-  public org.spin.grpc.util.ReferenceValueOrBuilder getValuesOrBuilder(
+  public int getWindowsCount() {
+    return windows_.size();
+  }
+  /**
+   * <pre>
+   * External Info
+   * </pre>
+   *
+   * <code>repeated .dictionary.ZoomWindow windows = 7;</code>
+   */
+  public org.spin.grpc.util.ZoomWindow getWindows(int index) {
+    return windows_.get(index);
+  }
+  /**
+   * <pre>
+   * External Info
+   * </pre>
+   *
+   * <code>repeated .dictionary.ZoomWindow windows = 7;</code>
+   */
+  public org.spin.grpc.util.ZoomWindowOrBuilder getWindowsOrBuilder(
       int index) {
-    return values_.get(index);
-  }
-
-  public static final int ISACTIVE_FIELD_NUMBER = 7;
-  private boolean isActive_;
-  /**
-   * <code>bool isActive = 7;</code>
-   */
-  public boolean getIsActive() {
-    return isActive_;
+    return windows_.get(index);
   }
 
   private byte memoizedIsInitialized = -1;
@@ -337,26 +404,26 @@ private static final long serialVersionUID = 0L;
 
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
-    if (id_ != 0) {
-      output.writeInt32(1, id_);
+    if (!getTableNameBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, tableName_);
     }
-    if (!getUuidBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, uuid_);
+    if (!getKeyColumnNameBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, keyColumnName_);
     }
-    if (!getNameBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 3, name_);
+    if (!getDisplayColumnNameBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 3, displayColumnName_);
     }
-    if (!getValidationTypeBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 4, validationType_);
+    if (!getQueryBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 4, query_);
     }
-    if (referenceTable_ != null) {
-      output.writeMessage(5, getReferenceTable());
+    if (!getDirectQueryBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 5, directQuery_);
     }
-    for (int i = 0; i < values_.size(); i++) {
-      output.writeMessage(6, values_.get(i));
+    if (!getValidationCodeBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 6, validationCode_);
     }
-    if (isActive_ != false) {
-      output.writeBool(7, isActive_);
+    for (int i = 0; i < windows_.size(); i++) {
+      output.writeMessage(7, windows_.get(i));
     }
     unknownFields.writeTo(output);
   }
@@ -366,30 +433,27 @@ private static final long serialVersionUID = 0L;
     if (size != -1) return size;
 
     size = 0;
-    if (id_ != 0) {
+    if (!getTableNameBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, tableName_);
+    }
+    if (!getKeyColumnNameBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, keyColumnName_);
+    }
+    if (!getDisplayColumnNameBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, displayColumnName_);
+    }
+    if (!getQueryBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, query_);
+    }
+    if (!getDirectQueryBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, directQuery_);
+    }
+    if (!getValidationCodeBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, validationCode_);
+    }
+    for (int i = 0; i < windows_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
-        .computeInt32Size(1, id_);
-    }
-    if (!getUuidBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, uuid_);
-    }
-    if (!getNameBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, name_);
-    }
-    if (!getValidationTypeBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, validationType_);
-    }
-    if (referenceTable_ != null) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(5, getReferenceTable());
-    }
-    for (int i = 0; i < values_.size(); i++) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(6, values_.get(i));
-    }
-    if (isActive_ != false) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeBoolSize(7, isActive_);
+        .computeMessageSize(7, windows_.get(i));
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -407,23 +471,20 @@ private static final long serialVersionUID = 0L;
     org.spin.grpc.util.Reference other = (org.spin.grpc.util.Reference) obj;
 
     boolean result = true;
-    result = result && (getId()
-        == other.getId());
-    result = result && getUuid()
-        .equals(other.getUuid());
-    result = result && getName()
-        .equals(other.getName());
-    result = result && getValidationType()
-        .equals(other.getValidationType());
-    result = result && (hasReferenceTable() == other.hasReferenceTable());
-    if (hasReferenceTable()) {
-      result = result && getReferenceTable()
-          .equals(other.getReferenceTable());
-    }
-    result = result && getValuesList()
-        .equals(other.getValuesList());
-    result = result && (getIsActive()
-        == other.getIsActive());
+    result = result && getTableName()
+        .equals(other.getTableName());
+    result = result && getKeyColumnName()
+        .equals(other.getKeyColumnName());
+    result = result && getDisplayColumnName()
+        .equals(other.getDisplayColumnName());
+    result = result && getQuery()
+        .equals(other.getQuery());
+    result = result && getDirectQuery()
+        .equals(other.getDirectQuery());
+    result = result && getValidationCode()
+        .equals(other.getValidationCode());
+    result = result && getWindowsList()
+        .equals(other.getWindowsList());
     result = result && unknownFields.equals(other.unknownFields);
     return result;
   }
@@ -435,25 +496,22 @@ private static final long serialVersionUID = 0L;
     }
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
-    hash = (37 * hash) + ID_FIELD_NUMBER;
-    hash = (53 * hash) + getId();
-    hash = (37 * hash) + UUID_FIELD_NUMBER;
-    hash = (53 * hash) + getUuid().hashCode();
-    hash = (37 * hash) + NAME_FIELD_NUMBER;
-    hash = (53 * hash) + getName().hashCode();
-    hash = (37 * hash) + VALIDATIONTYPE_FIELD_NUMBER;
-    hash = (53 * hash) + getValidationType().hashCode();
-    if (hasReferenceTable()) {
-      hash = (37 * hash) + REFERENCETABLE_FIELD_NUMBER;
-      hash = (53 * hash) + getReferenceTable().hashCode();
+    hash = (37 * hash) + TABLENAME_FIELD_NUMBER;
+    hash = (53 * hash) + getTableName().hashCode();
+    hash = (37 * hash) + KEYCOLUMNNAME_FIELD_NUMBER;
+    hash = (53 * hash) + getKeyColumnName().hashCode();
+    hash = (37 * hash) + DISPLAYCOLUMNNAME_FIELD_NUMBER;
+    hash = (53 * hash) + getDisplayColumnName().hashCode();
+    hash = (37 * hash) + QUERY_FIELD_NUMBER;
+    hash = (53 * hash) + getQuery().hashCode();
+    hash = (37 * hash) + DIRECTQUERY_FIELD_NUMBER;
+    hash = (53 * hash) + getDirectQuery().hashCode();
+    hash = (37 * hash) + VALIDATIONCODE_FIELD_NUMBER;
+    hash = (53 * hash) + getValidationCode().hashCode();
+    if (getWindowsCount() > 0) {
+      hash = (37 * hash) + WINDOWS_FIELD_NUMBER;
+      hash = (53 * hash) + getWindowsList().hashCode();
     }
-    if (getValuesCount() > 0) {
-      hash = (37 * hash) + VALUES_FIELD_NUMBER;
-      hash = (53 * hash) + getValuesList().hashCode();
-    }
-    hash = (37 * hash) + ISACTIVE_FIELD_NUMBER;
-    hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
-        getIsActive());
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -583,33 +641,29 @@ private static final long serialVersionUID = 0L;
     private void maybeForceBuilderInitialization() {
       if (com.google.protobuf.GeneratedMessageV3
               .alwaysUseFieldBuilders) {
-        getValuesFieldBuilder();
+        getWindowsFieldBuilder();
       }
     }
     public Builder clear() {
       super.clear();
-      id_ = 0;
+      tableName_ = "";
 
-      uuid_ = "";
+      keyColumnName_ = "";
 
-      name_ = "";
+      displayColumnName_ = "";
 
-      validationType_ = "";
+      query_ = "";
 
-      if (referenceTableBuilder_ == null) {
-        referenceTable_ = null;
+      directQuery_ = "";
+
+      validationCode_ = "";
+
+      if (windowsBuilder_ == null) {
+        windows_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000040);
       } else {
-        referenceTable_ = null;
-        referenceTableBuilder_ = null;
+        windowsBuilder_.clear();
       }
-      if (valuesBuilder_ == null) {
-        values_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000020);
-      } else {
-        valuesBuilder_.clear();
-      }
-      isActive_ = false;
-
       return this;
     }
 
@@ -634,25 +688,21 @@ private static final long serialVersionUID = 0L;
       org.spin.grpc.util.Reference result = new org.spin.grpc.util.Reference(this);
       int from_bitField0_ = bitField0_;
       int to_bitField0_ = 0;
-      result.id_ = id_;
-      result.uuid_ = uuid_;
-      result.name_ = name_;
-      result.validationType_ = validationType_;
-      if (referenceTableBuilder_ == null) {
-        result.referenceTable_ = referenceTable_;
-      } else {
-        result.referenceTable_ = referenceTableBuilder_.build();
-      }
-      if (valuesBuilder_ == null) {
-        if (((bitField0_ & 0x00000020) == 0x00000020)) {
-          values_ = java.util.Collections.unmodifiableList(values_);
-          bitField0_ = (bitField0_ & ~0x00000020);
+      result.tableName_ = tableName_;
+      result.keyColumnName_ = keyColumnName_;
+      result.displayColumnName_ = displayColumnName_;
+      result.query_ = query_;
+      result.directQuery_ = directQuery_;
+      result.validationCode_ = validationCode_;
+      if (windowsBuilder_ == null) {
+        if (((bitField0_ & 0x00000040) == 0x00000040)) {
+          windows_ = java.util.Collections.unmodifiableList(windows_);
+          bitField0_ = (bitField0_ & ~0x00000040);
         }
-        result.values_ = values_;
+        result.windows_ = windows_;
       } else {
-        result.values_ = valuesBuilder_.build();
+        result.windows_ = windowsBuilder_.build();
       }
-      result.isActive_ = isActive_;
       result.bitField0_ = to_bitField0_;
       onBuilt();
       return result;
@@ -695,52 +745,55 @@ private static final long serialVersionUID = 0L;
 
     public Builder mergeFrom(org.spin.grpc.util.Reference other) {
       if (other == org.spin.grpc.util.Reference.getDefaultInstance()) return this;
-      if (other.getId() != 0) {
-        setId(other.getId());
-      }
-      if (!other.getUuid().isEmpty()) {
-        uuid_ = other.uuid_;
+      if (!other.getTableName().isEmpty()) {
+        tableName_ = other.tableName_;
         onChanged();
       }
-      if (!other.getName().isEmpty()) {
-        name_ = other.name_;
+      if (!other.getKeyColumnName().isEmpty()) {
+        keyColumnName_ = other.keyColumnName_;
         onChanged();
       }
-      if (!other.getValidationType().isEmpty()) {
-        validationType_ = other.validationType_;
+      if (!other.getDisplayColumnName().isEmpty()) {
+        displayColumnName_ = other.displayColumnName_;
         onChanged();
       }
-      if (other.hasReferenceTable()) {
-        mergeReferenceTable(other.getReferenceTable());
+      if (!other.getQuery().isEmpty()) {
+        query_ = other.query_;
+        onChanged();
       }
-      if (valuesBuilder_ == null) {
-        if (!other.values_.isEmpty()) {
-          if (values_.isEmpty()) {
-            values_ = other.values_;
-            bitField0_ = (bitField0_ & ~0x00000020);
+      if (!other.getDirectQuery().isEmpty()) {
+        directQuery_ = other.directQuery_;
+        onChanged();
+      }
+      if (!other.getValidationCode().isEmpty()) {
+        validationCode_ = other.validationCode_;
+        onChanged();
+      }
+      if (windowsBuilder_ == null) {
+        if (!other.windows_.isEmpty()) {
+          if (windows_.isEmpty()) {
+            windows_ = other.windows_;
+            bitField0_ = (bitField0_ & ~0x00000040);
           } else {
-            ensureValuesIsMutable();
-            values_.addAll(other.values_);
+            ensureWindowsIsMutable();
+            windows_.addAll(other.windows_);
           }
           onChanged();
         }
       } else {
-        if (!other.values_.isEmpty()) {
-          if (valuesBuilder_.isEmpty()) {
-            valuesBuilder_.dispose();
-            valuesBuilder_ = null;
-            values_ = other.values_;
-            bitField0_ = (bitField0_ & ~0x00000020);
-            valuesBuilder_ = 
+        if (!other.windows_.isEmpty()) {
+          if (windowsBuilder_.isEmpty()) {
+            windowsBuilder_.dispose();
+            windowsBuilder_ = null;
+            windows_ = other.windows_;
+            bitField0_ = (bitField0_ & ~0x00000040);
+            windowsBuilder_ = 
               com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
-                 getValuesFieldBuilder() : null;
+                 getWindowsFieldBuilder() : null;
           } else {
-            valuesBuilder_.addAllMessages(other.values_);
+            windowsBuilder_.addAllMessages(other.windows_);
           }
         }
-      }
-      if (other.getIsActive() != false) {
-        setIsActive(other.getIsActive());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -770,656 +823,730 @@ private static final long serialVersionUID = 0L;
     }
     private int bitField0_;
 
-    private int id_ ;
+    private java.lang.Object tableName_ = "";
     /**
-     * <code>int32 id = 1;</code>
+     * <code>string tableName = 1;</code>
      */
-    public int getId() {
-      return id_;
-    }
-    /**
-     * <code>int32 id = 1;</code>
-     */
-    public Builder setId(int value) {
-      
-      id_ = value;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>int32 id = 1;</code>
-     */
-    public Builder clearId() {
-      
-      id_ = 0;
-      onChanged();
-      return this;
-    }
-
-    private java.lang.Object uuid_ = "";
-    /**
-     * <code>string uuid = 2;</code>
-     */
-    public java.lang.String getUuid() {
-      java.lang.Object ref = uuid_;
+    public java.lang.String getTableName() {
+      java.lang.Object ref = tableName_;
       if (!(ref instanceof java.lang.String)) {
         com.google.protobuf.ByteString bs =
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        uuid_ = s;
+        tableName_ = s;
         return s;
       } else {
         return (java.lang.String) ref;
       }
     }
     /**
-     * <code>string uuid = 2;</code>
+     * <code>string tableName = 1;</code>
      */
     public com.google.protobuf.ByteString
-        getUuidBytes() {
-      java.lang.Object ref = uuid_;
+        getTableNameBytes() {
+      java.lang.Object ref = tableName_;
       if (ref instanceof String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
-        uuid_ = b;
+        tableName_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
     /**
-     * <code>string uuid = 2;</code>
+     * <code>string tableName = 1;</code>
      */
-    public Builder setUuid(
+    public Builder setTableName(
         java.lang.String value) {
       if (value == null) {
     throw new NullPointerException();
   }
   
-      uuid_ = value;
+      tableName_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>string uuid = 2;</code>
+     * <code>string tableName = 1;</code>
      */
-    public Builder clearUuid() {
+    public Builder clearTableName() {
       
-      uuid_ = getDefaultInstance().getUuid();
+      tableName_ = getDefaultInstance().getTableName();
       onChanged();
       return this;
     }
     /**
-     * <code>string uuid = 2;</code>
+     * <code>string tableName = 1;</code>
      */
-    public Builder setUuidBytes(
+    public Builder setTableNameBytes(
         com.google.protobuf.ByteString value) {
       if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
       
-      uuid_ = value;
+      tableName_ = value;
       onChanged();
       return this;
     }
 
-    private java.lang.Object name_ = "";
+    private java.lang.Object keyColumnName_ = "";
     /**
-     * <code>string name = 3;</code>
+     * <code>string keyColumnName = 2;</code>
      */
-    public java.lang.String getName() {
-      java.lang.Object ref = name_;
+    public java.lang.String getKeyColumnName() {
+      java.lang.Object ref = keyColumnName_;
       if (!(ref instanceof java.lang.String)) {
         com.google.protobuf.ByteString bs =
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        name_ = s;
+        keyColumnName_ = s;
         return s;
       } else {
         return (java.lang.String) ref;
       }
     }
     /**
-     * <code>string name = 3;</code>
+     * <code>string keyColumnName = 2;</code>
      */
     public com.google.protobuf.ByteString
-        getNameBytes() {
-      java.lang.Object ref = name_;
+        getKeyColumnNameBytes() {
+      java.lang.Object ref = keyColumnName_;
       if (ref instanceof String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
-        name_ = b;
+        keyColumnName_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
     /**
-     * <code>string name = 3;</code>
+     * <code>string keyColumnName = 2;</code>
      */
-    public Builder setName(
+    public Builder setKeyColumnName(
         java.lang.String value) {
       if (value == null) {
     throw new NullPointerException();
   }
   
-      name_ = value;
+      keyColumnName_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>string name = 3;</code>
+     * <code>string keyColumnName = 2;</code>
      */
-    public Builder clearName() {
+    public Builder clearKeyColumnName() {
       
-      name_ = getDefaultInstance().getName();
+      keyColumnName_ = getDefaultInstance().getKeyColumnName();
       onChanged();
       return this;
     }
     /**
-     * <code>string name = 3;</code>
+     * <code>string keyColumnName = 2;</code>
      */
-    public Builder setNameBytes(
+    public Builder setKeyColumnNameBytes(
         com.google.protobuf.ByteString value) {
       if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
       
-      name_ = value;
+      keyColumnName_ = value;
       onChanged();
       return this;
     }
 
-    private java.lang.Object validationType_ = "";
+    private java.lang.Object displayColumnName_ = "";
     /**
-     * <code>string validationType = 4;</code>
+     * <code>string displayColumnName = 3;</code>
      */
-    public java.lang.String getValidationType() {
-      java.lang.Object ref = validationType_;
+    public java.lang.String getDisplayColumnName() {
+      java.lang.Object ref = displayColumnName_;
       if (!(ref instanceof java.lang.String)) {
         com.google.protobuf.ByteString bs =
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        validationType_ = s;
+        displayColumnName_ = s;
         return s;
       } else {
         return (java.lang.String) ref;
       }
     }
     /**
-     * <code>string validationType = 4;</code>
+     * <code>string displayColumnName = 3;</code>
      */
     public com.google.protobuf.ByteString
-        getValidationTypeBytes() {
-      java.lang.Object ref = validationType_;
+        getDisplayColumnNameBytes() {
+      java.lang.Object ref = displayColumnName_;
       if (ref instanceof String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
-        validationType_ = b;
+        displayColumnName_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
     /**
-     * <code>string validationType = 4;</code>
+     * <code>string displayColumnName = 3;</code>
      */
-    public Builder setValidationType(
+    public Builder setDisplayColumnName(
         java.lang.String value) {
       if (value == null) {
     throw new NullPointerException();
   }
   
-      validationType_ = value;
+      displayColumnName_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>string validationType = 4;</code>
+     * <code>string displayColumnName = 3;</code>
      */
-    public Builder clearValidationType() {
+    public Builder clearDisplayColumnName() {
       
-      validationType_ = getDefaultInstance().getValidationType();
+      displayColumnName_ = getDefaultInstance().getDisplayColumnName();
       onChanged();
       return this;
     }
     /**
-     * <code>string validationType = 4;</code>
+     * <code>string displayColumnName = 3;</code>
      */
-    public Builder setValidationTypeBytes(
+    public Builder setDisplayColumnNameBytes(
         com.google.protobuf.ByteString value) {
       if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
       
-      validationType_ = value;
+      displayColumnName_ = value;
       onChanged();
       return this;
     }
 
-    private org.spin.grpc.util.ReferenceTable referenceTable_ = null;
-    private com.google.protobuf.SingleFieldBuilderV3<
-        org.spin.grpc.util.ReferenceTable, org.spin.grpc.util.ReferenceTable.Builder, org.spin.grpc.util.ReferenceTableOrBuilder> referenceTableBuilder_;
+    private java.lang.Object query_ = "";
     /**
-     * <pre>
-     * External Info
-     * </pre>
-     *
-     * <code>.dictionary.ReferenceTable referenceTable = 5;</code>
+     * <code>string query = 4;</code>
      */
-    public boolean hasReferenceTable() {
-      return referenceTableBuilder_ != null || referenceTable_ != null;
-    }
-    /**
-     * <pre>
-     * External Info
-     * </pre>
-     *
-     * <code>.dictionary.ReferenceTable referenceTable = 5;</code>
-     */
-    public org.spin.grpc.util.ReferenceTable getReferenceTable() {
-      if (referenceTableBuilder_ == null) {
-        return referenceTable_ == null ? org.spin.grpc.util.ReferenceTable.getDefaultInstance() : referenceTable_;
+    public java.lang.String getQuery() {
+      java.lang.Object ref = query_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        query_ = s;
+        return s;
       } else {
-        return referenceTableBuilder_.getMessage();
+        return (java.lang.String) ref;
       }
     }
     /**
-     * <pre>
-     * External Info
-     * </pre>
-     *
-     * <code>.dictionary.ReferenceTable referenceTable = 5;</code>
+     * <code>string query = 4;</code>
      */
-    public Builder setReferenceTable(org.spin.grpc.util.ReferenceTable value) {
-      if (referenceTableBuilder_ == null) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        referenceTable_ = value;
-        onChanged();
+    public com.google.protobuf.ByteString
+        getQueryBytes() {
+      java.lang.Object ref = query_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        query_ = b;
+        return b;
       } else {
-        referenceTableBuilder_.setMessage(value);
+        return (com.google.protobuf.ByteString) ref;
       }
-
+    }
+    /**
+     * <code>string query = 4;</code>
+     */
+    public Builder setQuery(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
+      query_ = value;
+      onChanged();
       return this;
     }
     /**
-     * <pre>
-     * External Info
-     * </pre>
-     *
-     * <code>.dictionary.ReferenceTable referenceTable = 5;</code>
+     * <code>string query = 4;</code>
      */
-    public Builder setReferenceTable(
-        org.spin.grpc.util.ReferenceTable.Builder builderForValue) {
-      if (referenceTableBuilder_ == null) {
-        referenceTable_ = builderForValue.build();
-        onChanged();
-      } else {
-        referenceTableBuilder_.setMessage(builderForValue.build());
-      }
-
-      return this;
-    }
-    /**
-     * <pre>
-     * External Info
-     * </pre>
-     *
-     * <code>.dictionary.ReferenceTable referenceTable = 5;</code>
-     */
-    public Builder mergeReferenceTable(org.spin.grpc.util.ReferenceTable value) {
-      if (referenceTableBuilder_ == null) {
-        if (referenceTable_ != null) {
-          referenceTable_ =
-            org.spin.grpc.util.ReferenceTable.newBuilder(referenceTable_).mergeFrom(value).buildPartial();
-        } else {
-          referenceTable_ = value;
-        }
-        onChanged();
-      } else {
-        referenceTableBuilder_.mergeFrom(value);
-      }
-
-      return this;
-    }
-    /**
-     * <pre>
-     * External Info
-     * </pre>
-     *
-     * <code>.dictionary.ReferenceTable referenceTable = 5;</code>
-     */
-    public Builder clearReferenceTable() {
-      if (referenceTableBuilder_ == null) {
-        referenceTable_ = null;
-        onChanged();
-      } else {
-        referenceTable_ = null;
-        referenceTableBuilder_ = null;
-      }
-
-      return this;
-    }
-    /**
-     * <pre>
-     * External Info
-     * </pre>
-     *
-     * <code>.dictionary.ReferenceTable referenceTable = 5;</code>
-     */
-    public org.spin.grpc.util.ReferenceTable.Builder getReferenceTableBuilder() {
+    public Builder clearQuery() {
       
+      query_ = getDefaultInstance().getQuery();
       onChanged();
-      return getReferenceTableFieldBuilder().getBuilder();
+      return this;
     }
     /**
-     * <pre>
-     * External Info
-     * </pre>
-     *
-     * <code>.dictionary.ReferenceTable referenceTable = 5;</code>
+     * <code>string query = 4;</code>
      */
-    public org.spin.grpc.util.ReferenceTableOrBuilder getReferenceTableOrBuilder() {
-      if (referenceTableBuilder_ != null) {
-        return referenceTableBuilder_.getMessageOrBuilder();
-      } else {
-        return referenceTable_ == null ?
-            org.spin.grpc.util.ReferenceTable.getDefaultInstance() : referenceTable_;
-      }
-    }
-    /**
-     * <pre>
-     * External Info
-     * </pre>
-     *
-     * <code>.dictionary.ReferenceTable referenceTable = 5;</code>
-     */
-    private com.google.protobuf.SingleFieldBuilderV3<
-        org.spin.grpc.util.ReferenceTable, org.spin.grpc.util.ReferenceTable.Builder, org.spin.grpc.util.ReferenceTableOrBuilder> 
-        getReferenceTableFieldBuilder() {
-      if (referenceTableBuilder_ == null) {
-        referenceTableBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-            org.spin.grpc.util.ReferenceTable, org.spin.grpc.util.ReferenceTable.Builder, org.spin.grpc.util.ReferenceTableOrBuilder>(
-                getReferenceTable(),
-                getParentForChildren(),
-                isClean());
-        referenceTable_ = null;
-      }
-      return referenceTableBuilder_;
+    public Builder setQueryBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      
+      query_ = value;
+      onChanged();
+      return this;
     }
 
-    private java.util.List<org.spin.grpc.util.ReferenceValue> values_ =
+    private java.lang.Object directQuery_ = "";
+    /**
+     * <code>string directQuery = 5;</code>
+     */
+    public java.lang.String getDirectQuery() {
+      java.lang.Object ref = directQuery_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        directQuery_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string directQuery = 5;</code>
+     */
+    public com.google.protobuf.ByteString
+        getDirectQueryBytes() {
+      java.lang.Object ref = directQuery_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        directQuery_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string directQuery = 5;</code>
+     */
+    public Builder setDirectQuery(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
+      directQuery_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string directQuery = 5;</code>
+     */
+    public Builder clearDirectQuery() {
+      
+      directQuery_ = getDefaultInstance().getDirectQuery();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string directQuery = 5;</code>
+     */
+    public Builder setDirectQueryBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      
+      directQuery_ = value;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object validationCode_ = "";
+    /**
+     * <code>string validationCode = 6;</code>
+     */
+    public java.lang.String getValidationCode() {
+      java.lang.Object ref = validationCode_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        validationCode_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string validationCode = 6;</code>
+     */
+    public com.google.protobuf.ByteString
+        getValidationCodeBytes() {
+      java.lang.Object ref = validationCode_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        validationCode_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string validationCode = 6;</code>
+     */
+    public Builder setValidationCode(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
+      validationCode_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string validationCode = 6;</code>
+     */
+    public Builder clearValidationCode() {
+      
+      validationCode_ = getDefaultInstance().getValidationCode();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string validationCode = 6;</code>
+     */
+    public Builder setValidationCodeBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      
+      validationCode_ = value;
+      onChanged();
+      return this;
+    }
+
+    private java.util.List<org.spin.grpc.util.ZoomWindow> windows_ =
       java.util.Collections.emptyList();
-    private void ensureValuesIsMutable() {
-      if (!((bitField0_ & 0x00000020) == 0x00000020)) {
-        values_ = new java.util.ArrayList<org.spin.grpc.util.ReferenceValue>(values_);
-        bitField0_ |= 0x00000020;
+    private void ensureWindowsIsMutable() {
+      if (!((bitField0_ & 0x00000040) == 0x00000040)) {
+        windows_ = new java.util.ArrayList<org.spin.grpc.util.ZoomWindow>(windows_);
+        bitField0_ |= 0x00000040;
        }
     }
 
     private com.google.protobuf.RepeatedFieldBuilderV3<
-        org.spin.grpc.util.ReferenceValue, org.spin.grpc.util.ReferenceValue.Builder, org.spin.grpc.util.ReferenceValueOrBuilder> valuesBuilder_;
+        org.spin.grpc.util.ZoomWindow, org.spin.grpc.util.ZoomWindow.Builder, org.spin.grpc.util.ZoomWindowOrBuilder> windowsBuilder_;
 
     /**
-     * <code>repeated .dictionary.ReferenceValue values = 6;</code>
+     * <pre>
+     * External Info
+     * </pre>
+     *
+     * <code>repeated .dictionary.ZoomWindow windows = 7;</code>
      */
-    public java.util.List<org.spin.grpc.util.ReferenceValue> getValuesList() {
-      if (valuesBuilder_ == null) {
-        return java.util.Collections.unmodifiableList(values_);
+    public java.util.List<org.spin.grpc.util.ZoomWindow> getWindowsList() {
+      if (windowsBuilder_ == null) {
+        return java.util.Collections.unmodifiableList(windows_);
       } else {
-        return valuesBuilder_.getMessageList();
+        return windowsBuilder_.getMessageList();
       }
     }
     /**
-     * <code>repeated .dictionary.ReferenceValue values = 6;</code>
+     * <pre>
+     * External Info
+     * </pre>
+     *
+     * <code>repeated .dictionary.ZoomWindow windows = 7;</code>
      */
-    public int getValuesCount() {
-      if (valuesBuilder_ == null) {
-        return values_.size();
+    public int getWindowsCount() {
+      if (windowsBuilder_ == null) {
+        return windows_.size();
       } else {
-        return valuesBuilder_.getCount();
+        return windowsBuilder_.getCount();
       }
     }
     /**
-     * <code>repeated .dictionary.ReferenceValue values = 6;</code>
+     * <pre>
+     * External Info
+     * </pre>
+     *
+     * <code>repeated .dictionary.ZoomWindow windows = 7;</code>
      */
-    public org.spin.grpc.util.ReferenceValue getValues(int index) {
-      if (valuesBuilder_ == null) {
-        return values_.get(index);
+    public org.spin.grpc.util.ZoomWindow getWindows(int index) {
+      if (windowsBuilder_ == null) {
+        return windows_.get(index);
       } else {
-        return valuesBuilder_.getMessage(index);
+        return windowsBuilder_.getMessage(index);
       }
     }
     /**
-     * <code>repeated .dictionary.ReferenceValue values = 6;</code>
+     * <pre>
+     * External Info
+     * </pre>
+     *
+     * <code>repeated .dictionary.ZoomWindow windows = 7;</code>
      */
-    public Builder setValues(
-        int index, org.spin.grpc.util.ReferenceValue value) {
-      if (valuesBuilder_ == null) {
+    public Builder setWindows(
+        int index, org.spin.grpc.util.ZoomWindow value) {
+      if (windowsBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureValuesIsMutable();
-        values_.set(index, value);
+        ensureWindowsIsMutable();
+        windows_.set(index, value);
         onChanged();
       } else {
-        valuesBuilder_.setMessage(index, value);
+        windowsBuilder_.setMessage(index, value);
       }
       return this;
     }
     /**
-     * <code>repeated .dictionary.ReferenceValue values = 6;</code>
+     * <pre>
+     * External Info
+     * </pre>
+     *
+     * <code>repeated .dictionary.ZoomWindow windows = 7;</code>
      */
-    public Builder setValues(
-        int index, org.spin.grpc.util.ReferenceValue.Builder builderForValue) {
-      if (valuesBuilder_ == null) {
-        ensureValuesIsMutable();
-        values_.set(index, builderForValue.build());
+    public Builder setWindows(
+        int index, org.spin.grpc.util.ZoomWindow.Builder builderForValue) {
+      if (windowsBuilder_ == null) {
+        ensureWindowsIsMutable();
+        windows_.set(index, builderForValue.build());
         onChanged();
       } else {
-        valuesBuilder_.setMessage(index, builderForValue.build());
+        windowsBuilder_.setMessage(index, builderForValue.build());
       }
       return this;
     }
     /**
-     * <code>repeated .dictionary.ReferenceValue values = 6;</code>
+     * <pre>
+     * External Info
+     * </pre>
+     *
+     * <code>repeated .dictionary.ZoomWindow windows = 7;</code>
      */
-    public Builder addValues(org.spin.grpc.util.ReferenceValue value) {
-      if (valuesBuilder_ == null) {
+    public Builder addWindows(org.spin.grpc.util.ZoomWindow value) {
+      if (windowsBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureValuesIsMutable();
-        values_.add(value);
+        ensureWindowsIsMutable();
+        windows_.add(value);
         onChanged();
       } else {
-        valuesBuilder_.addMessage(value);
+        windowsBuilder_.addMessage(value);
       }
       return this;
     }
     /**
-     * <code>repeated .dictionary.ReferenceValue values = 6;</code>
+     * <pre>
+     * External Info
+     * </pre>
+     *
+     * <code>repeated .dictionary.ZoomWindow windows = 7;</code>
      */
-    public Builder addValues(
-        int index, org.spin.grpc.util.ReferenceValue value) {
-      if (valuesBuilder_ == null) {
+    public Builder addWindows(
+        int index, org.spin.grpc.util.ZoomWindow value) {
+      if (windowsBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureValuesIsMutable();
-        values_.add(index, value);
+        ensureWindowsIsMutable();
+        windows_.add(index, value);
         onChanged();
       } else {
-        valuesBuilder_.addMessage(index, value);
+        windowsBuilder_.addMessage(index, value);
       }
       return this;
     }
     /**
-     * <code>repeated .dictionary.ReferenceValue values = 6;</code>
+     * <pre>
+     * External Info
+     * </pre>
+     *
+     * <code>repeated .dictionary.ZoomWindow windows = 7;</code>
      */
-    public Builder addValues(
-        org.spin.grpc.util.ReferenceValue.Builder builderForValue) {
-      if (valuesBuilder_ == null) {
-        ensureValuesIsMutable();
-        values_.add(builderForValue.build());
+    public Builder addWindows(
+        org.spin.grpc.util.ZoomWindow.Builder builderForValue) {
+      if (windowsBuilder_ == null) {
+        ensureWindowsIsMutable();
+        windows_.add(builderForValue.build());
         onChanged();
       } else {
-        valuesBuilder_.addMessage(builderForValue.build());
+        windowsBuilder_.addMessage(builderForValue.build());
       }
       return this;
     }
     /**
-     * <code>repeated .dictionary.ReferenceValue values = 6;</code>
+     * <pre>
+     * External Info
+     * </pre>
+     *
+     * <code>repeated .dictionary.ZoomWindow windows = 7;</code>
      */
-    public Builder addValues(
-        int index, org.spin.grpc.util.ReferenceValue.Builder builderForValue) {
-      if (valuesBuilder_ == null) {
-        ensureValuesIsMutable();
-        values_.add(index, builderForValue.build());
+    public Builder addWindows(
+        int index, org.spin.grpc.util.ZoomWindow.Builder builderForValue) {
+      if (windowsBuilder_ == null) {
+        ensureWindowsIsMutable();
+        windows_.add(index, builderForValue.build());
         onChanged();
       } else {
-        valuesBuilder_.addMessage(index, builderForValue.build());
+        windowsBuilder_.addMessage(index, builderForValue.build());
       }
       return this;
     }
     /**
-     * <code>repeated .dictionary.ReferenceValue values = 6;</code>
+     * <pre>
+     * External Info
+     * </pre>
+     *
+     * <code>repeated .dictionary.ZoomWindow windows = 7;</code>
      */
-    public Builder addAllValues(
-        java.lang.Iterable<? extends org.spin.grpc.util.ReferenceValue> values) {
-      if (valuesBuilder_ == null) {
-        ensureValuesIsMutable();
+    public Builder addAllWindows(
+        java.lang.Iterable<? extends org.spin.grpc.util.ZoomWindow> values) {
+      if (windowsBuilder_ == null) {
+        ensureWindowsIsMutable();
         com.google.protobuf.AbstractMessageLite.Builder.addAll(
-            values, values_);
+            values, windows_);
         onChanged();
       } else {
-        valuesBuilder_.addAllMessages(values);
+        windowsBuilder_.addAllMessages(values);
       }
       return this;
     }
     /**
-     * <code>repeated .dictionary.ReferenceValue values = 6;</code>
+     * <pre>
+     * External Info
+     * </pre>
+     *
+     * <code>repeated .dictionary.ZoomWindow windows = 7;</code>
      */
-    public Builder clearValues() {
-      if (valuesBuilder_ == null) {
-        values_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000020);
+    public Builder clearWindows() {
+      if (windowsBuilder_ == null) {
+        windows_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000040);
         onChanged();
       } else {
-        valuesBuilder_.clear();
+        windowsBuilder_.clear();
       }
       return this;
     }
     /**
-     * <code>repeated .dictionary.ReferenceValue values = 6;</code>
+     * <pre>
+     * External Info
+     * </pre>
+     *
+     * <code>repeated .dictionary.ZoomWindow windows = 7;</code>
      */
-    public Builder removeValues(int index) {
-      if (valuesBuilder_ == null) {
-        ensureValuesIsMutable();
-        values_.remove(index);
+    public Builder removeWindows(int index) {
+      if (windowsBuilder_ == null) {
+        ensureWindowsIsMutable();
+        windows_.remove(index);
         onChanged();
       } else {
-        valuesBuilder_.remove(index);
+        windowsBuilder_.remove(index);
       }
       return this;
     }
     /**
-     * <code>repeated .dictionary.ReferenceValue values = 6;</code>
+     * <pre>
+     * External Info
+     * </pre>
+     *
+     * <code>repeated .dictionary.ZoomWindow windows = 7;</code>
      */
-    public org.spin.grpc.util.ReferenceValue.Builder getValuesBuilder(
+    public org.spin.grpc.util.ZoomWindow.Builder getWindowsBuilder(
         int index) {
-      return getValuesFieldBuilder().getBuilder(index);
+      return getWindowsFieldBuilder().getBuilder(index);
     }
     /**
-     * <code>repeated .dictionary.ReferenceValue values = 6;</code>
+     * <pre>
+     * External Info
+     * </pre>
+     *
+     * <code>repeated .dictionary.ZoomWindow windows = 7;</code>
      */
-    public org.spin.grpc.util.ReferenceValueOrBuilder getValuesOrBuilder(
+    public org.spin.grpc.util.ZoomWindowOrBuilder getWindowsOrBuilder(
         int index) {
-      if (valuesBuilder_ == null) {
-        return values_.get(index);  } else {
-        return valuesBuilder_.getMessageOrBuilder(index);
+      if (windowsBuilder_ == null) {
+        return windows_.get(index);  } else {
+        return windowsBuilder_.getMessageOrBuilder(index);
       }
     }
     /**
-     * <code>repeated .dictionary.ReferenceValue values = 6;</code>
+     * <pre>
+     * External Info
+     * </pre>
+     *
+     * <code>repeated .dictionary.ZoomWindow windows = 7;</code>
      */
-    public java.util.List<? extends org.spin.grpc.util.ReferenceValueOrBuilder> 
-         getValuesOrBuilderList() {
-      if (valuesBuilder_ != null) {
-        return valuesBuilder_.getMessageOrBuilderList();
+    public java.util.List<? extends org.spin.grpc.util.ZoomWindowOrBuilder> 
+         getWindowsOrBuilderList() {
+      if (windowsBuilder_ != null) {
+        return windowsBuilder_.getMessageOrBuilderList();
       } else {
-        return java.util.Collections.unmodifiableList(values_);
+        return java.util.Collections.unmodifiableList(windows_);
       }
     }
     /**
-     * <code>repeated .dictionary.ReferenceValue values = 6;</code>
+     * <pre>
+     * External Info
+     * </pre>
+     *
+     * <code>repeated .dictionary.ZoomWindow windows = 7;</code>
      */
-    public org.spin.grpc.util.ReferenceValue.Builder addValuesBuilder() {
-      return getValuesFieldBuilder().addBuilder(
-          org.spin.grpc.util.ReferenceValue.getDefaultInstance());
+    public org.spin.grpc.util.ZoomWindow.Builder addWindowsBuilder() {
+      return getWindowsFieldBuilder().addBuilder(
+          org.spin.grpc.util.ZoomWindow.getDefaultInstance());
     }
     /**
-     * <code>repeated .dictionary.ReferenceValue values = 6;</code>
+     * <pre>
+     * External Info
+     * </pre>
+     *
+     * <code>repeated .dictionary.ZoomWindow windows = 7;</code>
      */
-    public org.spin.grpc.util.ReferenceValue.Builder addValuesBuilder(
+    public org.spin.grpc.util.ZoomWindow.Builder addWindowsBuilder(
         int index) {
-      return getValuesFieldBuilder().addBuilder(
-          index, org.spin.grpc.util.ReferenceValue.getDefaultInstance());
+      return getWindowsFieldBuilder().addBuilder(
+          index, org.spin.grpc.util.ZoomWindow.getDefaultInstance());
     }
     /**
-     * <code>repeated .dictionary.ReferenceValue values = 6;</code>
+     * <pre>
+     * External Info
+     * </pre>
+     *
+     * <code>repeated .dictionary.ZoomWindow windows = 7;</code>
      */
-    public java.util.List<org.spin.grpc.util.ReferenceValue.Builder> 
-         getValuesBuilderList() {
-      return getValuesFieldBuilder().getBuilderList();
+    public java.util.List<org.spin.grpc.util.ZoomWindow.Builder> 
+         getWindowsBuilderList() {
+      return getWindowsFieldBuilder().getBuilderList();
     }
     private com.google.protobuf.RepeatedFieldBuilderV3<
-        org.spin.grpc.util.ReferenceValue, org.spin.grpc.util.ReferenceValue.Builder, org.spin.grpc.util.ReferenceValueOrBuilder> 
-        getValuesFieldBuilder() {
-      if (valuesBuilder_ == null) {
-        valuesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
-            org.spin.grpc.util.ReferenceValue, org.spin.grpc.util.ReferenceValue.Builder, org.spin.grpc.util.ReferenceValueOrBuilder>(
-                values_,
-                ((bitField0_ & 0x00000020) == 0x00000020),
+        org.spin.grpc.util.ZoomWindow, org.spin.grpc.util.ZoomWindow.Builder, org.spin.grpc.util.ZoomWindowOrBuilder> 
+        getWindowsFieldBuilder() {
+      if (windowsBuilder_ == null) {
+        windowsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+            org.spin.grpc.util.ZoomWindow, org.spin.grpc.util.ZoomWindow.Builder, org.spin.grpc.util.ZoomWindowOrBuilder>(
+                windows_,
+                ((bitField0_ & 0x00000040) == 0x00000040),
                 getParentForChildren(),
                 isClean());
-        values_ = null;
+        windows_ = null;
       }
-      return valuesBuilder_;
-    }
-
-    private boolean isActive_ ;
-    /**
-     * <code>bool isActive = 7;</code>
-     */
-    public boolean getIsActive() {
-      return isActive_;
-    }
-    /**
-     * <code>bool isActive = 7;</code>
-     */
-    public Builder setIsActive(boolean value) {
-      
-      isActive_ = value;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>bool isActive = 7;</code>
-     */
-    public Builder clearIsActive() {
-      
-      isActive_ = false;
-      onChanged();
-      return this;
+      return windowsBuilder_;
     }
     public final Builder setUnknownFields(
         final com.google.protobuf.UnknownFieldSet unknownFields) {

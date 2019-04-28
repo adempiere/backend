@@ -326,19 +326,6 @@ private static final long serialVersionUID = 0L;
             break;
           }
           case 330: {
-            org.spin.grpc.util.Validation.Builder subBuilder = null;
-            if (validation_ != null) {
-              subBuilder = validation_.toBuilder();
-            }
-            validation_ = input.readMessage(org.spin.grpc.util.Validation.parser(), extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(validation_);
-              validation_ = subBuilder.buildPartial();
-            }
-
-            break;
-          }
-          case 338: {
             org.spin.grpc.util.FieldDefinition.Builder subBuilder = null;
             if (fieldDefinition_ != null) {
               subBuilder = fieldDefinition_.toBuilder();
@@ -351,7 +338,7 @@ private static final long serialVersionUID = 0L;
 
             break;
           }
-          case 346: {
+          case 338: {
             org.spin.grpc.util.Reference.Builder subBuilder = null;
             if (reference_ != null) {
               subBuilder = reference_.toBuilder();
@@ -364,7 +351,7 @@ private static final long serialVersionUID = 0L;
 
             break;
           }
-          case 354: {
+          case 346: {
             org.spin.grpc.util.Process.Builder subBuilder = null;
             if (process_ != null) {
               subBuilder = process_.toBuilder();
@@ -377,37 +364,37 @@ private static final long serialVersionUID = 0L;
 
             break;
           }
-          case 360: {
+          case 352: {
 
             isQueryCriteria_ = input.readBool();
             break;
           }
-          case 368: {
+          case 360: {
 
             isOrderBy_ = input.readBool();
             break;
           }
-          case 376: {
+          case 368: {
 
             seqNoGrid_ = input.readInt32();
             break;
           }
-          case 384: {
+          case 376: {
 
             sortNo_ = input.readInt32();
             break;
           }
-          case 392: {
+          case 384: {
 
             isInfoOnly_ = input.readBool();
             break;
           }
-          case 400: {
+          case 392: {
 
             isActive_ = input.readBool();
             break;
           }
-          case 410: {
+          case 402: {
             java.lang.String s = input.readStringRequireUtf8();
 
             defaultValueTo_ = s;
@@ -1213,156 +1200,135 @@ private static final long serialVersionUID = 0L;
     return getFieldGroup();
   }
 
-  public static final int VALIDATION_FIELD_NUMBER = 41;
-  private org.spin.grpc.util.Validation validation_;
-  /**
-   * <code>.dictionary.Validation validation = 41;</code>
-   */
-  public boolean hasValidation() {
-    return validation_ != null;
-  }
-  /**
-   * <code>.dictionary.Validation validation = 41;</code>
-   */
-  public org.spin.grpc.util.Validation getValidation() {
-    return validation_ == null ? org.spin.grpc.util.Validation.getDefaultInstance() : validation_;
-  }
-  /**
-   * <code>.dictionary.Validation validation = 41;</code>
-   */
-  public org.spin.grpc.util.ValidationOrBuilder getValidationOrBuilder() {
-    return getValidation();
-  }
-
-  public static final int FIELDDEFINITION_FIELD_NUMBER = 42;
+  public static final int FIELDDEFINITION_FIELD_NUMBER = 41;
   private org.spin.grpc.util.FieldDefinition fieldDefinition_;
   /**
-   * <code>.dictionary.FieldDefinition fieldDefinition = 42;</code>
+   * <code>.dictionary.FieldDefinition fieldDefinition = 41;</code>
    */
   public boolean hasFieldDefinition() {
     return fieldDefinition_ != null;
   }
   /**
-   * <code>.dictionary.FieldDefinition fieldDefinition = 42;</code>
+   * <code>.dictionary.FieldDefinition fieldDefinition = 41;</code>
    */
   public org.spin.grpc.util.FieldDefinition getFieldDefinition() {
     return fieldDefinition_ == null ? org.spin.grpc.util.FieldDefinition.getDefaultInstance() : fieldDefinition_;
   }
   /**
-   * <code>.dictionary.FieldDefinition fieldDefinition = 42;</code>
+   * <code>.dictionary.FieldDefinition fieldDefinition = 41;</code>
    */
   public org.spin.grpc.util.FieldDefinitionOrBuilder getFieldDefinitionOrBuilder() {
     return getFieldDefinition();
   }
 
-  public static final int REFERENCE_FIELD_NUMBER = 43;
+  public static final int REFERENCE_FIELD_NUMBER = 42;
   private org.spin.grpc.util.Reference reference_;
   /**
-   * <code>.dictionary.Reference reference = 43;</code>
+   * <code>.dictionary.Reference reference = 42;</code>
    */
   public boolean hasReference() {
     return reference_ != null;
   }
   /**
-   * <code>.dictionary.Reference reference = 43;</code>
+   * <code>.dictionary.Reference reference = 42;</code>
    */
   public org.spin.grpc.util.Reference getReference() {
     return reference_ == null ? org.spin.grpc.util.Reference.getDefaultInstance() : reference_;
   }
   /**
-   * <code>.dictionary.Reference reference = 43;</code>
+   * <code>.dictionary.Reference reference = 42;</code>
    */
   public org.spin.grpc.util.ReferenceOrBuilder getReferenceOrBuilder() {
     return getReference();
   }
 
-  public static final int PROCESS_FIELD_NUMBER = 44;
+  public static final int PROCESS_FIELD_NUMBER = 43;
   private org.spin.grpc.util.Process process_;
   /**
-   * <code>.dictionary.Process process = 44;</code>
+   * <code>.dictionary.Process process = 43;</code>
    */
   public boolean hasProcess() {
     return process_ != null;
   }
   /**
-   * <code>.dictionary.Process process = 44;</code>
+   * <code>.dictionary.Process process = 43;</code>
    */
   public org.spin.grpc.util.Process getProcess() {
     return process_ == null ? org.spin.grpc.util.Process.getDefaultInstance() : process_;
   }
   /**
-   * <code>.dictionary.Process process = 44;</code>
+   * <code>.dictionary.Process process = 43;</code>
    */
   public org.spin.grpc.util.ProcessOrBuilder getProcessOrBuilder() {
     return getProcess();
   }
 
-  public static final int ISQUERYCRITERIA_FIELD_NUMBER = 45;
+  public static final int ISQUERYCRITERIA_FIELD_NUMBER = 44;
   private boolean isQueryCriteria_;
   /**
    * <pre>
    * Smart Browser Field Compatibility
    * </pre>
    *
-   * <code>bool isQueryCriteria = 45;</code>
+   * <code>bool isQueryCriteria = 44;</code>
    */
   public boolean getIsQueryCriteria() {
     return isQueryCriteria_;
   }
 
-  public static final int ISORDERBY_FIELD_NUMBER = 46;
+  public static final int ISORDERBY_FIELD_NUMBER = 45;
   private boolean isOrderBy_;
   /**
-   * <code>bool isOrderBy = 46;</code>
+   * <code>bool isOrderBy = 45;</code>
    */
   public boolean getIsOrderBy() {
     return isOrderBy_;
   }
 
-  public static final int SEQNOGRID_FIELD_NUMBER = 47;
+  public static final int SEQNOGRID_FIELD_NUMBER = 46;
   private int seqNoGrid_;
   /**
-   * <code>int32 seqNoGrid = 47;</code>
+   * <code>int32 seqNoGrid = 46;</code>
    */
   public int getSeqNoGrid() {
     return seqNoGrid_;
   }
 
-  public static final int SORTNO_FIELD_NUMBER = 48;
+  public static final int SORTNO_FIELD_NUMBER = 47;
   private int sortNo_;
   /**
-   * <code>int32 sortNo = 48;</code>
+   * <code>int32 sortNo = 47;</code>
    */
   public int getSortNo() {
     return sortNo_;
   }
 
-  public static final int ISINFOONLY_FIELD_NUMBER = 49;
+  public static final int ISINFOONLY_FIELD_NUMBER = 48;
   private boolean isInfoOnly_;
   /**
-   * <code>bool isInfoOnly = 49;</code>
+   * <code>bool isInfoOnly = 48;</code>
    */
   public boolean getIsInfoOnly() {
     return isInfoOnly_;
   }
 
-  public static final int ISACTIVE_FIELD_NUMBER = 50;
+  public static final int ISACTIVE_FIELD_NUMBER = 49;
   private boolean isActive_;
   /**
-   * <code>bool isActive = 50;</code>
+   * <code>bool isActive = 49;</code>
    */
   public boolean getIsActive() {
     return isActive_;
   }
 
-  public static final int DEFAULTVALUETO_FIELD_NUMBER = 51;
+  public static final int DEFAULTVALUETO_FIELD_NUMBER = 50;
   private volatile java.lang.Object defaultValueTo_;
   /**
    * <pre>
    * Process Parameter Compatibility
    * </pre>
    *
-   * <code>string defaultValueTo = 51;</code>
+   * <code>string defaultValueTo = 50;</code>
    */
   public java.lang.String getDefaultValueTo() {
     java.lang.Object ref = defaultValueTo_;
@@ -1381,7 +1347,7 @@ private static final long serialVersionUID = 0L;
    * Process Parameter Compatibility
    * </pre>
    *
-   * <code>string defaultValueTo = 51;</code>
+   * <code>string defaultValueTo = 50;</code>
    */
   public com.google.protobuf.ByteString
       getDefaultValueToBytes() {
@@ -1526,38 +1492,35 @@ private static final long serialVersionUID = 0L;
     if (fieldGroup_ != null) {
       output.writeMessage(40, getFieldGroup());
     }
-    if (validation_ != null) {
-      output.writeMessage(41, getValidation());
-    }
     if (fieldDefinition_ != null) {
-      output.writeMessage(42, getFieldDefinition());
+      output.writeMessage(41, getFieldDefinition());
     }
     if (reference_ != null) {
-      output.writeMessage(43, getReference());
+      output.writeMessage(42, getReference());
     }
     if (process_ != null) {
-      output.writeMessage(44, getProcess());
+      output.writeMessage(43, getProcess());
     }
     if (isQueryCriteria_ != false) {
-      output.writeBool(45, isQueryCriteria_);
+      output.writeBool(44, isQueryCriteria_);
     }
     if (isOrderBy_ != false) {
-      output.writeBool(46, isOrderBy_);
+      output.writeBool(45, isOrderBy_);
     }
     if (seqNoGrid_ != 0) {
-      output.writeInt32(47, seqNoGrid_);
+      output.writeInt32(46, seqNoGrid_);
     }
     if (sortNo_ != 0) {
-      output.writeInt32(48, sortNo_);
+      output.writeInt32(47, sortNo_);
     }
     if (isInfoOnly_ != false) {
-      output.writeBool(49, isInfoOnly_);
+      output.writeBool(48, isInfoOnly_);
     }
     if (isActive_ != false) {
-      output.writeBool(50, isActive_);
+      output.writeBool(49, isActive_);
     }
     if (!getDefaultValueToBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 51, defaultValueTo_);
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 50, defaultValueTo_);
     }
     if (identifierSequence_ != 0) {
       output.writeInt32(77, identifierSequence_);
@@ -1711,48 +1674,44 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(40, getFieldGroup());
     }
-    if (validation_ != null) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(41, getValidation());
-    }
     if (fieldDefinition_ != null) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(42, getFieldDefinition());
+        .computeMessageSize(41, getFieldDefinition());
     }
     if (reference_ != null) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(43, getReference());
+        .computeMessageSize(42, getReference());
     }
     if (process_ != null) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(44, getProcess());
+        .computeMessageSize(43, getProcess());
     }
     if (isQueryCriteria_ != false) {
       size += com.google.protobuf.CodedOutputStream
-        .computeBoolSize(45, isQueryCriteria_);
+        .computeBoolSize(44, isQueryCriteria_);
     }
     if (isOrderBy_ != false) {
       size += com.google.protobuf.CodedOutputStream
-        .computeBoolSize(46, isOrderBy_);
+        .computeBoolSize(45, isOrderBy_);
     }
     if (seqNoGrid_ != 0) {
       size += com.google.protobuf.CodedOutputStream
-        .computeInt32Size(47, seqNoGrid_);
+        .computeInt32Size(46, seqNoGrid_);
     }
     if (sortNo_ != 0) {
       size += com.google.protobuf.CodedOutputStream
-        .computeInt32Size(48, sortNo_);
+        .computeInt32Size(47, sortNo_);
     }
     if (isInfoOnly_ != false) {
       size += com.google.protobuf.CodedOutputStream
-        .computeBoolSize(49, isInfoOnly_);
+        .computeBoolSize(48, isInfoOnly_);
     }
     if (isActive_ != false) {
       size += com.google.protobuf.CodedOutputStream
-        .computeBoolSize(50, isActive_);
+        .computeBoolSize(49, isActive_);
     }
     if (!getDefaultValueToBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(51, defaultValueTo_);
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(50, defaultValueTo_);
     }
     if (identifierSequence_ != 0) {
       size += com.google.protobuf.CodedOutputStream
@@ -1859,11 +1818,6 @@ private static final long serialVersionUID = 0L;
     if (hasFieldGroup()) {
       result = result && getFieldGroup()
           .equals(other.getFieldGroup());
-    }
-    result = result && (hasValidation() == other.hasValidation());
-    if (hasValidation()) {
-      result = result && getValidation()
-          .equals(other.getValidation());
     }
     result = result && (hasFieldDefinition() == other.hasFieldDefinition());
     if (hasFieldDefinition()) {
@@ -2007,10 +1961,6 @@ private static final long serialVersionUID = 0L;
     if (hasFieldGroup()) {
       hash = (37 * hash) + FIELDGROUP_FIELD_NUMBER;
       hash = (53 * hash) + getFieldGroup().hashCode();
-    }
-    if (hasValidation()) {
-      hash = (37 * hash) + VALIDATION_FIELD_NUMBER;
-      hash = (53 * hash) + getValidation().hashCode();
     }
     if (hasFieldDefinition()) {
       hash = (37 * hash) + FIELDDEFINITION_FIELD_NUMBER;
@@ -2263,12 +2213,6 @@ private static final long serialVersionUID = 0L;
         fieldGroup_ = null;
         fieldGroupBuilder_ = null;
       }
-      if (validationBuilder_ == null) {
-        validation_ = null;
-      } else {
-        validation_ = null;
-        validationBuilder_ = null;
-      }
       if (fieldDefinitionBuilder_ == null) {
         fieldDefinition_ = null;
       } else {
@@ -2370,11 +2314,6 @@ private static final long serialVersionUID = 0L;
         result.fieldGroup_ = fieldGroup_;
       } else {
         result.fieldGroup_ = fieldGroupBuilder_.build();
-      }
-      if (validationBuilder_ == null) {
-        result.validation_ = validation_;
-      } else {
-        result.validation_ = validationBuilder_.build();
       }
       if (fieldDefinitionBuilder_ == null) {
         result.fieldDefinition_ = fieldDefinition_;
@@ -2573,9 +2512,6 @@ private static final long serialVersionUID = 0L;
       }
       if (other.hasFieldGroup()) {
         mergeFieldGroup(other.getFieldGroup());
-      }
-      if (other.hasValidation()) {
-        mergeValidation(other.getValidation());
       }
       if (other.hasFieldDefinition()) {
         mergeFieldDefinition(other.getFieldDefinition());
@@ -4538,134 +4474,17 @@ private static final long serialVersionUID = 0L;
       return fieldGroupBuilder_;
     }
 
-    private org.spin.grpc.util.Validation validation_ = null;
-    private com.google.protobuf.SingleFieldBuilderV3<
-        org.spin.grpc.util.Validation, org.spin.grpc.util.Validation.Builder, org.spin.grpc.util.ValidationOrBuilder> validationBuilder_;
-    /**
-     * <code>.dictionary.Validation validation = 41;</code>
-     */
-    public boolean hasValidation() {
-      return validationBuilder_ != null || validation_ != null;
-    }
-    /**
-     * <code>.dictionary.Validation validation = 41;</code>
-     */
-    public org.spin.grpc.util.Validation getValidation() {
-      if (validationBuilder_ == null) {
-        return validation_ == null ? org.spin.grpc.util.Validation.getDefaultInstance() : validation_;
-      } else {
-        return validationBuilder_.getMessage();
-      }
-    }
-    /**
-     * <code>.dictionary.Validation validation = 41;</code>
-     */
-    public Builder setValidation(org.spin.grpc.util.Validation value) {
-      if (validationBuilder_ == null) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        validation_ = value;
-        onChanged();
-      } else {
-        validationBuilder_.setMessage(value);
-      }
-
-      return this;
-    }
-    /**
-     * <code>.dictionary.Validation validation = 41;</code>
-     */
-    public Builder setValidation(
-        org.spin.grpc.util.Validation.Builder builderForValue) {
-      if (validationBuilder_ == null) {
-        validation_ = builderForValue.build();
-        onChanged();
-      } else {
-        validationBuilder_.setMessage(builderForValue.build());
-      }
-
-      return this;
-    }
-    /**
-     * <code>.dictionary.Validation validation = 41;</code>
-     */
-    public Builder mergeValidation(org.spin.grpc.util.Validation value) {
-      if (validationBuilder_ == null) {
-        if (validation_ != null) {
-          validation_ =
-            org.spin.grpc.util.Validation.newBuilder(validation_).mergeFrom(value).buildPartial();
-        } else {
-          validation_ = value;
-        }
-        onChanged();
-      } else {
-        validationBuilder_.mergeFrom(value);
-      }
-
-      return this;
-    }
-    /**
-     * <code>.dictionary.Validation validation = 41;</code>
-     */
-    public Builder clearValidation() {
-      if (validationBuilder_ == null) {
-        validation_ = null;
-        onChanged();
-      } else {
-        validation_ = null;
-        validationBuilder_ = null;
-      }
-
-      return this;
-    }
-    /**
-     * <code>.dictionary.Validation validation = 41;</code>
-     */
-    public org.spin.grpc.util.Validation.Builder getValidationBuilder() {
-      
-      onChanged();
-      return getValidationFieldBuilder().getBuilder();
-    }
-    /**
-     * <code>.dictionary.Validation validation = 41;</code>
-     */
-    public org.spin.grpc.util.ValidationOrBuilder getValidationOrBuilder() {
-      if (validationBuilder_ != null) {
-        return validationBuilder_.getMessageOrBuilder();
-      } else {
-        return validation_ == null ?
-            org.spin.grpc.util.Validation.getDefaultInstance() : validation_;
-      }
-    }
-    /**
-     * <code>.dictionary.Validation validation = 41;</code>
-     */
-    private com.google.protobuf.SingleFieldBuilderV3<
-        org.spin.grpc.util.Validation, org.spin.grpc.util.Validation.Builder, org.spin.grpc.util.ValidationOrBuilder> 
-        getValidationFieldBuilder() {
-      if (validationBuilder_ == null) {
-        validationBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-            org.spin.grpc.util.Validation, org.spin.grpc.util.Validation.Builder, org.spin.grpc.util.ValidationOrBuilder>(
-                getValidation(),
-                getParentForChildren(),
-                isClean());
-        validation_ = null;
-      }
-      return validationBuilder_;
-    }
-
     private org.spin.grpc.util.FieldDefinition fieldDefinition_ = null;
     private com.google.protobuf.SingleFieldBuilderV3<
         org.spin.grpc.util.FieldDefinition, org.spin.grpc.util.FieldDefinition.Builder, org.spin.grpc.util.FieldDefinitionOrBuilder> fieldDefinitionBuilder_;
     /**
-     * <code>.dictionary.FieldDefinition fieldDefinition = 42;</code>
+     * <code>.dictionary.FieldDefinition fieldDefinition = 41;</code>
      */
     public boolean hasFieldDefinition() {
       return fieldDefinitionBuilder_ != null || fieldDefinition_ != null;
     }
     /**
-     * <code>.dictionary.FieldDefinition fieldDefinition = 42;</code>
+     * <code>.dictionary.FieldDefinition fieldDefinition = 41;</code>
      */
     public org.spin.grpc.util.FieldDefinition getFieldDefinition() {
       if (fieldDefinitionBuilder_ == null) {
@@ -4675,7 +4494,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>.dictionary.FieldDefinition fieldDefinition = 42;</code>
+     * <code>.dictionary.FieldDefinition fieldDefinition = 41;</code>
      */
     public Builder setFieldDefinition(org.spin.grpc.util.FieldDefinition value) {
       if (fieldDefinitionBuilder_ == null) {
@@ -4691,7 +4510,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.dictionary.FieldDefinition fieldDefinition = 42;</code>
+     * <code>.dictionary.FieldDefinition fieldDefinition = 41;</code>
      */
     public Builder setFieldDefinition(
         org.spin.grpc.util.FieldDefinition.Builder builderForValue) {
@@ -4705,7 +4524,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.dictionary.FieldDefinition fieldDefinition = 42;</code>
+     * <code>.dictionary.FieldDefinition fieldDefinition = 41;</code>
      */
     public Builder mergeFieldDefinition(org.spin.grpc.util.FieldDefinition value) {
       if (fieldDefinitionBuilder_ == null) {
@@ -4723,7 +4542,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.dictionary.FieldDefinition fieldDefinition = 42;</code>
+     * <code>.dictionary.FieldDefinition fieldDefinition = 41;</code>
      */
     public Builder clearFieldDefinition() {
       if (fieldDefinitionBuilder_ == null) {
@@ -4737,7 +4556,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.dictionary.FieldDefinition fieldDefinition = 42;</code>
+     * <code>.dictionary.FieldDefinition fieldDefinition = 41;</code>
      */
     public org.spin.grpc.util.FieldDefinition.Builder getFieldDefinitionBuilder() {
       
@@ -4745,7 +4564,7 @@ private static final long serialVersionUID = 0L;
       return getFieldDefinitionFieldBuilder().getBuilder();
     }
     /**
-     * <code>.dictionary.FieldDefinition fieldDefinition = 42;</code>
+     * <code>.dictionary.FieldDefinition fieldDefinition = 41;</code>
      */
     public org.spin.grpc.util.FieldDefinitionOrBuilder getFieldDefinitionOrBuilder() {
       if (fieldDefinitionBuilder_ != null) {
@@ -4756,7 +4575,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>.dictionary.FieldDefinition fieldDefinition = 42;</code>
+     * <code>.dictionary.FieldDefinition fieldDefinition = 41;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
         org.spin.grpc.util.FieldDefinition, org.spin.grpc.util.FieldDefinition.Builder, org.spin.grpc.util.FieldDefinitionOrBuilder> 
@@ -4776,13 +4595,13 @@ private static final long serialVersionUID = 0L;
     private com.google.protobuf.SingleFieldBuilderV3<
         org.spin.grpc.util.Reference, org.spin.grpc.util.Reference.Builder, org.spin.grpc.util.ReferenceOrBuilder> referenceBuilder_;
     /**
-     * <code>.dictionary.Reference reference = 43;</code>
+     * <code>.dictionary.Reference reference = 42;</code>
      */
     public boolean hasReference() {
       return referenceBuilder_ != null || reference_ != null;
     }
     /**
-     * <code>.dictionary.Reference reference = 43;</code>
+     * <code>.dictionary.Reference reference = 42;</code>
      */
     public org.spin.grpc.util.Reference getReference() {
       if (referenceBuilder_ == null) {
@@ -4792,7 +4611,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>.dictionary.Reference reference = 43;</code>
+     * <code>.dictionary.Reference reference = 42;</code>
      */
     public Builder setReference(org.spin.grpc.util.Reference value) {
       if (referenceBuilder_ == null) {
@@ -4808,7 +4627,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.dictionary.Reference reference = 43;</code>
+     * <code>.dictionary.Reference reference = 42;</code>
      */
     public Builder setReference(
         org.spin.grpc.util.Reference.Builder builderForValue) {
@@ -4822,7 +4641,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.dictionary.Reference reference = 43;</code>
+     * <code>.dictionary.Reference reference = 42;</code>
      */
     public Builder mergeReference(org.spin.grpc.util.Reference value) {
       if (referenceBuilder_ == null) {
@@ -4840,7 +4659,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.dictionary.Reference reference = 43;</code>
+     * <code>.dictionary.Reference reference = 42;</code>
      */
     public Builder clearReference() {
       if (referenceBuilder_ == null) {
@@ -4854,7 +4673,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.dictionary.Reference reference = 43;</code>
+     * <code>.dictionary.Reference reference = 42;</code>
      */
     public org.spin.grpc.util.Reference.Builder getReferenceBuilder() {
       
@@ -4862,7 +4681,7 @@ private static final long serialVersionUID = 0L;
       return getReferenceFieldBuilder().getBuilder();
     }
     /**
-     * <code>.dictionary.Reference reference = 43;</code>
+     * <code>.dictionary.Reference reference = 42;</code>
      */
     public org.spin.grpc.util.ReferenceOrBuilder getReferenceOrBuilder() {
       if (referenceBuilder_ != null) {
@@ -4873,7 +4692,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>.dictionary.Reference reference = 43;</code>
+     * <code>.dictionary.Reference reference = 42;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
         org.spin.grpc.util.Reference, org.spin.grpc.util.Reference.Builder, org.spin.grpc.util.ReferenceOrBuilder> 
@@ -4893,13 +4712,13 @@ private static final long serialVersionUID = 0L;
     private com.google.protobuf.SingleFieldBuilderV3<
         org.spin.grpc.util.Process, org.spin.grpc.util.Process.Builder, org.spin.grpc.util.ProcessOrBuilder> processBuilder_;
     /**
-     * <code>.dictionary.Process process = 44;</code>
+     * <code>.dictionary.Process process = 43;</code>
      */
     public boolean hasProcess() {
       return processBuilder_ != null || process_ != null;
     }
     /**
-     * <code>.dictionary.Process process = 44;</code>
+     * <code>.dictionary.Process process = 43;</code>
      */
     public org.spin.grpc.util.Process getProcess() {
       if (processBuilder_ == null) {
@@ -4909,7 +4728,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>.dictionary.Process process = 44;</code>
+     * <code>.dictionary.Process process = 43;</code>
      */
     public Builder setProcess(org.spin.grpc.util.Process value) {
       if (processBuilder_ == null) {
@@ -4925,7 +4744,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.dictionary.Process process = 44;</code>
+     * <code>.dictionary.Process process = 43;</code>
      */
     public Builder setProcess(
         org.spin.grpc.util.Process.Builder builderForValue) {
@@ -4939,7 +4758,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.dictionary.Process process = 44;</code>
+     * <code>.dictionary.Process process = 43;</code>
      */
     public Builder mergeProcess(org.spin.grpc.util.Process value) {
       if (processBuilder_ == null) {
@@ -4957,7 +4776,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.dictionary.Process process = 44;</code>
+     * <code>.dictionary.Process process = 43;</code>
      */
     public Builder clearProcess() {
       if (processBuilder_ == null) {
@@ -4971,7 +4790,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.dictionary.Process process = 44;</code>
+     * <code>.dictionary.Process process = 43;</code>
      */
     public org.spin.grpc.util.Process.Builder getProcessBuilder() {
       
@@ -4979,7 +4798,7 @@ private static final long serialVersionUID = 0L;
       return getProcessFieldBuilder().getBuilder();
     }
     /**
-     * <code>.dictionary.Process process = 44;</code>
+     * <code>.dictionary.Process process = 43;</code>
      */
     public org.spin.grpc.util.ProcessOrBuilder getProcessOrBuilder() {
       if (processBuilder_ != null) {
@@ -4990,7 +4809,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>.dictionary.Process process = 44;</code>
+     * <code>.dictionary.Process process = 43;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
         org.spin.grpc.util.Process, org.spin.grpc.util.Process.Builder, org.spin.grpc.util.ProcessOrBuilder> 
@@ -5012,7 +4831,7 @@ private static final long serialVersionUID = 0L;
      * Smart Browser Field Compatibility
      * </pre>
      *
-     * <code>bool isQueryCriteria = 45;</code>
+     * <code>bool isQueryCriteria = 44;</code>
      */
     public boolean getIsQueryCriteria() {
       return isQueryCriteria_;
@@ -5022,7 +4841,7 @@ private static final long serialVersionUID = 0L;
      * Smart Browser Field Compatibility
      * </pre>
      *
-     * <code>bool isQueryCriteria = 45;</code>
+     * <code>bool isQueryCriteria = 44;</code>
      */
     public Builder setIsQueryCriteria(boolean value) {
       
@@ -5035,7 +4854,7 @@ private static final long serialVersionUID = 0L;
      * Smart Browser Field Compatibility
      * </pre>
      *
-     * <code>bool isQueryCriteria = 45;</code>
+     * <code>bool isQueryCriteria = 44;</code>
      */
     public Builder clearIsQueryCriteria() {
       
@@ -5046,13 +4865,13 @@ private static final long serialVersionUID = 0L;
 
     private boolean isOrderBy_ ;
     /**
-     * <code>bool isOrderBy = 46;</code>
+     * <code>bool isOrderBy = 45;</code>
      */
     public boolean getIsOrderBy() {
       return isOrderBy_;
     }
     /**
-     * <code>bool isOrderBy = 46;</code>
+     * <code>bool isOrderBy = 45;</code>
      */
     public Builder setIsOrderBy(boolean value) {
       
@@ -5061,7 +4880,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>bool isOrderBy = 46;</code>
+     * <code>bool isOrderBy = 45;</code>
      */
     public Builder clearIsOrderBy() {
       
@@ -5072,13 +4891,13 @@ private static final long serialVersionUID = 0L;
 
     private int seqNoGrid_ ;
     /**
-     * <code>int32 seqNoGrid = 47;</code>
+     * <code>int32 seqNoGrid = 46;</code>
      */
     public int getSeqNoGrid() {
       return seqNoGrid_;
     }
     /**
-     * <code>int32 seqNoGrid = 47;</code>
+     * <code>int32 seqNoGrid = 46;</code>
      */
     public Builder setSeqNoGrid(int value) {
       
@@ -5087,7 +4906,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>int32 seqNoGrid = 47;</code>
+     * <code>int32 seqNoGrid = 46;</code>
      */
     public Builder clearSeqNoGrid() {
       
@@ -5098,13 +4917,13 @@ private static final long serialVersionUID = 0L;
 
     private int sortNo_ ;
     /**
-     * <code>int32 sortNo = 48;</code>
+     * <code>int32 sortNo = 47;</code>
      */
     public int getSortNo() {
       return sortNo_;
     }
     /**
-     * <code>int32 sortNo = 48;</code>
+     * <code>int32 sortNo = 47;</code>
      */
     public Builder setSortNo(int value) {
       
@@ -5113,7 +4932,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>int32 sortNo = 48;</code>
+     * <code>int32 sortNo = 47;</code>
      */
     public Builder clearSortNo() {
       
@@ -5124,13 +4943,13 @@ private static final long serialVersionUID = 0L;
 
     private boolean isInfoOnly_ ;
     /**
-     * <code>bool isInfoOnly = 49;</code>
+     * <code>bool isInfoOnly = 48;</code>
      */
     public boolean getIsInfoOnly() {
       return isInfoOnly_;
     }
     /**
-     * <code>bool isInfoOnly = 49;</code>
+     * <code>bool isInfoOnly = 48;</code>
      */
     public Builder setIsInfoOnly(boolean value) {
       
@@ -5139,7 +4958,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>bool isInfoOnly = 49;</code>
+     * <code>bool isInfoOnly = 48;</code>
      */
     public Builder clearIsInfoOnly() {
       
@@ -5150,13 +4969,13 @@ private static final long serialVersionUID = 0L;
 
     private boolean isActive_ ;
     /**
-     * <code>bool isActive = 50;</code>
+     * <code>bool isActive = 49;</code>
      */
     public boolean getIsActive() {
       return isActive_;
     }
     /**
-     * <code>bool isActive = 50;</code>
+     * <code>bool isActive = 49;</code>
      */
     public Builder setIsActive(boolean value) {
       
@@ -5165,7 +4984,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>bool isActive = 50;</code>
+     * <code>bool isActive = 49;</code>
      */
     public Builder clearIsActive() {
       
@@ -5180,7 +4999,7 @@ private static final long serialVersionUID = 0L;
      * Process Parameter Compatibility
      * </pre>
      *
-     * <code>string defaultValueTo = 51;</code>
+     * <code>string defaultValueTo = 50;</code>
      */
     public java.lang.String getDefaultValueTo() {
       java.lang.Object ref = defaultValueTo_;
@@ -5199,7 +5018,7 @@ private static final long serialVersionUID = 0L;
      * Process Parameter Compatibility
      * </pre>
      *
-     * <code>string defaultValueTo = 51;</code>
+     * <code>string defaultValueTo = 50;</code>
      */
     public com.google.protobuf.ByteString
         getDefaultValueToBytes() {
@@ -5219,7 +5038,7 @@ private static final long serialVersionUID = 0L;
      * Process Parameter Compatibility
      * </pre>
      *
-     * <code>string defaultValueTo = 51;</code>
+     * <code>string defaultValueTo = 50;</code>
      */
     public Builder setDefaultValueTo(
         java.lang.String value) {
@@ -5236,7 +5055,7 @@ private static final long serialVersionUID = 0L;
      * Process Parameter Compatibility
      * </pre>
      *
-     * <code>string defaultValueTo = 51;</code>
+     * <code>string defaultValueTo = 50;</code>
      */
     public Builder clearDefaultValueTo() {
       
@@ -5249,7 +5068,7 @@ private static final long serialVersionUID = 0L;
      * Process Parameter Compatibility
      * </pre>
      *
-     * <code>string defaultValueTo = 51;</code>
+     * <code>string defaultValueTo = 50;</code>
      */
     public Builder setDefaultValueToBytes(
         com.google.protobuf.ByteString value) {

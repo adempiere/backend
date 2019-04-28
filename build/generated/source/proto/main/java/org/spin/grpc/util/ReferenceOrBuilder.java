@@ -8,91 +8,106 @@ public interface ReferenceOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
   /**
-   * <code>int32 id = 1;</code>
+   * <code>string tableName = 1;</code>
    */
-  int getId();
-
+  java.lang.String getTableName();
   /**
-   * <code>string uuid = 2;</code>
-   */
-  java.lang.String getUuid();
-  /**
-   * <code>string uuid = 2;</code>
+   * <code>string tableName = 1;</code>
    */
   com.google.protobuf.ByteString
-      getUuidBytes();
+      getTableNameBytes();
 
   /**
-   * <code>string name = 3;</code>
+   * <code>string keyColumnName = 2;</code>
    */
-  java.lang.String getName();
+  java.lang.String getKeyColumnName();
   /**
-   * <code>string name = 3;</code>
+   * <code>string keyColumnName = 2;</code>
    */
   com.google.protobuf.ByteString
-      getNameBytes();
+      getKeyColumnNameBytes();
 
   /**
-   * <code>string validationType = 4;</code>
+   * <code>string displayColumnName = 3;</code>
    */
-  java.lang.String getValidationType();
+  java.lang.String getDisplayColumnName();
   /**
-   * <code>string validationType = 4;</code>
+   * <code>string displayColumnName = 3;</code>
    */
   com.google.protobuf.ByteString
-      getValidationTypeBytes();
+      getDisplayColumnNameBytes();
+
+  /**
+   * <code>string query = 4;</code>
+   */
+  java.lang.String getQuery();
+  /**
+   * <code>string query = 4;</code>
+   */
+  com.google.protobuf.ByteString
+      getQueryBytes();
+
+  /**
+   * <code>string directQuery = 5;</code>
+   */
+  java.lang.String getDirectQuery();
+  /**
+   * <code>string directQuery = 5;</code>
+   */
+  com.google.protobuf.ByteString
+      getDirectQueryBytes();
+
+  /**
+   * <code>string validationCode = 6;</code>
+   */
+  java.lang.String getValidationCode();
+  /**
+   * <code>string validationCode = 6;</code>
+   */
+  com.google.protobuf.ByteString
+      getValidationCodeBytes();
 
   /**
    * <pre>
    * External Info
    * </pre>
    *
-   * <code>.dictionary.ReferenceTable referenceTable = 5;</code>
+   * <code>repeated .dictionary.ZoomWindow windows = 7;</code>
    */
-  boolean hasReferenceTable();
+  java.util.List<org.spin.grpc.util.ZoomWindow> 
+      getWindowsList();
   /**
    * <pre>
    * External Info
    * </pre>
    *
-   * <code>.dictionary.ReferenceTable referenceTable = 5;</code>
+   * <code>repeated .dictionary.ZoomWindow windows = 7;</code>
    */
-  org.spin.grpc.util.ReferenceTable getReferenceTable();
+  org.spin.grpc.util.ZoomWindow getWindows(int index);
   /**
    * <pre>
    * External Info
    * </pre>
    *
-   * <code>.dictionary.ReferenceTable referenceTable = 5;</code>
+   * <code>repeated .dictionary.ZoomWindow windows = 7;</code>
    */
-  org.spin.grpc.util.ReferenceTableOrBuilder getReferenceTableOrBuilder();
-
+  int getWindowsCount();
   /**
-   * <code>repeated .dictionary.ReferenceValue values = 6;</code>
+   * <pre>
+   * External Info
+   * </pre>
+   *
+   * <code>repeated .dictionary.ZoomWindow windows = 7;</code>
    */
-  java.util.List<org.spin.grpc.util.ReferenceValue> 
-      getValuesList();
+  java.util.List<? extends org.spin.grpc.util.ZoomWindowOrBuilder> 
+      getWindowsOrBuilderList();
   /**
-   * <code>repeated .dictionary.ReferenceValue values = 6;</code>
+   * <pre>
+   * External Info
+   * </pre>
+   *
+   * <code>repeated .dictionary.ZoomWindow windows = 7;</code>
    */
-  org.spin.grpc.util.ReferenceValue getValues(int index);
-  /**
-   * <code>repeated .dictionary.ReferenceValue values = 6;</code>
-   */
-  int getValuesCount();
-  /**
-   * <code>repeated .dictionary.ReferenceValue values = 6;</code>
-   */
-  java.util.List<? extends org.spin.grpc.util.ReferenceValueOrBuilder> 
-      getValuesOrBuilderList();
-  /**
-   * <code>repeated .dictionary.ReferenceValue values = 6;</code>
-   */
-  org.spin.grpc.util.ReferenceValueOrBuilder getValuesOrBuilder(
+  org.spin.grpc.util.ZoomWindowOrBuilder getWindowsOrBuilder(
       int index);
-
-  /**
-   * <code>bool isActive = 7;</code>
-   */
-  boolean getIsActive();
 }

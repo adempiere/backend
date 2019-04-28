@@ -198,15 +198,15 @@ public class DictionaryClient {
 	    	logger.info("####################### Window + Tabs #####################");
 	    	client.requestWindow(true);
 	    	logger.info("####################### Tab Only #####################");
-	    	client.requestTab(false);
+	    	client.requestTab(false);*/
 	    	logger.info("####################### Tab + Fields #####################");
 	    	client.requestTab(true);
-	    	logger.info("####################### Field Only #####################");
+	    	/*logger.info("####################### Field Only #####################");
 	    	client.requestField();
 	    	logger.info("####################### Process Only #####################");
-	    	client.requestProcess();*/
+	    	client.requestProcess();
 	    	logger.info("####################### Browser Only #####################");
-	    	client.requestBrowser();
+	    	client.requestBrowser();*/
 	    	
 	    } finally {
 	      client.shutdown();

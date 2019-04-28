@@ -152,19 +152,18 @@ message Field {
   	// External Info
   	ContextInfo contextInfo = 39;
   	FieldGroup fieldGroup = 40;
-  	Validation validation = 41;
-  	FieldDefinition fieldDefinition = 42;
-  	Reference reference = 43;
-  	Process process = 44;
+  	FieldDefinition fieldDefinition = 41;
+  	Reference reference = 42;
+  	Process process = 43;
   	// Smart Browser Field Compatibility
-	bool isQueryCriteria = 45;
-	bool isOrderBy = 46;
-	int32 seqNoGrid = 47;
-	int32 sortNo = 48;
-	bool isInfoOnly = 49;
-	bool isActive = 50;
+	bool isQueryCriteria = 44;
+	bool isOrderBy = 45;
+	int32 seqNoGrid = 46;
+	int32 sortNo = 47;
+	bool isInfoOnly = 48;
+	bool isActive = 49;
   	// Process Parameter Compatibility
-  	string defaultValueTo = 51;
+  	string defaultValueTo = 50;
 }
 
 // Context Info
@@ -270,50 +269,26 @@ message Browser {
   	bool isActive = 20;
 }
 
-// Validation
-message Validation {
+// Zoom Window
+message ZoomWindow {
 	int32 id = 1;
 	string uuid = 2;
 	string name = 3;
-  	string validationType = 4;
-  	string code = 5;
+	string description = 4;
+  	bool isSOTrx = 5;
   	bool isActive = 6;
 }
 
 // Foreign Reference
 message Reference {
-	int32 id = 1;
-	string uuid = 2;
-	string name = 3;
-  	string validationType = 4;
+	string tableName = 1;
+  	string keyColumnName = 2;
+  	string displayColumnName = 3;
+  	string query = 4;
+	string directQuery = 5;
+	string validationCode = 6;
   	// External Info
-  	ReferenceTable referenceTable = 5;
-  	repeated ReferenceValue values = 6;
-  	bool isActive = 7;
-}
-
-// Foreign Reference Value
-message ReferenceValue {
-	int32 id = 1;
-	string uuid = 2;
-	string value = 3;
-  	string name = 4;
-  	string description = 5;
-  	bool isActive = 6;
-}
-
-// Foreign Reference Table
-message ReferenceTable {
-	int32 id = 1;
-	string uuid = 2;
-	string tableName = 3;
-  	string keyColumnName = 4;
-  	string displayColumnName = 5;
-  	bool isDisplayIdentifier = 6;
-  	bool isValueDisplayed = 7;
-  	string displaySQL = 8;
-  	string whereClause = 9;
-  	bool isActive = 10;
+  	repeated ZoomWindow windows = 7;
 }
 
 // Menu
