@@ -20,11 +20,8 @@ private static final long serialVersionUID = 0L;
     super(builder);
   }
   private ClientRequest() {
-    uuid_ = "";
+    sessionUuid_ = "";
     language_ = "";
-    clientVersion_ = "";
-    clientUuid_ = "";
-    orgUuid_ = "";
   }
 
   @java.lang.Override
@@ -61,31 +58,13 @@ private static final long serialVersionUID = 0L;
           case 10: {
             java.lang.String s = input.readStringRequireUtf8();
 
-            uuid_ = s;
+            sessionUuid_ = s;
             break;
           }
           case 18: {
             java.lang.String s = input.readStringRequireUtf8();
 
             language_ = s;
-            break;
-          }
-          case 26: {
-            java.lang.String s = input.readStringRequireUtf8();
-
-            clientVersion_ = s;
-            break;
-          }
-          case 34: {
-            java.lang.String s = input.readStringRequireUtf8();
-
-            clientUuid_ = s;
-            break;
-          }
-          case 42: {
-            java.lang.String s = input.readStringRequireUtf8();
-
-            orgUuid_ = s;
             break;
           }
         }
@@ -112,34 +91,34 @@ private static final long serialVersionUID = 0L;
             org.spin.grpc.util.ClientRequest.class, org.spin.grpc.util.ClientRequest.Builder.class);
   }
 
-  public static final int UUID_FIELD_NUMBER = 1;
-  private volatile java.lang.Object uuid_;
+  public static final int SESSIONUUID_FIELD_NUMBER = 1;
+  private volatile java.lang.Object sessionUuid_;
   /**
-   * <code>string uuid = 1;</code>
+   * <code>string sessionUuid = 1;</code>
    */
-  public java.lang.String getUuid() {
-    java.lang.Object ref = uuid_;
+  public java.lang.String getSessionUuid() {
+    java.lang.Object ref = sessionUuid_;
     if (ref instanceof java.lang.String) {
       return (java.lang.String) ref;
     } else {
       com.google.protobuf.ByteString bs = 
           (com.google.protobuf.ByteString) ref;
       java.lang.String s = bs.toStringUtf8();
-      uuid_ = s;
+      sessionUuid_ = s;
       return s;
     }
   }
   /**
-   * <code>string uuid = 1;</code>
+   * <code>string sessionUuid = 1;</code>
    */
   public com.google.protobuf.ByteString
-      getUuidBytes() {
-    java.lang.Object ref = uuid_;
+      getSessionUuidBytes() {
+    java.lang.Object ref = sessionUuid_;
     if (ref instanceof java.lang.String) {
       com.google.protobuf.ByteString b = 
           com.google.protobuf.ByteString.copyFromUtf8(
               (java.lang.String) ref);
-      uuid_ = b;
+      sessionUuid_ = b;
       return b;
     } else {
       return (com.google.protobuf.ByteString) ref;
@@ -180,108 +159,6 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int CLIENTVERSION_FIELD_NUMBER = 3;
-  private volatile java.lang.Object clientVersion_;
-  /**
-   * <code>string clientVersion = 3;</code>
-   */
-  public java.lang.String getClientVersion() {
-    java.lang.Object ref = clientVersion_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = 
-          (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      clientVersion_ = s;
-      return s;
-    }
-  }
-  /**
-   * <code>string clientVersion = 3;</code>
-   */
-  public com.google.protobuf.ByteString
-      getClientVersionBytes() {
-    java.lang.Object ref = clientVersion_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
-          com.google.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      clientVersion_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
-  }
-
-  public static final int CLIENTUUID_FIELD_NUMBER = 4;
-  private volatile java.lang.Object clientUuid_;
-  /**
-   * <code>string clientUuid = 4;</code>
-   */
-  public java.lang.String getClientUuid() {
-    java.lang.Object ref = clientUuid_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = 
-          (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      clientUuid_ = s;
-      return s;
-    }
-  }
-  /**
-   * <code>string clientUuid = 4;</code>
-   */
-  public com.google.protobuf.ByteString
-      getClientUuidBytes() {
-    java.lang.Object ref = clientUuid_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
-          com.google.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      clientUuid_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
-  }
-
-  public static final int ORGUUID_FIELD_NUMBER = 5;
-  private volatile java.lang.Object orgUuid_;
-  /**
-   * <code>string orgUuid = 5;</code>
-   */
-  public java.lang.String getOrgUuid() {
-    java.lang.Object ref = orgUuid_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = 
-          (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      orgUuid_ = s;
-      return s;
-    }
-  }
-  /**
-   * <code>string orgUuid = 5;</code>
-   */
-  public com.google.protobuf.ByteString
-      getOrgUuidBytes() {
-    java.lang.Object ref = orgUuid_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
-          com.google.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      orgUuid_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
-  }
-
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
     byte isInitialized = memoizedIsInitialized;
@@ -294,20 +171,11 @@ private static final long serialVersionUID = 0L;
 
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
-    if (!getUuidBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, uuid_);
+    if (!getSessionUuidBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, sessionUuid_);
     }
     if (!getLanguageBytes().isEmpty()) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 2, language_);
-    }
-    if (!getClientVersionBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 3, clientVersion_);
-    }
-    if (!getClientUuidBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 4, clientUuid_);
-    }
-    if (!getOrgUuidBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 5, orgUuid_);
     }
     unknownFields.writeTo(output);
   }
@@ -317,20 +185,11 @@ private static final long serialVersionUID = 0L;
     if (size != -1) return size;
 
     size = 0;
-    if (!getUuidBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, uuid_);
+    if (!getSessionUuidBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, sessionUuid_);
     }
     if (!getLanguageBytes().isEmpty()) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, language_);
-    }
-    if (!getClientVersionBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, clientVersion_);
-    }
-    if (!getClientUuidBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, clientUuid_);
-    }
-    if (!getOrgUuidBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, orgUuid_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -348,16 +207,10 @@ private static final long serialVersionUID = 0L;
     org.spin.grpc.util.ClientRequest other = (org.spin.grpc.util.ClientRequest) obj;
 
     boolean result = true;
-    result = result && getUuid()
-        .equals(other.getUuid());
+    result = result && getSessionUuid()
+        .equals(other.getSessionUuid());
     result = result && getLanguage()
         .equals(other.getLanguage());
-    result = result && getClientVersion()
-        .equals(other.getClientVersion());
-    result = result && getClientUuid()
-        .equals(other.getClientUuid());
-    result = result && getOrgUuid()
-        .equals(other.getOrgUuid());
     result = result && unknownFields.equals(other.unknownFields);
     return result;
   }
@@ -369,16 +222,10 @@ private static final long serialVersionUID = 0L;
     }
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
-    hash = (37 * hash) + UUID_FIELD_NUMBER;
-    hash = (53 * hash) + getUuid().hashCode();
+    hash = (37 * hash) + SESSIONUUID_FIELD_NUMBER;
+    hash = (53 * hash) + getSessionUuid().hashCode();
     hash = (37 * hash) + LANGUAGE_FIELD_NUMBER;
     hash = (53 * hash) + getLanguage().hashCode();
-    hash = (37 * hash) + CLIENTVERSION_FIELD_NUMBER;
-    hash = (53 * hash) + getClientVersion().hashCode();
-    hash = (37 * hash) + CLIENTUUID_FIELD_NUMBER;
-    hash = (53 * hash) + getClientUuid().hashCode();
-    hash = (37 * hash) + ORGUUID_FIELD_NUMBER;
-    hash = (53 * hash) + getOrgUuid().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -512,15 +359,9 @@ private static final long serialVersionUID = 0L;
     }
     public Builder clear() {
       super.clear();
-      uuid_ = "";
+      sessionUuid_ = "";
 
       language_ = "";
-
-      clientVersion_ = "";
-
-      clientUuid_ = "";
-
-      orgUuid_ = "";
 
       return this;
     }
@@ -544,11 +385,8 @@ private static final long serialVersionUID = 0L;
 
     public org.spin.grpc.util.ClientRequest buildPartial() {
       org.spin.grpc.util.ClientRequest result = new org.spin.grpc.util.ClientRequest(this);
-      result.uuid_ = uuid_;
+      result.sessionUuid_ = sessionUuid_;
       result.language_ = language_;
-      result.clientVersion_ = clientVersion_;
-      result.clientUuid_ = clientUuid_;
-      result.orgUuid_ = orgUuid_;
       onBuilt();
       return result;
     }
@@ -590,24 +428,12 @@ private static final long serialVersionUID = 0L;
 
     public Builder mergeFrom(org.spin.grpc.util.ClientRequest other) {
       if (other == org.spin.grpc.util.ClientRequest.getDefaultInstance()) return this;
-      if (!other.getUuid().isEmpty()) {
-        uuid_ = other.uuid_;
+      if (!other.getSessionUuid().isEmpty()) {
+        sessionUuid_ = other.sessionUuid_;
         onChanged();
       }
       if (!other.getLanguage().isEmpty()) {
         language_ = other.language_;
-        onChanged();
-      }
-      if (!other.getClientVersion().isEmpty()) {
-        clientVersion_ = other.clientVersion_;
-        onChanged();
-      }
-      if (!other.getClientUuid().isEmpty()) {
-        clientUuid_ = other.clientUuid_;
-        onChanged();
-      }
-      if (!other.getOrgUuid().isEmpty()) {
-        orgUuid_ = other.orgUuid_;
         onChanged();
       }
       this.mergeUnknownFields(other.unknownFields);
@@ -637,71 +463,71 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private java.lang.Object uuid_ = "";
+    private java.lang.Object sessionUuid_ = "";
     /**
-     * <code>string uuid = 1;</code>
+     * <code>string sessionUuid = 1;</code>
      */
-    public java.lang.String getUuid() {
-      java.lang.Object ref = uuid_;
+    public java.lang.String getSessionUuid() {
+      java.lang.Object ref = sessionUuid_;
       if (!(ref instanceof java.lang.String)) {
         com.google.protobuf.ByteString bs =
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        uuid_ = s;
+        sessionUuid_ = s;
         return s;
       } else {
         return (java.lang.String) ref;
       }
     }
     /**
-     * <code>string uuid = 1;</code>
+     * <code>string sessionUuid = 1;</code>
      */
     public com.google.protobuf.ByteString
-        getUuidBytes() {
-      java.lang.Object ref = uuid_;
+        getSessionUuidBytes() {
+      java.lang.Object ref = sessionUuid_;
       if (ref instanceof String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
-        uuid_ = b;
+        sessionUuid_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
     /**
-     * <code>string uuid = 1;</code>
+     * <code>string sessionUuid = 1;</code>
      */
-    public Builder setUuid(
+    public Builder setSessionUuid(
         java.lang.String value) {
       if (value == null) {
     throw new NullPointerException();
   }
   
-      uuid_ = value;
+      sessionUuid_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>string uuid = 1;</code>
+     * <code>string sessionUuid = 1;</code>
      */
-    public Builder clearUuid() {
+    public Builder clearSessionUuid() {
       
-      uuid_ = getDefaultInstance().getUuid();
+      sessionUuid_ = getDefaultInstance().getSessionUuid();
       onChanged();
       return this;
     }
     /**
-     * <code>string uuid = 1;</code>
+     * <code>string sessionUuid = 1;</code>
      */
-    public Builder setUuidBytes(
+    public Builder setSessionUuidBytes(
         com.google.protobuf.ByteString value) {
       if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
       
-      uuid_ = value;
+      sessionUuid_ = value;
       onChanged();
       return this;
     }
@@ -771,213 +597,6 @@ private static final long serialVersionUID = 0L;
   checkByteStringIsUtf8(value);
       
       language_ = value;
-      onChanged();
-      return this;
-    }
-
-    private java.lang.Object clientVersion_ = "";
-    /**
-     * <code>string clientVersion = 3;</code>
-     */
-    public java.lang.String getClientVersion() {
-      java.lang.Object ref = clientVersion_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        clientVersion_ = s;
-        return s;
-      } else {
-        return (java.lang.String) ref;
-      }
-    }
-    /**
-     * <code>string clientVersion = 3;</code>
-     */
-    public com.google.protobuf.ByteString
-        getClientVersionBytes() {
-      java.lang.Object ref = clientVersion_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        clientVersion_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-    /**
-     * <code>string clientVersion = 3;</code>
-     */
-    public Builder setClientVersion(
-        java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
-      clientVersion_ = value;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string clientVersion = 3;</code>
-     */
-    public Builder clearClientVersion() {
-      
-      clientVersion_ = getDefaultInstance().getClientVersion();
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string clientVersion = 3;</code>
-     */
-    public Builder setClientVersionBytes(
-        com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-      
-      clientVersion_ = value;
-      onChanged();
-      return this;
-    }
-
-    private java.lang.Object clientUuid_ = "";
-    /**
-     * <code>string clientUuid = 4;</code>
-     */
-    public java.lang.String getClientUuid() {
-      java.lang.Object ref = clientUuid_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        clientUuid_ = s;
-        return s;
-      } else {
-        return (java.lang.String) ref;
-      }
-    }
-    /**
-     * <code>string clientUuid = 4;</code>
-     */
-    public com.google.protobuf.ByteString
-        getClientUuidBytes() {
-      java.lang.Object ref = clientUuid_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        clientUuid_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-    /**
-     * <code>string clientUuid = 4;</code>
-     */
-    public Builder setClientUuid(
-        java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
-      clientUuid_ = value;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string clientUuid = 4;</code>
-     */
-    public Builder clearClientUuid() {
-      
-      clientUuid_ = getDefaultInstance().getClientUuid();
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string clientUuid = 4;</code>
-     */
-    public Builder setClientUuidBytes(
-        com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-      
-      clientUuid_ = value;
-      onChanged();
-      return this;
-    }
-
-    private java.lang.Object orgUuid_ = "";
-    /**
-     * <code>string orgUuid = 5;</code>
-     */
-    public java.lang.String getOrgUuid() {
-      java.lang.Object ref = orgUuid_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        orgUuid_ = s;
-        return s;
-      } else {
-        return (java.lang.String) ref;
-      }
-    }
-    /**
-     * <code>string orgUuid = 5;</code>
-     */
-    public com.google.protobuf.ByteString
-        getOrgUuidBytes() {
-      java.lang.Object ref = orgUuid_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        orgUuid_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-    /**
-     * <code>string orgUuid = 5;</code>
-     */
-    public Builder setOrgUuid(
-        java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
-      orgUuid_ = value;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string orgUuid = 5;</code>
-     */
-    public Builder clearOrgUuid() {
-      
-      orgUuid_ = getDefaultInstance().getOrgUuid();
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string orgUuid = 5;</code>
-     */
-    public Builder setOrgUuidBytes(
-        com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-      
-      orgUuid_ = value;
       onChanged();
       return this;
     }

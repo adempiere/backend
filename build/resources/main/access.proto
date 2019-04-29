@@ -24,19 +24,35 @@ package access;
 // The greeting service definition.
 service AccessService {
   // Request user roles
-  rpc RequestUserRoles(UserRequest) returns (UserRoles) {}
+  rpc RequestUserRoles(RoleRequest) returns (UserRoles) {}
   // Request a Role from uuid
-  rpc RequestRole(UserRequest) returns (Role) {}  
+  rpc RequestLogin(LoginRequest) returns (Session) {}
+  // Request a Role from uuid
+  rpc RequestLogout(LogoutRequest) returns (Session) {}  
 }
 
-// The client request contains client info for request.
-message UserRequest {
-	string uuid = 1;
+// Request Role list from server
+message RoleRequest {
 	string userName = 2;
 	string userPass = 3;
-	string token = 4;
-	string clientVersion = 5;
-	string language = 6;
+	string clientVersion = 7;
+}
+
+// Request a Login Session
+message LoginRequest {
+	string userName = 2;
+	string userPass = 3;
+	string roleUuid = 4;
+	string warehouseUuid = 5;
+	string organizationUuid = 6;
+	string clientVersion = 7;
+	string language = 8;
+}
+
+// Request a Logout
+message LogoutRequest {
+	string sessionUuid = 1;
+	string clientVersion = 7;
 }
 
 // Role list from user
@@ -45,25 +61,35 @@ message UserRoles {
 	repeated Role roles = 2;
 }
 
+// Session
+message Session {
+	int32 id = 1;
+	string uuid = 2;
+	string name = 3;
+	Role role = 4;
+	bool processed = 5;
+}
+
 // Role Definition
 message Role {
 	int32 id = 1;
 	string uuid = 2;
 	string name = 3;
 	string description = 4;
+	int32 clientId = 5;
 	// Entity Access
-	repeated Access organizations = 5;
-	repeated Access windows = 6;
-	repeated Access process = 7;
-	repeated Access forms = 8;
-	repeated Access browsers = 9;
-	repeated Access workflows = 10;
-	repeated Access tasks = 11;
-	repeated Access dashboards = 12;
-	repeated Access documentActions = 13;
-	repeated TableAccess tables = 14;
-	repeated ColumnAccess columns = 15;
-	repeated RecordAccess records = 16;
+	repeated Access organizations = 6;
+	repeated Access windows = 7;
+	repeated Access process = 8;
+	repeated Access forms = 9;
+	repeated Access browsers = 10;
+	repeated Access workflows = 11;
+	repeated Access tasks = 12;
+	repeated Access dashboards = 13;
+	repeated Access documentActions = 14;
+	repeated TableAccess tables = 15;
+	repeated ColumnAccess columns = 16;
+	repeated RecordAccess records = 17;
 }
 
 // Access for distinct entity

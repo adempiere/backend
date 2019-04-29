@@ -24,6 +24,7 @@ private static final long serialVersionUID = 0L;
     uuid_ = "";
     name_ = "";
     description_ = "";
+    clientId_ = 0;
     organizations_ = java.util.Collections.emptyList();
     windows_ = java.util.Collections.emptyList();
     process_ = java.util.Collections.emptyList();
@@ -92,109 +93,114 @@ private static final long serialVersionUID = 0L;
             description_ = s;
             break;
           }
-          case 42: {
-            if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+          case 40: {
+
+            clientId_ = input.readInt32();
+            break;
+          }
+          case 50: {
+            if (!((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
               organizations_ = new java.util.ArrayList<org.spin.grpc.util.Access>();
-              mutable_bitField0_ |= 0x00000010;
+              mutable_bitField0_ |= 0x00000020;
             }
             organizations_.add(
                 input.readMessage(org.spin.grpc.util.Access.parser(), extensionRegistry));
             break;
           }
-          case 50: {
-            if (!((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
+          case 58: {
+            if (!((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
               windows_ = new java.util.ArrayList<org.spin.grpc.util.Access>();
-              mutable_bitField0_ |= 0x00000020;
+              mutable_bitField0_ |= 0x00000040;
             }
             windows_.add(
                 input.readMessage(org.spin.grpc.util.Access.parser(), extensionRegistry));
             break;
           }
-          case 58: {
-            if (!((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
+          case 66: {
+            if (!((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
               process_ = new java.util.ArrayList<org.spin.grpc.util.Access>();
-              mutable_bitField0_ |= 0x00000040;
+              mutable_bitField0_ |= 0x00000080;
             }
             process_.add(
                 input.readMessage(org.spin.grpc.util.Access.parser(), extensionRegistry));
             break;
           }
-          case 66: {
-            if (!((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
+          case 74: {
+            if (!((mutable_bitField0_ & 0x00000100) == 0x00000100)) {
               forms_ = new java.util.ArrayList<org.spin.grpc.util.Access>();
-              mutable_bitField0_ |= 0x00000080;
+              mutable_bitField0_ |= 0x00000100;
             }
             forms_.add(
                 input.readMessage(org.spin.grpc.util.Access.parser(), extensionRegistry));
             break;
           }
-          case 74: {
-            if (!((mutable_bitField0_ & 0x00000100) == 0x00000100)) {
+          case 82: {
+            if (!((mutable_bitField0_ & 0x00000200) == 0x00000200)) {
               browsers_ = new java.util.ArrayList<org.spin.grpc.util.Access>();
-              mutable_bitField0_ |= 0x00000100;
+              mutable_bitField0_ |= 0x00000200;
             }
             browsers_.add(
                 input.readMessage(org.spin.grpc.util.Access.parser(), extensionRegistry));
             break;
           }
-          case 82: {
-            if (!((mutable_bitField0_ & 0x00000200) == 0x00000200)) {
+          case 90: {
+            if (!((mutable_bitField0_ & 0x00000400) == 0x00000400)) {
               workflows_ = new java.util.ArrayList<org.spin.grpc.util.Access>();
-              mutable_bitField0_ |= 0x00000200;
+              mutable_bitField0_ |= 0x00000400;
             }
             workflows_.add(
                 input.readMessage(org.spin.grpc.util.Access.parser(), extensionRegistry));
             break;
           }
-          case 90: {
-            if (!((mutable_bitField0_ & 0x00000400) == 0x00000400)) {
+          case 98: {
+            if (!((mutable_bitField0_ & 0x00000800) == 0x00000800)) {
               tasks_ = new java.util.ArrayList<org.spin.grpc.util.Access>();
-              mutable_bitField0_ |= 0x00000400;
+              mutable_bitField0_ |= 0x00000800;
             }
             tasks_.add(
                 input.readMessage(org.spin.grpc.util.Access.parser(), extensionRegistry));
             break;
           }
-          case 98: {
-            if (!((mutable_bitField0_ & 0x00000800) == 0x00000800)) {
+          case 106: {
+            if (!((mutable_bitField0_ & 0x00001000) == 0x00001000)) {
               dashboards_ = new java.util.ArrayList<org.spin.grpc.util.Access>();
-              mutable_bitField0_ |= 0x00000800;
+              mutable_bitField0_ |= 0x00001000;
             }
             dashboards_.add(
                 input.readMessage(org.spin.grpc.util.Access.parser(), extensionRegistry));
             break;
           }
-          case 106: {
-            if (!((mutable_bitField0_ & 0x00001000) == 0x00001000)) {
+          case 114: {
+            if (!((mutable_bitField0_ & 0x00002000) == 0x00002000)) {
               documentActions_ = new java.util.ArrayList<org.spin.grpc.util.Access>();
-              mutable_bitField0_ |= 0x00001000;
+              mutable_bitField0_ |= 0x00002000;
             }
             documentActions_.add(
                 input.readMessage(org.spin.grpc.util.Access.parser(), extensionRegistry));
             break;
           }
-          case 114: {
-            if (!((mutable_bitField0_ & 0x00002000) == 0x00002000)) {
+          case 122: {
+            if (!((mutable_bitField0_ & 0x00004000) == 0x00004000)) {
               tables_ = new java.util.ArrayList<org.spin.grpc.util.TableAccess>();
-              mutable_bitField0_ |= 0x00002000;
+              mutable_bitField0_ |= 0x00004000;
             }
             tables_.add(
                 input.readMessage(org.spin.grpc.util.TableAccess.parser(), extensionRegistry));
             break;
           }
-          case 122: {
-            if (!((mutable_bitField0_ & 0x00004000) == 0x00004000)) {
+          case 130: {
+            if (!((mutable_bitField0_ & 0x00008000) == 0x00008000)) {
               columns_ = new java.util.ArrayList<org.spin.grpc.util.ColumnAccess>();
-              mutable_bitField0_ |= 0x00004000;
+              mutable_bitField0_ |= 0x00008000;
             }
             columns_.add(
                 input.readMessage(org.spin.grpc.util.ColumnAccess.parser(), extensionRegistry));
             break;
           }
-          case 130: {
-            if (!((mutable_bitField0_ & 0x00008000) == 0x00008000)) {
+          case 138: {
+            if (!((mutable_bitField0_ & 0x00010000) == 0x00010000)) {
               records_ = new java.util.ArrayList<org.spin.grpc.util.RecordAccess>();
-              mutable_bitField0_ |= 0x00008000;
+              mutable_bitField0_ |= 0x00010000;
             }
             records_.add(
                 input.readMessage(org.spin.grpc.util.RecordAccess.parser(), extensionRegistry));
@@ -208,40 +214,40 @@ private static final long serialVersionUID = 0L;
       throw new com.google.protobuf.InvalidProtocolBufferException(
           e).setUnfinishedMessage(this);
     } finally {
-      if (((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+      if (((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
         organizations_ = java.util.Collections.unmodifiableList(organizations_);
       }
-      if (((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
+      if (((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
         windows_ = java.util.Collections.unmodifiableList(windows_);
       }
-      if (((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
+      if (((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
         process_ = java.util.Collections.unmodifiableList(process_);
       }
-      if (((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
+      if (((mutable_bitField0_ & 0x00000100) == 0x00000100)) {
         forms_ = java.util.Collections.unmodifiableList(forms_);
       }
-      if (((mutable_bitField0_ & 0x00000100) == 0x00000100)) {
+      if (((mutable_bitField0_ & 0x00000200) == 0x00000200)) {
         browsers_ = java.util.Collections.unmodifiableList(browsers_);
       }
-      if (((mutable_bitField0_ & 0x00000200) == 0x00000200)) {
+      if (((mutable_bitField0_ & 0x00000400) == 0x00000400)) {
         workflows_ = java.util.Collections.unmodifiableList(workflows_);
       }
-      if (((mutable_bitField0_ & 0x00000400) == 0x00000400)) {
+      if (((mutable_bitField0_ & 0x00000800) == 0x00000800)) {
         tasks_ = java.util.Collections.unmodifiableList(tasks_);
       }
-      if (((mutable_bitField0_ & 0x00000800) == 0x00000800)) {
+      if (((mutable_bitField0_ & 0x00001000) == 0x00001000)) {
         dashboards_ = java.util.Collections.unmodifiableList(dashboards_);
       }
-      if (((mutable_bitField0_ & 0x00001000) == 0x00001000)) {
+      if (((mutable_bitField0_ & 0x00002000) == 0x00002000)) {
         documentActions_ = java.util.Collections.unmodifiableList(documentActions_);
       }
-      if (((mutable_bitField0_ & 0x00002000) == 0x00002000)) {
+      if (((mutable_bitField0_ & 0x00004000) == 0x00004000)) {
         tables_ = java.util.Collections.unmodifiableList(tables_);
       }
-      if (((mutable_bitField0_ & 0x00004000) == 0x00004000)) {
+      if (((mutable_bitField0_ & 0x00008000) == 0x00008000)) {
         columns_ = java.util.Collections.unmodifiableList(columns_);
       }
-      if (((mutable_bitField0_ & 0x00008000) == 0x00008000)) {
+      if (((mutable_bitField0_ & 0x00010000) == 0x00010000)) {
         records_ = java.util.Collections.unmodifiableList(records_);
       }
       this.unknownFields = unknownFields.build();
@@ -372,14 +378,23 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int ORGANIZATIONS_FIELD_NUMBER = 5;
+  public static final int CLIENTID_FIELD_NUMBER = 5;
+  private int clientId_;
+  /**
+   * <code>int32 clientId = 5;</code>
+   */
+  public int getClientId() {
+    return clientId_;
+  }
+
+  public static final int ORGANIZATIONS_FIELD_NUMBER = 6;
   private java.util.List<org.spin.grpc.util.Access> organizations_;
   /**
    * <pre>
    * Entity Access
    * </pre>
    *
-   * <code>repeated .access.Access organizations = 5;</code>
+   * <code>repeated .access.Access organizations = 6;</code>
    */
   public java.util.List<org.spin.grpc.util.Access> getOrganizationsList() {
     return organizations_;
@@ -389,7 +404,7 @@ private static final long serialVersionUID = 0L;
    * Entity Access
    * </pre>
    *
-   * <code>repeated .access.Access organizations = 5;</code>
+   * <code>repeated .access.Access organizations = 6;</code>
    */
   public java.util.List<? extends org.spin.grpc.util.AccessOrBuilder> 
       getOrganizationsOrBuilderList() {
@@ -400,7 +415,7 @@ private static final long serialVersionUID = 0L;
    * Entity Access
    * </pre>
    *
-   * <code>repeated .access.Access organizations = 5;</code>
+   * <code>repeated .access.Access organizations = 6;</code>
    */
   public int getOrganizationsCount() {
     return organizations_.size();
@@ -410,7 +425,7 @@ private static final long serialVersionUID = 0L;
    * Entity Access
    * </pre>
    *
-   * <code>repeated .access.Access organizations = 5;</code>
+   * <code>repeated .access.Access organizations = 6;</code>
    */
   public org.spin.grpc.util.Access getOrganizations(int index) {
     return organizations_.get(index);
@@ -420,392 +435,392 @@ private static final long serialVersionUID = 0L;
    * Entity Access
    * </pre>
    *
-   * <code>repeated .access.Access organizations = 5;</code>
+   * <code>repeated .access.Access organizations = 6;</code>
    */
   public org.spin.grpc.util.AccessOrBuilder getOrganizationsOrBuilder(
       int index) {
     return organizations_.get(index);
   }
 
-  public static final int WINDOWS_FIELD_NUMBER = 6;
+  public static final int WINDOWS_FIELD_NUMBER = 7;
   private java.util.List<org.spin.grpc.util.Access> windows_;
   /**
-   * <code>repeated .access.Access windows = 6;</code>
+   * <code>repeated .access.Access windows = 7;</code>
    */
   public java.util.List<org.spin.grpc.util.Access> getWindowsList() {
     return windows_;
   }
   /**
-   * <code>repeated .access.Access windows = 6;</code>
+   * <code>repeated .access.Access windows = 7;</code>
    */
   public java.util.List<? extends org.spin.grpc.util.AccessOrBuilder> 
       getWindowsOrBuilderList() {
     return windows_;
   }
   /**
-   * <code>repeated .access.Access windows = 6;</code>
+   * <code>repeated .access.Access windows = 7;</code>
    */
   public int getWindowsCount() {
     return windows_.size();
   }
   /**
-   * <code>repeated .access.Access windows = 6;</code>
+   * <code>repeated .access.Access windows = 7;</code>
    */
   public org.spin.grpc.util.Access getWindows(int index) {
     return windows_.get(index);
   }
   /**
-   * <code>repeated .access.Access windows = 6;</code>
+   * <code>repeated .access.Access windows = 7;</code>
    */
   public org.spin.grpc.util.AccessOrBuilder getWindowsOrBuilder(
       int index) {
     return windows_.get(index);
   }
 
-  public static final int PROCESS_FIELD_NUMBER = 7;
+  public static final int PROCESS_FIELD_NUMBER = 8;
   private java.util.List<org.spin.grpc.util.Access> process_;
   /**
-   * <code>repeated .access.Access process = 7;</code>
+   * <code>repeated .access.Access process = 8;</code>
    */
   public java.util.List<org.spin.grpc.util.Access> getProcessList() {
     return process_;
   }
   /**
-   * <code>repeated .access.Access process = 7;</code>
+   * <code>repeated .access.Access process = 8;</code>
    */
   public java.util.List<? extends org.spin.grpc.util.AccessOrBuilder> 
       getProcessOrBuilderList() {
     return process_;
   }
   /**
-   * <code>repeated .access.Access process = 7;</code>
+   * <code>repeated .access.Access process = 8;</code>
    */
   public int getProcessCount() {
     return process_.size();
   }
   /**
-   * <code>repeated .access.Access process = 7;</code>
+   * <code>repeated .access.Access process = 8;</code>
    */
   public org.spin.grpc.util.Access getProcess(int index) {
     return process_.get(index);
   }
   /**
-   * <code>repeated .access.Access process = 7;</code>
+   * <code>repeated .access.Access process = 8;</code>
    */
   public org.spin.grpc.util.AccessOrBuilder getProcessOrBuilder(
       int index) {
     return process_.get(index);
   }
 
-  public static final int FORMS_FIELD_NUMBER = 8;
+  public static final int FORMS_FIELD_NUMBER = 9;
   private java.util.List<org.spin.grpc.util.Access> forms_;
   /**
-   * <code>repeated .access.Access forms = 8;</code>
+   * <code>repeated .access.Access forms = 9;</code>
    */
   public java.util.List<org.spin.grpc.util.Access> getFormsList() {
     return forms_;
   }
   /**
-   * <code>repeated .access.Access forms = 8;</code>
+   * <code>repeated .access.Access forms = 9;</code>
    */
   public java.util.List<? extends org.spin.grpc.util.AccessOrBuilder> 
       getFormsOrBuilderList() {
     return forms_;
   }
   /**
-   * <code>repeated .access.Access forms = 8;</code>
+   * <code>repeated .access.Access forms = 9;</code>
    */
   public int getFormsCount() {
     return forms_.size();
   }
   /**
-   * <code>repeated .access.Access forms = 8;</code>
+   * <code>repeated .access.Access forms = 9;</code>
    */
   public org.spin.grpc.util.Access getForms(int index) {
     return forms_.get(index);
   }
   /**
-   * <code>repeated .access.Access forms = 8;</code>
+   * <code>repeated .access.Access forms = 9;</code>
    */
   public org.spin.grpc.util.AccessOrBuilder getFormsOrBuilder(
       int index) {
     return forms_.get(index);
   }
 
-  public static final int BROWSERS_FIELD_NUMBER = 9;
+  public static final int BROWSERS_FIELD_NUMBER = 10;
   private java.util.List<org.spin.grpc.util.Access> browsers_;
   /**
-   * <code>repeated .access.Access browsers = 9;</code>
+   * <code>repeated .access.Access browsers = 10;</code>
    */
   public java.util.List<org.spin.grpc.util.Access> getBrowsersList() {
     return browsers_;
   }
   /**
-   * <code>repeated .access.Access browsers = 9;</code>
+   * <code>repeated .access.Access browsers = 10;</code>
    */
   public java.util.List<? extends org.spin.grpc.util.AccessOrBuilder> 
       getBrowsersOrBuilderList() {
     return browsers_;
   }
   /**
-   * <code>repeated .access.Access browsers = 9;</code>
+   * <code>repeated .access.Access browsers = 10;</code>
    */
   public int getBrowsersCount() {
     return browsers_.size();
   }
   /**
-   * <code>repeated .access.Access browsers = 9;</code>
+   * <code>repeated .access.Access browsers = 10;</code>
    */
   public org.spin.grpc.util.Access getBrowsers(int index) {
     return browsers_.get(index);
   }
   /**
-   * <code>repeated .access.Access browsers = 9;</code>
+   * <code>repeated .access.Access browsers = 10;</code>
    */
   public org.spin.grpc.util.AccessOrBuilder getBrowsersOrBuilder(
       int index) {
     return browsers_.get(index);
   }
 
-  public static final int WORKFLOWS_FIELD_NUMBER = 10;
+  public static final int WORKFLOWS_FIELD_NUMBER = 11;
   private java.util.List<org.spin.grpc.util.Access> workflows_;
   /**
-   * <code>repeated .access.Access workflows = 10;</code>
+   * <code>repeated .access.Access workflows = 11;</code>
    */
   public java.util.List<org.spin.grpc.util.Access> getWorkflowsList() {
     return workflows_;
   }
   /**
-   * <code>repeated .access.Access workflows = 10;</code>
+   * <code>repeated .access.Access workflows = 11;</code>
    */
   public java.util.List<? extends org.spin.grpc.util.AccessOrBuilder> 
       getWorkflowsOrBuilderList() {
     return workflows_;
   }
   /**
-   * <code>repeated .access.Access workflows = 10;</code>
+   * <code>repeated .access.Access workflows = 11;</code>
    */
   public int getWorkflowsCount() {
     return workflows_.size();
   }
   /**
-   * <code>repeated .access.Access workflows = 10;</code>
+   * <code>repeated .access.Access workflows = 11;</code>
    */
   public org.spin.grpc.util.Access getWorkflows(int index) {
     return workflows_.get(index);
   }
   /**
-   * <code>repeated .access.Access workflows = 10;</code>
+   * <code>repeated .access.Access workflows = 11;</code>
    */
   public org.spin.grpc.util.AccessOrBuilder getWorkflowsOrBuilder(
       int index) {
     return workflows_.get(index);
   }
 
-  public static final int TASKS_FIELD_NUMBER = 11;
+  public static final int TASKS_FIELD_NUMBER = 12;
   private java.util.List<org.spin.grpc.util.Access> tasks_;
   /**
-   * <code>repeated .access.Access tasks = 11;</code>
+   * <code>repeated .access.Access tasks = 12;</code>
    */
   public java.util.List<org.spin.grpc.util.Access> getTasksList() {
     return tasks_;
   }
   /**
-   * <code>repeated .access.Access tasks = 11;</code>
+   * <code>repeated .access.Access tasks = 12;</code>
    */
   public java.util.List<? extends org.spin.grpc.util.AccessOrBuilder> 
       getTasksOrBuilderList() {
     return tasks_;
   }
   /**
-   * <code>repeated .access.Access tasks = 11;</code>
+   * <code>repeated .access.Access tasks = 12;</code>
    */
   public int getTasksCount() {
     return tasks_.size();
   }
   /**
-   * <code>repeated .access.Access tasks = 11;</code>
+   * <code>repeated .access.Access tasks = 12;</code>
    */
   public org.spin.grpc.util.Access getTasks(int index) {
     return tasks_.get(index);
   }
   /**
-   * <code>repeated .access.Access tasks = 11;</code>
+   * <code>repeated .access.Access tasks = 12;</code>
    */
   public org.spin.grpc.util.AccessOrBuilder getTasksOrBuilder(
       int index) {
     return tasks_.get(index);
   }
 
-  public static final int DASHBOARDS_FIELD_NUMBER = 12;
+  public static final int DASHBOARDS_FIELD_NUMBER = 13;
   private java.util.List<org.spin.grpc.util.Access> dashboards_;
   /**
-   * <code>repeated .access.Access dashboards = 12;</code>
+   * <code>repeated .access.Access dashboards = 13;</code>
    */
   public java.util.List<org.spin.grpc.util.Access> getDashboardsList() {
     return dashboards_;
   }
   /**
-   * <code>repeated .access.Access dashboards = 12;</code>
+   * <code>repeated .access.Access dashboards = 13;</code>
    */
   public java.util.List<? extends org.spin.grpc.util.AccessOrBuilder> 
       getDashboardsOrBuilderList() {
     return dashboards_;
   }
   /**
-   * <code>repeated .access.Access dashboards = 12;</code>
+   * <code>repeated .access.Access dashboards = 13;</code>
    */
   public int getDashboardsCount() {
     return dashboards_.size();
   }
   /**
-   * <code>repeated .access.Access dashboards = 12;</code>
+   * <code>repeated .access.Access dashboards = 13;</code>
    */
   public org.spin.grpc.util.Access getDashboards(int index) {
     return dashboards_.get(index);
   }
   /**
-   * <code>repeated .access.Access dashboards = 12;</code>
+   * <code>repeated .access.Access dashboards = 13;</code>
    */
   public org.spin.grpc.util.AccessOrBuilder getDashboardsOrBuilder(
       int index) {
     return dashboards_.get(index);
   }
 
-  public static final int DOCUMENTACTIONS_FIELD_NUMBER = 13;
+  public static final int DOCUMENTACTIONS_FIELD_NUMBER = 14;
   private java.util.List<org.spin.grpc.util.Access> documentActions_;
   /**
-   * <code>repeated .access.Access documentActions = 13;</code>
+   * <code>repeated .access.Access documentActions = 14;</code>
    */
   public java.util.List<org.spin.grpc.util.Access> getDocumentActionsList() {
     return documentActions_;
   }
   /**
-   * <code>repeated .access.Access documentActions = 13;</code>
+   * <code>repeated .access.Access documentActions = 14;</code>
    */
   public java.util.List<? extends org.spin.grpc.util.AccessOrBuilder> 
       getDocumentActionsOrBuilderList() {
     return documentActions_;
   }
   /**
-   * <code>repeated .access.Access documentActions = 13;</code>
+   * <code>repeated .access.Access documentActions = 14;</code>
    */
   public int getDocumentActionsCount() {
     return documentActions_.size();
   }
   /**
-   * <code>repeated .access.Access documentActions = 13;</code>
+   * <code>repeated .access.Access documentActions = 14;</code>
    */
   public org.spin.grpc.util.Access getDocumentActions(int index) {
     return documentActions_.get(index);
   }
   /**
-   * <code>repeated .access.Access documentActions = 13;</code>
+   * <code>repeated .access.Access documentActions = 14;</code>
    */
   public org.spin.grpc.util.AccessOrBuilder getDocumentActionsOrBuilder(
       int index) {
     return documentActions_.get(index);
   }
 
-  public static final int TABLES_FIELD_NUMBER = 14;
+  public static final int TABLES_FIELD_NUMBER = 15;
   private java.util.List<org.spin.grpc.util.TableAccess> tables_;
   /**
-   * <code>repeated .access.TableAccess tables = 14;</code>
+   * <code>repeated .access.TableAccess tables = 15;</code>
    */
   public java.util.List<org.spin.grpc.util.TableAccess> getTablesList() {
     return tables_;
   }
   /**
-   * <code>repeated .access.TableAccess tables = 14;</code>
+   * <code>repeated .access.TableAccess tables = 15;</code>
    */
   public java.util.List<? extends org.spin.grpc.util.TableAccessOrBuilder> 
       getTablesOrBuilderList() {
     return tables_;
   }
   /**
-   * <code>repeated .access.TableAccess tables = 14;</code>
+   * <code>repeated .access.TableAccess tables = 15;</code>
    */
   public int getTablesCount() {
     return tables_.size();
   }
   /**
-   * <code>repeated .access.TableAccess tables = 14;</code>
+   * <code>repeated .access.TableAccess tables = 15;</code>
    */
   public org.spin.grpc.util.TableAccess getTables(int index) {
     return tables_.get(index);
   }
   /**
-   * <code>repeated .access.TableAccess tables = 14;</code>
+   * <code>repeated .access.TableAccess tables = 15;</code>
    */
   public org.spin.grpc.util.TableAccessOrBuilder getTablesOrBuilder(
       int index) {
     return tables_.get(index);
   }
 
-  public static final int COLUMNS_FIELD_NUMBER = 15;
+  public static final int COLUMNS_FIELD_NUMBER = 16;
   private java.util.List<org.spin.grpc.util.ColumnAccess> columns_;
   /**
-   * <code>repeated .access.ColumnAccess columns = 15;</code>
+   * <code>repeated .access.ColumnAccess columns = 16;</code>
    */
   public java.util.List<org.spin.grpc.util.ColumnAccess> getColumnsList() {
     return columns_;
   }
   /**
-   * <code>repeated .access.ColumnAccess columns = 15;</code>
+   * <code>repeated .access.ColumnAccess columns = 16;</code>
    */
   public java.util.List<? extends org.spin.grpc.util.ColumnAccessOrBuilder> 
       getColumnsOrBuilderList() {
     return columns_;
   }
   /**
-   * <code>repeated .access.ColumnAccess columns = 15;</code>
+   * <code>repeated .access.ColumnAccess columns = 16;</code>
    */
   public int getColumnsCount() {
     return columns_.size();
   }
   /**
-   * <code>repeated .access.ColumnAccess columns = 15;</code>
+   * <code>repeated .access.ColumnAccess columns = 16;</code>
    */
   public org.spin.grpc.util.ColumnAccess getColumns(int index) {
     return columns_.get(index);
   }
   /**
-   * <code>repeated .access.ColumnAccess columns = 15;</code>
+   * <code>repeated .access.ColumnAccess columns = 16;</code>
    */
   public org.spin.grpc.util.ColumnAccessOrBuilder getColumnsOrBuilder(
       int index) {
     return columns_.get(index);
   }
 
-  public static final int RECORDS_FIELD_NUMBER = 16;
+  public static final int RECORDS_FIELD_NUMBER = 17;
   private java.util.List<org.spin.grpc.util.RecordAccess> records_;
   /**
-   * <code>repeated .access.RecordAccess records = 16;</code>
+   * <code>repeated .access.RecordAccess records = 17;</code>
    */
   public java.util.List<org.spin.grpc.util.RecordAccess> getRecordsList() {
     return records_;
   }
   /**
-   * <code>repeated .access.RecordAccess records = 16;</code>
+   * <code>repeated .access.RecordAccess records = 17;</code>
    */
   public java.util.List<? extends org.spin.grpc.util.RecordAccessOrBuilder> 
       getRecordsOrBuilderList() {
     return records_;
   }
   /**
-   * <code>repeated .access.RecordAccess records = 16;</code>
+   * <code>repeated .access.RecordAccess records = 17;</code>
    */
   public int getRecordsCount() {
     return records_.size();
   }
   /**
-   * <code>repeated .access.RecordAccess records = 16;</code>
+   * <code>repeated .access.RecordAccess records = 17;</code>
    */
   public org.spin.grpc.util.RecordAccess getRecords(int index) {
     return records_.get(index);
   }
   /**
-   * <code>repeated .access.RecordAccess records = 16;</code>
+   * <code>repeated .access.RecordAccess records = 17;</code>
    */
   public org.spin.grpc.util.RecordAccessOrBuilder getRecordsOrBuilder(
       int index) {
@@ -836,41 +851,44 @@ private static final long serialVersionUID = 0L;
     if (!getDescriptionBytes().isEmpty()) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 4, description_);
     }
+    if (clientId_ != 0) {
+      output.writeInt32(5, clientId_);
+    }
     for (int i = 0; i < organizations_.size(); i++) {
-      output.writeMessage(5, organizations_.get(i));
+      output.writeMessage(6, organizations_.get(i));
     }
     for (int i = 0; i < windows_.size(); i++) {
-      output.writeMessage(6, windows_.get(i));
+      output.writeMessage(7, windows_.get(i));
     }
     for (int i = 0; i < process_.size(); i++) {
-      output.writeMessage(7, process_.get(i));
+      output.writeMessage(8, process_.get(i));
     }
     for (int i = 0; i < forms_.size(); i++) {
-      output.writeMessage(8, forms_.get(i));
+      output.writeMessage(9, forms_.get(i));
     }
     for (int i = 0; i < browsers_.size(); i++) {
-      output.writeMessage(9, browsers_.get(i));
+      output.writeMessage(10, browsers_.get(i));
     }
     for (int i = 0; i < workflows_.size(); i++) {
-      output.writeMessage(10, workflows_.get(i));
+      output.writeMessage(11, workflows_.get(i));
     }
     for (int i = 0; i < tasks_.size(); i++) {
-      output.writeMessage(11, tasks_.get(i));
+      output.writeMessage(12, tasks_.get(i));
     }
     for (int i = 0; i < dashboards_.size(); i++) {
-      output.writeMessage(12, dashboards_.get(i));
+      output.writeMessage(13, dashboards_.get(i));
     }
     for (int i = 0; i < documentActions_.size(); i++) {
-      output.writeMessage(13, documentActions_.get(i));
+      output.writeMessage(14, documentActions_.get(i));
     }
     for (int i = 0; i < tables_.size(); i++) {
-      output.writeMessage(14, tables_.get(i));
+      output.writeMessage(15, tables_.get(i));
     }
     for (int i = 0; i < columns_.size(); i++) {
-      output.writeMessage(15, columns_.get(i));
+      output.writeMessage(16, columns_.get(i));
     }
     for (int i = 0; i < records_.size(); i++) {
-      output.writeMessage(16, records_.get(i));
+      output.writeMessage(17, records_.get(i));
     }
     unknownFields.writeTo(output);
   }
@@ -893,53 +911,57 @@ private static final long serialVersionUID = 0L;
     if (!getDescriptionBytes().isEmpty()) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, description_);
     }
+    if (clientId_ != 0) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeInt32Size(5, clientId_);
+    }
     for (int i = 0; i < organizations_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(5, organizations_.get(i));
+        .computeMessageSize(6, organizations_.get(i));
     }
     for (int i = 0; i < windows_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(6, windows_.get(i));
+        .computeMessageSize(7, windows_.get(i));
     }
     for (int i = 0; i < process_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(7, process_.get(i));
+        .computeMessageSize(8, process_.get(i));
     }
     for (int i = 0; i < forms_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(8, forms_.get(i));
+        .computeMessageSize(9, forms_.get(i));
     }
     for (int i = 0; i < browsers_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(9, browsers_.get(i));
+        .computeMessageSize(10, browsers_.get(i));
     }
     for (int i = 0; i < workflows_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(10, workflows_.get(i));
+        .computeMessageSize(11, workflows_.get(i));
     }
     for (int i = 0; i < tasks_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(11, tasks_.get(i));
+        .computeMessageSize(12, tasks_.get(i));
     }
     for (int i = 0; i < dashboards_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(12, dashboards_.get(i));
+        .computeMessageSize(13, dashboards_.get(i));
     }
     for (int i = 0; i < documentActions_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(13, documentActions_.get(i));
+        .computeMessageSize(14, documentActions_.get(i));
     }
     for (int i = 0; i < tables_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(14, tables_.get(i));
+        .computeMessageSize(15, tables_.get(i));
     }
     for (int i = 0; i < columns_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(15, columns_.get(i));
+        .computeMessageSize(16, columns_.get(i));
     }
     for (int i = 0; i < records_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(16, records_.get(i));
+        .computeMessageSize(17, records_.get(i));
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -965,6 +987,8 @@ private static final long serialVersionUID = 0L;
         .equals(other.getName());
     result = result && getDescription()
         .equals(other.getDescription());
+    result = result && (getClientId()
+        == other.getClientId());
     result = result && getOrganizationsList()
         .equals(other.getOrganizationsList());
     result = result && getWindowsList()
@@ -1008,6 +1032,8 @@ private static final long serialVersionUID = 0L;
     hash = (53 * hash) + getName().hashCode();
     hash = (37 * hash) + DESCRIPTION_FIELD_NUMBER;
     hash = (53 * hash) + getDescription().hashCode();
+    hash = (37 * hash) + CLIENTID_FIELD_NUMBER;
+    hash = (53 * hash) + getClientId();
     if (getOrganizationsCount() > 0) {
       hash = (37 * hash) + ORGANIZATIONS_FIELD_NUMBER;
       hash = (53 * hash) + getOrganizationsList().hashCode();
@@ -1209,75 +1235,77 @@ private static final long serialVersionUID = 0L;
 
       description_ = "";
 
+      clientId_ = 0;
+
       if (organizationsBuilder_ == null) {
         organizations_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000010);
+        bitField0_ = (bitField0_ & ~0x00000020);
       } else {
         organizationsBuilder_.clear();
       }
       if (windowsBuilder_ == null) {
         windows_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000020);
+        bitField0_ = (bitField0_ & ~0x00000040);
       } else {
         windowsBuilder_.clear();
       }
       if (processBuilder_ == null) {
         process_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000040);
+        bitField0_ = (bitField0_ & ~0x00000080);
       } else {
         processBuilder_.clear();
       }
       if (formsBuilder_ == null) {
         forms_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000080);
+        bitField0_ = (bitField0_ & ~0x00000100);
       } else {
         formsBuilder_.clear();
       }
       if (browsersBuilder_ == null) {
         browsers_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000100);
+        bitField0_ = (bitField0_ & ~0x00000200);
       } else {
         browsersBuilder_.clear();
       }
       if (workflowsBuilder_ == null) {
         workflows_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000200);
+        bitField0_ = (bitField0_ & ~0x00000400);
       } else {
         workflowsBuilder_.clear();
       }
       if (tasksBuilder_ == null) {
         tasks_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000400);
+        bitField0_ = (bitField0_ & ~0x00000800);
       } else {
         tasksBuilder_.clear();
       }
       if (dashboardsBuilder_ == null) {
         dashboards_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000800);
+        bitField0_ = (bitField0_ & ~0x00001000);
       } else {
         dashboardsBuilder_.clear();
       }
       if (documentActionsBuilder_ == null) {
         documentActions_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00001000);
+        bitField0_ = (bitField0_ & ~0x00002000);
       } else {
         documentActionsBuilder_.clear();
       }
       if (tablesBuilder_ == null) {
         tables_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00002000);
+        bitField0_ = (bitField0_ & ~0x00004000);
       } else {
         tablesBuilder_.clear();
       }
       if (columnsBuilder_ == null) {
         columns_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00004000);
+        bitField0_ = (bitField0_ & ~0x00008000);
       } else {
         columnsBuilder_.clear();
       }
       if (recordsBuilder_ == null) {
         records_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00008000);
+        bitField0_ = (bitField0_ & ~0x00010000);
       } else {
         recordsBuilder_.clear();
       }
@@ -1309,109 +1337,110 @@ private static final long serialVersionUID = 0L;
       result.uuid_ = uuid_;
       result.name_ = name_;
       result.description_ = description_;
+      result.clientId_ = clientId_;
       if (organizationsBuilder_ == null) {
-        if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        if (((bitField0_ & 0x00000020) == 0x00000020)) {
           organizations_ = java.util.Collections.unmodifiableList(organizations_);
-          bitField0_ = (bitField0_ & ~0x00000010);
+          bitField0_ = (bitField0_ & ~0x00000020);
         }
         result.organizations_ = organizations_;
       } else {
         result.organizations_ = organizationsBuilder_.build();
       }
       if (windowsBuilder_ == null) {
-        if (((bitField0_ & 0x00000020) == 0x00000020)) {
+        if (((bitField0_ & 0x00000040) == 0x00000040)) {
           windows_ = java.util.Collections.unmodifiableList(windows_);
-          bitField0_ = (bitField0_ & ~0x00000020);
+          bitField0_ = (bitField0_ & ~0x00000040);
         }
         result.windows_ = windows_;
       } else {
         result.windows_ = windowsBuilder_.build();
       }
       if (processBuilder_ == null) {
-        if (((bitField0_ & 0x00000040) == 0x00000040)) {
+        if (((bitField0_ & 0x00000080) == 0x00000080)) {
           process_ = java.util.Collections.unmodifiableList(process_);
-          bitField0_ = (bitField0_ & ~0x00000040);
+          bitField0_ = (bitField0_ & ~0x00000080);
         }
         result.process_ = process_;
       } else {
         result.process_ = processBuilder_.build();
       }
       if (formsBuilder_ == null) {
-        if (((bitField0_ & 0x00000080) == 0x00000080)) {
+        if (((bitField0_ & 0x00000100) == 0x00000100)) {
           forms_ = java.util.Collections.unmodifiableList(forms_);
-          bitField0_ = (bitField0_ & ~0x00000080);
+          bitField0_ = (bitField0_ & ~0x00000100);
         }
         result.forms_ = forms_;
       } else {
         result.forms_ = formsBuilder_.build();
       }
       if (browsersBuilder_ == null) {
-        if (((bitField0_ & 0x00000100) == 0x00000100)) {
+        if (((bitField0_ & 0x00000200) == 0x00000200)) {
           browsers_ = java.util.Collections.unmodifiableList(browsers_);
-          bitField0_ = (bitField0_ & ~0x00000100);
+          bitField0_ = (bitField0_ & ~0x00000200);
         }
         result.browsers_ = browsers_;
       } else {
         result.browsers_ = browsersBuilder_.build();
       }
       if (workflowsBuilder_ == null) {
-        if (((bitField0_ & 0x00000200) == 0x00000200)) {
+        if (((bitField0_ & 0x00000400) == 0x00000400)) {
           workflows_ = java.util.Collections.unmodifiableList(workflows_);
-          bitField0_ = (bitField0_ & ~0x00000200);
+          bitField0_ = (bitField0_ & ~0x00000400);
         }
         result.workflows_ = workflows_;
       } else {
         result.workflows_ = workflowsBuilder_.build();
       }
       if (tasksBuilder_ == null) {
-        if (((bitField0_ & 0x00000400) == 0x00000400)) {
+        if (((bitField0_ & 0x00000800) == 0x00000800)) {
           tasks_ = java.util.Collections.unmodifiableList(tasks_);
-          bitField0_ = (bitField0_ & ~0x00000400);
+          bitField0_ = (bitField0_ & ~0x00000800);
         }
         result.tasks_ = tasks_;
       } else {
         result.tasks_ = tasksBuilder_.build();
       }
       if (dashboardsBuilder_ == null) {
-        if (((bitField0_ & 0x00000800) == 0x00000800)) {
+        if (((bitField0_ & 0x00001000) == 0x00001000)) {
           dashboards_ = java.util.Collections.unmodifiableList(dashboards_);
-          bitField0_ = (bitField0_ & ~0x00000800);
+          bitField0_ = (bitField0_ & ~0x00001000);
         }
         result.dashboards_ = dashboards_;
       } else {
         result.dashboards_ = dashboardsBuilder_.build();
       }
       if (documentActionsBuilder_ == null) {
-        if (((bitField0_ & 0x00001000) == 0x00001000)) {
+        if (((bitField0_ & 0x00002000) == 0x00002000)) {
           documentActions_ = java.util.Collections.unmodifiableList(documentActions_);
-          bitField0_ = (bitField0_ & ~0x00001000);
+          bitField0_ = (bitField0_ & ~0x00002000);
         }
         result.documentActions_ = documentActions_;
       } else {
         result.documentActions_ = documentActionsBuilder_.build();
       }
       if (tablesBuilder_ == null) {
-        if (((bitField0_ & 0x00002000) == 0x00002000)) {
+        if (((bitField0_ & 0x00004000) == 0x00004000)) {
           tables_ = java.util.Collections.unmodifiableList(tables_);
-          bitField0_ = (bitField0_ & ~0x00002000);
+          bitField0_ = (bitField0_ & ~0x00004000);
         }
         result.tables_ = tables_;
       } else {
         result.tables_ = tablesBuilder_.build();
       }
       if (columnsBuilder_ == null) {
-        if (((bitField0_ & 0x00004000) == 0x00004000)) {
+        if (((bitField0_ & 0x00008000) == 0x00008000)) {
           columns_ = java.util.Collections.unmodifiableList(columns_);
-          bitField0_ = (bitField0_ & ~0x00004000);
+          bitField0_ = (bitField0_ & ~0x00008000);
         }
         result.columns_ = columns_;
       } else {
         result.columns_ = columnsBuilder_.build();
       }
       if (recordsBuilder_ == null) {
-        if (((bitField0_ & 0x00008000) == 0x00008000)) {
+        if (((bitField0_ & 0x00010000) == 0x00010000)) {
           records_ = java.util.Collections.unmodifiableList(records_);
-          bitField0_ = (bitField0_ & ~0x00008000);
+          bitField0_ = (bitField0_ & ~0x00010000);
         }
         result.records_ = records_;
       } else {
@@ -1474,11 +1503,14 @@ private static final long serialVersionUID = 0L;
         description_ = other.description_;
         onChanged();
       }
+      if (other.getClientId() != 0) {
+        setClientId(other.getClientId());
+      }
       if (organizationsBuilder_ == null) {
         if (!other.organizations_.isEmpty()) {
           if (organizations_.isEmpty()) {
             organizations_ = other.organizations_;
-            bitField0_ = (bitField0_ & ~0x00000010);
+            bitField0_ = (bitField0_ & ~0x00000020);
           } else {
             ensureOrganizationsIsMutable();
             organizations_.addAll(other.organizations_);
@@ -1491,7 +1523,7 @@ private static final long serialVersionUID = 0L;
             organizationsBuilder_.dispose();
             organizationsBuilder_ = null;
             organizations_ = other.organizations_;
-            bitField0_ = (bitField0_ & ~0x00000010);
+            bitField0_ = (bitField0_ & ~0x00000020);
             organizationsBuilder_ = 
               com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                  getOrganizationsFieldBuilder() : null;
@@ -1504,7 +1536,7 @@ private static final long serialVersionUID = 0L;
         if (!other.windows_.isEmpty()) {
           if (windows_.isEmpty()) {
             windows_ = other.windows_;
-            bitField0_ = (bitField0_ & ~0x00000020);
+            bitField0_ = (bitField0_ & ~0x00000040);
           } else {
             ensureWindowsIsMutable();
             windows_.addAll(other.windows_);
@@ -1517,7 +1549,7 @@ private static final long serialVersionUID = 0L;
             windowsBuilder_.dispose();
             windowsBuilder_ = null;
             windows_ = other.windows_;
-            bitField0_ = (bitField0_ & ~0x00000020);
+            bitField0_ = (bitField0_ & ~0x00000040);
             windowsBuilder_ = 
               com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                  getWindowsFieldBuilder() : null;
@@ -1530,7 +1562,7 @@ private static final long serialVersionUID = 0L;
         if (!other.process_.isEmpty()) {
           if (process_.isEmpty()) {
             process_ = other.process_;
-            bitField0_ = (bitField0_ & ~0x00000040);
+            bitField0_ = (bitField0_ & ~0x00000080);
           } else {
             ensureProcessIsMutable();
             process_.addAll(other.process_);
@@ -1543,7 +1575,7 @@ private static final long serialVersionUID = 0L;
             processBuilder_.dispose();
             processBuilder_ = null;
             process_ = other.process_;
-            bitField0_ = (bitField0_ & ~0x00000040);
+            bitField0_ = (bitField0_ & ~0x00000080);
             processBuilder_ = 
               com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                  getProcessFieldBuilder() : null;
@@ -1556,7 +1588,7 @@ private static final long serialVersionUID = 0L;
         if (!other.forms_.isEmpty()) {
           if (forms_.isEmpty()) {
             forms_ = other.forms_;
-            bitField0_ = (bitField0_ & ~0x00000080);
+            bitField0_ = (bitField0_ & ~0x00000100);
           } else {
             ensureFormsIsMutable();
             forms_.addAll(other.forms_);
@@ -1569,7 +1601,7 @@ private static final long serialVersionUID = 0L;
             formsBuilder_.dispose();
             formsBuilder_ = null;
             forms_ = other.forms_;
-            bitField0_ = (bitField0_ & ~0x00000080);
+            bitField0_ = (bitField0_ & ~0x00000100);
             formsBuilder_ = 
               com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                  getFormsFieldBuilder() : null;
@@ -1582,7 +1614,7 @@ private static final long serialVersionUID = 0L;
         if (!other.browsers_.isEmpty()) {
           if (browsers_.isEmpty()) {
             browsers_ = other.browsers_;
-            bitField0_ = (bitField0_ & ~0x00000100);
+            bitField0_ = (bitField0_ & ~0x00000200);
           } else {
             ensureBrowsersIsMutable();
             browsers_.addAll(other.browsers_);
@@ -1595,7 +1627,7 @@ private static final long serialVersionUID = 0L;
             browsersBuilder_.dispose();
             browsersBuilder_ = null;
             browsers_ = other.browsers_;
-            bitField0_ = (bitField0_ & ~0x00000100);
+            bitField0_ = (bitField0_ & ~0x00000200);
             browsersBuilder_ = 
               com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                  getBrowsersFieldBuilder() : null;
@@ -1608,7 +1640,7 @@ private static final long serialVersionUID = 0L;
         if (!other.workflows_.isEmpty()) {
           if (workflows_.isEmpty()) {
             workflows_ = other.workflows_;
-            bitField0_ = (bitField0_ & ~0x00000200);
+            bitField0_ = (bitField0_ & ~0x00000400);
           } else {
             ensureWorkflowsIsMutable();
             workflows_.addAll(other.workflows_);
@@ -1621,7 +1653,7 @@ private static final long serialVersionUID = 0L;
             workflowsBuilder_.dispose();
             workflowsBuilder_ = null;
             workflows_ = other.workflows_;
-            bitField0_ = (bitField0_ & ~0x00000200);
+            bitField0_ = (bitField0_ & ~0x00000400);
             workflowsBuilder_ = 
               com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                  getWorkflowsFieldBuilder() : null;
@@ -1634,7 +1666,7 @@ private static final long serialVersionUID = 0L;
         if (!other.tasks_.isEmpty()) {
           if (tasks_.isEmpty()) {
             tasks_ = other.tasks_;
-            bitField0_ = (bitField0_ & ~0x00000400);
+            bitField0_ = (bitField0_ & ~0x00000800);
           } else {
             ensureTasksIsMutable();
             tasks_.addAll(other.tasks_);
@@ -1647,7 +1679,7 @@ private static final long serialVersionUID = 0L;
             tasksBuilder_.dispose();
             tasksBuilder_ = null;
             tasks_ = other.tasks_;
-            bitField0_ = (bitField0_ & ~0x00000400);
+            bitField0_ = (bitField0_ & ~0x00000800);
             tasksBuilder_ = 
               com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                  getTasksFieldBuilder() : null;
@@ -1660,7 +1692,7 @@ private static final long serialVersionUID = 0L;
         if (!other.dashboards_.isEmpty()) {
           if (dashboards_.isEmpty()) {
             dashboards_ = other.dashboards_;
-            bitField0_ = (bitField0_ & ~0x00000800);
+            bitField0_ = (bitField0_ & ~0x00001000);
           } else {
             ensureDashboardsIsMutable();
             dashboards_.addAll(other.dashboards_);
@@ -1673,7 +1705,7 @@ private static final long serialVersionUID = 0L;
             dashboardsBuilder_.dispose();
             dashboardsBuilder_ = null;
             dashboards_ = other.dashboards_;
-            bitField0_ = (bitField0_ & ~0x00000800);
+            bitField0_ = (bitField0_ & ~0x00001000);
             dashboardsBuilder_ = 
               com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                  getDashboardsFieldBuilder() : null;
@@ -1686,7 +1718,7 @@ private static final long serialVersionUID = 0L;
         if (!other.documentActions_.isEmpty()) {
           if (documentActions_.isEmpty()) {
             documentActions_ = other.documentActions_;
-            bitField0_ = (bitField0_ & ~0x00001000);
+            bitField0_ = (bitField0_ & ~0x00002000);
           } else {
             ensureDocumentActionsIsMutable();
             documentActions_.addAll(other.documentActions_);
@@ -1699,7 +1731,7 @@ private static final long serialVersionUID = 0L;
             documentActionsBuilder_.dispose();
             documentActionsBuilder_ = null;
             documentActions_ = other.documentActions_;
-            bitField0_ = (bitField0_ & ~0x00001000);
+            bitField0_ = (bitField0_ & ~0x00002000);
             documentActionsBuilder_ = 
               com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                  getDocumentActionsFieldBuilder() : null;
@@ -1712,7 +1744,7 @@ private static final long serialVersionUID = 0L;
         if (!other.tables_.isEmpty()) {
           if (tables_.isEmpty()) {
             tables_ = other.tables_;
-            bitField0_ = (bitField0_ & ~0x00002000);
+            bitField0_ = (bitField0_ & ~0x00004000);
           } else {
             ensureTablesIsMutable();
             tables_.addAll(other.tables_);
@@ -1725,7 +1757,7 @@ private static final long serialVersionUID = 0L;
             tablesBuilder_.dispose();
             tablesBuilder_ = null;
             tables_ = other.tables_;
-            bitField0_ = (bitField0_ & ~0x00002000);
+            bitField0_ = (bitField0_ & ~0x00004000);
             tablesBuilder_ = 
               com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                  getTablesFieldBuilder() : null;
@@ -1738,7 +1770,7 @@ private static final long serialVersionUID = 0L;
         if (!other.columns_.isEmpty()) {
           if (columns_.isEmpty()) {
             columns_ = other.columns_;
-            bitField0_ = (bitField0_ & ~0x00004000);
+            bitField0_ = (bitField0_ & ~0x00008000);
           } else {
             ensureColumnsIsMutable();
             columns_.addAll(other.columns_);
@@ -1751,7 +1783,7 @@ private static final long serialVersionUID = 0L;
             columnsBuilder_.dispose();
             columnsBuilder_ = null;
             columns_ = other.columns_;
-            bitField0_ = (bitField0_ & ~0x00004000);
+            bitField0_ = (bitField0_ & ~0x00008000);
             columnsBuilder_ = 
               com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                  getColumnsFieldBuilder() : null;
@@ -1764,7 +1796,7 @@ private static final long serialVersionUID = 0L;
         if (!other.records_.isEmpty()) {
           if (records_.isEmpty()) {
             records_ = other.records_;
-            bitField0_ = (bitField0_ & ~0x00008000);
+            bitField0_ = (bitField0_ & ~0x00010000);
           } else {
             ensureRecordsIsMutable();
             records_.addAll(other.records_);
@@ -1777,7 +1809,7 @@ private static final long serialVersionUID = 0L;
             recordsBuilder_.dispose();
             recordsBuilder_ = null;
             records_ = other.records_;
-            bitField0_ = (bitField0_ & ~0x00008000);
+            bitField0_ = (bitField0_ & ~0x00010000);
             recordsBuilder_ = 
               com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                  getRecordsFieldBuilder() : null;
@@ -2047,12 +2079,38 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
+    private int clientId_ ;
+    /**
+     * <code>int32 clientId = 5;</code>
+     */
+    public int getClientId() {
+      return clientId_;
+    }
+    /**
+     * <code>int32 clientId = 5;</code>
+     */
+    public Builder setClientId(int value) {
+      
+      clientId_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>int32 clientId = 5;</code>
+     */
+    public Builder clearClientId() {
+      
+      clientId_ = 0;
+      onChanged();
+      return this;
+    }
+
     private java.util.List<org.spin.grpc.util.Access> organizations_ =
       java.util.Collections.emptyList();
     private void ensureOrganizationsIsMutable() {
-      if (!((bitField0_ & 0x00000010) == 0x00000010)) {
+      if (!((bitField0_ & 0x00000020) == 0x00000020)) {
         organizations_ = new java.util.ArrayList<org.spin.grpc.util.Access>(organizations_);
-        bitField0_ |= 0x00000010;
+        bitField0_ |= 0x00000020;
        }
     }
 
@@ -2064,7 +2122,7 @@ private static final long serialVersionUID = 0L;
      * Entity Access
      * </pre>
      *
-     * <code>repeated .access.Access organizations = 5;</code>
+     * <code>repeated .access.Access organizations = 6;</code>
      */
     public java.util.List<org.spin.grpc.util.Access> getOrganizationsList() {
       if (organizationsBuilder_ == null) {
@@ -2078,7 +2136,7 @@ private static final long serialVersionUID = 0L;
      * Entity Access
      * </pre>
      *
-     * <code>repeated .access.Access organizations = 5;</code>
+     * <code>repeated .access.Access organizations = 6;</code>
      */
     public int getOrganizationsCount() {
       if (organizationsBuilder_ == null) {
@@ -2092,7 +2150,7 @@ private static final long serialVersionUID = 0L;
      * Entity Access
      * </pre>
      *
-     * <code>repeated .access.Access organizations = 5;</code>
+     * <code>repeated .access.Access organizations = 6;</code>
      */
     public org.spin.grpc.util.Access getOrganizations(int index) {
       if (organizationsBuilder_ == null) {
@@ -2106,7 +2164,7 @@ private static final long serialVersionUID = 0L;
      * Entity Access
      * </pre>
      *
-     * <code>repeated .access.Access organizations = 5;</code>
+     * <code>repeated .access.Access organizations = 6;</code>
      */
     public Builder setOrganizations(
         int index, org.spin.grpc.util.Access value) {
@@ -2127,7 +2185,7 @@ private static final long serialVersionUID = 0L;
      * Entity Access
      * </pre>
      *
-     * <code>repeated .access.Access organizations = 5;</code>
+     * <code>repeated .access.Access organizations = 6;</code>
      */
     public Builder setOrganizations(
         int index, org.spin.grpc.util.Access.Builder builderForValue) {
@@ -2145,7 +2203,7 @@ private static final long serialVersionUID = 0L;
      * Entity Access
      * </pre>
      *
-     * <code>repeated .access.Access organizations = 5;</code>
+     * <code>repeated .access.Access organizations = 6;</code>
      */
     public Builder addOrganizations(org.spin.grpc.util.Access value) {
       if (organizationsBuilder_ == null) {
@@ -2165,7 +2223,7 @@ private static final long serialVersionUID = 0L;
      * Entity Access
      * </pre>
      *
-     * <code>repeated .access.Access organizations = 5;</code>
+     * <code>repeated .access.Access organizations = 6;</code>
      */
     public Builder addOrganizations(
         int index, org.spin.grpc.util.Access value) {
@@ -2186,7 +2244,7 @@ private static final long serialVersionUID = 0L;
      * Entity Access
      * </pre>
      *
-     * <code>repeated .access.Access organizations = 5;</code>
+     * <code>repeated .access.Access organizations = 6;</code>
      */
     public Builder addOrganizations(
         org.spin.grpc.util.Access.Builder builderForValue) {
@@ -2204,7 +2262,7 @@ private static final long serialVersionUID = 0L;
      * Entity Access
      * </pre>
      *
-     * <code>repeated .access.Access organizations = 5;</code>
+     * <code>repeated .access.Access organizations = 6;</code>
      */
     public Builder addOrganizations(
         int index, org.spin.grpc.util.Access.Builder builderForValue) {
@@ -2222,7 +2280,7 @@ private static final long serialVersionUID = 0L;
      * Entity Access
      * </pre>
      *
-     * <code>repeated .access.Access organizations = 5;</code>
+     * <code>repeated .access.Access organizations = 6;</code>
      */
     public Builder addAllOrganizations(
         java.lang.Iterable<? extends org.spin.grpc.util.Access> values) {
@@ -2241,12 +2299,12 @@ private static final long serialVersionUID = 0L;
      * Entity Access
      * </pre>
      *
-     * <code>repeated .access.Access organizations = 5;</code>
+     * <code>repeated .access.Access organizations = 6;</code>
      */
     public Builder clearOrganizations() {
       if (organizationsBuilder_ == null) {
         organizations_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000010);
+        bitField0_ = (bitField0_ & ~0x00000020);
         onChanged();
       } else {
         organizationsBuilder_.clear();
@@ -2258,7 +2316,7 @@ private static final long serialVersionUID = 0L;
      * Entity Access
      * </pre>
      *
-     * <code>repeated .access.Access organizations = 5;</code>
+     * <code>repeated .access.Access organizations = 6;</code>
      */
     public Builder removeOrganizations(int index) {
       if (organizationsBuilder_ == null) {
@@ -2275,7 +2333,7 @@ private static final long serialVersionUID = 0L;
      * Entity Access
      * </pre>
      *
-     * <code>repeated .access.Access organizations = 5;</code>
+     * <code>repeated .access.Access organizations = 6;</code>
      */
     public org.spin.grpc.util.Access.Builder getOrganizationsBuilder(
         int index) {
@@ -2286,7 +2344,7 @@ private static final long serialVersionUID = 0L;
      * Entity Access
      * </pre>
      *
-     * <code>repeated .access.Access organizations = 5;</code>
+     * <code>repeated .access.Access organizations = 6;</code>
      */
     public org.spin.grpc.util.AccessOrBuilder getOrganizationsOrBuilder(
         int index) {
@@ -2300,7 +2358,7 @@ private static final long serialVersionUID = 0L;
      * Entity Access
      * </pre>
      *
-     * <code>repeated .access.Access organizations = 5;</code>
+     * <code>repeated .access.Access organizations = 6;</code>
      */
     public java.util.List<? extends org.spin.grpc.util.AccessOrBuilder> 
          getOrganizationsOrBuilderList() {
@@ -2315,7 +2373,7 @@ private static final long serialVersionUID = 0L;
      * Entity Access
      * </pre>
      *
-     * <code>repeated .access.Access organizations = 5;</code>
+     * <code>repeated .access.Access organizations = 6;</code>
      */
     public org.spin.grpc.util.Access.Builder addOrganizationsBuilder() {
       return getOrganizationsFieldBuilder().addBuilder(
@@ -2326,7 +2384,7 @@ private static final long serialVersionUID = 0L;
      * Entity Access
      * </pre>
      *
-     * <code>repeated .access.Access organizations = 5;</code>
+     * <code>repeated .access.Access organizations = 6;</code>
      */
     public org.spin.grpc.util.Access.Builder addOrganizationsBuilder(
         int index) {
@@ -2338,7 +2396,7 @@ private static final long serialVersionUID = 0L;
      * Entity Access
      * </pre>
      *
-     * <code>repeated .access.Access organizations = 5;</code>
+     * <code>repeated .access.Access organizations = 6;</code>
      */
     public java.util.List<org.spin.grpc.util.Access.Builder> 
          getOrganizationsBuilderList() {
@@ -2351,7 +2409,7 @@ private static final long serialVersionUID = 0L;
         organizationsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
             org.spin.grpc.util.Access, org.spin.grpc.util.Access.Builder, org.spin.grpc.util.AccessOrBuilder>(
                 organizations_,
-                ((bitField0_ & 0x00000010) == 0x00000010),
+                ((bitField0_ & 0x00000020) == 0x00000020),
                 getParentForChildren(),
                 isClean());
         organizations_ = null;
@@ -2362,9 +2420,9 @@ private static final long serialVersionUID = 0L;
     private java.util.List<org.spin.grpc.util.Access> windows_ =
       java.util.Collections.emptyList();
     private void ensureWindowsIsMutable() {
-      if (!((bitField0_ & 0x00000020) == 0x00000020)) {
+      if (!((bitField0_ & 0x00000040) == 0x00000040)) {
         windows_ = new java.util.ArrayList<org.spin.grpc.util.Access>(windows_);
-        bitField0_ |= 0x00000020;
+        bitField0_ |= 0x00000040;
        }
     }
 
@@ -2372,7 +2430,7 @@ private static final long serialVersionUID = 0L;
         org.spin.grpc.util.Access, org.spin.grpc.util.Access.Builder, org.spin.grpc.util.AccessOrBuilder> windowsBuilder_;
 
     /**
-     * <code>repeated .access.Access windows = 6;</code>
+     * <code>repeated .access.Access windows = 7;</code>
      */
     public java.util.List<org.spin.grpc.util.Access> getWindowsList() {
       if (windowsBuilder_ == null) {
@@ -2382,7 +2440,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.Access windows = 6;</code>
+     * <code>repeated .access.Access windows = 7;</code>
      */
     public int getWindowsCount() {
       if (windowsBuilder_ == null) {
@@ -2392,7 +2450,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.Access windows = 6;</code>
+     * <code>repeated .access.Access windows = 7;</code>
      */
     public org.spin.grpc.util.Access getWindows(int index) {
       if (windowsBuilder_ == null) {
@@ -2402,7 +2460,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.Access windows = 6;</code>
+     * <code>repeated .access.Access windows = 7;</code>
      */
     public Builder setWindows(
         int index, org.spin.grpc.util.Access value) {
@@ -2419,7 +2477,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access windows = 6;</code>
+     * <code>repeated .access.Access windows = 7;</code>
      */
     public Builder setWindows(
         int index, org.spin.grpc.util.Access.Builder builderForValue) {
@@ -2433,7 +2491,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access windows = 6;</code>
+     * <code>repeated .access.Access windows = 7;</code>
      */
     public Builder addWindows(org.spin.grpc.util.Access value) {
       if (windowsBuilder_ == null) {
@@ -2449,7 +2507,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access windows = 6;</code>
+     * <code>repeated .access.Access windows = 7;</code>
      */
     public Builder addWindows(
         int index, org.spin.grpc.util.Access value) {
@@ -2466,7 +2524,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access windows = 6;</code>
+     * <code>repeated .access.Access windows = 7;</code>
      */
     public Builder addWindows(
         org.spin.grpc.util.Access.Builder builderForValue) {
@@ -2480,7 +2538,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access windows = 6;</code>
+     * <code>repeated .access.Access windows = 7;</code>
      */
     public Builder addWindows(
         int index, org.spin.grpc.util.Access.Builder builderForValue) {
@@ -2494,7 +2552,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access windows = 6;</code>
+     * <code>repeated .access.Access windows = 7;</code>
      */
     public Builder addAllWindows(
         java.lang.Iterable<? extends org.spin.grpc.util.Access> values) {
@@ -2509,12 +2567,12 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access windows = 6;</code>
+     * <code>repeated .access.Access windows = 7;</code>
      */
     public Builder clearWindows() {
       if (windowsBuilder_ == null) {
         windows_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000020);
+        bitField0_ = (bitField0_ & ~0x00000040);
         onChanged();
       } else {
         windowsBuilder_.clear();
@@ -2522,7 +2580,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access windows = 6;</code>
+     * <code>repeated .access.Access windows = 7;</code>
      */
     public Builder removeWindows(int index) {
       if (windowsBuilder_ == null) {
@@ -2535,14 +2593,14 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access windows = 6;</code>
+     * <code>repeated .access.Access windows = 7;</code>
      */
     public org.spin.grpc.util.Access.Builder getWindowsBuilder(
         int index) {
       return getWindowsFieldBuilder().getBuilder(index);
     }
     /**
-     * <code>repeated .access.Access windows = 6;</code>
+     * <code>repeated .access.Access windows = 7;</code>
      */
     public org.spin.grpc.util.AccessOrBuilder getWindowsOrBuilder(
         int index) {
@@ -2552,7 +2610,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.Access windows = 6;</code>
+     * <code>repeated .access.Access windows = 7;</code>
      */
     public java.util.List<? extends org.spin.grpc.util.AccessOrBuilder> 
          getWindowsOrBuilderList() {
@@ -2563,14 +2621,14 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.Access windows = 6;</code>
+     * <code>repeated .access.Access windows = 7;</code>
      */
     public org.spin.grpc.util.Access.Builder addWindowsBuilder() {
       return getWindowsFieldBuilder().addBuilder(
           org.spin.grpc.util.Access.getDefaultInstance());
     }
     /**
-     * <code>repeated .access.Access windows = 6;</code>
+     * <code>repeated .access.Access windows = 7;</code>
      */
     public org.spin.grpc.util.Access.Builder addWindowsBuilder(
         int index) {
@@ -2578,7 +2636,7 @@ private static final long serialVersionUID = 0L;
           index, org.spin.grpc.util.Access.getDefaultInstance());
     }
     /**
-     * <code>repeated .access.Access windows = 6;</code>
+     * <code>repeated .access.Access windows = 7;</code>
      */
     public java.util.List<org.spin.grpc.util.Access.Builder> 
          getWindowsBuilderList() {
@@ -2591,7 +2649,7 @@ private static final long serialVersionUID = 0L;
         windowsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
             org.spin.grpc.util.Access, org.spin.grpc.util.Access.Builder, org.spin.grpc.util.AccessOrBuilder>(
                 windows_,
-                ((bitField0_ & 0x00000020) == 0x00000020),
+                ((bitField0_ & 0x00000040) == 0x00000040),
                 getParentForChildren(),
                 isClean());
         windows_ = null;
@@ -2602,9 +2660,9 @@ private static final long serialVersionUID = 0L;
     private java.util.List<org.spin.grpc.util.Access> process_ =
       java.util.Collections.emptyList();
     private void ensureProcessIsMutable() {
-      if (!((bitField0_ & 0x00000040) == 0x00000040)) {
+      if (!((bitField0_ & 0x00000080) == 0x00000080)) {
         process_ = new java.util.ArrayList<org.spin.grpc.util.Access>(process_);
-        bitField0_ |= 0x00000040;
+        bitField0_ |= 0x00000080;
        }
     }
 
@@ -2612,7 +2670,7 @@ private static final long serialVersionUID = 0L;
         org.spin.grpc.util.Access, org.spin.grpc.util.Access.Builder, org.spin.grpc.util.AccessOrBuilder> processBuilder_;
 
     /**
-     * <code>repeated .access.Access process = 7;</code>
+     * <code>repeated .access.Access process = 8;</code>
      */
     public java.util.List<org.spin.grpc.util.Access> getProcessList() {
       if (processBuilder_ == null) {
@@ -2622,7 +2680,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.Access process = 7;</code>
+     * <code>repeated .access.Access process = 8;</code>
      */
     public int getProcessCount() {
       if (processBuilder_ == null) {
@@ -2632,7 +2690,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.Access process = 7;</code>
+     * <code>repeated .access.Access process = 8;</code>
      */
     public org.spin.grpc.util.Access getProcess(int index) {
       if (processBuilder_ == null) {
@@ -2642,7 +2700,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.Access process = 7;</code>
+     * <code>repeated .access.Access process = 8;</code>
      */
     public Builder setProcess(
         int index, org.spin.grpc.util.Access value) {
@@ -2659,7 +2717,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access process = 7;</code>
+     * <code>repeated .access.Access process = 8;</code>
      */
     public Builder setProcess(
         int index, org.spin.grpc.util.Access.Builder builderForValue) {
@@ -2673,7 +2731,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access process = 7;</code>
+     * <code>repeated .access.Access process = 8;</code>
      */
     public Builder addProcess(org.spin.grpc.util.Access value) {
       if (processBuilder_ == null) {
@@ -2689,7 +2747,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access process = 7;</code>
+     * <code>repeated .access.Access process = 8;</code>
      */
     public Builder addProcess(
         int index, org.spin.grpc.util.Access value) {
@@ -2706,7 +2764,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access process = 7;</code>
+     * <code>repeated .access.Access process = 8;</code>
      */
     public Builder addProcess(
         org.spin.grpc.util.Access.Builder builderForValue) {
@@ -2720,7 +2778,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access process = 7;</code>
+     * <code>repeated .access.Access process = 8;</code>
      */
     public Builder addProcess(
         int index, org.spin.grpc.util.Access.Builder builderForValue) {
@@ -2734,7 +2792,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access process = 7;</code>
+     * <code>repeated .access.Access process = 8;</code>
      */
     public Builder addAllProcess(
         java.lang.Iterable<? extends org.spin.grpc.util.Access> values) {
@@ -2749,12 +2807,12 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access process = 7;</code>
+     * <code>repeated .access.Access process = 8;</code>
      */
     public Builder clearProcess() {
       if (processBuilder_ == null) {
         process_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000040);
+        bitField0_ = (bitField0_ & ~0x00000080);
         onChanged();
       } else {
         processBuilder_.clear();
@@ -2762,7 +2820,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access process = 7;</code>
+     * <code>repeated .access.Access process = 8;</code>
      */
     public Builder removeProcess(int index) {
       if (processBuilder_ == null) {
@@ -2775,14 +2833,14 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access process = 7;</code>
+     * <code>repeated .access.Access process = 8;</code>
      */
     public org.spin.grpc.util.Access.Builder getProcessBuilder(
         int index) {
       return getProcessFieldBuilder().getBuilder(index);
     }
     /**
-     * <code>repeated .access.Access process = 7;</code>
+     * <code>repeated .access.Access process = 8;</code>
      */
     public org.spin.grpc.util.AccessOrBuilder getProcessOrBuilder(
         int index) {
@@ -2792,7 +2850,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.Access process = 7;</code>
+     * <code>repeated .access.Access process = 8;</code>
      */
     public java.util.List<? extends org.spin.grpc.util.AccessOrBuilder> 
          getProcessOrBuilderList() {
@@ -2803,14 +2861,14 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.Access process = 7;</code>
+     * <code>repeated .access.Access process = 8;</code>
      */
     public org.spin.grpc.util.Access.Builder addProcessBuilder() {
       return getProcessFieldBuilder().addBuilder(
           org.spin.grpc.util.Access.getDefaultInstance());
     }
     /**
-     * <code>repeated .access.Access process = 7;</code>
+     * <code>repeated .access.Access process = 8;</code>
      */
     public org.spin.grpc.util.Access.Builder addProcessBuilder(
         int index) {
@@ -2818,7 +2876,7 @@ private static final long serialVersionUID = 0L;
           index, org.spin.grpc.util.Access.getDefaultInstance());
     }
     /**
-     * <code>repeated .access.Access process = 7;</code>
+     * <code>repeated .access.Access process = 8;</code>
      */
     public java.util.List<org.spin.grpc.util.Access.Builder> 
          getProcessBuilderList() {
@@ -2831,7 +2889,7 @@ private static final long serialVersionUID = 0L;
         processBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
             org.spin.grpc.util.Access, org.spin.grpc.util.Access.Builder, org.spin.grpc.util.AccessOrBuilder>(
                 process_,
-                ((bitField0_ & 0x00000040) == 0x00000040),
+                ((bitField0_ & 0x00000080) == 0x00000080),
                 getParentForChildren(),
                 isClean());
         process_ = null;
@@ -2842,9 +2900,9 @@ private static final long serialVersionUID = 0L;
     private java.util.List<org.spin.grpc.util.Access> forms_ =
       java.util.Collections.emptyList();
     private void ensureFormsIsMutable() {
-      if (!((bitField0_ & 0x00000080) == 0x00000080)) {
+      if (!((bitField0_ & 0x00000100) == 0x00000100)) {
         forms_ = new java.util.ArrayList<org.spin.grpc.util.Access>(forms_);
-        bitField0_ |= 0x00000080;
+        bitField0_ |= 0x00000100;
        }
     }
 
@@ -2852,7 +2910,7 @@ private static final long serialVersionUID = 0L;
         org.spin.grpc.util.Access, org.spin.grpc.util.Access.Builder, org.spin.grpc.util.AccessOrBuilder> formsBuilder_;
 
     /**
-     * <code>repeated .access.Access forms = 8;</code>
+     * <code>repeated .access.Access forms = 9;</code>
      */
     public java.util.List<org.spin.grpc.util.Access> getFormsList() {
       if (formsBuilder_ == null) {
@@ -2862,7 +2920,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.Access forms = 8;</code>
+     * <code>repeated .access.Access forms = 9;</code>
      */
     public int getFormsCount() {
       if (formsBuilder_ == null) {
@@ -2872,7 +2930,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.Access forms = 8;</code>
+     * <code>repeated .access.Access forms = 9;</code>
      */
     public org.spin.grpc.util.Access getForms(int index) {
       if (formsBuilder_ == null) {
@@ -2882,7 +2940,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.Access forms = 8;</code>
+     * <code>repeated .access.Access forms = 9;</code>
      */
     public Builder setForms(
         int index, org.spin.grpc.util.Access value) {
@@ -2899,7 +2957,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access forms = 8;</code>
+     * <code>repeated .access.Access forms = 9;</code>
      */
     public Builder setForms(
         int index, org.spin.grpc.util.Access.Builder builderForValue) {
@@ -2913,7 +2971,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access forms = 8;</code>
+     * <code>repeated .access.Access forms = 9;</code>
      */
     public Builder addForms(org.spin.grpc.util.Access value) {
       if (formsBuilder_ == null) {
@@ -2929,7 +2987,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access forms = 8;</code>
+     * <code>repeated .access.Access forms = 9;</code>
      */
     public Builder addForms(
         int index, org.spin.grpc.util.Access value) {
@@ -2946,7 +3004,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access forms = 8;</code>
+     * <code>repeated .access.Access forms = 9;</code>
      */
     public Builder addForms(
         org.spin.grpc.util.Access.Builder builderForValue) {
@@ -2960,7 +3018,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access forms = 8;</code>
+     * <code>repeated .access.Access forms = 9;</code>
      */
     public Builder addForms(
         int index, org.spin.grpc.util.Access.Builder builderForValue) {
@@ -2974,7 +3032,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access forms = 8;</code>
+     * <code>repeated .access.Access forms = 9;</code>
      */
     public Builder addAllForms(
         java.lang.Iterable<? extends org.spin.grpc.util.Access> values) {
@@ -2989,12 +3047,12 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access forms = 8;</code>
+     * <code>repeated .access.Access forms = 9;</code>
      */
     public Builder clearForms() {
       if (formsBuilder_ == null) {
         forms_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000080);
+        bitField0_ = (bitField0_ & ~0x00000100);
         onChanged();
       } else {
         formsBuilder_.clear();
@@ -3002,7 +3060,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access forms = 8;</code>
+     * <code>repeated .access.Access forms = 9;</code>
      */
     public Builder removeForms(int index) {
       if (formsBuilder_ == null) {
@@ -3015,14 +3073,14 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access forms = 8;</code>
+     * <code>repeated .access.Access forms = 9;</code>
      */
     public org.spin.grpc.util.Access.Builder getFormsBuilder(
         int index) {
       return getFormsFieldBuilder().getBuilder(index);
     }
     /**
-     * <code>repeated .access.Access forms = 8;</code>
+     * <code>repeated .access.Access forms = 9;</code>
      */
     public org.spin.grpc.util.AccessOrBuilder getFormsOrBuilder(
         int index) {
@@ -3032,7 +3090,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.Access forms = 8;</code>
+     * <code>repeated .access.Access forms = 9;</code>
      */
     public java.util.List<? extends org.spin.grpc.util.AccessOrBuilder> 
          getFormsOrBuilderList() {
@@ -3043,14 +3101,14 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.Access forms = 8;</code>
+     * <code>repeated .access.Access forms = 9;</code>
      */
     public org.spin.grpc.util.Access.Builder addFormsBuilder() {
       return getFormsFieldBuilder().addBuilder(
           org.spin.grpc.util.Access.getDefaultInstance());
     }
     /**
-     * <code>repeated .access.Access forms = 8;</code>
+     * <code>repeated .access.Access forms = 9;</code>
      */
     public org.spin.grpc.util.Access.Builder addFormsBuilder(
         int index) {
@@ -3058,7 +3116,7 @@ private static final long serialVersionUID = 0L;
           index, org.spin.grpc.util.Access.getDefaultInstance());
     }
     /**
-     * <code>repeated .access.Access forms = 8;</code>
+     * <code>repeated .access.Access forms = 9;</code>
      */
     public java.util.List<org.spin.grpc.util.Access.Builder> 
          getFormsBuilderList() {
@@ -3071,7 +3129,7 @@ private static final long serialVersionUID = 0L;
         formsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
             org.spin.grpc.util.Access, org.spin.grpc.util.Access.Builder, org.spin.grpc.util.AccessOrBuilder>(
                 forms_,
-                ((bitField0_ & 0x00000080) == 0x00000080),
+                ((bitField0_ & 0x00000100) == 0x00000100),
                 getParentForChildren(),
                 isClean());
         forms_ = null;
@@ -3082,9 +3140,9 @@ private static final long serialVersionUID = 0L;
     private java.util.List<org.spin.grpc.util.Access> browsers_ =
       java.util.Collections.emptyList();
     private void ensureBrowsersIsMutable() {
-      if (!((bitField0_ & 0x00000100) == 0x00000100)) {
+      if (!((bitField0_ & 0x00000200) == 0x00000200)) {
         browsers_ = new java.util.ArrayList<org.spin.grpc.util.Access>(browsers_);
-        bitField0_ |= 0x00000100;
+        bitField0_ |= 0x00000200;
        }
     }
 
@@ -3092,7 +3150,7 @@ private static final long serialVersionUID = 0L;
         org.spin.grpc.util.Access, org.spin.grpc.util.Access.Builder, org.spin.grpc.util.AccessOrBuilder> browsersBuilder_;
 
     /**
-     * <code>repeated .access.Access browsers = 9;</code>
+     * <code>repeated .access.Access browsers = 10;</code>
      */
     public java.util.List<org.spin.grpc.util.Access> getBrowsersList() {
       if (browsersBuilder_ == null) {
@@ -3102,7 +3160,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.Access browsers = 9;</code>
+     * <code>repeated .access.Access browsers = 10;</code>
      */
     public int getBrowsersCount() {
       if (browsersBuilder_ == null) {
@@ -3112,7 +3170,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.Access browsers = 9;</code>
+     * <code>repeated .access.Access browsers = 10;</code>
      */
     public org.spin.grpc.util.Access getBrowsers(int index) {
       if (browsersBuilder_ == null) {
@@ -3122,7 +3180,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.Access browsers = 9;</code>
+     * <code>repeated .access.Access browsers = 10;</code>
      */
     public Builder setBrowsers(
         int index, org.spin.grpc.util.Access value) {
@@ -3139,7 +3197,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access browsers = 9;</code>
+     * <code>repeated .access.Access browsers = 10;</code>
      */
     public Builder setBrowsers(
         int index, org.spin.grpc.util.Access.Builder builderForValue) {
@@ -3153,7 +3211,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access browsers = 9;</code>
+     * <code>repeated .access.Access browsers = 10;</code>
      */
     public Builder addBrowsers(org.spin.grpc.util.Access value) {
       if (browsersBuilder_ == null) {
@@ -3169,7 +3227,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access browsers = 9;</code>
+     * <code>repeated .access.Access browsers = 10;</code>
      */
     public Builder addBrowsers(
         int index, org.spin.grpc.util.Access value) {
@@ -3186,7 +3244,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access browsers = 9;</code>
+     * <code>repeated .access.Access browsers = 10;</code>
      */
     public Builder addBrowsers(
         org.spin.grpc.util.Access.Builder builderForValue) {
@@ -3200,7 +3258,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access browsers = 9;</code>
+     * <code>repeated .access.Access browsers = 10;</code>
      */
     public Builder addBrowsers(
         int index, org.spin.grpc.util.Access.Builder builderForValue) {
@@ -3214,7 +3272,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access browsers = 9;</code>
+     * <code>repeated .access.Access browsers = 10;</code>
      */
     public Builder addAllBrowsers(
         java.lang.Iterable<? extends org.spin.grpc.util.Access> values) {
@@ -3229,12 +3287,12 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access browsers = 9;</code>
+     * <code>repeated .access.Access browsers = 10;</code>
      */
     public Builder clearBrowsers() {
       if (browsersBuilder_ == null) {
         browsers_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000100);
+        bitField0_ = (bitField0_ & ~0x00000200);
         onChanged();
       } else {
         browsersBuilder_.clear();
@@ -3242,7 +3300,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access browsers = 9;</code>
+     * <code>repeated .access.Access browsers = 10;</code>
      */
     public Builder removeBrowsers(int index) {
       if (browsersBuilder_ == null) {
@@ -3255,14 +3313,14 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access browsers = 9;</code>
+     * <code>repeated .access.Access browsers = 10;</code>
      */
     public org.spin.grpc.util.Access.Builder getBrowsersBuilder(
         int index) {
       return getBrowsersFieldBuilder().getBuilder(index);
     }
     /**
-     * <code>repeated .access.Access browsers = 9;</code>
+     * <code>repeated .access.Access browsers = 10;</code>
      */
     public org.spin.grpc.util.AccessOrBuilder getBrowsersOrBuilder(
         int index) {
@@ -3272,7 +3330,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.Access browsers = 9;</code>
+     * <code>repeated .access.Access browsers = 10;</code>
      */
     public java.util.List<? extends org.spin.grpc.util.AccessOrBuilder> 
          getBrowsersOrBuilderList() {
@@ -3283,14 +3341,14 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.Access browsers = 9;</code>
+     * <code>repeated .access.Access browsers = 10;</code>
      */
     public org.spin.grpc.util.Access.Builder addBrowsersBuilder() {
       return getBrowsersFieldBuilder().addBuilder(
           org.spin.grpc.util.Access.getDefaultInstance());
     }
     /**
-     * <code>repeated .access.Access browsers = 9;</code>
+     * <code>repeated .access.Access browsers = 10;</code>
      */
     public org.spin.grpc.util.Access.Builder addBrowsersBuilder(
         int index) {
@@ -3298,7 +3356,7 @@ private static final long serialVersionUID = 0L;
           index, org.spin.grpc.util.Access.getDefaultInstance());
     }
     /**
-     * <code>repeated .access.Access browsers = 9;</code>
+     * <code>repeated .access.Access browsers = 10;</code>
      */
     public java.util.List<org.spin.grpc.util.Access.Builder> 
          getBrowsersBuilderList() {
@@ -3311,7 +3369,7 @@ private static final long serialVersionUID = 0L;
         browsersBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
             org.spin.grpc.util.Access, org.spin.grpc.util.Access.Builder, org.spin.grpc.util.AccessOrBuilder>(
                 browsers_,
-                ((bitField0_ & 0x00000100) == 0x00000100),
+                ((bitField0_ & 0x00000200) == 0x00000200),
                 getParentForChildren(),
                 isClean());
         browsers_ = null;
@@ -3322,9 +3380,9 @@ private static final long serialVersionUID = 0L;
     private java.util.List<org.spin.grpc.util.Access> workflows_ =
       java.util.Collections.emptyList();
     private void ensureWorkflowsIsMutable() {
-      if (!((bitField0_ & 0x00000200) == 0x00000200)) {
+      if (!((bitField0_ & 0x00000400) == 0x00000400)) {
         workflows_ = new java.util.ArrayList<org.spin.grpc.util.Access>(workflows_);
-        bitField0_ |= 0x00000200;
+        bitField0_ |= 0x00000400;
        }
     }
 
@@ -3332,7 +3390,7 @@ private static final long serialVersionUID = 0L;
         org.spin.grpc.util.Access, org.spin.grpc.util.Access.Builder, org.spin.grpc.util.AccessOrBuilder> workflowsBuilder_;
 
     /**
-     * <code>repeated .access.Access workflows = 10;</code>
+     * <code>repeated .access.Access workflows = 11;</code>
      */
     public java.util.List<org.spin.grpc.util.Access> getWorkflowsList() {
       if (workflowsBuilder_ == null) {
@@ -3342,7 +3400,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.Access workflows = 10;</code>
+     * <code>repeated .access.Access workflows = 11;</code>
      */
     public int getWorkflowsCount() {
       if (workflowsBuilder_ == null) {
@@ -3352,7 +3410,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.Access workflows = 10;</code>
+     * <code>repeated .access.Access workflows = 11;</code>
      */
     public org.spin.grpc.util.Access getWorkflows(int index) {
       if (workflowsBuilder_ == null) {
@@ -3362,7 +3420,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.Access workflows = 10;</code>
+     * <code>repeated .access.Access workflows = 11;</code>
      */
     public Builder setWorkflows(
         int index, org.spin.grpc.util.Access value) {
@@ -3379,7 +3437,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access workflows = 10;</code>
+     * <code>repeated .access.Access workflows = 11;</code>
      */
     public Builder setWorkflows(
         int index, org.spin.grpc.util.Access.Builder builderForValue) {
@@ -3393,7 +3451,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access workflows = 10;</code>
+     * <code>repeated .access.Access workflows = 11;</code>
      */
     public Builder addWorkflows(org.spin.grpc.util.Access value) {
       if (workflowsBuilder_ == null) {
@@ -3409,7 +3467,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access workflows = 10;</code>
+     * <code>repeated .access.Access workflows = 11;</code>
      */
     public Builder addWorkflows(
         int index, org.spin.grpc.util.Access value) {
@@ -3426,7 +3484,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access workflows = 10;</code>
+     * <code>repeated .access.Access workflows = 11;</code>
      */
     public Builder addWorkflows(
         org.spin.grpc.util.Access.Builder builderForValue) {
@@ -3440,7 +3498,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access workflows = 10;</code>
+     * <code>repeated .access.Access workflows = 11;</code>
      */
     public Builder addWorkflows(
         int index, org.spin.grpc.util.Access.Builder builderForValue) {
@@ -3454,7 +3512,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access workflows = 10;</code>
+     * <code>repeated .access.Access workflows = 11;</code>
      */
     public Builder addAllWorkflows(
         java.lang.Iterable<? extends org.spin.grpc.util.Access> values) {
@@ -3469,12 +3527,12 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access workflows = 10;</code>
+     * <code>repeated .access.Access workflows = 11;</code>
      */
     public Builder clearWorkflows() {
       if (workflowsBuilder_ == null) {
         workflows_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000200);
+        bitField0_ = (bitField0_ & ~0x00000400);
         onChanged();
       } else {
         workflowsBuilder_.clear();
@@ -3482,7 +3540,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access workflows = 10;</code>
+     * <code>repeated .access.Access workflows = 11;</code>
      */
     public Builder removeWorkflows(int index) {
       if (workflowsBuilder_ == null) {
@@ -3495,14 +3553,14 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access workflows = 10;</code>
+     * <code>repeated .access.Access workflows = 11;</code>
      */
     public org.spin.grpc.util.Access.Builder getWorkflowsBuilder(
         int index) {
       return getWorkflowsFieldBuilder().getBuilder(index);
     }
     /**
-     * <code>repeated .access.Access workflows = 10;</code>
+     * <code>repeated .access.Access workflows = 11;</code>
      */
     public org.spin.grpc.util.AccessOrBuilder getWorkflowsOrBuilder(
         int index) {
@@ -3512,7 +3570,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.Access workflows = 10;</code>
+     * <code>repeated .access.Access workflows = 11;</code>
      */
     public java.util.List<? extends org.spin.grpc.util.AccessOrBuilder> 
          getWorkflowsOrBuilderList() {
@@ -3523,14 +3581,14 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.Access workflows = 10;</code>
+     * <code>repeated .access.Access workflows = 11;</code>
      */
     public org.spin.grpc.util.Access.Builder addWorkflowsBuilder() {
       return getWorkflowsFieldBuilder().addBuilder(
           org.spin.grpc.util.Access.getDefaultInstance());
     }
     /**
-     * <code>repeated .access.Access workflows = 10;</code>
+     * <code>repeated .access.Access workflows = 11;</code>
      */
     public org.spin.grpc.util.Access.Builder addWorkflowsBuilder(
         int index) {
@@ -3538,7 +3596,7 @@ private static final long serialVersionUID = 0L;
           index, org.spin.grpc.util.Access.getDefaultInstance());
     }
     /**
-     * <code>repeated .access.Access workflows = 10;</code>
+     * <code>repeated .access.Access workflows = 11;</code>
      */
     public java.util.List<org.spin.grpc.util.Access.Builder> 
          getWorkflowsBuilderList() {
@@ -3551,7 +3609,7 @@ private static final long serialVersionUID = 0L;
         workflowsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
             org.spin.grpc.util.Access, org.spin.grpc.util.Access.Builder, org.spin.grpc.util.AccessOrBuilder>(
                 workflows_,
-                ((bitField0_ & 0x00000200) == 0x00000200),
+                ((bitField0_ & 0x00000400) == 0x00000400),
                 getParentForChildren(),
                 isClean());
         workflows_ = null;
@@ -3562,9 +3620,9 @@ private static final long serialVersionUID = 0L;
     private java.util.List<org.spin.grpc.util.Access> tasks_ =
       java.util.Collections.emptyList();
     private void ensureTasksIsMutable() {
-      if (!((bitField0_ & 0x00000400) == 0x00000400)) {
+      if (!((bitField0_ & 0x00000800) == 0x00000800)) {
         tasks_ = new java.util.ArrayList<org.spin.grpc.util.Access>(tasks_);
-        bitField0_ |= 0x00000400;
+        bitField0_ |= 0x00000800;
        }
     }
 
@@ -3572,7 +3630,7 @@ private static final long serialVersionUID = 0L;
         org.spin.grpc.util.Access, org.spin.grpc.util.Access.Builder, org.spin.grpc.util.AccessOrBuilder> tasksBuilder_;
 
     /**
-     * <code>repeated .access.Access tasks = 11;</code>
+     * <code>repeated .access.Access tasks = 12;</code>
      */
     public java.util.List<org.spin.grpc.util.Access> getTasksList() {
       if (tasksBuilder_ == null) {
@@ -3582,7 +3640,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.Access tasks = 11;</code>
+     * <code>repeated .access.Access tasks = 12;</code>
      */
     public int getTasksCount() {
       if (tasksBuilder_ == null) {
@@ -3592,7 +3650,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.Access tasks = 11;</code>
+     * <code>repeated .access.Access tasks = 12;</code>
      */
     public org.spin.grpc.util.Access getTasks(int index) {
       if (tasksBuilder_ == null) {
@@ -3602,7 +3660,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.Access tasks = 11;</code>
+     * <code>repeated .access.Access tasks = 12;</code>
      */
     public Builder setTasks(
         int index, org.spin.grpc.util.Access value) {
@@ -3619,7 +3677,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access tasks = 11;</code>
+     * <code>repeated .access.Access tasks = 12;</code>
      */
     public Builder setTasks(
         int index, org.spin.grpc.util.Access.Builder builderForValue) {
@@ -3633,7 +3691,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access tasks = 11;</code>
+     * <code>repeated .access.Access tasks = 12;</code>
      */
     public Builder addTasks(org.spin.grpc.util.Access value) {
       if (tasksBuilder_ == null) {
@@ -3649,7 +3707,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access tasks = 11;</code>
+     * <code>repeated .access.Access tasks = 12;</code>
      */
     public Builder addTasks(
         int index, org.spin.grpc.util.Access value) {
@@ -3666,7 +3724,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access tasks = 11;</code>
+     * <code>repeated .access.Access tasks = 12;</code>
      */
     public Builder addTasks(
         org.spin.grpc.util.Access.Builder builderForValue) {
@@ -3680,7 +3738,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access tasks = 11;</code>
+     * <code>repeated .access.Access tasks = 12;</code>
      */
     public Builder addTasks(
         int index, org.spin.grpc.util.Access.Builder builderForValue) {
@@ -3694,7 +3752,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access tasks = 11;</code>
+     * <code>repeated .access.Access tasks = 12;</code>
      */
     public Builder addAllTasks(
         java.lang.Iterable<? extends org.spin.grpc.util.Access> values) {
@@ -3709,12 +3767,12 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access tasks = 11;</code>
+     * <code>repeated .access.Access tasks = 12;</code>
      */
     public Builder clearTasks() {
       if (tasksBuilder_ == null) {
         tasks_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000400);
+        bitField0_ = (bitField0_ & ~0x00000800);
         onChanged();
       } else {
         tasksBuilder_.clear();
@@ -3722,7 +3780,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access tasks = 11;</code>
+     * <code>repeated .access.Access tasks = 12;</code>
      */
     public Builder removeTasks(int index) {
       if (tasksBuilder_ == null) {
@@ -3735,14 +3793,14 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access tasks = 11;</code>
+     * <code>repeated .access.Access tasks = 12;</code>
      */
     public org.spin.grpc.util.Access.Builder getTasksBuilder(
         int index) {
       return getTasksFieldBuilder().getBuilder(index);
     }
     /**
-     * <code>repeated .access.Access tasks = 11;</code>
+     * <code>repeated .access.Access tasks = 12;</code>
      */
     public org.spin.grpc.util.AccessOrBuilder getTasksOrBuilder(
         int index) {
@@ -3752,7 +3810,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.Access tasks = 11;</code>
+     * <code>repeated .access.Access tasks = 12;</code>
      */
     public java.util.List<? extends org.spin.grpc.util.AccessOrBuilder> 
          getTasksOrBuilderList() {
@@ -3763,14 +3821,14 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.Access tasks = 11;</code>
+     * <code>repeated .access.Access tasks = 12;</code>
      */
     public org.spin.grpc.util.Access.Builder addTasksBuilder() {
       return getTasksFieldBuilder().addBuilder(
           org.spin.grpc.util.Access.getDefaultInstance());
     }
     /**
-     * <code>repeated .access.Access tasks = 11;</code>
+     * <code>repeated .access.Access tasks = 12;</code>
      */
     public org.spin.grpc.util.Access.Builder addTasksBuilder(
         int index) {
@@ -3778,7 +3836,7 @@ private static final long serialVersionUID = 0L;
           index, org.spin.grpc.util.Access.getDefaultInstance());
     }
     /**
-     * <code>repeated .access.Access tasks = 11;</code>
+     * <code>repeated .access.Access tasks = 12;</code>
      */
     public java.util.List<org.spin.grpc.util.Access.Builder> 
          getTasksBuilderList() {
@@ -3791,7 +3849,7 @@ private static final long serialVersionUID = 0L;
         tasksBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
             org.spin.grpc.util.Access, org.spin.grpc.util.Access.Builder, org.spin.grpc.util.AccessOrBuilder>(
                 tasks_,
-                ((bitField0_ & 0x00000400) == 0x00000400),
+                ((bitField0_ & 0x00000800) == 0x00000800),
                 getParentForChildren(),
                 isClean());
         tasks_ = null;
@@ -3802,9 +3860,9 @@ private static final long serialVersionUID = 0L;
     private java.util.List<org.spin.grpc.util.Access> dashboards_ =
       java.util.Collections.emptyList();
     private void ensureDashboardsIsMutable() {
-      if (!((bitField0_ & 0x00000800) == 0x00000800)) {
+      if (!((bitField0_ & 0x00001000) == 0x00001000)) {
         dashboards_ = new java.util.ArrayList<org.spin.grpc.util.Access>(dashboards_);
-        bitField0_ |= 0x00000800;
+        bitField0_ |= 0x00001000;
        }
     }
 
@@ -3812,7 +3870,7 @@ private static final long serialVersionUID = 0L;
         org.spin.grpc.util.Access, org.spin.grpc.util.Access.Builder, org.spin.grpc.util.AccessOrBuilder> dashboardsBuilder_;
 
     /**
-     * <code>repeated .access.Access dashboards = 12;</code>
+     * <code>repeated .access.Access dashboards = 13;</code>
      */
     public java.util.List<org.spin.grpc.util.Access> getDashboardsList() {
       if (dashboardsBuilder_ == null) {
@@ -3822,7 +3880,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.Access dashboards = 12;</code>
+     * <code>repeated .access.Access dashboards = 13;</code>
      */
     public int getDashboardsCount() {
       if (dashboardsBuilder_ == null) {
@@ -3832,7 +3890,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.Access dashboards = 12;</code>
+     * <code>repeated .access.Access dashboards = 13;</code>
      */
     public org.spin.grpc.util.Access getDashboards(int index) {
       if (dashboardsBuilder_ == null) {
@@ -3842,7 +3900,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.Access dashboards = 12;</code>
+     * <code>repeated .access.Access dashboards = 13;</code>
      */
     public Builder setDashboards(
         int index, org.spin.grpc.util.Access value) {
@@ -3859,7 +3917,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access dashboards = 12;</code>
+     * <code>repeated .access.Access dashboards = 13;</code>
      */
     public Builder setDashboards(
         int index, org.spin.grpc.util.Access.Builder builderForValue) {
@@ -3873,7 +3931,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access dashboards = 12;</code>
+     * <code>repeated .access.Access dashboards = 13;</code>
      */
     public Builder addDashboards(org.spin.grpc.util.Access value) {
       if (dashboardsBuilder_ == null) {
@@ -3889,7 +3947,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access dashboards = 12;</code>
+     * <code>repeated .access.Access dashboards = 13;</code>
      */
     public Builder addDashboards(
         int index, org.spin.grpc.util.Access value) {
@@ -3906,7 +3964,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access dashboards = 12;</code>
+     * <code>repeated .access.Access dashboards = 13;</code>
      */
     public Builder addDashboards(
         org.spin.grpc.util.Access.Builder builderForValue) {
@@ -3920,7 +3978,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access dashboards = 12;</code>
+     * <code>repeated .access.Access dashboards = 13;</code>
      */
     public Builder addDashboards(
         int index, org.spin.grpc.util.Access.Builder builderForValue) {
@@ -3934,7 +3992,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access dashboards = 12;</code>
+     * <code>repeated .access.Access dashboards = 13;</code>
      */
     public Builder addAllDashboards(
         java.lang.Iterable<? extends org.spin.grpc.util.Access> values) {
@@ -3949,12 +4007,12 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access dashboards = 12;</code>
+     * <code>repeated .access.Access dashboards = 13;</code>
      */
     public Builder clearDashboards() {
       if (dashboardsBuilder_ == null) {
         dashboards_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000800);
+        bitField0_ = (bitField0_ & ~0x00001000);
         onChanged();
       } else {
         dashboardsBuilder_.clear();
@@ -3962,7 +4020,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access dashboards = 12;</code>
+     * <code>repeated .access.Access dashboards = 13;</code>
      */
     public Builder removeDashboards(int index) {
       if (dashboardsBuilder_ == null) {
@@ -3975,14 +4033,14 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access dashboards = 12;</code>
+     * <code>repeated .access.Access dashboards = 13;</code>
      */
     public org.spin.grpc.util.Access.Builder getDashboardsBuilder(
         int index) {
       return getDashboardsFieldBuilder().getBuilder(index);
     }
     /**
-     * <code>repeated .access.Access dashboards = 12;</code>
+     * <code>repeated .access.Access dashboards = 13;</code>
      */
     public org.spin.grpc.util.AccessOrBuilder getDashboardsOrBuilder(
         int index) {
@@ -3992,7 +4050,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.Access dashboards = 12;</code>
+     * <code>repeated .access.Access dashboards = 13;</code>
      */
     public java.util.List<? extends org.spin.grpc.util.AccessOrBuilder> 
          getDashboardsOrBuilderList() {
@@ -4003,14 +4061,14 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.Access dashboards = 12;</code>
+     * <code>repeated .access.Access dashboards = 13;</code>
      */
     public org.spin.grpc.util.Access.Builder addDashboardsBuilder() {
       return getDashboardsFieldBuilder().addBuilder(
           org.spin.grpc.util.Access.getDefaultInstance());
     }
     /**
-     * <code>repeated .access.Access dashboards = 12;</code>
+     * <code>repeated .access.Access dashboards = 13;</code>
      */
     public org.spin.grpc.util.Access.Builder addDashboardsBuilder(
         int index) {
@@ -4018,7 +4076,7 @@ private static final long serialVersionUID = 0L;
           index, org.spin.grpc.util.Access.getDefaultInstance());
     }
     /**
-     * <code>repeated .access.Access dashboards = 12;</code>
+     * <code>repeated .access.Access dashboards = 13;</code>
      */
     public java.util.List<org.spin.grpc.util.Access.Builder> 
          getDashboardsBuilderList() {
@@ -4031,7 +4089,7 @@ private static final long serialVersionUID = 0L;
         dashboardsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
             org.spin.grpc.util.Access, org.spin.grpc.util.Access.Builder, org.spin.grpc.util.AccessOrBuilder>(
                 dashboards_,
-                ((bitField0_ & 0x00000800) == 0x00000800),
+                ((bitField0_ & 0x00001000) == 0x00001000),
                 getParentForChildren(),
                 isClean());
         dashboards_ = null;
@@ -4042,9 +4100,9 @@ private static final long serialVersionUID = 0L;
     private java.util.List<org.spin.grpc.util.Access> documentActions_ =
       java.util.Collections.emptyList();
     private void ensureDocumentActionsIsMutable() {
-      if (!((bitField0_ & 0x00001000) == 0x00001000)) {
+      if (!((bitField0_ & 0x00002000) == 0x00002000)) {
         documentActions_ = new java.util.ArrayList<org.spin.grpc.util.Access>(documentActions_);
-        bitField0_ |= 0x00001000;
+        bitField0_ |= 0x00002000;
        }
     }
 
@@ -4052,7 +4110,7 @@ private static final long serialVersionUID = 0L;
         org.spin.grpc.util.Access, org.spin.grpc.util.Access.Builder, org.spin.grpc.util.AccessOrBuilder> documentActionsBuilder_;
 
     /**
-     * <code>repeated .access.Access documentActions = 13;</code>
+     * <code>repeated .access.Access documentActions = 14;</code>
      */
     public java.util.List<org.spin.grpc.util.Access> getDocumentActionsList() {
       if (documentActionsBuilder_ == null) {
@@ -4062,7 +4120,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.Access documentActions = 13;</code>
+     * <code>repeated .access.Access documentActions = 14;</code>
      */
     public int getDocumentActionsCount() {
       if (documentActionsBuilder_ == null) {
@@ -4072,7 +4130,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.Access documentActions = 13;</code>
+     * <code>repeated .access.Access documentActions = 14;</code>
      */
     public org.spin.grpc.util.Access getDocumentActions(int index) {
       if (documentActionsBuilder_ == null) {
@@ -4082,7 +4140,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.Access documentActions = 13;</code>
+     * <code>repeated .access.Access documentActions = 14;</code>
      */
     public Builder setDocumentActions(
         int index, org.spin.grpc.util.Access value) {
@@ -4099,7 +4157,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access documentActions = 13;</code>
+     * <code>repeated .access.Access documentActions = 14;</code>
      */
     public Builder setDocumentActions(
         int index, org.spin.grpc.util.Access.Builder builderForValue) {
@@ -4113,7 +4171,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access documentActions = 13;</code>
+     * <code>repeated .access.Access documentActions = 14;</code>
      */
     public Builder addDocumentActions(org.spin.grpc.util.Access value) {
       if (documentActionsBuilder_ == null) {
@@ -4129,7 +4187,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access documentActions = 13;</code>
+     * <code>repeated .access.Access documentActions = 14;</code>
      */
     public Builder addDocumentActions(
         int index, org.spin.grpc.util.Access value) {
@@ -4146,7 +4204,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access documentActions = 13;</code>
+     * <code>repeated .access.Access documentActions = 14;</code>
      */
     public Builder addDocumentActions(
         org.spin.grpc.util.Access.Builder builderForValue) {
@@ -4160,7 +4218,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access documentActions = 13;</code>
+     * <code>repeated .access.Access documentActions = 14;</code>
      */
     public Builder addDocumentActions(
         int index, org.spin.grpc.util.Access.Builder builderForValue) {
@@ -4174,7 +4232,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access documentActions = 13;</code>
+     * <code>repeated .access.Access documentActions = 14;</code>
      */
     public Builder addAllDocumentActions(
         java.lang.Iterable<? extends org.spin.grpc.util.Access> values) {
@@ -4189,12 +4247,12 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access documentActions = 13;</code>
+     * <code>repeated .access.Access documentActions = 14;</code>
      */
     public Builder clearDocumentActions() {
       if (documentActionsBuilder_ == null) {
         documentActions_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00001000);
+        bitField0_ = (bitField0_ & ~0x00002000);
         onChanged();
       } else {
         documentActionsBuilder_.clear();
@@ -4202,7 +4260,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access documentActions = 13;</code>
+     * <code>repeated .access.Access documentActions = 14;</code>
      */
     public Builder removeDocumentActions(int index) {
       if (documentActionsBuilder_ == null) {
@@ -4215,14 +4273,14 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.Access documentActions = 13;</code>
+     * <code>repeated .access.Access documentActions = 14;</code>
      */
     public org.spin.grpc.util.Access.Builder getDocumentActionsBuilder(
         int index) {
       return getDocumentActionsFieldBuilder().getBuilder(index);
     }
     /**
-     * <code>repeated .access.Access documentActions = 13;</code>
+     * <code>repeated .access.Access documentActions = 14;</code>
      */
     public org.spin.grpc.util.AccessOrBuilder getDocumentActionsOrBuilder(
         int index) {
@@ -4232,7 +4290,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.Access documentActions = 13;</code>
+     * <code>repeated .access.Access documentActions = 14;</code>
      */
     public java.util.List<? extends org.spin.grpc.util.AccessOrBuilder> 
          getDocumentActionsOrBuilderList() {
@@ -4243,14 +4301,14 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.Access documentActions = 13;</code>
+     * <code>repeated .access.Access documentActions = 14;</code>
      */
     public org.spin.grpc.util.Access.Builder addDocumentActionsBuilder() {
       return getDocumentActionsFieldBuilder().addBuilder(
           org.spin.grpc.util.Access.getDefaultInstance());
     }
     /**
-     * <code>repeated .access.Access documentActions = 13;</code>
+     * <code>repeated .access.Access documentActions = 14;</code>
      */
     public org.spin.grpc.util.Access.Builder addDocumentActionsBuilder(
         int index) {
@@ -4258,7 +4316,7 @@ private static final long serialVersionUID = 0L;
           index, org.spin.grpc.util.Access.getDefaultInstance());
     }
     /**
-     * <code>repeated .access.Access documentActions = 13;</code>
+     * <code>repeated .access.Access documentActions = 14;</code>
      */
     public java.util.List<org.spin.grpc.util.Access.Builder> 
          getDocumentActionsBuilderList() {
@@ -4271,7 +4329,7 @@ private static final long serialVersionUID = 0L;
         documentActionsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
             org.spin.grpc.util.Access, org.spin.grpc.util.Access.Builder, org.spin.grpc.util.AccessOrBuilder>(
                 documentActions_,
-                ((bitField0_ & 0x00001000) == 0x00001000),
+                ((bitField0_ & 0x00002000) == 0x00002000),
                 getParentForChildren(),
                 isClean());
         documentActions_ = null;
@@ -4282,9 +4340,9 @@ private static final long serialVersionUID = 0L;
     private java.util.List<org.spin.grpc.util.TableAccess> tables_ =
       java.util.Collections.emptyList();
     private void ensureTablesIsMutable() {
-      if (!((bitField0_ & 0x00002000) == 0x00002000)) {
+      if (!((bitField0_ & 0x00004000) == 0x00004000)) {
         tables_ = new java.util.ArrayList<org.spin.grpc.util.TableAccess>(tables_);
-        bitField0_ |= 0x00002000;
+        bitField0_ |= 0x00004000;
        }
     }
 
@@ -4292,7 +4350,7 @@ private static final long serialVersionUID = 0L;
         org.spin.grpc.util.TableAccess, org.spin.grpc.util.TableAccess.Builder, org.spin.grpc.util.TableAccessOrBuilder> tablesBuilder_;
 
     /**
-     * <code>repeated .access.TableAccess tables = 14;</code>
+     * <code>repeated .access.TableAccess tables = 15;</code>
      */
     public java.util.List<org.spin.grpc.util.TableAccess> getTablesList() {
       if (tablesBuilder_ == null) {
@@ -4302,7 +4360,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.TableAccess tables = 14;</code>
+     * <code>repeated .access.TableAccess tables = 15;</code>
      */
     public int getTablesCount() {
       if (tablesBuilder_ == null) {
@@ -4312,7 +4370,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.TableAccess tables = 14;</code>
+     * <code>repeated .access.TableAccess tables = 15;</code>
      */
     public org.spin.grpc.util.TableAccess getTables(int index) {
       if (tablesBuilder_ == null) {
@@ -4322,7 +4380,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.TableAccess tables = 14;</code>
+     * <code>repeated .access.TableAccess tables = 15;</code>
      */
     public Builder setTables(
         int index, org.spin.grpc.util.TableAccess value) {
@@ -4339,7 +4397,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.TableAccess tables = 14;</code>
+     * <code>repeated .access.TableAccess tables = 15;</code>
      */
     public Builder setTables(
         int index, org.spin.grpc.util.TableAccess.Builder builderForValue) {
@@ -4353,7 +4411,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.TableAccess tables = 14;</code>
+     * <code>repeated .access.TableAccess tables = 15;</code>
      */
     public Builder addTables(org.spin.grpc.util.TableAccess value) {
       if (tablesBuilder_ == null) {
@@ -4369,7 +4427,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.TableAccess tables = 14;</code>
+     * <code>repeated .access.TableAccess tables = 15;</code>
      */
     public Builder addTables(
         int index, org.spin.grpc.util.TableAccess value) {
@@ -4386,7 +4444,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.TableAccess tables = 14;</code>
+     * <code>repeated .access.TableAccess tables = 15;</code>
      */
     public Builder addTables(
         org.spin.grpc.util.TableAccess.Builder builderForValue) {
@@ -4400,7 +4458,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.TableAccess tables = 14;</code>
+     * <code>repeated .access.TableAccess tables = 15;</code>
      */
     public Builder addTables(
         int index, org.spin.grpc.util.TableAccess.Builder builderForValue) {
@@ -4414,7 +4472,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.TableAccess tables = 14;</code>
+     * <code>repeated .access.TableAccess tables = 15;</code>
      */
     public Builder addAllTables(
         java.lang.Iterable<? extends org.spin.grpc.util.TableAccess> values) {
@@ -4429,12 +4487,12 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.TableAccess tables = 14;</code>
+     * <code>repeated .access.TableAccess tables = 15;</code>
      */
     public Builder clearTables() {
       if (tablesBuilder_ == null) {
         tables_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00002000);
+        bitField0_ = (bitField0_ & ~0x00004000);
         onChanged();
       } else {
         tablesBuilder_.clear();
@@ -4442,7 +4500,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.TableAccess tables = 14;</code>
+     * <code>repeated .access.TableAccess tables = 15;</code>
      */
     public Builder removeTables(int index) {
       if (tablesBuilder_ == null) {
@@ -4455,14 +4513,14 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.TableAccess tables = 14;</code>
+     * <code>repeated .access.TableAccess tables = 15;</code>
      */
     public org.spin.grpc.util.TableAccess.Builder getTablesBuilder(
         int index) {
       return getTablesFieldBuilder().getBuilder(index);
     }
     /**
-     * <code>repeated .access.TableAccess tables = 14;</code>
+     * <code>repeated .access.TableAccess tables = 15;</code>
      */
     public org.spin.grpc.util.TableAccessOrBuilder getTablesOrBuilder(
         int index) {
@@ -4472,7 +4530,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.TableAccess tables = 14;</code>
+     * <code>repeated .access.TableAccess tables = 15;</code>
      */
     public java.util.List<? extends org.spin.grpc.util.TableAccessOrBuilder> 
          getTablesOrBuilderList() {
@@ -4483,14 +4541,14 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.TableAccess tables = 14;</code>
+     * <code>repeated .access.TableAccess tables = 15;</code>
      */
     public org.spin.grpc.util.TableAccess.Builder addTablesBuilder() {
       return getTablesFieldBuilder().addBuilder(
           org.spin.grpc.util.TableAccess.getDefaultInstance());
     }
     /**
-     * <code>repeated .access.TableAccess tables = 14;</code>
+     * <code>repeated .access.TableAccess tables = 15;</code>
      */
     public org.spin.grpc.util.TableAccess.Builder addTablesBuilder(
         int index) {
@@ -4498,7 +4556,7 @@ private static final long serialVersionUID = 0L;
           index, org.spin.grpc.util.TableAccess.getDefaultInstance());
     }
     /**
-     * <code>repeated .access.TableAccess tables = 14;</code>
+     * <code>repeated .access.TableAccess tables = 15;</code>
      */
     public java.util.List<org.spin.grpc.util.TableAccess.Builder> 
          getTablesBuilderList() {
@@ -4511,7 +4569,7 @@ private static final long serialVersionUID = 0L;
         tablesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
             org.spin.grpc.util.TableAccess, org.spin.grpc.util.TableAccess.Builder, org.spin.grpc.util.TableAccessOrBuilder>(
                 tables_,
-                ((bitField0_ & 0x00002000) == 0x00002000),
+                ((bitField0_ & 0x00004000) == 0x00004000),
                 getParentForChildren(),
                 isClean());
         tables_ = null;
@@ -4522,9 +4580,9 @@ private static final long serialVersionUID = 0L;
     private java.util.List<org.spin.grpc.util.ColumnAccess> columns_ =
       java.util.Collections.emptyList();
     private void ensureColumnsIsMutable() {
-      if (!((bitField0_ & 0x00004000) == 0x00004000)) {
+      if (!((bitField0_ & 0x00008000) == 0x00008000)) {
         columns_ = new java.util.ArrayList<org.spin.grpc.util.ColumnAccess>(columns_);
-        bitField0_ |= 0x00004000;
+        bitField0_ |= 0x00008000;
        }
     }
 
@@ -4532,7 +4590,7 @@ private static final long serialVersionUID = 0L;
         org.spin.grpc.util.ColumnAccess, org.spin.grpc.util.ColumnAccess.Builder, org.spin.grpc.util.ColumnAccessOrBuilder> columnsBuilder_;
 
     /**
-     * <code>repeated .access.ColumnAccess columns = 15;</code>
+     * <code>repeated .access.ColumnAccess columns = 16;</code>
      */
     public java.util.List<org.spin.grpc.util.ColumnAccess> getColumnsList() {
       if (columnsBuilder_ == null) {
@@ -4542,7 +4600,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.ColumnAccess columns = 15;</code>
+     * <code>repeated .access.ColumnAccess columns = 16;</code>
      */
     public int getColumnsCount() {
       if (columnsBuilder_ == null) {
@@ -4552,7 +4610,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.ColumnAccess columns = 15;</code>
+     * <code>repeated .access.ColumnAccess columns = 16;</code>
      */
     public org.spin.grpc.util.ColumnAccess getColumns(int index) {
       if (columnsBuilder_ == null) {
@@ -4562,7 +4620,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.ColumnAccess columns = 15;</code>
+     * <code>repeated .access.ColumnAccess columns = 16;</code>
      */
     public Builder setColumns(
         int index, org.spin.grpc.util.ColumnAccess value) {
@@ -4579,7 +4637,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.ColumnAccess columns = 15;</code>
+     * <code>repeated .access.ColumnAccess columns = 16;</code>
      */
     public Builder setColumns(
         int index, org.spin.grpc.util.ColumnAccess.Builder builderForValue) {
@@ -4593,7 +4651,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.ColumnAccess columns = 15;</code>
+     * <code>repeated .access.ColumnAccess columns = 16;</code>
      */
     public Builder addColumns(org.spin.grpc.util.ColumnAccess value) {
       if (columnsBuilder_ == null) {
@@ -4609,7 +4667,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.ColumnAccess columns = 15;</code>
+     * <code>repeated .access.ColumnAccess columns = 16;</code>
      */
     public Builder addColumns(
         int index, org.spin.grpc.util.ColumnAccess value) {
@@ -4626,7 +4684,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.ColumnAccess columns = 15;</code>
+     * <code>repeated .access.ColumnAccess columns = 16;</code>
      */
     public Builder addColumns(
         org.spin.grpc.util.ColumnAccess.Builder builderForValue) {
@@ -4640,7 +4698,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.ColumnAccess columns = 15;</code>
+     * <code>repeated .access.ColumnAccess columns = 16;</code>
      */
     public Builder addColumns(
         int index, org.spin.grpc.util.ColumnAccess.Builder builderForValue) {
@@ -4654,7 +4712,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.ColumnAccess columns = 15;</code>
+     * <code>repeated .access.ColumnAccess columns = 16;</code>
      */
     public Builder addAllColumns(
         java.lang.Iterable<? extends org.spin.grpc.util.ColumnAccess> values) {
@@ -4669,12 +4727,12 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.ColumnAccess columns = 15;</code>
+     * <code>repeated .access.ColumnAccess columns = 16;</code>
      */
     public Builder clearColumns() {
       if (columnsBuilder_ == null) {
         columns_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00004000);
+        bitField0_ = (bitField0_ & ~0x00008000);
         onChanged();
       } else {
         columnsBuilder_.clear();
@@ -4682,7 +4740,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.ColumnAccess columns = 15;</code>
+     * <code>repeated .access.ColumnAccess columns = 16;</code>
      */
     public Builder removeColumns(int index) {
       if (columnsBuilder_ == null) {
@@ -4695,14 +4753,14 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.ColumnAccess columns = 15;</code>
+     * <code>repeated .access.ColumnAccess columns = 16;</code>
      */
     public org.spin.grpc.util.ColumnAccess.Builder getColumnsBuilder(
         int index) {
       return getColumnsFieldBuilder().getBuilder(index);
     }
     /**
-     * <code>repeated .access.ColumnAccess columns = 15;</code>
+     * <code>repeated .access.ColumnAccess columns = 16;</code>
      */
     public org.spin.grpc.util.ColumnAccessOrBuilder getColumnsOrBuilder(
         int index) {
@@ -4712,7 +4770,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.ColumnAccess columns = 15;</code>
+     * <code>repeated .access.ColumnAccess columns = 16;</code>
      */
     public java.util.List<? extends org.spin.grpc.util.ColumnAccessOrBuilder> 
          getColumnsOrBuilderList() {
@@ -4723,14 +4781,14 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.ColumnAccess columns = 15;</code>
+     * <code>repeated .access.ColumnAccess columns = 16;</code>
      */
     public org.spin.grpc.util.ColumnAccess.Builder addColumnsBuilder() {
       return getColumnsFieldBuilder().addBuilder(
           org.spin.grpc.util.ColumnAccess.getDefaultInstance());
     }
     /**
-     * <code>repeated .access.ColumnAccess columns = 15;</code>
+     * <code>repeated .access.ColumnAccess columns = 16;</code>
      */
     public org.spin.grpc.util.ColumnAccess.Builder addColumnsBuilder(
         int index) {
@@ -4738,7 +4796,7 @@ private static final long serialVersionUID = 0L;
           index, org.spin.grpc.util.ColumnAccess.getDefaultInstance());
     }
     /**
-     * <code>repeated .access.ColumnAccess columns = 15;</code>
+     * <code>repeated .access.ColumnAccess columns = 16;</code>
      */
     public java.util.List<org.spin.grpc.util.ColumnAccess.Builder> 
          getColumnsBuilderList() {
@@ -4751,7 +4809,7 @@ private static final long serialVersionUID = 0L;
         columnsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
             org.spin.grpc.util.ColumnAccess, org.spin.grpc.util.ColumnAccess.Builder, org.spin.grpc.util.ColumnAccessOrBuilder>(
                 columns_,
-                ((bitField0_ & 0x00004000) == 0x00004000),
+                ((bitField0_ & 0x00008000) == 0x00008000),
                 getParentForChildren(),
                 isClean());
         columns_ = null;
@@ -4762,9 +4820,9 @@ private static final long serialVersionUID = 0L;
     private java.util.List<org.spin.grpc.util.RecordAccess> records_ =
       java.util.Collections.emptyList();
     private void ensureRecordsIsMutable() {
-      if (!((bitField0_ & 0x00008000) == 0x00008000)) {
+      if (!((bitField0_ & 0x00010000) == 0x00010000)) {
         records_ = new java.util.ArrayList<org.spin.grpc.util.RecordAccess>(records_);
-        bitField0_ |= 0x00008000;
+        bitField0_ |= 0x00010000;
        }
     }
 
@@ -4772,7 +4830,7 @@ private static final long serialVersionUID = 0L;
         org.spin.grpc.util.RecordAccess, org.spin.grpc.util.RecordAccess.Builder, org.spin.grpc.util.RecordAccessOrBuilder> recordsBuilder_;
 
     /**
-     * <code>repeated .access.RecordAccess records = 16;</code>
+     * <code>repeated .access.RecordAccess records = 17;</code>
      */
     public java.util.List<org.spin.grpc.util.RecordAccess> getRecordsList() {
       if (recordsBuilder_ == null) {
@@ -4782,7 +4840,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.RecordAccess records = 16;</code>
+     * <code>repeated .access.RecordAccess records = 17;</code>
      */
     public int getRecordsCount() {
       if (recordsBuilder_ == null) {
@@ -4792,7 +4850,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.RecordAccess records = 16;</code>
+     * <code>repeated .access.RecordAccess records = 17;</code>
      */
     public org.spin.grpc.util.RecordAccess getRecords(int index) {
       if (recordsBuilder_ == null) {
@@ -4802,7 +4860,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.RecordAccess records = 16;</code>
+     * <code>repeated .access.RecordAccess records = 17;</code>
      */
     public Builder setRecords(
         int index, org.spin.grpc.util.RecordAccess value) {
@@ -4819,7 +4877,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.RecordAccess records = 16;</code>
+     * <code>repeated .access.RecordAccess records = 17;</code>
      */
     public Builder setRecords(
         int index, org.spin.grpc.util.RecordAccess.Builder builderForValue) {
@@ -4833,7 +4891,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.RecordAccess records = 16;</code>
+     * <code>repeated .access.RecordAccess records = 17;</code>
      */
     public Builder addRecords(org.spin.grpc.util.RecordAccess value) {
       if (recordsBuilder_ == null) {
@@ -4849,7 +4907,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.RecordAccess records = 16;</code>
+     * <code>repeated .access.RecordAccess records = 17;</code>
      */
     public Builder addRecords(
         int index, org.spin.grpc.util.RecordAccess value) {
@@ -4866,7 +4924,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.RecordAccess records = 16;</code>
+     * <code>repeated .access.RecordAccess records = 17;</code>
      */
     public Builder addRecords(
         org.spin.grpc.util.RecordAccess.Builder builderForValue) {
@@ -4880,7 +4938,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.RecordAccess records = 16;</code>
+     * <code>repeated .access.RecordAccess records = 17;</code>
      */
     public Builder addRecords(
         int index, org.spin.grpc.util.RecordAccess.Builder builderForValue) {
@@ -4894,7 +4952,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.RecordAccess records = 16;</code>
+     * <code>repeated .access.RecordAccess records = 17;</code>
      */
     public Builder addAllRecords(
         java.lang.Iterable<? extends org.spin.grpc.util.RecordAccess> values) {
@@ -4909,12 +4967,12 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.RecordAccess records = 16;</code>
+     * <code>repeated .access.RecordAccess records = 17;</code>
      */
     public Builder clearRecords() {
       if (recordsBuilder_ == null) {
         records_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00008000);
+        bitField0_ = (bitField0_ & ~0x00010000);
         onChanged();
       } else {
         recordsBuilder_.clear();
@@ -4922,7 +4980,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.RecordAccess records = 16;</code>
+     * <code>repeated .access.RecordAccess records = 17;</code>
      */
     public Builder removeRecords(int index) {
       if (recordsBuilder_ == null) {
@@ -4935,14 +4993,14 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .access.RecordAccess records = 16;</code>
+     * <code>repeated .access.RecordAccess records = 17;</code>
      */
     public org.spin.grpc.util.RecordAccess.Builder getRecordsBuilder(
         int index) {
       return getRecordsFieldBuilder().getBuilder(index);
     }
     /**
-     * <code>repeated .access.RecordAccess records = 16;</code>
+     * <code>repeated .access.RecordAccess records = 17;</code>
      */
     public org.spin.grpc.util.RecordAccessOrBuilder getRecordsOrBuilder(
         int index) {
@@ -4952,7 +5010,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.RecordAccess records = 16;</code>
+     * <code>repeated .access.RecordAccess records = 17;</code>
      */
     public java.util.List<? extends org.spin.grpc.util.RecordAccessOrBuilder> 
          getRecordsOrBuilderList() {
@@ -4963,14 +5021,14 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .access.RecordAccess records = 16;</code>
+     * <code>repeated .access.RecordAccess records = 17;</code>
      */
     public org.spin.grpc.util.RecordAccess.Builder addRecordsBuilder() {
       return getRecordsFieldBuilder().addBuilder(
           org.spin.grpc.util.RecordAccess.getDefaultInstance());
     }
     /**
-     * <code>repeated .access.RecordAccess records = 16;</code>
+     * <code>repeated .access.RecordAccess records = 17;</code>
      */
     public org.spin.grpc.util.RecordAccess.Builder addRecordsBuilder(
         int index) {
@@ -4978,7 +5036,7 @@ private static final long serialVersionUID = 0L;
           index, org.spin.grpc.util.RecordAccess.getDefaultInstance());
     }
     /**
-     * <code>repeated .access.RecordAccess records = 16;</code>
+     * <code>repeated .access.RecordAccess records = 17;</code>
      */
     public java.util.List<org.spin.grpc.util.RecordAccess.Builder> 
          getRecordsBuilderList() {
@@ -4991,7 +5049,7 @@ private static final long serialVersionUID = 0L;
         recordsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
             org.spin.grpc.util.RecordAccess, org.spin.grpc.util.RecordAccess.Builder, org.spin.grpc.util.RecordAccessOrBuilder>(
                 records_,
-                ((bitField0_ & 0x00008000) == 0x00008000),
+                ((bitField0_ & 0x00010000) == 0x00010000),
                 getParentForChildren(),
                 isClean());
         records_ = null;

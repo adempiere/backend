@@ -8,14 +8,14 @@ public interface ClientRequestOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
   /**
-   * <code>string uuid = 1;</code>
+   * <code>string sessionUuid = 1;</code>
    */
-  java.lang.String getUuid();
+  java.lang.String getSessionUuid();
   /**
-   * <code>string uuid = 1;</code>
+   * <code>string sessionUuid = 1;</code>
    */
   com.google.protobuf.ByteString
-      getUuidBytes();
+      getSessionUuidBytes();
 
   /**
    * <code>string language = 2;</code>
@@ -26,34 +26,4 @@ public interface ClientRequestOrBuilder extends
    */
   com.google.protobuf.ByteString
       getLanguageBytes();
-
-  /**
-   * <code>string clientVersion = 3;</code>
-   */
-  java.lang.String getClientVersion();
-  /**
-   * <code>string clientVersion = 3;</code>
-   */
-  com.google.protobuf.ByteString
-      getClientVersionBytes();
-
-  /**
-   * <code>string clientUuid = 4;</code>
-   */
-  java.lang.String getClientUuid();
-  /**
-   * <code>string clientUuid = 4;</code>
-   */
-  com.google.protobuf.ByteString
-      getClientUuidBytes();
-
-  /**
-   * <code>string orgUuid = 5;</code>
-   */
-  java.lang.String getOrgUuid();
-  /**
-   * <code>string orgUuid = 5;</code>
-   */
-  com.google.protobuf.ByteString
-      getOrgUuidBytes();
 }

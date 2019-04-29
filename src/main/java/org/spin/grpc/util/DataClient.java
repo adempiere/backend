@@ -1,3 +1,17 @@
+/************************************************************************************
+ * Copyright (C) 2012-2018 E.R.P. Consultores y Asociados, C.A.                     *
+ * Contributor(s): Yamel Senih ysenih@erpya.com                                     *
+ * This program is free software: you can redistribute it and/or modify             *
+ * it under the terms of the GNU General Public License as published by             *
+ * the Free Software Foundation, either version 2 of the License, or                *
+ * (at your option) any later version.                                              *
+ * This program is distributed in the hope that it will be useful,                  *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of                   *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the                     *
+ * GNU General Public License for more details.                                     *
+ * You should have received a copy of the GNU General Public License                *
+ * along with this program.	If not, see <https://www.gnu.org/licenses/>.            *
+ ************************************************************************************/
 package org.spin.grpc.util;
 
 import java.util.concurrent.TimeUnit;
@@ -51,7 +65,7 @@ public class DataClient {
 		      return;
 		  }
 	  }
-
+	  
 	  /** 
 	   * Request PO. 
 	   */
@@ -68,6 +82,58 @@ public class DataClient {
 		  try {
 			  response = blockingStub.requestObject(request);
 			  logger.info("PO: " + response);
+		  } catch (StatusRuntimeException e) {
+			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
+		      return;
+		  }
+	  }
+	  
+	  /** 
+	   * Request Lookup. 
+	   */
+	  public void requestLookup() {
+		  ClientRequest clientRequest = ClientRequest.newBuilder()
+				  .build();
+		  Criteria.Builder criteria = Criteria.newBuilder().setTableName("C_PaymentTerm");
+		  criteria.setQuery("SELECT C_PaymentTerm.C_PaymentTerm_ID,NULL,NVL(C_PaymentTerm_Trl.Name,'-1'),C_PaymentTerm.IsActive "
+		  		+ "FROM C_PaymentTerm "
+		  		+ "INNER JOIN C_PaymentTerm_TRL ON (C_PaymentTerm.C_PaymentTerm_ID=C_PaymentTerm_Trl.C_PaymentTerm_ID AND C_PaymentTerm_Trl.AD_Language='es_MX') "
+		  		+ "WHERE C_PaymentTerm.C_PaymentTerm_ID=?");
+		  criteria.addValues(Value.newBuilder().setIntValue(106));
+		  ValueObjectRequest request = ValueObjectRequest.newBuilder()
+	    		.setClientRequest(clientRequest)
+	    		.setUuid("8cc49692-fb40-11e8-a479-7a0060f0aa01")	// HR_JobOpening_ID
+	    		.setCriteria(criteria.build())
+	    		.build();
+		  ValueObject response;
+		  try {
+			  response = blockingStub.requestLookup(request);
+			  logger.info("Lookup: " + response);
+		  } catch (StatusRuntimeException e) {
+			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
+		      return;
+		  }
+	  }
+	  
+	  /** 
+	   * Request Lookup List. 
+	   */
+	  public void requestLookupList() {
+		  ClientRequest clientRequest = ClientRequest.newBuilder()
+				  .build();
+		  Criteria.Builder criteria = Criteria.newBuilder().setTableName("M_DiscountSchema");
+		  criteria.setQuery("SELECT M_DiscountSchema.M_DiscountSchema_ID,NULL,NVL(M_DiscountSchema.Name,'-1'),M_DiscountSchema.IsActive "
+		  		+ "FROM M_DiscountSchema "
+		  		+ "WHERE M_DiscountSchema.DiscountType<>'P' ORDER BY 3");
+		  ValueObjectRequest request = ValueObjectRequest.newBuilder()
+	    		.setClientRequest(clientRequest)
+	    		.setUuid("8cc49692-fb40-11e8-a479-7a0060f0aa01")	// HR_JobOpening_ID
+	    		.setCriteria(criteria.build())
+	    		.build();
+		  ValueObjectList response;
+		  try {
+			  response = blockingStub.requestLookupList(request);
+			  logger.info("Lookup List: " + response);
 		  } catch (StatusRuntimeException e) {
 			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
 		      return;
@@ -143,14 +209,15 @@ public class DataClient {
 	   * greeting.
 	   */
 	  public static void main(String[] args) throws Exception {
-		DataClient client = new DataClient("localhost", 50051);
+		DataClient client = new DataClient("localhost", 50052);
 	    try {
 //	    	logger.info("####################### PO #####################");
 //	    	client.requestPO();
 	    	//	
 //	    	client.requestPOWithSQL();
 	    	//	
-	    	client.requestPOListWithSQL();
+//	    	client.requestPOListWithSQL();
+	    	client.requestLookupList();
 //	    	logger.info("####################### PO List #####################");
 //	    	client.requestPOList();
 //	    	logger.info("####################### Callout #####################");

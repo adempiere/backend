@@ -1,7 +1,24 @@
+/************************************************************************************
+ * Copyright (C) 2012-2018 E.R.P. Consultores y Asociados, C.A.                     *
+ * Contributor(s): Yamel Senih ysenih@erpya.com                                     *
+ * This program is free software: you can redistribute it and/or modify             *
+ * it under the terms of the GNU General Public License as published by             *
+ * the Free Software Foundation, either version 2 of the License, or                *
+ * (at your option) any later version.                                              *
+ * This program is distributed in the hope that it will be useful,                  *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of                   *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the                     *
+ * GNU General Public License for more details.                                     *
+ * You should have received a copy of the GNU General Public License                *
+ * along with this program.	If not, see <https://www.gnu.org/licenses/>.            *
+ ************************************************************************************/
 package org.spin.grpc.util;
 
+import java.sql.Timestamp;
 import java.util.List;
+import java.util.Properties;
 
+import org.adempiere.exceptions.AdempiereException;
 import org.adempiere.model.I_AD_Browse_Access;
 import org.adempiere.model.X_AD_Browse_Access;
 import org.compiere.model.I_AD_Column_Access;
@@ -11,6 +28,7 @@ import org.compiere.model.I_AD_Process_Access;
 import org.compiere.model.I_AD_Record_Access;
 import org.compiere.model.I_AD_Role;
 import org.compiere.model.I_AD_Role_OrgAccess;
+import org.compiere.model.I_AD_Session;
 import org.compiere.model.I_AD_Table_Access;
 import org.compiere.model.I_AD_Task_Access;
 import org.compiere.model.I_AD_Window_Access;
@@ -24,6 +42,7 @@ import org.compiere.model.MProcessAccess;
 import org.compiere.model.MRecordAccess;
 import org.compiere.model.MRole;
 import org.compiere.model.MRoleOrgAccess;
+import org.compiere.model.MSession;
 import org.compiere.model.MTable;
 import org.compiere.model.MTableAccess;
 import org.compiere.model.MWindowAccess;
@@ -32,7 +51,9 @@ import org.compiere.model.X_AD_Document_Action_Access;
 import org.compiere.model.X_AD_Table_Access;
 import org.compiere.model.X_AD_Task_Access;
 import org.compiere.util.CLogger;
+import org.compiere.util.DB;
 import org.compiere.util.Env;
+import org.compiere.util.Login;
 import org.compiere.util.Util;
 import org.compiere.wf.MWorkflowAccess;
 import org.spin.grpc.util.AccessServiceGrpc.AccessServiceImplBase;
@@ -47,14 +68,13 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 	private CLogger log = CLogger.getCLogger(AccessServiceImplementation.class);
 
 	@Override
-	public void requestUserRoles(UserRequest request, StreamObserver<UserRoles> responseObserver) {
-		if(request == null) {
-			log.fine("Object Request Null");
-			return;
-		}
-		log.fine("User Role Requested = " + request.getUserName());
-		UserRoles.Builder userRoles = convertUserRoles(request.getUserName());
+	public void requestUserRoles(RoleRequest request, StreamObserver<UserRoles> responseObserver) {
 		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("User Role Requested = " + request.getUserName());
+			UserRoles.Builder userRoles = convertUserRoles(request);
 			responseObserver.onNext(userRoles.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -63,53 +83,138 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 	}
 	
 	@Override
-	public void requestRole(UserRequest request, StreamObserver<Role> responseObserver) {
-		if(request == null) {
-			log.fine("Object Request Null");
-			return;
-		}
-		log.fine("Role Requested = " + request.getUuid());
-		Role.Builder roleBuilder = convertRole(request.getUuid());
+	public void requestLogin(LoginRequest request, StreamObserver<Session> responseObserver) {
 		try {
-			responseObserver.onNext(roleBuilder.build());
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Session Requested = " + request.getUserName());
+			Session.Builder sessionBuilder = createSession(request);
+			responseObserver.onNext(sessionBuilder.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			responseObserver.onError(e);
 		}
 	}
 	
+	@Override
+	public void requestLogout(LogoutRequest request, StreamObserver<Session> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Session Requested = " + request.getSessionUuid());
+			Session.Builder sessionBuilder = logoutSession(request);
+			responseObserver.onNext(sessionBuilder.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			responseObserver.onError(e);
+		}
+	}
 	
 	/**
-	 * Convert Role from UUID
-	 * @param uuid
-	 * @param language
+	 * Get User ID
+	 * @param userName
+	 * @param userPass
 	 * @return
 	 */
-	private Role.Builder convertRole(String uuid) {
-		MRole role = new Query(Env.getCtx(), I_AD_Role.Table_Name, I_AD_Role.COLUMNNAME_UUID + " = ?", null)
-				.setParameters(uuid)
-				.setOnlyActiveRecords(true)
+	private int getUserId(String userName, String userPass) {
+		Login login = new Login(Env.getCtx());
+		return login.getAuthenticatedUserId(userName, userPass);
+	}
+	
+	/**
+	 * Get and convert session
+	 * @param request
+	 * @return
+	 */
+	private Session.Builder createSession(LoginRequest request) {
+		Session.Builder builder = Session.newBuilder();
+		//	Get Session
+		Properties context = Env.getCtx();
+		int userId = getUserId(request.getUserName(), request.getUserPass());
+		int roleId = DB.getSQLValue(null, "SELECT AD_Role_ID FROM AD_Role WHERE UUID = ?", request.getRoleUuid());
+		int organizationId = DB.getSQLValue(null, "SELECT AD_Org_ID FROM AD_Org WHERE UUID = ?", request.getOrganizationUuid());
+		if(organizationId < 0) {
+			organizationId = 0;
+		}
+		//	Get Values from role
+		if(userId < 0
+				|| roleId < 0) {
+			throw new AdempiereException("@AD_User_ID@ / @AD_Role_ID@ / @AD_Org_ID@ @NotFound@");
+		}
+		MRole role = MRole.get(context, roleId);
+		Env.setContext (context, "#AD_Session_ID", 0);
+		Env.setContext(context, "#AD_User_ID", userId);
+		Env.setContext(context, "#AD_Role_ID", roleId);
+		Env.setContext(context, "#AD_Client_ID", role.getAD_Client_ID());
+		Env.setContext(context, "#AD_Org_ID", organizationId);
+		Env.setContext(context, "#Date", new Timestamp(System.currentTimeMillis()));
+		Env.setContext(context, Env.LANGUAGE, request.getLanguage());
+		MSession session = MSession.get(context, true);
+		if(!Util.isEmpty(request.getClientVersion())) {
+			session.setWebSession(request.getClientVersion());
+		}
+		session.saveEx();
+		//	Session values
+		builder.setId(session.getAD_Session_ID());
+		builder.setUuid(validateNull(session.getUUID()));
+		builder.setName(validateNull(session.getDescription()));
+		//	Set role
+		Role.Builder roleBuilder = convertRole(role, true);
+		builder.setRole(roleBuilder.build());
+		//	Return session
+		return builder;
+	}
+	
+	/**
+	 * Logout session
+	 * @param request
+	 * @return
+	 */
+	private Session.Builder logoutSession(LogoutRequest request) {
+		Session.Builder builder = Session.newBuilder();
+		//	Get Session
+		if(Util.isEmpty(request.getSessionUuid())) {
+			throw new AdempiereException("@AD_Session_ID@ @NotFound@");
+		}
+		Properties context = Env.getCtx();
+		MSession session = new Query(context, I_AD_Session.Table_Name, I_AD_Session.COLUMNNAME_UUID + " = ?", null)
+				.setParameters(request.getSessionUuid())
 				.first();
-		return convertRole(role, true);
+		if(session == null
+				|| session.getAD_Session_ID() <= 0) {
+			throw new AdempiereException("@AD_Session_ID@ @NotFound@");
+		}
+		//	Logout
+		session.logout();
+		//	Session values
+		builder.setId(session.getAD_Session_ID());
+		builder.setUuid(validateNull(session.getUUID()));
+		builder.setName(validateNull(session.getDescription()));
+		//	Return session
+		return builder;
 	}
 	
 	/**
 	 * Convert User Roles
-	 * @param userName
-	 * @param language
+	 * @param request
 	 * @return
 	 */
-	private UserRoles.Builder convertUserRoles(String userName) {
-		if(Util.isEmpty(userName)) {
-			return null;
+	private UserRoles.Builder convertUserRoles(RoleRequest request) {
+		if(Util.isEmpty(request.getUserName())
+				|| Util.isEmpty(request.getUserPass())) {
+			throw new AdempiereException("@AD_User_ID@ / @AD_Role_ID@ / @AD_Org_ID@ @NotFound@");
 		}
-		//	TODO: Validate Access
+		int userId = getUserId(request.getUserName(), request.getUserPass());
+		if(userId < 0) {
+			throw new AdempiereException("@AD_User_ID@ / @AD_Role_ID@ / @AD_Org_ID@ @NotFound@");
+		}
 		List<MRole> roleList = new Query(Env.getCtx(), I_AD_Role.Table_Name, 
 				"EXISTS(SELECT 1 FROM AD_User_Roles ur "
-				+ "INNER JOIN AD_User u ON(u.AD_User_ID = ur.AD_User_ID) "
 				+ "WHERE ur.AD_Role_ID = AD_Role.AD_Role_ID "
-				+ "AND u.Value = ?)", null)
-				.setParameters(userName)
+				+ "AND ur.AD_User_ID = ?)", null)
+				.setParameters(userId)
 				.setOnlyActiveRecords(true)
 				.<MRole>list();
 		//	Validate

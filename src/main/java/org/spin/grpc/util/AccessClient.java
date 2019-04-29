@@ -1,3 +1,17 @@
+/************************************************************************************
+ * Copyright (C) 2012-2018 E.R.P. Consultores y Asociados, C.A.                     *
+ * Contributor(s): Yamel Senih ysenih@erpya.com                                     *
+ * This program is free software: you can redistribute it and/or modify             *
+ * it under the terms of the GNU General Public License as published by             *
+ * the Free Software Foundation, either version 2 of the License, or                *
+ * (at your option) any later version.                                              *
+ * This program is distributed in the hope that it will be useful,                  *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of                   *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the                     *
+ * GNU General Public License for more details.                                     *
+ * You should have received a copy of the GNU General Public License                *
+ * along with this program.	If not, see <https://www.gnu.org/licenses/>.            *
+ ************************************************************************************/
 package org.spin.grpc.util;
 
 import java.util.concurrent.TimeUnit;
@@ -37,8 +51,9 @@ public class AccessClient {
 	   * Request User Roles. 
 	   */
 	  public void requestUserRoles() {
-		  UserRequest userRequest = UserRequest.newBuilder()
+		  RoleRequest userRequest = RoleRequest.newBuilder()
 				  .setUserName("SuperUser")
+				  .setUserPass("System")
 				  .build();
 		  UserRoles response;
 		  try {
@@ -51,16 +66,39 @@ public class AccessClient {
 	  }
 
 	  /** 
+	   * Request Login. 
+	   */
+	  public void requestLogin() {
+		  LoginRequest request = LoginRequest.newBuilder()
+	    		.setClientVersion("Version Epale (" + System.currentTimeMillis() + ")")
+	    		.setUserName("SuperUser")
+				.setUserPass("System")
+				.setOrganizationUuid("a3e5c878-fb40-11e8-a479-7a0060f0aa01")
+	    		.setRoleUuid("a48d2596-fb40-11e8-a479-7a0060f0aa01")
+	    		.setLanguage("es_MX")
+	    		.build();
+		  Session response;
+		  try {
+			  response = blockingStub.requestLogin(request);
+			  logger.info("User Session: " + response);
+		  } catch (StatusRuntimeException e) {
+			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
+		      return;
+		  }
+	  }
+	  
+	  /** 
 	   * Request Role. 
 	   */
-	  public void requestRole() {
-		  UserRequest request = UserRequest.newBuilder()
-	    		.setUuid("a48d2596-fb40-11e8-a479-7a0060f0aa01")
+	  public void requestLogout() {
+		  LogoutRequest request = LogoutRequest.newBuilder()
+	    		.setClientVersion("Version Epale (" + System.currentTimeMillis() + ")")
+	    		.setSessionUuid("25f773a4-6a48-11e9-9537-070abd038317")
 	    		.build();
-		  Role response;
+		  Session response;
 		  try {
-			  response = blockingStub.requestRole(request);
-			  logger.info("User Roles: " + response);
+			  response = blockingStub.requestLogout(request);
+			  logger.info("User Session Logout: " + response);
 		  } catch (StatusRuntimeException e) {
 			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
 		      return;
@@ -76,8 +114,10 @@ public class AccessClient {
 	    try {
 	    	logger.info("####################### User Roles #####################");
 	    	client.requestUserRoles();
-	    	logger.info("####################### Role #####################");
-	    	client.requestRole();
+	    	logger.info("####################### Request Login #####################");
+	    	client.requestLogin();
+	    	logger.info("####################### Request Logout #####################");
+	    	client.requestLogout();
 	    } finally {
 	      client.shutdown();
 	    }

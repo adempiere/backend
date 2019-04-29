@@ -18,9 +18,14 @@ public interface CriteriaOrBuilder extends
       getTableNameBytes();
 
   /**
-   * <code>int64 limit = 2;</code>
+   * <code>string query = 2;</code>
    */
-  long getLimit();
+  java.lang.String getQuery();
+  /**
+   * <code>string query = 2;</code>
+   */
+  com.google.protobuf.ByteString
+      getQueryBytes();
 
   /**
    * <code>string whereClause = 3;</code>
@@ -67,26 +72,55 @@ public interface CriteriaOrBuilder extends
       int index);
 
   /**
-   * <code>repeated .data.OrderByProperty orderByColumn = 6;</code>
+   * <code>repeated .data.Value values = 6;</code>
+   */
+  java.util.List<org.spin.grpc.util.Value> 
+      getValuesList();
+  /**
+   * <code>repeated .data.Value values = 6;</code>
+   */
+  org.spin.grpc.util.Value getValues(int index);
+  /**
+   * <code>repeated .data.Value values = 6;</code>
+   */
+  int getValuesCount();
+  /**
+   * <code>repeated .data.Value values = 6;</code>
+   */
+  java.util.List<? extends org.spin.grpc.util.ValueOrBuilder> 
+      getValuesOrBuilderList();
+  /**
+   * <code>repeated .data.Value values = 6;</code>
+   */
+  org.spin.grpc.util.ValueOrBuilder getValuesOrBuilder(
+      int index);
+
+  /**
+   * <code>repeated .data.OrderByProperty orderByColumn = 7;</code>
    */
   java.util.List<org.spin.grpc.util.OrderByProperty> 
       getOrderByColumnList();
   /**
-   * <code>repeated .data.OrderByProperty orderByColumn = 6;</code>
+   * <code>repeated .data.OrderByProperty orderByColumn = 7;</code>
    */
   org.spin.grpc.util.OrderByProperty getOrderByColumn(int index);
   /**
-   * <code>repeated .data.OrderByProperty orderByColumn = 6;</code>
+   * <code>repeated .data.OrderByProperty orderByColumn = 7;</code>
    */
   int getOrderByColumnCount();
   /**
-   * <code>repeated .data.OrderByProperty orderByColumn = 6;</code>
+   * <code>repeated .data.OrderByProperty orderByColumn = 7;</code>
    */
   java.util.List<? extends org.spin.grpc.util.OrderByPropertyOrBuilder> 
       getOrderByColumnOrBuilderList();
   /**
-   * <code>repeated .data.OrderByProperty orderByColumn = 6;</code>
+   * <code>repeated .data.OrderByProperty orderByColumn = 7;</code>
    */
   org.spin.grpc.util.OrderByPropertyOrBuilder getOrderByColumnOrBuilder(
       int index);
+
+  /**
+   * <code>int64 limit = 8;</code>
+   */
+  long getLimit();
 }

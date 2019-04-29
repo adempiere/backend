@@ -1,16 +1,16 @@
-/*************************************************************************************
- * Copyright (C) 2012-2018 E.R.P. Consultores y Asociados, C.A.                      *
- * Contributor(s): Yamel Senih ysenih@erpya.com                                      *
- * This program is free software: you can redistribute it and/or modify              *
- * it under the terms of the GNU General Public License as published by              *
- * the Free Software Foundation, either version 2 of the License, or                 *
- * (at your option) any later version.                                               *
- * This program is distributed in the hope that it will be useful,                   *
- * but WITHOUT ANY WARRANTY; without even the implied warranty of                    *
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                     *
- * GNU General Public License for more details.                                      *
- * You should have received a copy of the GNU General Public License                 *
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.            *
+/************************************************************************************
+ * Copyright (C) 2012-2018 E.R.P. Consultores y Asociados, C.A.                     *
+ * Contributor(s): Yamel Senih ysenih@erpya.com                                     *
+ * This program is free software: you can redistribute it and/or modify             *
+ * it under the terms of the GNU General Public License as published by             *
+ * the Free Software Foundation, either version 2 of the License, or                *
+ * (at your option) any later version.                                              *
+ * This program is distributed in the hope that it will be useful,                  *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of                   *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the                     *
+ * GNU General Public License for more details.                                     *
+ * You should have received a copy of the GNU General Public License                *
+ * along with this program.	If not, see <https://www.gnu.org/licenses/>.            *
  ************************************************************************************/
 syntax = "proto3";
 
@@ -23,21 +23,22 @@ package data;
 
 // The greeting service definition.
 service DataService {
-  // Request Object entity from UUID (Optional ID)
-  rpc RequestObject(ValueObjectRequest) returns (ValueObject) {}
-  // Request Object List
-  rpc RequestObjectList(ValueObjectRequest) returns (ValueObjectList) {}
-  // Request Callout
-  rpc RequestCallout(CalloutRequest) returns (CalloutResponse) {}
+	// Request Object entity from UUID (Optional ID)
+	rpc RequestObject(ValueObjectRequest) returns (ValueObject) {}
+	// Request Object List
+	rpc RequestObjectList(ValueObjectRequest) returns (ValueObjectList) {}
+	// Request Lookup
+	rpc RequestLookup(ValueObjectRequest) returns (ValueObject) {}
+	// Request Lookup List
+	rpc RequestLookupList(ValueObjectRequest) returns (ValueObjectList) {}
+	// Request Callout
+	rpc RequestCallout(CalloutRequest) returns (CalloutResponse) {}
 }
 
 // The client request contains client info for request.
 message ClientRequest {
-	string uuid = 1;
+	string sessionUuid = 1;
 	string language = 2;
-	string clientVersion = 3;
-	string clientUuid = 4;
-	string orgUuid = 5;
 }
 
 // Object List
@@ -84,11 +85,13 @@ message ValueObjectRequest {
 // Query for Request Object
 message Criteria {
 	string tableName = 1;
-	int64 limit = 2;
+	string query = 2;
 	string whereClause = 3;
 	string orderByClause = 4;
 	repeated Condition conditions = 5;
-	repeated OrderByProperty orderByColumn = 6;
+	repeated Value values = 6;
+	repeated OrderByProperty orderByColumn = 7;
+	int64 limit = 8;
 }
 
 // Order By Property
@@ -96,7 +99,7 @@ message OrderByProperty {
 	string columnName = 1;
 	enum OrderType {
 		ASCENDING = 0;
-    	DESCENDING = 1;
+		DESCENDING = 1;
 	}
 	//	Operators
 	OrderType orderType = 2;
@@ -109,18 +112,18 @@ message Condition {
 	repeated Value values = 3;
 	enum Operator {
 		EQUAL = 0;
-    	NOT_EQUAL = 1;
-    	LIKE = 2;
-    	NOT_LIKE = 3;
-    	GREATER = 4;
-    	GREATER_EQUAL = 5;
-    	LESS = 6;
-    	LESS_EQUAL = 7;
-    	BETWEEN = 8;
-    	NOT_NULL = 9;
-    	NULL = 10;
-    	IN = 11;
-    	NOT_IN = 12;
+		NOT_EQUAL = 1;
+		LIKE = 2;
+		NOT_LIKE = 3;
+		GREATER = 4;
+		GREATER_EQUAL = 5;
+		LESS = 6;
+		LESS_EQUAL = 7;
+		BETWEEN = 8;
+		NOT_NULL = 9;
+		NULL = 10;
+		IN = 11;
+		NOT_IN = 12;
 	}
 	//	Operators
 	Operator operator = 4;

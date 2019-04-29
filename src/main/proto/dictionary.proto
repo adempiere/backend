@@ -1,16 +1,16 @@
-/*************************************************************************************
- * Copyright (C) 2012-2018 E.R.P. Consultores y Asociados, C.A.                      *
- * Contributor(s): Yamel Senih ysenih@erpya.com                                      *
- * This program is free software: you can redistribute it and/or modify              *
- * it under the terms of the GNU General Public License as published by              *
- * the Free Software Foundation, either version 2 of the License, or                 *
- * (at your option) any later version.                                               *
- * This program is distributed in the hope that it will be useful,                   *
- * but WITHOUT ANY WARRANTY; without even the implied warranty of                    *
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                     *
- * GNU General Public License for more details.                                      *
- * You should have received a copy of the GNU General Public License                 *
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.            *
+/************************************************************************************
+ * Copyright (C) 2012-2018 E.R.P. Consultores y Asociados, C.A.                     *
+ * Contributor(s): Yamel Senih ysenih@erpya.com                                     *
+ * This program is free software: you can redistribute it and/or modify             *
+ * it under the terms of the GNU General Public License as published by             *
+ * the Free Software Foundation, either version 2 of the License, or                *
+ * (at your option) any later version.                                              *
+ * This program is distributed in the hope that it will be useful,                  *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of                   *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the                     *
+ * GNU General Public License for more details.                                     *
+ * You should have received a copy of the GNU General Public License                *
+ * along with this program.	If not, see <https://www.gnu.org/licenses/>.            *
  ************************************************************************************/
 syntax = "proto3";
 
@@ -23,32 +23,31 @@ package dictionary;
 
 // The greeting service definition.
 service DictionaryService {
-  // Request Menu from Parent UUID
-  rpc RequestMenuAndChild(EntityRequest) returns (Menu) {}
-  // Request Menu
-  rpc RequestMenu(EntityRequest) returns (Menu) {}
-  // Request a Window
-  rpc RequestWindow(EntityRequest) returns (Window) {}
-  // Request Window and tabs
-  rpc RequestWindowAndTabs(EntityRequest) returns (Window) {}
-  // Request a Tab
-  rpc RequestTab(EntityRequest) returns (Tab) {}
-  // Request a Tab and Fields
-  rpc RequestTabAndFields(EntityRequest) returns (Tab) {}
-  // Request a Field
-  rpc RequestField(EntityRequest) returns (Field) {}
-  // Request Process
-  rpc RequestProcess(EntityRequest) returns (Process) {}
-  // Request Browser
-  rpc RequestBrowser(EntityRequest) returns (Browser) {}
+	// Request Menu from Parent UUID
+	rpc RequestMenuAndChild(EntityRequest) returns (Menu) {}
+	// Request Menu
+	rpc RequestMenu(EntityRequest) returns (Menu) {}
+	// Request a Window
+	rpc RequestWindow(EntityRequest) returns (Window) {}
+	// Request Window and tabs
+	rpc RequestWindowAndTabs(EntityRequest) returns (Window) {}
+	// Request a Tab
+	rpc RequestTab(EntityRequest) returns (Tab) {}
+	// Request a Tab and Fields
+	rpc RequestTabAndFields(EntityRequest) returns (Tab) {}
+	// Request a Field
+	rpc RequestField(EntityRequest) returns (Field) {}
+	// Request Process
+	rpc RequestProcess(EntityRequest) returns (Process) {}
+	// Request Browser
+	rpc RequestBrowser(EntityRequest) returns (Browser) {}
 }
 
 
 // The client request contains client info for request.
 message ApplicationRequest {
-	string uuid = 1;
+	string sessionUuid = 1;
 	string language = 2;
-	string clientVersion = 3;
 }
 
 // Object request
@@ -63,13 +62,13 @@ message Window {
 	int32 id = 1;
 	string uuid = 2;
 	string name = 3;
-  string description = 4;
-  string help = 5;
-  bool isActive = 6;
-  bool isSOTrx = 7;
-  //	External Info
-  ContextInfo contextInfo = 8;
-  repeated Tab tabs = 9;
+	string description = 4;
+	string help = 5;
+	bool isActive = 6;
+	bool isSOTrx = 7;
+	//	External Info
+	ContextInfo contextInfo = 8;
+	repeated Tab tabs = 9;
 }
 
 // Tab
@@ -77,36 +76,36 @@ message Tab {
 	int32 id = 1;
 	string uuid = 2;
 	string name = 3;
-  string description = 4;
-  string help = 5;
-  // Attributes
-  string tableName = 6;
-  int32 sequence = 7;
-  int32 tabLevel = 8;
-  //
-  bool isActive = 9;
-  bool isSingleRow = 10;
-  bool isAdvancedTab = 11;
-  bool isHasTree = 12;
-  bool isInfoTab = 13;
-  bool isSortTab = 14;
-  bool isTranslationTab = 15;
-  bool isReadOnly = 16;
-  bool isInsertRecord = 17;
-  bool isView = 18;
-  bool isDeleteable = 19;
-  bool isDocument = 20;
-  int32 accessLevel = 21;
-  string linkColumnName = 22;
-  string parentColumnName = 23;
-  string displayLogic = 24;
-  string commitWarning = 25;
-  string orderByClause = 26;
-  // External Info
-  ContextInfo contextInfo = 27;
-  repeated Process processes = 28;
-  repeated Field fields = 29;
-  FieldGroup fieldGroup = 30;
+	string description = 4;
+	string help = 5;
+	// Attributes
+	string tableName = 6;
+	int32 sequence = 7;
+	int32 tabLevel = 8;
+	//
+	bool isActive = 9;
+	bool isSingleRow = 10;
+	bool isAdvancedTab = 11;
+	bool isHasTree = 12;
+	bool isInfoTab = 13;
+	bool isSortTab = 14;
+	bool isTranslationTab = 15;
+	bool isReadOnly = 16;
+	bool isInsertRecord = 17;
+	bool isView = 18;
+	bool isDeleteable = 19;
+	bool isDocument = 20;
+	int32 accessLevel = 21;
+	string linkColumnName = 22;
+	string parentColumnName = 23;
+	string displayLogic = 24;
+	string commitWarning = 25;
+	string orderByClause = 26;
+	// External Info
+	ContextInfo contextInfo = 27;
+	repeated Process processes = 28;
+	repeated Field fields = 29;
+	FieldGroup fieldGroup = 30;
 }
 
 // Field
@@ -114,56 +113,56 @@ message Field {
 	int32 id = 1;
 	string uuid = 2;
 	string name = 3;
-  string description = 4;
-  string help = 5;
-  int32 sequence = 6;
-  string columnName = 7;
-  bool isDisplayed = 8;
-  bool isDisplayedGrid = 9;
-  bool isReadOnly = 10;
-  bool isAllowCopy = 11;
-  bool isEncrypted = 12;
-  bool isSameLine = 13;
-  bool isHeading = 14;
-  bool isFieldOnly = 15;
-  bool isQuickEntry = 16;
-  bool isMandatory = 17;
-  bool isKey = 18;
-  bool isParent = 19;
-  bool isUpdateable = 20;
-  bool isIdentifier = 21;
-  bool isAllowLogging = 22;
-  bool isSelectionColumn = 23;
-  bool isRange = 24;
-  bool isAlwaysUpdateable = 25;
-  bool isTranslated = 26;
-  int32 identifierSequence = 77;
-  string displayLogic = 28;
-  int32 displayType = 29;
-  string defaultValue = 30;
-  string readOnlyLogic = 31;
-  string mandatoryLogic = 32;
-  string callout = 33;
-  string columnSQL = 34;
-  string vFormat = 35;
-  string valueMin = 36;
-  string valueMax = 37;
-  string formatPattern = 38;
-  // External Info
-  ContextInfo contextInfo = 39;
-  FieldGroup fieldGroup = 40;
-  FieldDefinition fieldDefinition = 41;
-  Reference reference = 42;
-  Process process = 43;
-  // Smart Browser Field Compatibility
+	string description = 4;
+	string help = 5;
+	int32 sequence = 6;
+	string columnName = 7;
+	bool isDisplayed = 8;
+	bool isDisplayedGrid = 9;
+	bool isReadOnly = 10;
+	bool isAllowCopy = 11;
+	bool isEncrypted = 12;
+	bool isSameLine = 13;
+	bool isHeading = 14;
+	bool isFieldOnly = 15;
+	bool isQuickEntry = 16;
+	bool isMandatory = 17;
+	bool isKey = 18;
+	bool isParent = 19;
+	bool isUpdateable = 20;
+	bool isIdentifier = 21;
+	bool isAllowLogging = 22;
+	bool isSelectionColumn = 23;
+	bool isRange = 24;
+	bool isAlwaysUpdateable = 25;
+	bool isTranslated = 26;
+	int32 identifierSequence = 77;
+	string displayLogic = 28;
+	int32 displayType = 29;
+	string defaultValue = 30;
+	string readOnlyLogic = 31;
+	string mandatoryLogic = 32;
+	string callout = 33;
+	string columnSQL = 34;
+	string vFormat = 35;
+	string valueMin = 36;
+	string valueMax = 37;
+	string formatPattern = 38;
+	// External Info
+	ContextInfo contextInfo = 39;
+	FieldGroup fieldGroup = 40;
+	FieldDefinition fieldDefinition = 41;
+	Reference reference = 42;
+	Process process = 43;
+	// Smart Browser Field Compatibility
 	bool isQueryCriteria = 44;
 	bool isOrderBy = 45;
 	int32 seqNoGrid = 46;
 	int32 sortNo = 47;
 	bool isInfoOnly = 48;
 	bool isActive = 49;
-  	// Process Parameter Compatibility
-  	string defaultValueTo = 50;
+		// Process Parameter Compatibility
+		string defaultValueTo = 50;
 }
 
 // Context Info
@@ -171,10 +170,10 @@ message ContextInfo {
 	int32 id = 1;
 	string uuid = 2;
 	string name = 3;
-  string description = 4;
-  MessageText messageText = 5;
-  string sqlStatement = 6;
-  bool isActive = 7;
+	string description = 4;
+	MessageText messageText = 5;
+	string sqlStatement = 6;
+	bool isActive = 7;
 }
 
 // Message
@@ -182,10 +181,10 @@ message MessageText {
 	int32 id = 1;
 	string uuid = 2;
 	string value = 3;
-  string msgType = 4;
-  string msgText = 5;
-  string msgTip = 6;
-  bool isActive = 7;
+	string msgType = 4;
+	string msgText = 5;
+	string msgTip = 6;
+	bool isActive = 7;
 }
 
 // Context Info
@@ -193,8 +192,8 @@ message FieldGroup {
 	int32 id = 1;
 	string uuid = 2;
 	string name = 3;
-  string fieldGroupType = 4;
-  bool isActive = 5;
+	string fieldGroupType = 4;
+	bool isActive = 5;
 }
 
 // Context Info
@@ -203,9 +202,9 @@ message FieldDefinition {
 	string uuid = 2;
 	string value = 3;
 	string name = 4;
-  string fieldGroupType = 5;
-  repeated FieldCondition conditions = 6;
-  bool isActive = 7;
+	string fieldGroupType = 5;
+	repeated FieldCondition conditions = 6;
+	bool isActive = 7;
 }
 
 // Field Condition
@@ -213,8 +212,8 @@ message FieldCondition {
 	int32 id = 1;
 	string uuid = 2;
 	string condition = 3;
-  string stylesheet = 4;
-  bool isActive = 5;
+	string stylesheet = 4;
+	bool isActive = 5;
 }
 
 // Process
@@ -223,14 +222,14 @@ message Process {
 	string uuid = 2;
 	string value = 3;
 	string name = 4;
-  string description = 5;
-  string help = 6;
-  bool isReport = 7;
-  int32 accessLevel = 8;
-  string showHelp = 9;
-  bool isDirectPrint = 10;
-  repeated Field parameters = 11;
-  bool isActive = 12;
+	string description = 5;
+	string help = 6;
+	bool isReport = 7;
+	int32 accessLevel = 8;
+	string showHelp = 9;
+	bool isDirectPrint = 10;
+	repeated Field parameters = 11;
+	bool isActive = 12;
 }
 
 // Form
@@ -238,11 +237,11 @@ message Form {
 	int32 id = 1;
 	string uuid = 2;
 	string name = 3;
-  string description = 4;
-  string help = 5;
-  int32 accessLevel = 6;
-  string className = 7;
-  bool isActive = 8;
+	string description = 4;
+	string help = 5;
+	int32 accessLevel = 6;
+	string className = 7;
+	bool isActive = 8;
 }
 
 // Smart Browser
@@ -251,22 +250,22 @@ message Browser {
 	string uuid = 2;
 	string value = 3;
 	string name = 4;
-  string description = 5;
-  string help = 6;
-  int32 accessLevel = 8;
-  string whereClause = 9;
-  bool isUpdateable = 10;
-  bool IsDeleteable = 11;
-  bool IsSelectedByDefault = 12;
-  bool IsCollapsibleByDefault = 13;
-  bool IsExecutedQueryByDefault = 14;
-  bool IsShowTotal = 15;
-  string viewUuid = 16;
-  // External Reference
-  Window window = 17;
-  Process process = 18;
-  repeated Field fields = 19;
-  bool isActive = 20;
+	string description = 5;
+	string help = 6;
+	int32 accessLevel = 8;
+	string whereClause = 9;
+	bool isUpdateable = 10;
+	bool IsDeleteable = 11;
+	bool IsSelectedByDefault = 12;
+	bool IsCollapsibleByDefault = 13;
+	bool IsExecutedQueryByDefault = 14;
+	bool IsShowTotal = 15;
+	string viewUuid = 16;
+	// External Reference
+	Window window = 17;
+	Process process = 18;
+	repeated Field fields = 19;
+	bool isActive = 20;
 }
 
 // Zoom Window
@@ -275,20 +274,20 @@ message ZoomWindow {
 	string uuid = 2;
 	string name = 3;
 	string description = 4;
-  bool isSOTrx = 5;
-  bool isActive = 6;
+	bool isSOTrx = 5;
+	bool isActive = 6;
 }
 
 // Foreign Reference
 message Reference {
 	string tableName = 1;
-  string keyColumnName = 2;
-  string displayColumnName = 3;
-  string query = 4;
+	string keyColumnName = 2;
+	string displayColumnName = 3;
+	string query = 4;
 	string directQuery = 5;
 	string validationCode = 6;
-  // External Info
-  repeated ZoomWindow windows = 7;
+	// External Info
+	repeated ZoomWindow windows = 7;
 }
 
 // Menu
@@ -297,17 +296,17 @@ message Menu {
 	string uuid = 2;
 	string parentUuid = 4;
 	string name = 5;
-  string description = 6;
-  string sequence = 7;
-  bool isReadOnly = 8;
-  bool isSummary = 9;
-  bool isSOTrx = 10;
-  string action = 11;
-  // Supported References
-  string formUuid = 12;
-  string windowUuid = 13;
-  string processUuid = 14;
-  string browserUuid = 15;
-  repeated Menu childs = 16;
-  bool isActive = 17;
+	string description = 6;
+	string sequence = 7;
+	bool isReadOnly = 8;
+	bool isSummary = 9;
+	bool isSOTrx = 10;
+	string action = 11;
+	// Supported References
+	string formUuid = 12;
+	string windowUuid = 13;
+	string processUuid = 14;
+	string browserUuid = 15;
+	repeated Menu childs = 16;
+	bool isActive = 17;
 }

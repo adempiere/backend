@@ -30,28 +30,28 @@ public final class AccessServiceGrpc {
   public static final String SERVICE_NAME = "access.AccessService";
 
   // Static method descriptors that strictly reflect the proto.
-  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.UserRequest,
+  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.RoleRequest,
       org.spin.grpc.util.UserRoles> getRequestUserRolesMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "RequestUserRoles",
-      requestType = org.spin.grpc.util.UserRequest.class,
+      requestType = org.spin.grpc.util.RoleRequest.class,
       responseType = org.spin.grpc.util.UserRoles.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<org.spin.grpc.util.UserRequest,
+  public static io.grpc.MethodDescriptor<org.spin.grpc.util.RoleRequest,
       org.spin.grpc.util.UserRoles> getRequestUserRolesMethod() {
-    io.grpc.MethodDescriptor<org.spin.grpc.util.UserRequest, org.spin.grpc.util.UserRoles> getRequestUserRolesMethod;
+    io.grpc.MethodDescriptor<org.spin.grpc.util.RoleRequest, org.spin.grpc.util.UserRoles> getRequestUserRolesMethod;
     if ((getRequestUserRolesMethod = AccessServiceGrpc.getRequestUserRolesMethod) == null) {
       synchronized (AccessServiceGrpc.class) {
         if ((getRequestUserRolesMethod = AccessServiceGrpc.getRequestUserRolesMethod) == null) {
           AccessServiceGrpc.getRequestUserRolesMethod = getRequestUserRolesMethod = 
-              io.grpc.MethodDescriptor.<org.spin.grpc.util.UserRequest, org.spin.grpc.util.UserRoles>newBuilder()
+              io.grpc.MethodDescriptor.<org.spin.grpc.util.RoleRequest, org.spin.grpc.util.UserRoles>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
                   "access.AccessService", "RequestUserRoles"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  org.spin.grpc.util.UserRequest.getDefaultInstance()))
+                  org.spin.grpc.util.RoleRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.UserRoles.getDefaultInstance()))
                   .setSchemaDescriptor(new AccessServiceMethodDescriptorSupplier("RequestUserRoles"))
@@ -62,36 +62,68 @@ public final class AccessServiceGrpc {
      return getRequestUserRolesMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.UserRequest,
-      org.spin.grpc.util.Role> getRequestRoleMethod;
+  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.LoginRequest,
+      org.spin.grpc.util.Session> getRequestLoginMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "RequestRole",
-      requestType = org.spin.grpc.util.UserRequest.class,
-      responseType = org.spin.grpc.util.Role.class,
+      fullMethodName = SERVICE_NAME + '/' + "RequestLogin",
+      requestType = org.spin.grpc.util.LoginRequest.class,
+      responseType = org.spin.grpc.util.Session.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<org.spin.grpc.util.UserRequest,
-      org.spin.grpc.util.Role> getRequestRoleMethod() {
-    io.grpc.MethodDescriptor<org.spin.grpc.util.UserRequest, org.spin.grpc.util.Role> getRequestRoleMethod;
-    if ((getRequestRoleMethod = AccessServiceGrpc.getRequestRoleMethod) == null) {
+  public static io.grpc.MethodDescriptor<org.spin.grpc.util.LoginRequest,
+      org.spin.grpc.util.Session> getRequestLoginMethod() {
+    io.grpc.MethodDescriptor<org.spin.grpc.util.LoginRequest, org.spin.grpc.util.Session> getRequestLoginMethod;
+    if ((getRequestLoginMethod = AccessServiceGrpc.getRequestLoginMethod) == null) {
       synchronized (AccessServiceGrpc.class) {
-        if ((getRequestRoleMethod = AccessServiceGrpc.getRequestRoleMethod) == null) {
-          AccessServiceGrpc.getRequestRoleMethod = getRequestRoleMethod = 
-              io.grpc.MethodDescriptor.<org.spin.grpc.util.UserRequest, org.spin.grpc.util.Role>newBuilder()
+        if ((getRequestLoginMethod = AccessServiceGrpc.getRequestLoginMethod) == null) {
+          AccessServiceGrpc.getRequestLoginMethod = getRequestLoginMethod = 
+              io.grpc.MethodDescriptor.<org.spin.grpc.util.LoginRequest, org.spin.grpc.util.Session>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
-                  "access.AccessService", "RequestRole"))
+                  "access.AccessService", "RequestLogin"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  org.spin.grpc.util.UserRequest.getDefaultInstance()))
+                  org.spin.grpc.util.LoginRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  org.spin.grpc.util.Role.getDefaultInstance()))
-                  .setSchemaDescriptor(new AccessServiceMethodDescriptorSupplier("RequestRole"))
+                  org.spin.grpc.util.Session.getDefaultInstance()))
+                  .setSchemaDescriptor(new AccessServiceMethodDescriptorSupplier("RequestLogin"))
                   .build();
           }
         }
      }
-     return getRequestRoleMethod;
+     return getRequestLoginMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.LogoutRequest,
+      org.spin.grpc.util.Session> getRequestLogoutMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "RequestLogout",
+      requestType = org.spin.grpc.util.LogoutRequest.class,
+      responseType = org.spin.grpc.util.Session.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<org.spin.grpc.util.LogoutRequest,
+      org.spin.grpc.util.Session> getRequestLogoutMethod() {
+    io.grpc.MethodDescriptor<org.spin.grpc.util.LogoutRequest, org.spin.grpc.util.Session> getRequestLogoutMethod;
+    if ((getRequestLogoutMethod = AccessServiceGrpc.getRequestLogoutMethod) == null) {
+      synchronized (AccessServiceGrpc.class) {
+        if ((getRequestLogoutMethod = AccessServiceGrpc.getRequestLogoutMethod) == null) {
+          AccessServiceGrpc.getRequestLogoutMethod = getRequestLogoutMethod = 
+              io.grpc.MethodDescriptor.<org.spin.grpc.util.LogoutRequest, org.spin.grpc.util.Session>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(
+                  "access.AccessService", "RequestLogout"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  org.spin.grpc.util.LogoutRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  org.spin.grpc.util.Session.getDefaultInstance()))
+                  .setSchemaDescriptor(new AccessServiceMethodDescriptorSupplier("RequestLogout"))
+                  .build();
+          }
+        }
+     }
+     return getRequestLogoutMethod;
   }
 
   /**
@@ -129,7 +161,7 @@ public final class AccessServiceGrpc {
      * Request user roles
      * </pre>
      */
-    public void requestUserRoles(org.spin.grpc.util.UserRequest request,
+    public void requestUserRoles(org.spin.grpc.util.RoleRequest request,
         io.grpc.stub.StreamObserver<org.spin.grpc.util.UserRoles> responseObserver) {
       asyncUnimplementedUnaryCall(getRequestUserRolesMethod(), responseObserver);
     }
@@ -139,9 +171,19 @@ public final class AccessServiceGrpc {
      * Request a Role from uuid
      * </pre>
      */
-    public void requestRole(org.spin.grpc.util.UserRequest request,
-        io.grpc.stub.StreamObserver<org.spin.grpc.util.Role> responseObserver) {
-      asyncUnimplementedUnaryCall(getRequestRoleMethod(), responseObserver);
+    public void requestLogin(org.spin.grpc.util.LoginRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.Session> responseObserver) {
+      asyncUnimplementedUnaryCall(getRequestLoginMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
+     * Request a Role from uuid
+     * </pre>
+     */
+    public void requestLogout(org.spin.grpc.util.LogoutRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.Session> responseObserver) {
+      asyncUnimplementedUnaryCall(getRequestLogoutMethod(), responseObserver);
     }
 
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
@@ -150,16 +192,23 @@ public final class AccessServiceGrpc {
             getRequestUserRolesMethod(),
             asyncUnaryCall(
               new MethodHandlers<
-                org.spin.grpc.util.UserRequest,
+                org.spin.grpc.util.RoleRequest,
                 org.spin.grpc.util.UserRoles>(
                   this, METHODID_REQUEST_USER_ROLES)))
           .addMethod(
-            getRequestRoleMethod(),
+            getRequestLoginMethod(),
             asyncUnaryCall(
               new MethodHandlers<
-                org.spin.grpc.util.UserRequest,
-                org.spin.grpc.util.Role>(
-                  this, METHODID_REQUEST_ROLE)))
+                org.spin.grpc.util.LoginRequest,
+                org.spin.grpc.util.Session>(
+                  this, METHODID_REQUEST_LOGIN)))
+          .addMethod(
+            getRequestLogoutMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                org.spin.grpc.util.LogoutRequest,
+                org.spin.grpc.util.Session>(
+                  this, METHODID_REQUEST_LOGOUT)))
           .build();
     }
   }
@@ -190,7 +239,7 @@ public final class AccessServiceGrpc {
      * Request user roles
      * </pre>
      */
-    public void requestUserRoles(org.spin.grpc.util.UserRequest request,
+    public void requestUserRoles(org.spin.grpc.util.RoleRequest request,
         io.grpc.stub.StreamObserver<org.spin.grpc.util.UserRoles> responseObserver) {
       asyncUnaryCall(
           getChannel().newCall(getRequestUserRolesMethod(), getCallOptions()), request, responseObserver);
@@ -201,10 +250,21 @@ public final class AccessServiceGrpc {
      * Request a Role from uuid
      * </pre>
      */
-    public void requestRole(org.spin.grpc.util.UserRequest request,
-        io.grpc.stub.StreamObserver<org.spin.grpc.util.Role> responseObserver) {
+    public void requestLogin(org.spin.grpc.util.LoginRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.Session> responseObserver) {
       asyncUnaryCall(
-          getChannel().newCall(getRequestRoleMethod(), getCallOptions()), request, responseObserver);
+          getChannel().newCall(getRequestLoginMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
+     * Request a Role from uuid
+     * </pre>
+     */
+    public void requestLogout(org.spin.grpc.util.LogoutRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.Session> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getRequestLogoutMethod(), getCallOptions()), request, responseObserver);
     }
   }
 
@@ -234,7 +294,7 @@ public final class AccessServiceGrpc {
      * Request user roles
      * </pre>
      */
-    public org.spin.grpc.util.UserRoles requestUserRoles(org.spin.grpc.util.UserRequest request) {
+    public org.spin.grpc.util.UserRoles requestUserRoles(org.spin.grpc.util.RoleRequest request) {
       return blockingUnaryCall(
           getChannel(), getRequestUserRolesMethod(), getCallOptions(), request);
     }
@@ -244,9 +304,19 @@ public final class AccessServiceGrpc {
      * Request a Role from uuid
      * </pre>
      */
-    public org.spin.grpc.util.Role requestRole(org.spin.grpc.util.UserRequest request) {
+    public org.spin.grpc.util.Session requestLogin(org.spin.grpc.util.LoginRequest request) {
       return blockingUnaryCall(
-          getChannel(), getRequestRoleMethod(), getCallOptions(), request);
+          getChannel(), getRequestLoginMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * Request a Role from uuid
+     * </pre>
+     */
+    public org.spin.grpc.util.Session requestLogout(org.spin.grpc.util.LogoutRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getRequestLogoutMethod(), getCallOptions(), request);
     }
   }
 
@@ -277,7 +347,7 @@ public final class AccessServiceGrpc {
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.UserRoles> requestUserRoles(
-        org.spin.grpc.util.UserRequest request) {
+        org.spin.grpc.util.RoleRequest request) {
       return futureUnaryCall(
           getChannel().newCall(getRequestUserRolesMethod(), getCallOptions()), request);
     }
@@ -287,15 +357,27 @@ public final class AccessServiceGrpc {
      * Request a Role from uuid
      * </pre>
      */
-    public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.Role> requestRole(
-        org.spin.grpc.util.UserRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.Session> requestLogin(
+        org.spin.grpc.util.LoginRequest request) {
       return futureUnaryCall(
-          getChannel().newCall(getRequestRoleMethod(), getCallOptions()), request);
+          getChannel().newCall(getRequestLoginMethod(), getCallOptions()), request);
+    }
+
+    /**
+     * <pre>
+     * Request a Role from uuid
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.Session> requestLogout(
+        org.spin.grpc.util.LogoutRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getRequestLogoutMethod(), getCallOptions()), request);
     }
   }
 
   private static final int METHODID_REQUEST_USER_ROLES = 0;
-  private static final int METHODID_REQUEST_ROLE = 1;
+  private static final int METHODID_REQUEST_LOGIN = 1;
+  private static final int METHODID_REQUEST_LOGOUT = 2;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -315,12 +397,16 @@ public final class AccessServiceGrpc {
     public void invoke(Req request, io.grpc.stub.StreamObserver<Resp> responseObserver) {
       switch (methodId) {
         case METHODID_REQUEST_USER_ROLES:
-          serviceImpl.requestUserRoles((org.spin.grpc.util.UserRequest) request,
+          serviceImpl.requestUserRoles((org.spin.grpc.util.RoleRequest) request,
               (io.grpc.stub.StreamObserver<org.spin.grpc.util.UserRoles>) responseObserver);
           break;
-        case METHODID_REQUEST_ROLE:
-          serviceImpl.requestRole((org.spin.grpc.util.UserRequest) request,
-              (io.grpc.stub.StreamObserver<org.spin.grpc.util.Role>) responseObserver);
+        case METHODID_REQUEST_LOGIN:
+          serviceImpl.requestLogin((org.spin.grpc.util.LoginRequest) request,
+              (io.grpc.stub.StreamObserver<org.spin.grpc.util.Session>) responseObserver);
+          break;
+        case METHODID_REQUEST_LOGOUT:
+          serviceImpl.requestLogout((org.spin.grpc.util.LogoutRequest) request,
+              (io.grpc.stub.StreamObserver<org.spin.grpc.util.Session>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -384,7 +470,8 @@ public final class AccessServiceGrpc {
           serviceDescriptor = result = io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
               .setSchemaDescriptor(new AccessServiceFileDescriptorSupplier())
               .addMethod(getRequestUserRolesMethod())
-              .addMethod(getRequestRoleMethod())
+              .addMethod(getRequestLoginMethod())
+              .addMethod(getRequestLogoutMethod())
               .build();
         }
       }
