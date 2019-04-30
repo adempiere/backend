@@ -50,14 +50,15 @@ public class AccessClient {
 	  /** 
 	   * Request User Roles. 
 	   */
-	  public void requestUserRoles() {
-		  RoleRequest userRequest = RoleRequest.newBuilder()
+	  public void requestUserInfo() {
+		  LoginRequest userRequest = LoginRequest.newBuilder()
 				  .setUserName("SuperUser")
 				  .setUserPass("System")
+				  .setClientVersion("Version Epale")
 				  .build();
-		  UserRoles response;
+		  UserInfoValue response;
 		  try {
-			  response = blockingStub.requestUserRoles(userRequest);
+			  response = blockingStub.requestUserInfo(userRequest);
 			  logger.info("User Roles: " + response);
 		  } catch (StatusRuntimeException e) {
 			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
@@ -80,6 +81,26 @@ public class AccessClient {
 		  Session response;
 		  try {
 			  response = blockingStub.requestLogin(request);
+			  logger.info("User Session: " + response);
+		  } catch (StatusRuntimeException e) {
+			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
+		      return;
+		  }
+	  }
+	  
+	  /** 
+	   * Request Login. 
+	   */
+	  public void requestLoginDefaultRole() {
+		  LoginRequest request = LoginRequest.newBuilder()
+	    		.setClientVersion("Version Epale (" + System.currentTimeMillis() + ")")
+	    		.setUserName("GardenAdmin")
+				.setUserPass("GardenAdmin")
+	    		.setLanguage("es_MX")
+	    		.build();
+		  Session response;
+		  try {
+			  response = blockingStub.requestLoginDefault(request);
 			  logger.info("User Session: " + response);
 		  } catch (StatusRuntimeException e) {
 			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
@@ -113,11 +134,13 @@ public class AccessClient {
 		AccessClient client = new AccessClient("localhost", 50050);
 	    try {
 	    	logger.info("####################### User Roles #####################");
-	    	client.requestUserRoles();
+	    	client.requestUserInfo();
 	    	logger.info("####################### Request Login #####################");
 	    	client.requestLogin();
 	    	logger.info("####################### Request Logout #####################");
 	    	client.requestLogout();
+	    	logger.info("####################### Request Login And Role #####################");
+	    	client.requestLoginDefaultRole();
 	    } finally {
 	      client.shutdown();
 	    }

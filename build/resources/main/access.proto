@@ -24,18 +24,15 @@ package access;
 // The greeting service definition.
 service AccessService {
   // Request user roles
-  rpc RequestUserRoles(RoleRequest) returns (UserRoles) {}
-  // Request a Role from uuid
+  rpc RequestUserInfo(LoginRequest) returns (UserInfoValue) {}
+  // Request login from user
   rpc RequestLogin(LoginRequest) returns (Session) {}
+  // Request login and role
+  rpc RequestLoginDefault(LoginRequest) returns (Session) {}
   // Request a Role from uuid
   rpc RequestLogout(LogoutRequest) returns (Session) {}  
-}
-
-// Request Role list from server
-message RoleRequest {
-	string userName = 2;
-	string userPass = 3;
-	string clientVersion = 7;
+  // Request user roles from Session
+  rpc RequestUserInfoFromSession(UserInfoRequest) returns (UserInfoValue) {}  
 }
 
 // Request a Login Session
@@ -43,8 +40,8 @@ message LoginRequest {
 	string userName = 2;
 	string userPass = 3;
 	string roleUuid = 4;
-	string warehouseUuid = 5;
-	string organizationUuid = 6;
+	string organizationUuid = 5;
+	string warehouseUuid = 6;
 	string clientVersion = 7;
 	string language = 8;
 }
@@ -55,8 +52,14 @@ message LogoutRequest {
 	string clientVersion = 7;
 }
 
+// Request User Info
+message UserInfoRequest {
+	string sessionUuid = 1;
+	string clientVersion = 7;
+}
+
 // Role list from user
-message UserRoles {
+message UserInfoValue {
 	string uuid = 1;
 	repeated Role roles = 2;
 }

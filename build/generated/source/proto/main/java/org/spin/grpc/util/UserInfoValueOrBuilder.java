@@ -3,8 +3,8 @@
 
 package org.spin.grpc.util;
 
-public interface UserRolesOrBuilder extends
-    // @@protoc_insertion_point(interface_extends:access.UserRoles)
+public interface UserInfoValueOrBuilder extends
+    // @@protoc_insertion_point(interface_extends:access.UserInfoValue)
     com.google.protobuf.MessageOrBuilder {
 
   /**

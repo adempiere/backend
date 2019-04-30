@@ -23,8 +23,8 @@ private static final long serialVersionUID = 0L;
     userName_ = "";
     userPass_ = "";
     roleUuid_ = "";
-    warehouseUuid_ = "";
     organizationUuid_ = "";
+    warehouseUuid_ = "";
     clientVersion_ = "";
     language_ = "";
   }
@@ -81,13 +81,13 @@ private static final long serialVersionUID = 0L;
           case 42: {
             java.lang.String s = input.readStringRequireUtf8();
 
-            warehouseUuid_ = s;
+            organizationUuid_ = s;
             break;
           }
           case 50: {
             java.lang.String s = input.readStringRequireUtf8();
 
-            organizationUuid_ = s;
+            warehouseUuid_ = s;
             break;
           }
           case 58: {
@@ -228,44 +228,10 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int WAREHOUSEUUID_FIELD_NUMBER = 5;
-  private volatile java.lang.Object warehouseUuid_;
-  /**
-   * <code>string warehouseUuid = 5;</code>
-   */
-  public java.lang.String getWarehouseUuid() {
-    java.lang.Object ref = warehouseUuid_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = 
-          (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      warehouseUuid_ = s;
-      return s;
-    }
-  }
-  /**
-   * <code>string warehouseUuid = 5;</code>
-   */
-  public com.google.protobuf.ByteString
-      getWarehouseUuidBytes() {
-    java.lang.Object ref = warehouseUuid_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
-          com.google.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      warehouseUuid_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
-  }
-
-  public static final int ORGANIZATIONUUID_FIELD_NUMBER = 6;
+  public static final int ORGANIZATIONUUID_FIELD_NUMBER = 5;
   private volatile java.lang.Object organizationUuid_;
   /**
-   * <code>string organizationUuid = 6;</code>
+   * <code>string organizationUuid = 5;</code>
    */
   public java.lang.String getOrganizationUuid() {
     java.lang.Object ref = organizationUuid_;
@@ -280,7 +246,7 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <code>string organizationUuid = 6;</code>
+   * <code>string organizationUuid = 5;</code>
    */
   public com.google.protobuf.ByteString
       getOrganizationUuidBytes() {
@@ -290,6 +256,40 @@ private static final long serialVersionUID = 0L;
           com.google.protobuf.ByteString.copyFromUtf8(
               (java.lang.String) ref);
       organizationUuid_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int WAREHOUSEUUID_FIELD_NUMBER = 6;
+  private volatile java.lang.Object warehouseUuid_;
+  /**
+   * <code>string warehouseUuid = 6;</code>
+   */
+  public java.lang.String getWarehouseUuid() {
+    java.lang.Object ref = warehouseUuid_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      warehouseUuid_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string warehouseUuid = 6;</code>
+   */
+  public com.google.protobuf.ByteString
+      getWarehouseUuidBytes() {
+    java.lang.Object ref = warehouseUuid_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      warehouseUuid_ = b;
       return b;
     } else {
       return (com.google.protobuf.ByteString) ref;
@@ -385,11 +385,11 @@ private static final long serialVersionUID = 0L;
     if (!getRoleUuidBytes().isEmpty()) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 4, roleUuid_);
     }
-    if (!getWarehouseUuidBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 5, warehouseUuid_);
-    }
     if (!getOrganizationUuidBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 6, organizationUuid_);
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 5, organizationUuid_);
+    }
+    if (!getWarehouseUuidBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 6, warehouseUuid_);
     }
     if (!getClientVersionBytes().isEmpty()) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 7, clientVersion_);
@@ -414,11 +414,11 @@ private static final long serialVersionUID = 0L;
     if (!getRoleUuidBytes().isEmpty()) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, roleUuid_);
     }
-    if (!getWarehouseUuidBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, warehouseUuid_);
-    }
     if (!getOrganizationUuidBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, organizationUuid_);
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, organizationUuid_);
+    }
+    if (!getWarehouseUuidBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, warehouseUuid_);
     }
     if (!getClientVersionBytes().isEmpty()) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, clientVersion_);
@@ -448,10 +448,10 @@ private static final long serialVersionUID = 0L;
         .equals(other.getUserPass());
     result = result && getRoleUuid()
         .equals(other.getRoleUuid());
-    result = result && getWarehouseUuid()
-        .equals(other.getWarehouseUuid());
     result = result && getOrganizationUuid()
         .equals(other.getOrganizationUuid());
+    result = result && getWarehouseUuid()
+        .equals(other.getWarehouseUuid());
     result = result && getClientVersion()
         .equals(other.getClientVersion());
     result = result && getLanguage()
@@ -473,10 +473,10 @@ private static final long serialVersionUID = 0L;
     hash = (53 * hash) + getUserPass().hashCode();
     hash = (37 * hash) + ROLEUUID_FIELD_NUMBER;
     hash = (53 * hash) + getRoleUuid().hashCode();
-    hash = (37 * hash) + WAREHOUSEUUID_FIELD_NUMBER;
-    hash = (53 * hash) + getWarehouseUuid().hashCode();
     hash = (37 * hash) + ORGANIZATIONUUID_FIELD_NUMBER;
     hash = (53 * hash) + getOrganizationUuid().hashCode();
+    hash = (37 * hash) + WAREHOUSEUUID_FIELD_NUMBER;
+    hash = (53 * hash) + getWarehouseUuid().hashCode();
     hash = (37 * hash) + CLIENTVERSION_FIELD_NUMBER;
     hash = (53 * hash) + getClientVersion().hashCode();
     hash = (37 * hash) + LANGUAGE_FIELD_NUMBER;
@@ -620,9 +620,9 @@ private static final long serialVersionUID = 0L;
 
       roleUuid_ = "";
 
-      warehouseUuid_ = "";
-
       organizationUuid_ = "";
+
+      warehouseUuid_ = "";
 
       clientVersion_ = "";
 
@@ -653,8 +653,8 @@ private static final long serialVersionUID = 0L;
       result.userName_ = userName_;
       result.userPass_ = userPass_;
       result.roleUuid_ = roleUuid_;
-      result.warehouseUuid_ = warehouseUuid_;
       result.organizationUuid_ = organizationUuid_;
+      result.warehouseUuid_ = warehouseUuid_;
       result.clientVersion_ = clientVersion_;
       result.language_ = language_;
       onBuilt();
@@ -710,12 +710,12 @@ private static final long serialVersionUID = 0L;
         roleUuid_ = other.roleUuid_;
         onChanged();
       }
-      if (!other.getWarehouseUuid().isEmpty()) {
-        warehouseUuid_ = other.warehouseUuid_;
-        onChanged();
-      }
       if (!other.getOrganizationUuid().isEmpty()) {
         organizationUuid_ = other.organizationUuid_;
+        onChanged();
+      }
+      if (!other.getWarehouseUuid().isEmpty()) {
+        warehouseUuid_ = other.warehouseUuid_;
         onChanged();
       }
       if (!other.getClientVersion().isEmpty()) {
@@ -960,78 +960,9 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private java.lang.Object warehouseUuid_ = "";
-    /**
-     * <code>string warehouseUuid = 5;</code>
-     */
-    public java.lang.String getWarehouseUuid() {
-      java.lang.Object ref = warehouseUuid_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        warehouseUuid_ = s;
-        return s;
-      } else {
-        return (java.lang.String) ref;
-      }
-    }
-    /**
-     * <code>string warehouseUuid = 5;</code>
-     */
-    public com.google.protobuf.ByteString
-        getWarehouseUuidBytes() {
-      java.lang.Object ref = warehouseUuid_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        warehouseUuid_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-    /**
-     * <code>string warehouseUuid = 5;</code>
-     */
-    public Builder setWarehouseUuid(
-        java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
-      warehouseUuid_ = value;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string warehouseUuid = 5;</code>
-     */
-    public Builder clearWarehouseUuid() {
-      
-      warehouseUuid_ = getDefaultInstance().getWarehouseUuid();
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string warehouseUuid = 5;</code>
-     */
-    public Builder setWarehouseUuidBytes(
-        com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-      
-      warehouseUuid_ = value;
-      onChanged();
-      return this;
-    }
-
     private java.lang.Object organizationUuid_ = "";
     /**
-     * <code>string organizationUuid = 6;</code>
+     * <code>string organizationUuid = 5;</code>
      */
     public java.lang.String getOrganizationUuid() {
       java.lang.Object ref = organizationUuid_;
@@ -1046,7 +977,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string organizationUuid = 6;</code>
+     * <code>string organizationUuid = 5;</code>
      */
     public com.google.protobuf.ByteString
         getOrganizationUuidBytes() {
@@ -1062,7 +993,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string organizationUuid = 6;</code>
+     * <code>string organizationUuid = 5;</code>
      */
     public Builder setOrganizationUuid(
         java.lang.String value) {
@@ -1075,7 +1006,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string organizationUuid = 6;</code>
+     * <code>string organizationUuid = 5;</code>
      */
     public Builder clearOrganizationUuid() {
       
@@ -1084,7 +1015,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string organizationUuid = 6;</code>
+     * <code>string organizationUuid = 5;</code>
      */
     public Builder setOrganizationUuidBytes(
         com.google.protobuf.ByteString value) {
@@ -1094,6 +1025,75 @@ private static final long serialVersionUID = 0L;
   checkByteStringIsUtf8(value);
       
       organizationUuid_ = value;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object warehouseUuid_ = "";
+    /**
+     * <code>string warehouseUuid = 6;</code>
+     */
+    public java.lang.String getWarehouseUuid() {
+      java.lang.Object ref = warehouseUuid_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        warehouseUuid_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string warehouseUuid = 6;</code>
+     */
+    public com.google.protobuf.ByteString
+        getWarehouseUuidBytes() {
+      java.lang.Object ref = warehouseUuid_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        warehouseUuid_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string warehouseUuid = 6;</code>
+     */
+    public Builder setWarehouseUuid(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
+      warehouseUuid_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string warehouseUuid = 6;</code>
+     */
+    public Builder clearWarehouseUuid() {
+      
+      warehouseUuid_ = getDefaultInstance().getWarehouseUuid();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string warehouseUuid = 6;</code>
+     */
+    public Builder setWarehouseUuidBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      
+      warehouseUuid_ = value;
       onChanged();
       return this;
     }

@@ -38,24 +38,24 @@ public interface LoginRequestOrBuilder extends
       getRoleUuidBytes();
 
   /**
-   * <code>string warehouseUuid = 5;</code>
-   */
-  java.lang.String getWarehouseUuid();
-  /**
-   * <code>string warehouseUuid = 5;</code>
-   */
-  com.google.protobuf.ByteString
-      getWarehouseUuidBytes();
-
-  /**
-   * <code>string organizationUuid = 6;</code>
+   * <code>string organizationUuid = 5;</code>
    */
   java.lang.String getOrganizationUuid();
   /**
-   * <code>string organizationUuid = 6;</code>
+   * <code>string organizationUuid = 5;</code>
    */
   com.google.protobuf.ByteString
       getOrganizationUuidBytes();
+
+  /**
+   * <code>string warehouseUuid = 6;</code>
+   */
+  java.lang.String getWarehouseUuid();
+  /**
+   * <code>string warehouseUuid = 6;</code>
+   */
+  com.google.protobuf.ByteString
+      getWarehouseUuidBytes();
 
   /**
    * <code>string clientVersion = 7;</code>

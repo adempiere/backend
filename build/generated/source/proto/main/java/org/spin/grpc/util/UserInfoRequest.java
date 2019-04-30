@@ -5,23 +5,22 @@ package org.spin.grpc.util;
 
 /**
  * <pre>
- * Request Role list from server
+ * Request User Info
  * </pre>
  *
- * Protobuf type {@code access.RoleRequest}
+ * Protobuf type {@code access.UserInfoRequest}
  */
-public  final class RoleRequest extends
+public  final class UserInfoRequest extends
     com.google.protobuf.GeneratedMessageV3 implements
-    // @@protoc_insertion_point(message_implements:access.RoleRequest)
-    RoleRequestOrBuilder {
+    // @@protoc_insertion_point(message_implements:access.UserInfoRequest)
+    UserInfoRequestOrBuilder {
 private static final long serialVersionUID = 0L;
-  // Use RoleRequest.newBuilder() to construct.
-  private RoleRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+  // Use UserInfoRequest.newBuilder() to construct.
+  private UserInfoRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
   }
-  private RoleRequest() {
-    userName_ = "";
-    userPass_ = "";
+  private UserInfoRequest() {
+    sessionUuid_ = "";
     clientVersion_ = "";
   }
 
@@ -30,7 +29,7 @@ private static final long serialVersionUID = 0L;
   getUnknownFields() {
     return this.unknownFields;
   }
-  private RoleRequest(
+  private UserInfoRequest(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -56,16 +55,10 @@ private static final long serialVersionUID = 0L;
             }
             break;
           }
-          case 18: {
+          case 10: {
             java.lang.String s = input.readStringRequireUtf8();
 
-            userName_ = s;
-            break;
-          }
-          case 26: {
-            java.lang.String s = input.readStringRequireUtf8();
-
-            userPass_ = s;
+            sessionUuid_ = s;
             break;
           }
           case 58: {
@@ -88,78 +81,44 @@ private static final long serialVersionUID = 0L;
   }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-    return org.spin.grpc.util.ADempiereAccess.internal_static_access_RoleRequest_descriptor;
+    return org.spin.grpc.util.ADempiereAccess.internal_static_access_UserInfoRequest_descriptor;
   }
 
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
-    return org.spin.grpc.util.ADempiereAccess.internal_static_access_RoleRequest_fieldAccessorTable
+    return org.spin.grpc.util.ADempiereAccess.internal_static_access_UserInfoRequest_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
-            org.spin.grpc.util.RoleRequest.class, org.spin.grpc.util.RoleRequest.Builder.class);
+            org.spin.grpc.util.UserInfoRequest.class, org.spin.grpc.util.UserInfoRequest.Builder.class);
   }
 
-  public static final int USERNAME_FIELD_NUMBER = 2;
-  private volatile java.lang.Object userName_;
+  public static final int SESSIONUUID_FIELD_NUMBER = 1;
+  private volatile java.lang.Object sessionUuid_;
   /**
-   * <code>string userName = 2;</code>
+   * <code>string sessionUuid = 1;</code>
    */
-  public java.lang.String getUserName() {
-    java.lang.Object ref = userName_;
+  public java.lang.String getSessionUuid() {
+    java.lang.Object ref = sessionUuid_;
     if (ref instanceof java.lang.String) {
       return (java.lang.String) ref;
     } else {
       com.google.protobuf.ByteString bs = 
           (com.google.protobuf.ByteString) ref;
       java.lang.String s = bs.toStringUtf8();
-      userName_ = s;
+      sessionUuid_ = s;
       return s;
     }
   }
   /**
-   * <code>string userName = 2;</code>
+   * <code>string sessionUuid = 1;</code>
    */
   public com.google.protobuf.ByteString
-      getUserNameBytes() {
-    java.lang.Object ref = userName_;
+      getSessionUuidBytes() {
+    java.lang.Object ref = sessionUuid_;
     if (ref instanceof java.lang.String) {
       com.google.protobuf.ByteString b = 
           com.google.protobuf.ByteString.copyFromUtf8(
               (java.lang.String) ref);
-      userName_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
-  }
-
-  public static final int USERPASS_FIELD_NUMBER = 3;
-  private volatile java.lang.Object userPass_;
-  /**
-   * <code>string userPass = 3;</code>
-   */
-  public java.lang.String getUserPass() {
-    java.lang.Object ref = userPass_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = 
-          (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      userPass_ = s;
-      return s;
-    }
-  }
-  /**
-   * <code>string userPass = 3;</code>
-   */
-  public com.google.protobuf.ByteString
-      getUserPassBytes() {
-    java.lang.Object ref = userPass_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
-          com.google.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      userPass_ = b;
+      sessionUuid_ = b;
       return b;
     } else {
       return (com.google.protobuf.ByteString) ref;
@@ -212,11 +171,8 @@ private static final long serialVersionUID = 0L;
 
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
-    if (!getUserNameBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, userName_);
-    }
-    if (!getUserPassBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 3, userPass_);
+    if (!getSessionUuidBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, sessionUuid_);
     }
     if (!getClientVersionBytes().isEmpty()) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 7, clientVersion_);
@@ -229,11 +185,8 @@ private static final long serialVersionUID = 0L;
     if (size != -1) return size;
 
     size = 0;
-    if (!getUserNameBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, userName_);
-    }
-    if (!getUserPassBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, userPass_);
+    if (!getSessionUuidBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, sessionUuid_);
     }
     if (!getClientVersionBytes().isEmpty()) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, clientVersion_);
@@ -248,16 +201,14 @@ private static final long serialVersionUID = 0L;
     if (obj == this) {
      return true;
     }
-    if (!(obj instanceof org.spin.grpc.util.RoleRequest)) {
+    if (!(obj instanceof org.spin.grpc.util.UserInfoRequest)) {
       return super.equals(obj);
     }
-    org.spin.grpc.util.RoleRequest other = (org.spin.grpc.util.RoleRequest) obj;
+    org.spin.grpc.util.UserInfoRequest other = (org.spin.grpc.util.UserInfoRequest) obj;
 
     boolean result = true;
-    result = result && getUserName()
-        .equals(other.getUserName());
-    result = result && getUserPass()
-        .equals(other.getUserPass());
+    result = result && getSessionUuid()
+        .equals(other.getSessionUuid());
     result = result && getClientVersion()
         .equals(other.getClientVersion());
     result = result && unknownFields.equals(other.unknownFields);
@@ -271,10 +222,8 @@ private static final long serialVersionUID = 0L;
     }
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
-    hash = (37 * hash) + USERNAME_FIELD_NUMBER;
-    hash = (53 * hash) + getUserName().hashCode();
-    hash = (37 * hash) + USERPASS_FIELD_NUMBER;
-    hash = (53 * hash) + getUserPass().hashCode();
+    hash = (37 * hash) + SESSIONUUID_FIELD_NUMBER;
+    hash = (53 * hash) + getSessionUuid().hashCode();
     hash = (37 * hash) + CLIENTVERSION_FIELD_NUMBER;
     hash = (53 * hash) + getClientVersion().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
@@ -282,69 +231,69 @@ private static final long serialVersionUID = 0L;
     return hash;
   }
 
-  public static org.spin.grpc.util.RoleRequest parseFrom(
+  public static org.spin.grpc.util.UserInfoRequest parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.spin.grpc.util.RoleRequest parseFrom(
+  public static org.spin.grpc.util.UserInfoRequest parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.spin.grpc.util.RoleRequest parseFrom(
+  public static org.spin.grpc.util.UserInfoRequest parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.spin.grpc.util.RoleRequest parseFrom(
+  public static org.spin.grpc.util.UserInfoRequest parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.spin.grpc.util.RoleRequest parseFrom(byte[] data)
+  public static org.spin.grpc.util.UserInfoRequest parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.spin.grpc.util.RoleRequest parseFrom(
+  public static org.spin.grpc.util.UserInfoRequest parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.spin.grpc.util.RoleRequest parseFrom(java.io.InputStream input)
+  public static org.spin.grpc.util.UserInfoRequest parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static org.spin.grpc.util.RoleRequest parseFrom(
+  public static org.spin.grpc.util.UserInfoRequest parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input, extensionRegistry);
   }
-  public static org.spin.grpc.util.RoleRequest parseDelimitedFrom(java.io.InputStream input)
+  public static org.spin.grpc.util.UserInfoRequest parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input);
   }
-  public static org.spin.grpc.util.RoleRequest parseDelimitedFrom(
+  public static org.spin.grpc.util.UserInfoRequest parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
   }
-  public static org.spin.grpc.util.RoleRequest parseFrom(
+  public static org.spin.grpc.util.UserInfoRequest parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static org.spin.grpc.util.RoleRequest parseFrom(
+  public static org.spin.grpc.util.UserInfoRequest parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -356,7 +305,7 @@ private static final long serialVersionUID = 0L;
   public static Builder newBuilder() {
     return DEFAULT_INSTANCE.toBuilder();
   }
-  public static Builder newBuilder(org.spin.grpc.util.RoleRequest prototype) {
+  public static Builder newBuilder(org.spin.grpc.util.UserInfoRequest prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
   public Builder toBuilder() {
@@ -372,28 +321,28 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * Request Role list from server
+   * Request User Info
    * </pre>
    *
-   * Protobuf type {@code access.RoleRequest}
+   * Protobuf type {@code access.UserInfoRequest}
    */
   public static final class Builder extends
       com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-      // @@protoc_insertion_point(builder_implements:access.RoleRequest)
-      org.spin.grpc.util.RoleRequestOrBuilder {
+      // @@protoc_insertion_point(builder_implements:access.UserInfoRequest)
+      org.spin.grpc.util.UserInfoRequestOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.spin.grpc.util.ADempiereAccess.internal_static_access_RoleRequest_descriptor;
+      return org.spin.grpc.util.ADempiereAccess.internal_static_access_UserInfoRequest_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.spin.grpc.util.ADempiereAccess.internal_static_access_RoleRequest_fieldAccessorTable
+      return org.spin.grpc.util.ADempiereAccess.internal_static_access_UserInfoRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.spin.grpc.util.RoleRequest.class, org.spin.grpc.util.RoleRequest.Builder.class);
+              org.spin.grpc.util.UserInfoRequest.class, org.spin.grpc.util.UserInfoRequest.Builder.class);
     }
 
-    // Construct using org.spin.grpc.util.RoleRequest.newBuilder()
+    // Construct using org.spin.grpc.util.UserInfoRequest.newBuilder()
     private Builder() {
       maybeForceBuilderInitialization();
     }
@@ -410,9 +359,7 @@ private static final long serialVersionUID = 0L;
     }
     public Builder clear() {
       super.clear();
-      userName_ = "";
-
-      userPass_ = "";
+      sessionUuid_ = "";
 
       clientVersion_ = "";
 
@@ -421,25 +368,24 @@ private static final long serialVersionUID = 0L;
 
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
-      return org.spin.grpc.util.ADempiereAccess.internal_static_access_RoleRequest_descriptor;
+      return org.spin.grpc.util.ADempiereAccess.internal_static_access_UserInfoRequest_descriptor;
     }
 
-    public org.spin.grpc.util.RoleRequest getDefaultInstanceForType() {
-      return org.spin.grpc.util.RoleRequest.getDefaultInstance();
+    public org.spin.grpc.util.UserInfoRequest getDefaultInstanceForType() {
+      return org.spin.grpc.util.UserInfoRequest.getDefaultInstance();
     }
 
-    public org.spin.grpc.util.RoleRequest build() {
-      org.spin.grpc.util.RoleRequest result = buildPartial();
+    public org.spin.grpc.util.UserInfoRequest build() {
+      org.spin.grpc.util.UserInfoRequest result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
       return result;
     }
 
-    public org.spin.grpc.util.RoleRequest buildPartial() {
-      org.spin.grpc.util.RoleRequest result = new org.spin.grpc.util.RoleRequest(this);
-      result.userName_ = userName_;
-      result.userPass_ = userPass_;
+    public org.spin.grpc.util.UserInfoRequest buildPartial() {
+      org.spin.grpc.util.UserInfoRequest result = new org.spin.grpc.util.UserInfoRequest(this);
+      result.sessionUuid_ = sessionUuid_;
       result.clientVersion_ = clientVersion_;
       onBuilt();
       return result;
@@ -472,22 +418,18 @@ private static final long serialVersionUID = 0L;
       return (Builder) super.addRepeatedField(field, value);
     }
     public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof org.spin.grpc.util.RoleRequest) {
-        return mergeFrom((org.spin.grpc.util.RoleRequest)other);
+      if (other instanceof org.spin.grpc.util.UserInfoRequest) {
+        return mergeFrom((org.spin.grpc.util.UserInfoRequest)other);
       } else {
         super.mergeFrom(other);
         return this;
       }
     }
 
-    public Builder mergeFrom(org.spin.grpc.util.RoleRequest other) {
-      if (other == org.spin.grpc.util.RoleRequest.getDefaultInstance()) return this;
-      if (!other.getUserName().isEmpty()) {
-        userName_ = other.userName_;
-        onChanged();
-      }
-      if (!other.getUserPass().isEmpty()) {
-        userPass_ = other.userPass_;
+    public Builder mergeFrom(org.spin.grpc.util.UserInfoRequest other) {
+      if (other == org.spin.grpc.util.UserInfoRequest.getDefaultInstance()) return this;
+      if (!other.getSessionUuid().isEmpty()) {
+        sessionUuid_ = other.sessionUuid_;
         onChanged();
       }
       if (!other.getClientVersion().isEmpty()) {
@@ -507,11 +449,11 @@ private static final long serialVersionUID = 0L;
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      org.spin.grpc.util.RoleRequest parsedMessage = null;
+      org.spin.grpc.util.UserInfoRequest parsedMessage = null;
       try {
         parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (org.spin.grpc.util.RoleRequest) e.getUnfinishedMessage();
+        parsedMessage = (org.spin.grpc.util.UserInfoRequest) e.getUnfinishedMessage();
         throw e.unwrapIOException();
       } finally {
         if (parsedMessage != null) {
@@ -521,140 +463,71 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private java.lang.Object userName_ = "";
+    private java.lang.Object sessionUuid_ = "";
     /**
-     * <code>string userName = 2;</code>
+     * <code>string sessionUuid = 1;</code>
      */
-    public java.lang.String getUserName() {
-      java.lang.Object ref = userName_;
+    public java.lang.String getSessionUuid() {
+      java.lang.Object ref = sessionUuid_;
       if (!(ref instanceof java.lang.String)) {
         com.google.protobuf.ByteString bs =
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        userName_ = s;
+        sessionUuid_ = s;
         return s;
       } else {
         return (java.lang.String) ref;
       }
     }
     /**
-     * <code>string userName = 2;</code>
+     * <code>string sessionUuid = 1;</code>
      */
     public com.google.protobuf.ByteString
-        getUserNameBytes() {
-      java.lang.Object ref = userName_;
+        getSessionUuidBytes() {
+      java.lang.Object ref = sessionUuid_;
       if (ref instanceof String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
-        userName_ = b;
+        sessionUuid_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
     /**
-     * <code>string userName = 2;</code>
+     * <code>string sessionUuid = 1;</code>
      */
-    public Builder setUserName(
+    public Builder setSessionUuid(
         java.lang.String value) {
       if (value == null) {
     throw new NullPointerException();
   }
   
-      userName_ = value;
+      sessionUuid_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>string userName = 2;</code>
+     * <code>string sessionUuid = 1;</code>
      */
-    public Builder clearUserName() {
+    public Builder clearSessionUuid() {
       
-      userName_ = getDefaultInstance().getUserName();
+      sessionUuid_ = getDefaultInstance().getSessionUuid();
       onChanged();
       return this;
     }
     /**
-     * <code>string userName = 2;</code>
+     * <code>string sessionUuid = 1;</code>
      */
-    public Builder setUserNameBytes(
+    public Builder setSessionUuidBytes(
         com.google.protobuf.ByteString value) {
       if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
       
-      userName_ = value;
-      onChanged();
-      return this;
-    }
-
-    private java.lang.Object userPass_ = "";
-    /**
-     * <code>string userPass = 3;</code>
-     */
-    public java.lang.String getUserPass() {
-      java.lang.Object ref = userPass_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        userPass_ = s;
-        return s;
-      } else {
-        return (java.lang.String) ref;
-      }
-    }
-    /**
-     * <code>string userPass = 3;</code>
-     */
-    public com.google.protobuf.ByteString
-        getUserPassBytes() {
-      java.lang.Object ref = userPass_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        userPass_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-    /**
-     * <code>string userPass = 3;</code>
-     */
-    public Builder setUserPass(
-        java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
-      userPass_ = value;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string userPass = 3;</code>
-     */
-    public Builder clearUserPass() {
-      
-      userPass_ = getDefaultInstance().getUserPass();
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string userPass = 3;</code>
-     */
-    public Builder setUserPassBytes(
-        com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-      
-      userPass_ = value;
+      sessionUuid_ = value;
       onChanged();
       return this;
     }
@@ -738,39 +611,39 @@ private static final long serialVersionUID = 0L;
     }
 
 
-    // @@protoc_insertion_point(builder_scope:access.RoleRequest)
+    // @@protoc_insertion_point(builder_scope:access.UserInfoRequest)
   }
 
-  // @@protoc_insertion_point(class_scope:access.RoleRequest)
-  private static final org.spin.grpc.util.RoleRequest DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:access.UserInfoRequest)
+  private static final org.spin.grpc.util.UserInfoRequest DEFAULT_INSTANCE;
   static {
-    DEFAULT_INSTANCE = new org.spin.grpc.util.RoleRequest();
+    DEFAULT_INSTANCE = new org.spin.grpc.util.UserInfoRequest();
   }
 
-  public static org.spin.grpc.util.RoleRequest getDefaultInstance() {
+  public static org.spin.grpc.util.UserInfoRequest getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<RoleRequest>
-      PARSER = new com.google.protobuf.AbstractParser<RoleRequest>() {
-    public RoleRequest parsePartialFrom(
+  private static final com.google.protobuf.Parser<UserInfoRequest>
+      PARSER = new com.google.protobuf.AbstractParser<UserInfoRequest>() {
+    public UserInfoRequest parsePartialFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return new RoleRequest(input, extensionRegistry);
+      return new UserInfoRequest(input, extensionRegistry);
     }
   };
 
-  public static com.google.protobuf.Parser<RoleRequest> parser() {
+  public static com.google.protobuf.Parser<UserInfoRequest> parser() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.protobuf.Parser<RoleRequest> getParserForType() {
+  public com.google.protobuf.Parser<UserInfoRequest> getParserForType() {
     return PARSER;
   }
 
-  public org.spin.grpc.util.RoleRequest getDefaultInstanceForType() {
+  public org.spin.grpc.util.UserInfoRequest getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }
 

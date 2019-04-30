@@ -68,14 +68,14 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 	private CLogger log = CLogger.getCLogger(AccessServiceImplementation.class);
 
 	@Override
-	public void requestUserRoles(RoleRequest request, StreamObserver<UserRoles> responseObserver) {
+	public void requestUserInfo(LoginRequest request, StreamObserver<UserInfoValue> responseObserver) {
 		try {
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
 			log.fine("User Role Requested = " + request.getUserName());
-			UserRoles.Builder userRoles = convertUserRoles(request);
-			responseObserver.onNext(userRoles.build());
+			UserInfoValue.Builder userInfoValue = convertUserInfo(request);
+			responseObserver.onNext(userInfoValue.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			responseObserver.onError(e);
@@ -89,7 +89,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 				throw new AdempiereException("Object Request Null");
 			}
 			log.fine("Session Requested = " + request.getUserName());
-			Session.Builder sessionBuilder = createSession(request);
+			Session.Builder sessionBuilder = createSession(request, false);
 			responseObserver.onNext(sessionBuilder.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -112,6 +112,36 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 		}
 	}
 	
+	@Override
+	public void requestLoginDefault(LoginRequest request, StreamObserver<Session> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Session Requested = " + request.getUserName());
+			Session.Builder sessionBuilder = createSession(request, true);
+			responseObserver.onNext(sessionBuilder.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			responseObserver.onError(e);
+		}
+	}
+	
+	@Override
+	public void requestUserInfoFromSession(UserInfoRequest request, StreamObserver<UserInfoValue> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("User Info Requested = " + request.getClientVersion());
+			UserInfoValue.Builder userInfoValue = convertUserInfoFromSession(request);
+			responseObserver.onNext(userInfoValue.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			responseObserver.onError(e);
+		}
+	}
+	
 	/**
 	 * Get User ID
 	 * @param userName
@@ -128,19 +158,50 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 	 * @param request
 	 * @return
 	 */
-	private Session.Builder createSession(LoginRequest request) {
+	private Session.Builder createSession(LoginRequest request, boolean isDefaultRole) {
 		Session.Builder builder = Session.newBuilder();
 		//	Get Session
 		Properties context = Env.getCtx();
 		int userId = getUserId(request.getUserName(), request.getUserPass());
-		int roleId = DB.getSQLValue(null, "SELECT AD_Role_ID FROM AD_Role WHERE UUID = ?", request.getRoleUuid());
-		int organizationId = DB.getSQLValue(null, "SELECT AD_Org_ID FROM AD_Org WHERE UUID = ?", request.getOrganizationUuid());
+		//	Get Values from role
+		if(userId < 0) {
+			throw new AdempiereException("@AD_User_ID@ / @AD_Role_ID@ / @AD_Org_ID@ @NotFound@");
+		}
+		int roleId = -1;
+		int organizationId = -1;
+		int warehouseId = -1;
+		if(isDefaultRole) {
+			roleId = DB.getSQLValue(null, "SELECT ur.AD_Role_ID "
+					+ "FROM AD_User_Roles ur "
+					+ "WHERE ur.AD_User_ID = ? AND ur.IsActive = 'Y' "
+					+ "ORDER BY COALESCE(ur.IsDefault,'N') DESC", userId);
+			//	Organization
+			String organizationSQL = "SELECT o.AD_Org_ID "
+					+ "FROM AD_Role r "
+					+ "INNER JOIN AD_Client c ON(c.AD_Client_ID = r.AD_Client_ID) "
+					+ "INNER JOIN AD_Org o ON(c.AD_Client_ID=o.AD_Client_ID OR o.AD_Org_ID=0) "
+					+ "WHERE r.AD_Role_ID=? "
+					+ " AND o.IsActive='Y' AND o.IsSummary='N'"
+					+ " AND (r.IsAccessAllOrgs='Y' "
+						+ "OR (r.IsUseUserOrgAccess='N' AND EXISTS(SELECT 1 FROM AD_Role_OrgAccess ra WHERE ra.AD_Org_ID = o.AD_Org_ID AND ra.AD_Role_ID = r.AD_Role_ID AND ra.IsActive='Y')) "
+						+ "OR (r.IsUseUserOrgAccess='Y' AND EXISTS(SELECT 1 FROM AD_User_OrgAccess ua WHERE ua.AD_Org_ID = o.AD_Org_ID AND ua.AD_User_ID = ? AND ua.IsActive='Y'))"
+						+ ") "
+					+ "ORDER BY o.Name";
+			organizationId = DB.getSQLValue(null, organizationSQL, roleId, userId);
+			warehouseId = DB.getSQLValue(null, "SELECT M_Warehouse_ID FROM M_Warehouse WHERE IsActive = 'Y' AND AD_Org_ID = ?", organizationId);
+		} else {
+			roleId = DB.getSQLValue(null, "SELECT AD_Role_ID FROM AD_Role WHERE UUID = ?", request.getRoleUuid());
+			organizationId = DB.getSQLValue(null, "SELECT AD_Org_ID FROM AD_Org WHERE UUID = ?", request.getOrganizationUuid());
+			warehouseId = DB.getSQLValue(null, "SELECT M_Warehouse_ID FROM M_Warehouse WHERE UUID = ?", request.getWarehouseUuid());
+		}
 		if(organizationId < 0) {
 			organizationId = 0;
 		}
+		if(warehouseId < 0) {
+			warehouseId = 0;
+		}
 		//	Get Values from role
-		if(userId < 0
-				|| roleId < 0) {
+		if(roleId < 0) {
 			throw new AdempiereException("@AD_User_ID@ / @AD_Role_ID@ / @AD_Org_ID@ @NotFound@");
 		}
 		MRole role = MRole.get(context, roleId);
@@ -155,7 +216,6 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 		if(!Util.isEmpty(request.getClientVersion())) {
 			session.setWebSession(request.getClientVersion());
 		}
-		session.saveEx();
 		//	Session values
 		builder.setId(session.getAD_Session_ID());
 		builder.setUuid(validateNull(session.getUUID()));
@@ -201,7 +261,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 	 * @param request
 	 * @return
 	 */
-	private UserRoles.Builder convertUserRoles(RoleRequest request) {
+	private UserInfoValue.Builder convertUserInfo(LoginRequest request) {
 		if(Util.isEmpty(request.getUserName())
 				|| Util.isEmpty(request.getUserPass())) {
 			throw new AdempiereException("@AD_User_ID@ / @AD_Role_ID@ / @AD_Org_ID@ @NotFound@");
@@ -223,7 +283,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 			return null;
 		}
 		//	Iterate for it
-		UserRoles.Builder builder = UserRoles.newBuilder();
+		UserInfoValue.Builder builder = UserInfoValue.newBuilder();
 		for(MRole role : roleList) {
 			Role.Builder roleBuilder = convertRole(role, false);
 			builder.addRoles(roleBuilder.build());
@@ -232,6 +292,44 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 		return builder;
 	}
 	
+	
+	/**
+	 * Convert User Roles
+	 * @param request
+	 * @return
+	 */
+	private UserInfoValue.Builder convertUserInfoFromSession(UserInfoRequest request) {
+		if(Util.isEmpty(request.getSessionUuid())) {
+			throw new AdempiereException("@AD_Session_ID@ @NotFound@");
+		}
+		MSession session = new Query(Env.getCtx(), I_AD_Session.Table_Name, I_AD_Session.COLUMNNAME_UUID + " = ?", null)
+				.setParameters(request.getSessionUuid())
+				.first();
+		if(session == null
+				|| session.getAD_Session_ID() <= 0) {
+			throw new AdempiereException("@AD_Session_ID@ @NotFound@");
+		}
+		List<MRole> roleList = new Query(Env.getCtx(), I_AD_Role.Table_Name, 
+				"EXISTS(SELECT 1 FROM AD_User_Roles ur "
+				+ "WHERE ur.AD_Role_ID = AD_Role.AD_Role_ID "
+				+ "AND ur.AD_User_ID = ?)", null)
+				.setParameters(session.getCreatedBy())
+				.setOnlyActiveRecords(true)
+				.<MRole>list();
+		//	Validate
+		if(roleList == null
+				|| roleList.size() == 0) {
+			return null;
+		}
+		//	Iterate for it
+		UserInfoValue.Builder builder = UserInfoValue.newBuilder();
+		for(MRole role : roleList) {
+			Role.Builder roleBuilder = convertRole(role, false);
+			builder.addRoles(roleBuilder.build());
+		}
+		//	Return
+		return builder;
+	}
 	
 	/**
 	 * Convert role from model class
