@@ -60,17 +60,26 @@ message UserInfoRequest {
 
 // Role list from user
 message UserInfoValue {
-	string uuid = 1;
+	UserInfo userInfo = 1;
 	repeated Role roles = 2;
 }
+
+// User information
+message UserInfo {
+	string name = 1;
+	string description = 2;
+	string comments = 3;
+}
+
 
 // Session
 message Session {
 	int32 id = 1;
 	string uuid = 2;
 	string name = 3;
-	Role role = 4;
-	bool processed = 5;
+	UserInfo userInfo = 4;
+	Role role = 5;
+	bool processed = 6;
 }
 
 // Role Definition

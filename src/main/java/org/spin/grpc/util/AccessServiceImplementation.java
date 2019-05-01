@@ -45,6 +45,7 @@ import org.compiere.model.MRoleOrgAccess;
 import org.compiere.model.MSession;
 import org.compiere.model.MTable;
 import org.compiere.model.MTableAccess;
+import org.compiere.model.MUser;
 import org.compiere.model.MWindowAccess;
 import org.compiere.model.Query;
 import org.compiere.model.X_AD_Document_Action_Access;
@@ -160,6 +161,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 	 */
 	private Session.Builder createSession(LoginRequest request, boolean isDefaultRole) {
 		Session.Builder builder = Session.newBuilder();
+		DB.validateSupportedUUIDFromDB();
 		//	Get Session
 		Properties context = Env.getCtx();
 		int userId = getUserId(request.getUserName(), request.getUserPass());
@@ -220,6 +222,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 		builder.setId(session.getAD_Session_ID());
 		builder.setUuid(validateNull(session.getUUID()));
 		builder.setName(validateNull(session.getDescription()));
+		builder.setUserInfo(convertUserInfo(MUser.get(Env.getCtx(), userId)).build());
 		//	Set role
 		Role.Builder roleBuilder = convertRole(role, true);
 		builder.setRole(roleBuilder.build());
@@ -252,8 +255,22 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 		builder.setId(session.getAD_Session_ID());
 		builder.setUuid(validateNull(session.getUUID()));
 		builder.setName(validateNull(session.getDescription()));
+		builder.setUserInfo(convertUserInfo(MUser.get(context, session.getCreatedBy())).build());
 		//	Return session
 		return builder;
+	}
+	
+	/**
+	 * Convert User entity
+	 * @param user
+	 * @return
+	 */
+	private UserInfo.Builder convertUserInfo(MUser user) {
+		UserInfo.Builder userInfo = UserInfo.newBuilder();
+		userInfo.setName(validateNull(user.getName()));
+		userInfo.setDescription(validateNull(user.getDescription()));
+		userInfo.setComments(validateNull(user.getComments()));
+		return userInfo;
 	}
 	
 	/**
@@ -284,6 +301,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 		}
 		//	Iterate for it
 		UserInfoValue.Builder builder = UserInfoValue.newBuilder();
+		builder.setUserInfo(convertUserInfo(MUser.get(Env.getCtx(), userId)).build());
 		for(MRole role : roleList) {
 			Role.Builder roleBuilder = convertRole(role, false);
 			builder.addRoles(roleBuilder.build());
@@ -323,6 +341,14 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 		}
 		//	Iterate for it
 		UserInfoValue.Builder builder = UserInfoValue.newBuilder();
+		MUser user = MUser.get(Env.getCtx(), session.getCreatedBy());
+		if(user == null
+				|| user.getAD_User_ID() <= 0) {
+			throw new AdempiereException("@AD_User_ID@ @NotFound@");
+		}
+		//	Set User Information
+		builder.setUserInfo(convertUserInfo(MUser.get(Env.getCtx(), session.getCreatedBy())).build());
+		//	Set Role List
 		for(MRole role : roleList) {
 			Role.Builder roleBuilder = convertRole(role, false);
 			builder.addRoles(roleBuilder.build());

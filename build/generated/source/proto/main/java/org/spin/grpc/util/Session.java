@@ -75,6 +75,19 @@ private static final long serialVersionUID = 0L;
             break;
           }
           case 34: {
+            org.spin.grpc.util.UserInfo.Builder subBuilder = null;
+            if (userInfo_ != null) {
+              subBuilder = userInfo_.toBuilder();
+            }
+            userInfo_ = input.readMessage(org.spin.grpc.util.UserInfo.parser(), extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom(userInfo_);
+              userInfo_ = subBuilder.buildPartial();
+            }
+
+            break;
+          }
+          case 42: {
             org.spin.grpc.util.Role.Builder subBuilder = null;
             if (role_ != null) {
               subBuilder = role_.toBuilder();
@@ -87,7 +100,7 @@ private static final long serialVersionUID = 0L;
 
             break;
           }
-          case 40: {
+          case 48: {
 
             processed_ = input.readBool();
             break;
@@ -193,31 +206,52 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int ROLE_FIELD_NUMBER = 4;
+  public static final int USERINFO_FIELD_NUMBER = 4;
+  private org.spin.grpc.util.UserInfo userInfo_;
+  /**
+   * <code>.access.UserInfo userInfo = 4;</code>
+   */
+  public boolean hasUserInfo() {
+    return userInfo_ != null;
+  }
+  /**
+   * <code>.access.UserInfo userInfo = 4;</code>
+   */
+  public org.spin.grpc.util.UserInfo getUserInfo() {
+    return userInfo_ == null ? org.spin.grpc.util.UserInfo.getDefaultInstance() : userInfo_;
+  }
+  /**
+   * <code>.access.UserInfo userInfo = 4;</code>
+   */
+  public org.spin.grpc.util.UserInfoOrBuilder getUserInfoOrBuilder() {
+    return getUserInfo();
+  }
+
+  public static final int ROLE_FIELD_NUMBER = 5;
   private org.spin.grpc.util.Role role_;
   /**
-   * <code>.access.Role role = 4;</code>
+   * <code>.access.Role role = 5;</code>
    */
   public boolean hasRole() {
     return role_ != null;
   }
   /**
-   * <code>.access.Role role = 4;</code>
+   * <code>.access.Role role = 5;</code>
    */
   public org.spin.grpc.util.Role getRole() {
     return role_ == null ? org.spin.grpc.util.Role.getDefaultInstance() : role_;
   }
   /**
-   * <code>.access.Role role = 4;</code>
+   * <code>.access.Role role = 5;</code>
    */
   public org.spin.grpc.util.RoleOrBuilder getRoleOrBuilder() {
     return getRole();
   }
 
-  public static final int PROCESSED_FIELD_NUMBER = 5;
+  public static final int PROCESSED_FIELD_NUMBER = 6;
   private boolean processed_;
   /**
-   * <code>bool processed = 5;</code>
+   * <code>bool processed = 6;</code>
    */
   public boolean getProcessed() {
     return processed_;
@@ -244,11 +278,14 @@ private static final long serialVersionUID = 0L;
     if (!getNameBytes().isEmpty()) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 3, name_);
     }
+    if (userInfo_ != null) {
+      output.writeMessage(4, getUserInfo());
+    }
     if (role_ != null) {
-      output.writeMessage(4, getRole());
+      output.writeMessage(5, getRole());
     }
     if (processed_ != false) {
-      output.writeBool(5, processed_);
+      output.writeBool(6, processed_);
     }
     unknownFields.writeTo(output);
   }
@@ -268,13 +305,17 @@ private static final long serialVersionUID = 0L;
     if (!getNameBytes().isEmpty()) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, name_);
     }
+    if (userInfo_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(4, getUserInfo());
+    }
     if (role_ != null) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(4, getRole());
+        .computeMessageSize(5, getRole());
     }
     if (processed_ != false) {
       size += com.google.protobuf.CodedOutputStream
-        .computeBoolSize(5, processed_);
+        .computeBoolSize(6, processed_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -298,6 +339,11 @@ private static final long serialVersionUID = 0L;
         .equals(other.getUuid());
     result = result && getName()
         .equals(other.getName());
+    result = result && (hasUserInfo() == other.hasUserInfo());
+    if (hasUserInfo()) {
+      result = result && getUserInfo()
+          .equals(other.getUserInfo());
+    }
     result = result && (hasRole() == other.hasRole());
     if (hasRole()) {
       result = result && getRole()
@@ -322,6 +368,10 @@ private static final long serialVersionUID = 0L;
     hash = (53 * hash) + getUuid().hashCode();
     hash = (37 * hash) + NAME_FIELD_NUMBER;
     hash = (53 * hash) + getName().hashCode();
+    if (hasUserInfo()) {
+      hash = (37 * hash) + USERINFO_FIELD_NUMBER;
+      hash = (53 * hash) + getUserInfo().hashCode();
+    }
     if (hasRole()) {
       hash = (37 * hash) + ROLE_FIELD_NUMBER;
       hash = (53 * hash) + getRole().hashCode();
@@ -468,6 +518,12 @@ private static final long serialVersionUID = 0L;
 
       name_ = "";
 
+      if (userInfoBuilder_ == null) {
+        userInfo_ = null;
+      } else {
+        userInfo_ = null;
+        userInfoBuilder_ = null;
+      }
       if (roleBuilder_ == null) {
         role_ = null;
       } else {
@@ -501,6 +557,11 @@ private static final long serialVersionUID = 0L;
       result.id_ = id_;
       result.uuid_ = uuid_;
       result.name_ = name_;
+      if (userInfoBuilder_ == null) {
+        result.userInfo_ = userInfo_;
+      } else {
+        result.userInfo_ = userInfoBuilder_.build();
+      }
       if (roleBuilder_ == null) {
         result.role_ = role_;
       } else {
@@ -558,6 +619,9 @@ private static final long serialVersionUID = 0L;
       if (!other.getName().isEmpty()) {
         name_ = other.name_;
         onChanged();
+      }
+      if (other.hasUserInfo()) {
+        mergeUserInfo(other.getUserInfo());
       }
       if (other.hasRole()) {
         mergeRole(other.getRole());
@@ -756,17 +820,134 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
+    private org.spin.grpc.util.UserInfo userInfo_ = null;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        org.spin.grpc.util.UserInfo, org.spin.grpc.util.UserInfo.Builder, org.spin.grpc.util.UserInfoOrBuilder> userInfoBuilder_;
+    /**
+     * <code>.access.UserInfo userInfo = 4;</code>
+     */
+    public boolean hasUserInfo() {
+      return userInfoBuilder_ != null || userInfo_ != null;
+    }
+    /**
+     * <code>.access.UserInfo userInfo = 4;</code>
+     */
+    public org.spin.grpc.util.UserInfo getUserInfo() {
+      if (userInfoBuilder_ == null) {
+        return userInfo_ == null ? org.spin.grpc.util.UserInfo.getDefaultInstance() : userInfo_;
+      } else {
+        return userInfoBuilder_.getMessage();
+      }
+    }
+    /**
+     * <code>.access.UserInfo userInfo = 4;</code>
+     */
+    public Builder setUserInfo(org.spin.grpc.util.UserInfo value) {
+      if (userInfoBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        userInfo_ = value;
+        onChanged();
+      } else {
+        userInfoBuilder_.setMessage(value);
+      }
+
+      return this;
+    }
+    /**
+     * <code>.access.UserInfo userInfo = 4;</code>
+     */
+    public Builder setUserInfo(
+        org.spin.grpc.util.UserInfo.Builder builderForValue) {
+      if (userInfoBuilder_ == null) {
+        userInfo_ = builderForValue.build();
+        onChanged();
+      } else {
+        userInfoBuilder_.setMessage(builderForValue.build());
+      }
+
+      return this;
+    }
+    /**
+     * <code>.access.UserInfo userInfo = 4;</code>
+     */
+    public Builder mergeUserInfo(org.spin.grpc.util.UserInfo value) {
+      if (userInfoBuilder_ == null) {
+        if (userInfo_ != null) {
+          userInfo_ =
+            org.spin.grpc.util.UserInfo.newBuilder(userInfo_).mergeFrom(value).buildPartial();
+        } else {
+          userInfo_ = value;
+        }
+        onChanged();
+      } else {
+        userInfoBuilder_.mergeFrom(value);
+      }
+
+      return this;
+    }
+    /**
+     * <code>.access.UserInfo userInfo = 4;</code>
+     */
+    public Builder clearUserInfo() {
+      if (userInfoBuilder_ == null) {
+        userInfo_ = null;
+        onChanged();
+      } else {
+        userInfo_ = null;
+        userInfoBuilder_ = null;
+      }
+
+      return this;
+    }
+    /**
+     * <code>.access.UserInfo userInfo = 4;</code>
+     */
+    public org.spin.grpc.util.UserInfo.Builder getUserInfoBuilder() {
+      
+      onChanged();
+      return getUserInfoFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.access.UserInfo userInfo = 4;</code>
+     */
+    public org.spin.grpc.util.UserInfoOrBuilder getUserInfoOrBuilder() {
+      if (userInfoBuilder_ != null) {
+        return userInfoBuilder_.getMessageOrBuilder();
+      } else {
+        return userInfo_ == null ?
+            org.spin.grpc.util.UserInfo.getDefaultInstance() : userInfo_;
+      }
+    }
+    /**
+     * <code>.access.UserInfo userInfo = 4;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        org.spin.grpc.util.UserInfo, org.spin.grpc.util.UserInfo.Builder, org.spin.grpc.util.UserInfoOrBuilder> 
+        getUserInfoFieldBuilder() {
+      if (userInfoBuilder_ == null) {
+        userInfoBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            org.spin.grpc.util.UserInfo, org.spin.grpc.util.UserInfo.Builder, org.spin.grpc.util.UserInfoOrBuilder>(
+                getUserInfo(),
+                getParentForChildren(),
+                isClean());
+        userInfo_ = null;
+      }
+      return userInfoBuilder_;
+    }
+
     private org.spin.grpc.util.Role role_ = null;
     private com.google.protobuf.SingleFieldBuilderV3<
         org.spin.grpc.util.Role, org.spin.grpc.util.Role.Builder, org.spin.grpc.util.RoleOrBuilder> roleBuilder_;
     /**
-     * <code>.access.Role role = 4;</code>
+     * <code>.access.Role role = 5;</code>
      */
     public boolean hasRole() {
       return roleBuilder_ != null || role_ != null;
     }
     /**
-     * <code>.access.Role role = 4;</code>
+     * <code>.access.Role role = 5;</code>
      */
     public org.spin.grpc.util.Role getRole() {
       if (roleBuilder_ == null) {
@@ -776,7 +957,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>.access.Role role = 4;</code>
+     * <code>.access.Role role = 5;</code>
      */
     public Builder setRole(org.spin.grpc.util.Role value) {
       if (roleBuilder_ == null) {
@@ -792,7 +973,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.access.Role role = 4;</code>
+     * <code>.access.Role role = 5;</code>
      */
     public Builder setRole(
         org.spin.grpc.util.Role.Builder builderForValue) {
@@ -806,7 +987,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.access.Role role = 4;</code>
+     * <code>.access.Role role = 5;</code>
      */
     public Builder mergeRole(org.spin.grpc.util.Role value) {
       if (roleBuilder_ == null) {
@@ -824,7 +1005,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.access.Role role = 4;</code>
+     * <code>.access.Role role = 5;</code>
      */
     public Builder clearRole() {
       if (roleBuilder_ == null) {
@@ -838,7 +1019,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.access.Role role = 4;</code>
+     * <code>.access.Role role = 5;</code>
      */
     public org.spin.grpc.util.Role.Builder getRoleBuilder() {
       
@@ -846,7 +1027,7 @@ private static final long serialVersionUID = 0L;
       return getRoleFieldBuilder().getBuilder();
     }
     /**
-     * <code>.access.Role role = 4;</code>
+     * <code>.access.Role role = 5;</code>
      */
     public org.spin.grpc.util.RoleOrBuilder getRoleOrBuilder() {
       if (roleBuilder_ != null) {
@@ -857,7 +1038,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>.access.Role role = 4;</code>
+     * <code>.access.Role role = 5;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
         org.spin.grpc.util.Role, org.spin.grpc.util.Role.Builder, org.spin.grpc.util.RoleOrBuilder> 
@@ -875,13 +1056,13 @@ private static final long serialVersionUID = 0L;
 
     private boolean processed_ ;
     /**
-     * <code>bool processed = 5;</code>
+     * <code>bool processed = 6;</code>
      */
     public boolean getProcessed() {
       return processed_;
     }
     /**
-     * <code>bool processed = 5;</code>
+     * <code>bool processed = 6;</code>
      */
     public Builder setProcessed(boolean value) {
       
@@ -890,7 +1071,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>bool processed = 5;</code>
+     * <code>bool processed = 6;</code>
      */
     public Builder clearProcessed() {
       

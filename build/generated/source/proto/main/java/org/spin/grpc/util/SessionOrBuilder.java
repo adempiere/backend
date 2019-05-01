@@ -33,20 +33,33 @@ public interface SessionOrBuilder extends
       getNameBytes();
 
   /**
-   * <code>.access.Role role = 4;</code>
+   * <code>.access.UserInfo userInfo = 4;</code>
+   */
+  boolean hasUserInfo();
+  /**
+   * <code>.access.UserInfo userInfo = 4;</code>
+   */
+  org.spin.grpc.util.UserInfo getUserInfo();
+  /**
+   * <code>.access.UserInfo userInfo = 4;</code>
+   */
+  org.spin.grpc.util.UserInfoOrBuilder getUserInfoOrBuilder();
+
+  /**
+   * <code>.access.Role role = 5;</code>
    */
   boolean hasRole();
   /**
-   * <code>.access.Role role = 4;</code>
+   * <code>.access.Role role = 5;</code>
    */
   org.spin.grpc.util.Role getRole();
   /**
-   * <code>.access.Role role = 4;</code>
+   * <code>.access.Role role = 5;</code>
    */
   org.spin.grpc.util.RoleOrBuilder getRoleOrBuilder();
 
   /**
-   * <code>bool processed = 5;</code>
+   * <code>bool processed = 6;</code>
    */
   boolean getProcessed();
 }

@@ -8,14 +8,17 @@ public interface UserInfoValueOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
   /**
-   * <code>string uuid = 1;</code>
+   * <code>.access.UserInfo userInfo = 1;</code>
    */
-  java.lang.String getUuid();
+  boolean hasUserInfo();
   /**
-   * <code>string uuid = 1;</code>
+   * <code>.access.UserInfo userInfo = 1;</code>
    */
-  com.google.protobuf.ByteString
-      getUuidBytes();
+  org.spin.grpc.util.UserInfo getUserInfo();
+  /**
+   * <code>.access.UserInfo userInfo = 1;</code>
+   */
+  org.spin.grpc.util.UserInfoOrBuilder getUserInfoOrBuilder();
 
   /**
    * <code>repeated .access.Role roles = 2;</code>

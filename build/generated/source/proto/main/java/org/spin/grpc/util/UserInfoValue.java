@@ -20,7 +20,6 @@ private static final long serialVersionUID = 0L;
     super(builder);
   }
   private UserInfoValue() {
-    uuid_ = "";
     roles_ = java.util.Collections.emptyList();
   }
 
@@ -56,9 +55,16 @@ private static final long serialVersionUID = 0L;
             break;
           }
           case 10: {
-            java.lang.String s = input.readStringRequireUtf8();
+            org.spin.grpc.util.UserInfo.Builder subBuilder = null;
+            if (userInfo_ != null) {
+              subBuilder = userInfo_.toBuilder();
+            }
+            userInfo_ = input.readMessage(org.spin.grpc.util.UserInfo.parser(), extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom(userInfo_);
+              userInfo_ = subBuilder.buildPartial();
+            }
 
-            uuid_ = s;
             break;
           }
           case 18: {
@@ -98,38 +104,25 @@ private static final long serialVersionUID = 0L;
   }
 
   private int bitField0_;
-  public static final int UUID_FIELD_NUMBER = 1;
-  private volatile java.lang.Object uuid_;
+  public static final int USERINFO_FIELD_NUMBER = 1;
+  private org.spin.grpc.util.UserInfo userInfo_;
   /**
-   * <code>string uuid = 1;</code>
+   * <code>.access.UserInfo userInfo = 1;</code>
    */
-  public java.lang.String getUuid() {
-    java.lang.Object ref = uuid_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = 
-          (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      uuid_ = s;
-      return s;
-    }
+  public boolean hasUserInfo() {
+    return userInfo_ != null;
   }
   /**
-   * <code>string uuid = 1;</code>
+   * <code>.access.UserInfo userInfo = 1;</code>
    */
-  public com.google.protobuf.ByteString
-      getUuidBytes() {
-    java.lang.Object ref = uuid_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
-          com.google.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      uuid_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
+  public org.spin.grpc.util.UserInfo getUserInfo() {
+    return userInfo_ == null ? org.spin.grpc.util.UserInfo.getDefaultInstance() : userInfo_;
+  }
+  /**
+   * <code>.access.UserInfo userInfo = 1;</code>
+   */
+  public org.spin.grpc.util.UserInfoOrBuilder getUserInfoOrBuilder() {
+    return getUserInfo();
   }
 
   public static final int ROLES_FIELD_NUMBER = 2;
@@ -179,8 +172,8 @@ private static final long serialVersionUID = 0L;
 
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
-    if (!getUuidBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, uuid_);
+    if (userInfo_ != null) {
+      output.writeMessage(1, getUserInfo());
     }
     for (int i = 0; i < roles_.size(); i++) {
       output.writeMessage(2, roles_.get(i));
@@ -193,8 +186,9 @@ private static final long serialVersionUID = 0L;
     if (size != -1) return size;
 
     size = 0;
-    if (!getUuidBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, uuid_);
+    if (userInfo_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(1, getUserInfo());
     }
     for (int i = 0; i < roles_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
@@ -216,8 +210,11 @@ private static final long serialVersionUID = 0L;
     org.spin.grpc.util.UserInfoValue other = (org.spin.grpc.util.UserInfoValue) obj;
 
     boolean result = true;
-    result = result && getUuid()
-        .equals(other.getUuid());
+    result = result && (hasUserInfo() == other.hasUserInfo());
+    if (hasUserInfo()) {
+      result = result && getUserInfo()
+          .equals(other.getUserInfo());
+    }
     result = result && getRolesList()
         .equals(other.getRolesList());
     result = result && unknownFields.equals(other.unknownFields);
@@ -231,8 +228,10 @@ private static final long serialVersionUID = 0L;
     }
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
-    hash = (37 * hash) + UUID_FIELD_NUMBER;
-    hash = (53 * hash) + getUuid().hashCode();
+    if (hasUserInfo()) {
+      hash = (37 * hash) + USERINFO_FIELD_NUMBER;
+      hash = (53 * hash) + getUserInfo().hashCode();
+    }
     if (getRolesCount() > 0) {
       hash = (37 * hash) + ROLES_FIELD_NUMBER;
       hash = (53 * hash) + getRolesList().hashCode();
@@ -371,8 +370,12 @@ private static final long serialVersionUID = 0L;
     }
     public Builder clear() {
       super.clear();
-      uuid_ = "";
-
+      if (userInfoBuilder_ == null) {
+        userInfo_ = null;
+      } else {
+        userInfo_ = null;
+        userInfoBuilder_ = null;
+      }
       if (rolesBuilder_ == null) {
         roles_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000002);
@@ -403,7 +406,11 @@ private static final long serialVersionUID = 0L;
       org.spin.grpc.util.UserInfoValue result = new org.spin.grpc.util.UserInfoValue(this);
       int from_bitField0_ = bitField0_;
       int to_bitField0_ = 0;
-      result.uuid_ = uuid_;
+      if (userInfoBuilder_ == null) {
+        result.userInfo_ = userInfo_;
+      } else {
+        result.userInfo_ = userInfoBuilder_.build();
+      }
       if (rolesBuilder_ == null) {
         if (((bitField0_ & 0x00000002) == 0x00000002)) {
           roles_ = java.util.Collections.unmodifiableList(roles_);
@@ -455,9 +462,8 @@ private static final long serialVersionUID = 0L;
 
     public Builder mergeFrom(org.spin.grpc.util.UserInfoValue other) {
       if (other == org.spin.grpc.util.UserInfoValue.getDefaultInstance()) return this;
-      if (!other.getUuid().isEmpty()) {
-        uuid_ = other.uuid_;
-        onChanged();
+      if (other.hasUserInfo()) {
+        mergeUserInfo(other.getUserInfo());
       }
       if (rolesBuilder_ == null) {
         if (!other.roles_.isEmpty()) {
@@ -513,73 +519,121 @@ private static final long serialVersionUID = 0L;
     }
     private int bitField0_;
 
-    private java.lang.Object uuid_ = "";
+    private org.spin.grpc.util.UserInfo userInfo_ = null;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        org.spin.grpc.util.UserInfo, org.spin.grpc.util.UserInfo.Builder, org.spin.grpc.util.UserInfoOrBuilder> userInfoBuilder_;
     /**
-     * <code>string uuid = 1;</code>
+     * <code>.access.UserInfo userInfo = 1;</code>
      */
-    public java.lang.String getUuid() {
-      java.lang.Object ref = uuid_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        uuid_ = s;
-        return s;
+    public boolean hasUserInfo() {
+      return userInfoBuilder_ != null || userInfo_ != null;
+    }
+    /**
+     * <code>.access.UserInfo userInfo = 1;</code>
+     */
+    public org.spin.grpc.util.UserInfo getUserInfo() {
+      if (userInfoBuilder_ == null) {
+        return userInfo_ == null ? org.spin.grpc.util.UserInfo.getDefaultInstance() : userInfo_;
       } else {
-        return (java.lang.String) ref;
+        return userInfoBuilder_.getMessage();
       }
     }
     /**
-     * <code>string uuid = 1;</code>
+     * <code>.access.UserInfo userInfo = 1;</code>
      */
-    public com.google.protobuf.ByteString
-        getUuidBytes() {
-      java.lang.Object ref = uuid_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        uuid_ = b;
-        return b;
+    public Builder setUserInfo(org.spin.grpc.util.UserInfo value) {
+      if (userInfoBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        userInfo_ = value;
+        onChanged();
       } else {
-        return (com.google.protobuf.ByteString) ref;
+        userInfoBuilder_.setMessage(value);
+      }
+
+      return this;
+    }
+    /**
+     * <code>.access.UserInfo userInfo = 1;</code>
+     */
+    public Builder setUserInfo(
+        org.spin.grpc.util.UserInfo.Builder builderForValue) {
+      if (userInfoBuilder_ == null) {
+        userInfo_ = builderForValue.build();
+        onChanged();
+      } else {
+        userInfoBuilder_.setMessage(builderForValue.build());
+      }
+
+      return this;
+    }
+    /**
+     * <code>.access.UserInfo userInfo = 1;</code>
+     */
+    public Builder mergeUserInfo(org.spin.grpc.util.UserInfo value) {
+      if (userInfoBuilder_ == null) {
+        if (userInfo_ != null) {
+          userInfo_ =
+            org.spin.grpc.util.UserInfo.newBuilder(userInfo_).mergeFrom(value).buildPartial();
+        } else {
+          userInfo_ = value;
+        }
+        onChanged();
+      } else {
+        userInfoBuilder_.mergeFrom(value);
+      }
+
+      return this;
+    }
+    /**
+     * <code>.access.UserInfo userInfo = 1;</code>
+     */
+    public Builder clearUserInfo() {
+      if (userInfoBuilder_ == null) {
+        userInfo_ = null;
+        onChanged();
+      } else {
+        userInfo_ = null;
+        userInfoBuilder_ = null;
+      }
+
+      return this;
+    }
+    /**
+     * <code>.access.UserInfo userInfo = 1;</code>
+     */
+    public org.spin.grpc.util.UserInfo.Builder getUserInfoBuilder() {
+      
+      onChanged();
+      return getUserInfoFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.access.UserInfo userInfo = 1;</code>
+     */
+    public org.spin.grpc.util.UserInfoOrBuilder getUserInfoOrBuilder() {
+      if (userInfoBuilder_ != null) {
+        return userInfoBuilder_.getMessageOrBuilder();
+      } else {
+        return userInfo_ == null ?
+            org.spin.grpc.util.UserInfo.getDefaultInstance() : userInfo_;
       }
     }
     /**
-     * <code>string uuid = 1;</code>
+     * <code>.access.UserInfo userInfo = 1;</code>
      */
-    public Builder setUuid(
-        java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
-      uuid_ = value;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string uuid = 1;</code>
-     */
-    public Builder clearUuid() {
-      
-      uuid_ = getDefaultInstance().getUuid();
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string uuid = 1;</code>
-     */
-    public Builder setUuidBytes(
-        com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-      
-      uuid_ = value;
-      onChanged();
-      return this;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        org.spin.grpc.util.UserInfo, org.spin.grpc.util.UserInfo.Builder, org.spin.grpc.util.UserInfoOrBuilder> 
+        getUserInfoFieldBuilder() {
+      if (userInfoBuilder_ == null) {
+        userInfoBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            org.spin.grpc.util.UserInfo, org.spin.grpc.util.UserInfo.Builder, org.spin.grpc.util.UserInfoOrBuilder>(
+                getUserInfo(),
+                getParentForChildren(),
+                isClean());
+        userInfo_ = null;
+      }
+      return userInfoBuilder_;
     }
 
     private java.util.List<org.spin.grpc.util.Role> roles_ =

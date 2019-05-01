@@ -113,6 +113,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			return context;
 		}
 		context = Env.getCtx();
+		DB.validateSupportedUUIDFromDB();
 		MSession session = new Query(context, I_AD_Session.Table_Name, I_AD_Session.COLUMNNAME_UUID + " = ?", null)
 				.setParameters(request.getSessionUuid())
 				.first();
