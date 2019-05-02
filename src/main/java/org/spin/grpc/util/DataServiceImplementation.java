@@ -55,14 +55,14 @@ import io.grpc.stub.StreamObserver;
 public class DataServiceImplementation extends DataServiceImplBase {
 	/**	Logger			*/
 	private CLogger log = CLogger.getCLogger(DataServiceImplementation.class);
-	/**	Key column contant	*/
+	/**	Key column constant	*/
 	private final String KEY_COLUMN_KEY = "KeyColumn";
-	/**	Key column contant	*/
+	/**	Key column constant	*/
 	private final String DISPLAY_COLUMN_KEY = "DisplayColumn";
-	/**	Key column contant	*/
+	/**	Key column constant	*/
 	private final String VALUE_COLUMN_KEY = "ValueColumn";
 	/**	Session Context	*/
-	private static CCache<String, Properties> sessionsContext = new CCache<String, Properties>("DictionaryServiceImplementation", 30, 0);	//	no time-out
+	private static CCache<String, Properties> sessionsContext = new CCache<String, Properties>("DataServiceImplementation", 30, 0);	//	no time-out
 	
 	@Override
 	public void requestObject(ValueObjectRequest request, StreamObserver<ValueObject> responseObserver) {
