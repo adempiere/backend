@@ -136,12 +136,15 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	@Override
 	public void requestField(EntityRequest request, StreamObserver<Field> responseObserver) {
 		try {
-			if(request == null
-					|| Util.isEmpty(request.getUuid())) {
+			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			log.fine("Field Requested = " + request.getUuid());
+			log.fine("Menu Requested = " + request.getUuid());
 			ApplicationRequest applicationInfo = request.getApplicationRequest();
+			if(applicationInfo == null
+					|| Util.isEmpty(applicationInfo.getSessionUuid())) {
+				throw new AdempiereException("Object Request Null");
+			}
 			String language = null;
 			if(applicationInfo != null) {
 				language = applicationInfo.getLanguage();
@@ -158,15 +161,18 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	@Override
 	public void requestProcess(EntityRequest request, StreamObserver<Process> responseObserver) {
 		try {
-			if(request == null
-					|| Util.isEmpty(request.getUuid())) {
+			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			log.fine("Process Requested = " + request.getUuid());
-			ApplicationRequest clientInfo = request.getApplicationRequest();
+			log.fine("Menu Requested = " + request.getUuid());
+			ApplicationRequest applicationInfo = request.getApplicationRequest();
+			if(applicationInfo == null
+					|| Util.isEmpty(applicationInfo.getSessionUuid())) {
+				throw new AdempiereException("Object Request Null");
+			}
 			String language = null;
-			if(clientInfo != null) {
-				language = clientInfo.getLanguage();
+			if(applicationInfo != null) {
+				language = applicationInfo.getLanguage();
 			}
 			Properties context = getContext(request.getApplicationRequest());
 			Process.Builder processBuilder = convertProcess(context, request.getUuid(), language, true);
@@ -180,15 +186,18 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	@Override
 	public void requestBrowser(EntityRequest request, StreamObserver<Browser> responseObserver) {
 		try {
-			if(request == null
-					|| Util.isEmpty(request.getUuid())) {
+			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			log.fine("Smart Browser Requested = " + request.getUuid());
-			ApplicationRequest clientInfo = request.getApplicationRequest();
+			log.fine("Menu Requested = " + request.getUuid());
+			ApplicationRequest applicationInfo = request.getApplicationRequest();
+			if(applicationInfo == null
+					|| Util.isEmpty(applicationInfo.getSessionUuid())) {
+				throw new AdempiereException("Object Request Null");
+			}
 			String language = null;
-			if(clientInfo != null) {
-				language = clientInfo.getLanguage();
+			if(applicationInfo != null) {
+				language = applicationInfo.getLanguage();
 			}
 			Properties context = getContext(request.getApplicationRequest());
 			Browser.Builder browserBuilder = convertBrowser(context, request.getUuid(), language, true);
@@ -207,12 +216,15 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	 */
 	public void requestMenu(EntityRequest request, StreamObserver<Menu> responseObserver, boolean withChild) {
 		try {
-			if(request == null
-					|| Util.isEmpty(request.getUuid())) {
+			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
 			log.fine("Menu Requested = " + request.getUuid());
 			ApplicationRequest applicationInfo = request.getApplicationRequest();
+			if(applicationInfo == null
+					|| Util.isEmpty(applicationInfo.getSessionUuid())) {
+				throw new AdempiereException("Object Request Null");
+			}
 			String language = null;
 			if(applicationInfo != null) {
 				language = applicationInfo.getLanguage();
@@ -232,12 +244,15 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	 */
 	public void requestWindow(EntityRequest request, StreamObserver<Window> responseObserver, boolean withTabs) {
 		try {
-			if(request == null
-					|| Util.isEmpty(request.getUuid())) {
+			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			log.fine("Window Requested = " + request.getUuid());
+			log.fine("Menu Requested = " + request.getUuid());
 			ApplicationRequest applicationInfo = request.getApplicationRequest();
+			if(applicationInfo == null
+					|| Util.isEmpty(applicationInfo.getSessionUuid())) {
+				throw new AdempiereException("Object Request Null");
+			}
 			String language = null;
 			if(applicationInfo != null) {
 				language = applicationInfo.getLanguage();
@@ -259,15 +274,18 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	 */
 	public void requestTab(EntityRequest request, StreamObserver<Tab> responseObserver, boolean withFields) {
 		try {
-			if(request == null
-					|| Util.isEmpty(request.getUuid())) {
+			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			log.fine("Tab Requested = " + request.getUuid());
-			ApplicationRequest clientInfo = request.getApplicationRequest();
+			log.fine("Menu Requested = " + request.getUuid());
+			ApplicationRequest applicationInfo = request.getApplicationRequest();
+			if(applicationInfo == null
+					|| Util.isEmpty(applicationInfo.getSessionUuid())) {
+				throw new AdempiereException("Object Request Null");
+			}
 			String language = null;
-			if(clientInfo != null) {
-				language = clientInfo.getLanguage();
+			if(applicationInfo != null) {
+				language = applicationInfo.getLanguage();
 			}
 			Properties context = getContext(request.getApplicationRequest());
 			Tab.Builder tabBuilder = convertTab(context, request.getUuid(), language, withFields);
