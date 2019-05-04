@@ -18,11 +18,21 @@ public interface UserInfoRequestOrBuilder extends
       getSessionUuidBytes();
 
   /**
-   * <code>string clientVersion = 7;</code>
+   * <code>string language = 2;</code>
+   */
+  java.lang.String getLanguage();
+  /**
+   * <code>string language = 2;</code>
+   */
+  com.google.protobuf.ByteString
+      getLanguageBytes();
+
+  /**
+   * <code>string clientVersion = 3;</code>
    */
   java.lang.String getClientVersion();
   /**
-   * <code>string clientVersion = 7;</code>
+   * <code>string clientVersion = 3;</code>
    */
   com.google.protobuf.ByteString
       getClientVersionBytes();

@@ -190,6 +190,38 @@ public final class AccessServiceGrpc {
      return getRequestUserInfoFromSessionMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.UserInfoRequest,
+      org.spin.grpc.util.Menu> getRequestMenuAndChildMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "RequestMenuAndChild",
+      requestType = org.spin.grpc.util.UserInfoRequest.class,
+      responseType = org.spin.grpc.util.Menu.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<org.spin.grpc.util.UserInfoRequest,
+      org.spin.grpc.util.Menu> getRequestMenuAndChildMethod() {
+    io.grpc.MethodDescriptor<org.spin.grpc.util.UserInfoRequest, org.spin.grpc.util.Menu> getRequestMenuAndChildMethod;
+    if ((getRequestMenuAndChildMethod = AccessServiceGrpc.getRequestMenuAndChildMethod) == null) {
+      synchronized (AccessServiceGrpc.class) {
+        if ((getRequestMenuAndChildMethod = AccessServiceGrpc.getRequestMenuAndChildMethod) == null) {
+          AccessServiceGrpc.getRequestMenuAndChildMethod = getRequestMenuAndChildMethod = 
+              io.grpc.MethodDescriptor.<org.spin.grpc.util.UserInfoRequest, org.spin.grpc.util.Menu>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(
+                  "access.AccessService", "RequestMenuAndChild"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  org.spin.grpc.util.UserInfoRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  org.spin.grpc.util.Menu.getDefaultInstance()))
+                  .setSchemaDescriptor(new AccessServiceMethodDescriptorSupplier("RequestMenuAndChild"))
+                  .build();
+          }
+        }
+     }
+     return getRequestMenuAndChildMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -270,6 +302,16 @@ public final class AccessServiceGrpc {
       asyncUnimplementedUnaryCall(getRequestUserInfoFromSessionMethod(), responseObserver);
     }
 
+    /**
+     * <pre>
+     * Request Menu from Parent UUID
+     * </pre>
+     */
+    public void requestMenuAndChild(org.spin.grpc.util.UserInfoRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.Menu> responseObserver) {
+      asyncUnimplementedUnaryCall(getRequestMenuAndChildMethod(), responseObserver);
+    }
+
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
@@ -307,6 +349,13 @@ public final class AccessServiceGrpc {
                 org.spin.grpc.util.UserInfoRequest,
                 org.spin.grpc.util.UserInfoValue>(
                   this, METHODID_REQUEST_USER_INFO_FROM_SESSION)))
+          .addMethod(
+            getRequestMenuAndChildMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                org.spin.grpc.util.UserInfoRequest,
+                org.spin.grpc.util.Menu>(
+                  this, METHODID_REQUEST_MENU_AND_CHILD)))
           .build();
     }
   }
@@ -386,6 +435,17 @@ public final class AccessServiceGrpc {
       asyncUnaryCall(
           getChannel().newCall(getRequestUserInfoFromSessionMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     * <pre>
+     * Request Menu from Parent UUID
+     * </pre>
+     */
+    public void requestMenuAndChild(org.spin.grpc.util.UserInfoRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.Menu> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getRequestMenuAndChildMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -457,6 +517,16 @@ public final class AccessServiceGrpc {
     public org.spin.grpc.util.UserInfoValue requestUserInfoFromSession(org.spin.grpc.util.UserInfoRequest request) {
       return blockingUnaryCall(
           getChannel(), getRequestUserInfoFromSessionMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * Request Menu from Parent UUID
+     * </pre>
+     */
+    public org.spin.grpc.util.Menu requestMenuAndChild(org.spin.grpc.util.UserInfoRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getRequestMenuAndChildMethod(), getCallOptions(), request);
     }
   }
 
@@ -535,6 +605,17 @@ public final class AccessServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getRequestUserInfoFromSessionMethod(), getCallOptions()), request);
     }
+
+    /**
+     * <pre>
+     * Request Menu from Parent UUID
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.Menu> requestMenuAndChild(
+        org.spin.grpc.util.UserInfoRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getRequestMenuAndChildMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_REQUEST_USER_INFO = 0;
@@ -542,6 +623,7 @@ public final class AccessServiceGrpc {
   private static final int METHODID_REQUEST_LOGIN_DEFAULT = 2;
   private static final int METHODID_REQUEST_LOGOUT = 3;
   private static final int METHODID_REQUEST_USER_INFO_FROM_SESSION = 4;
+  private static final int METHODID_REQUEST_MENU_AND_CHILD = 5;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -579,6 +661,10 @@ public final class AccessServiceGrpc {
         case METHODID_REQUEST_USER_INFO_FROM_SESSION:
           serviceImpl.requestUserInfoFromSession((org.spin.grpc.util.UserInfoRequest) request,
               (io.grpc.stub.StreamObserver<org.spin.grpc.util.UserInfoValue>) responseObserver);
+          break;
+        case METHODID_REQUEST_MENU_AND_CHILD:
+          serviceImpl.requestMenuAndChild((org.spin.grpc.util.UserInfoRequest) request,
+              (io.grpc.stub.StreamObserver<org.spin.grpc.util.Menu>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -646,6 +732,7 @@ public final class AccessServiceGrpc {
               .addMethod(getRequestLoginDefaultMethod())
               .addMethod(getRequestLogoutMethod())
               .addMethod(getRequestUserInfoFromSessionMethod())
+              .addMethod(getRequestMenuAndChildMethod())
               .build();
         }
       }

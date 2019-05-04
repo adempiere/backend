@@ -89,11 +89,6 @@ public final class ADempiereDictionary {
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_dictionary_Reference_fieldAccessorTable;
-  static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_dictionary_Menu_descriptor;
-  static final 
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_dictionary_Menu_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -203,31 +198,20 @@ public final class ADempiereDictionary {
       "layColumnName\030\003 \001(\t\022\r\n\005query\030\004 \001(\t\022\023\n\013di" +
       "rectQuery\030\005 \001(\t\022\026\n\016validationCode\030\006 \001(\t\022" +
       "\'\n\007windows\030\007 \003(\0132\026.dictionary.ZoomWindow" +
-      "\"\265\002\n\004Menu\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(\t\022\022\n\np" +
-      "arentUuid\030\004 \001(\t\022\014\n\004name\030\005 \001(\t\022\023\n\013descrip" +
-      "tion\030\006 \001(\t\022\020\n\010sequence\030\007 \001(\t\022\022\n\nisReadOn" +
-      "ly\030\010 \001(\010\022\021\n\tisSummary\030\t \001(\010\022\017\n\007isSOTrx\030\n" +
-      " \001(\010\022\016\n\006action\030\013 \001(\t\022\020\n\010formUuid\030\014 \001(\t\022\022" +
-      "\n\nwindowUuid\030\r \001(\t\022\023\n\013processUuid\030\016 \001(\t\022" +
-      "\023\n\013browserUuid\030\017 \001(\t\022 \n\006childs\030\020 \003(\0132\020.d" +
-      "ictionary.Menu\022\020\n\010isActive\030\021 \001(\0102\353\004\n\021Dic" +
-      "tionaryService\022D\n\023RequestMenuAndChild\022\031." +
-      "dictionary.EntityRequest\032\020.dictionary.Me" +
-      "nu\"\000\022<\n\013RequestMenu\022\031.dictionary.EntityR" +
-      "equest\032\020.dictionary.Menu\"\000\022@\n\rRequestWin" +
-      "dow\022\031.dictionary.EntityRequest\032\022.diction" +
-      "ary.Window\"\000\022G\n\024RequestWindowAndTabs\022\031.d" +
-      "ictionary.EntityRequest\032\022.dictionary.Win" +
-      "dow\"\000\022:\n\nRequestTab\022\031.dictionary.EntityR" +
-      "equest\032\017.dictionary.Tab\"\000\022C\n\023RequestTabA" +
-      "ndFields\022\031.dictionary.EntityRequest\032\017.di" +
-      "ctionary.Tab\"\000\022>\n\014RequestField\022\031.diction" +
-      "ary.EntityRequest\032\021.dictionary.Field\"\000\022B" +
-      "\n\016RequestProcess\022\031.dictionary.EntityRequ" +
-      "est\032\023.dictionary.Process\"\000\022B\n\016RequestBro" +
-      "wser\022\031.dictionary.EntityRequest\032\023.dictio" +
-      "nary.Browser\"\000B1\n\022org.spin.grpc.utilB\023AD" +
-      "empiereDictionaryP\001\242\002\003HLWb\006proto3"
+      "2\347\003\n\021DictionaryService\022@\n\rRequestWindow\022" +
+      "\031.dictionary.EntityRequest\032\022.dictionary." +
+      "Window\"\000\022G\n\024RequestWindowAndTabs\022\031.dicti" +
+      "onary.EntityRequest\032\022.dictionary.Window\"" +
+      "\000\022:\n\nRequestTab\022\031.dictionary.EntityReque" +
+      "st\032\017.dictionary.Tab\"\000\022C\n\023RequestTabAndFi" +
+      "elds\022\031.dictionary.EntityRequest\032\017.dictio" +
+      "nary.Tab\"\000\022>\n\014RequestField\022\031.dictionary." +
+      "EntityRequest\032\021.dictionary.Field\"\000\022B\n\016Re" +
+      "questProcess\022\031.dictionary.EntityRequest\032" +
+      "\023.dictionary.Process\"\000\022B\n\016RequestBrowser" +
+      "\022\031.dictionary.EntityRequest\032\023.dictionary" +
+      ".Browser\"\000B1\n\022org.spin.grpc.utilB\023ADempi" +
+      "ereDictionaryP\001\242\002\003HLWb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -331,12 +315,6 @@ public final class ADempiereDictionary {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dictionary_Reference_descriptor,
         new java.lang.String[] { "TableName", "KeyColumnName", "DisplayColumnName", "Query", "DirectQuery", "ValidationCode", "Windows", });
-    internal_static_dictionary_Menu_descriptor =
-      getDescriptor().getMessageTypes().get(15);
-    internal_static_dictionary_Menu_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_dictionary_Menu_descriptor,
-        new java.lang.String[] { "Id", "Uuid", "ParentUuid", "Name", "Description", "Sequence", "IsReadOnly", "IsSummary", "IsSOTrx", "Action", "FormUuid", "WindowUuid", "ProcessUuid", "BrowserUuid", "Childs", "IsActive", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

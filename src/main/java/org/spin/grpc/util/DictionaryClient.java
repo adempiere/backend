@@ -79,30 +79,30 @@ public class DictionaryClient {
 	  /** 
 	   * Request Window. 
 	   */
-	  public void requestMenu(boolean withTabs) {
-		  ApplicationRequest applicationRequest = ApplicationRequest.newBuilder()
-				  .setLanguage("es_MX")
-				  .build();
-		  EntityRequest request = EntityRequest.newBuilder()
-	    		//.setUuid("8e4fd396-fb40-11e8-a479-7a0060f0aa01")
-	    		.setApplicationRequest(applicationRequest)
-	    		.build();
-		  Menu response;
-		  try {
-			  if(withTabs) {
-				  response = blockingStub.requestMenuAndChild(request);
-				  for(Menu child : response.getChildsList()) {
-					  logger.info("Menu Child: " + child);
-				  }
-			  } else {
-				  response = blockingStub.requestMenu(request);
-			  }
-			  logger.info("Menu: " + response);
-		  } catch (StatusRuntimeException e) {
-			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
-		      return;
-		  }
-	  }
+//	  public void requestMenu(boolean withTabs) {
+//		  ApplicationRequest applicationRequest = ApplicationRequest.newBuilder()
+//				  .setLanguage("es_MX")
+//				  .build();
+//		  EntityRequest request = EntityRequest.newBuilder()
+//	    		//.setUuid("8e4fd396-fb40-11e8-a479-7a0060f0aa01")
+//	    		.setApplicationRequest(applicationRequest)
+//	    		.build();
+//		  Menu response;
+//		  try {
+//			  if(withTabs) {
+//				  response = blockingStub.requestMenuAndChild(request);
+//				  for(Menu child : response.getChildsList()) {
+//					  logger.info("Menu Child: " + child);
+//				  }
+//			  } else {
+//				  response = blockingStub.requestMenu(request);
+//			  }
+//			  logger.info("Menu: " + response);
+//		  } catch (StatusRuntimeException e) {
+//			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
+//		      return;
+//		  }
+//	  }
 	  
 	  
 	  /**

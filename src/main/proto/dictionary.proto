@@ -23,10 +23,6 @@ package dictionary;
 
 // The greeting service definition.
 service DictionaryService {
-	// Request Menu from Parent UUID
-	rpc RequestMenuAndChild(EntityRequest) returns (Menu) {}
-	// Request Menu
-	rpc RequestMenu(EntityRequest) returns (Menu) {}
 	// Request a Window
 	rpc RequestWindow(EntityRequest) returns (Window) {}
 	// Request Window and tabs
@@ -288,25 +284,4 @@ message Reference {
 	string validationCode = 6;
 	// External Info
 	repeated ZoomWindow windows = 7;
-}
-
-// Menu
-message Menu {
-	int32 id = 1;
-	string uuid = 2;
-	string parentUuid = 4;
-	string name = 5;
-	string description = 6;
-	string sequence = 7;
-	bool isReadOnly = 8;
-	bool isSummary = 9;
-	bool isSOTrx = 10;
-	string action = 11;
-	// Supported References
-	string formUuid = 12;
-	string windowUuid = 13;
-	string processUuid = 14;
-	string browserUuid = 15;
-	repeated Menu childs = 16;
-	bool isActive = 17;
 }

@@ -26,7 +26,6 @@ import org.adempiere.model.MBrowse;
 import org.adempiere.model.MBrowseField;
 import org.compiere.model.I_AD_Field;
 import org.compiere.model.I_AD_FieldGroup;
-import org.compiere.model.I_AD_Menu;
 import org.compiere.model.I_AD_Message;
 import org.compiere.model.I_AD_Process;
 import org.compiere.model.I_AD_Process_Para;
@@ -35,18 +34,14 @@ import org.compiere.model.I_AD_Tab;
 import org.compiere.model.I_AD_Window;
 import org.compiere.model.MColumn;
 import org.compiere.model.MField;
-import org.compiere.model.MForm;
 import org.compiere.model.MLookupFactory;
 import org.compiere.model.MLookupInfo;
-import org.compiere.model.MMenu;
 import org.compiere.model.MMessage;
 import org.compiere.model.MProcess;
 import org.compiere.model.MProcessPara;
 import org.compiere.model.MSession;
 import org.compiere.model.MTab;
 import org.compiere.model.MTable;
-import org.compiere.model.MTree;
-import org.compiere.model.MTree_NodeMM;
 import org.compiere.model.MValRule;
 import org.compiere.model.MWindow;
 import org.compiere.model.Query;
@@ -57,7 +52,6 @@ import org.compiere.util.DB;
 import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
 import org.compiere.util.Language;
-import org.compiere.util.Msg;
 import org.compiere.util.Util;
 import org.spin.grpc.util.DictionaryServiceGrpc.DictionaryServiceImplBase;
 import org.spin.model.MADContextInfo;
@@ -92,15 +86,15 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		requestTab(request, responseObserver, true);
 	}
 	
-	@Override
-	public void requestMenu(EntityRequest request, StreamObserver<Menu> responseObserver) {
-		requestMenu(request, responseObserver, false);
-	}
-	
-	@Override
-	public void requestMenuAndChild(EntityRequest request, StreamObserver<Menu> responseObserver) {
-		requestMenu(request, responseObserver, true);
-	}
+//	@Override
+//	public void requestMenu(EntityRequest request, StreamObserver<Menu> responseObserver) {
+//		requestMenu(request, responseObserver, false);
+//	}
+//	
+//	@Override
+//	public void requestMenuAndChild(EntityRequest request, StreamObserver<Menu> responseObserver) {
+//		requestMenu(request, responseObserver, true);
+//	}
 	
 	/**
 	 * Get context from session for System
@@ -207,37 +201,6 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			responseObserver.onError(e);
 		}
 	}
-	
-	/**
-	 * Request Menu
-	 * @param request
-	 * @param responseObserver
-	 * @param withChild
-	 */
-	public void requestMenu(EntityRequest request, StreamObserver<Menu> responseObserver, boolean withChild) {
-		try {
-			if(request == null) {
-				throw new AdempiereException("Object Request Null");
-			}
-			log.fine("Menu Requested = " + request.getUuid());
-			ApplicationRequest applicationInfo = request.getApplicationRequest();
-			if(applicationInfo == null
-					|| Util.isEmpty(applicationInfo.getSessionUuid())) {
-				throw new AdempiereException("Object Request Null");
-			}
-			String language = null;
-			if(applicationInfo != null) {
-				language = applicationInfo.getLanguage();
-			}
-			Properties context = getContext(request.getApplicationRequest());
-			Menu.Builder menuBuilder = convertMenu(context, request.getUuid(), language, withChild);
-			responseObserver.onNext(menuBuilder.build());
-			responseObserver.onCompleted();
-		} catch (Exception e) {
-			responseObserver.onError(e);
-		}
-	}
-	
 	
 	/**
 	 * Request with parameters
@@ -1149,119 +1112,6 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setName(validateNull(name))
 				.setDescription(validateNull(description))
 				.setIsSOTrx(window.isSOTrx());
-	}
-	
-	/**
-	 * Convert Menu to Builder
-	 * @param uuid
-	 * @param language
-	 * @param withChild
-	 * @return
-	 */
-	private Menu.Builder convertMenu(Properties context, String uuid, String language, boolean withChild) {
-		MMenu menu = null;
-		if(!Util.isEmpty(uuid)) {
-			menu = new Query(context, I_AD_Menu.Table_Name, I_AD_Menu.COLUMNNAME_UUID + " = ?", null)
-					.setParameters(uuid)
-					.setOnlyActiveRecords(true)
-					.first();
-		} else {
-			menu = new MMenu(context, 0, null);
-			menu.setName(Msg.getMsg(context, "Menu"));
-		}
-		//	Convert
-		return convertMenu(context, menu, language, withChild);
-	}
-	
-	/**
-	 * Convert Menu to builder
-	 * @param menu
-	 * @param language
-	 * @param withChild
-	 * @return
-	 */
-	private Menu.Builder convertMenu(Properties context, MMenu menu, String language, boolean withChild) {
-		String name = null;
-		String description = null;
-		if(!Util.isEmpty(language)) {
-			name = menu.get_Translation(I_AD_Menu.COLUMNNAME_Name, language);
-			description = menu.get_Translation(I_AD_Menu.COLUMNNAME_Description, language);
-		}
-		//	Validate for default
-		if(Util.isEmpty(name)) {
-			name = menu.getName();
-		}
-		if(Util.isEmpty(description)) {
-			description = menu.getDescription();
-		}
-		Menu.Builder builder = Menu.newBuilder()
-				.setId(menu.getAD_Menu_ID())
-				.setUuid(validateNull(menu.getUUID()))
-				.setName(validateNull(name))
-				.setDescription(validateNull(description))
-				.setAction(validateNull(menu.getAction()))
-				.setIsSOTrx(menu.isSOTrx())
-				.setIsSummary(menu.isSummary())
-				.setIsReadOnly(menu.isReadOnly())
-				.setIsActive(menu.isActive());
-		//	Supported actions
-		if(!Util.isEmpty(menu.getAction())) {
-			if(menu.getAction().equals(MMenu.ACTION_Form)) {
-				if(menu.getAD_Form_ID() > 0) {
-					MForm form = new MForm(context, menu.getAD_Form_ID(), null);
-					builder.setFormUuid(form.getUUID());
-				}
-			} else if(menu.getAction().equals(MMenu.ACTION_Window)) {
-				if(menu.getAD_Window_ID() > 0) {
-					MWindow window = new MWindow(context, menu.getAD_Window_ID(), null);
-					builder.setWindowUuid(window.getUUID());
-				}
-			} else if(menu.getAction().equals(MMenu.ACTION_Process)
-				|| menu.getAction().equals(MMenu.ACTION_Report)) {
-				if(menu.getAD_Process_ID() > 0) {
-					MProcess process = MProcess.get(context, menu.getAD_Process_ID());
-					builder.setProcessUuid(process.getUUID());
-				}
-			} else if(menu.getAction().equals(MMenu.ACTION_SmartBrowse)) {
-				if(menu.getAD_Browse_ID() > 0) {
-					MBrowse smartBrowser = MBrowse.get(context, menu.getAD_Browse_ID());
-					builder.setBrowserUuid(smartBrowser.getUUID());
-				}
-			}
-		}
-		//	Get Reference
-		int treeId = MTree.getDefaultTreeIdFromTableId(menu.getAD_Client_ID(), I_AD_Menu.Table_ID);
-		if(treeId != 0) {
-			MTree tree = MTree.get(context, treeId, null);
-			MTree_NodeMM menuNode = new MTree_NodeMM(tree, menu.getAD_Menu_ID());
-			//	
-			if(menuNode.getParent_ID() > 0) {
-				MMenu pareentMenu = MMenu.getFromId(context, menuNode.getParent_ID());
-				builder.setParentUuid(validateNull(pareentMenu.getUUID()));
-			}
-		}
-		//	Load child
-		if(withChild) {
-			String whereAdded = "AND tnm.Parent_ID = ?";
-			List<Object> params = new ArrayList<>();
-			if(menu.getAD_Menu_ID() <= 0) {
-				whereAdded = "AND (COALESCE(tnm.Parent_ID, 0) = 0)";
-			} else {
-				params.add(menu.getAD_Menu_ID());
-			}
-			List<MMenu> childList = new Query(context, I_AD_Menu.Table_Name, "EXISTS(SELECT 1 FROM AD_TreeNodeMM tnm "
-					+ "WHERE tnm.Node_ID = AD_Menu.AD_Menu_ID "
-					+ whereAdded + ")", null)
-				.setParameters(params)
-				.setOnlyActiveRecords(true)
-				.list();
-			//	Convert Child
-			for(MMenu child : childList) {
-				Menu.Builder childBuilder = convertMenu(context, child, language, false);
-				builder.addChilds(childBuilder.build());
-			}
-		}
-		return builder;
 	}
 	
 	/**

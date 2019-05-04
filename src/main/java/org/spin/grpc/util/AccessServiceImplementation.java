@@ -15,15 +15,18 @@
 package org.spin.grpc.util;
 
 import java.sql.Timestamp;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
 import org.adempiere.exceptions.AdempiereException;
 import org.adempiere.model.I_AD_Browse_Access;
+import org.adempiere.model.MBrowse;
 import org.adempiere.model.X_AD_Browse_Access;
 import org.compiere.model.I_AD_Column_Access;
 import org.compiere.model.I_AD_Document_Action_Access;
 import org.compiere.model.I_AD_Form_Access;
+import org.compiere.model.I_AD_Menu;
 import org.compiere.model.I_AD_Process_Access;
 import org.compiere.model.I_AD_Record_Access;
 import org.compiere.model.I_AD_Role;
@@ -36,8 +39,11 @@ import org.compiere.model.I_AD_Workflow_Access;
 import org.compiere.model.MColumn;
 import org.compiere.model.MColumnAccess;
 import org.compiere.model.MDocType;
+import org.compiere.model.MForm;
 import org.compiere.model.MFormAccess;
+import org.compiere.model.MMenu;
 import org.compiere.model.MOrg;
+import org.compiere.model.MProcess;
 import org.compiere.model.MProcessAccess;
 import org.compiere.model.MRecordAccess;
 import org.compiere.model.MRole;
@@ -45,16 +51,21 @@ import org.compiere.model.MRoleOrgAccess;
 import org.compiere.model.MSession;
 import org.compiere.model.MTable;
 import org.compiere.model.MTableAccess;
+import org.compiere.model.MTree;
+import org.compiere.model.MTreeNode;
 import org.compiere.model.MUser;
+import org.compiere.model.MWindow;
 import org.compiere.model.MWindowAccess;
 import org.compiere.model.Query;
 import org.compiere.model.X_AD_Document_Action_Access;
 import org.compiere.model.X_AD_Table_Access;
 import org.compiere.model.X_AD_Task_Access;
+import org.compiere.util.CCache;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.compiere.util.Login;
+import org.compiere.util.Msg;
 import org.compiere.util.Util;
 import org.compiere.wf.MWorkflowAccess;
 import org.spin.grpc.util.AccessServiceGrpc.AccessServiceImplBase;
@@ -67,6 +78,8 @@ import io.grpc.stub.StreamObserver;
 public class AccessServiceImplementation extends AccessServiceImplBase {
 	/**	Logger			*/
 	private CLogger log = CLogger.getCLogger(AccessServiceImplementation.class);
+	/**	Session Context	*/
+	private static CCache<String, Properties> sessionsContext = new CCache<String, Properties>("AccessServiceImplementation", 30, 0);	//	no time-out
 
 	@Override
 	public void requestUserInfo(LoginRequest request, StreamObserver<UserInfoValue> responseObserver) {
@@ -141,6 +154,54 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 		} catch (Exception e) {
 			responseObserver.onError(e);
 		}
+	}
+	
+	@Override
+	public void requestMenuAndChild(UserInfoRequest request, StreamObserver<Menu> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Menu Requested = " + request.getClientVersion());
+			
+			Properties context = getContext(request);
+			Menu.Builder menuBuilder = convertMenu(context, request.getLanguage());
+			responseObserver.onNext(menuBuilder.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			responseObserver.onError(e);
+		}
+	}
+	
+	/**
+	 * Get context from session
+	 * @param request
+	 * @return
+	 */
+	private Properties getContext(UserInfoRequest request) {
+		Properties context = sessionsContext.get(request.getSessionUuid());
+		if(context != null) {
+			return context;
+		}
+		context = Env.getCtx();
+		DB.validateSupportedUUIDFromDB();
+		MSession session = new Query(context, I_AD_Session.Table_Name, I_AD_Session.COLUMNNAME_UUID + " = ?", null)
+				.setParameters(request.getSessionUuid())
+				.first();
+		if(session == null
+				|| session.getAD_Session_ID() <= 0) {
+			throw new AdempiereException("@AD_Session_ID@ @NotFound@");
+		}
+		Env.setContext (context, "#AD_Session_ID", session.getAD_Session_ID());
+		Env.setContext(context, "#AD_User_ID", session.getCreatedBy());
+		Env.setContext(context, "#AD_Role_ID", session.getAD_Role_ID());
+		Env.setContext(context, "#AD_Client_ID", session.getAD_Client_ID());
+		Env.setContext(context, "#AD_Org_ID", session.getAD_Org_ID());
+		Env.setContext(context, "#Date", new Timestamp(System.currentTimeMillis()));
+		Env.setContext(context, Env.LANGUAGE, request.getLanguage());
+		//	Save to Cache
+		sessionsContext.put(request.getSessionUuid(), context);
+		return context;
 	}
 	
 	/**
@@ -537,6 +598,116 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 		}
 		//	return
 		return builder;
+	}
+	
+	private Menu.Builder convertMenu(Properties context, String language) {
+		Menu.Builder builder = Menu.newBuilder();
+		MMenu menu = new MMenu(context, 0, null);
+		menu.setName(Msg.getMsg(context, "Menu"));
+		//	Get Reference
+		int roleId = Env.getAD_Role_ID(Env.getCtx());
+		int treeId = DB.getSQLValue(null,
+			"SELECT COALESCE(r.AD_Tree_Menu_ID, ci.AD_Tree_Menu_ID)" 
+			+ "FROM AD_ClientInfo ci" 
+			+ " INNER JOIN AD_Role r ON (ci.AD_Client_ID=r.AD_Client_ID) "
+			+ "WHERE AD_Role_ID=?", roleId);
+		if (treeId <= 0) {
+			treeId = MTree.getDefaultTreeIdFromTableId(menu.getAD_Client_ID(), I_AD_Menu.Table_ID);
+		}
+		if(treeId != 0) {
+			MTree tree = new MTree(Env.getCtx(), treeId, true, false, null, null);
+			//	
+			builder = convertMenu(context, menu, language);
+			//	Get main node
+			MTreeNode rootNode = tree.getRoot();
+			Enumeration<?> childrens = rootNode.children();
+			while (childrens.hasMoreElements()) {
+				MTreeNode child = (MTreeNode)childrens.nextElement();
+				Menu.Builder childBuilder = convertMenu(context, MMenu.getFromId(context, child.getNode_ID()), language);
+				//	Explode child
+				addChildren(context, childBuilder, child, language);
+				builder.addChilds(childBuilder.build());
+			}
+		}
+		return builder;
+	}
+	
+	/**
+	 * Convert Menu to builder
+	 * @param menu
+	 * @param language
+	 * @param withChild
+	 * @return
+	 */
+	private Menu.Builder convertMenu(Properties context, MMenu menu, String language) {
+		String name = null;
+		String description = null;
+		if(!Util.isEmpty(language)) {
+			name = menu.get_Translation(I_AD_Menu.COLUMNNAME_Name, language);
+			description = menu.get_Translation(I_AD_Menu.COLUMNNAME_Description, language);
+		}
+		//	Validate for default
+		if(Util.isEmpty(name)) {
+			name = menu.getName();
+		}
+		if(Util.isEmpty(description)) {
+			description = menu.getDescription();
+		}
+		Menu.Builder builder = Menu.newBuilder()
+				.setId(menu.getAD_Menu_ID())
+				.setUuid(validateNull(menu.getUUID()))
+				.setName(validateNull(name))
+				.setDescription(validateNull(description))
+				.setAction(validateNull(menu.getAction()))
+				.setIsSOTrx(menu.isSOTrx())
+				.setIsSummary(menu.isSummary())
+				.setIsReadOnly(menu.isReadOnly())
+				.setIsActive(menu.isActive());
+		//	Supported actions
+		if(!Util.isEmpty(menu.getAction())) {
+			String referenceUuid = null;
+			if(menu.getAction().equals(MMenu.ACTION_Form)) {
+				if(menu.getAD_Form_ID() > 0) {
+					MForm form = new MForm(context, menu.getAD_Form_ID(), null);
+					referenceUuid = form.getUUID();
+				}
+			} else if(menu.getAction().equals(MMenu.ACTION_Window)) {
+				if(menu.getAD_Window_ID() > 0) {
+					MWindow window = new MWindow(context, menu.getAD_Window_ID(), null);
+					referenceUuid = window.getUUID();
+				}
+			} else if(menu.getAction().equals(MMenu.ACTION_Process)
+				|| menu.getAction().equals(MMenu.ACTION_Report)) {
+				if(menu.getAD_Process_ID() > 0) {
+					MProcess process = MProcess.get(context, menu.getAD_Process_ID());
+					referenceUuid = process.getUUID();
+				}
+			} else if(menu.getAction().equals(MMenu.ACTION_SmartBrowse)) {
+				if(menu.getAD_Browse_ID() > 0) {
+					MBrowse smartBrowser = MBrowse.get(context, menu.getAD_Browse_ID());
+					referenceUuid = smartBrowser.getUUID();
+				}
+			}
+			builder.setReferenceUuid(validateNull(referenceUuid));
+		}
+		return builder;
+	}
+	
+	/**
+	 * Add children to menu
+	 * @param context
+	 * @param builder
+	 * @param node
+	 * @param language
+	 */
+	private void addChildren(Properties context, Menu.Builder builder, MTreeNode node, String language) {
+		Enumeration<?> childrens = node.children();
+		while (childrens.hasMoreElements()) {
+			MTreeNode child = (MTreeNode)childrens.nextElement();
+			Menu.Builder childBuilder = convertMenu(context, MMenu.getFromId(context, child.getNode_ID()), language);
+			addChildren(context, childBuilder, child, language);
+			builder.addChilds(childBuilder.build());
+		}
 	}
 	
 	/**
