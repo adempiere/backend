@@ -33,6 +33,8 @@ service AccessService {
   rpc RequestLogout(LogoutRequest) returns (Session) {}  
   // Request user roles from Session
   rpc RequestUserInfoFromSession(UserInfoRequest) returns (UserInfoValue) {}  
+  // Request Menu from Parent UUID
+  rpc RequestMenuAndChild(UserInfoRequest) returns (Menu) {}
 }
 
 // Request a Login Session
@@ -49,13 +51,15 @@ message LoginRequest {
 // Request a Logout
 message LogoutRequest {
 	string sessionUuid = 1;
-	string clientVersion = 7;
+	string language = 2;
+	string clientVersion = 3;
 }
 
 // Request User Info
 message UserInfoRequest {
 	string sessionUuid = 1;
-	string clientVersion = 7;
+	string language = 2;
+	string clientVersion = 3;
 }
 
 // Role list from user
@@ -144,3 +148,20 @@ message RecordAccess {
 	bool isDependentEntities = 6;
 }
 
+// Menu
+message Menu {
+	int32 id = 1;
+	string uuid = 2;
+	string parentUuid = 4;
+	string name = 5;
+	string description = 6;
+	string sequence = 7;
+	bool isReadOnly = 8;
+	bool isSummary = 9;
+	bool isSOTrx = 10;
+	string action = 11;
+	// Supported References
+	string referenceUuid = 12;
+	repeated Menu childs = 13;
+	bool isActive = 14;
+}

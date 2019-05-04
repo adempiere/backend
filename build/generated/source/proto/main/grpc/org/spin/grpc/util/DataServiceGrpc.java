@@ -190,6 +190,38 @@ public final class DataServiceGrpc {
      return getRequestCalloutMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.ProcessRequest,
+      org.spin.grpc.util.ProcessResponse> getRequestProcessMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "RequestProcess",
+      requestType = org.spin.grpc.util.ProcessRequest.class,
+      responseType = org.spin.grpc.util.ProcessResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<org.spin.grpc.util.ProcessRequest,
+      org.spin.grpc.util.ProcessResponse> getRequestProcessMethod() {
+    io.grpc.MethodDescriptor<org.spin.grpc.util.ProcessRequest, org.spin.grpc.util.ProcessResponse> getRequestProcessMethod;
+    if ((getRequestProcessMethod = DataServiceGrpc.getRequestProcessMethod) == null) {
+      synchronized (DataServiceGrpc.class) {
+        if ((getRequestProcessMethod = DataServiceGrpc.getRequestProcessMethod) == null) {
+          DataServiceGrpc.getRequestProcessMethod = getRequestProcessMethod = 
+              io.grpc.MethodDescriptor.<org.spin.grpc.util.ProcessRequest, org.spin.grpc.util.ProcessResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(
+                  "data.DataService", "RequestProcess"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  org.spin.grpc.util.ProcessRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  org.spin.grpc.util.ProcessResponse.getDefaultInstance()))
+                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("RequestProcess"))
+                  .build();
+          }
+        }
+     }
+     return getRequestProcessMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -270,6 +302,16 @@ public final class DataServiceGrpc {
       asyncUnimplementedUnaryCall(getRequestCalloutMethod(), responseObserver);
     }
 
+    /**
+     * <pre>
+     *	Request a Process / Report
+     * </pre>
+     */
+    public void requestProcess(org.spin.grpc.util.ProcessRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.ProcessResponse> responseObserver) {
+      asyncUnimplementedUnaryCall(getRequestProcessMethod(), responseObserver);
+    }
+
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
@@ -307,6 +349,13 @@ public final class DataServiceGrpc {
                 org.spin.grpc.util.CalloutRequest,
                 org.spin.grpc.util.CalloutResponse>(
                   this, METHODID_REQUEST_CALLOUT)))
+          .addMethod(
+            getRequestProcessMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                org.spin.grpc.util.ProcessRequest,
+                org.spin.grpc.util.ProcessResponse>(
+                  this, METHODID_REQUEST_PROCESS)))
           .build();
     }
   }
@@ -386,6 +435,17 @@ public final class DataServiceGrpc {
       asyncUnaryCall(
           getChannel().newCall(getRequestCalloutMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     * <pre>
+     *	Request a Process / Report
+     * </pre>
+     */
+    public void requestProcess(org.spin.grpc.util.ProcessRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.ProcessResponse> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getRequestProcessMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -457,6 +517,16 @@ public final class DataServiceGrpc {
     public org.spin.grpc.util.CalloutResponse requestCallout(org.spin.grpc.util.CalloutRequest request) {
       return blockingUnaryCall(
           getChannel(), getRequestCalloutMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     *	Request a Process / Report
+     * </pre>
+     */
+    public org.spin.grpc.util.ProcessResponse requestProcess(org.spin.grpc.util.ProcessRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getRequestProcessMethod(), getCallOptions(), request);
     }
   }
 
@@ -535,6 +605,17 @@ public final class DataServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getRequestCalloutMethod(), getCallOptions()), request);
     }
+
+    /**
+     * <pre>
+     *	Request a Process / Report
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.ProcessResponse> requestProcess(
+        org.spin.grpc.util.ProcessRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getRequestProcessMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_REQUEST_OBJECT = 0;
@@ -542,6 +623,7 @@ public final class DataServiceGrpc {
   private static final int METHODID_REQUEST_LOOKUP = 2;
   private static final int METHODID_REQUEST_LOOKUP_LIST = 3;
   private static final int METHODID_REQUEST_CALLOUT = 4;
+  private static final int METHODID_REQUEST_PROCESS = 5;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -579,6 +661,10 @@ public final class DataServiceGrpc {
         case METHODID_REQUEST_CALLOUT:
           serviceImpl.requestCallout((org.spin.grpc.util.CalloutRequest) request,
               (io.grpc.stub.StreamObserver<org.spin.grpc.util.CalloutResponse>) responseObserver);
+          break;
+        case METHODID_REQUEST_PROCESS:
+          serviceImpl.requestProcess((org.spin.grpc.util.ProcessRequest) request,
+              (io.grpc.stub.StreamObserver<org.spin.grpc.util.ProcessResponse>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -646,6 +732,7 @@ public final class DataServiceGrpc {
               .addMethod(getRequestLookupMethod())
               .addMethod(getRequestLookupListMethod())
               .addMethod(getRequestCalloutMethod())
+              .addMethod(getRequestProcessMethod())
               .build();
         }
       }

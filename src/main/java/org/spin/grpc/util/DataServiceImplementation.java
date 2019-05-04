@@ -14,6 +14,7 @@
  ************************************************************************************/
 package org.spin.grpc.util;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -22,7 +23,9 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -35,19 +38,24 @@ import org.compiere.model.Callout;
 import org.compiere.model.GridField;
 import org.compiere.model.GridTab;
 import org.compiere.model.I_AD_Element;
+import org.compiere.model.I_AD_Process;
 import org.compiere.model.I_AD_Session;
+import org.compiere.model.MProcess;
 import org.compiere.model.MRole;
 import org.compiere.model.MRule;
 import org.compiere.model.MSession;
 import org.compiere.model.PO;
 import org.compiere.model.POInfo;
 import org.compiere.model.Query;
+import org.compiere.process.ProcessInfo;
 import org.compiere.util.CCache;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.compiere.util.Util;
+import org.eevolution.service.dsl.ProcessBuilder;
 import org.spin.grpc.util.DataServiceGrpc.DataServiceImplBase;
+import org.spin.grpc.util.ProcessOutput.OuputType;
 import org.spin.grpc.util.Value.ValueType;
 
 import io.grpc.stub.StreamObserver;
@@ -147,6 +155,159 @@ public class DataServiceImplementation extends DataServiceImplBase {
 		} catch (Exception e) {
 			responseObserver.onError(e);
 		}
+	}
+	
+	@Override
+	public void requestProcess(ProcessRequest request, StreamObserver<ProcessResponse> responseObserver) {
+		try {
+			if(request == null
+					|| Util.isEmpty(request.getUuid())) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Lookup List Requested = " + request.getUuid());
+			Properties context = getContext(request.getClientRequest());
+			ProcessResponse.Builder processReponse = runProcess(context, request, request.getClientRequest().getLanguage());
+			responseObserver.onNext(processReponse.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			responseObserver.onError(e);
+		}
+	}
+	
+	/**
+	 * Run a process from request
+	 * @param context
+	 * @param request
+	 * @param language
+	 * @return
+	 */
+	private ProcessResponse.Builder runProcess(Properties context, ProcessRequest request, String language) {
+		ProcessResponse.Builder response = ProcessResponse.newBuilder();
+		//	Get Process definition
+		MProcess process = getProcess(context, request.getUuid(), language);
+		if(process == null
+				|| process.getAD_Process_ID() <= 0) {
+			throw new AdempiereException("@AD_Process_ID@ @NotFound@");
+		}
+		//	Call process builder
+		ProcessBuilder builder = ProcessBuilder.create(context)
+				.process(process.getAD_Process_ID())
+				.withRecordId(request.getTableId(), request.getRecordId())
+				.withBatchMode()
+				.withoutPrintPreview();
+		//	Selection
+		if(request.getSelectionsCount() > 0) {
+			List<Integer> selectionKeys = new ArrayList<>();
+			LinkedHashMap<Integer, LinkedHashMap<String, Object>> selection = new LinkedHashMap<>();
+			request.getSelectionsList().forEach(selectionKey -> {
+				selectionKeys.add(selectionKey.getSelectionId());
+				if(selectionKey.getValuesCount() > 0) {
+					selection.put(selectionKey.getSelectionId(), convertValues(selectionKey.getValuesMap()));
+				}
+			});
+			builder.withSelectedRecordsIds(request.getTableSelectedId(), selectionKeys, selection);
+		}
+		//	Parameters
+		if(request.getParametersCount() > 0) {
+			request.getParametersMap().entrySet().forEach(parameter -> {
+				Object value = getValueFromType(parameter.getValue());
+				if(value != null) {
+					builder.withParameter(parameter.getKey(), value);
+				}
+			});
+		}
+		//	Run process
+		ProcessInfo result = builder.execute();
+		String instanceUuid = DB.getSQLValueString(null, "SELECT UUID FROM AD_PInstance WHERE AD_PInstance_ID = ?", result.getAD_PInstance_ID());
+		response.setInstanceUuid(validateNull(instanceUuid));
+		//	Convert values
+		response.setIsError(result.isError());
+		if(!Util.isEmpty(result.getSummary())) {
+			response.setSummary(result.getSummary());
+		}
+		//	Convert Log
+		if(result.getLogList() != null) {
+			result.getLogList().forEach(log -> {
+				response.addLogs(convertProcessInfoLog(log).build());
+			});
+		}
+		//	Verify Output
+		if(result.getPDFReport() != null) {
+			File report = result.getPDFReport();
+			ProcessOutput.Builder output = ProcessOutput.newBuilder();
+			output.setFileName(validateNull(report.getName()));
+			output.setName(result.getTitle());
+			output.setDescription(validateNull(process.getDescription()));
+			//	Type
+			output.setOutputType(OuputType.FILE);
+			response.setOutput(output.build());
+		}
+		
+		return response;
+	}
+	
+	/**
+	 * Convert Log to gRPC
+	 * @param log
+	 * @return
+	 */
+	private ProcessInfoLog.Builder convertProcessInfoLog(org.compiere.process.ProcessInfoLog log) {
+		ProcessInfoLog.Builder processLog = ProcessInfoLog.newBuilder();
+		processLog.setRecordId(log.getP_ID());
+		processLog.setLog(validateNull(log.getP_Msg()));
+		return processLog;
+	}
+	
+	/**
+	 * Convert Selection values from gRPC to ADempiere values
+	 * @param values
+	 * @return
+	 */
+	private LinkedHashMap<String, Object> convertValues(Map<String, Value> values) {
+		LinkedHashMap<String, Object> convertedValues = new LinkedHashMap<>();
+		values.entrySet().forEach(value -> {
+			//	Convert value
+			convertedValues.put(value.getKey(), getValueFromType(value.getValue()));
+		});
+		//	
+		return convertedValues;
+	}
+	
+	/**
+	 * Get value from parameter type
+	 * @param valueToConvert
+	 * @return
+	 */
+	private Object getValueFromType(Value valueToConvert) {
+		Object value = null;
+		if(valueToConvert.getValueType().equals(ValueType.BOOLEAN)) {
+			value = valueToConvert.getBooleanValue();
+		} else if(valueToConvert.getValueType().equals(ValueType.DOUBLE)
+				|| valueToConvert.getValueType().equals(ValueType.LONG)) {
+			value = new BigDecimal(valueToConvert.getDoubleValue());
+		} else if(valueToConvert.getValueType().equals(ValueType.INTEGER)) {
+			value = valueToConvert.getIntValue();
+		} else if(valueToConvert.getValueType().equals(ValueType.STRING)) {
+			value = valueToConvert.getStringValue();
+		} else if(valueToConvert.getValueType().equals(ValueType.DATE)) {
+			if(valueToConvert.getLongValue() > 0) {
+				value = new Timestamp(valueToConvert.getLongValue());
+			}
+		}
+		return value;
+	}
+	
+	/**
+	 * Get Process from UUID
+	 * @param uuid
+	 * @param language
+	 * @return
+	 */
+	private MProcess getProcess(Properties context, String uuid, String language) {
+		return new Query(context, I_AD_Process.Table_Name, I_AD_Process.COLUMNNAME_UUID + " = ?", null)
+				.setParameters(uuid)
+				.setOnlyActiveRecords(true)
+				.first();
 	}
 	
 	/**

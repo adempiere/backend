@@ -86,16 +86,6 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		requestTab(request, responseObserver, true);
 	}
 	
-//	@Override
-//	public void requestMenu(EntityRequest request, StreamObserver<Menu> responseObserver) {
-//		requestMenu(request, responseObserver, false);
-//	}
-//	
-//	@Override
-//	public void requestMenuAndChild(EntityRequest request, StreamObserver<Menu> responseObserver) {
-//		requestMenu(request, responseObserver, true);
-//	}
-	
 	/**
 	 * Get context from session for System
 	 * @param request

@@ -5,22 +5,23 @@ package org.spin.grpc.util;
 
 /**
  * <pre>
- * Callout response with data from server
+ *	Process Log result
  * </pre>
  *
- * Protobuf type {@code data.CalloutResponse}
+ * Protobuf type {@code data.ProcessInfoLog}
  */
-public  final class CalloutResponse extends
+public  final class ProcessInfoLog extends
     com.google.protobuf.GeneratedMessageV3 implements
-    // @@protoc_insertion_point(message_implements:data.CalloutResponse)
-    CalloutResponseOrBuilder {
+    // @@protoc_insertion_point(message_implements:data.ProcessInfoLog)
+    ProcessInfoLogOrBuilder {
 private static final long serialVersionUID = 0L;
-  // Use CalloutResponse.newBuilder() to construct.
-  private CalloutResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+  // Use ProcessInfoLog.newBuilder() to construct.
+  private ProcessInfoLog(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
   }
-  private CalloutResponse() {
-    result_ = "";
+  private ProcessInfoLog() {
+    recordId_ = 0;
+    log_ = "";
   }
 
   @java.lang.Override
@@ -28,7 +29,7 @@ private static final long serialVersionUID = 0L;
   getUnknownFields() {
     return this.unknownFields;
   }
-  private CalloutResponse(
+  private ProcessInfoLog(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -54,23 +55,15 @@ private static final long serialVersionUID = 0L;
             }
             break;
           }
-          case 10: {
-            java.lang.String s = input.readStringRequireUtf8();
+          case 8: {
 
-            result_ = s;
+            recordId_ = input.readInt32();
             break;
           }
           case 18: {
-            org.spin.grpc.util.ValueObject.Builder subBuilder = null;
-            if (values_ != null) {
-              subBuilder = values_.toBuilder();
-            }
-            values_ = input.readMessage(org.spin.grpc.util.ValueObject.parser(), extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(values_);
-              values_ = subBuilder.buildPartial();
-            }
+            java.lang.String s = input.readStringRequireUtf8();
 
+            log_ = s;
             break;
           }
         }
@@ -87,69 +80,57 @@ private static final long serialVersionUID = 0L;
   }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-    return org.spin.grpc.util.ADempiereData.internal_static_data_CalloutResponse_descriptor;
+    return org.spin.grpc.util.ADempiereData.internal_static_data_ProcessInfoLog_descriptor;
   }
 
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
-    return org.spin.grpc.util.ADempiereData.internal_static_data_CalloutResponse_fieldAccessorTable
+    return org.spin.grpc.util.ADempiereData.internal_static_data_ProcessInfoLog_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
-            org.spin.grpc.util.CalloutResponse.class, org.spin.grpc.util.CalloutResponse.Builder.class);
+            org.spin.grpc.util.ProcessInfoLog.class, org.spin.grpc.util.ProcessInfoLog.Builder.class);
   }
 
-  public static final int RESULT_FIELD_NUMBER = 1;
-  private volatile java.lang.Object result_;
+  public static final int RECORDID_FIELD_NUMBER = 1;
+  private int recordId_;
   /**
-   * <code>string result = 1;</code>
+   * <code>int32 recordId = 1;</code>
    */
-  public java.lang.String getResult() {
-    java.lang.Object ref = result_;
+  public int getRecordId() {
+    return recordId_;
+  }
+
+  public static final int LOG_FIELD_NUMBER = 2;
+  private volatile java.lang.Object log_;
+  /**
+   * <code>string log = 2;</code>
+   */
+  public java.lang.String getLog() {
+    java.lang.Object ref = log_;
     if (ref instanceof java.lang.String) {
       return (java.lang.String) ref;
     } else {
       com.google.protobuf.ByteString bs = 
           (com.google.protobuf.ByteString) ref;
       java.lang.String s = bs.toStringUtf8();
-      result_ = s;
+      log_ = s;
       return s;
     }
   }
   /**
-   * <code>string result = 1;</code>
+   * <code>string log = 2;</code>
    */
   public com.google.protobuf.ByteString
-      getResultBytes() {
-    java.lang.Object ref = result_;
+      getLogBytes() {
+    java.lang.Object ref = log_;
     if (ref instanceof java.lang.String) {
       com.google.protobuf.ByteString b = 
           com.google.protobuf.ByteString.copyFromUtf8(
               (java.lang.String) ref);
-      result_ = b;
+      log_ = b;
       return b;
     } else {
       return (com.google.protobuf.ByteString) ref;
     }
-  }
-
-  public static final int VALUES_FIELD_NUMBER = 2;
-  private org.spin.grpc.util.ValueObject values_;
-  /**
-   * <code>.data.ValueObject values = 2;</code>
-   */
-  public boolean hasValues() {
-    return values_ != null;
-  }
-  /**
-   * <code>.data.ValueObject values = 2;</code>
-   */
-  public org.spin.grpc.util.ValueObject getValues() {
-    return values_ == null ? org.spin.grpc.util.ValueObject.getDefaultInstance() : values_;
-  }
-  /**
-   * <code>.data.ValueObject values = 2;</code>
-   */
-  public org.spin.grpc.util.ValueObjectOrBuilder getValuesOrBuilder() {
-    return getValues();
   }
 
   private byte memoizedIsInitialized = -1;
@@ -164,11 +145,11 @@ private static final long serialVersionUID = 0L;
 
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
-    if (!getResultBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, result_);
+    if (recordId_ != 0) {
+      output.writeInt32(1, recordId_);
     }
-    if (values_ != null) {
-      output.writeMessage(2, getValues());
+    if (!getLogBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, log_);
     }
     unknownFields.writeTo(output);
   }
@@ -178,12 +159,12 @@ private static final long serialVersionUID = 0L;
     if (size != -1) return size;
 
     size = 0;
-    if (!getResultBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, result_);
-    }
-    if (values_ != null) {
+    if (recordId_ != 0) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(2, getValues());
+        .computeInt32Size(1, recordId_);
+    }
+    if (!getLogBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, log_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -195,19 +176,16 @@ private static final long serialVersionUID = 0L;
     if (obj == this) {
      return true;
     }
-    if (!(obj instanceof org.spin.grpc.util.CalloutResponse)) {
+    if (!(obj instanceof org.spin.grpc.util.ProcessInfoLog)) {
       return super.equals(obj);
     }
-    org.spin.grpc.util.CalloutResponse other = (org.spin.grpc.util.CalloutResponse) obj;
+    org.spin.grpc.util.ProcessInfoLog other = (org.spin.grpc.util.ProcessInfoLog) obj;
 
     boolean result = true;
-    result = result && getResult()
-        .equals(other.getResult());
-    result = result && (hasValues() == other.hasValues());
-    if (hasValues()) {
-      result = result && getValues()
-          .equals(other.getValues());
-    }
+    result = result && (getRecordId()
+        == other.getRecordId());
+    result = result && getLog()
+        .equals(other.getLog());
     result = result && unknownFields.equals(other.unknownFields);
     return result;
   }
@@ -219,80 +197,78 @@ private static final long serialVersionUID = 0L;
     }
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
-    hash = (37 * hash) + RESULT_FIELD_NUMBER;
-    hash = (53 * hash) + getResult().hashCode();
-    if (hasValues()) {
-      hash = (37 * hash) + VALUES_FIELD_NUMBER;
-      hash = (53 * hash) + getValues().hashCode();
-    }
+    hash = (37 * hash) + RECORDID_FIELD_NUMBER;
+    hash = (53 * hash) + getRecordId();
+    hash = (37 * hash) + LOG_FIELD_NUMBER;
+    hash = (53 * hash) + getLog().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
   }
 
-  public static org.spin.grpc.util.CalloutResponse parseFrom(
+  public static org.spin.grpc.util.ProcessInfoLog parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.spin.grpc.util.CalloutResponse parseFrom(
+  public static org.spin.grpc.util.ProcessInfoLog parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.spin.grpc.util.CalloutResponse parseFrom(
+  public static org.spin.grpc.util.ProcessInfoLog parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.spin.grpc.util.CalloutResponse parseFrom(
+  public static org.spin.grpc.util.ProcessInfoLog parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.spin.grpc.util.CalloutResponse parseFrom(byte[] data)
+  public static org.spin.grpc.util.ProcessInfoLog parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.spin.grpc.util.CalloutResponse parseFrom(
+  public static org.spin.grpc.util.ProcessInfoLog parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.spin.grpc.util.CalloutResponse parseFrom(java.io.InputStream input)
+  public static org.spin.grpc.util.ProcessInfoLog parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static org.spin.grpc.util.CalloutResponse parseFrom(
+  public static org.spin.grpc.util.ProcessInfoLog parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input, extensionRegistry);
   }
-  public static org.spin.grpc.util.CalloutResponse parseDelimitedFrom(java.io.InputStream input)
+  public static org.spin.grpc.util.ProcessInfoLog parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input);
   }
-  public static org.spin.grpc.util.CalloutResponse parseDelimitedFrom(
+  public static org.spin.grpc.util.ProcessInfoLog parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
   }
-  public static org.spin.grpc.util.CalloutResponse parseFrom(
+  public static org.spin.grpc.util.ProcessInfoLog parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static org.spin.grpc.util.CalloutResponse parseFrom(
+  public static org.spin.grpc.util.ProcessInfoLog parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -304,7 +280,7 @@ private static final long serialVersionUID = 0L;
   public static Builder newBuilder() {
     return DEFAULT_INSTANCE.toBuilder();
   }
-  public static Builder newBuilder(org.spin.grpc.util.CalloutResponse prototype) {
+  public static Builder newBuilder(org.spin.grpc.util.ProcessInfoLog prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
   public Builder toBuilder() {
@@ -320,28 +296,28 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * Callout response with data from server
+   *	Process Log result
    * </pre>
    *
-   * Protobuf type {@code data.CalloutResponse}
+   * Protobuf type {@code data.ProcessInfoLog}
    */
   public static final class Builder extends
       com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-      // @@protoc_insertion_point(builder_implements:data.CalloutResponse)
-      org.spin.grpc.util.CalloutResponseOrBuilder {
+      // @@protoc_insertion_point(builder_implements:data.ProcessInfoLog)
+      org.spin.grpc.util.ProcessInfoLogOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.spin.grpc.util.ADempiereData.internal_static_data_CalloutResponse_descriptor;
+      return org.spin.grpc.util.ADempiereData.internal_static_data_ProcessInfoLog_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.spin.grpc.util.ADempiereData.internal_static_data_CalloutResponse_fieldAccessorTable
+      return org.spin.grpc.util.ADempiereData.internal_static_data_ProcessInfoLog_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.spin.grpc.util.CalloutResponse.class, org.spin.grpc.util.CalloutResponse.Builder.class);
+              org.spin.grpc.util.ProcessInfoLog.class, org.spin.grpc.util.ProcessInfoLog.Builder.class);
     }
 
-    // Construct using org.spin.grpc.util.CalloutResponse.newBuilder()
+    // Construct using org.spin.grpc.util.ProcessInfoLog.newBuilder()
     private Builder() {
       maybeForceBuilderInitialization();
     }
@@ -358,42 +334,34 @@ private static final long serialVersionUID = 0L;
     }
     public Builder clear() {
       super.clear();
-      result_ = "";
+      recordId_ = 0;
 
-      if (valuesBuilder_ == null) {
-        values_ = null;
-      } else {
-        values_ = null;
-        valuesBuilder_ = null;
-      }
+      log_ = "";
+
       return this;
     }
 
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
-      return org.spin.grpc.util.ADempiereData.internal_static_data_CalloutResponse_descriptor;
+      return org.spin.grpc.util.ADempiereData.internal_static_data_ProcessInfoLog_descriptor;
     }
 
-    public org.spin.grpc.util.CalloutResponse getDefaultInstanceForType() {
-      return org.spin.grpc.util.CalloutResponse.getDefaultInstance();
+    public org.spin.grpc.util.ProcessInfoLog getDefaultInstanceForType() {
+      return org.spin.grpc.util.ProcessInfoLog.getDefaultInstance();
     }
 
-    public org.spin.grpc.util.CalloutResponse build() {
-      org.spin.grpc.util.CalloutResponse result = buildPartial();
+    public org.spin.grpc.util.ProcessInfoLog build() {
+      org.spin.grpc.util.ProcessInfoLog result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
       return result;
     }
 
-    public org.spin.grpc.util.CalloutResponse buildPartial() {
-      org.spin.grpc.util.CalloutResponse result = new org.spin.grpc.util.CalloutResponse(this);
-      result.result_ = result_;
-      if (valuesBuilder_ == null) {
-        result.values_ = values_;
-      } else {
-        result.values_ = valuesBuilder_.build();
-      }
+    public org.spin.grpc.util.ProcessInfoLog buildPartial() {
+      org.spin.grpc.util.ProcessInfoLog result = new org.spin.grpc.util.ProcessInfoLog(this);
+      result.recordId_ = recordId_;
+      result.log_ = log_;
       onBuilt();
       return result;
     }
@@ -425,22 +393,22 @@ private static final long serialVersionUID = 0L;
       return (Builder) super.addRepeatedField(field, value);
     }
     public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof org.spin.grpc.util.CalloutResponse) {
-        return mergeFrom((org.spin.grpc.util.CalloutResponse)other);
+      if (other instanceof org.spin.grpc.util.ProcessInfoLog) {
+        return mergeFrom((org.spin.grpc.util.ProcessInfoLog)other);
       } else {
         super.mergeFrom(other);
         return this;
       }
     }
 
-    public Builder mergeFrom(org.spin.grpc.util.CalloutResponse other) {
-      if (other == org.spin.grpc.util.CalloutResponse.getDefaultInstance()) return this;
-      if (!other.getResult().isEmpty()) {
-        result_ = other.result_;
-        onChanged();
+    public Builder mergeFrom(org.spin.grpc.util.ProcessInfoLog other) {
+      if (other == org.spin.grpc.util.ProcessInfoLog.getDefaultInstance()) return this;
+      if (other.getRecordId() != 0) {
+        setRecordId(other.getRecordId());
       }
-      if (other.hasValues()) {
-        mergeValues(other.getValues());
+      if (!other.getLog().isEmpty()) {
+        log_ = other.log_;
+        onChanged();
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -455,11 +423,11 @@ private static final long serialVersionUID = 0L;
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      org.spin.grpc.util.CalloutResponse parsedMessage = null;
+      org.spin.grpc.util.ProcessInfoLog parsedMessage = null;
       try {
         parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (org.spin.grpc.util.CalloutResponse) e.getUnfinishedMessage();
+        parsedMessage = (org.spin.grpc.util.ProcessInfoLog) e.getUnfinishedMessage();
         throw e.unwrapIOException();
       } finally {
         if (parsedMessage != null) {
@@ -469,190 +437,99 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private java.lang.Object result_ = "";
+    private int recordId_ ;
     /**
-     * <code>string result = 1;</code>
+     * <code>int32 recordId = 1;</code>
      */
-    public java.lang.String getResult() {
-      java.lang.Object ref = result_;
+    public int getRecordId() {
+      return recordId_;
+    }
+    /**
+     * <code>int32 recordId = 1;</code>
+     */
+    public Builder setRecordId(int value) {
+      
+      recordId_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>int32 recordId = 1;</code>
+     */
+    public Builder clearRecordId() {
+      
+      recordId_ = 0;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object log_ = "";
+    /**
+     * <code>string log = 2;</code>
+     */
+    public java.lang.String getLog() {
+      java.lang.Object ref = log_;
       if (!(ref instanceof java.lang.String)) {
         com.google.protobuf.ByteString bs =
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        result_ = s;
+        log_ = s;
         return s;
       } else {
         return (java.lang.String) ref;
       }
     }
     /**
-     * <code>string result = 1;</code>
+     * <code>string log = 2;</code>
      */
     public com.google.protobuf.ByteString
-        getResultBytes() {
-      java.lang.Object ref = result_;
+        getLogBytes() {
+      java.lang.Object ref = log_;
       if (ref instanceof String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
-        result_ = b;
+        log_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
     /**
-     * <code>string result = 1;</code>
+     * <code>string log = 2;</code>
      */
-    public Builder setResult(
+    public Builder setLog(
         java.lang.String value) {
       if (value == null) {
     throw new NullPointerException();
   }
   
-      result_ = value;
+      log_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>string result = 1;</code>
+     * <code>string log = 2;</code>
      */
-    public Builder clearResult() {
+    public Builder clearLog() {
       
-      result_ = getDefaultInstance().getResult();
+      log_ = getDefaultInstance().getLog();
       onChanged();
       return this;
     }
     /**
-     * <code>string result = 1;</code>
+     * <code>string log = 2;</code>
      */
-    public Builder setResultBytes(
+    public Builder setLogBytes(
         com.google.protobuf.ByteString value) {
       if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
       
-      result_ = value;
+      log_ = value;
       onChanged();
       return this;
-    }
-
-    private org.spin.grpc.util.ValueObject values_ = null;
-    private com.google.protobuf.SingleFieldBuilderV3<
-        org.spin.grpc.util.ValueObject, org.spin.grpc.util.ValueObject.Builder, org.spin.grpc.util.ValueObjectOrBuilder> valuesBuilder_;
-    /**
-     * <code>.data.ValueObject values = 2;</code>
-     */
-    public boolean hasValues() {
-      return valuesBuilder_ != null || values_ != null;
-    }
-    /**
-     * <code>.data.ValueObject values = 2;</code>
-     */
-    public org.spin.grpc.util.ValueObject getValues() {
-      if (valuesBuilder_ == null) {
-        return values_ == null ? org.spin.grpc.util.ValueObject.getDefaultInstance() : values_;
-      } else {
-        return valuesBuilder_.getMessage();
-      }
-    }
-    /**
-     * <code>.data.ValueObject values = 2;</code>
-     */
-    public Builder setValues(org.spin.grpc.util.ValueObject value) {
-      if (valuesBuilder_ == null) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        values_ = value;
-        onChanged();
-      } else {
-        valuesBuilder_.setMessage(value);
-      }
-
-      return this;
-    }
-    /**
-     * <code>.data.ValueObject values = 2;</code>
-     */
-    public Builder setValues(
-        org.spin.grpc.util.ValueObject.Builder builderForValue) {
-      if (valuesBuilder_ == null) {
-        values_ = builderForValue.build();
-        onChanged();
-      } else {
-        valuesBuilder_.setMessage(builderForValue.build());
-      }
-
-      return this;
-    }
-    /**
-     * <code>.data.ValueObject values = 2;</code>
-     */
-    public Builder mergeValues(org.spin.grpc.util.ValueObject value) {
-      if (valuesBuilder_ == null) {
-        if (values_ != null) {
-          values_ =
-            org.spin.grpc.util.ValueObject.newBuilder(values_).mergeFrom(value).buildPartial();
-        } else {
-          values_ = value;
-        }
-        onChanged();
-      } else {
-        valuesBuilder_.mergeFrom(value);
-      }
-
-      return this;
-    }
-    /**
-     * <code>.data.ValueObject values = 2;</code>
-     */
-    public Builder clearValues() {
-      if (valuesBuilder_ == null) {
-        values_ = null;
-        onChanged();
-      } else {
-        values_ = null;
-        valuesBuilder_ = null;
-      }
-
-      return this;
-    }
-    /**
-     * <code>.data.ValueObject values = 2;</code>
-     */
-    public org.spin.grpc.util.ValueObject.Builder getValuesBuilder() {
-      
-      onChanged();
-      return getValuesFieldBuilder().getBuilder();
-    }
-    /**
-     * <code>.data.ValueObject values = 2;</code>
-     */
-    public org.spin.grpc.util.ValueObjectOrBuilder getValuesOrBuilder() {
-      if (valuesBuilder_ != null) {
-        return valuesBuilder_.getMessageOrBuilder();
-      } else {
-        return values_ == null ?
-            org.spin.grpc.util.ValueObject.getDefaultInstance() : values_;
-      }
-    }
-    /**
-     * <code>.data.ValueObject values = 2;</code>
-     */
-    private com.google.protobuf.SingleFieldBuilderV3<
-        org.spin.grpc.util.ValueObject, org.spin.grpc.util.ValueObject.Builder, org.spin.grpc.util.ValueObjectOrBuilder> 
-        getValuesFieldBuilder() {
-      if (valuesBuilder_ == null) {
-        valuesBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-            org.spin.grpc.util.ValueObject, org.spin.grpc.util.ValueObject.Builder, org.spin.grpc.util.ValueObjectOrBuilder>(
-                getValues(),
-                getParentForChildren(),
-                isClean());
-        values_ = null;
-      }
-      return valuesBuilder_;
     }
     public final Builder setUnknownFields(
         final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -665,39 +542,39 @@ private static final long serialVersionUID = 0L;
     }
 
 
-    // @@protoc_insertion_point(builder_scope:data.CalloutResponse)
+    // @@protoc_insertion_point(builder_scope:data.ProcessInfoLog)
   }
 
-  // @@protoc_insertion_point(class_scope:data.CalloutResponse)
-  private static final org.spin.grpc.util.CalloutResponse DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:data.ProcessInfoLog)
+  private static final org.spin.grpc.util.ProcessInfoLog DEFAULT_INSTANCE;
   static {
-    DEFAULT_INSTANCE = new org.spin.grpc.util.CalloutResponse();
+    DEFAULT_INSTANCE = new org.spin.grpc.util.ProcessInfoLog();
   }
 
-  public static org.spin.grpc.util.CalloutResponse getDefaultInstance() {
+  public static org.spin.grpc.util.ProcessInfoLog getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<CalloutResponse>
-      PARSER = new com.google.protobuf.AbstractParser<CalloutResponse>() {
-    public CalloutResponse parsePartialFrom(
+  private static final com.google.protobuf.Parser<ProcessInfoLog>
+      PARSER = new com.google.protobuf.AbstractParser<ProcessInfoLog>() {
+    public ProcessInfoLog parsePartialFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return new CalloutResponse(input, extensionRegistry);
+      return new ProcessInfoLog(input, extensionRegistry);
     }
   };
 
-  public static com.google.protobuf.Parser<CalloutResponse> parser() {
+  public static com.google.protobuf.Parser<ProcessInfoLog> parser() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.protobuf.Parser<CalloutResponse> getParserForType() {
+  public com.google.protobuf.Parser<ProcessInfoLog> getParserForType() {
     return PARSER;
   }
 
-  public org.spin.grpc.util.CalloutResponse getDefaultInstanceForType() {
+  public org.spin.grpc.util.ProcessInfoLog getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }
 

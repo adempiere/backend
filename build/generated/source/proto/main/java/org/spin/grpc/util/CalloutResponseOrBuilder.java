@@ -18,26 +18,15 @@ public interface CalloutResponseOrBuilder extends
       getResultBytes();
 
   /**
-   * <code>repeated .data.Value values = 2;</code>
+   * <code>.data.ValueObject values = 2;</code>
    */
-  java.util.List<org.spin.grpc.util.Value> 
-      getValuesList();
+  boolean hasValues();
   /**
-   * <code>repeated .data.Value values = 2;</code>
+   * <code>.data.ValueObject values = 2;</code>
    */
-  org.spin.grpc.util.Value getValues(int index);
+  org.spin.grpc.util.ValueObject getValues();
   /**
-   * <code>repeated .data.Value values = 2;</code>
+   * <code>.data.ValueObject values = 2;</code>
    */
-  int getValuesCount();
-  /**
-   * <code>repeated .data.Value values = 2;</code>
-   */
-  java.util.List<? extends org.spin.grpc.util.ValueOrBuilder> 
-      getValuesOrBuilderList();
-  /**
-   * <code>repeated .data.Value values = 2;</code>
-   */
-  org.spin.grpc.util.ValueOrBuilder getValuesOrBuilder(
-      int index);
+  org.spin.grpc.util.ValueObjectOrBuilder getValuesOrBuilder();
 }

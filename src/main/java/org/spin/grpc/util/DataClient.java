@@ -18,6 +18,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.spin.grpc.util.Value.ValueType;
+
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
@@ -162,6 +164,56 @@ public class DataClient {
 		  }
 	  }
 	  
+	  /**
+	   * Request a process
+	   */
+	  public void requestProcess() {
+		  ClientRequest clientRequest = ClientRequest.newBuilder()
+				  .setSessionUuid("53c1c836-6e47-11e9-8160-3709b250e4e1")
+				  .build();
+		  ProcessRequest request = ProcessRequest.newBuilder()
+				  .setClientRequest(clientRequest)
+				  .setUuid("a42acf86-fb40-11e8-a479-7a0060f0aa01")
+				  .build();
+		  ProcessResponse response;
+		  try {
+			  response = blockingStub.requestProcess(request);
+			  logger.info("Cache Reset: " + response);
+		  } catch (StatusRuntimeException e) {
+			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
+		      return;
+		  }
+	  }
+	  
+	  /**
+	   * Request a process
+	   */
+	  public void requestReport() {
+		  ClientRequest clientRequest = ClientRequest.newBuilder()
+				  .setSessionUuid("53c1c836-6e47-11e9-8160-3709b250e4e1")
+				  .build();
+		  //	Open Items
+		  ProcessRequest.Builder request = ProcessRequest.newBuilder()
+				  .setClientRequest(clientRequest)
+				  .setUuid("a42b9c36-fb40-11e8-a479-7a0060f0aa01");
+		  //	Add parameters
+		  //	Is SOT
+		  Value.Builder isSOTrx = Value.newBuilder();
+		  isSOTrx.setBooleanValue(true);
+		  isSOTrx.setValueType(ValueType.BOOLEAN);
+		  request.putParameters("IsSOTrx", isSOTrx.build());
+		  //	
+		  
+		  ProcessResponse response;
+		  try {
+			  response = blockingStub.requestProcess(request.build());
+			  logger.info("Open Item Report: " + response);
+		  } catch (StatusRuntimeException e) {
+			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
+		      return;
+		  }
+	  }
+	  
 	  /** 
 	   * Request PO List. 
 	   */
@@ -217,7 +269,8 @@ public class DataClient {
 //	    	client.requestPOWithSQL();
 	    	//	
 //	    	client.requestPOListWithSQL();
-	    	client.requestLookupList();
+	    	client.requestProcess();
+	    	client.requestReport();
 //	    	logger.info("####################### PO List #####################");
 //	    	client.requestPOList();
 //	    	logger.info("####################### Callout #####################");

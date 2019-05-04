@@ -33,6 +33,8 @@ service DataService {
 	rpc RequestLookupList(ValueObjectRequest) returns (ValueObjectList) {}
 	// Request Callout
 	rpc RequestCallout(CalloutRequest) returns (CalloutResponse) {}
+	//	Request a Process / Report
+	rpc RequestProcess(ProcessRequest) returns (ProcessResponse) {}
 }
 
 // The client request contains client info for request.
@@ -139,5 +141,56 @@ message CalloutRequest {
 // Callout response with data from server
 message CalloutResponse {
 	string result = 1;
-	repeated Value values = 2;
+	ValueObject values = 2;
 }
+
+// Process Request
+message ProcessRequest {
+	ClientRequest clientRequest = 1;
+	string uuid = 2;
+	int32 tableId = 3;
+	int32 recordId = 4;
+	int32 tableSelectedId = 5;
+	repeated Selection selections = 6;
+	map<string, Value> parameters = 7;
+}
+
+//	Process Selections
+message Selection {
+	int32 selectionId = 1;
+	map<string, Value> values = 7;
+}
+
+//	Response with log and values from server
+message ProcessResponse {
+	string instanceUuid = 1;
+	bool isError = 2;
+	string summary = 3;
+	int32 resultTableId = 4;
+	repeated ProcessInfoLog logs = 5;
+	ProcessOutput output = 6;
+}
+
+//	Process Log result
+message ProcessInfoLog {
+	int32 recordId = 1;
+	string log = 2;
+}
+
+//	Used for get output from report / process like PDF, HTML another result for show to end user 
+message ProcessOutput {
+	string uuid = 1;
+	string name = 2;
+	string description = 3;
+	string fileName = 4;
+	string output = 5;
+	bytes outputStream = 6;
+	enum OuputType {
+		TEXT = 0;
+		HTML = 1;
+		FILE = 4;
+	}
+	//	Output Type
+	OuputType outputType = 7;
+}
+
