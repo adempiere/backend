@@ -750,7 +750,10 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				MValRule validationRule = MValRule.get(context, validationRuleId);
 				validationCode = validationRule.getCode();
 			}
-			String columnName = processParameter.getAD_Element().getColumnName();
+			String columnName = processParameter.getColumnName();
+			if(processParameter.getAD_Element_ID() > 0) {
+				columnName = processParameter.getAD_Element().getColumnName();
+			}
 			MLookupInfo info = MLookupFactory.getLookupInfo(context, 0, 0, displayTypeId, Language.getLanguage(language), columnName, referenceValueId, false, validationCode, false);
 			Reference.Builder referenceBuilder = convertReference(context, info, language);
 			builder.setReference(referenceBuilder.build());

@@ -617,13 +617,13 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 		if(treeId != 0) {
 			MTree tree = new MTree(Env.getCtx(), treeId, true, false, null, null);
 			//	
-			builder = convertMenu(context, menu, language);
+			builder = convertMenu(context, menu, 0, language);
 			//	Get main node
 			MTreeNode rootNode = tree.getRoot();
 			Enumeration<?> childrens = rootNode.children();
 			while (childrens.hasMoreElements()) {
 				MTreeNode child = (MTreeNode)childrens.nextElement();
-				Menu.Builder childBuilder = convertMenu(context, MMenu.getFromId(context, child.getNode_ID()), language);
+				Menu.Builder childBuilder = convertMenu(context, MMenu.getFromId(context, child.getNode_ID()), child.getParent_ID(), language);
 				//	Explode child
 				addChildren(context, childBuilder, child, language);
 				builder.addChilds(childBuilder.build());
@@ -634,12 +634,14 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 	
 	/**
 	 * Convert Menu to builder
+	 * @param context
 	 * @param menu
+	 * @param parentId
 	 * @param language
 	 * @param withChild
 	 * @return
 	 */
-	private Menu.Builder convertMenu(Properties context, MMenu menu, String language) {
+	private Menu.Builder convertMenu(Properties context, MMenu menu, int parentId, String language) {
 		String name = null;
 		String description = null;
 		if(!Util.isEmpty(language)) {
@@ -653,6 +655,10 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 		if(Util.isEmpty(description)) {
 			description = menu.getDescription();
 		}
+		String parentUuid = null;
+		if(parentId > 0) {
+			parentUuid = MMenu.getFromId(context, parentId).getUUID();
+		}
 		Menu.Builder builder = Menu.newBuilder()
 				.setId(menu.getAD_Menu_ID())
 				.setUuid(validateNull(menu.getUUID()))
@@ -662,7 +668,8 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 				.setIsSOTrx(menu.isSOTrx())
 				.setIsSummary(menu.isSummary())
 				.setIsReadOnly(menu.isReadOnly())
-				.setIsActive(menu.isActive());
+				.setIsActive(menu.isActive())
+				.setParentUuid(validateNull(parentUuid));
 		//	Supported actions
 		if(!Util.isEmpty(menu.getAction())) {
 			String referenceUuid = null;
@@ -704,7 +711,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 		Enumeration<?> childrens = node.children();
 		while (childrens.hasMoreElements()) {
 			MTreeNode child = (MTreeNode)childrens.nextElement();
-			Menu.Builder childBuilder = convertMenu(context, MMenu.getFromId(context, child.getNode_ID()), language);
+			Menu.Builder childBuilder = convertMenu(context, MMenu.getFromId(context, child.getNode_ID()), child.getParent_ID(), language);
 			addChildren(context, childBuilder, child, language);
 			builder.addChilds(childBuilder.build());
 		}

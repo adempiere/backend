@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -199,22 +200,22 @@ public class DataServiceImplementation extends DataServiceImplBase {
 		if(request.getSelectionsCount() > 0) {
 			List<Integer> selectionKeys = new ArrayList<>();
 			LinkedHashMap<Integer, LinkedHashMap<String, Object>> selection = new LinkedHashMap<>();
-			request.getSelectionsList().forEach(selectionKey -> {
+			for(Selection selectionKey : request.getSelectionsList()) {
 				selectionKeys.add(selectionKey.getSelectionId());
 				if(selectionKey.getValuesCount() > 0) {
 					selection.put(selectionKey.getSelectionId(), convertValues(selectionKey.getValuesMap()));
 				}
-			});
+			}
 			builder.withSelectedRecordsIds(request.getTableSelectedId(), selectionKeys, selection);
 		}
 		//	Parameters
 		if(request.getParametersCount() > 0) {
-			request.getParametersMap().entrySet().forEach(parameter -> {
+			for(Entry<String, Value> parameter : request.getParametersMap().entrySet()) {
 				Object value = getValueFromType(parameter.getValue());
 				if(value != null) {
 					builder.withParameter(parameter.getKey(), value);
 				}
-			});
+			}
 		}
 		//	Run process
 		ProcessInfo result = builder.execute();
@@ -227,9 +228,9 @@ public class DataServiceImplementation extends DataServiceImplBase {
 		}
 		//	Convert Log
 		if(result.getLogList() != null) {
-			result.getLogList().forEach(log -> {
+			for(org.compiere.process.ProcessInfoLog log : result.getLogList()) {
 				response.addLogs(convertProcessInfoLog(log).build());
-			});
+			}
 		}
 		//	Verify Output
 		if(result.getPDFReport() != null) {
@@ -265,10 +266,10 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	 */
 	private LinkedHashMap<String, Object> convertValues(Map<String, Value> values) {
 		LinkedHashMap<String, Object> convertedValues = new LinkedHashMap<>();
-		values.entrySet().forEach(value -> {
+		for(Entry<String, Value> value : values.entrySet()) {
 			//	Convert value
 			convertedValues.put(value.getKey(), getValueFromType(value.getValue()));
-		});
+		}
 		//	
 		return convertedValues;
 	}
