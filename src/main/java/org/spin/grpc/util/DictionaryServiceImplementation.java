@@ -138,6 +138,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			responseObserver.onNext(fieldBuilder.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(e);
 		}
 	}
@@ -163,6 +164,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			responseObserver.onNext(processBuilder.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(e);
 		}
 	}
@@ -188,6 +190,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			responseObserver.onNext(browserBuilder.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(e);
 		}
 	}
@@ -215,6 +218,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			responseObserver.onNext(windowBuilder.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(e);
 		}
 	}
@@ -245,6 +249,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			responseObserver.onNext(tabBuilder.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(e);
 		}
 	}
@@ -527,15 +532,15 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			//	Add message text
 			MessageText messageText = MessageText.newBuilder()
 					.setId(message.getAD_Message_ID())
-					.setUuid(message.getUUID())
-					.setValue(message.getValue())
+					.setUuid(validateNull(message.getUUID()))
+					.setValue(validateNull(message.getValue()))
 					.setMsgText(validateNull(msgText))
 					.setMsgTip(validateNull(msgTip))
 					.build();
 			builder = ContextInfo.newBuilder()
 					.setId(contextInfoValue.getAD_ContextInfo_ID())
-					.setUuid(contextInfoValue.getUUID())
-					.setName(contextInfoValue.getName())
+					.setUuid(validateNull(contextInfoValue.getUUID()))
+					.setName(validateNull(contextInfoValue.getName()))
 					.setDescription(validateNull(contextInfoValue.getDescription()))
 					.setMessageText(messageText);
 		}
@@ -569,9 +574,9 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		}
 		Process.Builder builder = Process.newBuilder()
 				.setId(process.getAD_Process_ID())
-				.setUuid(process.getUUID())
+				.setUuid(validateNull(process.getUUID()))
 				.setValue(validateNull(process.getValue()))
-				.setName(name)
+				.setName(validateNull(name))
 				.setDescription(validateNull(description))
 				.setHelp(validateNull(help))
 				.setAccessLevel(Integer.parseInt(process.getAccessLevel()))
@@ -616,7 +621,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		}
 		Browser.Builder builder = Browser.newBuilder()
 				.setId(browser.getAD_Process_ID())
-				.setUuid(browser.getUUID())
+				.setUuid(validateNull(browser.getUUID()))
 				.setValue(validateNull(browser.getValue()))
 				.setName(name)
 				.setDescription(validateNull(description))
@@ -718,7 +723,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		//	Convert
 		Field.Builder builder = Field.newBuilder()
 				.setId(processParameter.getAD_Process_Para_ID())
-				.setUuid(processParameter.getUUID())
+				.setUuid(validateNull(processParameter.getUUID()))
 				.setName(validateNull(name))
 				.setDescription(validateNull(description))
 				.setHelp(validateNull(help))
@@ -789,7 +794,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		//	Convert
 		Field.Builder builder = Field.newBuilder()
 				.setId(browseField.getAD_Browse_Field_ID())
-				.setUuid(browseField.getUUID())
+				.setUuid(validateNull(browseField.getUUID()))
 				.setName(validateNull(name))
 				.setDescription(validateNull(description))
 				.setHelp(validateNull(help))
@@ -903,7 +908,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		//	Convert
 		Field.Builder builder = Field.newBuilder()
 				.setId(field.getAD_Field_ID())
-				.setUuid(field.getUUID())
+				.setUuid(validateNull(field.getUUID()))
 				.setName(validateNull(name))
 				.setDescription(validateNull(description))
 				.setHelp(validateNull(help))
@@ -1000,9 +1005,9 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			//	Reference
 			builder = FieldDefinition.newBuilder()
 					.setId(fieldDefinition.getAD_FieldDefinition_ID())
-					.setUuid(fieldDefinition.getUUID())
-					.setValue(fieldDefinition.getValue())
-					.setName(fieldDefinition.getName());
+					.setUuid(validateNull(fieldDefinition.getUUID()))
+					.setValue(validateNull(fieldDefinition.getValue()))
+					.setName(validateNull(fieldDefinition.getName()));
 			//	Get conditions
 			for(MADFieldCondition condition : fieldDefinition.getConditions()) {
 				if(!condition.isActive()) {
@@ -1010,7 +1015,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				}
 				FieldCondition.Builder fieldConditionBuilder = FieldCondition.newBuilder()
 						.setId(fieldDefinition.getAD_FieldDefinition_ID())
-						.setUuid(condition.getUUID())
+						.setUuid(validateNull(condition.getUUID()))
 						.setCondition(validateNull(condition.getCondition()))
 						.setStylesheet(validateNull(condition.getStylesheet()))
 						.setIsActive(fieldDefinition.isActive());
@@ -1043,7 +1048,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			//	Field Group
 			builder = FieldGroup.newBuilder()
 					.setId(fieldGroup.getAD_FieldGroup_ID())
-					.setUuid(fieldGroup.getUUID())
+					.setUuid(validateNull(fieldGroup.getUUID()))
 					.setName(validateNull(name))
 					.setFieldGroupType(fieldGroup.getFieldGroupType())
 					.setIsActive(fieldGroup.isActive());

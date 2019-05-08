@@ -35,6 +35,7 @@ import java.util.logging.Level;
 import javax.script.ScriptEngine;
 
 import org.adempiere.exceptions.AdempiereException;
+import org.compiere.apps.ProcessCtl;
 import org.compiere.model.Callout;
 import org.compiere.model.GridField;
 import org.compiere.model.GridTab;
@@ -48,11 +49,13 @@ import org.compiere.model.MSession;
 import org.compiere.model.PO;
 import org.compiere.model.POInfo;
 import org.compiere.model.Query;
+import org.compiere.print.ReportCtl;
 import org.compiere.process.ProcessInfo;
 import org.compiere.util.CCache;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
+import org.compiere.util.Ini;
 import org.compiere.util.Util;
 import org.eevolution.service.dsl.ProcessBuilder;
 import org.spin.grpc.util.DataServiceGrpc.DataServiceImplBase;
@@ -86,6 +89,7 @@ public class DataServiceImplementation extends DataServiceImplBase {
 			responseObserver.onNext(entityValue.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(e);
 		}
 	}
@@ -103,6 +107,7 @@ public class DataServiceImplementation extends DataServiceImplBase {
 			responseObserver.onNext(calloutResponse.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(e);
 		}
 	}
@@ -120,6 +125,7 @@ public class DataServiceImplementation extends DataServiceImplBase {
 			responseObserver.onNext(entutyValueList.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(e);
 		}
 	}
@@ -137,6 +143,7 @@ public class DataServiceImplementation extends DataServiceImplBase {
 			responseObserver.onNext(lookupValue.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(e);
 		}
 	}
@@ -154,6 +161,7 @@ public class DataServiceImplementation extends DataServiceImplBase {
 			responseObserver.onNext(entutyValueList.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(e);
 		}
 	}
@@ -171,6 +179,7 @@ public class DataServiceImplementation extends DataServiceImplBase {
 			responseObserver.onNext(processReponse.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(e);
 		}
 	}
@@ -190,35 +199,53 @@ public class DataServiceImplementation extends DataServiceImplBase {
 				|| process.getAD_Process_ID() <= 0) {
 			throw new AdempiereException("@AD_Process_ID@ @NotFound@");
 		}
+		Ini.setProperty(Ini.P_PRINTPREVIEW, false);
 		//	Call process builder
-		ProcessBuilder builder = ProcessBuilder.create(context)
-				.process(process.getAD_Process_ID())
-				.withRecordId(request.getTableId(), request.getRecordId())
-				.withBatchMode()
-				.withoutPrintPreview();
+//		ProcessBuilder builder = ProcessBuilder.create(context)
+//				.process(process.getAD_Process_ID())
+//				.withRecordId(request.getTableId(), request.getRecordId())
+//				.withBatchMode()
+//				.withoutPrintPreview()
+//				.withWindowNo(0)
+//				.withTitle(process.getName());
 		//	Selection
-		if(request.getSelectionsCount() > 0) {
-			List<Integer> selectionKeys = new ArrayList<>();
-			LinkedHashMap<Integer, LinkedHashMap<String, Object>> selection = new LinkedHashMap<>();
-			for(Selection selectionKey : request.getSelectionsList()) {
-				selectionKeys.add(selectionKey.getSelectionId());
-				if(selectionKey.getValuesCount() > 0) {
-					selection.put(selectionKey.getSelectionId(), convertValues(selectionKey.getValuesMap()));
-				}
-			}
-			builder.withSelectedRecordsIds(request.getTableSelectedId(), selectionKeys, selection);
-		}
-		//	Parameters
-		if(request.getParametersCount() > 0) {
-			for(Entry<String, Value> parameter : request.getParametersMap().entrySet()) {
-				Object value = getValueFromType(parameter.getValue());
-				if(value != null) {
-					builder.withParameter(parameter.getKey(), value);
-				}
-			}
-		}
+//		if(request.getSelectionsCount() > 0) {
+//			List<Integer> selectionKeys = new ArrayList<>();
+//			LinkedHashMap<Integer, LinkedHashMap<String, Object>> selection = new LinkedHashMap<>();
+//			for(Selection selectionKey : request.getSelectionsList()) {
+//				selectionKeys.add(selectionKey.getSelectionId());
+//				if(selectionKey.getValuesCount() > 0) {
+//					selection.put(selectionKey.getSelectionId(), convertValues(selectionKey.getValuesMap()));
+//				}
+//			}
+//			builder.withSelectedRecordsIds(request.getTableSelectedId(), selectionKeys, selection);
+//		}
+//		//	Parameters
+//		if(request.getParametersCount() > 0) {
+//			for(Entry<String, Value> parameter : request.getParametersMap().entrySet()) {
+//				Object value = getValueFromType(parameter.getValue());
+//				if(value != null) {
+//					builder.withParameter(parameter.getKey(), value);
+//				}
+//			}
+//		}
 		//	Run process
-		ProcessInfo result = builder.execute();
+		ProcessInfo result = new ProcessInfo(process.getName(), process.getAD_Process_ID());
+		result.setPrintPreview(false);
+		result.setRecord_ID(request.getRecordId());
+		result.setTable_ID(request.getTableId());
+		result.setAD_Client_ID(Env.getAD_Client_ID(context));
+		//	
+//		result.setParameter(getParameter());
+		//	Add HR Process for internal window
+//		if(getRecord_ID() != 0) {
+//			processInfo.addParameter(HR_PROCESS_ID, new BigDecimal(getHRProcessId()), null);
+//		}
+//		processInfo.addParameter(ReportCtl.PARAM_PRINT_FORMAT, format, null);
+//		processInfo.addParameter(ReportCtl.PARAM_PRINT_INFO, reportEngine.getPrintInfo(), null);
+		//	Execute Process
+		ProcessCtl.process(null, 0, null, result, null);
+//		ProcessInfo result = builder.execute();
 		String instanceUuid = DB.getSQLValueString(null, "SELECT UUID FROM AD_PInstance WHERE AD_PInstance_ID = ?", result.getAD_PInstance_ID());
 		response.setInstanceUuid(validateNull(instanceUuid));
 		//	Convert values

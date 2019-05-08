@@ -92,6 +92,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 			responseObserver.onNext(userInfoValue.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(e);
 		}
 	}
@@ -107,6 +108,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 			responseObserver.onNext(sessionBuilder.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(e);
 		}
 	}
@@ -122,6 +124,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 			responseObserver.onNext(sessionBuilder.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(e);
 		}
 	}
@@ -137,6 +140,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 			responseObserver.onNext(sessionBuilder.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(e);
 		}
 	}
@@ -152,6 +156,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 			responseObserver.onNext(userInfoValue.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(e);
 		}
 	}
@@ -169,6 +174,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 			responseObserver.onNext(menuBuilder.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(e);
 		}
 	}
