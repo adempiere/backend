@@ -134,8 +134,7 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	@Override
 	public void requestLookup(ValueObjectRequest request, StreamObserver<ValueObject> responseObserver) {
 		try {
-			if(request == null
-					|| Util.isEmpty(request.getUuid())) {
+			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
 			log.fine("Lookup Requested = " + request.getUuid());
@@ -152,9 +151,8 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	@Override
 	public void requestLookupList(ValueObjectRequest request, StreamObserver<ValueObjectList> responseObserver) {
 		try {
-			if(request == null
-					|| Util.isEmpty(request.getUuid())) {
-				throw new AdempiereException("Object Request Null");
+			if(request == null) {
+				throw new AdempiereException("Lookup Request Null");
 			}
 			log.fine("Lookup List Requested = " + request.getUuid());
 			Properties context = getContext(request.getClientRequest());
