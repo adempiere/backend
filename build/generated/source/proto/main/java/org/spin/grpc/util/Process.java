@@ -32,6 +32,7 @@ private static final long serialVersionUID = 0L;
     isDirectPrint_ = false;
     parameters_ = java.util.Collections.emptyList();
     isActive_ = false;
+    reportExportTypes_ = java.util.Collections.emptyList();
   }
 
   @java.lang.Override
@@ -135,6 +136,15 @@ private static final long serialVersionUID = 0L;
             isActive_ = input.readBool();
             break;
           }
+          case 106: {
+            if (!((mutable_bitField0_ & 0x00001000) == 0x00001000)) {
+              reportExportTypes_ = new java.util.ArrayList<org.spin.grpc.util.ReportExportType>();
+              mutable_bitField0_ |= 0x00001000;
+            }
+            reportExportTypes_.add(
+                input.readMessage(org.spin.grpc.util.ReportExportType.parser(), extensionRegistry));
+            break;
+          }
         }
       }
     } catch (com.google.protobuf.InvalidProtocolBufferException e) {
@@ -145,6 +155,9 @@ private static final long serialVersionUID = 0L;
     } finally {
       if (((mutable_bitField0_ & 0x00000400) == 0x00000400)) {
         parameters_ = java.util.Collections.unmodifiableList(parameters_);
+      }
+      if (((mutable_bitField0_ & 0x00001000) == 0x00001000)) {
+        reportExportTypes_ = java.util.Collections.unmodifiableList(reportExportTypes_);
       }
       this.unknownFields = unknownFields.build();
       makeExtensionsImmutable();
@@ -447,6 +460,61 @@ private static final long serialVersionUID = 0L;
     return isActive_;
   }
 
+  public static final int REPORTEXPORTTYPES_FIELD_NUMBER = 13;
+  private java.util.List<org.spin.grpc.util.ReportExportType> reportExportTypes_;
+  /**
+   * <pre>
+   * Reporty Type
+   * </pre>
+   *
+   * <code>repeated .dictionary.ReportExportType reportExportTypes = 13;</code>
+   */
+  public java.util.List<org.spin.grpc.util.ReportExportType> getReportExportTypesList() {
+    return reportExportTypes_;
+  }
+  /**
+   * <pre>
+   * Reporty Type
+   * </pre>
+   *
+   * <code>repeated .dictionary.ReportExportType reportExportTypes = 13;</code>
+   */
+  public java.util.List<? extends org.spin.grpc.util.ReportExportTypeOrBuilder> 
+      getReportExportTypesOrBuilderList() {
+    return reportExportTypes_;
+  }
+  /**
+   * <pre>
+   * Reporty Type
+   * </pre>
+   *
+   * <code>repeated .dictionary.ReportExportType reportExportTypes = 13;</code>
+   */
+  public int getReportExportTypesCount() {
+    return reportExportTypes_.size();
+  }
+  /**
+   * <pre>
+   * Reporty Type
+   * </pre>
+   *
+   * <code>repeated .dictionary.ReportExportType reportExportTypes = 13;</code>
+   */
+  public org.spin.grpc.util.ReportExportType getReportExportTypes(int index) {
+    return reportExportTypes_.get(index);
+  }
+  /**
+   * <pre>
+   * Reporty Type
+   * </pre>
+   *
+   * <code>repeated .dictionary.ReportExportType reportExportTypes = 13;</code>
+   */
+  public org.spin.grpc.util.ReportExportTypeOrBuilder getReportExportTypesOrBuilder(
+      int index) {
+    return reportExportTypes_.get(index);
+  }
+
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
     byte isInitialized = memoizedIsInitialized;
@@ -494,6 +562,9 @@ private static final long serialVersionUID = 0L;
     }
     if (isActive_ != false) {
       output.writeBool(12, isActive_);
+    }
+    for (int i = 0; i < reportExportTypes_.size(); i++) {
+      output.writeMessage(13, reportExportTypes_.get(i));
     }
     unknownFields.writeTo(output);
   }
@@ -545,6 +616,10 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeBoolSize(12, isActive_);
     }
+    for (int i = 0; i < reportExportTypes_.size(); i++) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(13, reportExportTypes_.get(i));
+    }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
     return size;
@@ -585,6 +660,8 @@ private static final long serialVersionUID = 0L;
         .equals(other.getParametersList());
     result = result && (getIsActive()
         == other.getIsActive());
+    result = result && getReportExportTypesList()
+        .equals(other.getReportExportTypesList());
     result = result && unknownFields.equals(other.unknownFields);
     return result;
   }
@@ -625,6 +702,10 @@ private static final long serialVersionUID = 0L;
     hash = (37 * hash) + ISACTIVE_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
         getIsActive());
+    if (getReportExportTypesCount() > 0) {
+      hash = (37 * hash) + REPORTEXPORTTYPES_FIELD_NUMBER;
+      hash = (53 * hash) + getReportExportTypesList().hashCode();
+    }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -755,6 +836,7 @@ private static final long serialVersionUID = 0L;
       if (com.google.protobuf.GeneratedMessageV3
               .alwaysUseFieldBuilders) {
         getParametersFieldBuilder();
+        getReportExportTypesFieldBuilder();
       }
     }
     public Builder clear() {
@@ -787,6 +869,12 @@ private static final long serialVersionUID = 0L;
       }
       isActive_ = false;
 
+      if (reportExportTypesBuilder_ == null) {
+        reportExportTypes_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00001000);
+      } else {
+        reportExportTypesBuilder_.clear();
+      }
       return this;
     }
 
@@ -831,6 +919,15 @@ private static final long serialVersionUID = 0L;
         result.parameters_ = parametersBuilder_.build();
       }
       result.isActive_ = isActive_;
+      if (reportExportTypesBuilder_ == null) {
+        if (((bitField0_ & 0x00001000) == 0x00001000)) {
+          reportExportTypes_ = java.util.Collections.unmodifiableList(reportExportTypes_);
+          bitField0_ = (bitField0_ & ~0x00001000);
+        }
+        result.reportExportTypes_ = reportExportTypes_;
+      } else {
+        result.reportExportTypes_ = reportExportTypesBuilder_.build();
+      }
       result.bitField0_ = to_bitField0_;
       onBuilt();
       return result;
@@ -937,6 +1034,32 @@ private static final long serialVersionUID = 0L;
       }
       if (other.getIsActive() != false) {
         setIsActive(other.getIsActive());
+      }
+      if (reportExportTypesBuilder_ == null) {
+        if (!other.reportExportTypes_.isEmpty()) {
+          if (reportExportTypes_.isEmpty()) {
+            reportExportTypes_ = other.reportExportTypes_;
+            bitField0_ = (bitField0_ & ~0x00001000);
+          } else {
+            ensureReportExportTypesIsMutable();
+            reportExportTypes_.addAll(other.reportExportTypes_);
+          }
+          onChanged();
+        }
+      } else {
+        if (!other.reportExportTypes_.isEmpty()) {
+          if (reportExportTypesBuilder_.isEmpty()) {
+            reportExportTypesBuilder_.dispose();
+            reportExportTypesBuilder_ = null;
+            reportExportTypes_ = other.reportExportTypes_;
+            bitField0_ = (bitField0_ & ~0x00001000);
+            reportExportTypesBuilder_ = 
+              com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                 getReportExportTypesFieldBuilder() : null;
+          } else {
+            reportExportTypesBuilder_.addAllMessages(other.reportExportTypes_);
+          }
+        }
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -1748,6 +1871,318 @@ private static final long serialVersionUID = 0L;
       isActive_ = false;
       onChanged();
       return this;
+    }
+
+    private java.util.List<org.spin.grpc.util.ReportExportType> reportExportTypes_ =
+      java.util.Collections.emptyList();
+    private void ensureReportExportTypesIsMutable() {
+      if (!((bitField0_ & 0x00001000) == 0x00001000)) {
+        reportExportTypes_ = new java.util.ArrayList<org.spin.grpc.util.ReportExportType>(reportExportTypes_);
+        bitField0_ |= 0x00001000;
+       }
+    }
+
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+        org.spin.grpc.util.ReportExportType, org.spin.grpc.util.ReportExportType.Builder, org.spin.grpc.util.ReportExportTypeOrBuilder> reportExportTypesBuilder_;
+
+    /**
+     * <pre>
+     * Reporty Type
+     * </pre>
+     *
+     * <code>repeated .dictionary.ReportExportType reportExportTypes = 13;</code>
+     */
+    public java.util.List<org.spin.grpc.util.ReportExportType> getReportExportTypesList() {
+      if (reportExportTypesBuilder_ == null) {
+        return java.util.Collections.unmodifiableList(reportExportTypes_);
+      } else {
+        return reportExportTypesBuilder_.getMessageList();
+      }
+    }
+    /**
+     * <pre>
+     * Reporty Type
+     * </pre>
+     *
+     * <code>repeated .dictionary.ReportExportType reportExportTypes = 13;</code>
+     */
+    public int getReportExportTypesCount() {
+      if (reportExportTypesBuilder_ == null) {
+        return reportExportTypes_.size();
+      } else {
+        return reportExportTypesBuilder_.getCount();
+      }
+    }
+    /**
+     * <pre>
+     * Reporty Type
+     * </pre>
+     *
+     * <code>repeated .dictionary.ReportExportType reportExportTypes = 13;</code>
+     */
+    public org.spin.grpc.util.ReportExportType getReportExportTypes(int index) {
+      if (reportExportTypesBuilder_ == null) {
+        return reportExportTypes_.get(index);
+      } else {
+        return reportExportTypesBuilder_.getMessage(index);
+      }
+    }
+    /**
+     * <pre>
+     * Reporty Type
+     * </pre>
+     *
+     * <code>repeated .dictionary.ReportExportType reportExportTypes = 13;</code>
+     */
+    public Builder setReportExportTypes(
+        int index, org.spin.grpc.util.ReportExportType value) {
+      if (reportExportTypesBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureReportExportTypesIsMutable();
+        reportExportTypes_.set(index, value);
+        onChanged();
+      } else {
+        reportExportTypesBuilder_.setMessage(index, value);
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Reporty Type
+     * </pre>
+     *
+     * <code>repeated .dictionary.ReportExportType reportExportTypes = 13;</code>
+     */
+    public Builder setReportExportTypes(
+        int index, org.spin.grpc.util.ReportExportType.Builder builderForValue) {
+      if (reportExportTypesBuilder_ == null) {
+        ensureReportExportTypesIsMutable();
+        reportExportTypes_.set(index, builderForValue.build());
+        onChanged();
+      } else {
+        reportExportTypesBuilder_.setMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Reporty Type
+     * </pre>
+     *
+     * <code>repeated .dictionary.ReportExportType reportExportTypes = 13;</code>
+     */
+    public Builder addReportExportTypes(org.spin.grpc.util.ReportExportType value) {
+      if (reportExportTypesBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureReportExportTypesIsMutable();
+        reportExportTypes_.add(value);
+        onChanged();
+      } else {
+        reportExportTypesBuilder_.addMessage(value);
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Reporty Type
+     * </pre>
+     *
+     * <code>repeated .dictionary.ReportExportType reportExportTypes = 13;</code>
+     */
+    public Builder addReportExportTypes(
+        int index, org.spin.grpc.util.ReportExportType value) {
+      if (reportExportTypesBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureReportExportTypesIsMutable();
+        reportExportTypes_.add(index, value);
+        onChanged();
+      } else {
+        reportExportTypesBuilder_.addMessage(index, value);
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Reporty Type
+     * </pre>
+     *
+     * <code>repeated .dictionary.ReportExportType reportExportTypes = 13;</code>
+     */
+    public Builder addReportExportTypes(
+        org.spin.grpc.util.ReportExportType.Builder builderForValue) {
+      if (reportExportTypesBuilder_ == null) {
+        ensureReportExportTypesIsMutable();
+        reportExportTypes_.add(builderForValue.build());
+        onChanged();
+      } else {
+        reportExportTypesBuilder_.addMessage(builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Reporty Type
+     * </pre>
+     *
+     * <code>repeated .dictionary.ReportExportType reportExportTypes = 13;</code>
+     */
+    public Builder addReportExportTypes(
+        int index, org.spin.grpc.util.ReportExportType.Builder builderForValue) {
+      if (reportExportTypesBuilder_ == null) {
+        ensureReportExportTypesIsMutable();
+        reportExportTypes_.add(index, builderForValue.build());
+        onChanged();
+      } else {
+        reportExportTypesBuilder_.addMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Reporty Type
+     * </pre>
+     *
+     * <code>repeated .dictionary.ReportExportType reportExportTypes = 13;</code>
+     */
+    public Builder addAllReportExportTypes(
+        java.lang.Iterable<? extends org.spin.grpc.util.ReportExportType> values) {
+      if (reportExportTypesBuilder_ == null) {
+        ensureReportExportTypesIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, reportExportTypes_);
+        onChanged();
+      } else {
+        reportExportTypesBuilder_.addAllMessages(values);
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Reporty Type
+     * </pre>
+     *
+     * <code>repeated .dictionary.ReportExportType reportExportTypes = 13;</code>
+     */
+    public Builder clearReportExportTypes() {
+      if (reportExportTypesBuilder_ == null) {
+        reportExportTypes_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00001000);
+        onChanged();
+      } else {
+        reportExportTypesBuilder_.clear();
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Reporty Type
+     * </pre>
+     *
+     * <code>repeated .dictionary.ReportExportType reportExportTypes = 13;</code>
+     */
+    public Builder removeReportExportTypes(int index) {
+      if (reportExportTypesBuilder_ == null) {
+        ensureReportExportTypesIsMutable();
+        reportExportTypes_.remove(index);
+        onChanged();
+      } else {
+        reportExportTypesBuilder_.remove(index);
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Reporty Type
+     * </pre>
+     *
+     * <code>repeated .dictionary.ReportExportType reportExportTypes = 13;</code>
+     */
+    public org.spin.grpc.util.ReportExportType.Builder getReportExportTypesBuilder(
+        int index) {
+      return getReportExportTypesFieldBuilder().getBuilder(index);
+    }
+    /**
+     * <pre>
+     * Reporty Type
+     * </pre>
+     *
+     * <code>repeated .dictionary.ReportExportType reportExportTypes = 13;</code>
+     */
+    public org.spin.grpc.util.ReportExportTypeOrBuilder getReportExportTypesOrBuilder(
+        int index) {
+      if (reportExportTypesBuilder_ == null) {
+        return reportExportTypes_.get(index);  } else {
+        return reportExportTypesBuilder_.getMessageOrBuilder(index);
+      }
+    }
+    /**
+     * <pre>
+     * Reporty Type
+     * </pre>
+     *
+     * <code>repeated .dictionary.ReportExportType reportExportTypes = 13;</code>
+     */
+    public java.util.List<? extends org.spin.grpc.util.ReportExportTypeOrBuilder> 
+         getReportExportTypesOrBuilderList() {
+      if (reportExportTypesBuilder_ != null) {
+        return reportExportTypesBuilder_.getMessageOrBuilderList();
+      } else {
+        return java.util.Collections.unmodifiableList(reportExportTypes_);
+      }
+    }
+    /**
+     * <pre>
+     * Reporty Type
+     * </pre>
+     *
+     * <code>repeated .dictionary.ReportExportType reportExportTypes = 13;</code>
+     */
+    public org.spin.grpc.util.ReportExportType.Builder addReportExportTypesBuilder() {
+      return getReportExportTypesFieldBuilder().addBuilder(
+          org.spin.grpc.util.ReportExportType.getDefaultInstance());
+    }
+    /**
+     * <pre>
+     * Reporty Type
+     * </pre>
+     *
+     * <code>repeated .dictionary.ReportExportType reportExportTypes = 13;</code>
+     */
+    public org.spin.grpc.util.ReportExportType.Builder addReportExportTypesBuilder(
+        int index) {
+      return getReportExportTypesFieldBuilder().addBuilder(
+          index, org.spin.grpc.util.ReportExportType.getDefaultInstance());
+    }
+    /**
+     * <pre>
+     * Reporty Type
+     * </pre>
+     *
+     * <code>repeated .dictionary.ReportExportType reportExportTypes = 13;</code>
+     */
+    public java.util.List<org.spin.grpc.util.ReportExportType.Builder> 
+         getReportExportTypesBuilderList() {
+      return getReportExportTypesFieldBuilder().getBuilderList();
+    }
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+        org.spin.grpc.util.ReportExportType, org.spin.grpc.util.ReportExportType.Builder, org.spin.grpc.util.ReportExportTypeOrBuilder> 
+        getReportExportTypesFieldBuilder() {
+      if (reportExportTypesBuilder_ == null) {
+        reportExportTypesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+            org.spin.grpc.util.ReportExportType, org.spin.grpc.util.ReportExportType.Builder, org.spin.grpc.util.ReportExportTypeOrBuilder>(
+                reportExportTypes_,
+                ((bitField0_ & 0x00001000) == 0x00001000),
+                getParentForChildren(),
+                isClean());
+        reportExportTypes_ = null;
+      }
+      return reportExportTypesBuilder_;
     }
     public final Builder setUnknownFields(
         final com.google.protobuf.UnknownFieldSet unknownFields) {

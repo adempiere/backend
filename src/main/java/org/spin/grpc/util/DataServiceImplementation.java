@@ -15,6 +15,10 @@
 package org.spin.grpc.util;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -35,7 +39,6 @@ import java.util.logging.Level;
 import javax.script.ScriptEngine;
 
 import org.adempiere.exceptions.AdempiereException;
-import org.compiere.apps.ProcessCtl;
 import org.compiere.model.Callout;
 import org.compiere.model.GridField;
 import org.compiere.model.GridTab;
@@ -49,18 +52,17 @@ import org.compiere.model.MSession;
 import org.compiere.model.PO;
 import org.compiere.model.POInfo;
 import org.compiere.model.Query;
-import org.compiere.print.ReportCtl;
 import org.compiere.process.ProcessInfo;
 import org.compiere.util.CCache;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
-import org.compiere.util.Ini;
 import org.compiere.util.Util;
 import org.eevolution.service.dsl.ProcessBuilder;
 import org.spin.grpc.util.DataServiceGrpc.DataServiceImplBase;
-import org.spin.grpc.util.ProcessOutput.OuputType;
 import org.spin.grpc.util.Value.ValueType;
+
+import com.google.protobuf.ByteString;
 
 import io.grpc.stub.StreamObserver;
 
@@ -190,8 +192,10 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	 * @param request
 	 * @param language
 	 * @return
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
 	 */
-	private ProcessResponse.Builder runProcess(Properties context, ProcessRequest request, String language) {
+	private ProcessResponse.Builder runProcess(Properties context, ProcessRequest request, String language) throws FileNotFoundException, IOException {
 		ProcessResponse.Builder response = ProcessResponse.newBuilder();
 		//	Get Process definition
 		MProcess process = getProcess(context, request.getUuid(), language);
@@ -199,56 +203,43 @@ public class DataServiceImplementation extends DataServiceImplBase {
 				|| process.getAD_Process_ID() <= 0) {
 			throw new AdempiereException("@AD_Process_ID@ @NotFound@");
 		}
-		Ini.setProperty(Ini.P_PRINTPREVIEW, false);
 		//	Call process builder
-//		ProcessBuilder builder = ProcessBuilder.create(context)
-//				.process(process.getAD_Process_ID())
-//				.withRecordId(request.getTableId(), request.getRecordId())
-//				.withBatchMode()
-//				.withoutPrintPreview()
-//				.withWindowNo(0)
-//				.withTitle(process.getName());
+		ProcessBuilder builder = ProcessBuilder.create(context)
+				.process(process.getAD_Process_ID())
+				.withRecordId(request.getTableId(), request.getRecordId())
+				.withBatchMode()
+				.withoutPrintPreview()
+				.withWindowNo(0)
+				.withTitle(process.getName());
+		//	Set Report Export Type
+		if(process.isReport()) {
+			builder.withReportExportFormat(request.getReportExportType());
+		}
 		//	Selection
-//		if(request.getSelectionsCount() > 0) {
-//			List<Integer> selectionKeys = new ArrayList<>();
-//			LinkedHashMap<Integer, LinkedHashMap<String, Object>> selection = new LinkedHashMap<>();
-//			for(Selection selectionKey : request.getSelectionsList()) {
-//				selectionKeys.add(selectionKey.getSelectionId());
-//				if(selectionKey.getValuesCount() > 0) {
-//					selection.put(selectionKey.getSelectionId(), convertValues(selectionKey.getValuesMap()));
-//				}
-//			}
-//			builder.withSelectedRecordsIds(request.getTableSelectedId(), selectionKeys, selection);
-//		}
-//		//	Parameters
-//		if(request.getParametersCount() > 0) {
-//			for(Entry<String, Value> parameter : request.getParametersMap().entrySet()) {
-//				Object value = getValueFromType(parameter.getValue());
-//				if(value != null) {
-//					builder.withParameter(parameter.getKey(), value);
-//				}
-//			}
-//		}
-		//	Run process
-		ProcessInfo result = new ProcessInfo(process.getName(), process.getAD_Process_ID());
-		result.setPrintPreview(false);
-		result.setRecord_ID(request.getRecordId());
-		result.setTable_ID(request.getTableId());
-		result.setAD_Client_ID(Env.getAD_Client_ID(context));
-		//	
-//		result.setParameter(getParameter());
-		//	Add HR Process for internal window
-//		if(getRecord_ID() != 0) {
-//			processInfo.addParameter(HR_PROCESS_ID, new BigDecimal(getHRProcessId()), null);
-//		}
-//		processInfo.addParameter(ReportCtl.PARAM_PRINT_FORMAT, format, null);
-//		processInfo.addParameter(ReportCtl.PARAM_PRINT_INFO, reportEngine.getPrintInfo(), null);
+		if(request.getSelectionsCount() > 0) {
+			List<Integer> selectionKeys = new ArrayList<>();
+			LinkedHashMap<Integer, LinkedHashMap<String, Object>> selection = new LinkedHashMap<>();
+			for(Selection selectionKey : request.getSelectionsList()) {
+				selectionKeys.add(selectionKey.getSelectionId());
+				if(selectionKey.getValuesCount() > 0) {
+					selection.put(selectionKey.getSelectionId(), convertValues(selectionKey.getValuesMap()));
+				}
+			}
+			builder.withSelectedRecordsIds(request.getTableSelectedId(), selectionKeys, selection);
+		}
+		//	Parameters
+		if(request.getParametersCount() > 0) {
+			for(Entry<String, Value> parameter : request.getParametersMap().entrySet()) {
+				Object value = getValueFromType(parameter.getValue());
+				if(value != null) {
+					builder.withParameter(parameter.getKey(), value);
+				}
+			}
+		}
 		//	Execute Process
-		ProcessCtl.process(null, 0, null, result, null);
-//		ProcessInfo result = builder.execute();
+		ProcessInfo result = builder.execute();
 		String instanceUuid = DB.getSQLValueString(null, "SELECT UUID FROM AD_PInstance WHERE AD_PInstance_ID = ?", result.getAD_PInstance_ID());
 		response.setInstanceUuid(validateNull(instanceUuid));
-		//	Convert values
 		response.setIsError(result.isError());
 		if(!Util.isEmpty(result.getSummary())) {
 			response.setSummary(result.getSummary());
@@ -260,15 +251,20 @@ public class DataServiceImplementation extends DataServiceImplBase {
 			}
 		}
 		//	Verify Output
-		if(result.getPDFReport() != null) {
-			File report = result.getPDFReport();
-			ProcessOutput.Builder output = ProcessOutput.newBuilder();
-			output.setFileName(validateNull(report.getName()));
-			output.setName(result.getTitle());
-			output.setDescription(validateNull(process.getDescription()));
-			//	Type
-			output.setOutputType(OuputType.FILE);
-			response.setOutput(output.build());
+		if(process.isReport()) {
+			File reportFile = result.getReportAsFile();
+			if(reportFile != null
+					&& reportFile.exists()) {
+				ProcessOutput.Builder output = ProcessOutput.newBuilder();
+				output.setFileName(validateNull(reportFile.getName()));
+				output.setName(result.getTitle());
+				output.setDescription(validateNull(process.getDescription()));
+				//	Type
+				output.setReportExportType(request.getReportExportType());
+				ByteString resultFile = ByteString.readFrom(new FileInputStream(reportFile));
+				output.setOutputBytes(resultFile);
+				response.setOutput(output.build());
+			}
 		}
 		
 		return response;

@@ -24,6 +24,7 @@ private static final long serialVersionUID = 0L;
     tableId_ = 0;
     recordId_ = 0;
     tableSelectedId_ = 0;
+    reportExportType_ = "";
     selections_ = java.util.Collections.emptyList();
   }
 
@@ -93,19 +94,25 @@ private static final long serialVersionUID = 0L;
             break;
           }
           case 50: {
-            if (!((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
+            java.lang.String s = input.readStringRequireUtf8();
+
+            reportExportType_ = s;
+            break;
+          }
+          case 58: {
+            if (!((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
               selections_ = new java.util.ArrayList<org.spin.grpc.util.Selection>();
-              mutable_bitField0_ |= 0x00000020;
+              mutable_bitField0_ |= 0x00000040;
             }
             selections_.add(
                 input.readMessage(org.spin.grpc.util.Selection.parser(), extensionRegistry));
             break;
           }
-          case 58: {
-            if (!((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
+          case 66: {
+            if (!((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
               parameters_ = com.google.protobuf.MapField.newMapField(
                   ParametersDefaultEntryHolder.defaultEntry);
-              mutable_bitField0_ |= 0x00000040;
+              mutable_bitField0_ |= 0x00000080;
             }
             com.google.protobuf.MapEntry<java.lang.String, org.spin.grpc.util.Value>
             parameters__ = input.readMessage(
@@ -122,7 +129,7 @@ private static final long serialVersionUID = 0L;
       throw new com.google.protobuf.InvalidProtocolBufferException(
           e).setUnfinishedMessage(this);
     } finally {
-      if (((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
+      if (((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
         selections_ = java.util.Collections.unmodifiableList(selections_);
       }
       this.unknownFields = unknownFields.build();
@@ -138,7 +145,7 @@ private static final long serialVersionUID = 0L;
   protected com.google.protobuf.MapField internalGetMapField(
       int number) {
     switch (number) {
-      case 7:
+      case 8:
         return internalGetParameters();
       default:
         throw new RuntimeException(
@@ -235,42 +242,76 @@ private static final long serialVersionUID = 0L;
     return tableSelectedId_;
   }
 
-  public static final int SELECTIONS_FIELD_NUMBER = 6;
+  public static final int REPORTEXPORTTYPE_FIELD_NUMBER = 6;
+  private volatile java.lang.Object reportExportType_;
+  /**
+   * <code>string reportExportType = 6;</code>
+   */
+  public java.lang.String getReportExportType() {
+    java.lang.Object ref = reportExportType_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      reportExportType_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string reportExportType = 6;</code>
+   */
+  public com.google.protobuf.ByteString
+      getReportExportTypeBytes() {
+    java.lang.Object ref = reportExportType_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      reportExportType_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int SELECTIONS_FIELD_NUMBER = 7;
   private java.util.List<org.spin.grpc.util.Selection> selections_;
   /**
-   * <code>repeated .data.Selection selections = 6;</code>
+   * <code>repeated .data.Selection selections = 7;</code>
    */
   public java.util.List<org.spin.grpc.util.Selection> getSelectionsList() {
     return selections_;
   }
   /**
-   * <code>repeated .data.Selection selections = 6;</code>
+   * <code>repeated .data.Selection selections = 7;</code>
    */
   public java.util.List<? extends org.spin.grpc.util.SelectionOrBuilder> 
       getSelectionsOrBuilderList() {
     return selections_;
   }
   /**
-   * <code>repeated .data.Selection selections = 6;</code>
+   * <code>repeated .data.Selection selections = 7;</code>
    */
   public int getSelectionsCount() {
     return selections_.size();
   }
   /**
-   * <code>repeated .data.Selection selections = 6;</code>
+   * <code>repeated .data.Selection selections = 7;</code>
    */
   public org.spin.grpc.util.Selection getSelections(int index) {
     return selections_.get(index);
   }
   /**
-   * <code>repeated .data.Selection selections = 6;</code>
+   * <code>repeated .data.Selection selections = 7;</code>
    */
   public org.spin.grpc.util.SelectionOrBuilder getSelectionsOrBuilder(
       int index) {
     return selections_.get(index);
   }
 
-  public static final int PARAMETERS_FIELD_NUMBER = 7;
+  public static final int PARAMETERS_FIELD_NUMBER = 8;
   private static final class ParametersDefaultEntryHolder {
     static final com.google.protobuf.MapEntry<
         java.lang.String, org.spin.grpc.util.Value> defaultEntry =
@@ -297,7 +338,7 @@ private static final long serialVersionUID = 0L;
     return internalGetParameters().getMap().size();
   }
   /**
-   * <code>map&lt;string, .data.Value&gt; parameters = 7;</code>
+   * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
    */
 
   public boolean containsParameters(
@@ -313,14 +354,14 @@ private static final long serialVersionUID = 0L;
     return getParametersMap();
   }
   /**
-   * <code>map&lt;string, .data.Value&gt; parameters = 7;</code>
+   * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
    */
 
   public java.util.Map<java.lang.String, org.spin.grpc.util.Value> getParametersMap() {
     return internalGetParameters().getMap();
   }
   /**
-   * <code>map&lt;string, .data.Value&gt; parameters = 7;</code>
+   * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
    */
 
   public org.spin.grpc.util.Value getParametersOrDefault(
@@ -332,7 +373,7 @@ private static final long serialVersionUID = 0L;
     return map.containsKey(key) ? map.get(key) : defaultValue;
   }
   /**
-   * <code>map&lt;string, .data.Value&gt; parameters = 7;</code>
+   * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
    */
 
   public org.spin.grpc.util.Value getParametersOrThrow(
@@ -373,15 +414,18 @@ private static final long serialVersionUID = 0L;
     if (tableSelectedId_ != 0) {
       output.writeInt32(5, tableSelectedId_);
     }
+    if (!getReportExportTypeBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 6, reportExportType_);
+    }
     for (int i = 0; i < selections_.size(); i++) {
-      output.writeMessage(6, selections_.get(i));
+      output.writeMessage(7, selections_.get(i));
     }
     com.google.protobuf.GeneratedMessageV3
       .serializeStringMapTo(
         output,
         internalGetParameters(),
         ParametersDefaultEntryHolder.defaultEntry,
-        7);
+        8);
     unknownFields.writeTo(output);
   }
 
@@ -409,9 +453,12 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeInt32Size(5, tableSelectedId_);
     }
+    if (!getReportExportTypeBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, reportExportType_);
+    }
     for (int i = 0; i < selections_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(6, selections_.get(i));
+        .computeMessageSize(7, selections_.get(i));
     }
     for (java.util.Map.Entry<java.lang.String, org.spin.grpc.util.Value> entry
          : internalGetParameters().getMap().entrySet()) {
@@ -421,7 +468,7 @@ private static final long serialVersionUID = 0L;
           .setValue(entry.getValue())
           .build();
       size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(7, parameters__);
+          .computeMessageSize(8, parameters__);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -452,6 +499,8 @@ private static final long serialVersionUID = 0L;
         == other.getRecordId());
     result = result && (getTableSelectedId()
         == other.getTableSelectedId());
+    result = result && getReportExportType()
+        .equals(other.getReportExportType());
     result = result && getSelectionsList()
         .equals(other.getSelectionsList());
     result = result && internalGetParameters().equals(
@@ -479,6 +528,8 @@ private static final long serialVersionUID = 0L;
     hash = (53 * hash) + getRecordId();
     hash = (37 * hash) + TABLESELECTEDID_FIELD_NUMBER;
     hash = (53 * hash) + getTableSelectedId();
+    hash = (37 * hash) + REPORTEXPORTTYPE_FIELD_NUMBER;
+    hash = (53 * hash) + getReportExportType().hashCode();
     if (getSelectionsCount() > 0) {
       hash = (37 * hash) + SELECTIONS_FIELD_NUMBER;
       hash = (53 * hash) + getSelectionsList().hashCode();
@@ -600,7 +651,7 @@ private static final long serialVersionUID = 0L;
     protected com.google.protobuf.MapField internalGetMapField(
         int number) {
       switch (number) {
-        case 7:
+        case 8:
           return internalGetParameters();
         default:
           throw new RuntimeException(
@@ -611,7 +662,7 @@ private static final long serialVersionUID = 0L;
     protected com.google.protobuf.MapField internalGetMutableMapField(
         int number) {
       switch (number) {
-        case 7:
+        case 8:
           return internalGetMutableParameters();
         default:
           throw new RuntimeException(
@@ -657,9 +708,11 @@ private static final long serialVersionUID = 0L;
 
       tableSelectedId_ = 0;
 
+      reportExportType_ = "";
+
       if (selectionsBuilder_ == null) {
         selections_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000020);
+        bitField0_ = (bitField0_ & ~0x00000040);
       } else {
         selectionsBuilder_.clear();
       }
@@ -697,10 +750,11 @@ private static final long serialVersionUID = 0L;
       result.tableId_ = tableId_;
       result.recordId_ = recordId_;
       result.tableSelectedId_ = tableSelectedId_;
+      result.reportExportType_ = reportExportType_;
       if (selectionsBuilder_ == null) {
-        if (((bitField0_ & 0x00000020) == 0x00000020)) {
+        if (((bitField0_ & 0x00000040) == 0x00000040)) {
           selections_ = java.util.Collections.unmodifiableList(selections_);
-          bitField0_ = (bitField0_ & ~0x00000020);
+          bitField0_ = (bitField0_ & ~0x00000040);
         }
         result.selections_ = selections_;
       } else {
@@ -766,11 +820,15 @@ private static final long serialVersionUID = 0L;
       if (other.getTableSelectedId() != 0) {
         setTableSelectedId(other.getTableSelectedId());
       }
+      if (!other.getReportExportType().isEmpty()) {
+        reportExportType_ = other.reportExportType_;
+        onChanged();
+      }
       if (selectionsBuilder_ == null) {
         if (!other.selections_.isEmpty()) {
           if (selections_.isEmpty()) {
             selections_ = other.selections_;
-            bitField0_ = (bitField0_ & ~0x00000020);
+            bitField0_ = (bitField0_ & ~0x00000040);
           } else {
             ensureSelectionsIsMutable();
             selections_.addAll(other.selections_);
@@ -783,7 +841,7 @@ private static final long serialVersionUID = 0L;
             selectionsBuilder_.dispose();
             selectionsBuilder_ = null;
             selections_ = other.selections_;
-            bitField0_ = (bitField0_ & ~0x00000020);
+            bitField0_ = (bitField0_ & ~0x00000040);
             selectionsBuilder_ = 
               com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                  getSelectionsFieldBuilder() : null;
@@ -1086,12 +1144,81 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
+    private java.lang.Object reportExportType_ = "";
+    /**
+     * <code>string reportExportType = 6;</code>
+     */
+    public java.lang.String getReportExportType() {
+      java.lang.Object ref = reportExportType_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        reportExportType_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string reportExportType = 6;</code>
+     */
+    public com.google.protobuf.ByteString
+        getReportExportTypeBytes() {
+      java.lang.Object ref = reportExportType_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        reportExportType_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string reportExportType = 6;</code>
+     */
+    public Builder setReportExportType(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
+      reportExportType_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string reportExportType = 6;</code>
+     */
+    public Builder clearReportExportType() {
+      
+      reportExportType_ = getDefaultInstance().getReportExportType();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string reportExportType = 6;</code>
+     */
+    public Builder setReportExportTypeBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      
+      reportExportType_ = value;
+      onChanged();
+      return this;
+    }
+
     private java.util.List<org.spin.grpc.util.Selection> selections_ =
       java.util.Collections.emptyList();
     private void ensureSelectionsIsMutable() {
-      if (!((bitField0_ & 0x00000020) == 0x00000020)) {
+      if (!((bitField0_ & 0x00000040) == 0x00000040)) {
         selections_ = new java.util.ArrayList<org.spin.grpc.util.Selection>(selections_);
-        bitField0_ |= 0x00000020;
+        bitField0_ |= 0x00000040;
        }
     }
 
@@ -1099,7 +1226,7 @@ private static final long serialVersionUID = 0L;
         org.spin.grpc.util.Selection, org.spin.grpc.util.Selection.Builder, org.spin.grpc.util.SelectionOrBuilder> selectionsBuilder_;
 
     /**
-     * <code>repeated .data.Selection selections = 6;</code>
+     * <code>repeated .data.Selection selections = 7;</code>
      */
     public java.util.List<org.spin.grpc.util.Selection> getSelectionsList() {
       if (selectionsBuilder_ == null) {
@@ -1109,7 +1236,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.Selection selections = 6;</code>
+     * <code>repeated .data.Selection selections = 7;</code>
      */
     public int getSelectionsCount() {
       if (selectionsBuilder_ == null) {
@@ -1119,7 +1246,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.Selection selections = 6;</code>
+     * <code>repeated .data.Selection selections = 7;</code>
      */
     public org.spin.grpc.util.Selection getSelections(int index) {
       if (selectionsBuilder_ == null) {
@@ -1129,7 +1256,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.Selection selections = 6;</code>
+     * <code>repeated .data.Selection selections = 7;</code>
      */
     public Builder setSelections(
         int index, org.spin.grpc.util.Selection value) {
@@ -1146,7 +1273,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.Selection selections = 6;</code>
+     * <code>repeated .data.Selection selections = 7;</code>
      */
     public Builder setSelections(
         int index, org.spin.grpc.util.Selection.Builder builderForValue) {
@@ -1160,7 +1287,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.Selection selections = 6;</code>
+     * <code>repeated .data.Selection selections = 7;</code>
      */
     public Builder addSelections(org.spin.grpc.util.Selection value) {
       if (selectionsBuilder_ == null) {
@@ -1176,7 +1303,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.Selection selections = 6;</code>
+     * <code>repeated .data.Selection selections = 7;</code>
      */
     public Builder addSelections(
         int index, org.spin.grpc.util.Selection value) {
@@ -1193,7 +1320,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.Selection selections = 6;</code>
+     * <code>repeated .data.Selection selections = 7;</code>
      */
     public Builder addSelections(
         org.spin.grpc.util.Selection.Builder builderForValue) {
@@ -1207,7 +1334,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.Selection selections = 6;</code>
+     * <code>repeated .data.Selection selections = 7;</code>
      */
     public Builder addSelections(
         int index, org.spin.grpc.util.Selection.Builder builderForValue) {
@@ -1221,7 +1348,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.Selection selections = 6;</code>
+     * <code>repeated .data.Selection selections = 7;</code>
      */
     public Builder addAllSelections(
         java.lang.Iterable<? extends org.spin.grpc.util.Selection> values) {
@@ -1236,12 +1363,12 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.Selection selections = 6;</code>
+     * <code>repeated .data.Selection selections = 7;</code>
      */
     public Builder clearSelections() {
       if (selectionsBuilder_ == null) {
         selections_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000020);
+        bitField0_ = (bitField0_ & ~0x00000040);
         onChanged();
       } else {
         selectionsBuilder_.clear();
@@ -1249,7 +1376,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.Selection selections = 6;</code>
+     * <code>repeated .data.Selection selections = 7;</code>
      */
     public Builder removeSelections(int index) {
       if (selectionsBuilder_ == null) {
@@ -1262,14 +1389,14 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.Selection selections = 6;</code>
+     * <code>repeated .data.Selection selections = 7;</code>
      */
     public org.spin.grpc.util.Selection.Builder getSelectionsBuilder(
         int index) {
       return getSelectionsFieldBuilder().getBuilder(index);
     }
     /**
-     * <code>repeated .data.Selection selections = 6;</code>
+     * <code>repeated .data.Selection selections = 7;</code>
      */
     public org.spin.grpc.util.SelectionOrBuilder getSelectionsOrBuilder(
         int index) {
@@ -1279,7 +1406,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.Selection selections = 6;</code>
+     * <code>repeated .data.Selection selections = 7;</code>
      */
     public java.util.List<? extends org.spin.grpc.util.SelectionOrBuilder> 
          getSelectionsOrBuilderList() {
@@ -1290,14 +1417,14 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.Selection selections = 6;</code>
+     * <code>repeated .data.Selection selections = 7;</code>
      */
     public org.spin.grpc.util.Selection.Builder addSelectionsBuilder() {
       return getSelectionsFieldBuilder().addBuilder(
           org.spin.grpc.util.Selection.getDefaultInstance());
     }
     /**
-     * <code>repeated .data.Selection selections = 6;</code>
+     * <code>repeated .data.Selection selections = 7;</code>
      */
     public org.spin.grpc.util.Selection.Builder addSelectionsBuilder(
         int index) {
@@ -1305,7 +1432,7 @@ private static final long serialVersionUID = 0L;
           index, org.spin.grpc.util.Selection.getDefaultInstance());
     }
     /**
-     * <code>repeated .data.Selection selections = 6;</code>
+     * <code>repeated .data.Selection selections = 7;</code>
      */
     public java.util.List<org.spin.grpc.util.Selection.Builder> 
          getSelectionsBuilderList() {
@@ -1318,7 +1445,7 @@ private static final long serialVersionUID = 0L;
         selectionsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
             org.spin.grpc.util.Selection, org.spin.grpc.util.Selection.Builder, org.spin.grpc.util.SelectionOrBuilder>(
                 selections_,
-                ((bitField0_ & 0x00000020) == 0x00000020),
+                ((bitField0_ & 0x00000040) == 0x00000040),
                 getParentForChildren(),
                 isClean());
         selections_ = null;
@@ -1353,7 +1480,7 @@ private static final long serialVersionUID = 0L;
       return internalGetParameters().getMap().size();
     }
     /**
-     * <code>map&lt;string, .data.Value&gt; parameters = 7;</code>
+     * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
      */
 
     public boolean containsParameters(
@@ -1369,14 +1496,14 @@ private static final long serialVersionUID = 0L;
       return getParametersMap();
     }
     /**
-     * <code>map&lt;string, .data.Value&gt; parameters = 7;</code>
+     * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
      */
 
     public java.util.Map<java.lang.String, org.spin.grpc.util.Value> getParametersMap() {
       return internalGetParameters().getMap();
     }
     /**
-     * <code>map&lt;string, .data.Value&gt; parameters = 7;</code>
+     * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
      */
 
     public org.spin.grpc.util.Value getParametersOrDefault(
@@ -1388,7 +1515,7 @@ private static final long serialVersionUID = 0L;
       return map.containsKey(key) ? map.get(key) : defaultValue;
     }
     /**
-     * <code>map&lt;string, .data.Value&gt; parameters = 7;</code>
+     * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
      */
 
     public org.spin.grpc.util.Value getParametersOrThrow(
@@ -1408,7 +1535,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>map&lt;string, .data.Value&gt; parameters = 7;</code>
+     * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
      */
 
     public Builder removeParameters(
@@ -1427,7 +1554,7 @@ private static final long serialVersionUID = 0L;
       return internalGetMutableParameters().getMutableMap();
     }
     /**
-     * <code>map&lt;string, .data.Value&gt; parameters = 7;</code>
+     * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
      */
     public Builder putParameters(
         java.lang.String key,
@@ -1439,7 +1566,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>map&lt;string, .data.Value&gt; parameters = 7;</code>
+     * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
      */
 
     public Builder putAllParameters(

@@ -151,8 +151,9 @@ message ProcessRequest {
 	int32 tableId = 3;
 	int32 recordId = 4;
 	int32 tableSelectedId = 5;
-	repeated Selection selections = 6;
-	map<string, Value> parameters = 7;
+	string reportExportType = 6;
+	repeated Selection selections = 7;
+	map<string, Value> parameters = 8;
 }
 
 //	Process Selections
@@ -177,7 +178,7 @@ message ProcessInfoLog {
 	string log = 2;
 }
 
-//	Used for get output from report / process like PDF, HTML another result for show to end user 
+//	Used for get output from report / process like PDF, HTML another result for show to end user
 message ProcessOutput {
 	string uuid = 1;
 	string name = 2;
@@ -185,11 +186,6 @@ message ProcessOutput {
 	string fileName = 4;
 	string output = 5;
 	bytes outputStream = 6;
-	enum OuputType {
-		TEXT = 0;
-		HTML = 1;
-		FILE = 4;
-	}
 	//	Output Type
-	OuputType outputType = 7;
+	string reportExportType = 7;
 }

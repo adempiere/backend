@@ -115,4 +115,48 @@ public interface ProcessOrBuilder extends
    * <code>bool isActive = 12;</code>
    */
   boolean getIsActive();
+
+  /**
+   * <pre>
+   * Reporty Type
+   * </pre>
+   *
+   * <code>repeated .dictionary.ReportExportType reportExportTypes = 13;</code>
+   */
+  java.util.List<org.spin.grpc.util.ReportExportType> 
+      getReportExportTypesList();
+  /**
+   * <pre>
+   * Reporty Type
+   * </pre>
+   *
+   * <code>repeated .dictionary.ReportExportType reportExportTypes = 13;</code>
+   */
+  org.spin.grpc.util.ReportExportType getReportExportTypes(int index);
+  /**
+   * <pre>
+   * Reporty Type
+   * </pre>
+   *
+   * <code>repeated .dictionary.ReportExportType reportExportTypes = 13;</code>
+   */
+  int getReportExportTypesCount();
+  /**
+   * <pre>
+   * Reporty Type
+   * </pre>
+   *
+   * <code>repeated .dictionary.ReportExportType reportExportTypes = 13;</code>
+   */
+  java.util.List<? extends org.spin.grpc.util.ReportExportTypeOrBuilder> 
+      getReportExportTypesOrBuilderList();
+  /**
+   * <pre>
+   * Reporty Type
+   * </pre>
+   *
+   * <code>repeated .dictionary.ReportExportType reportExportTypes = 13;</code>
+   */
+  org.spin.grpc.util.ReportExportTypeOrBuilder getReportExportTypesOrBuilder(
+      int index);
 }

@@ -5,7 +5,7 @@ package org.spin.grpc.util;
 
 /**
  * <pre>
- *	Used for get output from report / process like PDF, HTML another result for show to end user 
+ *	Used for get output from report / process like PDF, HTML another result for show to end user
  * </pre>
  *
  * Protobuf type {@code data.ProcessOutput}
@@ -26,7 +26,7 @@ private static final long serialVersionUID = 0L;
     fileName_ = "";
     output_ = "";
     outputStream_ = com.google.protobuf.ByteString.EMPTY;
-    outputType_ = 0;
+    reportExportType_ = "";
   }
 
   @java.lang.Override
@@ -95,10 +95,10 @@ private static final long serialVersionUID = 0L;
             outputStream_ = input.readBytes();
             break;
           }
-          case 56: {
-            int rawValue = input.readEnum();
+          case 58: {
+            java.lang.String s = input.readStringRequireUtf8();
 
-            outputType_ = rawValue;
+            reportExportType_ = s;
             break;
           }
         }
@@ -123,113 +123,6 @@ private static final long serialVersionUID = 0L;
     return org.spin.grpc.util.ADempiereData.internal_static_data_ProcessOutput_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
             org.spin.grpc.util.ProcessOutput.class, org.spin.grpc.util.ProcessOutput.Builder.class);
-  }
-
-  /**
-   * Protobuf enum {@code data.ProcessOutput.OuputType}
-   */
-  public enum OuputType
-      implements com.google.protobuf.ProtocolMessageEnum {
-    /**
-     * <code>TEXT = 0;</code>
-     */
-    TEXT(0),
-    /**
-     * <code>HTML = 1;</code>
-     */
-    HTML(1),
-    /**
-     * <code>FILE = 4;</code>
-     */
-    FILE(4),
-    UNRECOGNIZED(-1),
-    ;
-
-    /**
-     * <code>TEXT = 0;</code>
-     */
-    public static final int TEXT_VALUE = 0;
-    /**
-     * <code>HTML = 1;</code>
-     */
-    public static final int HTML_VALUE = 1;
-    /**
-     * <code>FILE = 4;</code>
-     */
-    public static final int FILE_VALUE = 4;
-
-
-    public final int getNumber() {
-      if (this == UNRECOGNIZED) {
-        throw new java.lang.IllegalArgumentException(
-            "Can't get the number of an unknown enum value.");
-      }
-      return value;
-    }
-
-    /**
-     * @deprecated Use {@link #forNumber(int)} instead.
-     */
-    @java.lang.Deprecated
-    public static OuputType valueOf(int value) {
-      return forNumber(value);
-    }
-
-    public static OuputType forNumber(int value) {
-      switch (value) {
-        case 0: return TEXT;
-        case 1: return HTML;
-        case 4: return FILE;
-        default: return null;
-      }
-    }
-
-    public static com.google.protobuf.Internal.EnumLiteMap<OuputType>
-        internalGetValueMap() {
-      return internalValueMap;
-    }
-    private static final com.google.protobuf.Internal.EnumLiteMap<
-        OuputType> internalValueMap =
-          new com.google.protobuf.Internal.EnumLiteMap<OuputType>() {
-            public OuputType findValueByNumber(int number) {
-              return OuputType.forNumber(number);
-            }
-          };
-
-    public final com.google.protobuf.Descriptors.EnumValueDescriptor
-        getValueDescriptor() {
-      return getDescriptor().getValues().get(ordinal());
-    }
-    public final com.google.protobuf.Descriptors.EnumDescriptor
-        getDescriptorForType() {
-      return getDescriptor();
-    }
-    public static final com.google.protobuf.Descriptors.EnumDescriptor
-        getDescriptor() {
-      return org.spin.grpc.util.ProcessOutput.getDescriptor().getEnumTypes().get(0);
-    }
-
-    private static final OuputType[] VALUES = values();
-
-    public static OuputType valueOf(
-        com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
-      if (desc.getType() != getDescriptor()) {
-        throw new java.lang.IllegalArgumentException(
-          "EnumValueDescriptor is not for this type.");
-      }
-      if (desc.getIndex() == -1) {
-        return UNRECOGNIZED;
-      }
-      return VALUES[desc.getIndex()];
-    }
-
-    private final int value;
-
-    private OuputType(int value) {
-      this.value = value;
-    }
-
-    // @@protoc_insertion_point(enum_scope:data.ProcessOutput.OuputType)
   }
 
   public static final int UUID_FIELD_NUMBER = 1;
@@ -411,28 +304,46 @@ private static final long serialVersionUID = 0L;
     return outputStream_;
   }
 
-  public static final int OUTPUTTYPE_FIELD_NUMBER = 7;
-  private int outputType_;
+  public static final int REPORTEXPORTTYPE_FIELD_NUMBER = 7;
+  private volatile java.lang.Object reportExportType_;
   /**
    * <pre>
    *	Output Type
    * </pre>
    *
-   * <code>.data.ProcessOutput.OuputType outputType = 7;</code>
+   * <code>string reportExportType = 7;</code>
    */
-  public int getOutputTypeValue() {
-    return outputType_;
+  public java.lang.String getReportExportType() {
+    java.lang.Object ref = reportExportType_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      reportExportType_ = s;
+      return s;
+    }
   }
   /**
    * <pre>
    *	Output Type
    * </pre>
    *
-   * <code>.data.ProcessOutput.OuputType outputType = 7;</code>
+   * <code>string reportExportType = 7;</code>
    */
-  public org.spin.grpc.util.ProcessOutput.OuputType getOutputType() {
-    org.spin.grpc.util.ProcessOutput.OuputType result = org.spin.grpc.util.ProcessOutput.OuputType.valueOf(outputType_);
-    return result == null ? org.spin.grpc.util.ProcessOutput.OuputType.UNRECOGNIZED : result;
+  public com.google.protobuf.ByteString
+      getReportExportTypeBytes() {
+    java.lang.Object ref = reportExportType_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      reportExportType_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
   }
 
   private byte memoizedIsInitialized = -1;
@@ -465,8 +376,8 @@ private static final long serialVersionUID = 0L;
     if (!outputStream_.isEmpty()) {
       output.writeBytes(6, outputStream_);
     }
-    if (outputType_ != org.spin.grpc.util.ProcessOutput.OuputType.TEXT.getNumber()) {
-      output.writeEnum(7, outputType_);
+    if (!getReportExportTypeBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 7, reportExportType_);
     }
     unknownFields.writeTo(output);
   }
@@ -495,9 +406,8 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeBytesSize(6, outputStream_);
     }
-    if (outputType_ != org.spin.grpc.util.ProcessOutput.OuputType.TEXT.getNumber()) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeEnumSize(7, outputType_);
+    if (!getReportExportTypeBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, reportExportType_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -527,7 +437,8 @@ private static final long serialVersionUID = 0L;
         .equals(other.getOutput());
     result = result && getOutputStream()
         .equals(other.getOutputStream());
-    result = result && outputType_ == other.outputType_;
+    result = result && getReportExportType()
+        .equals(other.getReportExportType());
     result = result && unknownFields.equals(other.unknownFields);
     return result;
   }
@@ -551,8 +462,8 @@ private static final long serialVersionUID = 0L;
     hash = (53 * hash) + getOutput().hashCode();
     hash = (37 * hash) + OUTPUTSTREAM_FIELD_NUMBER;
     hash = (53 * hash) + getOutputStream().hashCode();
-    hash = (37 * hash) + OUTPUTTYPE_FIELD_NUMBER;
-    hash = (53 * hash) + outputType_;
+    hash = (37 * hash) + REPORTEXPORTTYPE_FIELD_NUMBER;
+    hash = (53 * hash) + getReportExportType().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -648,7 +559,7 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   *	Used for get output from report / process like PDF, HTML another result for show to end user 
+   *	Used for get output from report / process like PDF, HTML another result for show to end user
    * </pre>
    *
    * Protobuf type {@code data.ProcessOutput}
@@ -698,7 +609,7 @@ private static final long serialVersionUID = 0L;
 
       outputStream_ = com.google.protobuf.ByteString.EMPTY;
 
-      outputType_ = 0;
+      reportExportType_ = "";
 
       return this;
     }
@@ -728,7 +639,7 @@ private static final long serialVersionUID = 0L;
       result.fileName_ = fileName_;
       result.output_ = output_;
       result.outputStream_ = outputStream_;
-      result.outputType_ = outputType_;
+      result.reportExportType_ = reportExportType_;
       onBuilt();
       return result;
     }
@@ -793,8 +704,9 @@ private static final long serialVersionUID = 0L;
       if (other.getOutputStream() != com.google.protobuf.ByteString.EMPTY) {
         setOutputStream(other.getOutputStream());
       }
-      if (other.outputType_ != 0) {
-        setOutputTypeValue(other.getOutputTypeValue());
+      if (!other.getReportExportType().isEmpty()) {
+        reportExportType_ = other.reportExportType_;
+        onChanged();
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -1197,53 +1109,60 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private int outputType_ = 0;
+    private java.lang.Object reportExportType_ = "";
     /**
      * <pre>
      *	Output Type
      * </pre>
      *
-     * <code>.data.ProcessOutput.OuputType outputType = 7;</code>
+     * <code>string reportExportType = 7;</code>
      */
-    public int getOutputTypeValue() {
-      return outputType_;
-    }
-    /**
-     * <pre>
-     *	Output Type
-     * </pre>
-     *
-     * <code>.data.ProcessOutput.OuputType outputType = 7;</code>
-     */
-    public Builder setOutputTypeValue(int value) {
-      outputType_ = value;
-      onChanged();
-      return this;
-    }
-    /**
-     * <pre>
-     *	Output Type
-     * </pre>
-     *
-     * <code>.data.ProcessOutput.OuputType outputType = 7;</code>
-     */
-    public org.spin.grpc.util.ProcessOutput.OuputType getOutputType() {
-      org.spin.grpc.util.ProcessOutput.OuputType result = org.spin.grpc.util.ProcessOutput.OuputType.valueOf(outputType_);
-      return result == null ? org.spin.grpc.util.ProcessOutput.OuputType.UNRECOGNIZED : result;
-    }
-    /**
-     * <pre>
-     *	Output Type
-     * </pre>
-     *
-     * <code>.data.ProcessOutput.OuputType outputType = 7;</code>
-     */
-    public Builder setOutputType(org.spin.grpc.util.ProcessOutput.OuputType value) {
-      if (value == null) {
-        throw new NullPointerException();
+    public java.lang.String getReportExportType() {
+      java.lang.Object ref = reportExportType_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        reportExportType_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
       }
-      
-      outputType_ = value.getNumber();
+    }
+    /**
+     * <pre>
+     *	Output Type
+     * </pre>
+     *
+     * <code>string reportExportType = 7;</code>
+     */
+    public com.google.protobuf.ByteString
+        getReportExportTypeBytes() {
+      java.lang.Object ref = reportExportType_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        reportExportType_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <pre>
+     *	Output Type
+     * </pre>
+     *
+     * <code>string reportExportType = 7;</code>
+     */
+    public Builder setReportExportType(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
+      reportExportType_ = value;
       onChanged();
       return this;
     }
@@ -1252,11 +1171,29 @@ private static final long serialVersionUID = 0L;
      *	Output Type
      * </pre>
      *
-     * <code>.data.ProcessOutput.OuputType outputType = 7;</code>
+     * <code>string reportExportType = 7;</code>
      */
-    public Builder clearOutputType() {
+    public Builder clearReportExportType() {
       
-      outputType_ = 0;
+      reportExportType_ = getDefaultInstance().getReportExportType();
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     *	Output Type
+     * </pre>
+     *
+     * <code>string reportExportType = 7;</code>
+     */
+    public Builder setReportExportTypeBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      
+      reportExportType_ = value;
       onChanged();
       return this;
     }

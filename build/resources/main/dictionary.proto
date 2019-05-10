@@ -226,6 +226,8 @@ message Process {
 	bool isDirectPrint = 10;
 	repeated Field parameters = 11;
 	bool isActive = 12;
+	// Reporty Type
+	repeated ReportExportType reportExportTypes = 13;
 }
 
 // Form
@@ -284,4 +286,11 @@ message Reference {
 	string validationCode = 6;
 	// External Info
 	repeated ZoomWindow windows = 7;
+}
+
+// Report Type for Export
+message ReportExportType {
+	string name = 1;
+	string description = 2;
+	string type = 3;
 }

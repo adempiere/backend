@@ -67,15 +67,16 @@ public interface ProcessOutputOrBuilder extends
    *	Output Type
    * </pre>
    *
-   * <code>.data.ProcessOutput.OuputType outputType = 7;</code>
+   * <code>string reportExportType = 7;</code>
    */
-  int getOutputTypeValue();
+  java.lang.String getReportExportType();
   /**
    * <pre>
    *	Output Type
    * </pre>
    *
-   * <code>.data.ProcessOutput.OuputType outputType = 7;</code>
+   * <code>string reportExportType = 7;</code>
    */
-  org.spin.grpc.util.ProcessOutput.OuputType getOutputType();
+  com.google.protobuf.ByteString
+      getReportExportTypeBytes();
 }

@@ -46,35 +46,45 @@ public interface ProcessRequestOrBuilder extends
   int getTableSelectedId();
 
   /**
-   * <code>repeated .data.Selection selections = 6;</code>
+   * <code>string reportExportType = 6;</code>
+   */
+  java.lang.String getReportExportType();
+  /**
+   * <code>string reportExportType = 6;</code>
+   */
+  com.google.protobuf.ByteString
+      getReportExportTypeBytes();
+
+  /**
+   * <code>repeated .data.Selection selections = 7;</code>
    */
   java.util.List<org.spin.grpc.util.Selection> 
       getSelectionsList();
   /**
-   * <code>repeated .data.Selection selections = 6;</code>
+   * <code>repeated .data.Selection selections = 7;</code>
    */
   org.spin.grpc.util.Selection getSelections(int index);
   /**
-   * <code>repeated .data.Selection selections = 6;</code>
+   * <code>repeated .data.Selection selections = 7;</code>
    */
   int getSelectionsCount();
   /**
-   * <code>repeated .data.Selection selections = 6;</code>
+   * <code>repeated .data.Selection selections = 7;</code>
    */
   java.util.List<? extends org.spin.grpc.util.SelectionOrBuilder> 
       getSelectionsOrBuilderList();
   /**
-   * <code>repeated .data.Selection selections = 6;</code>
+   * <code>repeated .data.Selection selections = 7;</code>
    */
   org.spin.grpc.util.SelectionOrBuilder getSelectionsOrBuilder(
       int index);
 
   /**
-   * <code>map&lt;string, .data.Value&gt; parameters = 7;</code>
+   * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
    */
   int getParametersCount();
   /**
-   * <code>map&lt;string, .data.Value&gt; parameters = 7;</code>
+   * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
    */
   boolean containsParameters(
       java.lang.String key);
@@ -85,19 +95,19 @@ public interface ProcessRequestOrBuilder extends
   java.util.Map<java.lang.String, org.spin.grpc.util.Value>
   getParameters();
   /**
-   * <code>map&lt;string, .data.Value&gt; parameters = 7;</code>
+   * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
    */
   java.util.Map<java.lang.String, org.spin.grpc.util.Value>
   getParametersMap();
   /**
-   * <code>map&lt;string, .data.Value&gt; parameters = 7;</code>
+   * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
    */
 
   org.spin.grpc.util.Value getParametersOrDefault(
       java.lang.String key,
       org.spin.grpc.util.Value defaultValue);
   /**
-   * <code>map&lt;string, .data.Value&gt; parameters = 7;</code>
+   * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
    */
 
   org.spin.grpc.util.Value getParametersOrThrow(

@@ -39,6 +39,7 @@ import org.compiere.model.MLookupInfo;
 import org.compiere.model.MMessage;
 import org.compiere.model.MProcess;
 import org.compiere.model.MProcessPara;
+import org.compiere.model.MReportView;
 import org.compiere.model.MSession;
 import org.compiere.model.MTab;
 import org.compiere.model.MTable;
@@ -57,6 +58,8 @@ import org.spin.grpc.util.DictionaryServiceGrpc.DictionaryServiceImplBase;
 import org.spin.model.MADContextInfo;
 import org.spin.model.MADFieldCondition;
 import org.spin.model.MADFieldDefinition;
+import org.spin.util.AbstractExportFormat;
+import org.spin.util.ReportExportHandler;
 
 import io.grpc.stub.StreamObserver;
 
@@ -583,6 +586,21 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setIsDirectPrint(process.isDirectPrint())
 				.setIsReport(process.isReport())
 				.setIsActive(process.isActive());
+		//	Report Types
+		if(process.isReport()) {
+			MReportView reportView = null;
+			if(process.getAD_ReportView_ID() > 0) {
+				reportView = MReportView.get(context, process.getAD_ReportView_ID());
+			}
+			ReportExportHandler exportHandler = new ReportExportHandler(Env.getCtx(), reportView);
+			for(AbstractExportFormat reportType : exportHandler.getExportFormatList()) {
+				ReportExportType.Builder reportExportType = ReportExportType.newBuilder();
+				reportExportType.setName(validateNull(reportType.getName()));
+				reportExportType.setDescription(validateNull(reportType.getName()));
+				reportExportType.setType(validateNull(reportType.getExtension()));
+				builder.addReportExportTypes(reportExportType.build());
+			}
+		}
 		//	For parameters
 		if(withParams) {
 			for(MProcessPara parameter : process.getParameters()) {
