@@ -172,7 +172,7 @@ public final class ADempiereData {
       "sOutput\022\014\n\004uuid\030\001 \001(\t\022\014\n\004name\030\002 \001(\t\022\023\n\013d" +
       "escription\030\003 \001(\t\022\020\n\010fileName\030\004 \001(\t\022\016\n\006ou" +
       "tput\030\005 \001(\t\022\024\n\014outputStream\030\006 \001(\014\022\030\n\020repo" +
-      "rtExportType\030\007 \001(\t2\237\003\n\013DataService\022>\n\rRe" +
+      "rtExportType\030\007 \001(\t2\344\003\n\013DataService\022>\n\rRe" +
       "questObject\022\030.data.ValueObjectRequest\032\021." +
       "data.ValueObject\"\000\022F\n\021RequestObjectList\022" +
       "\030.data.ValueObjectRequest\032\025.data.ValueOb" +
@@ -182,9 +182,10 @@ public final class ADempiereData {
       "t\032\025.data.ValueObjectList\"\000\022?\n\016RequestCal" +
       "lout\022\024.data.CalloutRequest\032\025.data.Callou" +
       "tResponse\"\000\022?\n\016RequestProcess\022\024.data.Pro" +
-      "cessRequest\032\025.data.ProcessResponse\"\000B+\n\022" +
-      "org.spin.grpc.utilB\rADempiereDataP\001\242\002\003HL" +
-      "Wb\006proto3"
+      "cessRequest\032\025.data.ProcessResponse\"\000\022C\n\016" +
+      "RequestBrowser\022\030.data.ValueObjectRequest" +
+      "\032\025.data.ValueObjectList\"\000B+\n\022org.spin.gr" +
+      "pc.utilB\rADempiereDataP\001\242\002\003HLWb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {

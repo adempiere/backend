@@ -156,8 +156,8 @@ public class DataServiceImplementation extends DataServiceImplBase {
 			}
 			log.fine("Lookup List Requested = " + request.getUuid());
 			Properties context = getContext(request.getClientRequest());
-			ValueObjectList.Builder entutyValueList = convertLookupList(context, request);
-			responseObserver.onNext(entutyValueList.build());
+			ValueObjectList.Builder entityValueList = convertLookupList(context, request);
+			responseObserver.onNext(entityValueList.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
@@ -176,6 +176,25 @@ public class DataServiceImplementation extends DataServiceImplBase {
 			Properties context = getContext(request.getClientRequest());
 			ProcessResponse.Builder processReponse = runProcess(context, request, request.getClientRequest().getLanguage());
 			responseObserver.onNext(processReponse.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(e);
+		}
+	}
+	
+	@Override
+	public void requestBrowser(ValueObjectRequest request, StreamObserver<ValueObjectList> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Browser Requested is Null");
+			}
+			log.fine("Object List Requested = " + request);
+			Properties context = getContext(request.getClientRequest());
+			
+			ValueObjectList.Builder entutyValueList = convertObjectList(context, request);
+			
+			responseObserver.onNext(entutyValueList.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
@@ -259,7 +278,11 @@ public class DataServiceImplementation extends DataServiceImplBase {
 				//	Type
 				output.setReportExportType(request.getReportExportType());
 				ByteString resultFile = ByteString.readFrom(new FileInputStream(reportFile));
-				output.setOutputBytes(resultFile);
+				if(request.getReportExportType().endsWith("html")
+						|| request.getReportExportType().endsWith("txt")) {
+					output.setOutputBytes(resultFile);
+				}
+				output.setOutputStream(resultFile);
 				response.setOutput(output.build());
 			}
 		}
@@ -711,6 +734,7 @@ public class DataServiceImplementation extends DataServiceImplBase {
 		
 		if(keyValue instanceof Integer) {
 			builder.setId((Integer) keyValue);
+			builder.putValues(KEY_COLUMN_KEY, Value.newBuilder().setValueType(ValueType.INTEGER).setIntValue((Integer) keyValue).build());
 		} else {
 			builder.putValues(KEY_COLUMN_KEY, Value.newBuilder().setValueType(ValueType.STRING).setStringValue(validateNull((String) keyValue)).build());
 		}

@@ -35,6 +35,8 @@ service DataService {
 	rpc RequestCallout(CalloutRequest) returns (CalloutResponse) {}
 	//	Request a Process / Report
 	rpc RequestProcess(ProcessRequest) returns (ProcessResponse) {}
+	//	Request Browser Data
+	rpc RequestBrowser(ValueObjectRequest) returns (ValueObjectList) {}
 }
 
 // The client request contains client info for request.
