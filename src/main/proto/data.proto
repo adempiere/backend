@@ -36,7 +36,7 @@ service DataService {
 	//	Request a Process / Report
 	rpc RequestProcess(ProcessRequest) returns (ProcessResponse) {}
 	//	Request Browser Data
-	rpc RequestBrowser(ValueObjectRequest) returns (ValueObjectList) {}
+	rpc RequestBrowser(BrowserRequest) returns (ValueObjectList) {}
 	//	Request Process Activity from current session
 	rpc RequestProcessActivity(ProcessActivityRequest) returns (ProcessResponseList) {}
 }
@@ -166,16 +166,11 @@ message ProcessRequest {
 	repeated KeyValue parameters = 8;
 }
 
-// Process Request Parameter
-message ProcessRequestParameter {
-	string columnName = 1;
-	Value value = 2;
-}
-
 // Process Activity Request
 message ProcessActivityRequest {
 	ClientRequest clientRequest = 1;
 	string userUuid = 2;
+	string instanceUuid = 3;
 }
 
 //	Process Selections
@@ -218,4 +213,11 @@ message ProcessOutput {
 	bytes outputStream = 6;
 	//	Output Type
 	string reportExportType = 7;
+}
+
+// Browser request
+message BrowserRequest {
+	string uuid = 1;
+	ClientRequest clientRequest = 2;
+	repeated KeyValue parameters = 3;
 }

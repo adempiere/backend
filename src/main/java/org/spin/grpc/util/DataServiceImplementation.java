@@ -187,7 +187,7 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	}
 	
 	@Override
-	public void requestBrowser(ValueObjectRequest request, StreamObserver<ValueObjectList> responseObserver) {
+	public void requestBrowser(BrowserRequest request, StreamObserver<ValueObjectList> responseObserver) {
 		try {
 			if(request == null) {
 				throw new AdempiereException("Browser Requested is Null");
@@ -195,7 +195,7 @@ public class DataServiceImplementation extends DataServiceImplBase {
 			log.fine("Object List Requested = " + request);
 			Properties context = getContext(request.getClientRequest());
 			
-			ValueObjectList.Builder entityValueList = convertObjectList(context, request);
+			ValueObjectList.Builder entityValueList = convertBrowserList(context, request);
 			
 			responseObserver.onNext(entityValueList.build());
 			responseObserver.onCompleted();
@@ -596,6 +596,37 @@ public class DataServiceImplementation extends DataServiceImplBase {
 		//	Return
 		return builder;
 	}
+
+	/**
+	 * Convert Object to list
+	 * @param request
+	 * @return
+	 */
+	private ValueObjectList.Builder convertBrowserList(Properties context, BrowserRequest request) {
+//		Criteria criteria = request.getCriteria();
+//		StringBuffer whereClause = new StringBuffer();
+//		List<Object> params = new ArrayList<>();
+//		if(!Util.isEmpty(request.getUuid())) {
+//			whereClause.append(I_AD_Element.COLUMNNAME_UUID + " = ?");
+//			params.add(request.getUuid());
+//		} else if(!Util.isEmpty(criteria.getWhereClause())) {
+//			whereClause.append("(").append(criteria.getWhereClause()).append(")");
+//		}
+//		//	
+//		List<PO> entityList = new Query(context, criteria.getTableName(), whereClause.toString(), null)
+//				.setParameters(params)
+//				.<PO>list();
+		//	
+		ValueObjectList.Builder builder = ValueObjectList.newBuilder()
+				.setRecordCount(10);//entityList.size());
+		//	Convert List
+//		for(PO entity : entityList) {
+//			ValueObject.Builder valueObject = convertObject(context, entity);
+//			builder.addRecords(valueObject.build());
+//		}
+		//	Return
+		return builder;
+	}
 	
 	/**
 	 * Convert request for process activity to builder
@@ -609,6 +640,9 @@ public class DataServiceImplementation extends DataServiceImplBase {
 		if(!Util.isEmpty(request.getUserUuid())) {
 			uuid = request.getUserUuid();
 			sql = "EXISTS(SELECT 1 FROM AD_User WHERE UUID = ? AND AD_User_ID = AD_PInstance.AD_User_ID)";
+		} else if(!Util.isEmpty(request.getInstanceUuid())) {
+			uuid = request.getInstanceUuid();
+			sql = "UUID = ?";
 		} else {
 			uuid = request.getClientRequest().getSessionUuid();
 			sql = "EXISTS(SELECT 1 FROM AD_Session WHERE UUID = ? AND CreatedBy = AD_PInstance.AD_User_ID)";

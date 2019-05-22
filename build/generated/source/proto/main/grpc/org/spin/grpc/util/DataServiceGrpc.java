@@ -222,28 +222,28 @@ public final class DataServiceGrpc {
      return getRequestProcessMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.ValueObjectRequest,
+  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.BrowserRequest,
       org.spin.grpc.util.ValueObjectList> getRequestBrowserMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "RequestBrowser",
-      requestType = org.spin.grpc.util.ValueObjectRequest.class,
+      requestType = org.spin.grpc.util.BrowserRequest.class,
       responseType = org.spin.grpc.util.ValueObjectList.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<org.spin.grpc.util.ValueObjectRequest,
+  public static io.grpc.MethodDescriptor<org.spin.grpc.util.BrowserRequest,
       org.spin.grpc.util.ValueObjectList> getRequestBrowserMethod() {
-    io.grpc.MethodDescriptor<org.spin.grpc.util.ValueObjectRequest, org.spin.grpc.util.ValueObjectList> getRequestBrowserMethod;
+    io.grpc.MethodDescriptor<org.spin.grpc.util.BrowserRequest, org.spin.grpc.util.ValueObjectList> getRequestBrowserMethod;
     if ((getRequestBrowserMethod = DataServiceGrpc.getRequestBrowserMethod) == null) {
       synchronized (DataServiceGrpc.class) {
         if ((getRequestBrowserMethod = DataServiceGrpc.getRequestBrowserMethod) == null) {
           DataServiceGrpc.getRequestBrowserMethod = getRequestBrowserMethod = 
-              io.grpc.MethodDescriptor.<org.spin.grpc.util.ValueObjectRequest, org.spin.grpc.util.ValueObjectList>newBuilder()
+              io.grpc.MethodDescriptor.<org.spin.grpc.util.BrowserRequest, org.spin.grpc.util.ValueObjectList>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
                   "data.DataService", "RequestBrowser"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  org.spin.grpc.util.ValueObjectRequest.getDefaultInstance()))
+                  org.spin.grpc.util.BrowserRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.ValueObjectList.getDefaultInstance()))
                   .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("RequestBrowser"))
@@ -381,7 +381,7 @@ public final class DataServiceGrpc {
      *	Request Browser Data
      * </pre>
      */
-    public void requestBrowser(org.spin.grpc.util.ValueObjectRequest request,
+    public void requestBrowser(org.spin.grpc.util.BrowserRequest request,
         io.grpc.stub.StreamObserver<org.spin.grpc.util.ValueObjectList> responseObserver) {
       asyncUnimplementedUnaryCall(getRequestBrowserMethod(), responseObserver);
     }
@@ -444,7 +444,7 @@ public final class DataServiceGrpc {
             getRequestBrowserMethod(),
             asyncUnaryCall(
               new MethodHandlers<
-                org.spin.grpc.util.ValueObjectRequest,
+                org.spin.grpc.util.BrowserRequest,
                 org.spin.grpc.util.ValueObjectList>(
                   this, METHODID_REQUEST_BROWSER)))
           .addMethod(
@@ -550,7 +550,7 @@ public final class DataServiceGrpc {
      *	Request Browser Data
      * </pre>
      */
-    public void requestBrowser(org.spin.grpc.util.ValueObjectRequest request,
+    public void requestBrowser(org.spin.grpc.util.BrowserRequest request,
         io.grpc.stub.StreamObserver<org.spin.grpc.util.ValueObjectList> responseObserver) {
       asyncUnaryCall(
           getChannel().newCall(getRequestBrowserMethod(), getCallOptions()), request, responseObserver);
@@ -654,7 +654,7 @@ public final class DataServiceGrpc {
      *	Request Browser Data
      * </pre>
      */
-    public org.spin.grpc.util.ValueObjectList requestBrowser(org.spin.grpc.util.ValueObjectRequest request) {
+    public org.spin.grpc.util.ValueObjectList requestBrowser(org.spin.grpc.util.BrowserRequest request) {
       return blockingUnaryCall(
           getChannel(), getRequestBrowserMethod(), getCallOptions(), request);
     }
@@ -763,7 +763,7 @@ public final class DataServiceGrpc {
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.ValueObjectList> requestBrowser(
-        org.spin.grpc.util.ValueObjectRequest request) {
+        org.spin.grpc.util.BrowserRequest request) {
       return futureUnaryCall(
           getChannel().newCall(getRequestBrowserMethod(), getCallOptions()), request);
     }
@@ -831,7 +831,7 @@ public final class DataServiceGrpc {
               (io.grpc.stub.StreamObserver<org.spin.grpc.util.ProcessResponse>) responseObserver);
           break;
         case METHODID_REQUEST_BROWSER:
-          serviceImpl.requestBrowser((org.spin.grpc.util.ValueObjectRequest) request,
+          serviceImpl.requestBrowser((org.spin.grpc.util.BrowserRequest) request,
               (io.grpc.stub.StreamObserver<org.spin.grpc.util.ValueObjectList>) responseObserver);
           break;
         case METHODID_REQUEST_PROCESS_ACTIVITY:

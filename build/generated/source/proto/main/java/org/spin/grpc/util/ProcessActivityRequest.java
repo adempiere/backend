@@ -21,6 +21,7 @@ private static final long serialVersionUID = 0L;
   }
   private ProcessActivityRequest() {
     userUuid_ = "";
+    instanceUuid_ = "";
   }
 
   @java.lang.Override
@@ -71,6 +72,12 @@ private static final long serialVersionUID = 0L;
             java.lang.String s = input.readStringRequireUtf8();
 
             userUuid_ = s;
+            break;
+          }
+          case 26: {
+            java.lang.String s = input.readStringRequireUtf8();
+
+            instanceUuid_ = s;
             break;
           }
         }
@@ -152,6 +159,40 @@ private static final long serialVersionUID = 0L;
     }
   }
 
+  public static final int INSTANCEUUID_FIELD_NUMBER = 3;
+  private volatile java.lang.Object instanceUuid_;
+  /**
+   * <code>string instanceUuid = 3;</code>
+   */
+  public java.lang.String getInstanceUuid() {
+    java.lang.Object ref = instanceUuid_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      instanceUuid_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string instanceUuid = 3;</code>
+   */
+  public com.google.protobuf.ByteString
+      getInstanceUuidBytes() {
+    java.lang.Object ref = instanceUuid_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      instanceUuid_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
     byte isInitialized = memoizedIsInitialized;
@@ -170,6 +211,9 @@ private static final long serialVersionUID = 0L;
     if (!getUserUuidBytes().isEmpty()) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 2, userUuid_);
     }
+    if (!getInstanceUuidBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 3, instanceUuid_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -184,6 +228,9 @@ private static final long serialVersionUID = 0L;
     }
     if (!getUserUuidBytes().isEmpty()) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, userUuid_);
+    }
+    if (!getInstanceUuidBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, instanceUuid_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -208,6 +255,8 @@ private static final long serialVersionUID = 0L;
     }
     result = result && getUserUuid()
         .equals(other.getUserUuid());
+    result = result && getInstanceUuid()
+        .equals(other.getInstanceUuid());
     result = result && unknownFields.equals(other.unknownFields);
     return result;
   }
@@ -225,6 +274,8 @@ private static final long serialVersionUID = 0L;
     }
     hash = (37 * hash) + USERUUID_FIELD_NUMBER;
     hash = (53 * hash) + getUserUuid().hashCode();
+    hash = (37 * hash) + INSTANCEUUID_FIELD_NUMBER;
+    hash = (53 * hash) + getInstanceUuid().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -366,6 +417,8 @@ private static final long serialVersionUID = 0L;
       }
       userUuid_ = "";
 
+      instanceUuid_ = "";
+
       return this;
     }
 
@@ -394,6 +447,7 @@ private static final long serialVersionUID = 0L;
         result.clientRequest_ = clientRequestBuilder_.build();
       }
       result.userUuid_ = userUuid_;
+      result.instanceUuid_ = instanceUuid_;
       onBuilt();
       return result;
     }
@@ -440,6 +494,10 @@ private static final long serialVersionUID = 0L;
       }
       if (!other.getUserUuid().isEmpty()) {
         userUuid_ = other.userUuid_;
+        onChanged();
+      }
+      if (!other.getInstanceUuid().isEmpty()) {
+        instanceUuid_ = other.instanceUuid_;
         onChanged();
       }
       this.mergeUnknownFields(other.unknownFields);
@@ -651,6 +709,75 @@ private static final long serialVersionUID = 0L;
   checkByteStringIsUtf8(value);
       
       userUuid_ = value;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object instanceUuid_ = "";
+    /**
+     * <code>string instanceUuid = 3;</code>
+     */
+    public java.lang.String getInstanceUuid() {
+      java.lang.Object ref = instanceUuid_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        instanceUuid_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string instanceUuid = 3;</code>
+     */
+    public com.google.protobuf.ByteString
+        getInstanceUuidBytes() {
+      java.lang.Object ref = instanceUuid_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        instanceUuid_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string instanceUuid = 3;</code>
+     */
+    public Builder setInstanceUuid(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
+      instanceUuid_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string instanceUuid = 3;</code>
+     */
+    public Builder clearInstanceUuid() {
+      
+      instanceUuid_ = getDefaultInstance().getInstanceUuid();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string instanceUuid = 3;</code>
+     */
+    public Builder setInstanceUuidBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      
+      instanceUuid_ = value;
       onChanged();
       return this;
     }

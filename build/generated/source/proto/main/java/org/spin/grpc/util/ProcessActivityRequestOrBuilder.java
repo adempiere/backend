@@ -29,4 +29,14 @@ public interface ProcessActivityRequestOrBuilder extends
    */
   com.google.protobuf.ByteString
       getUserUuidBytes();
+
+  /**
+   * <code>string instanceUuid = 3;</code>
+   */
+  java.lang.String getInstanceUuid();
+  /**
+   * <code>string instanceUuid = 3;</code>
+   */
+  com.google.protobuf.ByteString
+      getInstanceUuidBytes();
 }
