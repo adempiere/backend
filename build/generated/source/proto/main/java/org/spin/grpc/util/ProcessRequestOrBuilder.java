@@ -80,36 +80,26 @@ public interface ProcessRequestOrBuilder extends
       int index);
 
   /**
-   * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
+   * <code>repeated .data.KeyValue parameters = 8;</code>
+   */
+  java.util.List<org.spin.grpc.util.KeyValue> 
+      getParametersList();
+  /**
+   * <code>repeated .data.KeyValue parameters = 8;</code>
+   */
+  org.spin.grpc.util.KeyValue getParameters(int index);
+  /**
+   * <code>repeated .data.KeyValue parameters = 8;</code>
    */
   int getParametersCount();
   /**
-   * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
+   * <code>repeated .data.KeyValue parameters = 8;</code>
    */
-  boolean containsParameters(
-      java.lang.String key);
+  java.util.List<? extends org.spin.grpc.util.KeyValueOrBuilder> 
+      getParametersOrBuilderList();
   /**
-   * Use {@link #getParametersMap()} instead.
+   * <code>repeated .data.KeyValue parameters = 8;</code>
    */
-  @java.lang.Deprecated
-  java.util.Map<java.lang.String, org.spin.grpc.util.Value>
-  getParameters();
-  /**
-   * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
-   */
-  java.util.Map<java.lang.String, org.spin.grpc.util.Value>
-  getParametersMap();
-  /**
-   * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
-   */
-
-  org.spin.grpc.util.Value getParametersOrDefault(
-      java.lang.String key,
-      org.spin.grpc.util.Value defaultValue);
-  /**
-   * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
-   */
-
-  org.spin.grpc.util.Value getParametersOrThrow(
-      java.lang.String key);
+  org.spin.grpc.util.KeyValueOrBuilder getParametersOrBuilder(
+      int index);
 }

@@ -28,8 +28,6 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -43,10 +41,10 @@ import org.compiere.model.GridField;
 import org.compiere.model.GridTab;
 import org.compiere.model.I_AD_Element;
 import org.compiere.model.I_AD_PInstance;
+import org.compiere.model.I_AD_PInstance_Log;
 import org.compiere.model.I_AD_Process;
 import org.compiere.model.I_AD_Session;
 import org.compiere.model.MPInstance;
-import org.compiere.model.MPInstanceLog;
 import org.compiere.model.MPInstancePara;
 import org.compiere.model.MProcess;
 import org.compiere.model.MRole;
@@ -55,12 +53,14 @@ import org.compiere.model.MSession;
 import org.compiere.model.PO;
 import org.compiere.model.POInfo;
 import org.compiere.model.Query;
+import org.compiere.model.X_AD_PInstance_Log;
 import org.compiere.process.ProcessInfo;
 import org.compiere.util.CCache;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
+import org.compiere.util.Msg;
 import org.compiere.util.Util;
 import org.eevolution.service.dsl.ProcessBuilder;
 import org.spin.grpc.util.DataServiceGrpc.DataServiceImplBase;
@@ -85,8 +85,7 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	@Override
 	public void requestObject(ValueObjectRequest request, StreamObserver<ValueObject> responseObserver) {
 		try {
-			if(request == null
-					|| Util.isEmpty(request.getUuid())) {
+			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
 			log.fine("Object Requested = " + request.getUuid());
@@ -121,8 +120,7 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	@Override
 	public void requestObjectList(ValueObjectRequest request, StreamObserver<ValueObjectList> responseObserver) {
 		try {
-			if(request == null
-					|| Util.isEmpty(request.getUuid())) {
+			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
 			log.fine("Object List Requested = " + request.getUuid());
@@ -208,14 +206,13 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	}
 	
 	@Override
-	public void requestProcessActivity(ClientRequest request, StreamObserver<ProcessResponseList> responseObserver) {
+	public void requestProcessActivity(ProcessActivityRequest request, StreamObserver<ProcessResponseList> responseObserver) {
 		try {
-			if(request == null
-					|| Util.isEmpty(request.getSessionUuid())) {
+			if(request == null) {
 				throw new AdempiereException("Process Activity Requested is Null");
 			}
 			log.fine("Object List Requested = " + request);
-			Properties context = getContext(request);
+			Properties context = getContext(request.getClientRequest());
 			ProcessResponseList.Builder entityValueList = convertProcessActivity(context, request);
 			responseObserver.onNext(entityValueList.build());
 			responseObserver.onCompleted();
@@ -261,14 +258,14 @@ public class DataServiceImplementation extends DataServiceImplBase {
 			for(Selection selectionKey : request.getSelectionsList()) {
 				selectionKeys.add(selectionKey.getSelectionId());
 				if(selectionKey.getValuesCount() > 0) {
-					selection.put(selectionKey.getSelectionId(), convertValues(selectionKey.getValuesMap()));
+					selection.put(selectionKey.getSelectionId(), convertValues(selectionKey.getValuesList()));
 				}
 			}
 			builder.withSelectedRecordsIds(request.getTableSelectedId(), selectionKeys, selection);
 		}
 		//	Parameters
 		if(request.getParametersCount() > 0) {
-			for(Entry<String, Value> parameter : request.getParametersMap().entrySet()) {
+			for(KeyValue parameter : request.getParametersList()) {
 				Object value = getValueFromType(parameter.getValue());
 				if(value != null) {
 					builder.withParameter(parameter.getKey(), value);
@@ -330,10 +327,24 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	 * @param values
 	 * @return
 	 */
-	private LinkedHashMap<String, Object> convertValues(Map<String, Value> values) {
+//	private LinkedHashMap<String, Object> convertValues(Map<String, Value> values) {
+//		LinkedHashMap<String, Object> convertedValues = new LinkedHashMap<>();
+//		for(Entry<String, Value> value : values.entrySet()) {
+//			//	Convert value
+//			convertedValues.put(value.getKey(), getValueFromType(value.getValue()));
+//		}
+//		//	
+//		return convertedValues;
+//	}
+	
+	/**
+	 * Convert Selection values from gRPC to ADempiere values
+	 * @param values
+	 * @return
+	 */
+	private LinkedHashMap<String, Object> convertValues(List<KeyValue> values) {
 		LinkedHashMap<String, Object> convertedValues = new LinkedHashMap<>();
-		for(Entry<String, Value> value : values.entrySet()) {
-			//	Convert value
+		for(KeyValue value : values) {
 			convertedValues.put(value.getKey(), getValueFromType(value.getValue()));
 		}
 		//	
@@ -592,10 +603,20 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	 * @param request
 	 * @return
 	 */
-	private ProcessResponseList.Builder convertProcessActivity(Properties context, ClientRequest request) {
+	private ProcessResponseList.Builder convertProcessActivity(Properties context, ProcessActivityRequest request) {
+		String sql = null;
+		String uuid = null;
+		if(!Util.isEmpty(request.getUserUuid())) {
+			uuid = request.getUserUuid();
+			sql = "EXISTS(SELECT 1 FROM AD_User WHERE UUID = ? AND AD_User_ID = AD_PInstance.AD_User_ID)";
+		} else {
+			uuid = request.getClientRequest().getSessionUuid();
+			sql = "EXISTS(SELECT 1 FROM AD_Session WHERE UUID = ? AND CreatedBy = AD_PInstance.AD_User_ID)";
+		}
 		List<MPInstance> processInstanceList = new Query(context, I_AD_PInstance.Table_Name, 
-				"EXISTS(SELECT 1 FROM AD_Session WHERE UUID = ? AND CreatedBy = AD_PInstance.AD_User_ID)", null)
-				.setParameters(request.getSessionUuid())
+				sql, null)
+				.setParameters(uuid)
+				.setOrderBy(I_AD_PInstance.COLUMNNAME_Created + " DESC")
 				.<MPInstance>list();
 		//	
 		ProcessResponseList.Builder builder = ProcessResponseList.newBuilder();
@@ -617,12 +638,33 @@ public class DataServiceImplementation extends DataServiceImplBase {
 		ProcessResponse.Builder builder = ProcessResponse.newBuilder();
 		builder.setInstanceUuid(validateNull(instance.getUUID()));
 		builder.setIsError(!instance.isOK());
-		builder.setSummary(validateNull(instance.getErrorMsg()));
+		builder.setIsProcessing(instance.isProcessing());
+		String summary = instance.getErrorMsg();
+		if(!Util.isEmpty(summary)) {
+			summary = Msg.parseTranslation(Env.getCtx(), summary);
+		}
+		//	for report
+		MProcess process = MProcess.get(Env.getCtx(), instance.getAD_Process_ID());
+		if(process.isReport()) {
+			ProcessOutput.Builder outputBuilder = ProcessOutput.newBuilder();
+			outputBuilder.setReportExportType(validateNull(instance.getReportType()));
+			outputBuilder.setName(validateNull(instance.getName()));
+			builder.setOutput(outputBuilder.build());
+		}
+		builder.setSummary(validateNull(summary));
+		List<X_AD_PInstance_Log> logList = new Query(Env.getCtx(), I_AD_PInstance_Log.Table_Name, 
+				I_AD_PInstance.COLUMNNAME_AD_PInstance_ID + " = ?", null)
+				.setParameters(instance.getAD_PInstance_ID())
+				.<X_AD_PInstance_Log>list();
 		//	Add Output
-		for(MPInstanceLog log : instance.getLog()) {
+		for(X_AD_PInstance_Log log : logList) {
 			ProcessInfoLog.Builder logBuilder = ProcessInfoLog.newBuilder();
-			logBuilder.setRecordId(log.getLog_ID());
-			logBuilder.setLog(validateNull((log.getP_Msg())));
+			logBuilder.setRecordId(log.getAD_PInstance_Log_ID());
+			String message = log.getP_Msg();
+			if(!Util.isEmpty(message)) {
+				message = Msg.parseTranslation(Env.getCtx(), message);
+			}
+			logBuilder.setLog(validateNull((message)));
 			builder.addLogs(logBuilder.build());
 		}
 		//	
@@ -641,12 +683,14 @@ public class DataServiceImplementation extends DataServiceImplBase {
 				BigDecimal number = parameter.getP_Number();
 				BigDecimal numberTo = parameter.getP_Number_To();
 				//	Validate
-				if(number != null) {
+				if(number != null 
+						&& !number.equals(Env.ZERO)) {
 					hasFromParameter = true;
 					parameterBuilder.setIntValue(number.intValue());
 					parameterBuilder.setValueType(ValueType.INTEGER);
 				}
-				if(numberTo != null) {
+				if(numberTo != null
+						&& !numberTo.equals(Env.ZERO)) {
 					hasToParameter = true;
 					parameterToBuilder.setIntValue(numberTo.intValue());
 					parameterToBuilder.setValueType(ValueType.INTEGER);
@@ -655,12 +699,14 @@ public class DataServiceImplementation extends DataServiceImplBase {
 				BigDecimal number = parameter.getP_Number();
 				BigDecimal numberTo = parameter.getP_Number_To();
 				//	Validate
-				if(number != null) {
+				if(number != null 
+						&& !number.equals(Env.ZERO)) {
 					hasFromParameter = true;
 					parameterBuilder.setDoubleValue(number.doubleValue());
 					parameterBuilder.setValueType(ValueType.DOUBLE);
 				}
-				if(numberTo != null) {
+				if(numberTo != null
+						&& !numberTo.equals(Env.ZERO)) {
 					hasToParameter = true;
 					parameterToBuilder.setDoubleValue(numberTo.doubleValue());
 					parameterToBuilder.setValueType(ValueType.DOUBLE);
@@ -857,6 +903,10 @@ public class DataServiceImplementation extends DataServiceImplBase {
 			} else if (clazz == Boolean.class) {
 				builderValue.setValueType(ValueType.BOOLEAN);
 				builderValue.setBooleanValue(entity.get_ValueAsBoolean(columnName));
+			} else if(clazz == Timestamp.class) {
+				builderValue.setValueType(ValueType.DATE);
+				Timestamp date = (Timestamp) entity.get_Value(columnName);
+				builderValue.setLongValue(date.getTime());
 			} else {
 				continue;
 			}

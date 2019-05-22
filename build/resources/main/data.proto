@@ -38,7 +38,7 @@ service DataService {
 	//	Request Browser Data
 	rpc RequestBrowser(ValueObjectRequest) returns (ValueObjectList) {}
 	//	Request Process Activity from current session
-	rpc RequestProcessActivity(ClientRequest) returns (ProcessResponseList) {}
+	rpc RequestProcessActivity(ProcessActivityRequest) returns (ProcessResponseList) {}
 }
 
 // The client request contains client info for request.
@@ -59,6 +59,12 @@ message ValueObject {
 	string uuid = 2;
 	string tableName = 3;
 	map<string, Value> values = 4;
+}
+
+// Key and Value pairs
+message KeyValue {
+	string key = 1;
+	Value value = 2;
 }
 
 // Define value for object
@@ -157,13 +163,25 @@ message ProcessRequest {
 	int32 tableSelectedId = 5;
 	string reportExportType = 6;
 	repeated Selection selections = 7;
-	map<string, Value> parameters = 8;
+	repeated KeyValue parameters = 8;
+}
+
+// Process Request Parameter
+message ProcessRequestParameter {
+	string columnName = 1;
+	Value value = 2;
+}
+
+// Process Activity Request
+message ProcessActivityRequest {
+	ClientRequest clientRequest = 1;
+	string userUuid = 2;
 }
 
 //	Process Selections
 message Selection {
 	int32 selectionId = 1;
-	map<string, Value> values = 7;
+	repeated KeyValue values = 2;
 }
 
 // Process Response List
@@ -178,9 +196,10 @@ message ProcessResponse {
 	bool isError = 2;
 	string summary = 3;
 	int32 resultTableId = 4;
-	repeated ProcessInfoLog logs = 5;
-	map<string, Value> parameters = 6;
-	ProcessOutput output = 7;
+	bool isProcessing = 5;
+	repeated ProcessInfoLog logs = 6;
+	map<string, Value> parameters = 7;
+	ProcessOutput output = 8;
 }
 
 //	Process Log result

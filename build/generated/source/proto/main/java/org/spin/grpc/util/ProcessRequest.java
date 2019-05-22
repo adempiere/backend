@@ -26,6 +26,7 @@ private static final long serialVersionUID = 0L;
     tableSelectedId_ = 0;
     reportExportType_ = "";
     selections_ = java.util.Collections.emptyList();
+    parameters_ = java.util.Collections.emptyList();
   }
 
   @java.lang.Override
@@ -110,15 +111,11 @@ private static final long serialVersionUID = 0L;
           }
           case 66: {
             if (!((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
-              parameters_ = com.google.protobuf.MapField.newMapField(
-                  ParametersDefaultEntryHolder.defaultEntry);
+              parameters_ = new java.util.ArrayList<org.spin.grpc.util.KeyValue>();
               mutable_bitField0_ |= 0x00000080;
             }
-            com.google.protobuf.MapEntry<java.lang.String, org.spin.grpc.util.Value>
-            parameters__ = input.readMessage(
-                ParametersDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
-            parameters_.getMutableMap().put(
-                parameters__.getKey(), parameters__.getValue());
+            parameters_.add(
+                input.readMessage(org.spin.grpc.util.KeyValue.parser(), extensionRegistry));
             break;
           }
         }
@@ -132,6 +129,9 @@ private static final long serialVersionUID = 0L;
       if (((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
         selections_ = java.util.Collections.unmodifiableList(selections_);
       }
+      if (((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
+        parameters_ = java.util.Collections.unmodifiableList(parameters_);
+      }
       this.unknownFields = unknownFields.build();
       makeExtensionsImmutable();
     }
@@ -141,17 +141,6 @@ private static final long serialVersionUID = 0L;
     return org.spin.grpc.util.ADempiereData.internal_static_data_ProcessRequest_descriptor;
   }
 
-  @SuppressWarnings({"rawtypes"})
-  protected com.google.protobuf.MapField internalGetMapField(
-      int number) {
-    switch (number) {
-      case 8:
-        return internalGetParameters();
-      default:
-        throw new RuntimeException(
-            "Invalid map field number: " + number);
-    }
-  }
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
     return org.spin.grpc.util.ADempiereData.internal_static_data_ProcessRequest_fieldAccessorTable
@@ -312,79 +301,38 @@ private static final long serialVersionUID = 0L;
   }
 
   public static final int PARAMETERS_FIELD_NUMBER = 8;
-  private static final class ParametersDefaultEntryHolder {
-    static final com.google.protobuf.MapEntry<
-        java.lang.String, org.spin.grpc.util.Value> defaultEntry =
-            com.google.protobuf.MapEntry
-            .<java.lang.String, org.spin.grpc.util.Value>newDefaultInstance(
-                org.spin.grpc.util.ADempiereData.internal_static_data_ProcessRequest_ParametersEntry_descriptor, 
-                com.google.protobuf.WireFormat.FieldType.STRING,
-                "",
-                com.google.protobuf.WireFormat.FieldType.MESSAGE,
-                org.spin.grpc.util.Value.getDefaultInstance());
-  }
-  private com.google.protobuf.MapField<
-      java.lang.String, org.spin.grpc.util.Value> parameters_;
-  private com.google.protobuf.MapField<java.lang.String, org.spin.grpc.util.Value>
-  internalGetParameters() {
-    if (parameters_ == null) {
-      return com.google.protobuf.MapField.emptyMapField(
-          ParametersDefaultEntryHolder.defaultEntry);
-    }
+  private java.util.List<org.spin.grpc.util.KeyValue> parameters_;
+  /**
+   * <code>repeated .data.KeyValue parameters = 8;</code>
+   */
+  public java.util.List<org.spin.grpc.util.KeyValue> getParametersList() {
     return parameters_;
   }
-
+  /**
+   * <code>repeated .data.KeyValue parameters = 8;</code>
+   */
+  public java.util.List<? extends org.spin.grpc.util.KeyValueOrBuilder> 
+      getParametersOrBuilderList() {
+    return parameters_;
+  }
+  /**
+   * <code>repeated .data.KeyValue parameters = 8;</code>
+   */
   public int getParametersCount() {
-    return internalGetParameters().getMap().size();
+    return parameters_.size();
   }
   /**
-   * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
+   * <code>repeated .data.KeyValue parameters = 8;</code>
    */
-
-  public boolean containsParameters(
-      java.lang.String key) {
-    if (key == null) { throw new java.lang.NullPointerException(); }
-    return internalGetParameters().getMap().containsKey(key);
+  public org.spin.grpc.util.KeyValue getParameters(int index) {
+    return parameters_.get(index);
   }
   /**
-   * Use {@link #getParametersMap()} instead.
+   * <code>repeated .data.KeyValue parameters = 8;</code>
    */
-  @java.lang.Deprecated
-  public java.util.Map<java.lang.String, org.spin.grpc.util.Value> getParameters() {
-    return getParametersMap();
-  }
-  /**
-   * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
-   */
-
-  public java.util.Map<java.lang.String, org.spin.grpc.util.Value> getParametersMap() {
-    return internalGetParameters().getMap();
-  }
-  /**
-   * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
-   */
-
-  public org.spin.grpc.util.Value getParametersOrDefault(
-      java.lang.String key,
-      org.spin.grpc.util.Value defaultValue) {
-    if (key == null) { throw new java.lang.NullPointerException(); }
-    java.util.Map<java.lang.String, org.spin.grpc.util.Value> map =
-        internalGetParameters().getMap();
-    return map.containsKey(key) ? map.get(key) : defaultValue;
-  }
-  /**
-   * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
-   */
-
-  public org.spin.grpc.util.Value getParametersOrThrow(
-      java.lang.String key) {
-    if (key == null) { throw new java.lang.NullPointerException(); }
-    java.util.Map<java.lang.String, org.spin.grpc.util.Value> map =
-        internalGetParameters().getMap();
-    if (!map.containsKey(key)) {
-      throw new java.lang.IllegalArgumentException();
-    }
-    return map.get(key);
+  public org.spin.grpc.util.KeyValueOrBuilder getParametersOrBuilder(
+      int index) {
+    return parameters_.get(index);
   }
 
   private byte memoizedIsInitialized = -1;
@@ -420,12 +368,9 @@ private static final long serialVersionUID = 0L;
     for (int i = 0; i < selections_.size(); i++) {
       output.writeMessage(7, selections_.get(i));
     }
-    com.google.protobuf.GeneratedMessageV3
-      .serializeStringMapTo(
-        output,
-        internalGetParameters(),
-        ParametersDefaultEntryHolder.defaultEntry,
-        8);
+    for (int i = 0; i < parameters_.size(); i++) {
+      output.writeMessage(8, parameters_.get(i));
+    }
     unknownFields.writeTo(output);
   }
 
@@ -460,15 +405,9 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(7, selections_.get(i));
     }
-    for (java.util.Map.Entry<java.lang.String, org.spin.grpc.util.Value> entry
-         : internalGetParameters().getMap().entrySet()) {
-      com.google.protobuf.MapEntry<java.lang.String, org.spin.grpc.util.Value>
-      parameters__ = ParametersDefaultEntryHolder.defaultEntry.newBuilderForType()
-          .setKey(entry.getKey())
-          .setValue(entry.getValue())
-          .build();
+    for (int i = 0; i < parameters_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(8, parameters__);
+        .computeMessageSize(8, parameters_.get(i));
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -503,8 +442,8 @@ private static final long serialVersionUID = 0L;
         .equals(other.getReportExportType());
     result = result && getSelectionsList()
         .equals(other.getSelectionsList());
-    result = result && internalGetParameters().equals(
-        other.internalGetParameters());
+    result = result && getParametersList()
+        .equals(other.getParametersList());
     result = result && unknownFields.equals(other.unknownFields);
     return result;
   }
@@ -534,9 +473,9 @@ private static final long serialVersionUID = 0L;
       hash = (37 * hash) + SELECTIONS_FIELD_NUMBER;
       hash = (53 * hash) + getSelectionsList().hashCode();
     }
-    if (!internalGetParameters().getMap().isEmpty()) {
+    if (getParametersCount() > 0) {
       hash = (37 * hash) + PARAMETERS_FIELD_NUMBER;
-      hash = (53 * hash) + internalGetParameters().hashCode();
+      hash = (53 * hash) + getParametersList().hashCode();
     }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
@@ -647,28 +586,6 @@ private static final long serialVersionUID = 0L;
       return org.spin.grpc.util.ADempiereData.internal_static_data_ProcessRequest_descriptor;
     }
 
-    @SuppressWarnings({"rawtypes"})
-    protected com.google.protobuf.MapField internalGetMapField(
-        int number) {
-      switch (number) {
-        case 8:
-          return internalGetParameters();
-        default:
-          throw new RuntimeException(
-              "Invalid map field number: " + number);
-      }
-    }
-    @SuppressWarnings({"rawtypes"})
-    protected com.google.protobuf.MapField internalGetMutableMapField(
-        int number) {
-      switch (number) {
-        case 8:
-          return internalGetMutableParameters();
-        default:
-          throw new RuntimeException(
-              "Invalid map field number: " + number);
-      }
-    }
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return org.spin.grpc.util.ADempiereData.internal_static_data_ProcessRequest_fieldAccessorTable
@@ -690,6 +607,7 @@ private static final long serialVersionUID = 0L;
       if (com.google.protobuf.GeneratedMessageV3
               .alwaysUseFieldBuilders) {
         getSelectionsFieldBuilder();
+        getParametersFieldBuilder();
       }
     }
     public Builder clear() {
@@ -716,7 +634,12 @@ private static final long serialVersionUID = 0L;
       } else {
         selectionsBuilder_.clear();
       }
-      internalGetMutableParameters().clear();
+      if (parametersBuilder_ == null) {
+        parameters_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000080);
+      } else {
+        parametersBuilder_.clear();
+      }
       return this;
     }
 
@@ -760,8 +683,15 @@ private static final long serialVersionUID = 0L;
       } else {
         result.selections_ = selectionsBuilder_.build();
       }
-      result.parameters_ = internalGetParameters();
-      result.parameters_.makeImmutable();
+      if (parametersBuilder_ == null) {
+        if (((bitField0_ & 0x00000080) == 0x00000080)) {
+          parameters_ = java.util.Collections.unmodifiableList(parameters_);
+          bitField0_ = (bitField0_ & ~0x00000080);
+        }
+        result.parameters_ = parameters_;
+      } else {
+        result.parameters_ = parametersBuilder_.build();
+      }
       result.bitField0_ = to_bitField0_;
       onBuilt();
       return result;
@@ -850,8 +780,32 @@ private static final long serialVersionUID = 0L;
           }
         }
       }
-      internalGetMutableParameters().mergeFrom(
-          other.internalGetParameters());
+      if (parametersBuilder_ == null) {
+        if (!other.parameters_.isEmpty()) {
+          if (parameters_.isEmpty()) {
+            parameters_ = other.parameters_;
+            bitField0_ = (bitField0_ & ~0x00000080);
+          } else {
+            ensureParametersIsMutable();
+            parameters_.addAll(other.parameters_);
+          }
+          onChanged();
+        }
+      } else {
+        if (!other.parameters_.isEmpty()) {
+          if (parametersBuilder_.isEmpty()) {
+            parametersBuilder_.dispose();
+            parametersBuilder_ = null;
+            parameters_ = other.parameters_;
+            bitField0_ = (bitField0_ & ~0x00000080);
+            parametersBuilder_ = 
+              com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                 getParametersFieldBuilder() : null;
+          } else {
+            parametersBuilder_.addAllMessages(other.parameters_);
+          }
+        }
+      }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
       return this;
@@ -1453,127 +1407,244 @@ private static final long serialVersionUID = 0L;
       return selectionsBuilder_;
     }
 
-    private com.google.protobuf.MapField<
-        java.lang.String, org.spin.grpc.util.Value> parameters_;
-    private com.google.protobuf.MapField<java.lang.String, org.spin.grpc.util.Value>
-    internalGetParameters() {
-      if (parameters_ == null) {
-        return com.google.protobuf.MapField.emptyMapField(
-            ParametersDefaultEntryHolder.defaultEntry);
-      }
-      return parameters_;
-    }
-    private com.google.protobuf.MapField<java.lang.String, org.spin.grpc.util.Value>
-    internalGetMutableParameters() {
-      onChanged();;
-      if (parameters_ == null) {
-        parameters_ = com.google.protobuf.MapField.newMapField(
-            ParametersDefaultEntryHolder.defaultEntry);
-      }
-      if (!parameters_.isMutable()) {
-        parameters_ = parameters_.copy();
-      }
-      return parameters_;
+    private java.util.List<org.spin.grpc.util.KeyValue> parameters_ =
+      java.util.Collections.emptyList();
+    private void ensureParametersIsMutable() {
+      if (!((bitField0_ & 0x00000080) == 0x00000080)) {
+        parameters_ = new java.util.ArrayList<org.spin.grpc.util.KeyValue>(parameters_);
+        bitField0_ |= 0x00000080;
+       }
     }
 
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+        org.spin.grpc.util.KeyValue, org.spin.grpc.util.KeyValue.Builder, org.spin.grpc.util.KeyValueOrBuilder> parametersBuilder_;
+
+    /**
+     * <code>repeated .data.KeyValue parameters = 8;</code>
+     */
+    public java.util.List<org.spin.grpc.util.KeyValue> getParametersList() {
+      if (parametersBuilder_ == null) {
+        return java.util.Collections.unmodifiableList(parameters_);
+      } else {
+        return parametersBuilder_.getMessageList();
+      }
+    }
+    /**
+     * <code>repeated .data.KeyValue parameters = 8;</code>
+     */
     public int getParametersCount() {
-      return internalGetParameters().getMap().size();
-    }
-    /**
-     * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
-     */
-
-    public boolean containsParameters(
-        java.lang.String key) {
-      if (key == null) { throw new java.lang.NullPointerException(); }
-      return internalGetParameters().getMap().containsKey(key);
-    }
-    /**
-     * Use {@link #getParametersMap()} instead.
-     */
-    @java.lang.Deprecated
-    public java.util.Map<java.lang.String, org.spin.grpc.util.Value> getParameters() {
-      return getParametersMap();
-    }
-    /**
-     * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
-     */
-
-    public java.util.Map<java.lang.String, org.spin.grpc.util.Value> getParametersMap() {
-      return internalGetParameters().getMap();
-    }
-    /**
-     * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
-     */
-
-    public org.spin.grpc.util.Value getParametersOrDefault(
-        java.lang.String key,
-        org.spin.grpc.util.Value defaultValue) {
-      if (key == null) { throw new java.lang.NullPointerException(); }
-      java.util.Map<java.lang.String, org.spin.grpc.util.Value> map =
-          internalGetParameters().getMap();
-      return map.containsKey(key) ? map.get(key) : defaultValue;
-    }
-    /**
-     * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
-     */
-
-    public org.spin.grpc.util.Value getParametersOrThrow(
-        java.lang.String key) {
-      if (key == null) { throw new java.lang.NullPointerException(); }
-      java.util.Map<java.lang.String, org.spin.grpc.util.Value> map =
-          internalGetParameters().getMap();
-      if (!map.containsKey(key)) {
-        throw new java.lang.IllegalArgumentException();
+      if (parametersBuilder_ == null) {
+        return parameters_.size();
+      } else {
+        return parametersBuilder_.getCount();
       }
-      return map.get(key);
     }
-
+    /**
+     * <code>repeated .data.KeyValue parameters = 8;</code>
+     */
+    public org.spin.grpc.util.KeyValue getParameters(int index) {
+      if (parametersBuilder_ == null) {
+        return parameters_.get(index);
+      } else {
+        return parametersBuilder_.getMessage(index);
+      }
+    }
+    /**
+     * <code>repeated .data.KeyValue parameters = 8;</code>
+     */
+    public Builder setParameters(
+        int index, org.spin.grpc.util.KeyValue value) {
+      if (parametersBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureParametersIsMutable();
+        parameters_.set(index, value);
+        onChanged();
+      } else {
+        parametersBuilder_.setMessage(index, value);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.KeyValue parameters = 8;</code>
+     */
+    public Builder setParameters(
+        int index, org.spin.grpc.util.KeyValue.Builder builderForValue) {
+      if (parametersBuilder_ == null) {
+        ensureParametersIsMutable();
+        parameters_.set(index, builderForValue.build());
+        onChanged();
+      } else {
+        parametersBuilder_.setMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.KeyValue parameters = 8;</code>
+     */
+    public Builder addParameters(org.spin.grpc.util.KeyValue value) {
+      if (parametersBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureParametersIsMutable();
+        parameters_.add(value);
+        onChanged();
+      } else {
+        parametersBuilder_.addMessage(value);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.KeyValue parameters = 8;</code>
+     */
+    public Builder addParameters(
+        int index, org.spin.grpc.util.KeyValue value) {
+      if (parametersBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureParametersIsMutable();
+        parameters_.add(index, value);
+        onChanged();
+      } else {
+        parametersBuilder_.addMessage(index, value);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.KeyValue parameters = 8;</code>
+     */
+    public Builder addParameters(
+        org.spin.grpc.util.KeyValue.Builder builderForValue) {
+      if (parametersBuilder_ == null) {
+        ensureParametersIsMutable();
+        parameters_.add(builderForValue.build());
+        onChanged();
+      } else {
+        parametersBuilder_.addMessage(builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.KeyValue parameters = 8;</code>
+     */
+    public Builder addParameters(
+        int index, org.spin.grpc.util.KeyValue.Builder builderForValue) {
+      if (parametersBuilder_ == null) {
+        ensureParametersIsMutable();
+        parameters_.add(index, builderForValue.build());
+        onChanged();
+      } else {
+        parametersBuilder_.addMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.KeyValue parameters = 8;</code>
+     */
+    public Builder addAllParameters(
+        java.lang.Iterable<? extends org.spin.grpc.util.KeyValue> values) {
+      if (parametersBuilder_ == null) {
+        ensureParametersIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, parameters_);
+        onChanged();
+      } else {
+        parametersBuilder_.addAllMessages(values);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.KeyValue parameters = 8;</code>
+     */
     public Builder clearParameters() {
-      internalGetMutableParameters().getMutableMap()
-          .clear();
+      if (parametersBuilder_ == null) {
+        parameters_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000080);
+        onChanged();
+      } else {
+        parametersBuilder_.clear();
+      }
       return this;
     }
     /**
-     * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
+     * <code>repeated .data.KeyValue parameters = 8;</code>
      */
-
-    public Builder removeParameters(
-        java.lang.String key) {
-      if (key == null) { throw new java.lang.NullPointerException(); }
-      internalGetMutableParameters().getMutableMap()
-          .remove(key);
+    public Builder removeParameters(int index) {
+      if (parametersBuilder_ == null) {
+        ensureParametersIsMutable();
+        parameters_.remove(index);
+        onChanged();
+      } else {
+        parametersBuilder_.remove(index);
+      }
       return this;
     }
     /**
-     * Use alternate mutation accessors instead.
+     * <code>repeated .data.KeyValue parameters = 8;</code>
      */
-    @java.lang.Deprecated
-    public java.util.Map<java.lang.String, org.spin.grpc.util.Value>
-    getMutableParameters() {
-      return internalGetMutableParameters().getMutableMap();
+    public org.spin.grpc.util.KeyValue.Builder getParametersBuilder(
+        int index) {
+      return getParametersFieldBuilder().getBuilder(index);
     }
     /**
-     * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
+     * <code>repeated .data.KeyValue parameters = 8;</code>
      */
-    public Builder putParameters(
-        java.lang.String key,
-        org.spin.grpc.util.Value value) {
-      if (key == null) { throw new java.lang.NullPointerException(); }
-      if (value == null) { throw new java.lang.NullPointerException(); }
-      internalGetMutableParameters().getMutableMap()
-          .put(key, value);
-      return this;
+    public org.spin.grpc.util.KeyValueOrBuilder getParametersOrBuilder(
+        int index) {
+      if (parametersBuilder_ == null) {
+        return parameters_.get(index);  } else {
+        return parametersBuilder_.getMessageOrBuilder(index);
+      }
     }
     /**
-     * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
+     * <code>repeated .data.KeyValue parameters = 8;</code>
      */
-
-    public Builder putAllParameters(
-        java.util.Map<java.lang.String, org.spin.grpc.util.Value> values) {
-      internalGetMutableParameters().getMutableMap()
-          .putAll(values);
-      return this;
+    public java.util.List<? extends org.spin.grpc.util.KeyValueOrBuilder> 
+         getParametersOrBuilderList() {
+      if (parametersBuilder_ != null) {
+        return parametersBuilder_.getMessageOrBuilderList();
+      } else {
+        return java.util.Collections.unmodifiableList(parameters_);
+      }
+    }
+    /**
+     * <code>repeated .data.KeyValue parameters = 8;</code>
+     */
+    public org.spin.grpc.util.KeyValue.Builder addParametersBuilder() {
+      return getParametersFieldBuilder().addBuilder(
+          org.spin.grpc.util.KeyValue.getDefaultInstance());
+    }
+    /**
+     * <code>repeated .data.KeyValue parameters = 8;</code>
+     */
+    public org.spin.grpc.util.KeyValue.Builder addParametersBuilder(
+        int index) {
+      return getParametersFieldBuilder().addBuilder(
+          index, org.spin.grpc.util.KeyValue.getDefaultInstance());
+    }
+    /**
+     * <code>repeated .data.KeyValue parameters = 8;</code>
+     */
+    public java.util.List<org.spin.grpc.util.KeyValue.Builder> 
+         getParametersBuilderList() {
+      return getParametersFieldBuilder().getBuilderList();
+    }
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+        org.spin.grpc.util.KeyValue, org.spin.grpc.util.KeyValue.Builder, org.spin.grpc.util.KeyValueOrBuilder> 
+        getParametersFieldBuilder() {
+      if (parametersBuilder_ == null) {
+        parametersBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+            org.spin.grpc.util.KeyValue, org.spin.grpc.util.KeyValue.Builder, org.spin.grpc.util.KeyValueOrBuilder>(
+                parameters_,
+                ((bitField0_ & 0x00000080) == 0x00000080),
+                getParentForChildren(),
+                isClean());
+        parameters_ = null;
+      }
+      return parametersBuilder_;
     }
     public final Builder setUnknownFields(
         final com.google.protobuf.UnknownFieldSet unknownFields) {

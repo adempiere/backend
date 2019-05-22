@@ -24,6 +24,7 @@ private static final long serialVersionUID = 0L;
     isError_ = false;
     summary_ = "";
     resultTableId_ = 0;
+    isProcessing_ = false;
     logs_ = java.util.Collections.emptyList();
   }
 
@@ -80,20 +81,25 @@ private static final long serialVersionUID = 0L;
             resultTableId_ = input.readInt32();
             break;
           }
-          case 42: {
-            if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+          case 40: {
+
+            isProcessing_ = input.readBool();
+            break;
+          }
+          case 50: {
+            if (!((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
               logs_ = new java.util.ArrayList<org.spin.grpc.util.ProcessInfoLog>();
-              mutable_bitField0_ |= 0x00000010;
+              mutable_bitField0_ |= 0x00000020;
             }
             logs_.add(
                 input.readMessage(org.spin.grpc.util.ProcessInfoLog.parser(), extensionRegistry));
             break;
           }
-          case 50: {
-            if (!((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
+          case 58: {
+            if (!((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
               parameters_ = com.google.protobuf.MapField.newMapField(
                   ParametersDefaultEntryHolder.defaultEntry);
-              mutable_bitField0_ |= 0x00000020;
+              mutable_bitField0_ |= 0x00000040;
             }
             com.google.protobuf.MapEntry<java.lang.String, org.spin.grpc.util.Value>
             parameters__ = input.readMessage(
@@ -102,7 +108,7 @@ private static final long serialVersionUID = 0L;
                 parameters__.getKey(), parameters__.getValue());
             break;
           }
-          case 58: {
+          case 66: {
             org.spin.grpc.util.ProcessOutput.Builder subBuilder = null;
             if (output_ != null) {
               subBuilder = output_.toBuilder();
@@ -123,7 +129,7 @@ private static final long serialVersionUID = 0L;
       throw new com.google.protobuf.InvalidProtocolBufferException(
           e).setUnfinishedMessage(this);
     } finally {
-      if (((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+      if (((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
         logs_ = java.util.Collections.unmodifiableList(logs_);
       }
       this.unknownFields = unknownFields.build();
@@ -139,7 +145,7 @@ private static final long serialVersionUID = 0L;
   protected com.google.protobuf.MapField internalGetMapField(
       int number) {
     switch (number) {
-      case 6:
+      case 7:
         return internalGetParameters();
       default:
         throw new RuntimeException(
@@ -240,42 +246,51 @@ private static final long serialVersionUID = 0L;
     return resultTableId_;
   }
 
-  public static final int LOGS_FIELD_NUMBER = 5;
+  public static final int ISPROCESSING_FIELD_NUMBER = 5;
+  private boolean isProcessing_;
+  /**
+   * <code>bool isProcessing = 5;</code>
+   */
+  public boolean getIsProcessing() {
+    return isProcessing_;
+  }
+
+  public static final int LOGS_FIELD_NUMBER = 6;
   private java.util.List<org.spin.grpc.util.ProcessInfoLog> logs_;
   /**
-   * <code>repeated .data.ProcessInfoLog logs = 5;</code>
+   * <code>repeated .data.ProcessInfoLog logs = 6;</code>
    */
   public java.util.List<org.spin.grpc.util.ProcessInfoLog> getLogsList() {
     return logs_;
   }
   /**
-   * <code>repeated .data.ProcessInfoLog logs = 5;</code>
+   * <code>repeated .data.ProcessInfoLog logs = 6;</code>
    */
   public java.util.List<? extends org.spin.grpc.util.ProcessInfoLogOrBuilder> 
       getLogsOrBuilderList() {
     return logs_;
   }
   /**
-   * <code>repeated .data.ProcessInfoLog logs = 5;</code>
+   * <code>repeated .data.ProcessInfoLog logs = 6;</code>
    */
   public int getLogsCount() {
     return logs_.size();
   }
   /**
-   * <code>repeated .data.ProcessInfoLog logs = 5;</code>
+   * <code>repeated .data.ProcessInfoLog logs = 6;</code>
    */
   public org.spin.grpc.util.ProcessInfoLog getLogs(int index) {
     return logs_.get(index);
   }
   /**
-   * <code>repeated .data.ProcessInfoLog logs = 5;</code>
+   * <code>repeated .data.ProcessInfoLog logs = 6;</code>
    */
   public org.spin.grpc.util.ProcessInfoLogOrBuilder getLogsOrBuilder(
       int index) {
     return logs_.get(index);
   }
 
-  public static final int PARAMETERS_FIELD_NUMBER = 6;
+  public static final int PARAMETERS_FIELD_NUMBER = 7;
   private static final class ParametersDefaultEntryHolder {
     static final com.google.protobuf.MapEntry<
         java.lang.String, org.spin.grpc.util.Value> defaultEntry =
@@ -302,7 +317,7 @@ private static final long serialVersionUID = 0L;
     return internalGetParameters().getMap().size();
   }
   /**
-   * <code>map&lt;string, .data.Value&gt; parameters = 6;</code>
+   * <code>map&lt;string, .data.Value&gt; parameters = 7;</code>
    */
 
   public boolean containsParameters(
@@ -318,14 +333,14 @@ private static final long serialVersionUID = 0L;
     return getParametersMap();
   }
   /**
-   * <code>map&lt;string, .data.Value&gt; parameters = 6;</code>
+   * <code>map&lt;string, .data.Value&gt; parameters = 7;</code>
    */
 
   public java.util.Map<java.lang.String, org.spin.grpc.util.Value> getParametersMap() {
     return internalGetParameters().getMap();
   }
   /**
-   * <code>map&lt;string, .data.Value&gt; parameters = 6;</code>
+   * <code>map&lt;string, .data.Value&gt; parameters = 7;</code>
    */
 
   public org.spin.grpc.util.Value getParametersOrDefault(
@@ -337,7 +352,7 @@ private static final long serialVersionUID = 0L;
     return map.containsKey(key) ? map.get(key) : defaultValue;
   }
   /**
-   * <code>map&lt;string, .data.Value&gt; parameters = 6;</code>
+   * <code>map&lt;string, .data.Value&gt; parameters = 7;</code>
    */
 
   public org.spin.grpc.util.Value getParametersOrThrow(
@@ -351,22 +366,22 @@ private static final long serialVersionUID = 0L;
     return map.get(key);
   }
 
-  public static final int OUTPUT_FIELD_NUMBER = 7;
+  public static final int OUTPUT_FIELD_NUMBER = 8;
   private org.spin.grpc.util.ProcessOutput output_;
   /**
-   * <code>.data.ProcessOutput output = 7;</code>
+   * <code>.data.ProcessOutput output = 8;</code>
    */
   public boolean hasOutput() {
     return output_ != null;
   }
   /**
-   * <code>.data.ProcessOutput output = 7;</code>
+   * <code>.data.ProcessOutput output = 8;</code>
    */
   public org.spin.grpc.util.ProcessOutput getOutput() {
     return output_ == null ? org.spin.grpc.util.ProcessOutput.getDefaultInstance() : output_;
   }
   /**
-   * <code>.data.ProcessOutput output = 7;</code>
+   * <code>.data.ProcessOutput output = 8;</code>
    */
   public org.spin.grpc.util.ProcessOutputOrBuilder getOutputOrBuilder() {
     return getOutput();
@@ -396,17 +411,20 @@ private static final long serialVersionUID = 0L;
     if (resultTableId_ != 0) {
       output.writeInt32(4, resultTableId_);
     }
+    if (isProcessing_ != false) {
+      output.writeBool(5, isProcessing_);
+    }
     for (int i = 0; i < logs_.size(); i++) {
-      output.writeMessage(5, logs_.get(i));
+      output.writeMessage(6, logs_.get(i));
     }
     com.google.protobuf.GeneratedMessageV3
       .serializeStringMapTo(
         output,
         internalGetParameters(),
         ParametersDefaultEntryHolder.defaultEntry,
-        6);
+        7);
     if (output_ != null) {
-      output.writeMessage(7, getOutput());
+      output.writeMessage(8, getOutput());
     }
     unknownFields.writeTo(output);
   }
@@ -430,9 +448,13 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeInt32Size(4, resultTableId_);
     }
+    if (isProcessing_ != false) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeBoolSize(5, isProcessing_);
+    }
     for (int i = 0; i < logs_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(5, logs_.get(i));
+        .computeMessageSize(6, logs_.get(i));
     }
     for (java.util.Map.Entry<java.lang.String, org.spin.grpc.util.Value> entry
          : internalGetParameters().getMap().entrySet()) {
@@ -442,11 +464,11 @@ private static final long serialVersionUID = 0L;
           .setValue(entry.getValue())
           .build();
       size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(6, parameters__);
+          .computeMessageSize(7, parameters__);
     }
     if (output_ != null) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(7, getOutput());
+        .computeMessageSize(8, getOutput());
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -472,6 +494,8 @@ private static final long serialVersionUID = 0L;
         .equals(other.getSummary());
     result = result && (getResultTableId()
         == other.getResultTableId());
+    result = result && (getIsProcessing()
+        == other.getIsProcessing());
     result = result && getLogsList()
         .equals(other.getLogsList());
     result = result && internalGetParameters().equals(
@@ -501,6 +525,9 @@ private static final long serialVersionUID = 0L;
     hash = (53 * hash) + getSummary().hashCode();
     hash = (37 * hash) + RESULTTABLEID_FIELD_NUMBER;
     hash = (53 * hash) + getResultTableId();
+    hash = (37 * hash) + ISPROCESSING_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
+        getIsProcessing());
     if (getLogsCount() > 0) {
       hash = (37 * hash) + LOGS_FIELD_NUMBER;
       hash = (53 * hash) + getLogsList().hashCode();
@@ -626,7 +653,7 @@ private static final long serialVersionUID = 0L;
     protected com.google.protobuf.MapField internalGetMapField(
         int number) {
       switch (number) {
-        case 6:
+        case 7:
           return internalGetParameters();
         default:
           throw new RuntimeException(
@@ -637,7 +664,7 @@ private static final long serialVersionUID = 0L;
     protected com.google.protobuf.MapField internalGetMutableMapField(
         int number) {
       switch (number) {
-        case 6:
+        case 7:
           return internalGetMutableParameters();
         default:
           throw new RuntimeException(
@@ -677,9 +704,11 @@ private static final long serialVersionUID = 0L;
 
       resultTableId_ = 0;
 
+      isProcessing_ = false;
+
       if (logsBuilder_ == null) {
         logs_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000010);
+        bitField0_ = (bitField0_ & ~0x00000020);
       } else {
         logsBuilder_.clear();
       }
@@ -718,10 +747,11 @@ private static final long serialVersionUID = 0L;
       result.isError_ = isError_;
       result.summary_ = summary_;
       result.resultTableId_ = resultTableId_;
+      result.isProcessing_ = isProcessing_;
       if (logsBuilder_ == null) {
-        if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        if (((bitField0_ & 0x00000020) == 0x00000020)) {
           logs_ = java.util.Collections.unmodifiableList(logs_);
-          bitField0_ = (bitField0_ & ~0x00000010);
+          bitField0_ = (bitField0_ & ~0x00000020);
         }
         result.logs_ = logs_;
       } else {
@@ -790,11 +820,14 @@ private static final long serialVersionUID = 0L;
       if (other.getResultTableId() != 0) {
         setResultTableId(other.getResultTableId());
       }
+      if (other.getIsProcessing() != false) {
+        setIsProcessing(other.getIsProcessing());
+      }
       if (logsBuilder_ == null) {
         if (!other.logs_.isEmpty()) {
           if (logs_.isEmpty()) {
             logs_ = other.logs_;
-            bitField0_ = (bitField0_ & ~0x00000010);
+            bitField0_ = (bitField0_ & ~0x00000020);
           } else {
             ensureLogsIsMutable();
             logs_.addAll(other.logs_);
@@ -807,7 +840,7 @@ private static final long serialVersionUID = 0L;
             logsBuilder_.dispose();
             logsBuilder_ = null;
             logs_ = other.logs_;
-            bitField0_ = (bitField0_ & ~0x00000010);
+            bitField0_ = (bitField0_ & ~0x00000020);
             logsBuilder_ = 
               com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                  getLogsFieldBuilder() : null;
@@ -1039,12 +1072,38 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
+    private boolean isProcessing_ ;
+    /**
+     * <code>bool isProcessing = 5;</code>
+     */
+    public boolean getIsProcessing() {
+      return isProcessing_;
+    }
+    /**
+     * <code>bool isProcessing = 5;</code>
+     */
+    public Builder setIsProcessing(boolean value) {
+      
+      isProcessing_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>bool isProcessing = 5;</code>
+     */
+    public Builder clearIsProcessing() {
+      
+      isProcessing_ = false;
+      onChanged();
+      return this;
+    }
+
     private java.util.List<org.spin.grpc.util.ProcessInfoLog> logs_ =
       java.util.Collections.emptyList();
     private void ensureLogsIsMutable() {
-      if (!((bitField0_ & 0x00000010) == 0x00000010)) {
+      if (!((bitField0_ & 0x00000020) == 0x00000020)) {
         logs_ = new java.util.ArrayList<org.spin.grpc.util.ProcessInfoLog>(logs_);
-        bitField0_ |= 0x00000010;
+        bitField0_ |= 0x00000020;
        }
     }
 
@@ -1052,7 +1111,7 @@ private static final long serialVersionUID = 0L;
         org.spin.grpc.util.ProcessInfoLog, org.spin.grpc.util.ProcessInfoLog.Builder, org.spin.grpc.util.ProcessInfoLogOrBuilder> logsBuilder_;
 
     /**
-     * <code>repeated .data.ProcessInfoLog logs = 5;</code>
+     * <code>repeated .data.ProcessInfoLog logs = 6;</code>
      */
     public java.util.List<org.spin.grpc.util.ProcessInfoLog> getLogsList() {
       if (logsBuilder_ == null) {
@@ -1062,7 +1121,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.ProcessInfoLog logs = 5;</code>
+     * <code>repeated .data.ProcessInfoLog logs = 6;</code>
      */
     public int getLogsCount() {
       if (logsBuilder_ == null) {
@@ -1072,7 +1131,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.ProcessInfoLog logs = 5;</code>
+     * <code>repeated .data.ProcessInfoLog logs = 6;</code>
      */
     public org.spin.grpc.util.ProcessInfoLog getLogs(int index) {
       if (logsBuilder_ == null) {
@@ -1082,7 +1141,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.ProcessInfoLog logs = 5;</code>
+     * <code>repeated .data.ProcessInfoLog logs = 6;</code>
      */
     public Builder setLogs(
         int index, org.spin.grpc.util.ProcessInfoLog value) {
@@ -1099,7 +1158,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.ProcessInfoLog logs = 5;</code>
+     * <code>repeated .data.ProcessInfoLog logs = 6;</code>
      */
     public Builder setLogs(
         int index, org.spin.grpc.util.ProcessInfoLog.Builder builderForValue) {
@@ -1113,7 +1172,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.ProcessInfoLog logs = 5;</code>
+     * <code>repeated .data.ProcessInfoLog logs = 6;</code>
      */
     public Builder addLogs(org.spin.grpc.util.ProcessInfoLog value) {
       if (logsBuilder_ == null) {
@@ -1129,7 +1188,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.ProcessInfoLog logs = 5;</code>
+     * <code>repeated .data.ProcessInfoLog logs = 6;</code>
      */
     public Builder addLogs(
         int index, org.spin.grpc.util.ProcessInfoLog value) {
@@ -1146,7 +1205,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.ProcessInfoLog logs = 5;</code>
+     * <code>repeated .data.ProcessInfoLog logs = 6;</code>
      */
     public Builder addLogs(
         org.spin.grpc.util.ProcessInfoLog.Builder builderForValue) {
@@ -1160,7 +1219,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.ProcessInfoLog logs = 5;</code>
+     * <code>repeated .data.ProcessInfoLog logs = 6;</code>
      */
     public Builder addLogs(
         int index, org.spin.grpc.util.ProcessInfoLog.Builder builderForValue) {
@@ -1174,7 +1233,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.ProcessInfoLog logs = 5;</code>
+     * <code>repeated .data.ProcessInfoLog logs = 6;</code>
      */
     public Builder addAllLogs(
         java.lang.Iterable<? extends org.spin.grpc.util.ProcessInfoLog> values) {
@@ -1189,12 +1248,12 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.ProcessInfoLog logs = 5;</code>
+     * <code>repeated .data.ProcessInfoLog logs = 6;</code>
      */
     public Builder clearLogs() {
       if (logsBuilder_ == null) {
         logs_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000010);
+        bitField0_ = (bitField0_ & ~0x00000020);
         onChanged();
       } else {
         logsBuilder_.clear();
@@ -1202,7 +1261,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.ProcessInfoLog logs = 5;</code>
+     * <code>repeated .data.ProcessInfoLog logs = 6;</code>
      */
     public Builder removeLogs(int index) {
       if (logsBuilder_ == null) {
@@ -1215,14 +1274,14 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.ProcessInfoLog logs = 5;</code>
+     * <code>repeated .data.ProcessInfoLog logs = 6;</code>
      */
     public org.spin.grpc.util.ProcessInfoLog.Builder getLogsBuilder(
         int index) {
       return getLogsFieldBuilder().getBuilder(index);
     }
     /**
-     * <code>repeated .data.ProcessInfoLog logs = 5;</code>
+     * <code>repeated .data.ProcessInfoLog logs = 6;</code>
      */
     public org.spin.grpc.util.ProcessInfoLogOrBuilder getLogsOrBuilder(
         int index) {
@@ -1232,7 +1291,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.ProcessInfoLog logs = 5;</code>
+     * <code>repeated .data.ProcessInfoLog logs = 6;</code>
      */
     public java.util.List<? extends org.spin.grpc.util.ProcessInfoLogOrBuilder> 
          getLogsOrBuilderList() {
@@ -1243,14 +1302,14 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.ProcessInfoLog logs = 5;</code>
+     * <code>repeated .data.ProcessInfoLog logs = 6;</code>
      */
     public org.spin.grpc.util.ProcessInfoLog.Builder addLogsBuilder() {
       return getLogsFieldBuilder().addBuilder(
           org.spin.grpc.util.ProcessInfoLog.getDefaultInstance());
     }
     /**
-     * <code>repeated .data.ProcessInfoLog logs = 5;</code>
+     * <code>repeated .data.ProcessInfoLog logs = 6;</code>
      */
     public org.spin.grpc.util.ProcessInfoLog.Builder addLogsBuilder(
         int index) {
@@ -1258,7 +1317,7 @@ private static final long serialVersionUID = 0L;
           index, org.spin.grpc.util.ProcessInfoLog.getDefaultInstance());
     }
     /**
-     * <code>repeated .data.ProcessInfoLog logs = 5;</code>
+     * <code>repeated .data.ProcessInfoLog logs = 6;</code>
      */
     public java.util.List<org.spin.grpc.util.ProcessInfoLog.Builder> 
          getLogsBuilderList() {
@@ -1271,7 +1330,7 @@ private static final long serialVersionUID = 0L;
         logsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
             org.spin.grpc.util.ProcessInfoLog, org.spin.grpc.util.ProcessInfoLog.Builder, org.spin.grpc.util.ProcessInfoLogOrBuilder>(
                 logs_,
-                ((bitField0_ & 0x00000010) == 0x00000010),
+                ((bitField0_ & 0x00000020) == 0x00000020),
                 getParentForChildren(),
                 isClean());
         logs_ = null;
@@ -1306,7 +1365,7 @@ private static final long serialVersionUID = 0L;
       return internalGetParameters().getMap().size();
     }
     /**
-     * <code>map&lt;string, .data.Value&gt; parameters = 6;</code>
+     * <code>map&lt;string, .data.Value&gt; parameters = 7;</code>
      */
 
     public boolean containsParameters(
@@ -1322,14 +1381,14 @@ private static final long serialVersionUID = 0L;
       return getParametersMap();
     }
     /**
-     * <code>map&lt;string, .data.Value&gt; parameters = 6;</code>
+     * <code>map&lt;string, .data.Value&gt; parameters = 7;</code>
      */
 
     public java.util.Map<java.lang.String, org.spin.grpc.util.Value> getParametersMap() {
       return internalGetParameters().getMap();
     }
     /**
-     * <code>map&lt;string, .data.Value&gt; parameters = 6;</code>
+     * <code>map&lt;string, .data.Value&gt; parameters = 7;</code>
      */
 
     public org.spin.grpc.util.Value getParametersOrDefault(
@@ -1341,7 +1400,7 @@ private static final long serialVersionUID = 0L;
       return map.containsKey(key) ? map.get(key) : defaultValue;
     }
     /**
-     * <code>map&lt;string, .data.Value&gt; parameters = 6;</code>
+     * <code>map&lt;string, .data.Value&gt; parameters = 7;</code>
      */
 
     public org.spin.grpc.util.Value getParametersOrThrow(
@@ -1361,7 +1420,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>map&lt;string, .data.Value&gt; parameters = 6;</code>
+     * <code>map&lt;string, .data.Value&gt; parameters = 7;</code>
      */
 
     public Builder removeParameters(
@@ -1380,7 +1439,7 @@ private static final long serialVersionUID = 0L;
       return internalGetMutableParameters().getMutableMap();
     }
     /**
-     * <code>map&lt;string, .data.Value&gt; parameters = 6;</code>
+     * <code>map&lt;string, .data.Value&gt; parameters = 7;</code>
      */
     public Builder putParameters(
         java.lang.String key,
@@ -1392,7 +1451,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>map&lt;string, .data.Value&gt; parameters = 6;</code>
+     * <code>map&lt;string, .data.Value&gt; parameters = 7;</code>
      */
 
     public Builder putAllParameters(
@@ -1406,13 +1465,13 @@ private static final long serialVersionUID = 0L;
     private com.google.protobuf.SingleFieldBuilderV3<
         org.spin.grpc.util.ProcessOutput, org.spin.grpc.util.ProcessOutput.Builder, org.spin.grpc.util.ProcessOutputOrBuilder> outputBuilder_;
     /**
-     * <code>.data.ProcessOutput output = 7;</code>
+     * <code>.data.ProcessOutput output = 8;</code>
      */
     public boolean hasOutput() {
       return outputBuilder_ != null || output_ != null;
     }
     /**
-     * <code>.data.ProcessOutput output = 7;</code>
+     * <code>.data.ProcessOutput output = 8;</code>
      */
     public org.spin.grpc.util.ProcessOutput getOutput() {
       if (outputBuilder_ == null) {
@@ -1422,7 +1481,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>.data.ProcessOutput output = 7;</code>
+     * <code>.data.ProcessOutput output = 8;</code>
      */
     public Builder setOutput(org.spin.grpc.util.ProcessOutput value) {
       if (outputBuilder_ == null) {
@@ -1438,7 +1497,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.data.ProcessOutput output = 7;</code>
+     * <code>.data.ProcessOutput output = 8;</code>
      */
     public Builder setOutput(
         org.spin.grpc.util.ProcessOutput.Builder builderForValue) {
@@ -1452,7 +1511,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.data.ProcessOutput output = 7;</code>
+     * <code>.data.ProcessOutput output = 8;</code>
      */
     public Builder mergeOutput(org.spin.grpc.util.ProcessOutput value) {
       if (outputBuilder_ == null) {
@@ -1470,7 +1529,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.data.ProcessOutput output = 7;</code>
+     * <code>.data.ProcessOutput output = 8;</code>
      */
     public Builder clearOutput() {
       if (outputBuilder_ == null) {
@@ -1484,7 +1543,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.data.ProcessOutput output = 7;</code>
+     * <code>.data.ProcessOutput output = 8;</code>
      */
     public org.spin.grpc.util.ProcessOutput.Builder getOutputBuilder() {
       
@@ -1492,7 +1551,7 @@ private static final long serialVersionUID = 0L;
       return getOutputFieldBuilder().getBuilder();
     }
     /**
-     * <code>.data.ProcessOutput output = 7;</code>
+     * <code>.data.ProcessOutput output = 8;</code>
      */
     public org.spin.grpc.util.ProcessOutputOrBuilder getOutputOrBuilder() {
       if (outputBuilder_ != null) {
@@ -1503,7 +1562,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>.data.ProcessOutput output = 7;</code>
+     * <code>.data.ProcessOutput output = 8;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
         org.spin.grpc.util.ProcessOutput, org.spin.grpc.util.ProcessOutput.Builder, org.spin.grpc.util.ProcessOutputOrBuilder> 

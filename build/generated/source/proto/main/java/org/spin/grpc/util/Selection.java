@@ -21,6 +21,7 @@ private static final long serialVersionUID = 0L;
   }
   private Selection() {
     selectionId_ = 0;
+    values_ = java.util.Collections.emptyList();
   }
 
   @java.lang.Override
@@ -59,17 +60,13 @@ private static final long serialVersionUID = 0L;
             selectionId_ = input.readInt32();
             break;
           }
-          case 58: {
+          case 18: {
             if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
-              values_ = com.google.protobuf.MapField.newMapField(
-                  ValuesDefaultEntryHolder.defaultEntry);
+              values_ = new java.util.ArrayList<org.spin.grpc.util.KeyValue>();
               mutable_bitField0_ |= 0x00000002;
             }
-            com.google.protobuf.MapEntry<java.lang.String, org.spin.grpc.util.Value>
-            values__ = input.readMessage(
-                ValuesDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
-            values_.getMutableMap().put(
-                values__.getKey(), values__.getValue());
+            values_.add(
+                input.readMessage(org.spin.grpc.util.KeyValue.parser(), extensionRegistry));
             break;
           }
         }
@@ -80,6 +77,9 @@ private static final long serialVersionUID = 0L;
       throw new com.google.protobuf.InvalidProtocolBufferException(
           e).setUnfinishedMessage(this);
     } finally {
+      if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+        values_ = java.util.Collections.unmodifiableList(values_);
+      }
       this.unknownFields = unknownFields.build();
       makeExtensionsImmutable();
     }
@@ -89,17 +89,6 @@ private static final long serialVersionUID = 0L;
     return org.spin.grpc.util.ADempiereData.internal_static_data_Selection_descriptor;
   }
 
-  @SuppressWarnings({"rawtypes"})
-  protected com.google.protobuf.MapField internalGetMapField(
-      int number) {
-    switch (number) {
-      case 7:
-        return internalGetValues();
-      default:
-        throw new RuntimeException(
-            "Invalid map field number: " + number);
-    }
-  }
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
     return org.spin.grpc.util.ADempiereData.internal_static_data_Selection_fieldAccessorTable
@@ -117,80 +106,39 @@ private static final long serialVersionUID = 0L;
     return selectionId_;
   }
 
-  public static final int VALUES_FIELD_NUMBER = 7;
-  private static final class ValuesDefaultEntryHolder {
-    static final com.google.protobuf.MapEntry<
-        java.lang.String, org.spin.grpc.util.Value> defaultEntry =
-            com.google.protobuf.MapEntry
-            .<java.lang.String, org.spin.grpc.util.Value>newDefaultInstance(
-                org.spin.grpc.util.ADempiereData.internal_static_data_Selection_ValuesEntry_descriptor, 
-                com.google.protobuf.WireFormat.FieldType.STRING,
-                "",
-                com.google.protobuf.WireFormat.FieldType.MESSAGE,
-                org.spin.grpc.util.Value.getDefaultInstance());
-  }
-  private com.google.protobuf.MapField<
-      java.lang.String, org.spin.grpc.util.Value> values_;
-  private com.google.protobuf.MapField<java.lang.String, org.spin.grpc.util.Value>
-  internalGetValues() {
-    if (values_ == null) {
-      return com.google.protobuf.MapField.emptyMapField(
-          ValuesDefaultEntryHolder.defaultEntry);
-    }
+  public static final int VALUES_FIELD_NUMBER = 2;
+  private java.util.List<org.spin.grpc.util.KeyValue> values_;
+  /**
+   * <code>repeated .data.KeyValue values = 2;</code>
+   */
+  public java.util.List<org.spin.grpc.util.KeyValue> getValuesList() {
     return values_;
   }
-
+  /**
+   * <code>repeated .data.KeyValue values = 2;</code>
+   */
+  public java.util.List<? extends org.spin.grpc.util.KeyValueOrBuilder> 
+      getValuesOrBuilderList() {
+    return values_;
+  }
+  /**
+   * <code>repeated .data.KeyValue values = 2;</code>
+   */
   public int getValuesCount() {
-    return internalGetValues().getMap().size();
+    return values_.size();
   }
   /**
-   * <code>map&lt;string, .data.Value&gt; values = 7;</code>
+   * <code>repeated .data.KeyValue values = 2;</code>
    */
-
-  public boolean containsValues(
-      java.lang.String key) {
-    if (key == null) { throw new java.lang.NullPointerException(); }
-    return internalGetValues().getMap().containsKey(key);
+  public org.spin.grpc.util.KeyValue getValues(int index) {
+    return values_.get(index);
   }
   /**
-   * Use {@link #getValuesMap()} instead.
+   * <code>repeated .data.KeyValue values = 2;</code>
    */
-  @java.lang.Deprecated
-  public java.util.Map<java.lang.String, org.spin.grpc.util.Value> getValues() {
-    return getValuesMap();
-  }
-  /**
-   * <code>map&lt;string, .data.Value&gt; values = 7;</code>
-   */
-
-  public java.util.Map<java.lang.String, org.spin.grpc.util.Value> getValuesMap() {
-    return internalGetValues().getMap();
-  }
-  /**
-   * <code>map&lt;string, .data.Value&gt; values = 7;</code>
-   */
-
-  public org.spin.grpc.util.Value getValuesOrDefault(
-      java.lang.String key,
-      org.spin.grpc.util.Value defaultValue) {
-    if (key == null) { throw new java.lang.NullPointerException(); }
-    java.util.Map<java.lang.String, org.spin.grpc.util.Value> map =
-        internalGetValues().getMap();
-    return map.containsKey(key) ? map.get(key) : defaultValue;
-  }
-  /**
-   * <code>map&lt;string, .data.Value&gt; values = 7;</code>
-   */
-
-  public org.spin.grpc.util.Value getValuesOrThrow(
-      java.lang.String key) {
-    if (key == null) { throw new java.lang.NullPointerException(); }
-    java.util.Map<java.lang.String, org.spin.grpc.util.Value> map =
-        internalGetValues().getMap();
-    if (!map.containsKey(key)) {
-      throw new java.lang.IllegalArgumentException();
-    }
-    return map.get(key);
+  public org.spin.grpc.util.KeyValueOrBuilder getValuesOrBuilder(
+      int index) {
+    return values_.get(index);
   }
 
   private byte memoizedIsInitialized = -1;
@@ -208,12 +156,9 @@ private static final long serialVersionUID = 0L;
     if (selectionId_ != 0) {
       output.writeInt32(1, selectionId_);
     }
-    com.google.protobuf.GeneratedMessageV3
-      .serializeStringMapTo(
-        output,
-        internalGetValues(),
-        ValuesDefaultEntryHolder.defaultEntry,
-        7);
+    for (int i = 0; i < values_.size(); i++) {
+      output.writeMessage(2, values_.get(i));
+    }
     unknownFields.writeTo(output);
   }
 
@@ -226,15 +171,9 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeInt32Size(1, selectionId_);
     }
-    for (java.util.Map.Entry<java.lang.String, org.spin.grpc.util.Value> entry
-         : internalGetValues().getMap().entrySet()) {
-      com.google.protobuf.MapEntry<java.lang.String, org.spin.grpc.util.Value>
-      values__ = ValuesDefaultEntryHolder.defaultEntry.newBuilderForType()
-          .setKey(entry.getKey())
-          .setValue(entry.getValue())
-          .build();
+    for (int i = 0; i < values_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(7, values__);
+        .computeMessageSize(2, values_.get(i));
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -254,8 +193,8 @@ private static final long serialVersionUID = 0L;
     boolean result = true;
     result = result && (getSelectionId()
         == other.getSelectionId());
-    result = result && internalGetValues().equals(
-        other.internalGetValues());
+    result = result && getValuesList()
+        .equals(other.getValuesList());
     result = result && unknownFields.equals(other.unknownFields);
     return result;
   }
@@ -269,9 +208,9 @@ private static final long serialVersionUID = 0L;
     hash = (19 * hash) + getDescriptor().hashCode();
     hash = (37 * hash) + SELECTIONID_FIELD_NUMBER;
     hash = (53 * hash) + getSelectionId();
-    if (!internalGetValues().getMap().isEmpty()) {
+    if (getValuesCount() > 0) {
       hash = (37 * hash) + VALUES_FIELD_NUMBER;
-      hash = (53 * hash) + internalGetValues().hashCode();
+      hash = (53 * hash) + getValuesList().hashCode();
     }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
@@ -382,28 +321,6 @@ private static final long serialVersionUID = 0L;
       return org.spin.grpc.util.ADempiereData.internal_static_data_Selection_descriptor;
     }
 
-    @SuppressWarnings({"rawtypes"})
-    protected com.google.protobuf.MapField internalGetMapField(
-        int number) {
-      switch (number) {
-        case 7:
-          return internalGetValues();
-        default:
-          throw new RuntimeException(
-              "Invalid map field number: " + number);
-      }
-    }
-    @SuppressWarnings({"rawtypes"})
-    protected com.google.protobuf.MapField internalGetMutableMapField(
-        int number) {
-      switch (number) {
-        case 7:
-          return internalGetMutableValues();
-        default:
-          throw new RuntimeException(
-              "Invalid map field number: " + number);
-      }
-    }
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return org.spin.grpc.util.ADempiereData.internal_static_data_Selection_fieldAccessorTable
@@ -424,13 +341,19 @@ private static final long serialVersionUID = 0L;
     private void maybeForceBuilderInitialization() {
       if (com.google.protobuf.GeneratedMessageV3
               .alwaysUseFieldBuilders) {
+        getValuesFieldBuilder();
       }
     }
     public Builder clear() {
       super.clear();
       selectionId_ = 0;
 
-      internalGetMutableValues().clear();
+      if (valuesBuilder_ == null) {
+        values_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000002);
+      } else {
+        valuesBuilder_.clear();
+      }
       return this;
     }
 
@@ -456,8 +379,15 @@ private static final long serialVersionUID = 0L;
       int from_bitField0_ = bitField0_;
       int to_bitField0_ = 0;
       result.selectionId_ = selectionId_;
-      result.values_ = internalGetValues();
-      result.values_.makeImmutable();
+      if (valuesBuilder_ == null) {
+        if (((bitField0_ & 0x00000002) == 0x00000002)) {
+          values_ = java.util.Collections.unmodifiableList(values_);
+          bitField0_ = (bitField0_ & ~0x00000002);
+        }
+        result.values_ = values_;
+      } else {
+        result.values_ = valuesBuilder_.build();
+      }
       result.bitField0_ = to_bitField0_;
       onBuilt();
       return result;
@@ -503,8 +433,32 @@ private static final long serialVersionUID = 0L;
       if (other.getSelectionId() != 0) {
         setSelectionId(other.getSelectionId());
       }
-      internalGetMutableValues().mergeFrom(
-          other.internalGetValues());
+      if (valuesBuilder_ == null) {
+        if (!other.values_.isEmpty()) {
+          if (values_.isEmpty()) {
+            values_ = other.values_;
+            bitField0_ = (bitField0_ & ~0x00000002);
+          } else {
+            ensureValuesIsMutable();
+            values_.addAll(other.values_);
+          }
+          onChanged();
+        }
+      } else {
+        if (!other.values_.isEmpty()) {
+          if (valuesBuilder_.isEmpty()) {
+            valuesBuilder_.dispose();
+            valuesBuilder_ = null;
+            values_ = other.values_;
+            bitField0_ = (bitField0_ & ~0x00000002);
+            valuesBuilder_ = 
+              com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                 getValuesFieldBuilder() : null;
+          } else {
+            valuesBuilder_.addAllMessages(other.values_);
+          }
+        }
+      }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
       return this;
@@ -559,127 +513,244 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private com.google.protobuf.MapField<
-        java.lang.String, org.spin.grpc.util.Value> values_;
-    private com.google.protobuf.MapField<java.lang.String, org.spin.grpc.util.Value>
-    internalGetValues() {
-      if (values_ == null) {
-        return com.google.protobuf.MapField.emptyMapField(
-            ValuesDefaultEntryHolder.defaultEntry);
-      }
-      return values_;
-    }
-    private com.google.protobuf.MapField<java.lang.String, org.spin.grpc.util.Value>
-    internalGetMutableValues() {
-      onChanged();;
-      if (values_ == null) {
-        values_ = com.google.protobuf.MapField.newMapField(
-            ValuesDefaultEntryHolder.defaultEntry);
-      }
-      if (!values_.isMutable()) {
-        values_ = values_.copy();
-      }
-      return values_;
+    private java.util.List<org.spin.grpc.util.KeyValue> values_ =
+      java.util.Collections.emptyList();
+    private void ensureValuesIsMutable() {
+      if (!((bitField0_ & 0x00000002) == 0x00000002)) {
+        values_ = new java.util.ArrayList<org.spin.grpc.util.KeyValue>(values_);
+        bitField0_ |= 0x00000002;
+       }
     }
 
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+        org.spin.grpc.util.KeyValue, org.spin.grpc.util.KeyValue.Builder, org.spin.grpc.util.KeyValueOrBuilder> valuesBuilder_;
+
+    /**
+     * <code>repeated .data.KeyValue values = 2;</code>
+     */
+    public java.util.List<org.spin.grpc.util.KeyValue> getValuesList() {
+      if (valuesBuilder_ == null) {
+        return java.util.Collections.unmodifiableList(values_);
+      } else {
+        return valuesBuilder_.getMessageList();
+      }
+    }
+    /**
+     * <code>repeated .data.KeyValue values = 2;</code>
+     */
     public int getValuesCount() {
-      return internalGetValues().getMap().size();
-    }
-    /**
-     * <code>map&lt;string, .data.Value&gt; values = 7;</code>
-     */
-
-    public boolean containsValues(
-        java.lang.String key) {
-      if (key == null) { throw new java.lang.NullPointerException(); }
-      return internalGetValues().getMap().containsKey(key);
-    }
-    /**
-     * Use {@link #getValuesMap()} instead.
-     */
-    @java.lang.Deprecated
-    public java.util.Map<java.lang.String, org.spin.grpc.util.Value> getValues() {
-      return getValuesMap();
-    }
-    /**
-     * <code>map&lt;string, .data.Value&gt; values = 7;</code>
-     */
-
-    public java.util.Map<java.lang.String, org.spin.grpc.util.Value> getValuesMap() {
-      return internalGetValues().getMap();
-    }
-    /**
-     * <code>map&lt;string, .data.Value&gt; values = 7;</code>
-     */
-
-    public org.spin.grpc.util.Value getValuesOrDefault(
-        java.lang.String key,
-        org.spin.grpc.util.Value defaultValue) {
-      if (key == null) { throw new java.lang.NullPointerException(); }
-      java.util.Map<java.lang.String, org.spin.grpc.util.Value> map =
-          internalGetValues().getMap();
-      return map.containsKey(key) ? map.get(key) : defaultValue;
-    }
-    /**
-     * <code>map&lt;string, .data.Value&gt; values = 7;</code>
-     */
-
-    public org.spin.grpc.util.Value getValuesOrThrow(
-        java.lang.String key) {
-      if (key == null) { throw new java.lang.NullPointerException(); }
-      java.util.Map<java.lang.String, org.spin.grpc.util.Value> map =
-          internalGetValues().getMap();
-      if (!map.containsKey(key)) {
-        throw new java.lang.IllegalArgumentException();
+      if (valuesBuilder_ == null) {
+        return values_.size();
+      } else {
+        return valuesBuilder_.getCount();
       }
-      return map.get(key);
     }
-
+    /**
+     * <code>repeated .data.KeyValue values = 2;</code>
+     */
+    public org.spin.grpc.util.KeyValue getValues(int index) {
+      if (valuesBuilder_ == null) {
+        return values_.get(index);
+      } else {
+        return valuesBuilder_.getMessage(index);
+      }
+    }
+    /**
+     * <code>repeated .data.KeyValue values = 2;</code>
+     */
+    public Builder setValues(
+        int index, org.spin.grpc.util.KeyValue value) {
+      if (valuesBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureValuesIsMutable();
+        values_.set(index, value);
+        onChanged();
+      } else {
+        valuesBuilder_.setMessage(index, value);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.KeyValue values = 2;</code>
+     */
+    public Builder setValues(
+        int index, org.spin.grpc.util.KeyValue.Builder builderForValue) {
+      if (valuesBuilder_ == null) {
+        ensureValuesIsMutable();
+        values_.set(index, builderForValue.build());
+        onChanged();
+      } else {
+        valuesBuilder_.setMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.KeyValue values = 2;</code>
+     */
+    public Builder addValues(org.spin.grpc.util.KeyValue value) {
+      if (valuesBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureValuesIsMutable();
+        values_.add(value);
+        onChanged();
+      } else {
+        valuesBuilder_.addMessage(value);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.KeyValue values = 2;</code>
+     */
+    public Builder addValues(
+        int index, org.spin.grpc.util.KeyValue value) {
+      if (valuesBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureValuesIsMutable();
+        values_.add(index, value);
+        onChanged();
+      } else {
+        valuesBuilder_.addMessage(index, value);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.KeyValue values = 2;</code>
+     */
+    public Builder addValues(
+        org.spin.grpc.util.KeyValue.Builder builderForValue) {
+      if (valuesBuilder_ == null) {
+        ensureValuesIsMutable();
+        values_.add(builderForValue.build());
+        onChanged();
+      } else {
+        valuesBuilder_.addMessage(builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.KeyValue values = 2;</code>
+     */
+    public Builder addValues(
+        int index, org.spin.grpc.util.KeyValue.Builder builderForValue) {
+      if (valuesBuilder_ == null) {
+        ensureValuesIsMutable();
+        values_.add(index, builderForValue.build());
+        onChanged();
+      } else {
+        valuesBuilder_.addMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.KeyValue values = 2;</code>
+     */
+    public Builder addAllValues(
+        java.lang.Iterable<? extends org.spin.grpc.util.KeyValue> values) {
+      if (valuesBuilder_ == null) {
+        ensureValuesIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, values_);
+        onChanged();
+      } else {
+        valuesBuilder_.addAllMessages(values);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.KeyValue values = 2;</code>
+     */
     public Builder clearValues() {
-      internalGetMutableValues().getMutableMap()
-          .clear();
+      if (valuesBuilder_ == null) {
+        values_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000002);
+        onChanged();
+      } else {
+        valuesBuilder_.clear();
+      }
       return this;
     }
     /**
-     * <code>map&lt;string, .data.Value&gt; values = 7;</code>
+     * <code>repeated .data.KeyValue values = 2;</code>
      */
-
-    public Builder removeValues(
-        java.lang.String key) {
-      if (key == null) { throw new java.lang.NullPointerException(); }
-      internalGetMutableValues().getMutableMap()
-          .remove(key);
+    public Builder removeValues(int index) {
+      if (valuesBuilder_ == null) {
+        ensureValuesIsMutable();
+        values_.remove(index);
+        onChanged();
+      } else {
+        valuesBuilder_.remove(index);
+      }
       return this;
     }
     /**
-     * Use alternate mutation accessors instead.
+     * <code>repeated .data.KeyValue values = 2;</code>
      */
-    @java.lang.Deprecated
-    public java.util.Map<java.lang.String, org.spin.grpc.util.Value>
-    getMutableValues() {
-      return internalGetMutableValues().getMutableMap();
+    public org.spin.grpc.util.KeyValue.Builder getValuesBuilder(
+        int index) {
+      return getValuesFieldBuilder().getBuilder(index);
     }
     /**
-     * <code>map&lt;string, .data.Value&gt; values = 7;</code>
+     * <code>repeated .data.KeyValue values = 2;</code>
      */
-    public Builder putValues(
-        java.lang.String key,
-        org.spin.grpc.util.Value value) {
-      if (key == null) { throw new java.lang.NullPointerException(); }
-      if (value == null) { throw new java.lang.NullPointerException(); }
-      internalGetMutableValues().getMutableMap()
-          .put(key, value);
-      return this;
+    public org.spin.grpc.util.KeyValueOrBuilder getValuesOrBuilder(
+        int index) {
+      if (valuesBuilder_ == null) {
+        return values_.get(index);  } else {
+        return valuesBuilder_.getMessageOrBuilder(index);
+      }
     }
     /**
-     * <code>map&lt;string, .data.Value&gt; values = 7;</code>
+     * <code>repeated .data.KeyValue values = 2;</code>
      */
-
-    public Builder putAllValues(
-        java.util.Map<java.lang.String, org.spin.grpc.util.Value> values) {
-      internalGetMutableValues().getMutableMap()
-          .putAll(values);
-      return this;
+    public java.util.List<? extends org.spin.grpc.util.KeyValueOrBuilder> 
+         getValuesOrBuilderList() {
+      if (valuesBuilder_ != null) {
+        return valuesBuilder_.getMessageOrBuilderList();
+      } else {
+        return java.util.Collections.unmodifiableList(values_);
+      }
+    }
+    /**
+     * <code>repeated .data.KeyValue values = 2;</code>
+     */
+    public org.spin.grpc.util.KeyValue.Builder addValuesBuilder() {
+      return getValuesFieldBuilder().addBuilder(
+          org.spin.grpc.util.KeyValue.getDefaultInstance());
+    }
+    /**
+     * <code>repeated .data.KeyValue values = 2;</code>
+     */
+    public org.spin.grpc.util.KeyValue.Builder addValuesBuilder(
+        int index) {
+      return getValuesFieldBuilder().addBuilder(
+          index, org.spin.grpc.util.KeyValue.getDefaultInstance());
+    }
+    /**
+     * <code>repeated .data.KeyValue values = 2;</code>
+     */
+    public java.util.List<org.spin.grpc.util.KeyValue.Builder> 
+         getValuesBuilderList() {
+      return getValuesFieldBuilder().getBuilderList();
+    }
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+        org.spin.grpc.util.KeyValue, org.spin.grpc.util.KeyValue.Builder, org.spin.grpc.util.KeyValueOrBuilder> 
+        getValuesFieldBuilder() {
+      if (valuesBuilder_ == null) {
+        valuesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+            org.spin.grpc.util.KeyValue, org.spin.grpc.util.KeyValue.Builder, org.spin.grpc.util.KeyValueOrBuilder>(
+                values_,
+                ((bitField0_ & 0x00000002) == 0x00000002),
+                getParentForChildren(),
+                isClean());
+        values_ = null;
+      }
+      return valuesBuilder_;
     }
     public final Builder setUnknownFields(
         final com.google.protobuf.UnknownFieldSet unknownFields) {

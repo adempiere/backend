@@ -13,36 +13,26 @@ public interface SelectionOrBuilder extends
   int getSelectionId();
 
   /**
-   * <code>map&lt;string, .data.Value&gt; values = 7;</code>
+   * <code>repeated .data.KeyValue values = 2;</code>
+   */
+  java.util.List<org.spin.grpc.util.KeyValue> 
+      getValuesList();
+  /**
+   * <code>repeated .data.KeyValue values = 2;</code>
+   */
+  org.spin.grpc.util.KeyValue getValues(int index);
+  /**
+   * <code>repeated .data.KeyValue values = 2;</code>
    */
   int getValuesCount();
   /**
-   * <code>map&lt;string, .data.Value&gt; values = 7;</code>
+   * <code>repeated .data.KeyValue values = 2;</code>
    */
-  boolean containsValues(
-      java.lang.String key);
+  java.util.List<? extends org.spin.grpc.util.KeyValueOrBuilder> 
+      getValuesOrBuilderList();
   /**
-   * Use {@link #getValuesMap()} instead.
+   * <code>repeated .data.KeyValue values = 2;</code>
    */
-  @java.lang.Deprecated
-  java.util.Map<java.lang.String, org.spin.grpc.util.Value>
-  getValues();
-  /**
-   * <code>map&lt;string, .data.Value&gt; values = 7;</code>
-   */
-  java.util.Map<java.lang.String, org.spin.grpc.util.Value>
-  getValuesMap();
-  /**
-   * <code>map&lt;string, .data.Value&gt; values = 7;</code>
-   */
-
-  org.spin.grpc.util.Value getValuesOrDefault(
-      java.lang.String key,
-      org.spin.grpc.util.Value defaultValue);
-  /**
-   * <code>map&lt;string, .data.Value&gt; values = 7;</code>
-   */
-
-  org.spin.grpc.util.Value getValuesOrThrow(
-      java.lang.String key);
+  org.spin.grpc.util.KeyValueOrBuilder getValuesOrBuilder(
+      int index);
 }

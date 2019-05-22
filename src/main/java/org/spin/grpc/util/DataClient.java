@@ -18,8 +18,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.enterprise.deploy.spi.exceptions.ClientExecuteException;
-
 import org.spin.grpc.util.Value.ValueType;
 
 import io.grpc.ManagedChannel;
@@ -192,7 +190,7 @@ public class DataClient {
 	   */
 	  public void requestReport() {
 		  ClientRequest clientRequest = ClientRequest.newBuilder()
-				  .setSessionUuid("53c1c836-6e47-11e9-8160-3709b250e4e1")
+				  .setSessionUuid("966a230e-7022-11e9-b796-0f88cc28c4a8")
 				  .build();
 		  //	Open Items
 		  ProcessRequest.Builder request = ProcessRequest.newBuilder()
@@ -203,7 +201,10 @@ public class DataClient {
 		  Value.Builder isSOTrx = Value.newBuilder();
 		  isSOTrx.setBooleanValue(true);
 		  isSOTrx.setValueType(ValueType.BOOLEAN);
-		  request.putParameters("IsSOTrx", isSOTrx.build());
+		  KeyValue.Builder keyValue = KeyValue.newBuilder();
+		  keyValue.setKey("IsSOTrx");
+		  keyValue.setValue(isSOTrx.build());
+		  request.addParameters(keyValue);
 		  //	
 		  
 		  ProcessResponse response;
@@ -223,9 +224,12 @@ public class DataClient {
 		  ClientRequest clientRequest = ClientRequest.newBuilder()
 				  .setSessionUuid("2866df12-7be1-11e9-9f6a-c3c12ab1a3a5")
 				  .build();
-		  ProcessResponseList response;
+		  
+		  ProcessActivityRequest.Builder request = ProcessActivityRequest.newBuilder();
+		  request.setClientRequest(clientRequest);
+		  ProcessResponseList response = null;
 		  try {
-			  response = blockingStub.requestProcessActivity(clientRequest);
+			  response = blockingStub.requestProcessActivity(request.build());
 			  logger.info("Open Item Report from session: " + response);
 		  } catch (StatusRuntimeException e) {
 			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
@@ -289,12 +293,12 @@ public class DataClient {
 	    	//	
 //	    	client.requestPOListWithSQL();
 //	    	client.requestProcess();
-//	    	client.requestReport();
+	    	client.requestReport();
 //	    	logger.info("####################### PO List #####################");
 //	    	client.requestPOList();
 //	    	logger.info("####################### Callout #####################");
 //	    	client.requestPOList();
-	    	client.requestProcessActivity();
+//	    	client.requestProcessActivity();
 	    } finally {
 	      client.shutdown();
 	    }
