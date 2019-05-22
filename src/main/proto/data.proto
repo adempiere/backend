@@ -37,6 +37,8 @@ service DataService {
 	rpc RequestProcess(ProcessRequest) returns (ProcessResponse) {}
 	//	Request Browser Data
 	rpc RequestBrowser(ValueObjectRequest) returns (ValueObjectList) {}
+	//	Request Process Activity from current session
+	rpc RequestProcessActivity(ClientRequest) returns (ProcessResponseList) {}
 }
 
 // The client request contains client info for request.
@@ -164,6 +166,12 @@ message Selection {
 	map<string, Value> values = 7;
 }
 
+// Process Response List
+message ProcessResponseList {
+	int64 recordCount = 1;
+	repeated ProcessResponse responses = 2;
+}
+
 //	Response with log and values from server
 message ProcessResponse {
 	string instanceUuid = 1;
@@ -171,7 +179,8 @@ message ProcessResponse {
 	string summary = 3;
 	int32 resultTableId = 4;
 	repeated ProcessInfoLog logs = 5;
-	ProcessOutput output = 6;
+	map<string, Value> parameters = 6;
+	ProcessOutput output = 7;
 }
 
 //	Process Log result

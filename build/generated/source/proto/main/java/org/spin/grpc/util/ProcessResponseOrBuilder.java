@@ -62,15 +62,49 @@ public interface ProcessResponseOrBuilder extends
       int index);
 
   /**
-   * <code>.data.ProcessOutput output = 6;</code>
+   * <code>map&lt;string, .data.Value&gt; parameters = 6;</code>
+   */
+  int getParametersCount();
+  /**
+   * <code>map&lt;string, .data.Value&gt; parameters = 6;</code>
+   */
+  boolean containsParameters(
+      java.lang.String key);
+  /**
+   * Use {@link #getParametersMap()} instead.
+   */
+  @java.lang.Deprecated
+  java.util.Map<java.lang.String, org.spin.grpc.util.Value>
+  getParameters();
+  /**
+   * <code>map&lt;string, .data.Value&gt; parameters = 6;</code>
+   */
+  java.util.Map<java.lang.String, org.spin.grpc.util.Value>
+  getParametersMap();
+  /**
+   * <code>map&lt;string, .data.Value&gt; parameters = 6;</code>
+   */
+
+  org.spin.grpc.util.Value getParametersOrDefault(
+      java.lang.String key,
+      org.spin.grpc.util.Value defaultValue);
+  /**
+   * <code>map&lt;string, .data.Value&gt; parameters = 6;</code>
+   */
+
+  org.spin.grpc.util.Value getParametersOrThrow(
+      java.lang.String key);
+
+  /**
+   * <code>.data.ProcessOutput output = 7;</code>
    */
   boolean hasOutput();
   /**
-   * <code>.data.ProcessOutput output = 6;</code>
+   * <code>.data.ProcessOutput output = 7;</code>
    */
   org.spin.grpc.util.ProcessOutput getOutput();
   /**
-   * <code>.data.ProcessOutput output = 6;</code>
+   * <code>.data.ProcessOutput output = 7;</code>
    */
   org.spin.grpc.util.ProcessOutputOrBuilder getOutputOrBuilder();
 }

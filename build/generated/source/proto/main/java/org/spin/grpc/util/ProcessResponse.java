@@ -90,6 +90,19 @@ private static final long serialVersionUID = 0L;
             break;
           }
           case 50: {
+            if (!((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
+              parameters_ = com.google.protobuf.MapField.newMapField(
+                  ParametersDefaultEntryHolder.defaultEntry);
+              mutable_bitField0_ |= 0x00000020;
+            }
+            com.google.protobuf.MapEntry<java.lang.String, org.spin.grpc.util.Value>
+            parameters__ = input.readMessage(
+                ParametersDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
+            parameters_.getMutableMap().put(
+                parameters__.getKey(), parameters__.getValue());
+            break;
+          }
+          case 58: {
             org.spin.grpc.util.ProcessOutput.Builder subBuilder = null;
             if (output_ != null) {
               subBuilder = output_.toBuilder();
@@ -122,6 +135,17 @@ private static final long serialVersionUID = 0L;
     return org.spin.grpc.util.ADempiereData.internal_static_data_ProcessResponse_descriptor;
   }
 
+  @SuppressWarnings({"rawtypes"})
+  protected com.google.protobuf.MapField internalGetMapField(
+      int number) {
+    switch (number) {
+      case 6:
+        return internalGetParameters();
+      default:
+        throw new RuntimeException(
+            "Invalid map field number: " + number);
+    }
+  }
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
     return org.spin.grpc.util.ADempiereData.internal_static_data_ProcessResponse_fieldAccessorTable
@@ -251,22 +275,98 @@ private static final long serialVersionUID = 0L;
     return logs_.get(index);
   }
 
-  public static final int OUTPUT_FIELD_NUMBER = 6;
+  public static final int PARAMETERS_FIELD_NUMBER = 6;
+  private static final class ParametersDefaultEntryHolder {
+    static final com.google.protobuf.MapEntry<
+        java.lang.String, org.spin.grpc.util.Value> defaultEntry =
+            com.google.protobuf.MapEntry
+            .<java.lang.String, org.spin.grpc.util.Value>newDefaultInstance(
+                org.spin.grpc.util.ADempiereData.internal_static_data_ProcessResponse_ParametersEntry_descriptor, 
+                com.google.protobuf.WireFormat.FieldType.STRING,
+                "",
+                com.google.protobuf.WireFormat.FieldType.MESSAGE,
+                org.spin.grpc.util.Value.getDefaultInstance());
+  }
+  private com.google.protobuf.MapField<
+      java.lang.String, org.spin.grpc.util.Value> parameters_;
+  private com.google.protobuf.MapField<java.lang.String, org.spin.grpc.util.Value>
+  internalGetParameters() {
+    if (parameters_ == null) {
+      return com.google.protobuf.MapField.emptyMapField(
+          ParametersDefaultEntryHolder.defaultEntry);
+    }
+    return parameters_;
+  }
+
+  public int getParametersCount() {
+    return internalGetParameters().getMap().size();
+  }
+  /**
+   * <code>map&lt;string, .data.Value&gt; parameters = 6;</code>
+   */
+
+  public boolean containsParameters(
+      java.lang.String key) {
+    if (key == null) { throw new java.lang.NullPointerException(); }
+    return internalGetParameters().getMap().containsKey(key);
+  }
+  /**
+   * Use {@link #getParametersMap()} instead.
+   */
+  @java.lang.Deprecated
+  public java.util.Map<java.lang.String, org.spin.grpc.util.Value> getParameters() {
+    return getParametersMap();
+  }
+  /**
+   * <code>map&lt;string, .data.Value&gt; parameters = 6;</code>
+   */
+
+  public java.util.Map<java.lang.String, org.spin.grpc.util.Value> getParametersMap() {
+    return internalGetParameters().getMap();
+  }
+  /**
+   * <code>map&lt;string, .data.Value&gt; parameters = 6;</code>
+   */
+
+  public org.spin.grpc.util.Value getParametersOrDefault(
+      java.lang.String key,
+      org.spin.grpc.util.Value defaultValue) {
+    if (key == null) { throw new java.lang.NullPointerException(); }
+    java.util.Map<java.lang.String, org.spin.grpc.util.Value> map =
+        internalGetParameters().getMap();
+    return map.containsKey(key) ? map.get(key) : defaultValue;
+  }
+  /**
+   * <code>map&lt;string, .data.Value&gt; parameters = 6;</code>
+   */
+
+  public org.spin.grpc.util.Value getParametersOrThrow(
+      java.lang.String key) {
+    if (key == null) { throw new java.lang.NullPointerException(); }
+    java.util.Map<java.lang.String, org.spin.grpc.util.Value> map =
+        internalGetParameters().getMap();
+    if (!map.containsKey(key)) {
+      throw new java.lang.IllegalArgumentException();
+    }
+    return map.get(key);
+  }
+
+  public static final int OUTPUT_FIELD_NUMBER = 7;
   private org.spin.grpc.util.ProcessOutput output_;
   /**
-   * <code>.data.ProcessOutput output = 6;</code>
+   * <code>.data.ProcessOutput output = 7;</code>
    */
   public boolean hasOutput() {
     return output_ != null;
   }
   /**
-   * <code>.data.ProcessOutput output = 6;</code>
+   * <code>.data.ProcessOutput output = 7;</code>
    */
   public org.spin.grpc.util.ProcessOutput getOutput() {
     return output_ == null ? org.spin.grpc.util.ProcessOutput.getDefaultInstance() : output_;
   }
   /**
-   * <code>.data.ProcessOutput output = 6;</code>
+   * <code>.data.ProcessOutput output = 7;</code>
    */
   public org.spin.grpc.util.ProcessOutputOrBuilder getOutputOrBuilder() {
     return getOutput();
@@ -299,8 +399,14 @@ private static final long serialVersionUID = 0L;
     for (int i = 0; i < logs_.size(); i++) {
       output.writeMessage(5, logs_.get(i));
     }
+    com.google.protobuf.GeneratedMessageV3
+      .serializeStringMapTo(
+        output,
+        internalGetParameters(),
+        ParametersDefaultEntryHolder.defaultEntry,
+        6);
     if (output_ != null) {
-      output.writeMessage(6, getOutput());
+      output.writeMessage(7, getOutput());
     }
     unknownFields.writeTo(output);
   }
@@ -328,9 +434,19 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(5, logs_.get(i));
     }
+    for (java.util.Map.Entry<java.lang.String, org.spin.grpc.util.Value> entry
+         : internalGetParameters().getMap().entrySet()) {
+      com.google.protobuf.MapEntry<java.lang.String, org.spin.grpc.util.Value>
+      parameters__ = ParametersDefaultEntryHolder.defaultEntry.newBuilderForType()
+          .setKey(entry.getKey())
+          .setValue(entry.getValue())
+          .build();
+      size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(6, parameters__);
+    }
     if (output_ != null) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(6, getOutput());
+        .computeMessageSize(7, getOutput());
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -358,6 +474,8 @@ private static final long serialVersionUID = 0L;
         == other.getResultTableId());
     result = result && getLogsList()
         .equals(other.getLogsList());
+    result = result && internalGetParameters().equals(
+        other.internalGetParameters());
     result = result && (hasOutput() == other.hasOutput());
     if (hasOutput()) {
       result = result && getOutput()
@@ -386,6 +504,10 @@ private static final long serialVersionUID = 0L;
     if (getLogsCount() > 0) {
       hash = (37 * hash) + LOGS_FIELD_NUMBER;
       hash = (53 * hash) + getLogsList().hashCode();
+    }
+    if (!internalGetParameters().getMap().isEmpty()) {
+      hash = (37 * hash) + PARAMETERS_FIELD_NUMBER;
+      hash = (53 * hash) + internalGetParameters().hashCode();
     }
     if (hasOutput()) {
       hash = (37 * hash) + OUTPUT_FIELD_NUMBER;
@@ -500,6 +622,28 @@ private static final long serialVersionUID = 0L;
       return org.spin.grpc.util.ADempiereData.internal_static_data_ProcessResponse_descriptor;
     }
 
+    @SuppressWarnings({"rawtypes"})
+    protected com.google.protobuf.MapField internalGetMapField(
+        int number) {
+      switch (number) {
+        case 6:
+          return internalGetParameters();
+        default:
+          throw new RuntimeException(
+              "Invalid map field number: " + number);
+      }
+    }
+    @SuppressWarnings({"rawtypes"})
+    protected com.google.protobuf.MapField internalGetMutableMapField(
+        int number) {
+      switch (number) {
+        case 6:
+          return internalGetMutableParameters();
+        default:
+          throw new RuntimeException(
+              "Invalid map field number: " + number);
+      }
+    }
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return org.spin.grpc.util.ADempiereData.internal_static_data_ProcessResponse_fieldAccessorTable
@@ -539,6 +683,7 @@ private static final long serialVersionUID = 0L;
       } else {
         logsBuilder_.clear();
       }
+      internalGetMutableParameters().clear();
       if (outputBuilder_ == null) {
         output_ = null;
       } else {
@@ -582,6 +727,8 @@ private static final long serialVersionUID = 0L;
       } else {
         result.logs_ = logsBuilder_.build();
       }
+      result.parameters_ = internalGetParameters();
+      result.parameters_.makeImmutable();
       if (outputBuilder_ == null) {
         result.output_ = output_;
       } else {
@@ -669,6 +816,8 @@ private static final long serialVersionUID = 0L;
           }
         }
       }
+      internalGetMutableParameters().mergeFrom(
+          other.internalGetParameters());
       if (other.hasOutput()) {
         mergeOutput(other.getOutput());
       }
@@ -1130,17 +1279,140 @@ private static final long serialVersionUID = 0L;
       return logsBuilder_;
     }
 
+    private com.google.protobuf.MapField<
+        java.lang.String, org.spin.grpc.util.Value> parameters_;
+    private com.google.protobuf.MapField<java.lang.String, org.spin.grpc.util.Value>
+    internalGetParameters() {
+      if (parameters_ == null) {
+        return com.google.protobuf.MapField.emptyMapField(
+            ParametersDefaultEntryHolder.defaultEntry);
+      }
+      return parameters_;
+    }
+    private com.google.protobuf.MapField<java.lang.String, org.spin.grpc.util.Value>
+    internalGetMutableParameters() {
+      onChanged();;
+      if (parameters_ == null) {
+        parameters_ = com.google.protobuf.MapField.newMapField(
+            ParametersDefaultEntryHolder.defaultEntry);
+      }
+      if (!parameters_.isMutable()) {
+        parameters_ = parameters_.copy();
+      }
+      return parameters_;
+    }
+
+    public int getParametersCount() {
+      return internalGetParameters().getMap().size();
+    }
+    /**
+     * <code>map&lt;string, .data.Value&gt; parameters = 6;</code>
+     */
+
+    public boolean containsParameters(
+        java.lang.String key) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      return internalGetParameters().getMap().containsKey(key);
+    }
+    /**
+     * Use {@link #getParametersMap()} instead.
+     */
+    @java.lang.Deprecated
+    public java.util.Map<java.lang.String, org.spin.grpc.util.Value> getParameters() {
+      return getParametersMap();
+    }
+    /**
+     * <code>map&lt;string, .data.Value&gt; parameters = 6;</code>
+     */
+
+    public java.util.Map<java.lang.String, org.spin.grpc.util.Value> getParametersMap() {
+      return internalGetParameters().getMap();
+    }
+    /**
+     * <code>map&lt;string, .data.Value&gt; parameters = 6;</code>
+     */
+
+    public org.spin.grpc.util.Value getParametersOrDefault(
+        java.lang.String key,
+        org.spin.grpc.util.Value defaultValue) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      java.util.Map<java.lang.String, org.spin.grpc.util.Value> map =
+          internalGetParameters().getMap();
+      return map.containsKey(key) ? map.get(key) : defaultValue;
+    }
+    /**
+     * <code>map&lt;string, .data.Value&gt; parameters = 6;</code>
+     */
+
+    public org.spin.grpc.util.Value getParametersOrThrow(
+        java.lang.String key) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      java.util.Map<java.lang.String, org.spin.grpc.util.Value> map =
+          internalGetParameters().getMap();
+      if (!map.containsKey(key)) {
+        throw new java.lang.IllegalArgumentException();
+      }
+      return map.get(key);
+    }
+
+    public Builder clearParameters() {
+      internalGetMutableParameters().getMutableMap()
+          .clear();
+      return this;
+    }
+    /**
+     * <code>map&lt;string, .data.Value&gt; parameters = 6;</code>
+     */
+
+    public Builder removeParameters(
+        java.lang.String key) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      internalGetMutableParameters().getMutableMap()
+          .remove(key);
+      return this;
+    }
+    /**
+     * Use alternate mutation accessors instead.
+     */
+    @java.lang.Deprecated
+    public java.util.Map<java.lang.String, org.spin.grpc.util.Value>
+    getMutableParameters() {
+      return internalGetMutableParameters().getMutableMap();
+    }
+    /**
+     * <code>map&lt;string, .data.Value&gt; parameters = 6;</code>
+     */
+    public Builder putParameters(
+        java.lang.String key,
+        org.spin.grpc.util.Value value) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      if (value == null) { throw new java.lang.NullPointerException(); }
+      internalGetMutableParameters().getMutableMap()
+          .put(key, value);
+      return this;
+    }
+    /**
+     * <code>map&lt;string, .data.Value&gt; parameters = 6;</code>
+     */
+
+    public Builder putAllParameters(
+        java.util.Map<java.lang.String, org.spin.grpc.util.Value> values) {
+      internalGetMutableParameters().getMutableMap()
+          .putAll(values);
+      return this;
+    }
+
     private org.spin.grpc.util.ProcessOutput output_ = null;
     private com.google.protobuf.SingleFieldBuilderV3<
         org.spin.grpc.util.ProcessOutput, org.spin.grpc.util.ProcessOutput.Builder, org.spin.grpc.util.ProcessOutputOrBuilder> outputBuilder_;
     /**
-     * <code>.data.ProcessOutput output = 6;</code>
+     * <code>.data.ProcessOutput output = 7;</code>
      */
     public boolean hasOutput() {
       return outputBuilder_ != null || output_ != null;
     }
     /**
-     * <code>.data.ProcessOutput output = 6;</code>
+     * <code>.data.ProcessOutput output = 7;</code>
      */
     public org.spin.grpc.util.ProcessOutput getOutput() {
       if (outputBuilder_ == null) {
@@ -1150,7 +1422,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>.data.ProcessOutput output = 6;</code>
+     * <code>.data.ProcessOutput output = 7;</code>
      */
     public Builder setOutput(org.spin.grpc.util.ProcessOutput value) {
       if (outputBuilder_ == null) {
@@ -1166,7 +1438,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.data.ProcessOutput output = 6;</code>
+     * <code>.data.ProcessOutput output = 7;</code>
      */
     public Builder setOutput(
         org.spin.grpc.util.ProcessOutput.Builder builderForValue) {
@@ -1180,7 +1452,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.data.ProcessOutput output = 6;</code>
+     * <code>.data.ProcessOutput output = 7;</code>
      */
     public Builder mergeOutput(org.spin.grpc.util.ProcessOutput value) {
       if (outputBuilder_ == null) {
@@ -1198,7 +1470,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.data.ProcessOutput output = 6;</code>
+     * <code>.data.ProcessOutput output = 7;</code>
      */
     public Builder clearOutput() {
       if (outputBuilder_ == null) {
@@ -1212,7 +1484,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.data.ProcessOutput output = 6;</code>
+     * <code>.data.ProcessOutput output = 7;</code>
      */
     public org.spin.grpc.util.ProcessOutput.Builder getOutputBuilder() {
       
@@ -1220,7 +1492,7 @@ private static final long serialVersionUID = 0L;
       return getOutputFieldBuilder().getBuilder();
     }
     /**
-     * <code>.data.ProcessOutput output = 6;</code>
+     * <code>.data.ProcessOutput output = 7;</code>
      */
     public org.spin.grpc.util.ProcessOutputOrBuilder getOutputOrBuilder() {
       if (outputBuilder_ != null) {
@@ -1231,7 +1503,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>.data.ProcessOutput output = 6;</code>
+     * <code>.data.ProcessOutput output = 7;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
         org.spin.grpc.util.ProcessOutput, org.spin.grpc.util.ProcessOutput.Builder, org.spin.grpc.util.ProcessOutputOrBuilder> 

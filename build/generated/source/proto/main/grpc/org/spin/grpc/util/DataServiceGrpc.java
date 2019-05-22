@@ -254,6 +254,38 @@ public final class DataServiceGrpc {
      return getRequestBrowserMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.ClientRequest,
+      org.spin.grpc.util.ProcessResponseList> getRequestProcessActivityMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "RequestProcessActivity",
+      requestType = org.spin.grpc.util.ClientRequest.class,
+      responseType = org.spin.grpc.util.ProcessResponseList.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<org.spin.grpc.util.ClientRequest,
+      org.spin.grpc.util.ProcessResponseList> getRequestProcessActivityMethod() {
+    io.grpc.MethodDescriptor<org.spin.grpc.util.ClientRequest, org.spin.grpc.util.ProcessResponseList> getRequestProcessActivityMethod;
+    if ((getRequestProcessActivityMethod = DataServiceGrpc.getRequestProcessActivityMethod) == null) {
+      synchronized (DataServiceGrpc.class) {
+        if ((getRequestProcessActivityMethod = DataServiceGrpc.getRequestProcessActivityMethod) == null) {
+          DataServiceGrpc.getRequestProcessActivityMethod = getRequestProcessActivityMethod = 
+              io.grpc.MethodDescriptor.<org.spin.grpc.util.ClientRequest, org.spin.grpc.util.ProcessResponseList>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(
+                  "data.DataService", "RequestProcessActivity"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  org.spin.grpc.util.ClientRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  org.spin.grpc.util.ProcessResponseList.getDefaultInstance()))
+                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("RequestProcessActivity"))
+                  .build();
+          }
+        }
+     }
+     return getRequestProcessActivityMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -354,6 +386,16 @@ public final class DataServiceGrpc {
       asyncUnimplementedUnaryCall(getRequestBrowserMethod(), responseObserver);
     }
 
+    /**
+     * <pre>
+     *	Request Process Activity from current session
+     * </pre>
+     */
+    public void requestProcessActivity(org.spin.grpc.util.ClientRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.ProcessResponseList> responseObserver) {
+      asyncUnimplementedUnaryCall(getRequestProcessActivityMethod(), responseObserver);
+    }
+
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
@@ -405,6 +447,13 @@ public final class DataServiceGrpc {
                 org.spin.grpc.util.ValueObjectRequest,
                 org.spin.grpc.util.ValueObjectList>(
                   this, METHODID_REQUEST_BROWSER)))
+          .addMethod(
+            getRequestProcessActivityMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                org.spin.grpc.util.ClientRequest,
+                org.spin.grpc.util.ProcessResponseList>(
+                  this, METHODID_REQUEST_PROCESS_ACTIVITY)))
           .build();
     }
   }
@@ -506,6 +555,17 @@ public final class DataServiceGrpc {
       asyncUnaryCall(
           getChannel().newCall(getRequestBrowserMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     * <pre>
+     *	Request Process Activity from current session
+     * </pre>
+     */
+    public void requestProcessActivity(org.spin.grpc.util.ClientRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.ProcessResponseList> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getRequestProcessActivityMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -597,6 +657,16 @@ public final class DataServiceGrpc {
     public org.spin.grpc.util.ValueObjectList requestBrowser(org.spin.grpc.util.ValueObjectRequest request) {
       return blockingUnaryCall(
           getChannel(), getRequestBrowserMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     *	Request Process Activity from current session
+     * </pre>
+     */
+    public org.spin.grpc.util.ProcessResponseList requestProcessActivity(org.spin.grpc.util.ClientRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getRequestProcessActivityMethod(), getCallOptions(), request);
     }
   }
 
@@ -697,6 +767,17 @@ public final class DataServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getRequestBrowserMethod(), getCallOptions()), request);
     }
+
+    /**
+     * <pre>
+     *	Request Process Activity from current session
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.ProcessResponseList> requestProcessActivity(
+        org.spin.grpc.util.ClientRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getRequestProcessActivityMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_REQUEST_OBJECT = 0;
@@ -706,6 +787,7 @@ public final class DataServiceGrpc {
   private static final int METHODID_REQUEST_CALLOUT = 4;
   private static final int METHODID_REQUEST_PROCESS = 5;
   private static final int METHODID_REQUEST_BROWSER = 6;
+  private static final int METHODID_REQUEST_PROCESS_ACTIVITY = 7;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -751,6 +833,10 @@ public final class DataServiceGrpc {
         case METHODID_REQUEST_BROWSER:
           serviceImpl.requestBrowser((org.spin.grpc.util.ValueObjectRequest) request,
               (io.grpc.stub.StreamObserver<org.spin.grpc.util.ValueObjectList>) responseObserver);
+          break;
+        case METHODID_REQUEST_PROCESS_ACTIVITY:
+          serviceImpl.requestProcessActivity((org.spin.grpc.util.ClientRequest) request,
+              (io.grpc.stub.StreamObserver<org.spin.grpc.util.ProcessResponseList>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -820,6 +906,7 @@ public final class DataServiceGrpc {
               .addMethod(getRequestCalloutMethod())
               .addMethod(getRequestProcessMethod())
               .addMethod(getRequestBrowserMethod())
+              .addMethod(getRequestProcessActivityMethod())
               .build();
         }
       }

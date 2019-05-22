@@ -18,6 +18,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.enterprise.deploy.spi.exceptions.ClientExecuteException;
+
 import org.spin.grpc.util.Value.ValueType;
 
 import io.grpc.ManagedChannel;
@@ -214,6 +216,23 @@ public class DataClient {
 		  }
 	  }
 	  
+	  /**
+	   * Request a process
+	   */
+	  public void requestProcessActivity() {
+		  ClientRequest clientRequest = ClientRequest.newBuilder()
+				  .setSessionUuid("2866df12-7be1-11e9-9f6a-c3c12ab1a3a5")
+				  .build();
+		  ProcessResponseList response;
+		  try {
+			  response = blockingStub.requestProcessActivity(clientRequest);
+			  logger.info("Open Item Report from session: " + response);
+		  } catch (StatusRuntimeException e) {
+			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
+		      return;
+		  }
+	  }
+	  
 	  /** 
 	   * Request PO List. 
 	   */
@@ -269,12 +288,13 @@ public class DataClient {
 //	    	client.requestPOWithSQL();
 	    	//	
 //	    	client.requestPOListWithSQL();
-	    	client.requestProcess();
-	    	client.requestReport();
+//	    	client.requestProcess();
+//	    	client.requestReport();
 //	    	logger.info("####################### PO List #####################");
 //	    	client.requestPOList();
 //	    	logger.info("####################### Callout #####################");
 //	    	client.requestPOList();
+	    	client.requestProcessActivity();
 	    } finally {
 	      client.shutdown();
 	    }

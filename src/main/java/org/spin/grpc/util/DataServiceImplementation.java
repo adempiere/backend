@@ -42,8 +42,12 @@ import org.compiere.model.Callout;
 import org.compiere.model.GridField;
 import org.compiere.model.GridTab;
 import org.compiere.model.I_AD_Element;
+import org.compiere.model.I_AD_PInstance;
 import org.compiere.model.I_AD_Process;
 import org.compiere.model.I_AD_Session;
+import org.compiere.model.MPInstance;
+import org.compiere.model.MPInstanceLog;
+import org.compiere.model.MPInstancePara;
 import org.compiere.model.MProcess;
 import org.compiere.model.MRole;
 import org.compiere.model.MRule;
@@ -55,6 +59,7 @@ import org.compiere.process.ProcessInfo;
 import org.compiere.util.CCache;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
+import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
 import org.compiere.util.Util;
 import org.eevolution.service.dsl.ProcessBuilder;
@@ -192,9 +197,27 @@ public class DataServiceImplementation extends DataServiceImplBase {
 			log.fine("Object List Requested = " + request);
 			Properties context = getContext(request.getClientRequest());
 			
-			ValueObjectList.Builder entutyValueList = convertObjectList(context, request);
+			ValueObjectList.Builder entityValueList = convertObjectList(context, request);
 			
-			responseObserver.onNext(entutyValueList.build());
+			responseObserver.onNext(entityValueList.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(e);
+		}
+	}
+	
+	@Override
+	public void requestProcessActivity(ClientRequest request, StreamObserver<ProcessResponseList> responseObserver) {
+		try {
+			if(request == null
+					|| Util.isEmpty(request.getSessionUuid())) {
+				throw new AdempiereException("Process Activity Requested is Null");
+			}
+			log.fine("Object List Requested = " + request);
+			Properties context = getContext(request);
+			ProcessResponseList.Builder entityValueList = convertProcessActivity(context, request);
+			responseObserver.onNext(entityValueList.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
@@ -384,6 +407,7 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	private Properties getContext(ClientRequest request) {
 		Properties context = sessionsContext.get(request.getSessionUuid());
 		if(context != null) {
+			Env.setContext(context, Env.LANGUAGE, request.getLanguage());
 			return context;
 		}
 		context = Env.getCtx();
@@ -559,6 +583,133 @@ public class DataServiceImplementation extends DataServiceImplBase {
 			builder.addRecords(valueObject.build());
 		}
 		//	Return
+		return builder;
+	}
+	
+	/**
+	 * Convert request for process activity to builder
+	 * @param context
+	 * @param request
+	 * @return
+	 */
+	private ProcessResponseList.Builder convertProcessActivity(Properties context, ClientRequest request) {
+		List<MPInstance> processInstanceList = new Query(context, I_AD_PInstance.Table_Name, 
+				"EXISTS(SELECT 1 FROM AD_Session WHERE UUID = ? AND CreatedBy = AD_PInstance.AD_User_ID)", null)
+				.setParameters(request.getSessionUuid())
+				.<MPInstance>list();
+		//	
+		ProcessResponseList.Builder builder = ProcessResponseList.newBuilder();
+		//	Convert Process Instance
+		for(MPInstance processInstance : processInstanceList) {
+			ProcessResponse.Builder valueObject = convertProcessInstance(processInstance);
+			builder.addResponses(valueObject.build());
+		}
+		//	Return
+		return builder;
+	}
+	
+	/**
+	 * Convert Process Instance
+	 * @param instance
+	 * @return
+	 */
+	private ProcessResponse.Builder convertProcessInstance(MPInstance instance) {
+		ProcessResponse.Builder builder = ProcessResponse.newBuilder();
+		builder.setInstanceUuid(validateNull(instance.getUUID()));
+		builder.setIsError(!instance.isOK());
+		builder.setSummary(validateNull(instance.getErrorMsg()));
+		//	Add Output
+		for(MPInstanceLog log : instance.getLog()) {
+			ProcessInfoLog.Builder logBuilder = ProcessInfoLog.newBuilder();
+			logBuilder.setRecordId(log.getLog_ID());
+			logBuilder.setLog(validateNull((log.getP_Msg())));
+			builder.addLogs(logBuilder.build());
+		}
+		//	
+		for(MPInstancePara parameter : instance.getParameters()) {
+			Value.Builder parameterBuilder = Value.newBuilder();
+			Value.Builder parameterToBuilder = Value.newBuilder();
+			boolean hasFromParameter = false;
+			boolean hasToParameter = false;
+			String parameterName = parameter.getParameterName();
+			int displayType = parameter.getDisplayType();
+			if(displayType == -1) {
+				displayType = DisplayType.String;
+			}
+			//	Validate
+			if(DisplayType.isID(displayType)) {
+				BigDecimal number = parameter.getP_Number();
+				BigDecimal numberTo = parameter.getP_Number_To();
+				//	Validate
+				if(number != null) {
+					hasFromParameter = true;
+					parameterBuilder.setIntValue(number.intValue());
+					parameterBuilder.setValueType(ValueType.INTEGER);
+				}
+				if(numberTo != null) {
+					hasToParameter = true;
+					parameterToBuilder.setIntValue(numberTo.intValue());
+					parameterToBuilder.setValueType(ValueType.INTEGER);
+				}
+			} else if(DisplayType.isNumeric(displayType)) {
+				BigDecimal number = parameter.getP_Number();
+				BigDecimal numberTo = parameter.getP_Number_To();
+				//	Validate
+				if(number != null) {
+					hasFromParameter = true;
+					parameterBuilder.setDoubleValue(number.doubleValue());
+					parameterBuilder.setValueType(ValueType.DOUBLE);
+				}
+				if(numberTo != null) {
+					hasToParameter = true;
+					parameterToBuilder.setDoubleValue(numberTo.doubleValue());
+					parameterToBuilder.setValueType(ValueType.DOUBLE);
+				}
+			} else if(DisplayType.isDate(displayType)) {
+				Timestamp date = parameter.getP_Date();
+				Timestamp dateTo = parameter.getP_Date_To();
+				//	Validate
+				if(date != null) {
+					hasFromParameter = true;
+					parameterBuilder.setLongValue(date.getTime());
+					parameterBuilder.setValueType(ValueType.DATE);
+				}
+				if(dateTo != null) {
+					hasToParameter = true;
+					parameterToBuilder.setLongValue(dateTo.getTime());
+					parameterToBuilder.setValueType(ValueType.DATE);
+				}
+			} else if(DisplayType.YesNo == displayType) {
+				String value = parameter.getP_String();
+				if(!Util.isEmpty(value)) {
+					hasFromParameter = true;
+					parameterBuilder.setBooleanValue(!Util.isEmpty(value) && value.equals("Y"));
+					parameterBuilder.setValueType(ValueType.BOOLEAN);
+				}
+			} else {
+				String value = parameter.getP_String();
+				String valueTo = parameter.getP_String_To();
+				//	Validate
+				if(!Util.isEmpty(value)) {
+					hasFromParameter = true;
+					parameterBuilder.setStringValue(validateNull(value));
+					parameterBuilder.setValueType(ValueType.STRING);
+				}
+				if(!Util.isEmpty(valueTo)) {
+					hasToParameter = true;
+					parameterToBuilder.setStringValue(validateNull(valueTo));
+					parameterToBuilder.setValueType(ValueType.STRING);
+				}
+			}
+			//	For parameter
+			if(hasFromParameter) {
+				builder.putParameters(parameterName, parameterBuilder.build());
+			}
+			//	For to parameter
+			if(hasToParameter) {
+				builder.putParameters(parameterName + "_To", parameterToBuilder.build());
+			}
+		}
 		return builder;
 	}
 	
