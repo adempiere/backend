@@ -193,25 +193,26 @@ public final class ADempiereData {
       "t\022\014\n\004uuid\030\001 \001(\t\022\014\n\004name\030\002 \001(\t\022\023\n\013descrip" +
       "tion\030\003 \001(\t\022\020\n\010fileName\030\004 \001(\t\022\016\n\006output\030\005" +
       " \001(\t\022\024\n\014outputStream\030\006 \001(\014\022\030\n\020reportExpo" +
-      "rtType\030\007 \001(\t\"n\n\016BrowserRequest\022\014\n\004uuid\030\001" +
-      " \001(\t\022*\n\rclientRequest\030\002 \001(\0132\023.data.Clien" +
-      "tRequest\022\"\n\nparameters\030\003 \003(\0132\016.data.KeyV" +
-      "alue2\265\004\n\013DataService\022>\n\rRequestObject\022\030." +
-      "data.ValueObjectRequest\032\021.data.ValueObje" +
-      "ct\"\000\022F\n\021RequestObjectList\022\030.data.ValueOb" +
-      "jectRequest\032\025.data.ValueObjectList\"\000\022>\n\r" +
-      "RequestLookup\022\030.data.ValueObjectRequest\032" +
-      "\021.data.ValueObject\"\000\022F\n\021RequestLookupLis" +
-      "t\022\030.data.ValueObjectRequest\032\025.data.Value" +
-      "ObjectList\"\000\022?\n\016RequestCallout\022\024.data.Ca" +
-      "lloutRequest\032\025.data.CalloutResponse\"\000\022?\n" +
-      "\016RequestProcess\022\024.data.ProcessRequest\032\025." +
-      "data.ProcessResponse\"\000\022?\n\016RequestBrowser" +
-      "\022\024.data.BrowserRequest\032\025.data.ValueObjec" +
-      "tList\"\000\022S\n\026RequestProcessActivity\022\034.data" +
-      ".ProcessActivityRequest\032\031.data.ProcessRe" +
-      "sponseList\"\000B+\n\022org.spin.grpc.utilB\rADem" +
-      "piereDataP\001\242\002\003HLWb\006proto3"
+      "rtType\030\007 \001(\t\"\220\001\n\016BrowserRequest\022\014\n\004uuid\030" +
+      "\001 \001(\t\022*\n\rclientRequest\030\002 \001(\0132\023.data.Clie" +
+      "ntRequest\022 \n\010criteria\030\003 \001(\0132\016.data.Crite" +
+      "ria\022\"\n\nparameters\030\004 \003(\0132\016.data.KeyValue2" +
+      "\265\004\n\013DataService\022>\n\rRequestObject\022\030.data." +
+      "ValueObjectRequest\032\021.data.ValueObject\"\000\022" +
+      "F\n\021RequestObjectList\022\030.data.ValueObjectR" +
+      "equest\032\025.data.ValueObjectList\"\000\022>\n\rReque" +
+      "stLookup\022\030.data.ValueObjectRequest\032\021.dat" +
+      "a.ValueObject\"\000\022F\n\021RequestLookupList\022\030.d" +
+      "ata.ValueObjectRequest\032\025.data.ValueObjec" +
+      "tList\"\000\022?\n\016RequestCallout\022\024.data.Callout" +
+      "Request\032\025.data.CalloutResponse\"\000\022?\n\016Requ" +
+      "estProcess\022\024.data.ProcessRequest\032\025.data." +
+      "ProcessResponse\"\000\022?\n\016RequestBrowser\022\024.da" +
+      "ta.BrowserRequest\032\025.data.ValueObjectList" +
+      "\"\000\022S\n\026RequestProcessActivity\022\034.data.Proc" +
+      "essActivityRequest\032\031.data.ProcessRespons" +
+      "eList\"\000B+\n\022org.spin.grpc.utilB\rADempiere" +
+      "DataP\001\242\002\003HLWb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -350,7 +351,7 @@ public final class ADempiereData {
     internal_static_data_BrowserRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_data_BrowserRequest_descriptor,
-        new java.lang.String[] { "Uuid", "ClientRequest", "Parameters", });
+        new java.lang.String[] { "Uuid", "ClientRequest", "Criteria", "Parameters", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

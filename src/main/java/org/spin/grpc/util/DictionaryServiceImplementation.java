@@ -837,11 +837,12 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setIsActive(browseField.isActive())
 				.setCallout(validateNull(browseField.getCallout()))
 				.setDisplayType(browseField.getAD_Reference_ID());
-		if(browseField.getAD_View_Column().getAD_Column_ID() > 0) {
-			builder.setColumnName(validateNull(browseField.getAD_View_Column().getAD_Column().getColumnName()));
-		} else {
-			builder.setColumnName(validateNull(browseField.getAD_View_Column().getColumnSQL()));
-		}
+//		if(browseField.getAD_View_Column().getAD_Column_ID() > 0) {
+//			builder.setColumnName(validateNull(browseField.getAD_View_Column().getAD_Column().getColumnName()));
+//		} else {
+//			builder.setColumnName(validateNull(browseField.getAD_View_Column().getColumnSQL()));
+//		}
+		builder.setColumnName(validateNull(browseField.getAD_View_Column().getColumnName()));
 		//	
 		int displayTypeId = browseField.getAD_Reference_ID();
 		if(DisplayType.isLookup(displayTypeId)) {

@@ -75,9 +75,22 @@ private static final long serialVersionUID = 0L;
             break;
           }
           case 26: {
-            if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+            org.spin.grpc.util.Criteria.Builder subBuilder = null;
+            if (criteria_ != null) {
+              subBuilder = criteria_.toBuilder();
+            }
+            criteria_ = input.readMessage(org.spin.grpc.util.Criteria.parser(), extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom(criteria_);
+              criteria_ = subBuilder.buildPartial();
+            }
+
+            break;
+          }
+          case 34: {
+            if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
               parameters_ = new java.util.ArrayList<org.spin.grpc.util.KeyValue>();
-              mutable_bitField0_ |= 0x00000004;
+              mutable_bitField0_ |= 0x00000008;
             }
             parameters_.add(
                 input.readMessage(org.spin.grpc.util.KeyValue.parser(), extensionRegistry));
@@ -91,7 +104,7 @@ private static final long serialVersionUID = 0L;
       throw new com.google.protobuf.InvalidProtocolBufferException(
           e).setUnfinishedMessage(this);
     } finally {
-      if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+      if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
         parameters_ = java.util.Collections.unmodifiableList(parameters_);
       }
       this.unknownFields = unknownFields.build();
@@ -166,35 +179,56 @@ private static final long serialVersionUID = 0L;
     return getClientRequest();
   }
 
-  public static final int PARAMETERS_FIELD_NUMBER = 3;
+  public static final int CRITERIA_FIELD_NUMBER = 3;
+  private org.spin.grpc.util.Criteria criteria_;
+  /**
+   * <code>.data.Criteria criteria = 3;</code>
+   */
+  public boolean hasCriteria() {
+    return criteria_ != null;
+  }
+  /**
+   * <code>.data.Criteria criteria = 3;</code>
+   */
+  public org.spin.grpc.util.Criteria getCriteria() {
+    return criteria_ == null ? org.spin.grpc.util.Criteria.getDefaultInstance() : criteria_;
+  }
+  /**
+   * <code>.data.Criteria criteria = 3;</code>
+   */
+  public org.spin.grpc.util.CriteriaOrBuilder getCriteriaOrBuilder() {
+    return getCriteria();
+  }
+
+  public static final int PARAMETERS_FIELD_NUMBER = 4;
   private java.util.List<org.spin.grpc.util.KeyValue> parameters_;
   /**
-   * <code>repeated .data.KeyValue parameters = 3;</code>
+   * <code>repeated .data.KeyValue parameters = 4;</code>
    */
   public java.util.List<org.spin.grpc.util.KeyValue> getParametersList() {
     return parameters_;
   }
   /**
-   * <code>repeated .data.KeyValue parameters = 3;</code>
+   * <code>repeated .data.KeyValue parameters = 4;</code>
    */
   public java.util.List<? extends org.spin.grpc.util.KeyValueOrBuilder> 
       getParametersOrBuilderList() {
     return parameters_;
   }
   /**
-   * <code>repeated .data.KeyValue parameters = 3;</code>
+   * <code>repeated .data.KeyValue parameters = 4;</code>
    */
   public int getParametersCount() {
     return parameters_.size();
   }
   /**
-   * <code>repeated .data.KeyValue parameters = 3;</code>
+   * <code>repeated .data.KeyValue parameters = 4;</code>
    */
   public org.spin.grpc.util.KeyValue getParameters(int index) {
     return parameters_.get(index);
   }
   /**
-   * <code>repeated .data.KeyValue parameters = 3;</code>
+   * <code>repeated .data.KeyValue parameters = 4;</code>
    */
   public org.spin.grpc.util.KeyValueOrBuilder getParametersOrBuilder(
       int index) {
@@ -219,8 +253,11 @@ private static final long serialVersionUID = 0L;
     if (clientRequest_ != null) {
       output.writeMessage(2, getClientRequest());
     }
+    if (criteria_ != null) {
+      output.writeMessage(3, getCriteria());
+    }
     for (int i = 0; i < parameters_.size(); i++) {
-      output.writeMessage(3, parameters_.get(i));
+      output.writeMessage(4, parameters_.get(i));
     }
     unknownFields.writeTo(output);
   }
@@ -237,9 +274,13 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(2, getClientRequest());
     }
+    if (criteria_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(3, getCriteria());
+    }
     for (int i = 0; i < parameters_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(3, parameters_.get(i));
+        .computeMessageSize(4, parameters_.get(i));
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -264,6 +305,11 @@ private static final long serialVersionUID = 0L;
       result = result && getClientRequest()
           .equals(other.getClientRequest());
     }
+    result = result && (hasCriteria() == other.hasCriteria());
+    if (hasCriteria()) {
+      result = result && getCriteria()
+          .equals(other.getCriteria());
+    }
     result = result && getParametersList()
         .equals(other.getParametersList());
     result = result && unknownFields.equals(other.unknownFields);
@@ -282,6 +328,10 @@ private static final long serialVersionUID = 0L;
     if (hasClientRequest()) {
       hash = (37 * hash) + CLIENTREQUEST_FIELD_NUMBER;
       hash = (53 * hash) + getClientRequest().hashCode();
+    }
+    if (hasCriteria()) {
+      hash = (37 * hash) + CRITERIA_FIELD_NUMBER;
+      hash = (53 * hash) + getCriteria().hashCode();
     }
     if (getParametersCount() > 0) {
       hash = (37 * hash) + PARAMETERS_FIELD_NUMBER;
@@ -429,9 +479,15 @@ private static final long serialVersionUID = 0L;
         clientRequest_ = null;
         clientRequestBuilder_ = null;
       }
+      if (criteriaBuilder_ == null) {
+        criteria_ = null;
+      } else {
+        criteria_ = null;
+        criteriaBuilder_ = null;
+      }
       if (parametersBuilder_ == null) {
         parameters_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000004);
+        bitField0_ = (bitField0_ & ~0x00000008);
       } else {
         parametersBuilder_.clear();
       }
@@ -465,10 +521,15 @@ private static final long serialVersionUID = 0L;
       } else {
         result.clientRequest_ = clientRequestBuilder_.build();
       }
+      if (criteriaBuilder_ == null) {
+        result.criteria_ = criteria_;
+      } else {
+        result.criteria_ = criteriaBuilder_.build();
+      }
       if (parametersBuilder_ == null) {
-        if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        if (((bitField0_ & 0x00000008) == 0x00000008)) {
           parameters_ = java.util.Collections.unmodifiableList(parameters_);
-          bitField0_ = (bitField0_ & ~0x00000004);
+          bitField0_ = (bitField0_ & ~0x00000008);
         }
         result.parameters_ = parameters_;
       } else {
@@ -523,11 +584,14 @@ private static final long serialVersionUID = 0L;
       if (other.hasClientRequest()) {
         mergeClientRequest(other.getClientRequest());
       }
+      if (other.hasCriteria()) {
+        mergeCriteria(other.getCriteria());
+      }
       if (parametersBuilder_ == null) {
         if (!other.parameters_.isEmpty()) {
           if (parameters_.isEmpty()) {
             parameters_ = other.parameters_;
-            bitField0_ = (bitField0_ & ~0x00000004);
+            bitField0_ = (bitField0_ & ~0x00000008);
           } else {
             ensureParametersIsMutable();
             parameters_.addAll(other.parameters_);
@@ -540,7 +604,7 @@ private static final long serialVersionUID = 0L;
             parametersBuilder_.dispose();
             parametersBuilder_ = null;
             parameters_ = other.parameters_;
-            bitField0_ = (bitField0_ & ~0x00000004);
+            bitField0_ = (bitField0_ & ~0x00000008);
             parametersBuilder_ = 
               com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                  getParametersFieldBuilder() : null;
@@ -763,12 +827,129 @@ private static final long serialVersionUID = 0L;
       return clientRequestBuilder_;
     }
 
+    private org.spin.grpc.util.Criteria criteria_ = null;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        org.spin.grpc.util.Criteria, org.spin.grpc.util.Criteria.Builder, org.spin.grpc.util.CriteriaOrBuilder> criteriaBuilder_;
+    /**
+     * <code>.data.Criteria criteria = 3;</code>
+     */
+    public boolean hasCriteria() {
+      return criteriaBuilder_ != null || criteria_ != null;
+    }
+    /**
+     * <code>.data.Criteria criteria = 3;</code>
+     */
+    public org.spin.grpc.util.Criteria getCriteria() {
+      if (criteriaBuilder_ == null) {
+        return criteria_ == null ? org.spin.grpc.util.Criteria.getDefaultInstance() : criteria_;
+      } else {
+        return criteriaBuilder_.getMessage();
+      }
+    }
+    /**
+     * <code>.data.Criteria criteria = 3;</code>
+     */
+    public Builder setCriteria(org.spin.grpc.util.Criteria value) {
+      if (criteriaBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        criteria_ = value;
+        onChanged();
+      } else {
+        criteriaBuilder_.setMessage(value);
+      }
+
+      return this;
+    }
+    /**
+     * <code>.data.Criteria criteria = 3;</code>
+     */
+    public Builder setCriteria(
+        org.spin.grpc.util.Criteria.Builder builderForValue) {
+      if (criteriaBuilder_ == null) {
+        criteria_ = builderForValue.build();
+        onChanged();
+      } else {
+        criteriaBuilder_.setMessage(builderForValue.build());
+      }
+
+      return this;
+    }
+    /**
+     * <code>.data.Criteria criteria = 3;</code>
+     */
+    public Builder mergeCriteria(org.spin.grpc.util.Criteria value) {
+      if (criteriaBuilder_ == null) {
+        if (criteria_ != null) {
+          criteria_ =
+            org.spin.grpc.util.Criteria.newBuilder(criteria_).mergeFrom(value).buildPartial();
+        } else {
+          criteria_ = value;
+        }
+        onChanged();
+      } else {
+        criteriaBuilder_.mergeFrom(value);
+      }
+
+      return this;
+    }
+    /**
+     * <code>.data.Criteria criteria = 3;</code>
+     */
+    public Builder clearCriteria() {
+      if (criteriaBuilder_ == null) {
+        criteria_ = null;
+        onChanged();
+      } else {
+        criteria_ = null;
+        criteriaBuilder_ = null;
+      }
+
+      return this;
+    }
+    /**
+     * <code>.data.Criteria criteria = 3;</code>
+     */
+    public org.spin.grpc.util.Criteria.Builder getCriteriaBuilder() {
+      
+      onChanged();
+      return getCriteriaFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.data.Criteria criteria = 3;</code>
+     */
+    public org.spin.grpc.util.CriteriaOrBuilder getCriteriaOrBuilder() {
+      if (criteriaBuilder_ != null) {
+        return criteriaBuilder_.getMessageOrBuilder();
+      } else {
+        return criteria_ == null ?
+            org.spin.grpc.util.Criteria.getDefaultInstance() : criteria_;
+      }
+    }
+    /**
+     * <code>.data.Criteria criteria = 3;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        org.spin.grpc.util.Criteria, org.spin.grpc.util.Criteria.Builder, org.spin.grpc.util.CriteriaOrBuilder> 
+        getCriteriaFieldBuilder() {
+      if (criteriaBuilder_ == null) {
+        criteriaBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            org.spin.grpc.util.Criteria, org.spin.grpc.util.Criteria.Builder, org.spin.grpc.util.CriteriaOrBuilder>(
+                getCriteria(),
+                getParentForChildren(),
+                isClean());
+        criteria_ = null;
+      }
+      return criteriaBuilder_;
+    }
+
     private java.util.List<org.spin.grpc.util.KeyValue> parameters_ =
       java.util.Collections.emptyList();
     private void ensureParametersIsMutable() {
-      if (!((bitField0_ & 0x00000004) == 0x00000004)) {
+      if (!((bitField0_ & 0x00000008) == 0x00000008)) {
         parameters_ = new java.util.ArrayList<org.spin.grpc.util.KeyValue>(parameters_);
-        bitField0_ |= 0x00000004;
+        bitField0_ |= 0x00000008;
        }
     }
 
@@ -776,7 +957,7 @@ private static final long serialVersionUID = 0L;
         org.spin.grpc.util.KeyValue, org.spin.grpc.util.KeyValue.Builder, org.spin.grpc.util.KeyValueOrBuilder> parametersBuilder_;
 
     /**
-     * <code>repeated .data.KeyValue parameters = 3;</code>
+     * <code>repeated .data.KeyValue parameters = 4;</code>
      */
     public java.util.List<org.spin.grpc.util.KeyValue> getParametersList() {
       if (parametersBuilder_ == null) {
@@ -786,7 +967,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.KeyValue parameters = 3;</code>
+     * <code>repeated .data.KeyValue parameters = 4;</code>
      */
     public int getParametersCount() {
       if (parametersBuilder_ == null) {
@@ -796,7 +977,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.KeyValue parameters = 3;</code>
+     * <code>repeated .data.KeyValue parameters = 4;</code>
      */
     public org.spin.grpc.util.KeyValue getParameters(int index) {
       if (parametersBuilder_ == null) {
@@ -806,7 +987,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.KeyValue parameters = 3;</code>
+     * <code>repeated .data.KeyValue parameters = 4;</code>
      */
     public Builder setParameters(
         int index, org.spin.grpc.util.KeyValue value) {
@@ -823,7 +1004,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.KeyValue parameters = 3;</code>
+     * <code>repeated .data.KeyValue parameters = 4;</code>
      */
     public Builder setParameters(
         int index, org.spin.grpc.util.KeyValue.Builder builderForValue) {
@@ -837,7 +1018,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.KeyValue parameters = 3;</code>
+     * <code>repeated .data.KeyValue parameters = 4;</code>
      */
     public Builder addParameters(org.spin.grpc.util.KeyValue value) {
       if (parametersBuilder_ == null) {
@@ -853,7 +1034,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.KeyValue parameters = 3;</code>
+     * <code>repeated .data.KeyValue parameters = 4;</code>
      */
     public Builder addParameters(
         int index, org.spin.grpc.util.KeyValue value) {
@@ -870,7 +1051,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.KeyValue parameters = 3;</code>
+     * <code>repeated .data.KeyValue parameters = 4;</code>
      */
     public Builder addParameters(
         org.spin.grpc.util.KeyValue.Builder builderForValue) {
@@ -884,7 +1065,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.KeyValue parameters = 3;</code>
+     * <code>repeated .data.KeyValue parameters = 4;</code>
      */
     public Builder addParameters(
         int index, org.spin.grpc.util.KeyValue.Builder builderForValue) {
@@ -898,7 +1079,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.KeyValue parameters = 3;</code>
+     * <code>repeated .data.KeyValue parameters = 4;</code>
      */
     public Builder addAllParameters(
         java.lang.Iterable<? extends org.spin.grpc.util.KeyValue> values) {
@@ -913,12 +1094,12 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.KeyValue parameters = 3;</code>
+     * <code>repeated .data.KeyValue parameters = 4;</code>
      */
     public Builder clearParameters() {
       if (parametersBuilder_ == null) {
         parameters_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000004);
+        bitField0_ = (bitField0_ & ~0x00000008);
         onChanged();
       } else {
         parametersBuilder_.clear();
@@ -926,7 +1107,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.KeyValue parameters = 3;</code>
+     * <code>repeated .data.KeyValue parameters = 4;</code>
      */
     public Builder removeParameters(int index) {
       if (parametersBuilder_ == null) {
@@ -939,14 +1120,14 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.KeyValue parameters = 3;</code>
+     * <code>repeated .data.KeyValue parameters = 4;</code>
      */
     public org.spin.grpc.util.KeyValue.Builder getParametersBuilder(
         int index) {
       return getParametersFieldBuilder().getBuilder(index);
     }
     /**
-     * <code>repeated .data.KeyValue parameters = 3;</code>
+     * <code>repeated .data.KeyValue parameters = 4;</code>
      */
     public org.spin.grpc.util.KeyValueOrBuilder getParametersOrBuilder(
         int index) {
@@ -956,7 +1137,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.KeyValue parameters = 3;</code>
+     * <code>repeated .data.KeyValue parameters = 4;</code>
      */
     public java.util.List<? extends org.spin.grpc.util.KeyValueOrBuilder> 
          getParametersOrBuilderList() {
@@ -967,14 +1148,14 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.KeyValue parameters = 3;</code>
+     * <code>repeated .data.KeyValue parameters = 4;</code>
      */
     public org.spin.grpc.util.KeyValue.Builder addParametersBuilder() {
       return getParametersFieldBuilder().addBuilder(
           org.spin.grpc.util.KeyValue.getDefaultInstance());
     }
     /**
-     * <code>repeated .data.KeyValue parameters = 3;</code>
+     * <code>repeated .data.KeyValue parameters = 4;</code>
      */
     public org.spin.grpc.util.KeyValue.Builder addParametersBuilder(
         int index) {
@@ -982,7 +1163,7 @@ private static final long serialVersionUID = 0L;
           index, org.spin.grpc.util.KeyValue.getDefaultInstance());
     }
     /**
-     * <code>repeated .data.KeyValue parameters = 3;</code>
+     * <code>repeated .data.KeyValue parameters = 4;</code>
      */
     public java.util.List<org.spin.grpc.util.KeyValue.Builder> 
          getParametersBuilderList() {
@@ -995,7 +1176,7 @@ private static final long serialVersionUID = 0L;
         parametersBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
             org.spin.grpc.util.KeyValue, org.spin.grpc.util.KeyValue.Builder, org.spin.grpc.util.KeyValueOrBuilder>(
                 parameters_,
-                ((bitField0_ & 0x00000004) == 0x00000004),
+                ((bitField0_ & 0x00000008) == 0x00000008),
                 getParentForChildren(),
                 isClean());
         parameters_ = null;

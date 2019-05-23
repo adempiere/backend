@@ -26,8 +26,10 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -36,6 +38,9 @@ import java.util.logging.Level;
 import javax.script.ScriptEngine;
 
 import org.adempiere.exceptions.AdempiereException;
+import org.adempiere.model.I_AD_Browse;
+import org.adempiere.model.MBrowse;
+import org.adempiere.model.MBrowseField;
 import org.compiere.model.Callout;
 import org.compiere.model.GridField;
 import org.compiere.model.GridTab;
@@ -81,6 +86,8 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	private final String VALUE_COLUMN_KEY = "ValueColumn";
 	/**	Session Context	*/
 	private static CCache<String, Properties> sessionsContext = new CCache<String, Properties>("DataServiceImplementation", 30, 0);	//	no time-out
+	/**	Session Context	*/
+	private static CCache<String, MBrowse> browserRequested = new CCache<String, MBrowse>(I_AD_Browse.Table_Name + "_UUID", 30, 0);	//	no time-out
 	
 	@Override
 	public void requestObject(ValueObjectRequest request, StreamObserver<ValueObject> responseObserver) {
@@ -189,7 +196,8 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	@Override
 	public void requestBrowser(BrowserRequest request, StreamObserver<ValueObjectList> responseObserver) {
 		try {
-			if(request == null) {
+			if(request == null
+					|| Util.isEmpty(request.getUuid())) {
 				throw new AdempiereException("Browser Requested is Null");
 			}
 			log.fine("Object List Requested = " + request);
@@ -596,13 +604,139 @@ public class DataServiceImplementation extends DataServiceImplBase {
 		//	Return
 		return builder;
 	}
+	
+	/**
+	 * Get Where clause for Smart Browse
+	 * @param browser
+	 * @param parsedWhereClause
+	 * @param values
+	 * @return
+	 */
+	private String getBrowserWhereClause(MBrowse browser, String parsedWhereClause, HashMap<String, Object> parameterMap, List<Object> values) {
+		StringBuilder browserWhereClause = new StringBuilder();
+		List<MBrowseField> fields = browser.getFields();
+		LinkedHashMap<String, MBrowseField> fieldsMap = new LinkedHashMap<>();
+		//	Add field to map
+		for(MBrowseField field: fields) {
+			fieldsMap.put(field.getAD_View_Column().getColumnName(), field);
+		}
+		//	
+		boolean onRange = false;
+		if(parameterMap.size() > 0) {
+			for(Entry<String, Object> parameter : parameterMap.entrySet()) {
+				MBrowseField field = fieldsMap.get(parameter.getKey());
+				if(field == null) {
+					continue;
+				}
+				String columnName = field.getAD_View_Column().getColumnSQL();
+				Object parameterValue = parameter.getValue();
+				if (!onRange) {
+					if (parameterValue != null && !field.isRange()) {
+						if(browserWhereClause.length() > 0) {
+							browserWhereClause.append(" AND ");
+						}
+						if(DisplayType.String == field.getAD_Reference_ID()) {
+							String value = (String) parameterValue;
+							if (value.contains(",")) {
+								value = value.replace(" ", "");
+								String inStr = new String(value);
+								StringBuffer outStr = new StringBuffer("(");
+								int i = inStr.indexOf(',');
+								while (i != -1)
+								{
+									outStr.append("'" + inStr.substring(0, i) + "',");
+									inStr = inStr.substring(i+1, inStr.length());
+									i = inStr.indexOf(',');
 
+								}
+								outStr.append("'" + inStr + "')");
+								//	
+								browserWhereClause.append(columnName).append(" IN ")
+								.append(outStr);
+							}
+							else if (value.contains("%")) {
+								browserWhereClause.append(" lower( ").append(columnName).append(") LIKE ? ");
+								values.add(parameterValue.toString().toLowerCase());
+							} else {
+								browserWhereClause.append(" lower( ").append(columnName).append(") = ? ");
+								values.add(parameterValue.toString().toLowerCase());
+							}
+						} else {
+							browserWhereClause.append(columnName).append("=? ");
+							values.add(parameterValue);
+						}
+					} else if (parameterValue != null && field.isRange()) {
+						if(browserWhereClause.length() > 0) {
+							browserWhereClause.append(" AND ");
+						}
+						if(DisplayType.String == field.getAD_Reference_ID()) {
+							browserWhereClause.append(" lower( ").append(columnName).append(") >= ? ");
+							values.add(parameterValue.toString().toLowerCase());
+						}
+						else {
+							browserWhereClause.append(columnName).append(" >= ? ");
+							values.add(parameterValue);
+						}
+						onRange = true;
+					}
+					else if (parameterValue == null && field.isRange()) {
+						onRange = true;
+					} else
+						continue;
+				} else if (parameterValue != null) {
+					if(browserWhereClause.length() > 0) {
+						browserWhereClause.append(" AND ");
+					}
+					if(DisplayType.String == field.getAD_Reference_ID()) {
+						browserWhereClause.append(" lower( ").append(columnName).append(") <= ? ");
+						values.add(parameterValue.toString().toLowerCase());
+					} else {
+						browserWhereClause.append(columnName).append(" <= ? ");
+						values.add(parameterValue);
+					}
+					onRange = false;
+				} else {
+					onRange = false;
+				}
+			}
+		}
+		//	
+		String whereClause = null;
+		//	
+		if(!Util.isEmpty(parsedWhereClause)) {
+			whereClause = parsedWhereClause.toString();
+		}
+		if(browserWhereClause.length() > 0) {
+			if(Util.isEmpty(whereClause)) {
+				whereClause = browserWhereClause.toString();
+			} else {
+				whereClause = whereClause + " AND (" + browserWhereClause + ")";
+			}
+		}
+		return whereClause;
+	}
+	
 	/**
 	 * Convert Object to list
 	 * @param request
 	 * @return
 	 */
 	private ValueObjectList.Builder convertBrowserList(Properties context, BrowserRequest request) {
+		ValueObjectList.Builder builder = ValueObjectList.newBuilder();
+		MBrowse browser = getBrowser(context, request.getUuid());
+		if(browser == null) {
+			return builder;
+		}
+		HashMap<String, Object> parameterMap = new HashMap<>();
+		//	Populate map
+		for(KeyValue parameter : request.getParametersList()) {
+			parameterMap.put(parameter.getKey(), getValueFromType(parameter.getValue()));
+		}
+		List<Object> values = new ArrayList<Object>();
+		String sql = getBrowserWhereClause(browser, null, parameterMap, values);
+		//	Add SQL
+		
+		
 //		Criteria criteria = request.getCriteria();
 //		StringBuffer whereClause = new StringBuffer();
 //		List<Object> params = new ArrayList<>();
@@ -617,8 +751,6 @@ public class DataServiceImplementation extends DataServiceImplBase {
 //				.setParameters(params)
 //				.<PO>list();
 		//	
-		ValueObjectList.Builder builder = ValueObjectList.newBuilder()
-				.setRecordCount(10);//entityList.size());
 		//	Convert List
 //		for(PO entity : entityList) {
 //			ValueObject.Builder valueObject = convertObject(context, entity);
@@ -626,6 +758,28 @@ public class DataServiceImplementation extends DataServiceImplBase {
 //		}
 		//	Return
 		return builder;
+	}
+	
+	/**
+	 * get browser
+	 * @param context
+	 * @param uuid
+	 * @return
+	 */
+	private MBrowse getBrowser(Properties context, String uuid) {
+		MBrowse browser = browserRequested.get(uuid);
+		if(browser == null) {
+			browser = new Query(context, I_AD_Browse.Table_Name, I_AD_Process.COLUMNNAME_UUID + " = ?", null)
+					.setParameters(uuid)
+					.setOnlyActiveRecords(true)
+					.first();
+		}
+		//	Put on Cache
+		if(browser != null) {
+			browserRequested.put(uuid, browser);
+		}
+		//	
+		return browser;
 	}
 	
 	/**

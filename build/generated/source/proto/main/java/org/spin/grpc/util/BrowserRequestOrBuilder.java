@@ -31,25 +31,38 @@ public interface BrowserRequestOrBuilder extends
   org.spin.grpc.util.ClientRequestOrBuilder getClientRequestOrBuilder();
 
   /**
-   * <code>repeated .data.KeyValue parameters = 3;</code>
+   * <code>.data.Criteria criteria = 3;</code>
+   */
+  boolean hasCriteria();
+  /**
+   * <code>.data.Criteria criteria = 3;</code>
+   */
+  org.spin.grpc.util.Criteria getCriteria();
+  /**
+   * <code>.data.Criteria criteria = 3;</code>
+   */
+  org.spin.grpc.util.CriteriaOrBuilder getCriteriaOrBuilder();
+
+  /**
+   * <code>repeated .data.KeyValue parameters = 4;</code>
    */
   java.util.List<org.spin.grpc.util.KeyValue> 
       getParametersList();
   /**
-   * <code>repeated .data.KeyValue parameters = 3;</code>
+   * <code>repeated .data.KeyValue parameters = 4;</code>
    */
   org.spin.grpc.util.KeyValue getParameters(int index);
   /**
-   * <code>repeated .data.KeyValue parameters = 3;</code>
+   * <code>repeated .data.KeyValue parameters = 4;</code>
    */
   int getParametersCount();
   /**
-   * <code>repeated .data.KeyValue parameters = 3;</code>
+   * <code>repeated .data.KeyValue parameters = 4;</code>
    */
   java.util.List<? extends org.spin.grpc.util.KeyValueOrBuilder> 
       getParametersOrBuilderList();
   /**
-   * <code>repeated .data.KeyValue parameters = 3;</code>
+   * <code>repeated .data.KeyValue parameters = 4;</code>
    */
   org.spin.grpc.util.KeyValueOrBuilder getParametersOrBuilder(
       int index);

@@ -219,5 +219,6 @@ message ProcessOutput {
 message BrowserRequest {
 	string uuid = 1;
 	ClientRequest clientRequest = 2;
-	repeated KeyValue parameters = 3;
+	Criteria criteria = 3;
+	repeated KeyValue parameters = 4;
 }
