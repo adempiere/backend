@@ -778,7 +778,7 @@ public class DataServiceImplementation extends DataServiceImplBase {
 		//	Add Order By
 		parsedSQL = parsedSQL + orderByClause;
 		//	Return
-		return convertBrowserResult(parsedSQL, values);
+		return convertBrowserResult(browser, parsedSQL, values);
 	}
 	
 	/**
@@ -787,12 +787,17 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	 * @param values
 	 * @return
 	 */
-	private ValueObjectList.Builder convertBrowserResult(String sql, List<Object> values) {
+	private ValueObjectList.Builder convertBrowserResult(MBrowse browser, String sql, List<Object> values) {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		ValueObjectList.Builder builder = ValueObjectList.newBuilder();
 		long recordCount = 0;
 		try {
+			LinkedHashMap<String, MBrowseField> fieldsMap = new LinkedHashMap<>();
+			//	Add field to map
+			for(MBrowseField field: browser.getFields()) {
+				fieldsMap.put(field.getAD_View_Column().getColumnName().toUpperCase(), field);
+			}
 			//	SELECT Key, Value, Name FROM ...
 			pstmt = DB.prepareStatement(sql, null);
 			AtomicInteger parameterIndex = new AtomicInteger(1);
@@ -806,17 +811,43 @@ public class DataServiceImplementation extends DataServiceImplBase {
 				ResultSetMetaData metaData = rs.getMetaData();
 				for (int index = 1; index <= metaData.getColumnCount(); index++) {
 					String columnName = metaData.getColumnName (index);
-					int valueType = metaData.getColumnType(index);
+					MBrowseField field = fieldsMap.get(columnName.toUpperCase());
 					Value.Builder valueBuilder = Value.newBuilder();
+					boolean isFilled = false;
 					//	Validate Type
-					if(valueType == Types.VARCHAR
-							|| valueType == Types.NVARCHAR
-							|| valueType == Types.CHAR
-							|| valueType == Types.NCHAR) {
-						valueBuilder.setStringValue(validateNull(rs.getString(index)));
-						valueBuilder.setValueType(ValueType.STRING);
+					if(DisplayType.isID(field.getAD_Reference_ID())) {
+						valueBuilder.setIntValue(rs.getInt(index));
+						valueBuilder.setValueType(ValueType.INTEGER);
+					} if(DisplayType.isNumeric(field.getAD_Reference_ID())) {
+						BigDecimal value = rs.getBigDecimal(index);
+						if(value != null) {
+							isFilled = true;
+							valueBuilder.setDoubleValue(value.doubleValue());
+							valueBuilder.setValueType(ValueType.DOUBLE);
+						}
+					} if(DisplayType.YesNo == field.getAD_Reference_ID()) {
+						isFilled = true;
+						String value = rs.getString(index);
+						valueBuilder.setBooleanValue(!Util.isEmpty(value) && value.equals("Y"));
+						valueBuilder.setValueType(ValueType.BOOLEAN);
+					} if(DisplayType.isDate(field.getAD_Reference_ID())) {
+						Timestamp value = rs.getTimestamp(index);
+						if(value != null) {
+							isFilled = true;
+							valueBuilder.setLongValue(value.getTime());
+						}
+						valueBuilder.setValueType(ValueType.DATE);
+					} else if(DisplayType.isText(field.getAD_Reference_ID())) {
+						String value = rs.getString(index);
+						if(!Util.isEmpty(value)) {
+							isFilled = true;
+							valueBuilder.setStringValue(value);
+							valueBuilder.setValueType(ValueType.STRING);
+						}
 					}
-					valueObjectBuilder.putValues(columnName, valueBuilder.build());
+					if(isFilled) {
+						valueObjectBuilder.putValues(field.getAD_View_Column().getColumnName(), valueBuilder.build());
+					}
 				}
 				//	
 				builder.addRecords(valueObjectBuilder.build());
