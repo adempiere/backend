@@ -185,41 +185,42 @@ public final class ADempiereDictionary {
       "rtExportType\"\213\001\n\004Form\022\n\n\002id\030\001 \001(\005\022\014\n\004uui" +
       "d\030\002 \001(\t\022\014\n\004name\030\003 \001(\t\022\023\n\013description\030\004 \001" +
       "(\t\022\014\n\004help\030\005 \001(\t\022\023\n\013accessLevel\030\006 \001(\005\022\021\n" +
-      "\tclassName\030\007 \001(\t\022\020\n\010isActive\030\010 \001(\010\"\276\003\n\007B" +
+      "\tclassName\030\007 \001(\t\022\020\n\010isActive\030\010 \001(\010\"\344\003\n\007B" +
       "rowser\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(\t\022\r\n\005valu" +
       "e\030\003 \001(\t\022\014\n\004name\030\004 \001(\t\022\023\n\013description\030\005 \001" +
-      "(\t\022\014\n\004help\030\006 \001(\t\022\023\n\013accessLevel\030\010 \001(\005\022\023\n" +
-      "\013whereClause\030\t \001(\t\022\024\n\014isUpdateable\030\n \001(\010" +
-      "\022\024\n\014IsDeleteable\030\013 \001(\010\022\033\n\023IsSelectedByDe" +
-      "fault\030\014 \001(\010\022\036\n\026IsCollapsibleByDefault\030\r " +
-      "\001(\010\022 \n\030IsExecutedQueryByDefault\030\016 \001(\010\022\023\n" +
-      "\013IsShowTotal\030\017 \001(\010\022\020\n\010viewUuid\030\020 \001(\t\022\"\n\006" +
-      "window\030\021 \001(\0132\022.dictionary.Window\022$\n\007proc" +
-      "ess\030\022 \001(\0132\023.dictionary.Process\022!\n\006fields" +
-      "\030\023 \003(\0132\021.dictionary.Field\022\020\n\010isActive\030\024 " +
-      "\001(\010\"l\n\nZoomWindow\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 " +
-      "\001(\t\022\014\n\004name\030\003 \001(\t\022\023\n\013description\030\004 \001(\t\022\017" +
-      "\n\007isSOTrx\030\005 \001(\010\022\020\n\010isActive\030\006 \001(\010\"\265\001\n\tRe" +
-      "ference\022\021\n\ttableName\030\001 \001(\t\022\025\n\rkeyColumnN" +
-      "ame\030\002 \001(\t\022\031\n\021displayColumnName\030\003 \001(\t\022\r\n\005" +
-      "query\030\004 \001(\t\022\023\n\013directQuery\030\005 \001(\t\022\026\n\016vali" +
-      "dationCode\030\006 \001(\t\022\'\n\007windows\030\007 \003(\0132\026.dict" +
-      "ionary.ZoomWindow\"C\n\020ReportExportType\022\014\n" +
-      "\004name\030\001 \001(\t\022\023\n\013description\030\002 \001(\t\022\014\n\004type" +
-      "\030\003 \001(\t2\347\003\n\021DictionaryService\022@\n\rRequestW" +
-      "indow\022\031.dictionary.EntityRequest\032\022.dicti" +
-      "onary.Window\"\000\022G\n\024RequestWindowAndTabs\022\031" +
-      ".dictionary.EntityRequest\032\022.dictionary.W" +
-      "indow\"\000\022:\n\nRequestTab\022\031.dictionary.Entit" +
-      "yRequest\032\017.dictionary.Tab\"\000\022C\n\023RequestTa" +
-      "bAndFields\022\031.dictionary.EntityRequest\032\017." +
-      "dictionary.Tab\"\000\022>\n\014RequestField\022\031.dicti" +
-      "onary.EntityRequest\032\021.dictionary.Field\"\000" +
-      "\022B\n\016RequestProcess\022\031.dictionary.EntityRe" +
-      "quest\032\023.dictionary.Process\"\000\022B\n\016RequestB" +
-      "rowser\022\031.dictionary.EntityRequest\032\023.dict" +
-      "ionary.Browser\"\000B1\n\022org.spin.grpc.utilB\023" +
-      "ADempiereDictionaryP\001\242\002\003HLWb\006proto3"
+      "(\t\022\014\n\004help\030\006 \001(\t\022\023\n\013accessLevel\030\010 \001(\005\022\r\n" +
+      "\005query\030\t \001(\t\022\023\n\013whereClause\030\n \001(\t\022\025\n\rord" +
+      "erByClause\030\013 \001(\t\022\024\n\014isUpdateable\030\014 \001(\010\022\024" +
+      "\n\014IsDeleteable\030\r \001(\010\022\033\n\023IsSelectedByDefa" +
+      "ult\030\016 \001(\010\022\036\n\026IsCollapsibleByDefault\030\017 \001(" +
+      "\010\022 \n\030IsExecutedQueryByDefault\030\020 \001(\010\022\023\n\013I" +
+      "sShowTotal\030\021 \001(\010\022\020\n\010viewUuid\030\022 \001(\t\022\"\n\006wi" +
+      "ndow\030\023 \001(\0132\022.dictionary.Window\022$\n\007proces" +
+      "s\030\024 \001(\0132\023.dictionary.Process\022!\n\006fields\030\025" +
+      " \003(\0132\021.dictionary.Field\022\020\n\010isActive\030\026 \001(" +
+      "\010\"l\n\nZoomWindow\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(" +
+      "\t\022\014\n\004name\030\003 \001(\t\022\023\n\013description\030\004 \001(\t\022\017\n\007" +
+      "isSOTrx\030\005 \001(\010\022\020\n\010isActive\030\006 \001(\010\"\265\001\n\tRefe" +
+      "rence\022\021\n\ttableName\030\001 \001(\t\022\025\n\rkeyColumnNam" +
+      "e\030\002 \001(\t\022\031\n\021displayColumnName\030\003 \001(\t\022\r\n\005qu" +
+      "ery\030\004 \001(\t\022\023\n\013directQuery\030\005 \001(\t\022\026\n\016valida" +
+      "tionCode\030\006 \001(\t\022\'\n\007windows\030\007 \003(\0132\026.dictio" +
+      "nary.ZoomWindow\"C\n\020ReportExportType\022\014\n\004n" +
+      "ame\030\001 \001(\t\022\023\n\013description\030\002 \001(\t\022\014\n\004type\030\003" +
+      " \001(\t2\347\003\n\021DictionaryService\022@\n\rRequestWin" +
+      "dow\022\031.dictionary.EntityRequest\032\022.diction" +
+      "ary.Window\"\000\022G\n\024RequestWindowAndTabs\022\031.d" +
+      "ictionary.EntityRequest\032\022.dictionary.Win" +
+      "dow\"\000\022:\n\nRequestTab\022\031.dictionary.EntityR" +
+      "equest\032\017.dictionary.Tab\"\000\022C\n\023RequestTabA" +
+      "ndFields\022\031.dictionary.EntityRequest\032\017.di" +
+      "ctionary.Tab\"\000\022>\n\014RequestField\022\031.diction" +
+      "ary.EntityRequest\032\021.dictionary.Field\"\000\022B" +
+      "\n\016RequestProcess\022\031.dictionary.EntityRequ" +
+      "est\032\023.dictionary.Process\"\000\022B\n\016RequestBro" +
+      "wser\022\031.dictionary.EntityRequest\032\023.dictio" +
+      "nary.Browser\"\000B1\n\022org.spin.grpc.utilB\023AD" +
+      "empiereDictionaryP\001\242\002\003HLWb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -310,7 +311,7 @@ public final class ADempiereDictionary {
     internal_static_dictionary_Browser_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dictionary_Browser_descriptor,
-        new java.lang.String[] { "Id", "Uuid", "Value", "Name", "Description", "Help", "AccessLevel", "WhereClause", "IsUpdateable", "IsDeleteable", "IsSelectedByDefault", "IsCollapsibleByDefault", "IsExecutedQueryByDefault", "IsShowTotal", "ViewUuid", "Window", "Process", "Fields", "IsActive", });
+        new java.lang.String[] { "Id", "Uuid", "Value", "Name", "Description", "Help", "AccessLevel", "Query", "WhereClause", "OrderByClause", "IsUpdateable", "IsDeleteable", "IsSelectedByDefault", "IsCollapsibleByDefault", "IsExecutedQueryByDefault", "IsShowTotal", "ViewUuid", "Window", "Process", "Fields", "IsActive", });
     internal_static_dictionary_ZoomWindow_descriptor =
       getDescriptor().getMessageTypes().get(13);
     internal_static_dictionary_ZoomWindow_fieldAccessorTable = new

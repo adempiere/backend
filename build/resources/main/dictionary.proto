@@ -157,8 +157,8 @@ message Field {
 	int32 sortNo = 47;
 	bool isInfoOnly = 48;
 	bool isActive = 49;
-		// Process Parameter Compatibility
-		string defaultValueTo = 50;
+	// Process Parameter Compatibility
+	string defaultValueTo = 50;
 }
 
 // Context Info
@@ -251,19 +251,21 @@ message Browser {
 	string description = 5;
 	string help = 6;
 	int32 accessLevel = 8;
-	string whereClause = 9;
-	bool isUpdateable = 10;
-	bool IsDeleteable = 11;
-	bool IsSelectedByDefault = 12;
-	bool IsCollapsibleByDefault = 13;
-	bool IsExecutedQueryByDefault = 14;
-	bool IsShowTotal = 15;
-	string viewUuid = 16;
+	string query = 9;
+	string whereClause = 10;
+	string orderByClause = 11;
+	bool isUpdateable = 12;
+	bool IsDeleteable = 13;
+	bool IsSelectedByDefault = 14;
+	bool IsCollapsibleByDefault = 15;
+	bool IsExecutedQueryByDefault = 16;
+	bool IsShowTotal = 17;
+	string viewUuid = 18;
 	// External Reference
-	Window window = 17;
-	Process process = 18;
-	repeated Field fields = 19;
-	bool isActive = 20;
+	Window window = 19;
+	Process process = 20;
+	repeated Field fields = 21;
+	bool isActive = 22;
 }
 
 // Zoom Window

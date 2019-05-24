@@ -27,7 +27,9 @@ private static final long serialVersionUID = 0L;
     description_ = "";
     help_ = "";
     accessLevel_ = 0;
+    query_ = "";
     whereClause_ = "";
+    orderByClause_ = "";
     isUpdateable_ = false;
     isDeleteable_ = false;
     isSelectedByDefault_ = false;
@@ -113,46 +115,58 @@ private static final long serialVersionUID = 0L;
           case 74: {
             java.lang.String s = input.readStringRequireUtf8();
 
+            query_ = s;
+            break;
+          }
+          case 82: {
+            java.lang.String s = input.readStringRequireUtf8();
+
             whereClause_ = s;
             break;
           }
-          case 80: {
+          case 90: {
+            java.lang.String s = input.readStringRequireUtf8();
 
-            isUpdateable_ = input.readBool();
-            break;
-          }
-          case 88: {
-
-            isDeleteable_ = input.readBool();
+            orderByClause_ = s;
             break;
           }
           case 96: {
 
-            isSelectedByDefault_ = input.readBool();
+            isUpdateable_ = input.readBool();
             break;
           }
           case 104: {
 
-            isCollapsibleByDefault_ = input.readBool();
+            isDeleteable_ = input.readBool();
             break;
           }
           case 112: {
 
-            isExecutedQueryByDefault_ = input.readBool();
+            isSelectedByDefault_ = input.readBool();
             break;
           }
           case 120: {
 
+            isCollapsibleByDefault_ = input.readBool();
+            break;
+          }
+          case 128: {
+
+            isExecutedQueryByDefault_ = input.readBool();
+            break;
+          }
+          case 136: {
+
             isShowTotal_ = input.readBool();
             break;
           }
-          case 130: {
+          case 146: {
             java.lang.String s = input.readStringRequireUtf8();
 
             viewUuid_ = s;
             break;
           }
-          case 138: {
+          case 154: {
             org.spin.grpc.util.Window.Builder subBuilder = null;
             if (window_ != null) {
               subBuilder = window_.toBuilder();
@@ -165,7 +179,7 @@ private static final long serialVersionUID = 0L;
 
             break;
           }
-          case 146: {
+          case 162: {
             org.spin.grpc.util.Process.Builder subBuilder = null;
             if (process_ != null) {
               subBuilder = process_.toBuilder();
@@ -178,16 +192,16 @@ private static final long serialVersionUID = 0L;
 
             break;
           }
-          case 154: {
-            if (!((mutable_bitField0_ & 0x00020000) == 0x00020000)) {
+          case 170: {
+            if (!((mutable_bitField0_ & 0x00080000) == 0x00080000)) {
               fields_ = new java.util.ArrayList<org.spin.grpc.util.Field>();
-              mutable_bitField0_ |= 0x00020000;
+              mutable_bitField0_ |= 0x00080000;
             }
             fields_.add(
                 input.readMessage(org.spin.grpc.util.Field.parser(), extensionRegistry));
             break;
           }
-          case 160: {
+          case 176: {
 
             isActive_ = input.readBool();
             break;
@@ -200,7 +214,7 @@ private static final long serialVersionUID = 0L;
       throw new com.google.protobuf.InvalidProtocolBufferException(
           e).setUnfinishedMessage(this);
     } finally {
-      if (((mutable_bitField0_ & 0x00020000) == 0x00020000)) {
+      if (((mutable_bitField0_ & 0x00080000) == 0x00080000)) {
         fields_ = java.util.Collections.unmodifiableList(fields_);
       }
       this.unknownFields = unknownFields.build();
@@ -408,10 +422,44 @@ private static final long serialVersionUID = 0L;
     return accessLevel_;
   }
 
-  public static final int WHERECLAUSE_FIELD_NUMBER = 9;
+  public static final int QUERY_FIELD_NUMBER = 9;
+  private volatile java.lang.Object query_;
+  /**
+   * <code>string query = 9;</code>
+   */
+  public java.lang.String getQuery() {
+    java.lang.Object ref = query_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      query_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string query = 9;</code>
+   */
+  public com.google.protobuf.ByteString
+      getQueryBytes() {
+    java.lang.Object ref = query_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      query_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int WHERECLAUSE_FIELD_NUMBER = 10;
   private volatile java.lang.Object whereClause_;
   /**
-   * <code>string whereClause = 9;</code>
+   * <code>string whereClause = 10;</code>
    */
   public java.lang.String getWhereClause() {
     java.lang.Object ref = whereClause_;
@@ -426,7 +474,7 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <code>string whereClause = 9;</code>
+   * <code>string whereClause = 10;</code>
    */
   public com.google.protobuf.ByteString
       getWhereClauseBytes() {
@@ -442,64 +490,98 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int ISUPDATEABLE_FIELD_NUMBER = 10;
+  public static final int ORDERBYCLAUSE_FIELD_NUMBER = 11;
+  private volatile java.lang.Object orderByClause_;
+  /**
+   * <code>string orderByClause = 11;</code>
+   */
+  public java.lang.String getOrderByClause() {
+    java.lang.Object ref = orderByClause_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      orderByClause_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string orderByClause = 11;</code>
+   */
+  public com.google.protobuf.ByteString
+      getOrderByClauseBytes() {
+    java.lang.Object ref = orderByClause_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      orderByClause_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int ISUPDATEABLE_FIELD_NUMBER = 12;
   private boolean isUpdateable_;
   /**
-   * <code>bool isUpdateable = 10;</code>
+   * <code>bool isUpdateable = 12;</code>
    */
   public boolean getIsUpdateable() {
     return isUpdateable_;
   }
 
-  public static final int ISDELETEABLE_FIELD_NUMBER = 11;
+  public static final int ISDELETEABLE_FIELD_NUMBER = 13;
   private boolean isDeleteable_;
   /**
-   * <code>bool IsDeleteable = 11;</code>
+   * <code>bool IsDeleteable = 13;</code>
    */
   public boolean getIsDeleteable() {
     return isDeleteable_;
   }
 
-  public static final int ISSELECTEDBYDEFAULT_FIELD_NUMBER = 12;
+  public static final int ISSELECTEDBYDEFAULT_FIELD_NUMBER = 14;
   private boolean isSelectedByDefault_;
   /**
-   * <code>bool IsSelectedByDefault = 12;</code>
+   * <code>bool IsSelectedByDefault = 14;</code>
    */
   public boolean getIsSelectedByDefault() {
     return isSelectedByDefault_;
   }
 
-  public static final int ISCOLLAPSIBLEBYDEFAULT_FIELD_NUMBER = 13;
+  public static final int ISCOLLAPSIBLEBYDEFAULT_FIELD_NUMBER = 15;
   private boolean isCollapsibleByDefault_;
   /**
-   * <code>bool IsCollapsibleByDefault = 13;</code>
+   * <code>bool IsCollapsibleByDefault = 15;</code>
    */
   public boolean getIsCollapsibleByDefault() {
     return isCollapsibleByDefault_;
   }
 
-  public static final int ISEXECUTEDQUERYBYDEFAULT_FIELD_NUMBER = 14;
+  public static final int ISEXECUTEDQUERYBYDEFAULT_FIELD_NUMBER = 16;
   private boolean isExecutedQueryByDefault_;
   /**
-   * <code>bool IsExecutedQueryByDefault = 14;</code>
+   * <code>bool IsExecutedQueryByDefault = 16;</code>
    */
   public boolean getIsExecutedQueryByDefault() {
     return isExecutedQueryByDefault_;
   }
 
-  public static final int ISSHOWTOTAL_FIELD_NUMBER = 15;
+  public static final int ISSHOWTOTAL_FIELD_NUMBER = 17;
   private boolean isShowTotal_;
   /**
-   * <code>bool IsShowTotal = 15;</code>
+   * <code>bool IsShowTotal = 17;</code>
    */
   public boolean getIsShowTotal() {
     return isShowTotal_;
   }
 
-  public static final int VIEWUUID_FIELD_NUMBER = 16;
+  public static final int VIEWUUID_FIELD_NUMBER = 18;
   private volatile java.lang.Object viewUuid_;
   /**
-   * <code>string viewUuid = 16;</code>
+   * <code>string viewUuid = 18;</code>
    */
   public java.lang.String getViewUuid() {
     java.lang.Object ref = viewUuid_;
@@ -514,7 +596,7 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <code>string viewUuid = 16;</code>
+   * <code>string viewUuid = 18;</code>
    */
   public com.google.protobuf.ByteString
       getViewUuidBytes() {
@@ -530,14 +612,14 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int WINDOW_FIELD_NUMBER = 17;
+  public static final int WINDOW_FIELD_NUMBER = 19;
   private org.spin.grpc.util.Window window_;
   /**
    * <pre>
    * External Reference
    * </pre>
    *
-   * <code>.dictionary.Window window = 17;</code>
+   * <code>.dictionary.Window window = 19;</code>
    */
   public boolean hasWindow() {
     return window_ != null;
@@ -547,7 +629,7 @@ private static final long serialVersionUID = 0L;
    * External Reference
    * </pre>
    *
-   * <code>.dictionary.Window window = 17;</code>
+   * <code>.dictionary.Window window = 19;</code>
    */
   public org.spin.grpc.util.Window getWindow() {
     return window_ == null ? org.spin.grpc.util.Window.getDefaultInstance() : window_;
@@ -557,72 +639,72 @@ private static final long serialVersionUID = 0L;
    * External Reference
    * </pre>
    *
-   * <code>.dictionary.Window window = 17;</code>
+   * <code>.dictionary.Window window = 19;</code>
    */
   public org.spin.grpc.util.WindowOrBuilder getWindowOrBuilder() {
     return getWindow();
   }
 
-  public static final int PROCESS_FIELD_NUMBER = 18;
+  public static final int PROCESS_FIELD_NUMBER = 20;
   private org.spin.grpc.util.Process process_;
   /**
-   * <code>.dictionary.Process process = 18;</code>
+   * <code>.dictionary.Process process = 20;</code>
    */
   public boolean hasProcess() {
     return process_ != null;
   }
   /**
-   * <code>.dictionary.Process process = 18;</code>
+   * <code>.dictionary.Process process = 20;</code>
    */
   public org.spin.grpc.util.Process getProcess() {
     return process_ == null ? org.spin.grpc.util.Process.getDefaultInstance() : process_;
   }
   /**
-   * <code>.dictionary.Process process = 18;</code>
+   * <code>.dictionary.Process process = 20;</code>
    */
   public org.spin.grpc.util.ProcessOrBuilder getProcessOrBuilder() {
     return getProcess();
   }
 
-  public static final int FIELDS_FIELD_NUMBER = 19;
+  public static final int FIELDS_FIELD_NUMBER = 21;
   private java.util.List<org.spin.grpc.util.Field> fields_;
   /**
-   * <code>repeated .dictionary.Field fields = 19;</code>
+   * <code>repeated .dictionary.Field fields = 21;</code>
    */
   public java.util.List<org.spin.grpc.util.Field> getFieldsList() {
     return fields_;
   }
   /**
-   * <code>repeated .dictionary.Field fields = 19;</code>
+   * <code>repeated .dictionary.Field fields = 21;</code>
    */
   public java.util.List<? extends org.spin.grpc.util.FieldOrBuilder> 
       getFieldsOrBuilderList() {
     return fields_;
   }
   /**
-   * <code>repeated .dictionary.Field fields = 19;</code>
+   * <code>repeated .dictionary.Field fields = 21;</code>
    */
   public int getFieldsCount() {
     return fields_.size();
   }
   /**
-   * <code>repeated .dictionary.Field fields = 19;</code>
+   * <code>repeated .dictionary.Field fields = 21;</code>
    */
   public org.spin.grpc.util.Field getFields(int index) {
     return fields_.get(index);
   }
   /**
-   * <code>repeated .dictionary.Field fields = 19;</code>
+   * <code>repeated .dictionary.Field fields = 21;</code>
    */
   public org.spin.grpc.util.FieldOrBuilder getFieldsOrBuilder(
       int index) {
     return fields_.get(index);
   }
 
-  public static final int ISACTIVE_FIELD_NUMBER = 20;
+  public static final int ISACTIVE_FIELD_NUMBER = 22;
   private boolean isActive_;
   /**
-   * <code>bool isActive = 20;</code>
+   * <code>bool isActive = 22;</code>
    */
   public boolean getIsActive() {
     return isActive_;
@@ -661,41 +743,47 @@ private static final long serialVersionUID = 0L;
     if (accessLevel_ != 0) {
       output.writeInt32(8, accessLevel_);
     }
+    if (!getQueryBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 9, query_);
+    }
     if (!getWhereClauseBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 9, whereClause_);
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 10, whereClause_);
+    }
+    if (!getOrderByClauseBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 11, orderByClause_);
     }
     if (isUpdateable_ != false) {
-      output.writeBool(10, isUpdateable_);
+      output.writeBool(12, isUpdateable_);
     }
     if (isDeleteable_ != false) {
-      output.writeBool(11, isDeleteable_);
+      output.writeBool(13, isDeleteable_);
     }
     if (isSelectedByDefault_ != false) {
-      output.writeBool(12, isSelectedByDefault_);
+      output.writeBool(14, isSelectedByDefault_);
     }
     if (isCollapsibleByDefault_ != false) {
-      output.writeBool(13, isCollapsibleByDefault_);
+      output.writeBool(15, isCollapsibleByDefault_);
     }
     if (isExecutedQueryByDefault_ != false) {
-      output.writeBool(14, isExecutedQueryByDefault_);
+      output.writeBool(16, isExecutedQueryByDefault_);
     }
     if (isShowTotal_ != false) {
-      output.writeBool(15, isShowTotal_);
+      output.writeBool(17, isShowTotal_);
     }
     if (!getViewUuidBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 16, viewUuid_);
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 18, viewUuid_);
     }
     if (window_ != null) {
-      output.writeMessage(17, getWindow());
+      output.writeMessage(19, getWindow());
     }
     if (process_ != null) {
-      output.writeMessage(18, getProcess());
+      output.writeMessage(20, getProcess());
     }
     for (int i = 0; i < fields_.size(); i++) {
-      output.writeMessage(19, fields_.get(i));
+      output.writeMessage(21, fields_.get(i));
     }
     if (isActive_ != false) {
-      output.writeBool(20, isActive_);
+      output.writeBool(22, isActive_);
     }
     unknownFields.writeTo(output);
   }
@@ -728,51 +816,57 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeInt32Size(8, accessLevel_);
     }
+    if (!getQueryBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(9, query_);
+    }
     if (!getWhereClauseBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(9, whereClause_);
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(10, whereClause_);
+    }
+    if (!getOrderByClauseBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(11, orderByClause_);
     }
     if (isUpdateable_ != false) {
       size += com.google.protobuf.CodedOutputStream
-        .computeBoolSize(10, isUpdateable_);
+        .computeBoolSize(12, isUpdateable_);
     }
     if (isDeleteable_ != false) {
       size += com.google.protobuf.CodedOutputStream
-        .computeBoolSize(11, isDeleteable_);
+        .computeBoolSize(13, isDeleteable_);
     }
     if (isSelectedByDefault_ != false) {
       size += com.google.protobuf.CodedOutputStream
-        .computeBoolSize(12, isSelectedByDefault_);
+        .computeBoolSize(14, isSelectedByDefault_);
     }
     if (isCollapsibleByDefault_ != false) {
       size += com.google.protobuf.CodedOutputStream
-        .computeBoolSize(13, isCollapsibleByDefault_);
+        .computeBoolSize(15, isCollapsibleByDefault_);
     }
     if (isExecutedQueryByDefault_ != false) {
       size += com.google.protobuf.CodedOutputStream
-        .computeBoolSize(14, isExecutedQueryByDefault_);
+        .computeBoolSize(16, isExecutedQueryByDefault_);
     }
     if (isShowTotal_ != false) {
       size += com.google.protobuf.CodedOutputStream
-        .computeBoolSize(15, isShowTotal_);
+        .computeBoolSize(17, isShowTotal_);
     }
     if (!getViewUuidBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(16, viewUuid_);
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(18, viewUuid_);
     }
     if (window_ != null) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(17, getWindow());
+        .computeMessageSize(19, getWindow());
     }
     if (process_ != null) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(18, getProcess());
+        .computeMessageSize(20, getProcess());
     }
     for (int i = 0; i < fields_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(19, fields_.get(i));
+        .computeMessageSize(21, fields_.get(i));
     }
     if (isActive_ != false) {
       size += com.google.protobuf.CodedOutputStream
-        .computeBoolSize(20, isActive_);
+        .computeBoolSize(22, isActive_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -804,8 +898,12 @@ private static final long serialVersionUID = 0L;
         .equals(other.getHelp());
     result = result && (getAccessLevel()
         == other.getAccessLevel());
+    result = result && getQuery()
+        .equals(other.getQuery());
     result = result && getWhereClause()
         .equals(other.getWhereClause());
+    result = result && getOrderByClause()
+        .equals(other.getOrderByClause());
     result = result && (getIsUpdateable()
         == other.getIsUpdateable());
     result = result && (getIsDeleteable()
@@ -859,8 +957,12 @@ private static final long serialVersionUID = 0L;
     hash = (53 * hash) + getHelp().hashCode();
     hash = (37 * hash) + ACCESSLEVEL_FIELD_NUMBER;
     hash = (53 * hash) + getAccessLevel();
+    hash = (37 * hash) + QUERY_FIELD_NUMBER;
+    hash = (53 * hash) + getQuery().hashCode();
     hash = (37 * hash) + WHERECLAUSE_FIELD_NUMBER;
     hash = (53 * hash) + getWhereClause().hashCode();
+    hash = (37 * hash) + ORDERBYCLAUSE_FIELD_NUMBER;
+    hash = (53 * hash) + getOrderByClause().hashCode();
     hash = (37 * hash) + ISUPDATEABLE_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
         getIsUpdateable());
@@ -1044,7 +1146,11 @@ private static final long serialVersionUID = 0L;
 
       accessLevel_ = 0;
 
+      query_ = "";
+
       whereClause_ = "";
+
+      orderByClause_ = "";
 
       isUpdateable_ = false;
 
@@ -1074,7 +1180,7 @@ private static final long serialVersionUID = 0L;
       }
       if (fieldsBuilder_ == null) {
         fields_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00020000);
+        bitField0_ = (bitField0_ & ~0x00080000);
       } else {
         fieldsBuilder_.clear();
       }
@@ -1111,7 +1217,9 @@ private static final long serialVersionUID = 0L;
       result.description_ = description_;
       result.help_ = help_;
       result.accessLevel_ = accessLevel_;
+      result.query_ = query_;
       result.whereClause_ = whereClause_;
+      result.orderByClause_ = orderByClause_;
       result.isUpdateable_ = isUpdateable_;
       result.isDeleteable_ = isDeleteable_;
       result.isSelectedByDefault_ = isSelectedByDefault_;
@@ -1130,9 +1238,9 @@ private static final long serialVersionUID = 0L;
         result.process_ = processBuilder_.build();
       }
       if (fieldsBuilder_ == null) {
-        if (((bitField0_ & 0x00020000) == 0x00020000)) {
+        if (((bitField0_ & 0x00080000) == 0x00080000)) {
           fields_ = java.util.Collections.unmodifiableList(fields_);
-          bitField0_ = (bitField0_ & ~0x00020000);
+          bitField0_ = (bitField0_ & ~0x00080000);
         }
         result.fields_ = fields_;
       } else {
@@ -1207,8 +1315,16 @@ private static final long serialVersionUID = 0L;
       if (other.getAccessLevel() != 0) {
         setAccessLevel(other.getAccessLevel());
       }
+      if (!other.getQuery().isEmpty()) {
+        query_ = other.query_;
+        onChanged();
+      }
       if (!other.getWhereClause().isEmpty()) {
         whereClause_ = other.whereClause_;
+        onChanged();
+      }
+      if (!other.getOrderByClause().isEmpty()) {
+        orderByClause_ = other.orderByClause_;
         onChanged();
       }
       if (other.getIsUpdateable() != false) {
@@ -1243,7 +1359,7 @@ private static final long serialVersionUID = 0L;
         if (!other.fields_.isEmpty()) {
           if (fields_.isEmpty()) {
             fields_ = other.fields_;
-            bitField0_ = (bitField0_ & ~0x00020000);
+            bitField0_ = (bitField0_ & ~0x00080000);
           } else {
             ensureFieldsIsMutable();
             fields_.addAll(other.fields_);
@@ -1256,7 +1372,7 @@ private static final long serialVersionUID = 0L;
             fieldsBuilder_.dispose();
             fieldsBuilder_ = null;
             fields_ = other.fields_;
-            bitField0_ = (bitField0_ & ~0x00020000);
+            bitField0_ = (bitField0_ & ~0x00080000);
             fieldsBuilder_ = 
               com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                  getFieldsFieldBuilder() : null;
@@ -1693,9 +1809,78 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
+    private java.lang.Object query_ = "";
+    /**
+     * <code>string query = 9;</code>
+     */
+    public java.lang.String getQuery() {
+      java.lang.Object ref = query_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        query_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string query = 9;</code>
+     */
+    public com.google.protobuf.ByteString
+        getQueryBytes() {
+      java.lang.Object ref = query_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        query_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string query = 9;</code>
+     */
+    public Builder setQuery(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
+      query_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string query = 9;</code>
+     */
+    public Builder clearQuery() {
+      
+      query_ = getDefaultInstance().getQuery();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string query = 9;</code>
+     */
+    public Builder setQueryBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      
+      query_ = value;
+      onChanged();
+      return this;
+    }
+
     private java.lang.Object whereClause_ = "";
     /**
-     * <code>string whereClause = 9;</code>
+     * <code>string whereClause = 10;</code>
      */
     public java.lang.String getWhereClause() {
       java.lang.Object ref = whereClause_;
@@ -1710,7 +1895,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string whereClause = 9;</code>
+     * <code>string whereClause = 10;</code>
      */
     public com.google.protobuf.ByteString
         getWhereClauseBytes() {
@@ -1726,7 +1911,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string whereClause = 9;</code>
+     * <code>string whereClause = 10;</code>
      */
     public Builder setWhereClause(
         java.lang.String value) {
@@ -1739,7 +1924,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string whereClause = 9;</code>
+     * <code>string whereClause = 10;</code>
      */
     public Builder clearWhereClause() {
       
@@ -1748,7 +1933,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string whereClause = 9;</code>
+     * <code>string whereClause = 10;</code>
      */
     public Builder setWhereClauseBytes(
         com.google.protobuf.ByteString value) {
@@ -1762,15 +1947,84 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
+    private java.lang.Object orderByClause_ = "";
+    /**
+     * <code>string orderByClause = 11;</code>
+     */
+    public java.lang.String getOrderByClause() {
+      java.lang.Object ref = orderByClause_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        orderByClause_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string orderByClause = 11;</code>
+     */
+    public com.google.protobuf.ByteString
+        getOrderByClauseBytes() {
+      java.lang.Object ref = orderByClause_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        orderByClause_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string orderByClause = 11;</code>
+     */
+    public Builder setOrderByClause(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
+      orderByClause_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string orderByClause = 11;</code>
+     */
+    public Builder clearOrderByClause() {
+      
+      orderByClause_ = getDefaultInstance().getOrderByClause();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string orderByClause = 11;</code>
+     */
+    public Builder setOrderByClauseBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      
+      orderByClause_ = value;
+      onChanged();
+      return this;
+    }
+
     private boolean isUpdateable_ ;
     /**
-     * <code>bool isUpdateable = 10;</code>
+     * <code>bool isUpdateable = 12;</code>
      */
     public boolean getIsUpdateable() {
       return isUpdateable_;
     }
     /**
-     * <code>bool isUpdateable = 10;</code>
+     * <code>bool isUpdateable = 12;</code>
      */
     public Builder setIsUpdateable(boolean value) {
       
@@ -1779,7 +2033,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>bool isUpdateable = 10;</code>
+     * <code>bool isUpdateable = 12;</code>
      */
     public Builder clearIsUpdateable() {
       
@@ -1790,13 +2044,13 @@ private static final long serialVersionUID = 0L;
 
     private boolean isDeleteable_ ;
     /**
-     * <code>bool IsDeleteable = 11;</code>
+     * <code>bool IsDeleteable = 13;</code>
      */
     public boolean getIsDeleteable() {
       return isDeleteable_;
     }
     /**
-     * <code>bool IsDeleteable = 11;</code>
+     * <code>bool IsDeleteable = 13;</code>
      */
     public Builder setIsDeleteable(boolean value) {
       
@@ -1805,7 +2059,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>bool IsDeleteable = 11;</code>
+     * <code>bool IsDeleteable = 13;</code>
      */
     public Builder clearIsDeleteable() {
       
@@ -1816,13 +2070,13 @@ private static final long serialVersionUID = 0L;
 
     private boolean isSelectedByDefault_ ;
     /**
-     * <code>bool IsSelectedByDefault = 12;</code>
+     * <code>bool IsSelectedByDefault = 14;</code>
      */
     public boolean getIsSelectedByDefault() {
       return isSelectedByDefault_;
     }
     /**
-     * <code>bool IsSelectedByDefault = 12;</code>
+     * <code>bool IsSelectedByDefault = 14;</code>
      */
     public Builder setIsSelectedByDefault(boolean value) {
       
@@ -1831,7 +2085,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>bool IsSelectedByDefault = 12;</code>
+     * <code>bool IsSelectedByDefault = 14;</code>
      */
     public Builder clearIsSelectedByDefault() {
       
@@ -1842,13 +2096,13 @@ private static final long serialVersionUID = 0L;
 
     private boolean isCollapsibleByDefault_ ;
     /**
-     * <code>bool IsCollapsibleByDefault = 13;</code>
+     * <code>bool IsCollapsibleByDefault = 15;</code>
      */
     public boolean getIsCollapsibleByDefault() {
       return isCollapsibleByDefault_;
     }
     /**
-     * <code>bool IsCollapsibleByDefault = 13;</code>
+     * <code>bool IsCollapsibleByDefault = 15;</code>
      */
     public Builder setIsCollapsibleByDefault(boolean value) {
       
@@ -1857,7 +2111,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>bool IsCollapsibleByDefault = 13;</code>
+     * <code>bool IsCollapsibleByDefault = 15;</code>
      */
     public Builder clearIsCollapsibleByDefault() {
       
@@ -1868,13 +2122,13 @@ private static final long serialVersionUID = 0L;
 
     private boolean isExecutedQueryByDefault_ ;
     /**
-     * <code>bool IsExecutedQueryByDefault = 14;</code>
+     * <code>bool IsExecutedQueryByDefault = 16;</code>
      */
     public boolean getIsExecutedQueryByDefault() {
       return isExecutedQueryByDefault_;
     }
     /**
-     * <code>bool IsExecutedQueryByDefault = 14;</code>
+     * <code>bool IsExecutedQueryByDefault = 16;</code>
      */
     public Builder setIsExecutedQueryByDefault(boolean value) {
       
@@ -1883,7 +2137,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>bool IsExecutedQueryByDefault = 14;</code>
+     * <code>bool IsExecutedQueryByDefault = 16;</code>
      */
     public Builder clearIsExecutedQueryByDefault() {
       
@@ -1894,13 +2148,13 @@ private static final long serialVersionUID = 0L;
 
     private boolean isShowTotal_ ;
     /**
-     * <code>bool IsShowTotal = 15;</code>
+     * <code>bool IsShowTotal = 17;</code>
      */
     public boolean getIsShowTotal() {
       return isShowTotal_;
     }
     /**
-     * <code>bool IsShowTotal = 15;</code>
+     * <code>bool IsShowTotal = 17;</code>
      */
     public Builder setIsShowTotal(boolean value) {
       
@@ -1909,7 +2163,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>bool IsShowTotal = 15;</code>
+     * <code>bool IsShowTotal = 17;</code>
      */
     public Builder clearIsShowTotal() {
       
@@ -1920,7 +2174,7 @@ private static final long serialVersionUID = 0L;
 
     private java.lang.Object viewUuid_ = "";
     /**
-     * <code>string viewUuid = 16;</code>
+     * <code>string viewUuid = 18;</code>
      */
     public java.lang.String getViewUuid() {
       java.lang.Object ref = viewUuid_;
@@ -1935,7 +2189,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string viewUuid = 16;</code>
+     * <code>string viewUuid = 18;</code>
      */
     public com.google.protobuf.ByteString
         getViewUuidBytes() {
@@ -1951,7 +2205,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string viewUuid = 16;</code>
+     * <code>string viewUuid = 18;</code>
      */
     public Builder setViewUuid(
         java.lang.String value) {
@@ -1964,7 +2218,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string viewUuid = 16;</code>
+     * <code>string viewUuid = 18;</code>
      */
     public Builder clearViewUuid() {
       
@@ -1973,7 +2227,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string viewUuid = 16;</code>
+     * <code>string viewUuid = 18;</code>
      */
     public Builder setViewUuidBytes(
         com.google.protobuf.ByteString value) {
@@ -1995,7 +2249,7 @@ private static final long serialVersionUID = 0L;
      * External Reference
      * </pre>
      *
-     * <code>.dictionary.Window window = 17;</code>
+     * <code>.dictionary.Window window = 19;</code>
      */
     public boolean hasWindow() {
       return windowBuilder_ != null || window_ != null;
@@ -2005,7 +2259,7 @@ private static final long serialVersionUID = 0L;
      * External Reference
      * </pre>
      *
-     * <code>.dictionary.Window window = 17;</code>
+     * <code>.dictionary.Window window = 19;</code>
      */
     public org.spin.grpc.util.Window getWindow() {
       if (windowBuilder_ == null) {
@@ -2019,7 +2273,7 @@ private static final long serialVersionUID = 0L;
      * External Reference
      * </pre>
      *
-     * <code>.dictionary.Window window = 17;</code>
+     * <code>.dictionary.Window window = 19;</code>
      */
     public Builder setWindow(org.spin.grpc.util.Window value) {
       if (windowBuilder_ == null) {
@@ -2039,7 +2293,7 @@ private static final long serialVersionUID = 0L;
      * External Reference
      * </pre>
      *
-     * <code>.dictionary.Window window = 17;</code>
+     * <code>.dictionary.Window window = 19;</code>
      */
     public Builder setWindow(
         org.spin.grpc.util.Window.Builder builderForValue) {
@@ -2057,7 +2311,7 @@ private static final long serialVersionUID = 0L;
      * External Reference
      * </pre>
      *
-     * <code>.dictionary.Window window = 17;</code>
+     * <code>.dictionary.Window window = 19;</code>
      */
     public Builder mergeWindow(org.spin.grpc.util.Window value) {
       if (windowBuilder_ == null) {
@@ -2079,7 +2333,7 @@ private static final long serialVersionUID = 0L;
      * External Reference
      * </pre>
      *
-     * <code>.dictionary.Window window = 17;</code>
+     * <code>.dictionary.Window window = 19;</code>
      */
     public Builder clearWindow() {
       if (windowBuilder_ == null) {
@@ -2097,7 +2351,7 @@ private static final long serialVersionUID = 0L;
      * External Reference
      * </pre>
      *
-     * <code>.dictionary.Window window = 17;</code>
+     * <code>.dictionary.Window window = 19;</code>
      */
     public org.spin.grpc.util.Window.Builder getWindowBuilder() {
       
@@ -2109,7 +2363,7 @@ private static final long serialVersionUID = 0L;
      * External Reference
      * </pre>
      *
-     * <code>.dictionary.Window window = 17;</code>
+     * <code>.dictionary.Window window = 19;</code>
      */
     public org.spin.grpc.util.WindowOrBuilder getWindowOrBuilder() {
       if (windowBuilder_ != null) {
@@ -2124,7 +2378,7 @@ private static final long serialVersionUID = 0L;
      * External Reference
      * </pre>
      *
-     * <code>.dictionary.Window window = 17;</code>
+     * <code>.dictionary.Window window = 19;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
         org.spin.grpc.util.Window, org.spin.grpc.util.Window.Builder, org.spin.grpc.util.WindowOrBuilder> 
@@ -2144,13 +2398,13 @@ private static final long serialVersionUID = 0L;
     private com.google.protobuf.SingleFieldBuilderV3<
         org.spin.grpc.util.Process, org.spin.grpc.util.Process.Builder, org.spin.grpc.util.ProcessOrBuilder> processBuilder_;
     /**
-     * <code>.dictionary.Process process = 18;</code>
+     * <code>.dictionary.Process process = 20;</code>
      */
     public boolean hasProcess() {
       return processBuilder_ != null || process_ != null;
     }
     /**
-     * <code>.dictionary.Process process = 18;</code>
+     * <code>.dictionary.Process process = 20;</code>
      */
     public org.spin.grpc.util.Process getProcess() {
       if (processBuilder_ == null) {
@@ -2160,7 +2414,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>.dictionary.Process process = 18;</code>
+     * <code>.dictionary.Process process = 20;</code>
      */
     public Builder setProcess(org.spin.grpc.util.Process value) {
       if (processBuilder_ == null) {
@@ -2176,7 +2430,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.dictionary.Process process = 18;</code>
+     * <code>.dictionary.Process process = 20;</code>
      */
     public Builder setProcess(
         org.spin.grpc.util.Process.Builder builderForValue) {
@@ -2190,7 +2444,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.dictionary.Process process = 18;</code>
+     * <code>.dictionary.Process process = 20;</code>
      */
     public Builder mergeProcess(org.spin.grpc.util.Process value) {
       if (processBuilder_ == null) {
@@ -2208,7 +2462,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.dictionary.Process process = 18;</code>
+     * <code>.dictionary.Process process = 20;</code>
      */
     public Builder clearProcess() {
       if (processBuilder_ == null) {
@@ -2222,7 +2476,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.dictionary.Process process = 18;</code>
+     * <code>.dictionary.Process process = 20;</code>
      */
     public org.spin.grpc.util.Process.Builder getProcessBuilder() {
       
@@ -2230,7 +2484,7 @@ private static final long serialVersionUID = 0L;
       return getProcessFieldBuilder().getBuilder();
     }
     /**
-     * <code>.dictionary.Process process = 18;</code>
+     * <code>.dictionary.Process process = 20;</code>
      */
     public org.spin.grpc.util.ProcessOrBuilder getProcessOrBuilder() {
       if (processBuilder_ != null) {
@@ -2241,7 +2495,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>.dictionary.Process process = 18;</code>
+     * <code>.dictionary.Process process = 20;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
         org.spin.grpc.util.Process, org.spin.grpc.util.Process.Builder, org.spin.grpc.util.ProcessOrBuilder> 
@@ -2260,9 +2514,9 @@ private static final long serialVersionUID = 0L;
     private java.util.List<org.spin.grpc.util.Field> fields_ =
       java.util.Collections.emptyList();
     private void ensureFieldsIsMutable() {
-      if (!((bitField0_ & 0x00020000) == 0x00020000)) {
+      if (!((bitField0_ & 0x00080000) == 0x00080000)) {
         fields_ = new java.util.ArrayList<org.spin.grpc.util.Field>(fields_);
-        bitField0_ |= 0x00020000;
+        bitField0_ |= 0x00080000;
        }
     }
 
@@ -2270,7 +2524,7 @@ private static final long serialVersionUID = 0L;
         org.spin.grpc.util.Field, org.spin.grpc.util.Field.Builder, org.spin.grpc.util.FieldOrBuilder> fieldsBuilder_;
 
     /**
-     * <code>repeated .dictionary.Field fields = 19;</code>
+     * <code>repeated .dictionary.Field fields = 21;</code>
      */
     public java.util.List<org.spin.grpc.util.Field> getFieldsList() {
       if (fieldsBuilder_ == null) {
@@ -2280,7 +2534,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .dictionary.Field fields = 19;</code>
+     * <code>repeated .dictionary.Field fields = 21;</code>
      */
     public int getFieldsCount() {
       if (fieldsBuilder_ == null) {
@@ -2290,7 +2544,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .dictionary.Field fields = 19;</code>
+     * <code>repeated .dictionary.Field fields = 21;</code>
      */
     public org.spin.grpc.util.Field getFields(int index) {
       if (fieldsBuilder_ == null) {
@@ -2300,7 +2554,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .dictionary.Field fields = 19;</code>
+     * <code>repeated .dictionary.Field fields = 21;</code>
      */
     public Builder setFields(
         int index, org.spin.grpc.util.Field value) {
@@ -2317,7 +2571,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .dictionary.Field fields = 19;</code>
+     * <code>repeated .dictionary.Field fields = 21;</code>
      */
     public Builder setFields(
         int index, org.spin.grpc.util.Field.Builder builderForValue) {
@@ -2331,7 +2585,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .dictionary.Field fields = 19;</code>
+     * <code>repeated .dictionary.Field fields = 21;</code>
      */
     public Builder addFields(org.spin.grpc.util.Field value) {
       if (fieldsBuilder_ == null) {
@@ -2347,7 +2601,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .dictionary.Field fields = 19;</code>
+     * <code>repeated .dictionary.Field fields = 21;</code>
      */
     public Builder addFields(
         int index, org.spin.grpc.util.Field value) {
@@ -2364,7 +2618,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .dictionary.Field fields = 19;</code>
+     * <code>repeated .dictionary.Field fields = 21;</code>
      */
     public Builder addFields(
         org.spin.grpc.util.Field.Builder builderForValue) {
@@ -2378,7 +2632,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .dictionary.Field fields = 19;</code>
+     * <code>repeated .dictionary.Field fields = 21;</code>
      */
     public Builder addFields(
         int index, org.spin.grpc.util.Field.Builder builderForValue) {
@@ -2392,7 +2646,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .dictionary.Field fields = 19;</code>
+     * <code>repeated .dictionary.Field fields = 21;</code>
      */
     public Builder addAllFields(
         java.lang.Iterable<? extends org.spin.grpc.util.Field> values) {
@@ -2407,12 +2661,12 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .dictionary.Field fields = 19;</code>
+     * <code>repeated .dictionary.Field fields = 21;</code>
      */
     public Builder clearFields() {
       if (fieldsBuilder_ == null) {
         fields_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00020000);
+        bitField0_ = (bitField0_ & ~0x00080000);
         onChanged();
       } else {
         fieldsBuilder_.clear();
@@ -2420,7 +2674,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .dictionary.Field fields = 19;</code>
+     * <code>repeated .dictionary.Field fields = 21;</code>
      */
     public Builder removeFields(int index) {
       if (fieldsBuilder_ == null) {
@@ -2433,14 +2687,14 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .dictionary.Field fields = 19;</code>
+     * <code>repeated .dictionary.Field fields = 21;</code>
      */
     public org.spin.grpc.util.Field.Builder getFieldsBuilder(
         int index) {
       return getFieldsFieldBuilder().getBuilder(index);
     }
     /**
-     * <code>repeated .dictionary.Field fields = 19;</code>
+     * <code>repeated .dictionary.Field fields = 21;</code>
      */
     public org.spin.grpc.util.FieldOrBuilder getFieldsOrBuilder(
         int index) {
@@ -2450,7 +2704,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .dictionary.Field fields = 19;</code>
+     * <code>repeated .dictionary.Field fields = 21;</code>
      */
     public java.util.List<? extends org.spin.grpc.util.FieldOrBuilder> 
          getFieldsOrBuilderList() {
@@ -2461,14 +2715,14 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .dictionary.Field fields = 19;</code>
+     * <code>repeated .dictionary.Field fields = 21;</code>
      */
     public org.spin.grpc.util.Field.Builder addFieldsBuilder() {
       return getFieldsFieldBuilder().addBuilder(
           org.spin.grpc.util.Field.getDefaultInstance());
     }
     /**
-     * <code>repeated .dictionary.Field fields = 19;</code>
+     * <code>repeated .dictionary.Field fields = 21;</code>
      */
     public org.spin.grpc.util.Field.Builder addFieldsBuilder(
         int index) {
@@ -2476,7 +2730,7 @@ private static final long serialVersionUID = 0L;
           index, org.spin.grpc.util.Field.getDefaultInstance());
     }
     /**
-     * <code>repeated .dictionary.Field fields = 19;</code>
+     * <code>repeated .dictionary.Field fields = 21;</code>
      */
     public java.util.List<org.spin.grpc.util.Field.Builder> 
          getFieldsBuilderList() {
@@ -2489,7 +2743,7 @@ private static final long serialVersionUID = 0L;
         fieldsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
             org.spin.grpc.util.Field, org.spin.grpc.util.Field.Builder, org.spin.grpc.util.FieldOrBuilder>(
                 fields_,
-                ((bitField0_ & 0x00020000) == 0x00020000),
+                ((bitField0_ & 0x00080000) == 0x00080000),
                 getParentForChildren(),
                 isClean());
         fields_ = null;
@@ -2499,13 +2753,13 @@ private static final long serialVersionUID = 0L;
 
     private boolean isActive_ ;
     /**
-     * <code>bool isActive = 20;</code>
+     * <code>bool isActive = 22;</code>
      */
     public boolean getIsActive() {
       return isActive_;
     }
     /**
-     * <code>bool isActive = 20;</code>
+     * <code>bool isActive = 22;</code>
      */
     public Builder setIsActive(boolean value) {
       
@@ -2514,7 +2768,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>bool isActive = 20;</code>
+     * <code>bool isActive = 22;</code>
      */
     public Builder clearIsActive() {
       

@@ -24,6 +24,7 @@ import org.adempiere.model.I_AD_Browse;
 import org.adempiere.model.I_AD_Browse_Field;
 import org.adempiere.model.MBrowse;
 import org.adempiere.model.MBrowseField;
+import org.adempiere.model.MView;
 import org.compiere.model.I_AD_Field;
 import org.compiere.model.I_AD_FieldGroup;
 import org.compiere.model.I_AD_Message;
@@ -637,6 +638,8 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		if(Util.isEmpty(help)) {
 			help = browser.getHelp();
 		}
+		String query = MView.getSQLFromView(browser.getAD_View_ID(), null);
+		String orderByClause = getSQLOrderBy(browser);
 		Browser.Builder builder = Browser.newBuilder()
 				.setId(browser.getAD_Process_ID())
 				.setUuid(validateNull(browser.getUUID()))
@@ -652,7 +655,9 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setIsSelectedByDefault(browser.isSelectedByDefault())
 				.setIsShowTotal(browser.isShowTotal())
 				.setIsUpdateable(browser.isUpdateable())
-				.setWhereClause(validateNull(browser.getWhereClause()));
+				.setQuery(validateNull(query))
+				.setWhereClause(validateNull(browser.getWhereClause()))
+				.setOrderByClause(validateNull(orderByClause));
 		//	Set View UUID
 		if(browser.getAD_View_ID() > 0) {
 			builder.setViewUuid(validateNull(browser.getAD_View().getUUID()));
@@ -676,6 +681,45 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			}
 		}
 		return builder;
+	}
+	
+	/**
+	 * Get Order By
+	 * @param browser
+	 * @return
+	 */
+	public String getSQLOrderBy(MBrowse browser) {
+		StringBuilder sqlOrderBy = new StringBuilder();
+		for (MBrowseField field : browser.getOrderByFields()) {
+			if (field.isOrderBy()) {
+				int orderByPosition = getOrderByPosition(browser, field);
+				if (orderByPosition <= 0)
+					continue;
+
+				if (sqlOrderBy.length() > 0) {
+					sqlOrderBy.append(",");
+				}
+				sqlOrderBy.append(orderByPosition);
+			}
+		}
+		return sqlOrderBy.length() > 0 ? sqlOrderBy.toString(): "";
+	}
+	
+	/**
+	 * Get Order By Postirion for SB
+	 * @param BrowserField
+	 * @return
+	 */
+	private int getOrderByPosition(MBrowse browser, MBrowseField BrowserField) {
+		int colOffset = 1; // columns start with 1
+		int col = 0;
+		for (MBrowseField field : browser.getFields()) {
+			int sortBySqlNo = col + colOffset;
+			if (BrowserField.getAD_Browse_Field_ID() == field.getAD_Browse_Field_ID())
+				return sortBySqlNo;
+			col ++;
+		}
+		return -1;
 	}
 	
 	/**

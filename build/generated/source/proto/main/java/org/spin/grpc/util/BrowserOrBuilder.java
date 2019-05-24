@@ -68,51 +68,71 @@ public interface BrowserOrBuilder extends
   int getAccessLevel();
 
   /**
-   * <code>string whereClause = 9;</code>
+   * <code>string query = 9;</code>
+   */
+  java.lang.String getQuery();
+  /**
+   * <code>string query = 9;</code>
+   */
+  com.google.protobuf.ByteString
+      getQueryBytes();
+
+  /**
+   * <code>string whereClause = 10;</code>
    */
   java.lang.String getWhereClause();
   /**
-   * <code>string whereClause = 9;</code>
+   * <code>string whereClause = 10;</code>
    */
   com.google.protobuf.ByteString
       getWhereClauseBytes();
 
   /**
-   * <code>bool isUpdateable = 10;</code>
+   * <code>string orderByClause = 11;</code>
+   */
+  java.lang.String getOrderByClause();
+  /**
+   * <code>string orderByClause = 11;</code>
+   */
+  com.google.protobuf.ByteString
+      getOrderByClauseBytes();
+
+  /**
+   * <code>bool isUpdateable = 12;</code>
    */
   boolean getIsUpdateable();
 
   /**
-   * <code>bool IsDeleteable = 11;</code>
+   * <code>bool IsDeleteable = 13;</code>
    */
   boolean getIsDeleteable();
 
   /**
-   * <code>bool IsSelectedByDefault = 12;</code>
+   * <code>bool IsSelectedByDefault = 14;</code>
    */
   boolean getIsSelectedByDefault();
 
   /**
-   * <code>bool IsCollapsibleByDefault = 13;</code>
+   * <code>bool IsCollapsibleByDefault = 15;</code>
    */
   boolean getIsCollapsibleByDefault();
 
   /**
-   * <code>bool IsExecutedQueryByDefault = 14;</code>
+   * <code>bool IsExecutedQueryByDefault = 16;</code>
    */
   boolean getIsExecutedQueryByDefault();
 
   /**
-   * <code>bool IsShowTotal = 15;</code>
+   * <code>bool IsShowTotal = 17;</code>
    */
   boolean getIsShowTotal();
 
   /**
-   * <code>string viewUuid = 16;</code>
+   * <code>string viewUuid = 18;</code>
    */
   java.lang.String getViewUuid();
   /**
-   * <code>string viewUuid = 16;</code>
+   * <code>string viewUuid = 18;</code>
    */
   com.google.protobuf.ByteString
       getViewUuidBytes();
@@ -122,7 +142,7 @@ public interface BrowserOrBuilder extends
    * External Reference
    * </pre>
    *
-   * <code>.dictionary.Window window = 17;</code>
+   * <code>.dictionary.Window window = 19;</code>
    */
   boolean hasWindow();
   /**
@@ -130,7 +150,7 @@ public interface BrowserOrBuilder extends
    * External Reference
    * </pre>
    *
-   * <code>.dictionary.Window window = 17;</code>
+   * <code>.dictionary.Window window = 19;</code>
    */
   org.spin.grpc.util.Window getWindow();
   /**
@@ -138,49 +158,49 @@ public interface BrowserOrBuilder extends
    * External Reference
    * </pre>
    *
-   * <code>.dictionary.Window window = 17;</code>
+   * <code>.dictionary.Window window = 19;</code>
    */
   org.spin.grpc.util.WindowOrBuilder getWindowOrBuilder();
 
   /**
-   * <code>.dictionary.Process process = 18;</code>
+   * <code>.dictionary.Process process = 20;</code>
    */
   boolean hasProcess();
   /**
-   * <code>.dictionary.Process process = 18;</code>
+   * <code>.dictionary.Process process = 20;</code>
    */
   org.spin.grpc.util.Process getProcess();
   /**
-   * <code>.dictionary.Process process = 18;</code>
+   * <code>.dictionary.Process process = 20;</code>
    */
   org.spin.grpc.util.ProcessOrBuilder getProcessOrBuilder();
 
   /**
-   * <code>repeated .dictionary.Field fields = 19;</code>
+   * <code>repeated .dictionary.Field fields = 21;</code>
    */
   java.util.List<org.spin.grpc.util.Field> 
       getFieldsList();
   /**
-   * <code>repeated .dictionary.Field fields = 19;</code>
+   * <code>repeated .dictionary.Field fields = 21;</code>
    */
   org.spin.grpc.util.Field getFields(int index);
   /**
-   * <code>repeated .dictionary.Field fields = 19;</code>
+   * <code>repeated .dictionary.Field fields = 21;</code>
    */
   int getFieldsCount();
   /**
-   * <code>repeated .dictionary.Field fields = 19;</code>
+   * <code>repeated .dictionary.Field fields = 21;</code>
    */
   java.util.List<? extends org.spin.grpc.util.FieldOrBuilder> 
       getFieldsOrBuilderList();
   /**
-   * <code>repeated .dictionary.Field fields = 19;</code>
+   * <code>repeated .dictionary.Field fields = 21;</code>
    */
   org.spin.grpc.util.FieldOrBuilder getFieldsOrBuilder(
       int index);
 
   /**
-   * <code>bool isActive = 20;</code>
+   * <code>bool isActive = 22;</code>
    */
   boolean getIsActive();
 }

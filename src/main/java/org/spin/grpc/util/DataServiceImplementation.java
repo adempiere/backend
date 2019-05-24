@@ -575,6 +575,29 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	}
 	
 	/**
+	 * Set Parameter for Statement from object
+	 * @param pstmt
+	 * @param value
+	 * @param index
+	 * @throws SQLException
+	 */
+	private void setParameterFromObject(PreparedStatement pstmt, Object value, int index) throws SQLException {
+		if(value instanceof Integer) {
+			pstmt.setInt(index, (Integer) value);
+		} else if(value instanceof Double) {
+			pstmt.setDouble(index, (Double) value);
+		} else if(value instanceof Long) {
+			pstmt.setLong(index, (Long) value);
+		} else if(value instanceof BigDecimal) {
+			pstmt.setBigDecimal(index, (BigDecimal) value);
+		} else if(value instanceof String) {
+			pstmt.setString(index, (String) value);
+		} else if(value instanceof Timestamp) {
+			pstmt.setTimestamp(index, (Timestamp) value);
+		}
+	}
+	
+	/**
 	 * Convert Object to list
 	 * @param request
 	 * @return
@@ -727,35 +750,85 @@ public class DataServiceImplementation extends DataServiceImplBase {
 		if(browser == null) {
 			return builder;
 		}
+		Criteria criteria = request.getCriteria();
 		HashMap<String, Object> parameterMap = new HashMap<>();
 		//	Populate map
 		for(KeyValue parameter : request.getParametersList()) {
 			parameterMap.put(parameter.getKey(), getValueFromType(parameter.getValue()));
 		}
 		List<Object> values = new ArrayList<Object>();
-		String sql = getBrowserWhereClause(browser, null, parameterMap, values);
+		String whereClause = getBrowserWhereClause(browser, criteria.getWhereClause(), parameterMap, values);
 		//	Add SQL
-		
-		
-//		Criteria criteria = request.getCriteria();
-//		StringBuffer whereClause = new StringBuffer();
-//		List<Object> params = new ArrayList<>();
-//		if(!Util.isEmpty(request.getUuid())) {
-//			whereClause.append(I_AD_Element.COLUMNNAME_UUID + " = ?");
-//			params.add(request.getUuid());
-//		} else if(!Util.isEmpty(criteria.getWhereClause())) {
-//			whereClause.append("(").append(criteria.getWhereClause()).append(")");
-//		}
-//		//	
-//		List<PO> entityList = new Query(context, criteria.getTableName(), whereClause.toString(), null)
-//				.setParameters(params)
-//				.<PO>list();
+		//	TODO: Add parsed query from client
+		StringBuilder sql = new StringBuilder(criteria.getQuery());
+		if (whereClause.length() > 0) {
+			sql.append(" WHERE ").append(whereClause); // includes first AND
+		}
+		String tableName = browser.getAD_View().getParentEntityAliasName();
 		//	
-		//	Convert List
-//		for(PO entity : entityList) {
-//			ValueObject.Builder valueObject = convertObject(context, entity);
-//			builder.addRecords(valueObject.build());
-//		}
+		String parsedSQL = MRole.getDefault().addAccessSQL(sql.toString(),
+				tableName, MRole.SQL_FULLYQUALIFIED,
+				MRole.SQL_RO);
+		String orderByClause = criteria.getOrderByClause();
+		if(Util.isEmpty(orderByClause)) {
+			orderByClause = "";
+		} else {
+			orderByClause = " ORDER BY " + orderByClause;
+		}
+		//	Add Order By
+		parsedSQL = parsedSQL + orderByClause;
+		//	Return
+		return convertBrowserResult(parsedSQL, values);
+	}
+	
+	/**
+	 * Convert SQL to list values
+	 * @param sql
+	 * @param values
+	 * @return
+	 */
+	private ValueObjectList.Builder convertBrowserResult(String sql, List<Object> values) {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		ValueObjectList.Builder builder = ValueObjectList.newBuilder();
+		long recordCount = 0;
+		try {
+			//	SELECT Key, Value, Name FROM ...
+			pstmt = DB.prepareStatement(sql, null);
+			AtomicInteger parameterIndex = new AtomicInteger(1);
+			for(Object value : values) {
+				setParameterFromObject(pstmt, value, parameterIndex.getAndIncrement());
+			}
+			//	Get from Query
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				ValueObject.Builder valueObjectBuilder = ValueObject.newBuilder();
+				ResultSetMetaData metaData = rs.getMetaData();
+				for (int index = 1; index <= metaData.getColumnCount(); index++) {
+					String columnName = metaData.getColumnName (index);
+					int valueType = metaData.getColumnType(index);
+					Value.Builder valueBuilder = Value.newBuilder();
+					//	Validate Type
+					if(valueType == Types.VARCHAR
+							|| valueType == Types.NVARCHAR
+							|| valueType == Types.CHAR
+							|| valueType == Types.NCHAR) {
+						valueBuilder.setStringValue(validateNull(rs.getString(index)));
+						valueBuilder.setValueType(ValueType.STRING);
+					}
+					valueObjectBuilder.putValues(columnName, valueBuilder.build());
+				}
+				//	
+				builder.addRecords(valueObjectBuilder.build());
+				recordCount++;
+			}
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+		} finally {
+			DB.close(rs, pstmt);
+		}
+		//	Set record counts
+		builder.setRecordCount(recordCount);
 		//	Return
 		return builder;
 	}
