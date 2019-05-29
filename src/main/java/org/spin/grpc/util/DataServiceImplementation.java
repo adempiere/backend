@@ -816,6 +816,7 @@ public class DataServiceImplementation extends DataServiceImplBase {
 					boolean isFilled = false;
 					//	Validate Type
 					if(DisplayType.isID(field.getAD_Reference_ID())) {
+						isFilled = true;
 						valueBuilder.setIntValue(rs.getInt(index));
 						valueBuilder.setValueType(ValueType.INTEGER);
 					} if(DisplayType.isNumeric(field.getAD_Reference_ID())) {
@@ -903,7 +904,7 @@ public class DataServiceImplementation extends DataServiceImplBase {
 			sql = "UUID = ?";
 		} else {
 			uuid = request.getClientRequest().getSessionUuid();
-			sql = "EXISTS(SELECT 1 FROM AD_Session WHERE UUID = ? AND CreatedBy = AD_PInstance.AD_User_ID)";
+			sql = "EXISTS(SELECT 1 FROM AD_Session WHERE UUID = ? AND AD_Session_ID = AD_PInstance.AD_Session_ID)";
 		}
 		List<MPInstance> processInstanceList = new Query(context, I_AD_PInstance.Table_Name, 
 				sql, null)
