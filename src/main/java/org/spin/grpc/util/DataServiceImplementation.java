@@ -533,9 +533,9 @@ public class DataServiceImplementation extends DataServiceImplBase {
 						|| keyValueType == Types.NVARCHAR
 						|| keyValueType == Types.CHAR
 						|| keyValueType == Types.NCHAR) {
-					keyValue = rs.getString(1);
+					keyValue = rs.getString(2);
 				} else {
-					keyValue = rs.getInt(1);
+					keyValue = rs.getInt(2);
 				}
 				//	
 				ValueObject.Builder valueObject = convertObjectFromResult(keyValue, null, rs.getString(2), rs.getString(3));
