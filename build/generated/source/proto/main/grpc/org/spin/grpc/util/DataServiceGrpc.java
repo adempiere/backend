@@ -286,6 +286,38 @@ public final class DataServiceGrpc {
      return getRequestProcessActivityMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.RecentItemsRequest,
+      org.spin.grpc.util.RecentItemsResponse> getRequestRecentItemsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "RequestRecentItems",
+      requestType = org.spin.grpc.util.RecentItemsRequest.class,
+      responseType = org.spin.grpc.util.RecentItemsResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<org.spin.grpc.util.RecentItemsRequest,
+      org.spin.grpc.util.RecentItemsResponse> getRequestRecentItemsMethod() {
+    io.grpc.MethodDescriptor<org.spin.grpc.util.RecentItemsRequest, org.spin.grpc.util.RecentItemsResponse> getRequestRecentItemsMethod;
+    if ((getRequestRecentItemsMethod = DataServiceGrpc.getRequestRecentItemsMethod) == null) {
+      synchronized (DataServiceGrpc.class) {
+        if ((getRequestRecentItemsMethod = DataServiceGrpc.getRequestRecentItemsMethod) == null) {
+          DataServiceGrpc.getRequestRecentItemsMethod = getRequestRecentItemsMethod = 
+              io.grpc.MethodDescriptor.<org.spin.grpc.util.RecentItemsRequest, org.spin.grpc.util.RecentItemsResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(
+                  "data.DataService", "RequestRecentItems"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  org.spin.grpc.util.RecentItemsRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  org.spin.grpc.util.RecentItemsResponse.getDefaultInstance()))
+                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("RequestRecentItems"))
+                  .build();
+          }
+        }
+     }
+     return getRequestRecentItemsMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -396,6 +428,16 @@ public final class DataServiceGrpc {
       asyncUnimplementedUnaryCall(getRequestProcessActivityMethod(), responseObserver);
     }
 
+    /**
+     * <pre>
+     *	Request Recent Items
+     * </pre>
+     */
+    public void requestRecentItems(org.spin.grpc.util.RecentItemsRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.RecentItemsResponse> responseObserver) {
+      asyncUnimplementedUnaryCall(getRequestRecentItemsMethod(), responseObserver);
+    }
+
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
@@ -454,6 +496,13 @@ public final class DataServiceGrpc {
                 org.spin.grpc.util.ProcessActivityRequest,
                 org.spin.grpc.util.ProcessResponseList>(
                   this, METHODID_REQUEST_PROCESS_ACTIVITY)))
+          .addMethod(
+            getRequestRecentItemsMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                org.spin.grpc.util.RecentItemsRequest,
+                org.spin.grpc.util.RecentItemsResponse>(
+                  this, METHODID_REQUEST_RECENT_ITEMS)))
           .build();
     }
   }
@@ -566,6 +615,17 @@ public final class DataServiceGrpc {
       asyncUnaryCall(
           getChannel().newCall(getRequestProcessActivityMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     * <pre>
+     *	Request Recent Items
+     * </pre>
+     */
+    public void requestRecentItems(org.spin.grpc.util.RecentItemsRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.RecentItemsResponse> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getRequestRecentItemsMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -667,6 +727,16 @@ public final class DataServiceGrpc {
     public org.spin.grpc.util.ProcessResponseList requestProcessActivity(org.spin.grpc.util.ProcessActivityRequest request) {
       return blockingUnaryCall(
           getChannel(), getRequestProcessActivityMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     *	Request Recent Items
+     * </pre>
+     */
+    public org.spin.grpc.util.RecentItemsResponse requestRecentItems(org.spin.grpc.util.RecentItemsRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getRequestRecentItemsMethod(), getCallOptions(), request);
     }
   }
 
@@ -778,6 +848,17 @@ public final class DataServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getRequestProcessActivityMethod(), getCallOptions()), request);
     }
+
+    /**
+     * <pre>
+     *	Request Recent Items
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.RecentItemsResponse> requestRecentItems(
+        org.spin.grpc.util.RecentItemsRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getRequestRecentItemsMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_REQUEST_OBJECT = 0;
@@ -788,6 +869,7 @@ public final class DataServiceGrpc {
   private static final int METHODID_REQUEST_PROCESS = 5;
   private static final int METHODID_REQUEST_BROWSER = 6;
   private static final int METHODID_REQUEST_PROCESS_ACTIVITY = 7;
+  private static final int METHODID_REQUEST_RECENT_ITEMS = 8;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -837,6 +919,10 @@ public final class DataServiceGrpc {
         case METHODID_REQUEST_PROCESS_ACTIVITY:
           serviceImpl.requestProcessActivity((org.spin.grpc.util.ProcessActivityRequest) request,
               (io.grpc.stub.StreamObserver<org.spin.grpc.util.ProcessResponseList>) responseObserver);
+          break;
+        case METHODID_REQUEST_RECENT_ITEMS:
+          serviceImpl.requestRecentItems((org.spin.grpc.util.RecentItemsRequest) request,
+              (io.grpc.stub.StreamObserver<org.spin.grpc.util.RecentItemsResponse>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -907,6 +993,7 @@ public final class DataServiceGrpc {
               .addMethod(getRequestProcessMethod())
               .addMethod(getRequestBrowserMethod())
               .addMethod(getRequestProcessActivityMethod())
+              .addMethod(getRequestRecentItemsMethod())
               .build();
         }
       }

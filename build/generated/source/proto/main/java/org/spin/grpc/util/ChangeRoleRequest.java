@@ -5,21 +5,21 @@ package org.spin.grpc.util;
 
 /**
  * <pre>
- * Request User Info
+ * Request a Change Role
  * </pre>
  *
- * Protobuf type {@code access.UserInfoRequest}
+ * Protobuf type {@code access.ChangeRoleRequest}
  */
-public  final class UserInfoRequest extends
+public  final class ChangeRoleRequest extends
     com.google.protobuf.GeneratedMessageV3 implements
-    // @@protoc_insertion_point(message_implements:access.UserInfoRequest)
-    UserInfoRequestOrBuilder {
+    // @@protoc_insertion_point(message_implements:access.ChangeRoleRequest)
+    ChangeRoleRequestOrBuilder {
 private static final long serialVersionUID = 0L;
-  // Use UserInfoRequest.newBuilder() to construct.
-  private UserInfoRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+  // Use ChangeRoleRequest.newBuilder() to construct.
+  private ChangeRoleRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
   }
-  private UserInfoRequest() {
+  private ChangeRoleRequest() {
     sessionUuid_ = "";
     roleUuid_ = "";
     organizationUuid_ = "";
@@ -33,7 +33,7 @@ private static final long serialVersionUID = 0L;
   getUnknownFields() {
     return this.unknownFields;
   }
-  private UserInfoRequest(
+  private ChangeRoleRequest(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -109,14 +109,14 @@ private static final long serialVersionUID = 0L;
   }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-    return org.spin.grpc.util.ADempiereAccess.internal_static_access_UserInfoRequest_descriptor;
+    return org.spin.grpc.util.ADempiereAccess.internal_static_access_ChangeRoleRequest_descriptor;
   }
 
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
-    return org.spin.grpc.util.ADempiereAccess.internal_static_access_UserInfoRequest_fieldAccessorTable
+    return org.spin.grpc.util.ADempiereAccess.internal_static_access_ChangeRoleRequest_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
-            org.spin.grpc.util.UserInfoRequest.class, org.spin.grpc.util.UserInfoRequest.Builder.class);
+            org.spin.grpc.util.ChangeRoleRequest.class, org.spin.grpc.util.ChangeRoleRequest.Builder.class);
   }
 
   public static final int SESSIONUUID_FIELD_NUMBER = 1;
@@ -389,10 +389,10 @@ private static final long serialVersionUID = 0L;
     if (obj == this) {
      return true;
     }
-    if (!(obj instanceof org.spin.grpc.util.UserInfoRequest)) {
+    if (!(obj instanceof org.spin.grpc.util.ChangeRoleRequest)) {
       return super.equals(obj);
     }
-    org.spin.grpc.util.UserInfoRequest other = (org.spin.grpc.util.UserInfoRequest) obj;
+    org.spin.grpc.util.ChangeRoleRequest other = (org.spin.grpc.util.ChangeRoleRequest) obj;
 
     boolean result = true;
     result = result && getSessionUuid()
@@ -435,69 +435,69 @@ private static final long serialVersionUID = 0L;
     return hash;
   }
 
-  public static org.spin.grpc.util.UserInfoRequest parseFrom(
+  public static org.spin.grpc.util.ChangeRoleRequest parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.spin.grpc.util.UserInfoRequest parseFrom(
+  public static org.spin.grpc.util.ChangeRoleRequest parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.spin.grpc.util.UserInfoRequest parseFrom(
+  public static org.spin.grpc.util.ChangeRoleRequest parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.spin.grpc.util.UserInfoRequest parseFrom(
+  public static org.spin.grpc.util.ChangeRoleRequest parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.spin.grpc.util.UserInfoRequest parseFrom(byte[] data)
+  public static org.spin.grpc.util.ChangeRoleRequest parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.spin.grpc.util.UserInfoRequest parseFrom(
+  public static org.spin.grpc.util.ChangeRoleRequest parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.spin.grpc.util.UserInfoRequest parseFrom(java.io.InputStream input)
+  public static org.spin.grpc.util.ChangeRoleRequest parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static org.spin.grpc.util.UserInfoRequest parseFrom(
+  public static org.spin.grpc.util.ChangeRoleRequest parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input, extensionRegistry);
   }
-  public static org.spin.grpc.util.UserInfoRequest parseDelimitedFrom(java.io.InputStream input)
+  public static org.spin.grpc.util.ChangeRoleRequest parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input);
   }
-  public static org.spin.grpc.util.UserInfoRequest parseDelimitedFrom(
+  public static org.spin.grpc.util.ChangeRoleRequest parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
   }
-  public static org.spin.grpc.util.UserInfoRequest parseFrom(
+  public static org.spin.grpc.util.ChangeRoleRequest parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static org.spin.grpc.util.UserInfoRequest parseFrom(
+  public static org.spin.grpc.util.ChangeRoleRequest parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -509,7 +509,7 @@ private static final long serialVersionUID = 0L;
   public static Builder newBuilder() {
     return DEFAULT_INSTANCE.toBuilder();
   }
-  public static Builder newBuilder(org.spin.grpc.util.UserInfoRequest prototype) {
+  public static Builder newBuilder(org.spin.grpc.util.ChangeRoleRequest prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
   public Builder toBuilder() {
@@ -525,28 +525,28 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * Request User Info
+   * Request a Change Role
    * </pre>
    *
-   * Protobuf type {@code access.UserInfoRequest}
+   * Protobuf type {@code access.ChangeRoleRequest}
    */
   public static final class Builder extends
       com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-      // @@protoc_insertion_point(builder_implements:access.UserInfoRequest)
-      org.spin.grpc.util.UserInfoRequestOrBuilder {
+      // @@protoc_insertion_point(builder_implements:access.ChangeRoleRequest)
+      org.spin.grpc.util.ChangeRoleRequestOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.spin.grpc.util.ADempiereAccess.internal_static_access_UserInfoRequest_descriptor;
+      return org.spin.grpc.util.ADempiereAccess.internal_static_access_ChangeRoleRequest_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.spin.grpc.util.ADempiereAccess.internal_static_access_UserInfoRequest_fieldAccessorTable
+      return org.spin.grpc.util.ADempiereAccess.internal_static_access_ChangeRoleRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.spin.grpc.util.UserInfoRequest.class, org.spin.grpc.util.UserInfoRequest.Builder.class);
+              org.spin.grpc.util.ChangeRoleRequest.class, org.spin.grpc.util.ChangeRoleRequest.Builder.class);
     }
 
-    // Construct using org.spin.grpc.util.UserInfoRequest.newBuilder()
+    // Construct using org.spin.grpc.util.ChangeRoleRequest.newBuilder()
     private Builder() {
       maybeForceBuilderInitialization();
     }
@@ -580,23 +580,23 @@ private static final long serialVersionUID = 0L;
 
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
-      return org.spin.grpc.util.ADempiereAccess.internal_static_access_UserInfoRequest_descriptor;
+      return org.spin.grpc.util.ADempiereAccess.internal_static_access_ChangeRoleRequest_descriptor;
     }
 
-    public org.spin.grpc.util.UserInfoRequest getDefaultInstanceForType() {
-      return org.spin.grpc.util.UserInfoRequest.getDefaultInstance();
+    public org.spin.grpc.util.ChangeRoleRequest getDefaultInstanceForType() {
+      return org.spin.grpc.util.ChangeRoleRequest.getDefaultInstance();
     }
 
-    public org.spin.grpc.util.UserInfoRequest build() {
-      org.spin.grpc.util.UserInfoRequest result = buildPartial();
+    public org.spin.grpc.util.ChangeRoleRequest build() {
+      org.spin.grpc.util.ChangeRoleRequest result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
       return result;
     }
 
-    public org.spin.grpc.util.UserInfoRequest buildPartial() {
-      org.spin.grpc.util.UserInfoRequest result = new org.spin.grpc.util.UserInfoRequest(this);
+    public org.spin.grpc.util.ChangeRoleRequest buildPartial() {
+      org.spin.grpc.util.ChangeRoleRequest result = new org.spin.grpc.util.ChangeRoleRequest(this);
       result.sessionUuid_ = sessionUuid_;
       result.roleUuid_ = roleUuid_;
       result.organizationUuid_ = organizationUuid_;
@@ -634,16 +634,16 @@ private static final long serialVersionUID = 0L;
       return (Builder) super.addRepeatedField(field, value);
     }
     public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof org.spin.grpc.util.UserInfoRequest) {
-        return mergeFrom((org.spin.grpc.util.UserInfoRequest)other);
+      if (other instanceof org.spin.grpc.util.ChangeRoleRequest) {
+        return mergeFrom((org.spin.grpc.util.ChangeRoleRequest)other);
       } else {
         super.mergeFrom(other);
         return this;
       }
     }
 
-    public Builder mergeFrom(org.spin.grpc.util.UserInfoRequest other) {
-      if (other == org.spin.grpc.util.UserInfoRequest.getDefaultInstance()) return this;
+    public Builder mergeFrom(org.spin.grpc.util.ChangeRoleRequest other) {
+      if (other == org.spin.grpc.util.ChangeRoleRequest.getDefaultInstance()) return this;
       if (!other.getSessionUuid().isEmpty()) {
         sessionUuid_ = other.sessionUuid_;
         onChanged();
@@ -681,11 +681,11 @@ private static final long serialVersionUID = 0L;
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      org.spin.grpc.util.UserInfoRequest parsedMessage = null;
+      org.spin.grpc.util.ChangeRoleRequest parsedMessage = null;
       try {
         parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (org.spin.grpc.util.UserInfoRequest) e.getUnfinishedMessage();
+        parsedMessage = (org.spin.grpc.util.ChangeRoleRequest) e.getUnfinishedMessage();
         throw e.unwrapIOException();
       } finally {
         if (parsedMessage != null) {
@@ -1119,39 +1119,39 @@ private static final long serialVersionUID = 0L;
     }
 
 
-    // @@protoc_insertion_point(builder_scope:access.UserInfoRequest)
+    // @@protoc_insertion_point(builder_scope:access.ChangeRoleRequest)
   }
 
-  // @@protoc_insertion_point(class_scope:access.UserInfoRequest)
-  private static final org.spin.grpc.util.UserInfoRequest DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:access.ChangeRoleRequest)
+  private static final org.spin.grpc.util.ChangeRoleRequest DEFAULT_INSTANCE;
   static {
-    DEFAULT_INSTANCE = new org.spin.grpc.util.UserInfoRequest();
+    DEFAULT_INSTANCE = new org.spin.grpc.util.ChangeRoleRequest();
   }
 
-  public static org.spin.grpc.util.UserInfoRequest getDefaultInstance() {
+  public static org.spin.grpc.util.ChangeRoleRequest getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<UserInfoRequest>
-      PARSER = new com.google.protobuf.AbstractParser<UserInfoRequest>() {
-    public UserInfoRequest parsePartialFrom(
+  private static final com.google.protobuf.Parser<ChangeRoleRequest>
+      PARSER = new com.google.protobuf.AbstractParser<ChangeRoleRequest>() {
+    public ChangeRoleRequest parsePartialFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return new UserInfoRequest(input, extensionRegistry);
+      return new ChangeRoleRequest(input, extensionRegistry);
     }
   };
 
-  public static com.google.protobuf.Parser<UserInfoRequest> parser() {
+  public static com.google.protobuf.Parser<ChangeRoleRequest> parser() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.protobuf.Parser<UserInfoRequest> getParserForType() {
+  public com.google.protobuf.Parser<ChangeRoleRequest> getParserForType() {
     return PARSER;
   }
 
-  public org.spin.grpc.util.UserInfoRequest getDefaultInstanceForType() {
+  public org.spin.grpc.util.ChangeRoleRequest getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }
 

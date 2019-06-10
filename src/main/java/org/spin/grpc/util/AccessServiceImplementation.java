@@ -36,6 +36,7 @@ import org.compiere.model.I_AD_Table_Access;
 import org.compiere.model.I_AD_Task_Access;
 import org.compiere.model.I_AD_Window_Access;
 import org.compiere.model.I_AD_Workflow_Access;
+import org.compiere.model.MClient;
 import org.compiere.model.MColumn;
 import org.compiere.model.MColumnAccess;
 import org.compiere.model.MDocType;
@@ -64,6 +65,7 @@ import org.compiere.util.CCache;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
+import org.compiere.util.Language;
 import org.compiere.util.Login;
 import org.compiere.util.Msg;
 import org.compiere.util.Util;
@@ -80,7 +82,9 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 	private CLogger log = CLogger.getCLogger(AccessServiceImplementation.class);
 	/**	Session Context	*/
 	private static CCache<String, Properties> sessionsContext = new CCache<String, Properties>("AccessServiceImplementation", 30, 0);	//	no time-out
-
+	/**	Language */
+	private static CCache<String, String> languageCache = new CCache<String, String>("Language_ISO_Code", 30, 0);	//	no time-out
+	
 	@Override
 	public void requestUserInfo(LoginRequest request, StreamObserver<UserInfoValue> responseObserver) {
 		try {
@@ -170,8 +174,25 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 			log.fine("Menu Requested = " + request.getClientVersion());
 			
 			Properties context = getContext(request);
-			Menu.Builder menuBuilder = convertMenu(context, request.getLanguage());
+			String language = getDefaultLanguage(request.getLanguage());
+			Menu.Builder menuBuilder = convertMenu(context, language);
 			responseObserver.onNext(menuBuilder.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(e);
+		}
+	}
+	
+	@Override
+	public void requestChangeRole(UserInfoRequest request, StreamObserver<Session> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Change Role Requested = " + request.getRoleUuid());
+			Session.Builder sessionBuilder = changeRole(request);
+			responseObserver.onNext(sessionBuilder.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
@@ -187,6 +208,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 	private Properties getContext(UserInfoRequest request) {
 		Properties context = sessionsContext.get(request.getSessionUuid());
 		if(context != null) {
+			Env.setContext(context, Env.LANGUAGE, getDefaultLanguage(request.getLanguage()));
 			return context;
 		}
 		context = Env.getCtx();
@@ -204,10 +226,40 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 		Env.setContext(context, "#AD_Client_ID", session.getAD_Client_ID());
 		Env.setContext(context, "#AD_Org_ID", session.getAD_Org_ID());
 		Env.setContext(context, "#Date", new Timestamp(System.currentTimeMillis()));
-		Env.setContext(context, Env.LANGUAGE, request.getLanguage());
+		Env.setContext(context, Env.LANGUAGE, getDefaultLanguage(request.getLanguage()));
 		//	Save to Cache
 		sessionsContext.put(request.getSessionUuid(), context);
 		return context;
+	}
+	
+	/**
+	 * Get Default from language
+	 * @param language
+	 * @return
+	 */
+	//	TODO: Change it for a class and reuse
+	private String getDefaultLanguage(String language) {
+		String defaultLanguage = language;
+		if(Util.isEmpty(language)) {
+			language = Language.AD_Language_en_US;
+		}
+		//	Using es / en instead es_VE / en_US
+		//	get default
+		if(language.length() == 2) {
+			defaultLanguage = languageCache.get(language);
+			if(!Util.isEmpty(defaultLanguage)) {
+				return defaultLanguage;
+			}
+			defaultLanguage = DB.getSQLValueString(null, "SELECT AD_Language "
+					+ "FROM AD_Language "
+					+ "WHERE LanguageISO = ? "
+					+ "AND IsSystemLanguage = 'Y'", language);
+		}
+		if(Util.isEmpty(defaultLanguage)) {
+			defaultLanguage = Language.AD_Language_en_US;
+		}
+		//	Default return
+		return defaultLanguage;
 	}
 	
 	/**
@@ -296,6 +348,66 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 		//	Return session
 		return builder;
 	}
+	
+	/**
+	 * Change current role
+	 * @param request
+	 * @return
+	 */
+	private Session.Builder changeRole(UserInfoRequest request) {
+		Session.Builder builder = Session.newBuilder();
+		DB.validateSupportedUUIDFromDB();
+		//	Get / Validate Session
+		Properties context = getContext(request);
+		MSession currentSession = MSession.get(context, false);
+		int userId = currentSession.getCreatedBy();
+		int roleId = -1;
+		int organizationId = -1;
+		int warehouseId = -1;
+		roleId = DB.getSQLValue(null, "SELECT AD_Role_ID FROM AD_Role WHERE UUID = ?", request.getRoleUuid());
+		organizationId = DB.getSQLValue(null, "SELECT AD_Org_ID FROM AD_Org WHERE UUID = ?", request.getOrganizationUuid());
+		warehouseId = DB.getSQLValue(null, "SELECT M_Warehouse_ID FROM M_Warehouse WHERE UUID = ?", request.getWarehouseUuid());
+		if(organizationId < 0) {
+			organizationId = 0;
+		}
+		if(warehouseId < 0) {
+			warehouseId = 0;
+		}
+		//	Get Values from role
+		if(roleId < 0) {
+			throw new AdempiereException("@AD_User_ID@ / @AD_Role_ID@ / @AD_Org_ID@ @NotFound@");
+		}
+		MRole role = MRole.get(context, roleId);
+		Env.setContext (context, "#AD_Session_ID", 0);
+		Env.setContext(context, "#AD_User_ID", userId);
+		Env.setContext(context, "#AD_Role_ID", roleId);
+		Env.setContext(context, "#AD_Client_ID", role.getAD_Client_ID());
+		Env.setContext(context, "#AD_Org_ID", organizationId);
+		Env.setContext(context, "#Date", new Timestamp(System.currentTimeMillis()));
+		Env.setContext(context, Env.LANGUAGE, getDefaultLanguage(request.getLanguage()));
+		MSession session = MSession.get(context, true);
+		if(!Util.isEmpty(request.getClientVersion())) {
+			session.setWebSession(request.getClientVersion());
+		}
+		//	Session values
+		builder.setId(session.getAD_Session_ID());
+		builder.setUuid(validateNull(session.getUUID()));
+		builder.setName(validateNull(session.getDescription()));
+		builder.setUserInfo(convertUserInfo(MUser.get(Env.getCtx(), userId)).build());
+		//	Set role
+		Role.Builder roleBuilder = convertRole(role, true);
+		builder.setRole(roleBuilder.build());
+		//	Logout
+		LogoutRequest logoutRequest = LogoutRequest.newBuilder()
+				.setSessionUuid(request.getSessionUuid())
+				.setClientVersion(request.getClientVersion())
+				.setLanguage(request.getLanguage())
+				.build();
+		logoutSession(logoutRequest);
+		//	Return session
+		return builder;
+	}
+	
 	
 	/**
 	 * Logout session
@@ -434,11 +546,14 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 		Role.Builder builder = null;
 		//	Validate
 		if(role != null) {
+			MClient client = MClient.get(Env.getCtx(), role.getAD_Client_ID());
 			builder = Role.newBuilder()
 					.setId(role.getAD_Role_ID())
 					.setUuid(validateNull(role.getUUID()))
 					.setName(validateNull(role.getName()))
-					.setDescription(validateNull(role.getDescription()));
+					.setDescription(validateNull(role.getDescription()))
+					.setClientName(validateNull(client.getName()))
+					.setClientId(role.getAD_Client_ID());
 			//	With Access
 			if(withAccess) {
 				//	Org Access

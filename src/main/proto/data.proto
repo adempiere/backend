@@ -39,6 +39,8 @@ service DataService {
 	rpc RequestBrowser(BrowserRequest) returns (ValueObjectList) {}
 	//	Request Process Activity from current session
 	rpc RequestProcessActivity(ProcessActivityRequest) returns (ProcessResponseList) {}
+	//	Request Recent Items
+	rpc RequestRecentItems(RecentItemsRequest) returns (RecentItemsResponse) {}
 }
 
 // The client request contains client info for request.
@@ -171,6 +173,29 @@ message ProcessActivityRequest {
 	ClientRequest clientRequest = 1;
 	string userUuid = 2;
 	string instanceUuid = 3;
+}
+
+// Recent Items Request
+message RecentItemsRequest {
+	ClientRequest clientRequest = 1;
+	bool currentSession = 2;
+}
+
+// Recent Item
+message RecentItem {
+	string menuUuid = 1;
+	string menuName = 2;
+	string windowUuid = 3;
+	string tabUuid = 4;
+	int32 tableId = 5;
+	int32 recordId = 6;
+	string displayName = 7;
+}
+
+//	Recent Items List
+message RecentItemsResponse {
+	int64 recordCount = 1;
+	repeated RecentItem recentItems = 2;
 }
 
 //	Process Selections

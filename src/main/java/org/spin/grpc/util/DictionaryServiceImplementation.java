@@ -69,6 +69,9 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	private CLogger log = CLogger.getCLogger(DictionaryServiceImplementation.class);
 	/**	Session Context	*/
 	private static CCache<String, Properties> sessionsContext = new CCache<String, Properties>("DictionaryServiceImplementation", 30, 0);	//	no time-out	
+	/**	Language */
+	private static CCache<String, String> languageCache = new CCache<String, String>("Language_ISO_Code", 30, 0);	//	no time-out
+	
 	
 	@Override
 	public void requestWindow(EntityRequest request, StreamObserver<Window> responseObserver) {
@@ -98,6 +101,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	private Properties getContext(ApplicationRequest request) {
 		Properties context = sessionsContext.get(request.getSessionUuid());
 		if(context != null) {
+			Env.setContext(context, Env.LANGUAGE, getDefaultLanguage(request.getLanguage()));
 			return context;
 		}
 		context = Env.getCtx();
@@ -115,10 +119,40 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		Env.setContext(context, "#AD_Client_ID", 0);
 		Env.setContext(context, "#AD_Org_ID", 0);
 		Env.setContext(context, "#Date", new Timestamp(System.currentTimeMillis()));
-		Env.setContext(context, Env.LANGUAGE, request.getLanguage());
+		Env.setContext(context, Env.LANGUAGE, getDefaultLanguage(request.getLanguage()));
 		//	Save to Cache
 		sessionsContext.put(request.getSessionUuid(), context);
 		return context;
+	}
+	
+	/**
+	 * Get Default from language
+	 * @param language
+	 * @return
+	 */
+	//	TODO: Change it for a class and reuse
+	private String getDefaultLanguage(String language) {
+		String defaultLanguage = language;
+		if(Util.isEmpty(language)) {
+			language = Language.AD_Language_en_US;
+		}
+		//	Using es / en instead es_VE / en_US
+		//	get default
+		if(language.length() == 2) {
+			defaultLanguage = languageCache.get(language);
+			if(!Util.isEmpty(defaultLanguage)) {
+				return defaultLanguage;
+			}
+			defaultLanguage = DB.getSQLValueString(null, "SELECT AD_Language "
+					+ "FROM AD_Language "
+					+ "WHERE LanguageISO = ? "
+					+ "AND IsSystemLanguage = 'Y'", language);
+		}
+		if(Util.isEmpty(defaultLanguage)) {
+			defaultLanguage = Language.AD_Language_en_US;
+		}
+		//	Default return
+		return defaultLanguage;
 	}
 	
 	@Override
@@ -135,7 +169,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			}
 			String language = null;
 			if(applicationInfo != null) {
-				language = applicationInfo.getLanguage();
+				language = getDefaultLanguage(applicationInfo.getLanguage());
 			}
 			Properties context = getContext(request.getApplicationRequest());
 			Field.Builder fieldBuilder = convertField(context, request.getUuid(), language);
@@ -161,7 +195,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			}
 			String language = null;
 			if(applicationInfo != null) {
-				language = applicationInfo.getLanguage();
+				language = getDefaultLanguage(applicationInfo.getLanguage());
 			}
 			Properties context = getContext(request.getApplicationRequest());
 			Process.Builder processBuilder = convertProcess(context, request.getUuid(), language, true);
@@ -187,7 +221,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			}
 			String language = null;
 			if(applicationInfo != null) {
-				language = applicationInfo.getLanguage();
+				language = getDefaultLanguage(applicationInfo.getLanguage());
 			}
 			Properties context = getContext(request.getApplicationRequest());
 			Browser.Builder browserBuilder = convertBrowser(context, request.getUuid(), language, true);
@@ -215,7 +249,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			}
 			String language = null;
 			if(applicationInfo != null) {
-				language = applicationInfo.getLanguage();
+				language = getDefaultLanguage(applicationInfo.getLanguage());
 			}
 			Properties context = getContext(request.getApplicationRequest());
 			Window.Builder windowBuilder = convertWindow(context, request.getUuid(), language, withTabs);
@@ -246,7 +280,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			}
 			String language = null;
 			if(applicationInfo != null) {
-				language = applicationInfo.getLanguage();
+				language = getDefaultLanguage(applicationInfo.getLanguage());
 			}
 			Properties context = getContext(request.getApplicationRequest());
 			Tab.Builder tabBuilder = convertTab(context, request.getUuid(), language, withFields);
@@ -881,11 +915,6 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setIsActive(browseField.isActive())
 				.setCallout(validateNull(browseField.getCallout()))
 				.setDisplayType(browseField.getAD_Reference_ID());
-//		if(browseField.getAD_View_Column().getAD_Column_ID() > 0) {
-//			builder.setColumnName(validateNull(browseField.getAD_View_Column().getAD_Column().getColumnName()));
-//		} else {
-//			builder.setColumnName(validateNull(browseField.getAD_View_Column().getColumnSQL()));
-//		}
 		builder.setColumnName(validateNull(browseField.getAD_View_Column().getColumnName()));
 		//	
 		int displayTypeId = browseField.getAD_Reference_ID();

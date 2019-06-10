@@ -52,6 +52,7 @@ import org.compiere.model.I_AD_Session;
 import org.compiere.model.MPInstance;
 import org.compiere.model.MPInstancePara;
 import org.compiere.model.MProcess;
+import org.compiere.model.MRecentItem;
 import org.compiere.model.MRole;
 import org.compiere.model.MRule;
 import org.compiere.model.MSession;
@@ -65,6 +66,7 @@ import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
+import org.compiere.util.Language;
 import org.compiere.util.Msg;
 import org.compiere.util.Util;
 import org.eevolution.service.dsl.ProcessBuilder;
@@ -86,8 +88,10 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	private final String VALUE_COLUMN_KEY = "ValueColumn";
 	/**	Session Context	*/
 	private static CCache<String, Properties> sessionsContext = new CCache<String, Properties>("DataServiceImplementation", 30, 0);	//	no time-out
-	/**	Session Context	*/
+	/**	Browse Requested	*/
 	private static CCache<String, MBrowse> browserRequested = new CCache<String, MBrowse>(I_AD_Browse.Table_Name + "_UUID", 30, 0);	//	no time-out
+	/**	Language */
+	private static CCache<String, String> languageCache = new CCache<String, String>("Language_ISO_Code", 30, 0);	//	no time-out
 	
 	@Override
 	public void requestObject(ValueObjectRequest request, StreamObserver<ValueObject> responseObserver) {
@@ -184,7 +188,8 @@ public class DataServiceImplementation extends DataServiceImplBase {
 			}
 			log.fine("Lookup List Requested = " + request.getUuid());
 			Properties context = getContext(request.getClientRequest());
-			ProcessResponse.Builder processReponse = runProcess(context, request, request.getClientRequest().getLanguage());
+			String language = getDefaultLanguage(request.getClientRequest().getLanguage());
+			ProcessResponse.Builder processReponse = runProcess(context, request, language);
 			responseObserver.onNext(processReponse.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -222,6 +227,23 @@ public class DataServiceImplementation extends DataServiceImplBase {
 			log.fine("Object List Requested = " + request);
 			Properties context = getContext(request.getClientRequest());
 			ProcessResponseList.Builder entityValueList = convertProcessActivity(context, request);
+			responseObserver.onNext(entityValueList.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(e);
+		}
+	}
+	
+	@Override
+	public void requestRecentItems(RecentItemsRequest request, StreamObserver<RecentItemsResponse> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Process Activity Requested is Null");
+			}
+			log.fine("Recent Items Requested = " + request);
+			Properties context = getContext(request.getClientRequest());
+			RecentItemsResponse.Builder entityValueList = convertRecentItems(context, request);
 			responseObserver.onNext(entityValueList.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -335,21 +357,6 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	 * @param values
 	 * @return
 	 */
-//	private LinkedHashMap<String, Object> convertValues(Map<String, Value> values) {
-//		LinkedHashMap<String, Object> convertedValues = new LinkedHashMap<>();
-//		for(Entry<String, Value> value : values.entrySet()) {
-//			//	Convert value
-//			convertedValues.put(value.getKey(), getValueFromType(value.getValue()));
-//		}
-//		//	
-//		return convertedValues;
-//	}
-	
-	/**
-	 * Convert Selection values from gRPC to ADempiere values
-	 * @param values
-	 * @return
-	 */
 	private LinkedHashMap<String, Object> convertValues(List<KeyValue> values) {
 		LinkedHashMap<String, Object> convertedValues = new LinkedHashMap<>();
 		for(KeyValue value : values) {
@@ -426,7 +433,7 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	private Properties getContext(ClientRequest request) {
 		Properties context = sessionsContext.get(request.getSessionUuid());
 		if(context != null) {
-			Env.setContext(context, Env.LANGUAGE, request.getLanguage());
+			Env.setContext(context, Env.LANGUAGE, getDefaultLanguage(request.getLanguage()));
 			return context;
 		}
 		context = Env.getCtx();
@@ -444,10 +451,40 @@ public class DataServiceImplementation extends DataServiceImplBase {
 		Env.setContext(context, "#AD_Client_ID", session.getAD_Client_ID());
 		Env.setContext(context, "#AD_Org_ID", session.getAD_Org_ID());
 		Env.setContext(context, "#Date", new Timestamp(System.currentTimeMillis()));
-		Env.setContext(context, Env.LANGUAGE, request.getLanguage());
+		Env.setContext(context, Env.LANGUAGE, getDefaultLanguage(request.getLanguage()));
 		//	Save to Cache
 		sessionsContext.put(request.getSessionUuid(), context);
 		return context;
+	}
+	
+	/**
+	 * Get Default from language
+	 * @param language
+	 * @return
+	 */
+	//	TODO: Change it for a class and reuse
+	private String getDefaultLanguage(String language) {
+		String defaultLanguage = language;
+		if(Util.isEmpty(language)) {
+			language = Language.AD_Language_en_US;
+		}
+		//	Using es / en instead es_VE / en_US
+		//	get default
+		if(language.length() == 2) {
+			defaultLanguage = languageCache.get(language);
+			if(!Util.isEmpty(defaultLanguage)) {
+				return defaultLanguage;
+			}
+			defaultLanguage = DB.getSQLValueString(null, "SELECT AD_Language "
+					+ "FROM AD_Language "
+					+ "WHERE LanguageISO = ? "
+					+ "AND IsSystemLanguage = 'Y'", language);
+		}
+		if(Util.isEmpty(defaultLanguage)) {
+			defaultLanguage = Language.AD_Language_en_US;
+		}
+		//	Default return
+		return defaultLanguage;
 	}
 	
 	/**
@@ -532,10 +569,11 @@ public class DataServiceImplementation extends DataServiceImplBase {
 				if(keyValueType == Types.VARCHAR
 						|| keyValueType == Types.NVARCHAR
 						|| keyValueType == Types.CHAR
-						|| keyValueType == Types.NCHAR) {
+						|| keyValueType == Types.NCHAR
+						|| keyValueType == Types.OTHER) {
 					keyValue = rs.getString(2);
 				} else {
-					keyValue = rs.getInt(2);
+					keyValue = rs.getInt(1);
 				}
 				//	
 				ValueObject.Builder valueObject = convertObjectFromResult(keyValue, null, rs.getString(2), rs.getString(3));
@@ -917,6 +955,37 @@ public class DataServiceImplementation extends DataServiceImplBase {
 		for(MPInstance processInstance : processInstanceList) {
 			ProcessResponse.Builder valueObject = convertProcessInstance(processInstance);
 			builder.addResponses(valueObject.build());
+		}
+		//	Return
+		return builder;
+	}
+	
+	/**
+	 * Convert Recent Items
+	 * @param context
+	 * @param request
+	 * @return
+	 */
+	private RecentItemsResponse.Builder convertRecentItems(Properties context, RecentItemsRequest request) {
+		RecentItemsResponse.Builder builder = RecentItemsResponse.newBuilder();
+		List<MRecentItem> recentItemsList = MRecentItem.getFromUserAndRole(context);
+		if(recentItemsList != null) {
+			for(MRecentItem recentItem : recentItemsList) {
+				RecentItem.Builder recentItemBuilder = RecentItem.newBuilder()
+						.setRecordId(recentItem.getRecord_ID())
+						.setTableId(recentItem.getAD_Table_ID())
+						.setDisplayName(validateNull(recentItem.getLabel()));
+				if(recentItem.getAD_Tab_ID() > 0) {
+					recentItemBuilder.setTabUuid(validateNull(recentItem.getAD_Tab().getUUID()));
+				}
+				if(recentItem.getAD_Window_ID() > 0) {
+					recentItemBuilder.setWindowUuid(validateNull(recentItem.getAD_Window().getUUID()));
+				}
+				if(recentItem.getAD_Menu_ID() > 0) {
+					recentItemBuilder.setMenuUuid(validateNull(recentItem.getAD_Menu().getUUID()));
+				}
+				builder.addRecentItems(recentItemBuilder.build());
+			}
 		}
 		//	Return
 		return builder;

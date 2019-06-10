@@ -222,6 +222,38 @@ public final class AccessServiceGrpc {
      return getRequestMenuAndChildMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.UserInfoRequest,
+      org.spin.grpc.util.Session> getRequestChangeRoleMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "RequestChangeRole",
+      requestType = org.spin.grpc.util.UserInfoRequest.class,
+      responseType = org.spin.grpc.util.Session.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<org.spin.grpc.util.UserInfoRequest,
+      org.spin.grpc.util.Session> getRequestChangeRoleMethod() {
+    io.grpc.MethodDescriptor<org.spin.grpc.util.UserInfoRequest, org.spin.grpc.util.Session> getRequestChangeRoleMethod;
+    if ((getRequestChangeRoleMethod = AccessServiceGrpc.getRequestChangeRoleMethod) == null) {
+      synchronized (AccessServiceGrpc.class) {
+        if ((getRequestChangeRoleMethod = AccessServiceGrpc.getRequestChangeRoleMethod) == null) {
+          AccessServiceGrpc.getRequestChangeRoleMethod = getRequestChangeRoleMethod = 
+              io.grpc.MethodDescriptor.<org.spin.grpc.util.UserInfoRequest, org.spin.grpc.util.Session>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(
+                  "access.AccessService", "RequestChangeRole"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  org.spin.grpc.util.UserInfoRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  org.spin.grpc.util.Session.getDefaultInstance()))
+                  .setSchemaDescriptor(new AccessServiceMethodDescriptorSupplier("RequestChangeRole"))
+                  .build();
+          }
+        }
+     }
+     return getRequestChangeRoleMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -312,6 +344,16 @@ public final class AccessServiceGrpc {
       asyncUnimplementedUnaryCall(getRequestMenuAndChildMethod(), responseObserver);
     }
 
+    /**
+     * <pre>
+     * Request change role
+     * </pre>
+     */
+    public void requestChangeRole(org.spin.grpc.util.UserInfoRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.Session> responseObserver) {
+      asyncUnimplementedUnaryCall(getRequestChangeRoleMethod(), responseObserver);
+    }
+
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
@@ -356,6 +398,13 @@ public final class AccessServiceGrpc {
                 org.spin.grpc.util.UserInfoRequest,
                 org.spin.grpc.util.Menu>(
                   this, METHODID_REQUEST_MENU_AND_CHILD)))
+          .addMethod(
+            getRequestChangeRoleMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                org.spin.grpc.util.UserInfoRequest,
+                org.spin.grpc.util.Session>(
+                  this, METHODID_REQUEST_CHANGE_ROLE)))
           .build();
     }
   }
@@ -446,6 +495,17 @@ public final class AccessServiceGrpc {
       asyncUnaryCall(
           getChannel().newCall(getRequestMenuAndChildMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     * <pre>
+     * Request change role
+     * </pre>
+     */
+    public void requestChangeRole(org.spin.grpc.util.UserInfoRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.Session> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getRequestChangeRoleMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -527,6 +587,16 @@ public final class AccessServiceGrpc {
     public org.spin.grpc.util.Menu requestMenuAndChild(org.spin.grpc.util.UserInfoRequest request) {
       return blockingUnaryCall(
           getChannel(), getRequestMenuAndChildMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * Request change role
+     * </pre>
+     */
+    public org.spin.grpc.util.Session requestChangeRole(org.spin.grpc.util.UserInfoRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getRequestChangeRoleMethod(), getCallOptions(), request);
     }
   }
 
@@ -616,6 +686,17 @@ public final class AccessServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getRequestMenuAndChildMethod(), getCallOptions()), request);
     }
+
+    /**
+     * <pre>
+     * Request change role
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.Session> requestChangeRole(
+        org.spin.grpc.util.UserInfoRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getRequestChangeRoleMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_REQUEST_USER_INFO = 0;
@@ -624,6 +705,7 @@ public final class AccessServiceGrpc {
   private static final int METHODID_REQUEST_LOGOUT = 3;
   private static final int METHODID_REQUEST_USER_INFO_FROM_SESSION = 4;
   private static final int METHODID_REQUEST_MENU_AND_CHILD = 5;
+  private static final int METHODID_REQUEST_CHANGE_ROLE = 6;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -665,6 +747,10 @@ public final class AccessServiceGrpc {
         case METHODID_REQUEST_MENU_AND_CHILD:
           serviceImpl.requestMenuAndChild((org.spin.grpc.util.UserInfoRequest) request,
               (io.grpc.stub.StreamObserver<org.spin.grpc.util.Menu>) responseObserver);
+          break;
+        case METHODID_REQUEST_CHANGE_ROLE:
+          serviceImpl.requestChangeRole((org.spin.grpc.util.UserInfoRequest) request,
+              (io.grpc.stub.StreamObserver<org.spin.grpc.util.Session>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -733,6 +819,7 @@ public final class AccessServiceGrpc {
               .addMethod(getRequestLogoutMethod())
               .addMethod(getRequestUserInfoFromSessionMethod())
               .addMethod(getRequestMenuAndChildMethod())
+              .addMethod(getRequestChangeRoleMethod())
               .build();
         }
       }

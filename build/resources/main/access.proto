@@ -35,6 +35,8 @@ service AccessService {
   rpc RequestUserInfoFromSession(UserInfoRequest) returns (UserInfoValue) {}  
   // Request Menu from Parent UUID
   rpc RequestMenuAndChild(UserInfoRequest) returns (Menu) {}
+  // Request change role
+  rpc RequestChangeRole(UserInfoRequest) returns (Session) {}
 }
 
 // Request a Login Session
@@ -55,11 +57,24 @@ message LogoutRequest {
 	string clientVersion = 3;
 }
 
+// Request a Change Role
+message ChangeRoleRequest {
+	string sessionUuid = 1;
+	string roleUuid = 2;
+	string organizationUuid = 3;
+	string warehouseUuid = 4;
+	string language = 5;
+	string clientVersion = 6;
+}
+
 // Request User Info
 message UserInfoRequest {
 	string sessionUuid = 1;
-	string language = 2;
-	string clientVersion = 3;
+	string roleUuid = 2;
+	string organizationUuid = 3;
+	string warehouseUuid = 4;
+	string language = 5;
+	string clientVersion = 6;
 }
 
 // Role list from user
@@ -93,19 +108,20 @@ message Role {
 	string name = 3;
 	string description = 4;
 	int32 clientId = 5;
+	string clientName = 6;
 	// Entity Access
-	repeated Access organizations = 6;
-	repeated Access windows = 7;
-	repeated Access process = 8;
-	repeated Access forms = 9;
-	repeated Access browsers = 10;
-	repeated Access workflows = 11;
-	repeated Access tasks = 12;
-	repeated Access dashboards = 13;
-	repeated Access documentActions = 14;
-	repeated TableAccess tables = 15;
-	repeated ColumnAccess columns = 16;
-	repeated RecordAccess records = 17;
+	repeated Access organizations = 7;
+	repeated Access windows = 8;
+	repeated Access process = 9;
+	repeated Access forms = 10;
+	repeated Access browsers = 11;
+	repeated Access workflows = 12;
+	repeated Access tasks = 13;
+	repeated Access dashboards = 14;
+	repeated Access documentActions = 15;
+	repeated TableAccess tables = 16;
+	repeated ColumnAccess columns = 17;
+	repeated RecordAccess records = 18;
 }
 
 // Access for distinct entity

@@ -85,6 +85,21 @@ public final class ADempiereData {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_data_ProcessActivityRequest_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_data_RecentItemsRequest_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_data_RecentItemsRequest_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_data_RecentItem_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_data_RecentItem_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_data_RecentItemsResponse_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_data_RecentItemsResponse_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
     internal_static_data_Selection_descriptor;
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -176,43 +191,53 @@ public final class ADempiereData {
       "\"\n\nparameters\030\010 \003(\0132\016.data.KeyValue\"l\n\026P" +
       "rocessActivityRequest\022*\n\rclientRequest\030\001" +
       " \001(\0132\023.data.ClientRequest\022\020\n\010userUuid\030\002 " +
-      "\001(\t\022\024\n\014instanceUuid\030\003 \001(\t\"@\n\tSelection\022\023" +
-      "\n\013selectionId\030\001 \001(\005\022\036\n\006values\030\002 \003(\0132\016.da" +
-      "ta.KeyValue\"T\n\023ProcessResponseList\022\023\n\013re" +
-      "cordCount\030\001 \001(\003\022(\n\tresponses\030\002 \003(\0132\025.dat" +
-      "a.ProcessResponse\"\272\002\n\017ProcessResponse\022\024\n" +
-      "\014instanceUuid\030\001 \001(\t\022\017\n\007isError\030\002 \001(\010\022\017\n\007" +
-      "summary\030\003 \001(\t\022\025\n\rresultTableId\030\004 \001(\005\022\024\n\014" +
-      "isProcessing\030\005 \001(\010\022\"\n\004logs\030\006 \003(\0132\024.data." +
-      "ProcessInfoLog\0229\n\nparameters\030\007 \003(\0132%.dat" +
-      "a.ProcessResponse.ParametersEntry\022#\n\006out" +
-      "put\030\010 \001(\0132\023.data.ProcessOutput\032>\n\017Parame" +
-      "tersEntry\022\013\n\003key\030\001 \001(\t\022\032\n\005value\030\002 \001(\0132\013." +
-      "data.Value:\0028\001\"/\n\016ProcessInfoLog\022\020\n\010reco" +
-      "rdId\030\001 \001(\005\022\013\n\003log\030\002 \001(\t\"\222\001\n\rProcessOutpu" +
-      "t\022\014\n\004uuid\030\001 \001(\t\022\014\n\004name\030\002 \001(\t\022\023\n\013descrip" +
-      "tion\030\003 \001(\t\022\020\n\010fileName\030\004 \001(\t\022\016\n\006output\030\005" +
-      " \001(\t\022\024\n\014outputStream\030\006 \001(\014\022\030\n\020reportExpo" +
-      "rtType\030\007 \001(\t\"\220\001\n\016BrowserRequest\022\014\n\004uuid\030" +
-      "\001 \001(\t\022*\n\rclientRequest\030\002 \001(\0132\023.data.Clie" +
-      "ntRequest\022 \n\010criteria\030\003 \001(\0132\016.data.Crite" +
-      "ria\022\"\n\nparameters\030\004 \003(\0132\016.data.KeyValue2" +
-      "\265\004\n\013DataService\022>\n\rRequestObject\022\030.data." +
-      "ValueObjectRequest\032\021.data.ValueObject\"\000\022" +
-      "F\n\021RequestObjectList\022\030.data.ValueObjectR" +
-      "equest\032\025.data.ValueObjectList\"\000\022>\n\rReque" +
-      "stLookup\022\030.data.ValueObjectRequest\032\021.dat" +
-      "a.ValueObject\"\000\022F\n\021RequestLookupList\022\030.d" +
-      "ata.ValueObjectRequest\032\025.data.ValueObjec" +
-      "tList\"\000\022?\n\016RequestCallout\022\024.data.Callout" +
-      "Request\032\025.data.CalloutResponse\"\000\022?\n\016Requ" +
-      "estProcess\022\024.data.ProcessRequest\032\025.data." +
-      "ProcessResponse\"\000\022?\n\016RequestBrowser\022\024.da" +
-      "ta.BrowserRequest\032\025.data.ValueObjectList" +
-      "\"\000\022S\n\026RequestProcessActivity\022\034.data.Proc" +
-      "essActivityRequest\032\031.data.ProcessRespons" +
-      "eList\"\000B+\n\022org.spin.grpc.utilB\rADempiere" +
-      "DataP\001\242\002\003HLWb\006proto3"
+      "\001(\t\022\024\n\014instanceUuid\030\003 \001(\t\"X\n\022RecentItems" +
+      "Request\022*\n\rclientRequest\030\001 \001(\0132\023.data.Cl" +
+      "ientRequest\022\026\n\016currentSession\030\002 \001(\010\"\215\001\n\n" +
+      "RecentItem\022\020\n\010menuUuid\030\001 \001(\t\022\020\n\010menuName" +
+      "\030\002 \001(\t\022\022\n\nwindowUuid\030\003 \001(\t\022\017\n\007tabUuid\030\004 " +
+      "\001(\t\022\017\n\007tableId\030\005 \001(\005\022\020\n\010recordId\030\006 \001(\005\022\023" +
+      "\n\013displayName\030\007 \001(\t\"Q\n\023RecentItemsRespon" +
+      "se\022\023\n\013recordCount\030\001 \001(\003\022%\n\013recentItems\030\002" +
+      " \003(\0132\020.data.RecentItem\"@\n\tSelection\022\023\n\013s" +
+      "electionId\030\001 \001(\005\022\036\n\006values\030\002 \003(\0132\016.data." +
+      "KeyValue\"T\n\023ProcessResponseList\022\023\n\013recor" +
+      "dCount\030\001 \001(\003\022(\n\tresponses\030\002 \003(\0132\025.data.P" +
+      "rocessResponse\"\272\002\n\017ProcessResponse\022\024\n\014in" +
+      "stanceUuid\030\001 \001(\t\022\017\n\007isError\030\002 \001(\010\022\017\n\007sum" +
+      "mary\030\003 \001(\t\022\025\n\rresultTableId\030\004 \001(\005\022\024\n\014isP" +
+      "rocessing\030\005 \001(\010\022\"\n\004logs\030\006 \003(\0132\024.data.Pro" +
+      "cessInfoLog\0229\n\nparameters\030\007 \003(\0132%.data.P" +
+      "rocessResponse.ParametersEntry\022#\n\006output" +
+      "\030\010 \001(\0132\023.data.ProcessOutput\032>\n\017Parameter" +
+      "sEntry\022\013\n\003key\030\001 \001(\t\022\032\n\005value\030\002 \001(\0132\013.dat" +
+      "a.Value:\0028\001\"/\n\016ProcessInfoLog\022\020\n\010recordI" +
+      "d\030\001 \001(\005\022\013\n\003log\030\002 \001(\t\"\222\001\n\rProcessOutput\022\014" +
+      "\n\004uuid\030\001 \001(\t\022\014\n\004name\030\002 \001(\t\022\023\n\013descriptio" +
+      "n\030\003 \001(\t\022\020\n\010fileName\030\004 \001(\t\022\016\n\006output\030\005 \001(" +
+      "\t\022\024\n\014outputStream\030\006 \001(\014\022\030\n\020reportExportT" +
+      "ype\030\007 \001(\t\"\220\001\n\016BrowserRequest\022\014\n\004uuid\030\001 \001" +
+      "(\t\022*\n\rclientRequest\030\002 \001(\0132\023.data.ClientR" +
+      "equest\022 \n\010criteria\030\003 \001(\0132\016.data.Criteria" +
+      "\022\"\n\nparameters\030\004 \003(\0132\016.data.KeyValue2\202\005\n" +
+      "\013DataService\022>\n\rRequestObject\022\030.data.Val" +
+      "ueObjectRequest\032\021.data.ValueObject\"\000\022F\n\021" +
+      "RequestObjectList\022\030.data.ValueObjectRequ" +
+      "est\032\025.data.ValueObjectList\"\000\022>\n\rRequestL" +
+      "ookup\022\030.data.ValueObjectRequest\032\021.data.V" +
+      "alueObject\"\000\022F\n\021RequestLookupList\022\030.data" +
+      ".ValueObjectRequest\032\025.data.ValueObjectLi" +
+      "st\"\000\022?\n\016RequestCallout\022\024.data.CalloutReq" +
+      "uest\032\025.data.CalloutResponse\"\000\022?\n\016Request" +
+      "Process\022\024.data.ProcessRequest\032\025.data.Pro" +
+      "cessResponse\"\000\022?\n\016RequestBrowser\022\024.data." +
+      "BrowserRequest\032\025.data.ValueObjectList\"\000\022" +
+      "S\n\026RequestProcessActivity\022\034.data.Process" +
+      "ActivityRequest\032\031.data.ProcessResponseLi" +
+      "st\"\000\022K\n\022RequestRecentItems\022\030.data.Recent" +
+      "ItemsRequest\032\031.data.RecentItemsResponse\"" +
+      "\000B+\n\022org.spin.grpc.utilB\rADempiereDataP\001" +
+      "\242\002\003HLWb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -310,20 +335,38 @@ public final class ADempiereData {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_data_ProcessActivityRequest_descriptor,
         new java.lang.String[] { "ClientRequest", "UserUuid", "InstanceUuid", });
-    internal_static_data_Selection_descriptor =
+    internal_static_data_RecentItemsRequest_descriptor =
       getDescriptor().getMessageTypes().get(13);
+    internal_static_data_RecentItemsRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_data_RecentItemsRequest_descriptor,
+        new java.lang.String[] { "ClientRequest", "CurrentSession", });
+    internal_static_data_RecentItem_descriptor =
+      getDescriptor().getMessageTypes().get(14);
+    internal_static_data_RecentItem_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_data_RecentItem_descriptor,
+        new java.lang.String[] { "MenuUuid", "MenuName", "WindowUuid", "TabUuid", "TableId", "RecordId", "DisplayName", });
+    internal_static_data_RecentItemsResponse_descriptor =
+      getDescriptor().getMessageTypes().get(15);
+    internal_static_data_RecentItemsResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_data_RecentItemsResponse_descriptor,
+        new java.lang.String[] { "RecordCount", "RecentItems", });
+    internal_static_data_Selection_descriptor =
+      getDescriptor().getMessageTypes().get(16);
     internal_static_data_Selection_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_data_Selection_descriptor,
         new java.lang.String[] { "SelectionId", "Values", });
     internal_static_data_ProcessResponseList_descriptor =
-      getDescriptor().getMessageTypes().get(14);
+      getDescriptor().getMessageTypes().get(17);
     internal_static_data_ProcessResponseList_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_data_ProcessResponseList_descriptor,
         new java.lang.String[] { "RecordCount", "Responses", });
     internal_static_data_ProcessResponse_descriptor =
-      getDescriptor().getMessageTypes().get(15);
+      getDescriptor().getMessageTypes().get(18);
     internal_static_data_ProcessResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_data_ProcessResponse_descriptor,
@@ -335,19 +378,19 @@ public final class ADempiereData {
         internal_static_data_ProcessResponse_ParametersEntry_descriptor,
         new java.lang.String[] { "Key", "Value", });
     internal_static_data_ProcessInfoLog_descriptor =
-      getDescriptor().getMessageTypes().get(16);
+      getDescriptor().getMessageTypes().get(19);
     internal_static_data_ProcessInfoLog_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_data_ProcessInfoLog_descriptor,
         new java.lang.String[] { "RecordId", "Log", });
     internal_static_data_ProcessOutput_descriptor =
-      getDescriptor().getMessageTypes().get(17);
+      getDescriptor().getMessageTypes().get(20);
     internal_static_data_ProcessOutput_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_data_ProcessOutput_descriptor,
         new java.lang.String[] { "Uuid", "Name", "Description", "FileName", "Output", "OutputStream", "ReportExportType", });
     internal_static_data_BrowserRequest_descriptor =
-      getDescriptor().getMessageTypes().get(18);
+      getDescriptor().getMessageTypes().get(21);
     internal_static_data_BrowserRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_data_BrowserRequest_descriptor,
