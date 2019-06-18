@@ -235,9 +235,10 @@ message ProcessOutput {
 	string description = 3;
 	string fileName = 4;
 	string output = 5;
-	bytes outputStream = 6;
+	string mimeType = 6;
+	bytes outputStream = 7;
 	//	Output Type
-	string reportExportType = 7;
+	string reportExportType = 8;
 }
 
 // Browser request

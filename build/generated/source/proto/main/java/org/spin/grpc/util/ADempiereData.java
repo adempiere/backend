@@ -212,32 +212,32 @@ public final class ADempiereData {
       "\030\010 \001(\0132\023.data.ProcessOutput\032>\n\017Parameter" +
       "sEntry\022\013\n\003key\030\001 \001(\t\022\032\n\005value\030\002 \001(\0132\013.dat" +
       "a.Value:\0028\001\"/\n\016ProcessInfoLog\022\020\n\010recordI" +
-      "d\030\001 \001(\005\022\013\n\003log\030\002 \001(\t\"\222\001\n\rProcessOutput\022\014" +
+      "d\030\001 \001(\005\022\013\n\003log\030\002 \001(\t\"\244\001\n\rProcessOutput\022\014" +
       "\n\004uuid\030\001 \001(\t\022\014\n\004name\030\002 \001(\t\022\023\n\013descriptio" +
       "n\030\003 \001(\t\022\020\n\010fileName\030\004 \001(\t\022\016\n\006output\030\005 \001(" +
-      "\t\022\024\n\014outputStream\030\006 \001(\014\022\030\n\020reportExportT" +
-      "ype\030\007 \001(\t\"\220\001\n\016BrowserRequest\022\014\n\004uuid\030\001 \001" +
-      "(\t\022*\n\rclientRequest\030\002 \001(\0132\023.data.ClientR" +
-      "equest\022 \n\010criteria\030\003 \001(\0132\016.data.Criteria" +
-      "\022\"\n\nparameters\030\004 \003(\0132\016.data.KeyValue2\202\005\n" +
-      "\013DataService\022>\n\rRequestObject\022\030.data.Val" +
-      "ueObjectRequest\032\021.data.ValueObject\"\000\022F\n\021" +
-      "RequestObjectList\022\030.data.ValueObjectRequ" +
-      "est\032\025.data.ValueObjectList\"\000\022>\n\rRequestL" +
-      "ookup\022\030.data.ValueObjectRequest\032\021.data.V" +
-      "alueObject\"\000\022F\n\021RequestLookupList\022\030.data" +
-      ".ValueObjectRequest\032\025.data.ValueObjectLi" +
-      "st\"\000\022?\n\016RequestCallout\022\024.data.CalloutReq" +
-      "uest\032\025.data.CalloutResponse\"\000\022?\n\016Request" +
-      "Process\022\024.data.ProcessRequest\032\025.data.Pro" +
-      "cessResponse\"\000\022?\n\016RequestBrowser\022\024.data." +
-      "BrowserRequest\032\025.data.ValueObjectList\"\000\022" +
-      "S\n\026RequestProcessActivity\022\034.data.Process" +
-      "ActivityRequest\032\031.data.ProcessResponseLi" +
-      "st\"\000\022K\n\022RequestRecentItems\022\030.data.Recent" +
-      "ItemsRequest\032\031.data.RecentItemsResponse\"" +
-      "\000B+\n\022org.spin.grpc.utilB\rADempiereDataP\001" +
-      "\242\002\003HLWb\006proto3"
+      "\t\022\020\n\010mimeType\030\006 \001(\t\022\024\n\014outputStream\030\007 \001(" +
+      "\014\022\030\n\020reportExportType\030\010 \001(\t\"\220\001\n\016BrowserR" +
+      "equest\022\014\n\004uuid\030\001 \001(\t\022*\n\rclientRequest\030\002 " +
+      "\001(\0132\023.data.ClientRequest\022 \n\010criteria\030\003 \001" +
+      "(\0132\016.data.Criteria\022\"\n\nparameters\030\004 \003(\0132\016" +
+      ".data.KeyValue2\202\005\n\013DataService\022>\n\rReques" +
+      "tObject\022\030.data.ValueObjectRequest\032\021.data" +
+      ".ValueObject\"\000\022F\n\021RequestObjectList\022\030.da" +
+      "ta.ValueObjectRequest\032\025.data.ValueObject" +
+      "List\"\000\022>\n\rRequestLookup\022\030.data.ValueObje" +
+      "ctRequest\032\021.data.ValueObject\"\000\022F\n\021Reques" +
+      "tLookupList\022\030.data.ValueObjectRequest\032\025." +
+      "data.ValueObjectList\"\000\022?\n\016RequestCallout" +
+      "\022\024.data.CalloutRequest\032\025.data.CalloutRes" +
+      "ponse\"\000\022?\n\016RequestProcess\022\024.data.Process" +
+      "Request\032\025.data.ProcessResponse\"\000\022?\n\016Requ" +
+      "estBrowser\022\024.data.BrowserRequest\032\025.data." +
+      "ValueObjectList\"\000\022S\n\026RequestProcessActiv" +
+      "ity\022\034.data.ProcessActivityRequest\032\031.data" +
+      ".ProcessResponseList\"\000\022K\n\022RequestRecentI" +
+      "tems\022\030.data.RecentItemsRequest\032\031.data.Re" +
+      "centItemsResponse\"\000B+\n\022org.spin.grpc.uti" +
+      "lB\rADempiereDataP\001\242\002\003HLWb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -388,7 +388,7 @@ public final class ADempiereData {
     internal_static_data_ProcessOutput_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_data_ProcessOutput_descriptor,
-        new java.lang.String[] { "Uuid", "Name", "Description", "FileName", "Output", "OutputStream", "ReportExportType", });
+        new java.lang.String[] { "Uuid", "Name", "Description", "FileName", "Output", "MimeType", "OutputStream", "ReportExportType", });
     internal_static_data_BrowserRequest_descriptor =
       getDescriptor().getMessageTypes().get(21);
     internal_static_data_BrowserRequest_fieldAccessorTable = new

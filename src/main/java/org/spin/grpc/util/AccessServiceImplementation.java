@@ -721,6 +721,12 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 		return builder;
 	}
 	
+	/**
+	 * Convert Menu
+	 * @param context
+	 * @param language
+	 * @return
+	 */
 	private Menu.Builder convertMenu(Properties context, String language) {
 		Menu.Builder builder = Menu.newBuilder();
 		MMenu menu = new MMenu(context, 0, null);

@@ -25,6 +25,7 @@ private static final long serialVersionUID = 0L;
     description_ = "";
     fileName_ = "";
     output_ = "";
+    mimeType_ = "";
     outputStream_ = com.google.protobuf.ByteString.EMPTY;
     reportExportType_ = "";
   }
@@ -91,11 +92,17 @@ private static final long serialVersionUID = 0L;
             break;
           }
           case 50: {
+            java.lang.String s = input.readStringRequireUtf8();
+
+            mimeType_ = s;
+            break;
+          }
+          case 58: {
 
             outputStream_ = input.readBytes();
             break;
           }
-          case 58: {
+          case 66: {
             java.lang.String s = input.readStringRequireUtf8();
 
             reportExportType_ = s;
@@ -295,23 +302,57 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int OUTPUTSTREAM_FIELD_NUMBER = 6;
+  public static final int MIMETYPE_FIELD_NUMBER = 6;
+  private volatile java.lang.Object mimeType_;
+  /**
+   * <code>string mimeType = 6;</code>
+   */
+  public java.lang.String getMimeType() {
+    java.lang.Object ref = mimeType_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      mimeType_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string mimeType = 6;</code>
+   */
+  public com.google.protobuf.ByteString
+      getMimeTypeBytes() {
+    java.lang.Object ref = mimeType_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      mimeType_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int OUTPUTSTREAM_FIELD_NUMBER = 7;
   private com.google.protobuf.ByteString outputStream_;
   /**
-   * <code>bytes outputStream = 6;</code>
+   * <code>bytes outputStream = 7;</code>
    */
   public com.google.protobuf.ByteString getOutputStream() {
     return outputStream_;
   }
 
-  public static final int REPORTEXPORTTYPE_FIELD_NUMBER = 7;
+  public static final int REPORTEXPORTTYPE_FIELD_NUMBER = 8;
   private volatile java.lang.Object reportExportType_;
   /**
    * <pre>
    *	Output Type
    * </pre>
    *
-   * <code>string reportExportType = 7;</code>
+   * <code>string reportExportType = 8;</code>
    */
   public java.lang.String getReportExportType() {
     java.lang.Object ref = reportExportType_;
@@ -330,7 +371,7 @@ private static final long serialVersionUID = 0L;
    *	Output Type
    * </pre>
    *
-   * <code>string reportExportType = 7;</code>
+   * <code>string reportExportType = 8;</code>
    */
   public com.google.protobuf.ByteString
       getReportExportTypeBytes() {
@@ -373,11 +414,14 @@ private static final long serialVersionUID = 0L;
     if (!getOutputBytes().isEmpty()) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 5, output_);
     }
+    if (!getMimeTypeBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 6, mimeType_);
+    }
     if (!outputStream_.isEmpty()) {
-      output.writeBytes(6, outputStream_);
+      output.writeBytes(7, outputStream_);
     }
     if (!getReportExportTypeBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 7, reportExportType_);
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 8, reportExportType_);
     }
     unknownFields.writeTo(output);
   }
@@ -402,12 +446,15 @@ private static final long serialVersionUID = 0L;
     if (!getOutputBytes().isEmpty()) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, output_);
     }
+    if (!getMimeTypeBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, mimeType_);
+    }
     if (!outputStream_.isEmpty()) {
       size += com.google.protobuf.CodedOutputStream
-        .computeBytesSize(6, outputStream_);
+        .computeBytesSize(7, outputStream_);
     }
     if (!getReportExportTypeBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, reportExportType_);
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, reportExportType_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -435,6 +482,8 @@ private static final long serialVersionUID = 0L;
         .equals(other.getFileName());
     result = result && getOutput()
         .equals(other.getOutput());
+    result = result && getMimeType()
+        .equals(other.getMimeType());
     result = result && getOutputStream()
         .equals(other.getOutputStream());
     result = result && getReportExportType()
@@ -460,6 +509,8 @@ private static final long serialVersionUID = 0L;
     hash = (53 * hash) + getFileName().hashCode();
     hash = (37 * hash) + OUTPUT_FIELD_NUMBER;
     hash = (53 * hash) + getOutput().hashCode();
+    hash = (37 * hash) + MIMETYPE_FIELD_NUMBER;
+    hash = (53 * hash) + getMimeType().hashCode();
     hash = (37 * hash) + OUTPUTSTREAM_FIELD_NUMBER;
     hash = (53 * hash) + getOutputStream().hashCode();
     hash = (37 * hash) + REPORTEXPORTTYPE_FIELD_NUMBER;
@@ -607,6 +658,8 @@ private static final long serialVersionUID = 0L;
 
       output_ = "";
 
+      mimeType_ = "";
+
       outputStream_ = com.google.protobuf.ByteString.EMPTY;
 
       reportExportType_ = "";
@@ -638,6 +691,7 @@ private static final long serialVersionUID = 0L;
       result.description_ = description_;
       result.fileName_ = fileName_;
       result.output_ = output_;
+      result.mimeType_ = mimeType_;
       result.outputStream_ = outputStream_;
       result.reportExportType_ = reportExportType_;
       onBuilt();
@@ -699,6 +753,10 @@ private static final long serialVersionUID = 0L;
       }
       if (!other.getOutput().isEmpty()) {
         output_ = other.output_;
+        onChanged();
+      }
+      if (!other.getMimeType().isEmpty()) {
+        mimeType_ = other.mimeType_;
         onChanged();
       }
       if (other.getOutputStream() != com.google.protobuf.ByteString.EMPTY) {
@@ -1080,15 +1138,84 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
+    private java.lang.Object mimeType_ = "";
+    /**
+     * <code>string mimeType = 6;</code>
+     */
+    public java.lang.String getMimeType() {
+      java.lang.Object ref = mimeType_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        mimeType_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string mimeType = 6;</code>
+     */
+    public com.google.protobuf.ByteString
+        getMimeTypeBytes() {
+      java.lang.Object ref = mimeType_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        mimeType_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string mimeType = 6;</code>
+     */
+    public Builder setMimeType(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
+      mimeType_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string mimeType = 6;</code>
+     */
+    public Builder clearMimeType() {
+      
+      mimeType_ = getDefaultInstance().getMimeType();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string mimeType = 6;</code>
+     */
+    public Builder setMimeTypeBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      
+      mimeType_ = value;
+      onChanged();
+      return this;
+    }
+
     private com.google.protobuf.ByteString outputStream_ = com.google.protobuf.ByteString.EMPTY;
     /**
-     * <code>bytes outputStream = 6;</code>
+     * <code>bytes outputStream = 7;</code>
      */
     public com.google.protobuf.ByteString getOutputStream() {
       return outputStream_;
     }
     /**
-     * <code>bytes outputStream = 6;</code>
+     * <code>bytes outputStream = 7;</code>
      */
     public Builder setOutputStream(com.google.protobuf.ByteString value) {
       if (value == null) {
@@ -1100,7 +1227,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>bytes outputStream = 6;</code>
+     * <code>bytes outputStream = 7;</code>
      */
     public Builder clearOutputStream() {
       
@@ -1115,7 +1242,7 @@ private static final long serialVersionUID = 0L;
      *	Output Type
      * </pre>
      *
-     * <code>string reportExportType = 7;</code>
+     * <code>string reportExportType = 8;</code>
      */
     public java.lang.String getReportExportType() {
       java.lang.Object ref = reportExportType_;
@@ -1134,7 +1261,7 @@ private static final long serialVersionUID = 0L;
      *	Output Type
      * </pre>
      *
-     * <code>string reportExportType = 7;</code>
+     * <code>string reportExportType = 8;</code>
      */
     public com.google.protobuf.ByteString
         getReportExportTypeBytes() {
@@ -1154,7 +1281,7 @@ private static final long serialVersionUID = 0L;
      *	Output Type
      * </pre>
      *
-     * <code>string reportExportType = 7;</code>
+     * <code>string reportExportType = 8;</code>
      */
     public Builder setReportExportType(
         java.lang.String value) {
@@ -1171,7 +1298,7 @@ private static final long serialVersionUID = 0L;
      *	Output Type
      * </pre>
      *
-     * <code>string reportExportType = 7;</code>
+     * <code>string reportExportType = 8;</code>
      */
     public Builder clearReportExportType() {
       
@@ -1184,7 +1311,7 @@ private static final long serialVersionUID = 0L;
      *	Output Type
      * </pre>
      *
-     * <code>string reportExportType = 7;</code>
+     * <code>string reportExportType = 8;</code>
      */
     public Builder setReportExportTypeBytes(
         com.google.protobuf.ByteString value) {

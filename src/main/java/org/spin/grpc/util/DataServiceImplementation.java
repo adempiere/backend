@@ -67,6 +67,7 @@ import org.compiere.util.DB;
 import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
 import org.compiere.util.Language;
+import org.compiere.util.MimeType;
 import org.compiere.util.Msg;
 import org.compiere.util.Util;
 import org.eevolution.service.dsl.ProcessBuilder;
@@ -321,9 +322,11 @@ public class DataServiceImplementation extends DataServiceImplBase {
 			File reportFile = result.getReportAsFile();
 			if(reportFile != null
 					&& reportFile.exists()) {
+				String validFileName = getValidName(reportFile.getName());
 				ProcessOutput.Builder output = ProcessOutput.newBuilder();
-				output.setFileName(validateNull(reportFile.getName()));
+				output.setFileName(validateNull(validFileName));
 				output.setName(result.getTitle());
+				output.setMimeType(validateNull(MimeType.getMimeType(validFileName)));
 				output.setDescription(validateNull(process.getDescription()));
 				//	Type
 				output.setReportExportType(request.getReportExportType());
@@ -338,6 +341,18 @@ public class DataServiceImplementation extends DataServiceImplBase {
 		}
 		
 		return response;
+	}
+	
+	/**
+	 * Convert Name
+	 * @param name
+	 * @return
+	 */
+	private String getValidName(String name) {
+		if(Util.isEmpty(name)) {
+			return "";
+		}
+		return name.replaceAll("[+^:&áàäéèëíìïóòöúùñÁÀÄÉÈËÍÌÏÓÒÖÚÙÜÑçÇ$()*#/><]", "").replaceAll(" ", "-");
 	}
 	
 	/**
@@ -852,24 +867,33 @@ public class DataServiceImplementation extends DataServiceImplBase {
 					MBrowseField field = fieldsMap.get(columnName.toUpperCase());
 					Value.Builder valueBuilder = Value.newBuilder();
 					boolean isFilled = false;
-					//	Validate Type
-					if(DisplayType.isID(field.getAD_Reference_ID())) {
+					//	Display Columns
+					if(field == null) {
+						String value = rs.getString(index);
+						if(!Util.isEmpty(value)) {
+							isFilled = true;
+							valueBuilder.setStringValue(value);
+							valueBuilder.setValueType(ValueType.STRING);
+							valueObjectBuilder.putValues(columnName, valueBuilder.build());
+						}
+						continue;
+					} else if(DisplayType.isID(field.getAD_Reference_ID())) {
 						isFilled = true;
 						valueBuilder.setIntValue(rs.getInt(index));
 						valueBuilder.setValueType(ValueType.INTEGER);
-					} if(DisplayType.isNumeric(field.getAD_Reference_ID())) {
+					} else if(DisplayType.isNumeric(field.getAD_Reference_ID())) {
 						BigDecimal value = rs.getBigDecimal(index);
 						if(value != null) {
 							isFilled = true;
 							valueBuilder.setDoubleValue(value.doubleValue());
 							valueBuilder.setValueType(ValueType.DOUBLE);
 						}
-					} if(DisplayType.YesNo == field.getAD_Reference_ID()) {
+					} else if(DisplayType.YesNo == field.getAD_Reference_ID()) {
 						isFilled = true;
 						String value = rs.getString(index);
 						valueBuilder.setBooleanValue(!Util.isEmpty(value) && value.equals("Y"));
 						valueBuilder.setValueType(ValueType.BOOLEAN);
-					} if(DisplayType.isDate(field.getAD_Reference_ID())) {
+					} else if(DisplayType.isDate(field.getAD_Reference_ID())) {
 						Timestamp value = rs.getTimestamp(index);
 						if(value != null) {
 							isFilled = true;

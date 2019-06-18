@@ -58,7 +58,17 @@ public interface ProcessOutputOrBuilder extends
       getOutputBytes();
 
   /**
-   * <code>bytes outputStream = 6;</code>
+   * <code>string mimeType = 6;</code>
+   */
+  java.lang.String getMimeType();
+  /**
+   * <code>string mimeType = 6;</code>
+   */
+  com.google.protobuf.ByteString
+      getMimeTypeBytes();
+
+  /**
+   * <code>bytes outputStream = 7;</code>
    */
   com.google.protobuf.ByteString getOutputStream();
 
@@ -67,7 +77,7 @@ public interface ProcessOutputOrBuilder extends
    *	Output Type
    * </pre>
    *
-   * <code>string reportExportType = 7;</code>
+   * <code>string reportExportType = 8;</code>
    */
   java.lang.String getReportExportType();
   /**
@@ -75,7 +85,7 @@ public interface ProcessOutputOrBuilder extends
    *	Output Type
    * </pre>
    *
-   * <code>string reportExportType = 7;</code>
+   * <code>string reportExportType = 8;</code>
    */
   com.google.protobuf.ByteString
       getReportExportTypeBytes();

@@ -71,7 +71,8 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	private static CCache<String, Properties> sessionsContext = new CCache<String, Properties>("DictionaryServiceImplementation", 30, 0);	//	no time-out	
 	/**	Language */
 	private static CCache<String, String> languageCache = new CCache<String, String>("Language_ISO_Code", 30, 0);	//	no time-out
-	
+	/**	Key column constant	*/
+	private final String DISPLAY_COLUMN_KEY = "DisplayColumn";
 	
 	@Override
 	public void requestWindow(EntityRequest request, StreamObserver<Window> responseObserver) {
@@ -672,7 +673,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		if(Util.isEmpty(help)) {
 			help = browser.getHelp();
 		}
-		String query = MView.getSQLFromView(browser.getAD_View_ID(), null);
+		String query = addQueryReferences(browser, MView.getSQLFromView(browser.getAD_View_ID(), null));
 		String orderByClause = getSQLOrderBy(browser);
 		Browser.Builder builder = Browser.newBuilder()
 				.setId(browser.getAD_Process_ID())
@@ -715,6 +716,55 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			}
 		}
 		return builder;
+	}
+	
+	/**
+	 * Add references to original query
+	 * @param originalQuery
+	 * @return
+	 */
+	private String addQueryReferences(MBrowse browser, String originalQuery) {
+		int fromIndex = originalQuery.toUpperCase().indexOf(" FROM ");
+		StringBuffer queryToAdd = new StringBuffer(originalQuery.substring(0, fromIndex));
+		StringBuffer joinsToAdd = new StringBuffer(originalQuery.substring(fromIndex, originalQuery.length() - 1));
+		Language language = Language.getLanguage(Env.getAD_Language(Env.getCtx()));
+		for (MBrowseField browseField : browser.getDisplayFields()) {
+			int displayTypeId = browseField.getAD_Reference_ID();
+			if(DisplayType.isLookup(displayTypeId)) {
+				//	Reference Value
+				int referenceValueId = browseField.getAD_Reference_Value_ID();
+				//	Validation Code
+				String columnName = browseField.getAD_Element().getColumnName();
+				String tableName = browseField.getAD_View_Column().getAD_View_Definition().getTableAlias();
+				if(browseField.getAD_View_Column().getAD_Column_ID() > 0) {
+					columnName = browseField.getAD_View_Column().getAD_Column().getColumnName();
+				}
+				String sqlColumn = browseField.getAD_View_Column().getColumnSQL();
+				queryToAdd.append(", ");
+				String columnAlias = DISPLAY_COLUMN_KEY + "_" + browseField.getAD_View_Column().getColumnName();
+				String tableAlias = "Table_" + columnAlias;
+				if(DisplayType.TableDir == displayTypeId
+						|| referenceValueId == 0) {
+					//	Add Display
+					String displayColumn = "(" + MLookupFactory.getLookup_TableDirEmbed(language, columnName, tableName) + ")";
+					queryToAdd.append(displayColumn).append(" AS \"").append(columnAlias).append("\"");
+				} else {
+					//	Get info
+					MLookupInfo info = MLookupFactory.getLookupInfo(Env.getCtx(), 0, 0, displayTypeId, language, columnName, referenceValueId, false, null, false);
+					if(info != null) {
+						String displayColumn = tableAlias + "." + (info.DisplayColumn == null? "": info.DisplayColumn).replace(info.TableName + ".", "");
+						String joinColumn = tableAlias + "." + (info.KeyColumn == null? "": info.KeyColumn).replace(info.TableName + ".", "");
+						String viewJoincolumn = sqlColumn;
+						//	Add Display
+						queryToAdd.append(displayColumn).append(" AS \"").append(columnAlias).append("\"");
+						//	Add join
+						joinsToAdd.append(" LEFT JOIN ").append(info.TableName).append(" ").append(tableAlias).append(" ON(").append(joinColumn).append(" = ").append(viewJoincolumn).append(")");
+					}
+				}
+			}
+		}
+		queryToAdd.append(joinsToAdd);
+		return queryToAdd.toString();
 	}
 	
 	/**
