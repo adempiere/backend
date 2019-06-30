@@ -8,70 +8,80 @@ public interface ProcessResponseOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
   /**
-   * <code>string instanceUuid = 1;</code>
+   * <code>string uuid = 1;</code>
+   */
+  java.lang.String getUuid();
+  /**
+   * <code>string uuid = 1;</code>
+   */
+  com.google.protobuf.ByteString
+      getUuidBytes();
+
+  /**
+   * <code>string instanceUuid = 2;</code>
    */
   java.lang.String getInstanceUuid();
   /**
-   * <code>string instanceUuid = 1;</code>
+   * <code>string instanceUuid = 2;</code>
    */
   com.google.protobuf.ByteString
       getInstanceUuidBytes();
 
   /**
-   * <code>bool isError = 2;</code>
+   * <code>bool isError = 3;</code>
    */
   boolean getIsError();
 
   /**
-   * <code>string summary = 3;</code>
+   * <code>string summary = 4;</code>
    */
   java.lang.String getSummary();
   /**
-   * <code>string summary = 3;</code>
+   * <code>string summary = 4;</code>
    */
   com.google.protobuf.ByteString
       getSummaryBytes();
 
   /**
-   * <code>int32 resultTableId = 4;</code>
+   * <code>int32 resultTableId = 5;</code>
    */
   int getResultTableId();
 
   /**
-   * <code>bool isProcessing = 5;</code>
+   * <code>bool isProcessing = 6;</code>
    */
   boolean getIsProcessing();
 
   /**
-   * <code>repeated .data.ProcessInfoLog logs = 6;</code>
+   * <code>repeated .data.ProcessInfoLog logs = 7;</code>
    */
   java.util.List<org.spin.grpc.util.ProcessInfoLog> 
       getLogsList();
   /**
-   * <code>repeated .data.ProcessInfoLog logs = 6;</code>
+   * <code>repeated .data.ProcessInfoLog logs = 7;</code>
    */
   org.spin.grpc.util.ProcessInfoLog getLogs(int index);
   /**
-   * <code>repeated .data.ProcessInfoLog logs = 6;</code>
+   * <code>repeated .data.ProcessInfoLog logs = 7;</code>
    */
   int getLogsCount();
   /**
-   * <code>repeated .data.ProcessInfoLog logs = 6;</code>
+   * <code>repeated .data.ProcessInfoLog logs = 7;</code>
    */
   java.util.List<? extends org.spin.grpc.util.ProcessInfoLogOrBuilder> 
       getLogsOrBuilderList();
   /**
-   * <code>repeated .data.ProcessInfoLog logs = 6;</code>
+   * <code>repeated .data.ProcessInfoLog logs = 7;</code>
    */
   org.spin.grpc.util.ProcessInfoLogOrBuilder getLogsOrBuilder(
       int index);
 
   /**
-   * <code>map&lt;string, .data.Value&gt; parameters = 7;</code>
+   * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
    */
   int getParametersCount();
   /**
-   * <code>map&lt;string, .data.Value&gt; parameters = 7;</code>
+   * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
    */
   boolean containsParameters(
       java.lang.String key);
@@ -82,34 +92,34 @@ public interface ProcessResponseOrBuilder extends
   java.util.Map<java.lang.String, org.spin.grpc.util.Value>
   getParameters();
   /**
-   * <code>map&lt;string, .data.Value&gt; parameters = 7;</code>
+   * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
    */
   java.util.Map<java.lang.String, org.spin.grpc.util.Value>
   getParametersMap();
   /**
-   * <code>map&lt;string, .data.Value&gt; parameters = 7;</code>
+   * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
    */
 
   org.spin.grpc.util.Value getParametersOrDefault(
       java.lang.String key,
       org.spin.grpc.util.Value defaultValue);
   /**
-   * <code>map&lt;string, .data.Value&gt; parameters = 7;</code>
+   * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
    */
 
   org.spin.grpc.util.Value getParametersOrThrow(
       java.lang.String key);
 
   /**
-   * <code>.data.ProcessOutput output = 8;</code>
+   * <code>.data.ProcessOutput output = 9;</code>
    */
   boolean hasOutput();
   /**
-   * <code>.data.ProcessOutput output = 8;</code>
+   * <code>.data.ProcessOutput output = 9;</code>
    */
   org.spin.grpc.util.ProcessOutput getOutput();
   /**
-   * <code>.data.ProcessOutput output = 8;</code>
+   * <code>.data.ProcessOutput output = 9;</code>
    */
   org.spin.grpc.util.ProcessOutputOrBuilder getOutputOrBuilder();
 }

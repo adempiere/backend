@@ -212,14 +212,15 @@ message ProcessResponseList {
 
 //	Response with log and values from server
 message ProcessResponse {
-	string instanceUuid = 1;
-	bool isError = 2;
-	string summary = 3;
-	int32 resultTableId = 4;
-	bool isProcessing = 5;
-	repeated ProcessInfoLog logs = 6;
-	map<string, Value> parameters = 7;
-	ProcessOutput output = 8;
+	string uuid = 1;
+	string instanceUuid = 2;
+	bool isError = 3;
+	string summary = 4;
+	int32 resultTableId = 5;
+	bool isProcessing = 6;
+	repeated ProcessInfoLog logs = 7;
+	map<string, Value> parameters = 8;
+	ProcessOutput output = 9;
 }
 
 //	Process Log result

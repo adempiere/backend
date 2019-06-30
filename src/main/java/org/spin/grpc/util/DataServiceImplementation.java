@@ -1031,6 +1031,7 @@ public class DataServiceImplementation extends DataServiceImplBase {
 		}
 		//	for report
 		MProcess process = MProcess.get(Env.getCtx(), instance.getAD_Process_ID());
+		builder.setUuid(validateNull(process.getUUID()));
 		if(process.isReport()) {
 			ProcessOutput.Builder outputBuilder = ProcessOutput.newBuilder();
 			outputBuilder.setReportExportType(validateNull(instance.getReportType()));
