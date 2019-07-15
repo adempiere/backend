@@ -3,8 +3,8 @@
 
 package org.spin.grpc.util;
 
-public interface ValueObjectOrBuilder extends
-    // @@protoc_insertion_point(interface_extends:data.ValueObject)
+public interface EntityOrBuilder extends
+    // @@protoc_insertion_point(interface_extends:data.Entity)
     com.google.protobuf.MessageOrBuilder {
 
   /**

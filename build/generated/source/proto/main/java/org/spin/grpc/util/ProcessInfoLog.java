@@ -5,7 +5,7 @@ package org.spin.grpc.util;
 
 /**
  * <pre>
- *	Process Log result
+ *	BusinessProcess Log result
  * </pre>
  *
  * Protobuf type {@code data.ProcessInfoLog}
@@ -296,7 +296,7 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   *	Process Log result
+   *	BusinessProcess Log result
    * </pre>
    *
    * Protobuf type {@code data.ProcessInfoLog}

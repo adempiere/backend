@@ -66,4 +66,9 @@ public interface RecentItemOrBuilder extends
    */
   com.google.protobuf.ByteString
       getDisplayNameBytes();
+
+  /**
+   * <code>int64 updated = 8;</code>
+   */
+  long getUpdated();
 }

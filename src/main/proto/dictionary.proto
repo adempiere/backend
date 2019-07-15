@@ -24,19 +24,19 @@ package dictionary;
 // The greeting service definition.
 service DictionaryService {
 	// Request a Window
-	rpc RequestWindow(EntityRequest) returns (Window) {}
+	rpc GetWindow(EntityRequest) returns (Window) {}
 	// Request Window and tabs
-	rpc RequestWindowAndTabs(EntityRequest) returns (Window) {}
+	rpc GetWindowAndTabs(EntityRequest) returns (Window) {}
 	// Request a Tab
-	rpc RequestTab(EntityRequest) returns (Tab) {}
+	rpc GetTab(EntityRequest) returns (Tab) {}
 	// Request a Tab and Fields
-	rpc RequestTabAndFields(EntityRequest) returns (Tab) {}
+	rpc GetTabAndFields(EntityRequest) returns (Tab) {}
 	// Request a Field
-	rpc RequestField(EntityRequest) returns (Field) {}
+	rpc GetField(EntityRequest) returns (Field) {}
 	// Request Process
-	rpc RequestProcess(EntityRequest) returns (Process) {}
+	rpc GetProcess(EntityRequest) returns (Process) {}
 	// Request Browser
-	rpc RequestBrowser(EntityRequest) returns (Browser) {}
+	rpc GetBrowser(EntityRequest) returns (Browser) {}
 }
 
 

@@ -207,20 +207,20 @@ public final class ADempiereDictionary {
       "tionCode\030\006 \001(\t\022\'\n\007windows\030\007 \003(\0132\026.dictio" +
       "nary.ZoomWindow\"C\n\020ReportExportType\022\014\n\004n" +
       "ame\030\001 \001(\t\022\023\n\013description\030\002 \001(\t\022\014\n\004type\030\003" +
-      " \001(\t2\347\003\n\021DictionaryService\022@\n\rRequestWin" +
-      "dow\022\031.dictionary.EntityRequest\032\022.diction" +
-      "ary.Window\"\000\022G\n\024RequestWindowAndTabs\022\031.d" +
-      "ictionary.EntityRequest\032\022.dictionary.Win" +
-      "dow\"\000\022:\n\nRequestTab\022\031.dictionary.EntityR" +
-      "equest\032\017.dictionary.Tab\"\000\022C\n\023RequestTabA" +
-      "ndFields\022\031.dictionary.EntityRequest\032\017.di" +
-      "ctionary.Tab\"\000\022>\n\014RequestField\022\031.diction" +
-      "ary.EntityRequest\032\021.dictionary.Field\"\000\022B" +
-      "\n\016RequestProcess\022\031.dictionary.EntityRequ" +
-      "est\032\023.dictionary.Process\"\000\022B\n\016RequestBro" +
-      "wser\022\031.dictionary.EntityRequest\032\023.dictio" +
-      "nary.Browser\"\000B1\n\022org.spin.grpc.utilB\023AD" +
-      "empiereDictionaryP\001\242\002\003HLWb\006proto3"
+      " \001(\t2\313\003\n\021DictionaryService\022<\n\tGetWindow\022" +
+      "\031.dictionary.EntityRequest\032\022.dictionary." +
+      "Window\"\000\022C\n\020GetWindowAndTabs\022\031.dictionar" +
+      "y.EntityRequest\032\022.dictionary.Window\"\000\0226\n" +
+      "\006GetTab\022\031.dictionary.EntityRequest\032\017.dic" +
+      "tionary.Tab\"\000\022?\n\017GetTabAndFields\022\031.dicti" +
+      "onary.EntityRequest\032\017.dictionary.Tab\"\000\022:" +
+      "\n\010GetField\022\031.dictionary.EntityRequest\032\021." +
+      "dictionary.Field\"\000\022>\n\nGetProcess\022\031.dicti" +
+      "onary.EntityRequest\032\023.dictionary.Process" +
+      "\"\000\022>\n\nGetBrowser\022\031.dictionary.EntityRequ" +
+      "est\032\023.dictionary.Browser\"\000B1\n\022org.spin.g" +
+      "rpc.utilB\023ADempiereDictionaryP\001\242\002\003HLWb\006p" +
+      "roto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {

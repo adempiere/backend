@@ -5,23 +5,23 @@ package org.spin.grpc.util;
 
 /**
  * <pre>
- * Browser request
+ * Get Entity Request
  * </pre>
  *
- * Protobuf type {@code data.BrowserRequest}
+ * Protobuf type {@code data.GetEntityRequest}
  */
-public  final class BrowserRequest extends
+public  final class GetEntityRequest extends
     com.google.protobuf.GeneratedMessageV3 implements
-    // @@protoc_insertion_point(message_implements:data.BrowserRequest)
-    BrowserRequestOrBuilder {
+    // @@protoc_insertion_point(message_implements:data.GetEntityRequest)
+    GetEntityRequestOrBuilder {
 private static final long serialVersionUID = 0L;
-  // Use BrowserRequest.newBuilder() to construct.
-  private BrowserRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+  // Use GetEntityRequest.newBuilder() to construct.
+  private GetEntityRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
   }
-  private BrowserRequest() {
+  private GetEntityRequest() {
+    id_ = 0;
     uuid_ = "";
-    parameters_ = java.util.Collections.emptyList();
   }
 
   @java.lang.Override
@@ -29,7 +29,7 @@ private static final long serialVersionUID = 0L;
   getUnknownFields() {
     return this.unknownFields;
   }
-  private BrowserRequest(
+  private GetEntityRequest(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -55,13 +55,18 @@ private static final long serialVersionUID = 0L;
             }
             break;
           }
-          case 10: {
+          case 8: {
+
+            id_ = input.readInt32();
+            break;
+          }
+          case 18: {
             java.lang.String s = input.readStringRequireUtf8();
 
             uuid_ = s;
             break;
           }
-          case 18: {
+          case 26: {
             org.spin.grpc.util.ClientRequest.Builder subBuilder = null;
             if (clientRequest_ != null) {
               subBuilder = clientRequest_.toBuilder();
@@ -74,7 +79,7 @@ private static final long serialVersionUID = 0L;
 
             break;
           }
-          case 26: {
+          case 34: {
             org.spin.grpc.util.Criteria.Builder subBuilder = null;
             if (criteria_ != null) {
               subBuilder = criteria_.toBuilder();
@@ -87,15 +92,6 @@ private static final long serialVersionUID = 0L;
 
             break;
           }
-          case 34: {
-            if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
-              parameters_ = new java.util.ArrayList<org.spin.grpc.util.KeyValue>();
-              mutable_bitField0_ |= 0x00000008;
-            }
-            parameters_.add(
-                input.readMessage(org.spin.grpc.util.KeyValue.parser(), extensionRegistry));
-            break;
-          }
         }
       }
     } catch (com.google.protobuf.InvalidProtocolBufferException e) {
@@ -104,30 +100,35 @@ private static final long serialVersionUID = 0L;
       throw new com.google.protobuf.InvalidProtocolBufferException(
           e).setUnfinishedMessage(this);
     } finally {
-      if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
-        parameters_ = java.util.Collections.unmodifiableList(parameters_);
-      }
       this.unknownFields = unknownFields.build();
       makeExtensionsImmutable();
     }
   }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-    return org.spin.grpc.util.ADempiereData.internal_static_data_BrowserRequest_descriptor;
+    return org.spin.grpc.util.ADempiereData.internal_static_data_GetEntityRequest_descriptor;
   }
 
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
-    return org.spin.grpc.util.ADempiereData.internal_static_data_BrowserRequest_fieldAccessorTable
+    return org.spin.grpc.util.ADempiereData.internal_static_data_GetEntityRequest_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
-            org.spin.grpc.util.BrowserRequest.class, org.spin.grpc.util.BrowserRequest.Builder.class);
+            org.spin.grpc.util.GetEntityRequest.class, org.spin.grpc.util.GetEntityRequest.Builder.class);
   }
 
-  private int bitField0_;
-  public static final int UUID_FIELD_NUMBER = 1;
+  public static final int ID_FIELD_NUMBER = 1;
+  private int id_;
+  /**
+   * <code>int32 id = 1;</code>
+   */
+  public int getId() {
+    return id_;
+  }
+
+  public static final int UUID_FIELD_NUMBER = 2;
   private volatile java.lang.Object uuid_;
   /**
-   * <code>string uuid = 1;</code>
+   * <code>string uuid = 2;</code>
    */
   public java.lang.String getUuid() {
     java.lang.Object ref = uuid_;
@@ -142,7 +143,7 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <code>string uuid = 1;</code>
+   * <code>string uuid = 2;</code>
    */
   public com.google.protobuf.ByteString
       getUuidBytes() {
@@ -158,81 +159,58 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int CLIENTREQUEST_FIELD_NUMBER = 2;
+  public static final int CLIENTREQUEST_FIELD_NUMBER = 3;
   private org.spin.grpc.util.ClientRequest clientRequest_;
   /**
-   * <code>.data.ClientRequest clientRequest = 2;</code>
+   * <code>.data.ClientRequest clientRequest = 3;</code>
    */
   public boolean hasClientRequest() {
     return clientRequest_ != null;
   }
   /**
-   * <code>.data.ClientRequest clientRequest = 2;</code>
+   * <code>.data.ClientRequest clientRequest = 3;</code>
    */
   public org.spin.grpc.util.ClientRequest getClientRequest() {
     return clientRequest_ == null ? org.spin.grpc.util.ClientRequest.getDefaultInstance() : clientRequest_;
   }
   /**
-   * <code>.data.ClientRequest clientRequest = 2;</code>
+   * <code>.data.ClientRequest clientRequest = 3;</code>
    */
   public org.spin.grpc.util.ClientRequestOrBuilder getClientRequestOrBuilder() {
     return getClientRequest();
   }
 
-  public static final int CRITERIA_FIELD_NUMBER = 3;
+  public static final int CRITERIA_FIELD_NUMBER = 4;
   private org.spin.grpc.util.Criteria criteria_;
   /**
-   * <code>.data.Criteria criteria = 3;</code>
+   * <pre>
+   * Query
+   * </pre>
+   *
+   * <code>.data.Criteria criteria = 4;</code>
    */
   public boolean hasCriteria() {
     return criteria_ != null;
   }
   /**
-   * <code>.data.Criteria criteria = 3;</code>
+   * <pre>
+   * Query
+   * </pre>
+   *
+   * <code>.data.Criteria criteria = 4;</code>
    */
   public org.spin.grpc.util.Criteria getCriteria() {
     return criteria_ == null ? org.spin.grpc.util.Criteria.getDefaultInstance() : criteria_;
   }
   /**
-   * <code>.data.Criteria criteria = 3;</code>
+   * <pre>
+   * Query
+   * </pre>
+   *
+   * <code>.data.Criteria criteria = 4;</code>
    */
   public org.spin.grpc.util.CriteriaOrBuilder getCriteriaOrBuilder() {
     return getCriteria();
-  }
-
-  public static final int PARAMETERS_FIELD_NUMBER = 4;
-  private java.util.List<org.spin.grpc.util.KeyValue> parameters_;
-  /**
-   * <code>repeated .data.KeyValue parameters = 4;</code>
-   */
-  public java.util.List<org.spin.grpc.util.KeyValue> getParametersList() {
-    return parameters_;
-  }
-  /**
-   * <code>repeated .data.KeyValue parameters = 4;</code>
-   */
-  public java.util.List<? extends org.spin.grpc.util.KeyValueOrBuilder> 
-      getParametersOrBuilderList() {
-    return parameters_;
-  }
-  /**
-   * <code>repeated .data.KeyValue parameters = 4;</code>
-   */
-  public int getParametersCount() {
-    return parameters_.size();
-  }
-  /**
-   * <code>repeated .data.KeyValue parameters = 4;</code>
-   */
-  public org.spin.grpc.util.KeyValue getParameters(int index) {
-    return parameters_.get(index);
-  }
-  /**
-   * <code>repeated .data.KeyValue parameters = 4;</code>
-   */
-  public org.spin.grpc.util.KeyValueOrBuilder getParametersOrBuilder(
-      int index) {
-    return parameters_.get(index);
   }
 
   private byte memoizedIsInitialized = -1;
@@ -247,17 +225,17 @@ private static final long serialVersionUID = 0L;
 
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
+    if (id_ != 0) {
+      output.writeInt32(1, id_);
+    }
     if (!getUuidBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, uuid_);
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, uuid_);
     }
     if (clientRequest_ != null) {
-      output.writeMessage(2, getClientRequest());
+      output.writeMessage(3, getClientRequest());
     }
     if (criteria_ != null) {
-      output.writeMessage(3, getCriteria());
-    }
-    for (int i = 0; i < parameters_.size(); i++) {
-      output.writeMessage(4, parameters_.get(i));
+      output.writeMessage(4, getCriteria());
     }
     unknownFields.writeTo(output);
   }
@@ -267,20 +245,20 @@ private static final long serialVersionUID = 0L;
     if (size != -1) return size;
 
     size = 0;
+    if (id_ != 0) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeInt32Size(1, id_);
+    }
     if (!getUuidBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, uuid_);
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, uuid_);
     }
     if (clientRequest_ != null) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(2, getClientRequest());
+        .computeMessageSize(3, getClientRequest());
     }
     if (criteria_ != null) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(3, getCriteria());
-    }
-    for (int i = 0; i < parameters_.size(); i++) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(4, parameters_.get(i));
+        .computeMessageSize(4, getCriteria());
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -292,12 +270,14 @@ private static final long serialVersionUID = 0L;
     if (obj == this) {
      return true;
     }
-    if (!(obj instanceof org.spin.grpc.util.BrowserRequest)) {
+    if (!(obj instanceof org.spin.grpc.util.GetEntityRequest)) {
       return super.equals(obj);
     }
-    org.spin.grpc.util.BrowserRequest other = (org.spin.grpc.util.BrowserRequest) obj;
+    org.spin.grpc.util.GetEntityRequest other = (org.spin.grpc.util.GetEntityRequest) obj;
 
     boolean result = true;
+    result = result && (getId()
+        == other.getId());
     result = result && getUuid()
         .equals(other.getUuid());
     result = result && (hasClientRequest() == other.hasClientRequest());
@@ -310,8 +290,6 @@ private static final long serialVersionUID = 0L;
       result = result && getCriteria()
           .equals(other.getCriteria());
     }
-    result = result && getParametersList()
-        .equals(other.getParametersList());
     result = result && unknownFields.equals(other.unknownFields);
     return result;
   }
@@ -323,6 +301,8 @@ private static final long serialVersionUID = 0L;
     }
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
+    hash = (37 * hash) + ID_FIELD_NUMBER;
+    hash = (53 * hash) + getId();
     hash = (37 * hash) + UUID_FIELD_NUMBER;
     hash = (53 * hash) + getUuid().hashCode();
     if (hasClientRequest()) {
@@ -333,78 +313,74 @@ private static final long serialVersionUID = 0L;
       hash = (37 * hash) + CRITERIA_FIELD_NUMBER;
       hash = (53 * hash) + getCriteria().hashCode();
     }
-    if (getParametersCount() > 0) {
-      hash = (37 * hash) + PARAMETERS_FIELD_NUMBER;
-      hash = (53 * hash) + getParametersList().hashCode();
-    }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
   }
 
-  public static org.spin.grpc.util.BrowserRequest parseFrom(
+  public static org.spin.grpc.util.GetEntityRequest parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.spin.grpc.util.BrowserRequest parseFrom(
+  public static org.spin.grpc.util.GetEntityRequest parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.spin.grpc.util.BrowserRequest parseFrom(
+  public static org.spin.grpc.util.GetEntityRequest parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.spin.grpc.util.BrowserRequest parseFrom(
+  public static org.spin.grpc.util.GetEntityRequest parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.spin.grpc.util.BrowserRequest parseFrom(byte[] data)
+  public static org.spin.grpc.util.GetEntityRequest parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.spin.grpc.util.BrowserRequest parseFrom(
+  public static org.spin.grpc.util.GetEntityRequest parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.spin.grpc.util.BrowserRequest parseFrom(java.io.InputStream input)
+  public static org.spin.grpc.util.GetEntityRequest parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static org.spin.grpc.util.BrowserRequest parseFrom(
+  public static org.spin.grpc.util.GetEntityRequest parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input, extensionRegistry);
   }
-  public static org.spin.grpc.util.BrowserRequest parseDelimitedFrom(java.io.InputStream input)
+  public static org.spin.grpc.util.GetEntityRequest parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input);
   }
-  public static org.spin.grpc.util.BrowserRequest parseDelimitedFrom(
+  public static org.spin.grpc.util.GetEntityRequest parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
   }
-  public static org.spin.grpc.util.BrowserRequest parseFrom(
+  public static org.spin.grpc.util.GetEntityRequest parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static org.spin.grpc.util.BrowserRequest parseFrom(
+  public static org.spin.grpc.util.GetEntityRequest parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -416,7 +392,7 @@ private static final long serialVersionUID = 0L;
   public static Builder newBuilder() {
     return DEFAULT_INSTANCE.toBuilder();
   }
-  public static Builder newBuilder(org.spin.grpc.util.BrowserRequest prototype) {
+  public static Builder newBuilder(org.spin.grpc.util.GetEntityRequest prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
   public Builder toBuilder() {
@@ -432,28 +408,28 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * Browser request
+   * Get Entity Request
    * </pre>
    *
-   * Protobuf type {@code data.BrowserRequest}
+   * Protobuf type {@code data.GetEntityRequest}
    */
   public static final class Builder extends
       com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-      // @@protoc_insertion_point(builder_implements:data.BrowserRequest)
-      org.spin.grpc.util.BrowserRequestOrBuilder {
+      // @@protoc_insertion_point(builder_implements:data.GetEntityRequest)
+      org.spin.grpc.util.GetEntityRequestOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.spin.grpc.util.ADempiereData.internal_static_data_BrowserRequest_descriptor;
+      return org.spin.grpc.util.ADempiereData.internal_static_data_GetEntityRequest_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.spin.grpc.util.ADempiereData.internal_static_data_BrowserRequest_fieldAccessorTable
+      return org.spin.grpc.util.ADempiereData.internal_static_data_GetEntityRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.spin.grpc.util.BrowserRequest.class, org.spin.grpc.util.BrowserRequest.Builder.class);
+              org.spin.grpc.util.GetEntityRequest.class, org.spin.grpc.util.GetEntityRequest.Builder.class);
     }
 
-    // Construct using org.spin.grpc.util.BrowserRequest.newBuilder()
+    // Construct using org.spin.grpc.util.GetEntityRequest.newBuilder()
     private Builder() {
       maybeForceBuilderInitialization();
     }
@@ -466,11 +442,12 @@ private static final long serialVersionUID = 0L;
     private void maybeForceBuilderInitialization() {
       if (com.google.protobuf.GeneratedMessageV3
               .alwaysUseFieldBuilders) {
-        getParametersFieldBuilder();
       }
     }
     public Builder clear() {
       super.clear();
+      id_ = 0;
+
       uuid_ = "";
 
       if (clientRequestBuilder_ == null) {
@@ -485,36 +462,29 @@ private static final long serialVersionUID = 0L;
         criteria_ = null;
         criteriaBuilder_ = null;
       }
-      if (parametersBuilder_ == null) {
-        parameters_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000008);
-      } else {
-        parametersBuilder_.clear();
-      }
       return this;
     }
 
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
-      return org.spin.grpc.util.ADempiereData.internal_static_data_BrowserRequest_descriptor;
+      return org.spin.grpc.util.ADempiereData.internal_static_data_GetEntityRequest_descriptor;
     }
 
-    public org.spin.grpc.util.BrowserRequest getDefaultInstanceForType() {
-      return org.spin.grpc.util.BrowserRequest.getDefaultInstance();
+    public org.spin.grpc.util.GetEntityRequest getDefaultInstanceForType() {
+      return org.spin.grpc.util.GetEntityRequest.getDefaultInstance();
     }
 
-    public org.spin.grpc.util.BrowserRequest build() {
-      org.spin.grpc.util.BrowserRequest result = buildPartial();
+    public org.spin.grpc.util.GetEntityRequest build() {
+      org.spin.grpc.util.GetEntityRequest result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
       return result;
     }
 
-    public org.spin.grpc.util.BrowserRequest buildPartial() {
-      org.spin.grpc.util.BrowserRequest result = new org.spin.grpc.util.BrowserRequest(this);
-      int from_bitField0_ = bitField0_;
-      int to_bitField0_ = 0;
+    public org.spin.grpc.util.GetEntityRequest buildPartial() {
+      org.spin.grpc.util.GetEntityRequest result = new org.spin.grpc.util.GetEntityRequest(this);
+      result.id_ = id_;
       result.uuid_ = uuid_;
       if (clientRequestBuilder_ == null) {
         result.clientRequest_ = clientRequest_;
@@ -526,16 +496,6 @@ private static final long serialVersionUID = 0L;
       } else {
         result.criteria_ = criteriaBuilder_.build();
       }
-      if (parametersBuilder_ == null) {
-        if (((bitField0_ & 0x00000008) == 0x00000008)) {
-          parameters_ = java.util.Collections.unmodifiableList(parameters_);
-          bitField0_ = (bitField0_ & ~0x00000008);
-        }
-        result.parameters_ = parameters_;
-      } else {
-        result.parameters_ = parametersBuilder_.build();
-      }
-      result.bitField0_ = to_bitField0_;
       onBuilt();
       return result;
     }
@@ -567,16 +527,19 @@ private static final long serialVersionUID = 0L;
       return (Builder) super.addRepeatedField(field, value);
     }
     public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof org.spin.grpc.util.BrowserRequest) {
-        return mergeFrom((org.spin.grpc.util.BrowserRequest)other);
+      if (other instanceof org.spin.grpc.util.GetEntityRequest) {
+        return mergeFrom((org.spin.grpc.util.GetEntityRequest)other);
       } else {
         super.mergeFrom(other);
         return this;
       }
     }
 
-    public Builder mergeFrom(org.spin.grpc.util.BrowserRequest other) {
-      if (other == org.spin.grpc.util.BrowserRequest.getDefaultInstance()) return this;
+    public Builder mergeFrom(org.spin.grpc.util.GetEntityRequest other) {
+      if (other == org.spin.grpc.util.GetEntityRequest.getDefaultInstance()) return this;
+      if (other.getId() != 0) {
+        setId(other.getId());
+      }
       if (!other.getUuid().isEmpty()) {
         uuid_ = other.uuid_;
         onChanged();
@@ -586,32 +549,6 @@ private static final long serialVersionUID = 0L;
       }
       if (other.hasCriteria()) {
         mergeCriteria(other.getCriteria());
-      }
-      if (parametersBuilder_ == null) {
-        if (!other.parameters_.isEmpty()) {
-          if (parameters_.isEmpty()) {
-            parameters_ = other.parameters_;
-            bitField0_ = (bitField0_ & ~0x00000008);
-          } else {
-            ensureParametersIsMutable();
-            parameters_.addAll(other.parameters_);
-          }
-          onChanged();
-        }
-      } else {
-        if (!other.parameters_.isEmpty()) {
-          if (parametersBuilder_.isEmpty()) {
-            parametersBuilder_.dispose();
-            parametersBuilder_ = null;
-            parameters_ = other.parameters_;
-            bitField0_ = (bitField0_ & ~0x00000008);
-            parametersBuilder_ = 
-              com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
-                 getParametersFieldBuilder() : null;
-          } else {
-            parametersBuilder_.addAllMessages(other.parameters_);
-          }
-        }
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -626,11 +563,11 @@ private static final long serialVersionUID = 0L;
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      org.spin.grpc.util.BrowserRequest parsedMessage = null;
+      org.spin.grpc.util.GetEntityRequest parsedMessage = null;
       try {
         parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (org.spin.grpc.util.BrowserRequest) e.getUnfinishedMessage();
+        parsedMessage = (org.spin.grpc.util.GetEntityRequest) e.getUnfinishedMessage();
         throw e.unwrapIOException();
       } finally {
         if (parsedMessage != null) {
@@ -639,11 +576,36 @@ private static final long serialVersionUID = 0L;
       }
       return this;
     }
-    private int bitField0_;
+
+    private int id_ ;
+    /**
+     * <code>int32 id = 1;</code>
+     */
+    public int getId() {
+      return id_;
+    }
+    /**
+     * <code>int32 id = 1;</code>
+     */
+    public Builder setId(int value) {
+      
+      id_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>int32 id = 1;</code>
+     */
+    public Builder clearId() {
+      
+      id_ = 0;
+      onChanged();
+      return this;
+    }
 
     private java.lang.Object uuid_ = "";
     /**
-     * <code>string uuid = 1;</code>
+     * <code>string uuid = 2;</code>
      */
     public java.lang.String getUuid() {
       java.lang.Object ref = uuid_;
@@ -658,7 +620,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string uuid = 1;</code>
+     * <code>string uuid = 2;</code>
      */
     public com.google.protobuf.ByteString
         getUuidBytes() {
@@ -674,7 +636,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string uuid = 1;</code>
+     * <code>string uuid = 2;</code>
      */
     public Builder setUuid(
         java.lang.String value) {
@@ -687,7 +649,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string uuid = 1;</code>
+     * <code>string uuid = 2;</code>
      */
     public Builder clearUuid() {
       
@@ -696,7 +658,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string uuid = 1;</code>
+     * <code>string uuid = 2;</code>
      */
     public Builder setUuidBytes(
         com.google.protobuf.ByteString value) {
@@ -714,13 +676,13 @@ private static final long serialVersionUID = 0L;
     private com.google.protobuf.SingleFieldBuilderV3<
         org.spin.grpc.util.ClientRequest, org.spin.grpc.util.ClientRequest.Builder, org.spin.grpc.util.ClientRequestOrBuilder> clientRequestBuilder_;
     /**
-     * <code>.data.ClientRequest clientRequest = 2;</code>
+     * <code>.data.ClientRequest clientRequest = 3;</code>
      */
     public boolean hasClientRequest() {
       return clientRequestBuilder_ != null || clientRequest_ != null;
     }
     /**
-     * <code>.data.ClientRequest clientRequest = 2;</code>
+     * <code>.data.ClientRequest clientRequest = 3;</code>
      */
     public org.spin.grpc.util.ClientRequest getClientRequest() {
       if (clientRequestBuilder_ == null) {
@@ -730,7 +692,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>.data.ClientRequest clientRequest = 2;</code>
+     * <code>.data.ClientRequest clientRequest = 3;</code>
      */
     public Builder setClientRequest(org.spin.grpc.util.ClientRequest value) {
       if (clientRequestBuilder_ == null) {
@@ -746,7 +708,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.data.ClientRequest clientRequest = 2;</code>
+     * <code>.data.ClientRequest clientRequest = 3;</code>
      */
     public Builder setClientRequest(
         org.spin.grpc.util.ClientRequest.Builder builderForValue) {
@@ -760,7 +722,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.data.ClientRequest clientRequest = 2;</code>
+     * <code>.data.ClientRequest clientRequest = 3;</code>
      */
     public Builder mergeClientRequest(org.spin.grpc.util.ClientRequest value) {
       if (clientRequestBuilder_ == null) {
@@ -778,7 +740,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.data.ClientRequest clientRequest = 2;</code>
+     * <code>.data.ClientRequest clientRequest = 3;</code>
      */
     public Builder clearClientRequest() {
       if (clientRequestBuilder_ == null) {
@@ -792,7 +754,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.data.ClientRequest clientRequest = 2;</code>
+     * <code>.data.ClientRequest clientRequest = 3;</code>
      */
     public org.spin.grpc.util.ClientRequest.Builder getClientRequestBuilder() {
       
@@ -800,7 +762,7 @@ private static final long serialVersionUID = 0L;
       return getClientRequestFieldBuilder().getBuilder();
     }
     /**
-     * <code>.data.ClientRequest clientRequest = 2;</code>
+     * <code>.data.ClientRequest clientRequest = 3;</code>
      */
     public org.spin.grpc.util.ClientRequestOrBuilder getClientRequestOrBuilder() {
       if (clientRequestBuilder_ != null) {
@@ -811,7 +773,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>.data.ClientRequest clientRequest = 2;</code>
+     * <code>.data.ClientRequest clientRequest = 3;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
         org.spin.grpc.util.ClientRequest, org.spin.grpc.util.ClientRequest.Builder, org.spin.grpc.util.ClientRequestOrBuilder> 
@@ -831,13 +793,21 @@ private static final long serialVersionUID = 0L;
     private com.google.protobuf.SingleFieldBuilderV3<
         org.spin.grpc.util.Criteria, org.spin.grpc.util.Criteria.Builder, org.spin.grpc.util.CriteriaOrBuilder> criteriaBuilder_;
     /**
-     * <code>.data.Criteria criteria = 3;</code>
+     * <pre>
+     * Query
+     * </pre>
+     *
+     * <code>.data.Criteria criteria = 4;</code>
      */
     public boolean hasCriteria() {
       return criteriaBuilder_ != null || criteria_ != null;
     }
     /**
-     * <code>.data.Criteria criteria = 3;</code>
+     * <pre>
+     * Query
+     * </pre>
+     *
+     * <code>.data.Criteria criteria = 4;</code>
      */
     public org.spin.grpc.util.Criteria getCriteria() {
       if (criteriaBuilder_ == null) {
@@ -847,7 +817,11 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>.data.Criteria criteria = 3;</code>
+     * <pre>
+     * Query
+     * </pre>
+     *
+     * <code>.data.Criteria criteria = 4;</code>
      */
     public Builder setCriteria(org.spin.grpc.util.Criteria value) {
       if (criteriaBuilder_ == null) {
@@ -863,7 +837,11 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.data.Criteria criteria = 3;</code>
+     * <pre>
+     * Query
+     * </pre>
+     *
+     * <code>.data.Criteria criteria = 4;</code>
      */
     public Builder setCriteria(
         org.spin.grpc.util.Criteria.Builder builderForValue) {
@@ -877,7 +855,11 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.data.Criteria criteria = 3;</code>
+     * <pre>
+     * Query
+     * </pre>
+     *
+     * <code>.data.Criteria criteria = 4;</code>
      */
     public Builder mergeCriteria(org.spin.grpc.util.Criteria value) {
       if (criteriaBuilder_ == null) {
@@ -895,7 +877,11 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.data.Criteria criteria = 3;</code>
+     * <pre>
+     * Query
+     * </pre>
+     *
+     * <code>.data.Criteria criteria = 4;</code>
      */
     public Builder clearCriteria() {
       if (criteriaBuilder_ == null) {
@@ -909,7 +895,11 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.data.Criteria criteria = 3;</code>
+     * <pre>
+     * Query
+     * </pre>
+     *
+     * <code>.data.Criteria criteria = 4;</code>
      */
     public org.spin.grpc.util.Criteria.Builder getCriteriaBuilder() {
       
@@ -917,7 +907,11 @@ private static final long serialVersionUID = 0L;
       return getCriteriaFieldBuilder().getBuilder();
     }
     /**
-     * <code>.data.Criteria criteria = 3;</code>
+     * <pre>
+     * Query
+     * </pre>
+     *
+     * <code>.data.Criteria criteria = 4;</code>
      */
     public org.spin.grpc.util.CriteriaOrBuilder getCriteriaOrBuilder() {
       if (criteriaBuilder_ != null) {
@@ -928,7 +922,11 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>.data.Criteria criteria = 3;</code>
+     * <pre>
+     * Query
+     * </pre>
+     *
+     * <code>.data.Criteria criteria = 4;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
         org.spin.grpc.util.Criteria, org.spin.grpc.util.Criteria.Builder, org.spin.grpc.util.CriteriaOrBuilder> 
@@ -943,246 +941,6 @@ private static final long serialVersionUID = 0L;
       }
       return criteriaBuilder_;
     }
-
-    private java.util.List<org.spin.grpc.util.KeyValue> parameters_ =
-      java.util.Collections.emptyList();
-    private void ensureParametersIsMutable() {
-      if (!((bitField0_ & 0x00000008) == 0x00000008)) {
-        parameters_ = new java.util.ArrayList<org.spin.grpc.util.KeyValue>(parameters_);
-        bitField0_ |= 0x00000008;
-       }
-    }
-
-    private com.google.protobuf.RepeatedFieldBuilderV3<
-        org.spin.grpc.util.KeyValue, org.spin.grpc.util.KeyValue.Builder, org.spin.grpc.util.KeyValueOrBuilder> parametersBuilder_;
-
-    /**
-     * <code>repeated .data.KeyValue parameters = 4;</code>
-     */
-    public java.util.List<org.spin.grpc.util.KeyValue> getParametersList() {
-      if (parametersBuilder_ == null) {
-        return java.util.Collections.unmodifiableList(parameters_);
-      } else {
-        return parametersBuilder_.getMessageList();
-      }
-    }
-    /**
-     * <code>repeated .data.KeyValue parameters = 4;</code>
-     */
-    public int getParametersCount() {
-      if (parametersBuilder_ == null) {
-        return parameters_.size();
-      } else {
-        return parametersBuilder_.getCount();
-      }
-    }
-    /**
-     * <code>repeated .data.KeyValue parameters = 4;</code>
-     */
-    public org.spin.grpc.util.KeyValue getParameters(int index) {
-      if (parametersBuilder_ == null) {
-        return parameters_.get(index);
-      } else {
-        return parametersBuilder_.getMessage(index);
-      }
-    }
-    /**
-     * <code>repeated .data.KeyValue parameters = 4;</code>
-     */
-    public Builder setParameters(
-        int index, org.spin.grpc.util.KeyValue value) {
-      if (parametersBuilder_ == null) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        ensureParametersIsMutable();
-        parameters_.set(index, value);
-        onChanged();
-      } else {
-        parametersBuilder_.setMessage(index, value);
-      }
-      return this;
-    }
-    /**
-     * <code>repeated .data.KeyValue parameters = 4;</code>
-     */
-    public Builder setParameters(
-        int index, org.spin.grpc.util.KeyValue.Builder builderForValue) {
-      if (parametersBuilder_ == null) {
-        ensureParametersIsMutable();
-        parameters_.set(index, builderForValue.build());
-        onChanged();
-      } else {
-        parametersBuilder_.setMessage(index, builderForValue.build());
-      }
-      return this;
-    }
-    /**
-     * <code>repeated .data.KeyValue parameters = 4;</code>
-     */
-    public Builder addParameters(org.spin.grpc.util.KeyValue value) {
-      if (parametersBuilder_ == null) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        ensureParametersIsMutable();
-        parameters_.add(value);
-        onChanged();
-      } else {
-        parametersBuilder_.addMessage(value);
-      }
-      return this;
-    }
-    /**
-     * <code>repeated .data.KeyValue parameters = 4;</code>
-     */
-    public Builder addParameters(
-        int index, org.spin.grpc.util.KeyValue value) {
-      if (parametersBuilder_ == null) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        ensureParametersIsMutable();
-        parameters_.add(index, value);
-        onChanged();
-      } else {
-        parametersBuilder_.addMessage(index, value);
-      }
-      return this;
-    }
-    /**
-     * <code>repeated .data.KeyValue parameters = 4;</code>
-     */
-    public Builder addParameters(
-        org.spin.grpc.util.KeyValue.Builder builderForValue) {
-      if (parametersBuilder_ == null) {
-        ensureParametersIsMutable();
-        parameters_.add(builderForValue.build());
-        onChanged();
-      } else {
-        parametersBuilder_.addMessage(builderForValue.build());
-      }
-      return this;
-    }
-    /**
-     * <code>repeated .data.KeyValue parameters = 4;</code>
-     */
-    public Builder addParameters(
-        int index, org.spin.grpc.util.KeyValue.Builder builderForValue) {
-      if (parametersBuilder_ == null) {
-        ensureParametersIsMutable();
-        parameters_.add(index, builderForValue.build());
-        onChanged();
-      } else {
-        parametersBuilder_.addMessage(index, builderForValue.build());
-      }
-      return this;
-    }
-    /**
-     * <code>repeated .data.KeyValue parameters = 4;</code>
-     */
-    public Builder addAllParameters(
-        java.lang.Iterable<? extends org.spin.grpc.util.KeyValue> values) {
-      if (parametersBuilder_ == null) {
-        ensureParametersIsMutable();
-        com.google.protobuf.AbstractMessageLite.Builder.addAll(
-            values, parameters_);
-        onChanged();
-      } else {
-        parametersBuilder_.addAllMessages(values);
-      }
-      return this;
-    }
-    /**
-     * <code>repeated .data.KeyValue parameters = 4;</code>
-     */
-    public Builder clearParameters() {
-      if (parametersBuilder_ == null) {
-        parameters_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000008);
-        onChanged();
-      } else {
-        parametersBuilder_.clear();
-      }
-      return this;
-    }
-    /**
-     * <code>repeated .data.KeyValue parameters = 4;</code>
-     */
-    public Builder removeParameters(int index) {
-      if (parametersBuilder_ == null) {
-        ensureParametersIsMutable();
-        parameters_.remove(index);
-        onChanged();
-      } else {
-        parametersBuilder_.remove(index);
-      }
-      return this;
-    }
-    /**
-     * <code>repeated .data.KeyValue parameters = 4;</code>
-     */
-    public org.spin.grpc.util.KeyValue.Builder getParametersBuilder(
-        int index) {
-      return getParametersFieldBuilder().getBuilder(index);
-    }
-    /**
-     * <code>repeated .data.KeyValue parameters = 4;</code>
-     */
-    public org.spin.grpc.util.KeyValueOrBuilder getParametersOrBuilder(
-        int index) {
-      if (parametersBuilder_ == null) {
-        return parameters_.get(index);  } else {
-        return parametersBuilder_.getMessageOrBuilder(index);
-      }
-    }
-    /**
-     * <code>repeated .data.KeyValue parameters = 4;</code>
-     */
-    public java.util.List<? extends org.spin.grpc.util.KeyValueOrBuilder> 
-         getParametersOrBuilderList() {
-      if (parametersBuilder_ != null) {
-        return parametersBuilder_.getMessageOrBuilderList();
-      } else {
-        return java.util.Collections.unmodifiableList(parameters_);
-      }
-    }
-    /**
-     * <code>repeated .data.KeyValue parameters = 4;</code>
-     */
-    public org.spin.grpc.util.KeyValue.Builder addParametersBuilder() {
-      return getParametersFieldBuilder().addBuilder(
-          org.spin.grpc.util.KeyValue.getDefaultInstance());
-    }
-    /**
-     * <code>repeated .data.KeyValue parameters = 4;</code>
-     */
-    public org.spin.grpc.util.KeyValue.Builder addParametersBuilder(
-        int index) {
-      return getParametersFieldBuilder().addBuilder(
-          index, org.spin.grpc.util.KeyValue.getDefaultInstance());
-    }
-    /**
-     * <code>repeated .data.KeyValue parameters = 4;</code>
-     */
-    public java.util.List<org.spin.grpc.util.KeyValue.Builder> 
-         getParametersBuilderList() {
-      return getParametersFieldBuilder().getBuilderList();
-    }
-    private com.google.protobuf.RepeatedFieldBuilderV3<
-        org.spin.grpc.util.KeyValue, org.spin.grpc.util.KeyValue.Builder, org.spin.grpc.util.KeyValueOrBuilder> 
-        getParametersFieldBuilder() {
-      if (parametersBuilder_ == null) {
-        parametersBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
-            org.spin.grpc.util.KeyValue, org.spin.grpc.util.KeyValue.Builder, org.spin.grpc.util.KeyValueOrBuilder>(
-                parameters_,
-                ((bitField0_ & 0x00000008) == 0x00000008),
-                getParentForChildren(),
-                isClean());
-        parameters_ = null;
-      }
-      return parametersBuilder_;
-    }
     public final Builder setUnknownFields(
         final com.google.protobuf.UnknownFieldSet unknownFields) {
       return super.setUnknownFieldsProto3(unknownFields);
@@ -1194,39 +952,39 @@ private static final long serialVersionUID = 0L;
     }
 
 
-    // @@protoc_insertion_point(builder_scope:data.BrowserRequest)
+    // @@protoc_insertion_point(builder_scope:data.GetEntityRequest)
   }
 
-  // @@protoc_insertion_point(class_scope:data.BrowserRequest)
-  private static final org.spin.grpc.util.BrowserRequest DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:data.GetEntityRequest)
+  private static final org.spin.grpc.util.GetEntityRequest DEFAULT_INSTANCE;
   static {
-    DEFAULT_INSTANCE = new org.spin.grpc.util.BrowserRequest();
+    DEFAULT_INSTANCE = new org.spin.grpc.util.GetEntityRequest();
   }
 
-  public static org.spin.grpc.util.BrowserRequest getDefaultInstance() {
+  public static org.spin.grpc.util.GetEntityRequest getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<BrowserRequest>
-      PARSER = new com.google.protobuf.AbstractParser<BrowserRequest>() {
-    public BrowserRequest parsePartialFrom(
+  private static final com.google.protobuf.Parser<GetEntityRequest>
+      PARSER = new com.google.protobuf.AbstractParser<GetEntityRequest>() {
+    public GetEntityRequest parsePartialFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return new BrowserRequest(input, extensionRegistry);
+      return new GetEntityRequest(input, extensionRegistry);
     }
   };
 
-  public static com.google.protobuf.Parser<BrowserRequest> parser() {
+  public static com.google.protobuf.Parser<GetEntityRequest> parser() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.protobuf.Parser<BrowserRequest> getParserForType() {
+  public com.google.protobuf.Parser<GetEntityRequest> getParserForType() {
     return PARSER;
   }
 
-  public org.spin.grpc.util.BrowserRequest getDefaultInstanceForType() {
+  public org.spin.grpc.util.GetEntityRequest getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }
 

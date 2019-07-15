@@ -86,7 +86,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 	private static CCache<String, String> languageCache = new CCache<String, String>("Language_ISO_Code", 30, 0);	//	no time-out
 	
 	@Override
-	public void requestUserInfo(LoginRequest request, StreamObserver<UserInfoValue> responseObserver) {
+	public void getUserInfo(LoginRequest request, StreamObserver<UserInfoValue> responseObserver) {
 		try {
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
@@ -102,7 +102,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 	}
 	
 	@Override
-	public void requestLogin(LoginRequest request, StreamObserver<Session> responseObserver) {
+	public void runLogin(LoginRequest request, StreamObserver<Session> responseObserver) {
 		try {
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
@@ -118,7 +118,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 	}
 	
 	@Override
-	public void requestLogout(LogoutRequest request, StreamObserver<Session> responseObserver) {
+	public void runLogout(LogoutRequest request, StreamObserver<Session> responseObserver) {
 		try {
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
@@ -134,7 +134,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 	}
 	
 	@Override
-	public void requestLoginDefault(LoginRequest request, StreamObserver<Session> responseObserver) {
+	public void runLoginDefault(LoginRequest request, StreamObserver<Session> responseObserver) {
 		try {
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
@@ -150,7 +150,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 	}
 	
 	@Override
-	public void requestUserInfoFromSession(UserInfoRequest request, StreamObserver<UserInfoValue> responseObserver) {
+	public void getUserInfoFromSession(UserInfoRequest request, StreamObserver<UserInfoValue> responseObserver) {
 		try {
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
@@ -166,7 +166,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 	}
 	
 	@Override
-	public void requestMenuAndChild(UserInfoRequest request, StreamObserver<Menu> responseObserver) {
+	public void getMenuAndChild(UserInfoRequest request, StreamObserver<Menu> responseObserver) {
 		try {
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
@@ -185,7 +185,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 	}
 	
 	@Override
-	public void requestChangeRole(UserInfoRequest request, StreamObserver<Session> responseObserver) {
+	public void runChangeRole(UserInfoRequest request, StreamObserver<Session> responseObserver) {
 		try {
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");

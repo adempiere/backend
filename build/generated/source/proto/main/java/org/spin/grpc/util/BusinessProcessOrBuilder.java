@@ -3,8 +3,8 @@
 
 package org.spin.grpc.util;
 
-public interface ProcessResponseOrBuilder extends
-    // @@protoc_insertion_point(interface_extends:data.ProcessResponse)
+public interface BusinessProcessOrBuilder extends
+    // @@protoc_insertion_point(interface_extends:data.BusinessProcess)
     com.google.protobuf.MessageOrBuilder {
 
   /**

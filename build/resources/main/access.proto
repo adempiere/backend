@@ -24,19 +24,19 @@ package access;
 // The greeting service definition.
 service AccessService {
   // Request user roles
-  rpc RequestUserInfo(LoginRequest) returns (UserInfoValue) {}
+  rpc GetUserInfo(LoginRequest) returns (UserInfoValue) {}
   // Request login from user
-  rpc RequestLogin(LoginRequest) returns (Session) {}
+  rpc RunLogin(LoginRequest) returns (Session) {}
   // Request login and role
-  rpc RequestLoginDefault(LoginRequest) returns (Session) {}
+  rpc RunLoginDefault(LoginRequest) returns (Session) {}
   // Request a Role from uuid
-  rpc RequestLogout(LogoutRequest) returns (Session) {}  
+  rpc RunLogout(LogoutRequest) returns (Session) {}  
   // Request user roles from Session
-  rpc RequestUserInfoFromSession(UserInfoRequest) returns (UserInfoValue) {}  
+  rpc GetUserInfoFromSession(UserInfoRequest) returns (UserInfoValue) {}  
   // Request Menu from Parent UUID
-  rpc RequestMenuAndChild(UserInfoRequest) returns (Menu) {}
+  rpc GetMenuAndChild(UserInfoRequest) returns (Menu) {}
   // Request change role
-  rpc RequestChangeRole(UserInfoRequest) returns (Session) {}
+  rpc RunChangeRole(UserInfoRequest) returns (Session) {}
 }
 
 // Request a Login Session

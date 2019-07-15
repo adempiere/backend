@@ -23,24 +23,24 @@ package data;
 
 // The greeting service definition.
 service DataService {
-	// Request Object entity from UUID (Optional ID)
-	rpc RequestObject(ValueObjectRequest) returns (ValueObject) {}
-	// Request Object List
-	rpc RequestObjectList(ValueObjectRequest) returns (ValueObjectList) {}
-	// Request Lookup
-	rpc RequestLookup(ValueObjectRequest) returns (ValueObject) {}
-	// Request Lookup List
-	rpc RequestLookupList(ValueObjectRequest) returns (ValueObjectList) {}
-	// Request Callout
-	rpc RequestCallout(CalloutRequest) returns (CalloutResponse) {}
-	//	Request a Process / Report
-	rpc RequestProcess(ProcessRequest) returns (ProcessResponse) {}
+	// Get a Entity
+	rpc GetEntity(GetEntityRequest) returns (Entity) {}
+	// List a Entities
+	rpc ListEntities(ListEntitiesRequest) returns (ListEntitiesResponse) {}
+	// Get Lookup Item
+	rpc GetLookupItem(GetLookupItemRequest) returns (LookupItem) {}
+	// List Lookup Item
+	rpc ListLookupItems(ListLookupItemsRequest) returns (ListLookupItemsResponse) {}
+	// Run a Callout
+	rpc RunCallout(RunCalloutRequest) returns (Callout) {}
+	//	Request a BusinessProcess / Report
+	rpc RunBusinessProcess(RunBusinessProcessRequest) returns (BusinessProcess) {}
 	//	Request Browser Data
-	rpc RequestBrowser(BrowserRequest) returns (ValueObjectList) {}
-	//	Request Process Activity from current session
-	rpc RequestProcessActivity(ProcessActivityRequest) returns (ProcessResponseList) {}
+	rpc ListBrowserItems(ListBrowserItemsRequest) returns (ListBrowserItemsResponse) {}
+	//	Request BusinessProcess Activity from current session
+	rpc ListActivities(ListActivitiesRequest) returns (ListActivitiesResponse) {}
 	//	Request Recent Items
-	rpc RequestRecentItems(RecentItemsRequest) returns (RecentItemsResponse) {}
+	rpc ListRecentItems(ListRecentItemsRequest) returns (ListRecentItemsResponse) {}
 }
 
 // The client request contains client info for request.
@@ -49,14 +49,15 @@ message ClientRequest {
 	string language = 2;
 }
 
-// Object List
-message ValueObjectList {
+// Browsers List
+message ListBrowserItemsResponse {
 	int64 recordCount = 1;
-	repeated ValueObject records = 2;
+	repeated Entity records = 2;
+	string next_page_token = 3;
 }
 
 // Value Object from ADempiere
-message ValueObject {
+message Entity {
 	int32 id = 1;
 	string uuid = 2;
 	string tableName = 3;
@@ -87,13 +88,62 @@ message Value {
 	ValueType valueType = 6;
 }
 
-// Object request
-message ValueObjectRequest {
+// Get Entity Request
+message GetEntityRequest {
 	int32 id = 1;
 	string uuid = 2;
 	ClientRequest clientRequest = 3;
 	// Query
 	Criteria criteria = 4;
+}
+
+// Get Lookup Item
+message GetLookupItemRequest {
+	int32 id = 1;
+	string uuid = 2;
+	ClientRequest clientRequest = 3;
+	// Query
+	Criteria criteria = 4;
+}
+
+// Lookup Item Response
+message LookupItem {
+	int32 id = 1;
+	string uuid = 2;
+	string tableName = 3;
+	map<string, Value> values = 4;
+}
+
+// List Lookup Item
+message ListLookupItemsRequest {
+	int32 id = 1;
+	string uuid = 2;
+	ClientRequest clientRequest = 3;
+	// Query
+	Criteria criteria = 4;
+}
+
+// List Lookup Item Response
+message ListLookupItemsResponse {
+	int64 recordCount = 1;
+	repeated LookupItem records = 2;
+	string next_page_token = 3;
+}
+
+// List Entities Request
+message ListEntitiesRequest {
+	ClientRequest clientRequest = 3;
+	// Query
+	Criteria criteria = 4;
+	int32 page_size = 5;
+	string page_token = 6;
+}
+
+// List Entities Response
+message ListEntitiesResponse {
+	int64 recordCount = 1;
+	repeated Entity records = 2;
+	string next_page_token = 3;
 }
 
 // Query for Request Object
@@ -144,20 +194,20 @@ message Condition {
 }
 
 // Callout Request
-message CalloutRequest {
+message RunCalloutRequest {
 	ClientRequest clientRequest = 1;
 	string callout = 2;
-	ValueObject valueObject = 3;
+	Entity Entity = 3;
 }
 
 // Callout response with data from server
-message CalloutResponse {
+message Callout {
 	string result = 1;
-	ValueObject values = 2;
+	Entity values = 2;
 }
 
-// Process Request
-message ProcessRequest {
+// BusinessProcess Request
+message RunBusinessProcessRequest {
 	ClientRequest clientRequest = 1;
 	string uuid = 2;
 	int32 tableId = 3;
@@ -168,15 +218,15 @@ message ProcessRequest {
 	repeated KeyValue parameters = 8;
 }
 
-// Process Activity Request
-message ProcessActivityRequest {
+// BusinessProcess Activity Request
+message ListActivitiesRequest {
 	ClientRequest clientRequest = 1;
 	string userUuid = 2;
 	string instanceUuid = 3;
 }
 
 // Recent Items Request
-message RecentItemsRequest {
+message ListRecentItemsRequest {
 	ClientRequest clientRequest = 1;
 	bool currentSession = 2;
 }
@@ -190,28 +240,29 @@ message RecentItem {
 	int32 tableId = 5;
 	int32 recordId = 6;
 	string displayName = 7;
+	int64 updated = 8;
 }
 
 //	Recent Items List
-message RecentItemsResponse {
+message ListRecentItemsResponse {
 	int64 recordCount = 1;
 	repeated RecentItem recentItems = 2;
 }
 
-//	Process Selections
+//	BusinessProcess Selections
 message Selection {
 	int32 selectionId = 1;
 	repeated KeyValue values = 2;
 }
 
-// Process Response List
-message ProcessResponseList {
+// BusinessProcess Response List
+message ListActivitiesResponse {
 	int64 recordCount = 1;
-	repeated ProcessResponse responses = 2;
+	repeated BusinessProcess responses = 2;
 }
 
 //	Response with log and values from server
-message ProcessResponse {
+message BusinessProcess {
 	string uuid = 1;
 	string instanceUuid = 2;
 	bool isError = 3;
@@ -223,13 +274,13 @@ message ProcessResponse {
 	ProcessOutput output = 9;
 }
 
-//	Process Log result
+//	BusinessProcess Log result
 message ProcessInfoLog {
 	int32 recordId = 1;
 	string log = 2;
 }
 
-//	Used for get output from report / process like PDF, HTML another result for show to end user
+//	Used for get output from report / BusinessProcess like PDF, HTML another result for show to end user
 message ProcessOutput {
 	string uuid = 1;
 	string name = 2;
@@ -243,9 +294,11 @@ message ProcessOutput {
 }
 
 // Browser request
-message BrowserRequest {
+message ListBrowserItemsRequest {
 	string uuid = 1;
 	ClientRequest clientRequest = 2;
 	Criteria criteria = 3;
 	repeated KeyValue parameters = 4;
+	int32 page_size = 5;
+	string page_token = 6;
 }

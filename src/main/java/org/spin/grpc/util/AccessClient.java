@@ -58,7 +58,7 @@ public class AccessClient {
 				  .build();
 		  UserInfoValue response;
 		  try {
-			  response = blockingStub.requestUserInfo(userRequest);
+			  response = blockingStub.getUserInfo(userRequest);
 			  logger.info("User Roles: " + response);
 		  } catch (StatusRuntimeException e) {
 			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
@@ -80,7 +80,7 @@ public class AccessClient {
 	    		.build();
 		  Session response;
 		  try {
-			  response = blockingStub.requestLogin(request);
+			  response = blockingStub.runLogin(request);
 			  logger.info("User Session: " + response);
 		  } catch (StatusRuntimeException e) {
 			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
@@ -100,7 +100,7 @@ public class AccessClient {
 	    		.build();
 		  Session response;
 		  try {
-			  response = blockingStub.requestLoginDefault(request);
+			  response = blockingStub.runLoginDefault(request);
 			  logger.info("User Session: " + response);
 		  } catch (StatusRuntimeException e) {
 			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
@@ -118,7 +118,7 @@ public class AccessClient {
 	    		.build();
 		  Session response;
 		  try {
-			  response = blockingStub.requestLogout(request);
+			  response = blockingStub.runLogout(request);
 			  logger.info("User Session Logout: " + response);
 		  } catch (StatusRuntimeException e) {
 			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());

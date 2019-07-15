@@ -27,6 +27,7 @@ private static final long serialVersionUID = 0L;
     tableId_ = 0;
     recordId_ = 0;
     displayName_ = "";
+    updated_ = 0L;
   }
 
   @java.lang.Override
@@ -98,6 +99,11 @@ private static final long serialVersionUID = 0L;
             java.lang.String s = input.readStringRequireUtf8();
 
             displayName_ = s;
+            break;
+          }
+          case 64: {
+
+            updated_ = input.readInt64();
             break;
           }
         }
@@ -312,6 +318,15 @@ private static final long serialVersionUID = 0L;
     }
   }
 
+  public static final int UPDATED_FIELD_NUMBER = 8;
+  private long updated_;
+  /**
+   * <code>int64 updated = 8;</code>
+   */
+  public long getUpdated() {
+    return updated_;
+  }
+
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
     byte isInitialized = memoizedIsInitialized;
@@ -345,6 +360,9 @@ private static final long serialVersionUID = 0L;
     if (!getDisplayNameBytes().isEmpty()) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 7, displayName_);
     }
+    if (updated_ != 0L) {
+      output.writeInt64(8, updated_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -376,6 +394,10 @@ private static final long serialVersionUID = 0L;
     if (!getDisplayNameBytes().isEmpty()) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, displayName_);
     }
+    if (updated_ != 0L) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeInt64Size(8, updated_);
+    }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
     return size;
@@ -406,6 +428,8 @@ private static final long serialVersionUID = 0L;
         == other.getRecordId());
     result = result && getDisplayName()
         .equals(other.getDisplayName());
+    result = result && (getUpdated()
+        == other.getUpdated());
     result = result && unknownFields.equals(other.unknownFields);
     return result;
   }
@@ -431,6 +455,9 @@ private static final long serialVersionUID = 0L;
     hash = (53 * hash) + getRecordId();
     hash = (37 * hash) + DISPLAYNAME_FIELD_NUMBER;
     hash = (53 * hash) + getDisplayName().hashCode();
+    hash = (37 * hash) + UPDATED_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+        getUpdated());
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -578,6 +605,8 @@ private static final long serialVersionUID = 0L;
 
       displayName_ = "";
 
+      updated_ = 0L;
+
       return this;
     }
 
@@ -607,6 +636,7 @@ private static final long serialVersionUID = 0L;
       result.tableId_ = tableId_;
       result.recordId_ = recordId_;
       result.displayName_ = displayName_;
+      result.updated_ = updated_;
       onBuilt();
       return result;
     }
@@ -673,6 +703,9 @@ private static final long serialVersionUID = 0L;
       if (!other.getDisplayName().isEmpty()) {
         displayName_ = other.displayName_;
         onChanged();
+      }
+      if (other.getUpdated() != 0L) {
+        setUpdated(other.getUpdated());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -1094,6 +1127,32 @@ private static final long serialVersionUID = 0L;
   checkByteStringIsUtf8(value);
       
       displayName_ = value;
+      onChanged();
+      return this;
+    }
+
+    private long updated_ ;
+    /**
+     * <code>int64 updated = 8;</code>
+     */
+    public long getUpdated() {
+      return updated_;
+    }
+    /**
+     * <code>int64 updated = 8;</code>
+     */
+    public Builder setUpdated(long value) {
+      
+      updated_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>int64 updated = 8;</code>
+     */
+    public Builder clearUpdated() {
+      
+      updated_ = 0L;
       onChanged();
       return this;
     }

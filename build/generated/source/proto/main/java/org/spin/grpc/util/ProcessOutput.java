@@ -5,7 +5,7 @@ package org.spin.grpc.util;
 
 /**
  * <pre>
- *	Used for get output from report / process like PDF, HTML another result for show to end user
+ *	Used for get output from report / BusinessProcess like PDF, HTML another result for show to end user
  * </pre>
  *
  * Protobuf type {@code data.ProcessOutput}
@@ -610,7 +610,7 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   *	Used for get output from report / process like PDF, HTML another result for show to end user
+   *	Used for get output from report / BusinessProcess like PDF, HTML another result for show to end user
    * </pre>
    *
    * Protobuf type {@code data.ProcessOutput}

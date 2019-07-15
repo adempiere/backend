@@ -3,8 +3,8 @@
 
 package org.spin.grpc.util;
 
-public interface CalloutResponseOrBuilder extends
-    // @@protoc_insertion_point(interface_extends:data.CalloutResponse)
+public interface CalloutOrBuilder extends
+    // @@protoc_insertion_point(interface_extends:data.Callout)
     com.google.protobuf.MessageOrBuilder {
 
   /**
@@ -18,15 +18,15 @@ public interface CalloutResponseOrBuilder extends
       getResultBytes();
 
   /**
-   * <code>.data.ValueObject values = 2;</code>
+   * <code>.data.Entity values = 2;</code>
    */
   boolean hasValues();
   /**
-   * <code>.data.ValueObject values = 2;</code>
+   * <code>.data.Entity values = 2;</code>
    */
-  org.spin.grpc.util.ValueObject getValues();
+  org.spin.grpc.util.Entity getValues();
   /**
-   * <code>.data.ValueObject values = 2;</code>
+   * <code>.data.Entity values = 2;</code>
    */
-  org.spin.grpc.util.ValueObjectOrBuilder getValuesOrBuilder();
+  org.spin.grpc.util.EntityOrBuilder getValuesOrBuilder();
 }

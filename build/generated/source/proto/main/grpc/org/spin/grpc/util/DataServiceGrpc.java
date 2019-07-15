@@ -30,292 +30,292 @@ public final class DataServiceGrpc {
   public static final String SERVICE_NAME = "data.DataService";
 
   // Static method descriptors that strictly reflect the proto.
-  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.ValueObjectRequest,
-      org.spin.grpc.util.ValueObject> getRequestObjectMethod;
+  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.GetEntityRequest,
+      org.spin.grpc.util.Entity> getGetEntityMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "RequestObject",
-      requestType = org.spin.grpc.util.ValueObjectRequest.class,
-      responseType = org.spin.grpc.util.ValueObject.class,
+      fullMethodName = SERVICE_NAME + '/' + "GetEntity",
+      requestType = org.spin.grpc.util.GetEntityRequest.class,
+      responseType = org.spin.grpc.util.Entity.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<org.spin.grpc.util.ValueObjectRequest,
-      org.spin.grpc.util.ValueObject> getRequestObjectMethod() {
-    io.grpc.MethodDescriptor<org.spin.grpc.util.ValueObjectRequest, org.spin.grpc.util.ValueObject> getRequestObjectMethod;
-    if ((getRequestObjectMethod = DataServiceGrpc.getRequestObjectMethod) == null) {
+  public static io.grpc.MethodDescriptor<org.spin.grpc.util.GetEntityRequest,
+      org.spin.grpc.util.Entity> getGetEntityMethod() {
+    io.grpc.MethodDescriptor<org.spin.grpc.util.GetEntityRequest, org.spin.grpc.util.Entity> getGetEntityMethod;
+    if ((getGetEntityMethod = DataServiceGrpc.getGetEntityMethod) == null) {
       synchronized (DataServiceGrpc.class) {
-        if ((getRequestObjectMethod = DataServiceGrpc.getRequestObjectMethod) == null) {
-          DataServiceGrpc.getRequestObjectMethod = getRequestObjectMethod = 
-              io.grpc.MethodDescriptor.<org.spin.grpc.util.ValueObjectRequest, org.spin.grpc.util.ValueObject>newBuilder()
+        if ((getGetEntityMethod = DataServiceGrpc.getGetEntityMethod) == null) {
+          DataServiceGrpc.getGetEntityMethod = getGetEntityMethod = 
+              io.grpc.MethodDescriptor.<org.spin.grpc.util.GetEntityRequest, org.spin.grpc.util.Entity>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
-                  "data.DataService", "RequestObject"))
+                  "data.DataService", "GetEntity"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  org.spin.grpc.util.ValueObjectRequest.getDefaultInstance()))
+                  org.spin.grpc.util.GetEntityRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  org.spin.grpc.util.ValueObject.getDefaultInstance()))
-                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("RequestObject"))
+                  org.spin.grpc.util.Entity.getDefaultInstance()))
+                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("GetEntity"))
                   .build();
           }
         }
      }
-     return getRequestObjectMethod;
+     return getGetEntityMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.ValueObjectRequest,
-      org.spin.grpc.util.ValueObjectList> getRequestObjectListMethod;
+  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.ListEntitiesRequest,
+      org.spin.grpc.util.ListEntitiesResponse> getListEntitiesMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "RequestObjectList",
-      requestType = org.spin.grpc.util.ValueObjectRequest.class,
-      responseType = org.spin.grpc.util.ValueObjectList.class,
+      fullMethodName = SERVICE_NAME + '/' + "ListEntities",
+      requestType = org.spin.grpc.util.ListEntitiesRequest.class,
+      responseType = org.spin.grpc.util.ListEntitiesResponse.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<org.spin.grpc.util.ValueObjectRequest,
-      org.spin.grpc.util.ValueObjectList> getRequestObjectListMethod() {
-    io.grpc.MethodDescriptor<org.spin.grpc.util.ValueObjectRequest, org.spin.grpc.util.ValueObjectList> getRequestObjectListMethod;
-    if ((getRequestObjectListMethod = DataServiceGrpc.getRequestObjectListMethod) == null) {
+  public static io.grpc.MethodDescriptor<org.spin.grpc.util.ListEntitiesRequest,
+      org.spin.grpc.util.ListEntitiesResponse> getListEntitiesMethod() {
+    io.grpc.MethodDescriptor<org.spin.grpc.util.ListEntitiesRequest, org.spin.grpc.util.ListEntitiesResponse> getListEntitiesMethod;
+    if ((getListEntitiesMethod = DataServiceGrpc.getListEntitiesMethod) == null) {
       synchronized (DataServiceGrpc.class) {
-        if ((getRequestObjectListMethod = DataServiceGrpc.getRequestObjectListMethod) == null) {
-          DataServiceGrpc.getRequestObjectListMethod = getRequestObjectListMethod = 
-              io.grpc.MethodDescriptor.<org.spin.grpc.util.ValueObjectRequest, org.spin.grpc.util.ValueObjectList>newBuilder()
+        if ((getListEntitiesMethod = DataServiceGrpc.getListEntitiesMethod) == null) {
+          DataServiceGrpc.getListEntitiesMethod = getListEntitiesMethod = 
+              io.grpc.MethodDescriptor.<org.spin.grpc.util.ListEntitiesRequest, org.spin.grpc.util.ListEntitiesResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
-                  "data.DataService", "RequestObjectList"))
+                  "data.DataService", "ListEntities"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  org.spin.grpc.util.ValueObjectRequest.getDefaultInstance()))
+                  org.spin.grpc.util.ListEntitiesRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  org.spin.grpc.util.ValueObjectList.getDefaultInstance()))
-                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("RequestObjectList"))
+                  org.spin.grpc.util.ListEntitiesResponse.getDefaultInstance()))
+                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("ListEntities"))
                   .build();
           }
         }
      }
-     return getRequestObjectListMethod;
+     return getListEntitiesMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.ValueObjectRequest,
-      org.spin.grpc.util.ValueObject> getRequestLookupMethod;
+  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.GetLookupItemRequest,
+      org.spin.grpc.util.LookupItem> getGetLookupItemMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "RequestLookup",
-      requestType = org.spin.grpc.util.ValueObjectRequest.class,
-      responseType = org.spin.grpc.util.ValueObject.class,
+      fullMethodName = SERVICE_NAME + '/' + "GetLookupItem",
+      requestType = org.spin.grpc.util.GetLookupItemRequest.class,
+      responseType = org.spin.grpc.util.LookupItem.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<org.spin.grpc.util.ValueObjectRequest,
-      org.spin.grpc.util.ValueObject> getRequestLookupMethod() {
-    io.grpc.MethodDescriptor<org.spin.grpc.util.ValueObjectRequest, org.spin.grpc.util.ValueObject> getRequestLookupMethod;
-    if ((getRequestLookupMethod = DataServiceGrpc.getRequestLookupMethod) == null) {
+  public static io.grpc.MethodDescriptor<org.spin.grpc.util.GetLookupItemRequest,
+      org.spin.grpc.util.LookupItem> getGetLookupItemMethod() {
+    io.grpc.MethodDescriptor<org.spin.grpc.util.GetLookupItemRequest, org.spin.grpc.util.LookupItem> getGetLookupItemMethod;
+    if ((getGetLookupItemMethod = DataServiceGrpc.getGetLookupItemMethod) == null) {
       synchronized (DataServiceGrpc.class) {
-        if ((getRequestLookupMethod = DataServiceGrpc.getRequestLookupMethod) == null) {
-          DataServiceGrpc.getRequestLookupMethod = getRequestLookupMethod = 
-              io.grpc.MethodDescriptor.<org.spin.grpc.util.ValueObjectRequest, org.spin.grpc.util.ValueObject>newBuilder()
+        if ((getGetLookupItemMethod = DataServiceGrpc.getGetLookupItemMethod) == null) {
+          DataServiceGrpc.getGetLookupItemMethod = getGetLookupItemMethod = 
+              io.grpc.MethodDescriptor.<org.spin.grpc.util.GetLookupItemRequest, org.spin.grpc.util.LookupItem>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
-                  "data.DataService", "RequestLookup"))
+                  "data.DataService", "GetLookupItem"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  org.spin.grpc.util.ValueObjectRequest.getDefaultInstance()))
+                  org.spin.grpc.util.GetLookupItemRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  org.spin.grpc.util.ValueObject.getDefaultInstance()))
-                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("RequestLookup"))
+                  org.spin.grpc.util.LookupItem.getDefaultInstance()))
+                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("GetLookupItem"))
                   .build();
           }
         }
      }
-     return getRequestLookupMethod;
+     return getGetLookupItemMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.ValueObjectRequest,
-      org.spin.grpc.util.ValueObjectList> getRequestLookupListMethod;
+  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.ListLookupItemsRequest,
+      org.spin.grpc.util.ListLookupItemsResponse> getListLookupItemsMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "RequestLookupList",
-      requestType = org.spin.grpc.util.ValueObjectRequest.class,
-      responseType = org.spin.grpc.util.ValueObjectList.class,
+      fullMethodName = SERVICE_NAME + '/' + "ListLookupItems",
+      requestType = org.spin.grpc.util.ListLookupItemsRequest.class,
+      responseType = org.spin.grpc.util.ListLookupItemsResponse.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<org.spin.grpc.util.ValueObjectRequest,
-      org.spin.grpc.util.ValueObjectList> getRequestLookupListMethod() {
-    io.grpc.MethodDescriptor<org.spin.grpc.util.ValueObjectRequest, org.spin.grpc.util.ValueObjectList> getRequestLookupListMethod;
-    if ((getRequestLookupListMethod = DataServiceGrpc.getRequestLookupListMethod) == null) {
+  public static io.grpc.MethodDescriptor<org.spin.grpc.util.ListLookupItemsRequest,
+      org.spin.grpc.util.ListLookupItemsResponse> getListLookupItemsMethod() {
+    io.grpc.MethodDescriptor<org.spin.grpc.util.ListLookupItemsRequest, org.spin.grpc.util.ListLookupItemsResponse> getListLookupItemsMethod;
+    if ((getListLookupItemsMethod = DataServiceGrpc.getListLookupItemsMethod) == null) {
       synchronized (DataServiceGrpc.class) {
-        if ((getRequestLookupListMethod = DataServiceGrpc.getRequestLookupListMethod) == null) {
-          DataServiceGrpc.getRequestLookupListMethod = getRequestLookupListMethod = 
-              io.grpc.MethodDescriptor.<org.spin.grpc.util.ValueObjectRequest, org.spin.grpc.util.ValueObjectList>newBuilder()
+        if ((getListLookupItemsMethod = DataServiceGrpc.getListLookupItemsMethod) == null) {
+          DataServiceGrpc.getListLookupItemsMethod = getListLookupItemsMethod = 
+              io.grpc.MethodDescriptor.<org.spin.grpc.util.ListLookupItemsRequest, org.spin.grpc.util.ListLookupItemsResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
-                  "data.DataService", "RequestLookupList"))
+                  "data.DataService", "ListLookupItems"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  org.spin.grpc.util.ValueObjectRequest.getDefaultInstance()))
+                  org.spin.grpc.util.ListLookupItemsRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  org.spin.grpc.util.ValueObjectList.getDefaultInstance()))
-                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("RequestLookupList"))
+                  org.spin.grpc.util.ListLookupItemsResponse.getDefaultInstance()))
+                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("ListLookupItems"))
                   .build();
           }
         }
      }
-     return getRequestLookupListMethod;
+     return getListLookupItemsMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.CalloutRequest,
-      org.spin.grpc.util.CalloutResponse> getRequestCalloutMethod;
+  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.RunCalloutRequest,
+      org.spin.grpc.util.Callout> getRunCalloutMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "RequestCallout",
-      requestType = org.spin.grpc.util.CalloutRequest.class,
-      responseType = org.spin.grpc.util.CalloutResponse.class,
+      fullMethodName = SERVICE_NAME + '/' + "RunCallout",
+      requestType = org.spin.grpc.util.RunCalloutRequest.class,
+      responseType = org.spin.grpc.util.Callout.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<org.spin.grpc.util.CalloutRequest,
-      org.spin.grpc.util.CalloutResponse> getRequestCalloutMethod() {
-    io.grpc.MethodDescriptor<org.spin.grpc.util.CalloutRequest, org.spin.grpc.util.CalloutResponse> getRequestCalloutMethod;
-    if ((getRequestCalloutMethod = DataServiceGrpc.getRequestCalloutMethod) == null) {
+  public static io.grpc.MethodDescriptor<org.spin.grpc.util.RunCalloutRequest,
+      org.spin.grpc.util.Callout> getRunCalloutMethod() {
+    io.grpc.MethodDescriptor<org.spin.grpc.util.RunCalloutRequest, org.spin.grpc.util.Callout> getRunCalloutMethod;
+    if ((getRunCalloutMethod = DataServiceGrpc.getRunCalloutMethod) == null) {
       synchronized (DataServiceGrpc.class) {
-        if ((getRequestCalloutMethod = DataServiceGrpc.getRequestCalloutMethod) == null) {
-          DataServiceGrpc.getRequestCalloutMethod = getRequestCalloutMethod = 
-              io.grpc.MethodDescriptor.<org.spin.grpc.util.CalloutRequest, org.spin.grpc.util.CalloutResponse>newBuilder()
+        if ((getRunCalloutMethod = DataServiceGrpc.getRunCalloutMethod) == null) {
+          DataServiceGrpc.getRunCalloutMethod = getRunCalloutMethod = 
+              io.grpc.MethodDescriptor.<org.spin.grpc.util.RunCalloutRequest, org.spin.grpc.util.Callout>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
-                  "data.DataService", "RequestCallout"))
+                  "data.DataService", "RunCallout"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  org.spin.grpc.util.CalloutRequest.getDefaultInstance()))
+                  org.spin.grpc.util.RunCalloutRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  org.spin.grpc.util.CalloutResponse.getDefaultInstance()))
-                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("RequestCallout"))
+                  org.spin.grpc.util.Callout.getDefaultInstance()))
+                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("RunCallout"))
                   .build();
           }
         }
      }
-     return getRequestCalloutMethod;
+     return getRunCalloutMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.ProcessRequest,
-      org.spin.grpc.util.ProcessResponse> getRequestProcessMethod;
+  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.RunBusinessProcessRequest,
+      org.spin.grpc.util.BusinessProcess> getRunBusinessProcessMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "RequestProcess",
-      requestType = org.spin.grpc.util.ProcessRequest.class,
-      responseType = org.spin.grpc.util.ProcessResponse.class,
+      fullMethodName = SERVICE_NAME + '/' + "RunBusinessProcess",
+      requestType = org.spin.grpc.util.RunBusinessProcessRequest.class,
+      responseType = org.spin.grpc.util.BusinessProcess.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<org.spin.grpc.util.ProcessRequest,
-      org.spin.grpc.util.ProcessResponse> getRequestProcessMethod() {
-    io.grpc.MethodDescriptor<org.spin.grpc.util.ProcessRequest, org.spin.grpc.util.ProcessResponse> getRequestProcessMethod;
-    if ((getRequestProcessMethod = DataServiceGrpc.getRequestProcessMethod) == null) {
+  public static io.grpc.MethodDescriptor<org.spin.grpc.util.RunBusinessProcessRequest,
+      org.spin.grpc.util.BusinessProcess> getRunBusinessProcessMethod() {
+    io.grpc.MethodDescriptor<org.spin.grpc.util.RunBusinessProcessRequest, org.spin.grpc.util.BusinessProcess> getRunBusinessProcessMethod;
+    if ((getRunBusinessProcessMethod = DataServiceGrpc.getRunBusinessProcessMethod) == null) {
       synchronized (DataServiceGrpc.class) {
-        if ((getRequestProcessMethod = DataServiceGrpc.getRequestProcessMethod) == null) {
-          DataServiceGrpc.getRequestProcessMethod = getRequestProcessMethod = 
-              io.grpc.MethodDescriptor.<org.spin.grpc.util.ProcessRequest, org.spin.grpc.util.ProcessResponse>newBuilder()
+        if ((getRunBusinessProcessMethod = DataServiceGrpc.getRunBusinessProcessMethod) == null) {
+          DataServiceGrpc.getRunBusinessProcessMethod = getRunBusinessProcessMethod = 
+              io.grpc.MethodDescriptor.<org.spin.grpc.util.RunBusinessProcessRequest, org.spin.grpc.util.BusinessProcess>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
-                  "data.DataService", "RequestProcess"))
+                  "data.DataService", "RunBusinessProcess"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  org.spin.grpc.util.ProcessRequest.getDefaultInstance()))
+                  org.spin.grpc.util.RunBusinessProcessRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  org.spin.grpc.util.ProcessResponse.getDefaultInstance()))
-                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("RequestProcess"))
+                  org.spin.grpc.util.BusinessProcess.getDefaultInstance()))
+                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("RunBusinessProcess"))
                   .build();
           }
         }
      }
-     return getRequestProcessMethod;
+     return getRunBusinessProcessMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.BrowserRequest,
-      org.spin.grpc.util.ValueObjectList> getRequestBrowserMethod;
+  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.ListBrowserItemsRequest,
+      org.spin.grpc.util.ListBrowserItemsResponse> getListBrowserItemsMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "RequestBrowser",
-      requestType = org.spin.grpc.util.BrowserRequest.class,
-      responseType = org.spin.grpc.util.ValueObjectList.class,
+      fullMethodName = SERVICE_NAME + '/' + "ListBrowserItems",
+      requestType = org.spin.grpc.util.ListBrowserItemsRequest.class,
+      responseType = org.spin.grpc.util.ListBrowserItemsResponse.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<org.spin.grpc.util.BrowserRequest,
-      org.spin.grpc.util.ValueObjectList> getRequestBrowserMethod() {
-    io.grpc.MethodDescriptor<org.spin.grpc.util.BrowserRequest, org.spin.grpc.util.ValueObjectList> getRequestBrowserMethod;
-    if ((getRequestBrowserMethod = DataServiceGrpc.getRequestBrowserMethod) == null) {
+  public static io.grpc.MethodDescriptor<org.spin.grpc.util.ListBrowserItemsRequest,
+      org.spin.grpc.util.ListBrowserItemsResponse> getListBrowserItemsMethod() {
+    io.grpc.MethodDescriptor<org.spin.grpc.util.ListBrowserItemsRequest, org.spin.grpc.util.ListBrowserItemsResponse> getListBrowserItemsMethod;
+    if ((getListBrowserItemsMethod = DataServiceGrpc.getListBrowserItemsMethod) == null) {
       synchronized (DataServiceGrpc.class) {
-        if ((getRequestBrowserMethod = DataServiceGrpc.getRequestBrowserMethod) == null) {
-          DataServiceGrpc.getRequestBrowserMethod = getRequestBrowserMethod = 
-              io.grpc.MethodDescriptor.<org.spin.grpc.util.BrowserRequest, org.spin.grpc.util.ValueObjectList>newBuilder()
+        if ((getListBrowserItemsMethod = DataServiceGrpc.getListBrowserItemsMethod) == null) {
+          DataServiceGrpc.getListBrowserItemsMethod = getListBrowserItemsMethod = 
+              io.grpc.MethodDescriptor.<org.spin.grpc.util.ListBrowserItemsRequest, org.spin.grpc.util.ListBrowserItemsResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
-                  "data.DataService", "RequestBrowser"))
+                  "data.DataService", "ListBrowserItems"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  org.spin.grpc.util.BrowserRequest.getDefaultInstance()))
+                  org.spin.grpc.util.ListBrowserItemsRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  org.spin.grpc.util.ValueObjectList.getDefaultInstance()))
-                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("RequestBrowser"))
+                  org.spin.grpc.util.ListBrowserItemsResponse.getDefaultInstance()))
+                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("ListBrowserItems"))
                   .build();
           }
         }
      }
-     return getRequestBrowserMethod;
+     return getListBrowserItemsMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.ProcessActivityRequest,
-      org.spin.grpc.util.ProcessResponseList> getRequestProcessActivityMethod;
+  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.ListActivitiesRequest,
+      org.spin.grpc.util.ListActivitiesResponse> getListActivitiesMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "RequestProcessActivity",
-      requestType = org.spin.grpc.util.ProcessActivityRequest.class,
-      responseType = org.spin.grpc.util.ProcessResponseList.class,
+      fullMethodName = SERVICE_NAME + '/' + "ListActivities",
+      requestType = org.spin.grpc.util.ListActivitiesRequest.class,
+      responseType = org.spin.grpc.util.ListActivitiesResponse.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<org.spin.grpc.util.ProcessActivityRequest,
-      org.spin.grpc.util.ProcessResponseList> getRequestProcessActivityMethod() {
-    io.grpc.MethodDescriptor<org.spin.grpc.util.ProcessActivityRequest, org.spin.grpc.util.ProcessResponseList> getRequestProcessActivityMethod;
-    if ((getRequestProcessActivityMethod = DataServiceGrpc.getRequestProcessActivityMethod) == null) {
+  public static io.grpc.MethodDescriptor<org.spin.grpc.util.ListActivitiesRequest,
+      org.spin.grpc.util.ListActivitiesResponse> getListActivitiesMethod() {
+    io.grpc.MethodDescriptor<org.spin.grpc.util.ListActivitiesRequest, org.spin.grpc.util.ListActivitiesResponse> getListActivitiesMethod;
+    if ((getListActivitiesMethod = DataServiceGrpc.getListActivitiesMethod) == null) {
       synchronized (DataServiceGrpc.class) {
-        if ((getRequestProcessActivityMethod = DataServiceGrpc.getRequestProcessActivityMethod) == null) {
-          DataServiceGrpc.getRequestProcessActivityMethod = getRequestProcessActivityMethod = 
-              io.grpc.MethodDescriptor.<org.spin.grpc.util.ProcessActivityRequest, org.spin.grpc.util.ProcessResponseList>newBuilder()
+        if ((getListActivitiesMethod = DataServiceGrpc.getListActivitiesMethod) == null) {
+          DataServiceGrpc.getListActivitiesMethod = getListActivitiesMethod = 
+              io.grpc.MethodDescriptor.<org.spin.grpc.util.ListActivitiesRequest, org.spin.grpc.util.ListActivitiesResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
-                  "data.DataService", "RequestProcessActivity"))
+                  "data.DataService", "ListActivities"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  org.spin.grpc.util.ProcessActivityRequest.getDefaultInstance()))
+                  org.spin.grpc.util.ListActivitiesRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  org.spin.grpc.util.ProcessResponseList.getDefaultInstance()))
-                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("RequestProcessActivity"))
+                  org.spin.grpc.util.ListActivitiesResponse.getDefaultInstance()))
+                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("ListActivities"))
                   .build();
           }
         }
      }
-     return getRequestProcessActivityMethod;
+     return getListActivitiesMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.RecentItemsRequest,
-      org.spin.grpc.util.RecentItemsResponse> getRequestRecentItemsMethod;
+  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.ListRecentItemsRequest,
+      org.spin.grpc.util.ListRecentItemsResponse> getListRecentItemsMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "RequestRecentItems",
-      requestType = org.spin.grpc.util.RecentItemsRequest.class,
-      responseType = org.spin.grpc.util.RecentItemsResponse.class,
+      fullMethodName = SERVICE_NAME + '/' + "ListRecentItems",
+      requestType = org.spin.grpc.util.ListRecentItemsRequest.class,
+      responseType = org.spin.grpc.util.ListRecentItemsResponse.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<org.spin.grpc.util.RecentItemsRequest,
-      org.spin.grpc.util.RecentItemsResponse> getRequestRecentItemsMethod() {
-    io.grpc.MethodDescriptor<org.spin.grpc.util.RecentItemsRequest, org.spin.grpc.util.RecentItemsResponse> getRequestRecentItemsMethod;
-    if ((getRequestRecentItemsMethod = DataServiceGrpc.getRequestRecentItemsMethod) == null) {
+  public static io.grpc.MethodDescriptor<org.spin.grpc.util.ListRecentItemsRequest,
+      org.spin.grpc.util.ListRecentItemsResponse> getListRecentItemsMethod() {
+    io.grpc.MethodDescriptor<org.spin.grpc.util.ListRecentItemsRequest, org.spin.grpc.util.ListRecentItemsResponse> getListRecentItemsMethod;
+    if ((getListRecentItemsMethod = DataServiceGrpc.getListRecentItemsMethod) == null) {
       synchronized (DataServiceGrpc.class) {
-        if ((getRequestRecentItemsMethod = DataServiceGrpc.getRequestRecentItemsMethod) == null) {
-          DataServiceGrpc.getRequestRecentItemsMethod = getRequestRecentItemsMethod = 
-              io.grpc.MethodDescriptor.<org.spin.grpc.util.RecentItemsRequest, org.spin.grpc.util.RecentItemsResponse>newBuilder()
+        if ((getListRecentItemsMethod = DataServiceGrpc.getListRecentItemsMethod) == null) {
+          DataServiceGrpc.getListRecentItemsMethod = getListRecentItemsMethod = 
+              io.grpc.MethodDescriptor.<org.spin.grpc.util.ListRecentItemsRequest, org.spin.grpc.util.ListRecentItemsResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
-                  "data.DataService", "RequestRecentItems"))
+                  "data.DataService", "ListRecentItems"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  org.spin.grpc.util.RecentItemsRequest.getDefaultInstance()))
+                  org.spin.grpc.util.ListRecentItemsRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  org.spin.grpc.util.RecentItemsResponse.getDefaultInstance()))
-                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("RequestRecentItems"))
+                  org.spin.grpc.util.ListRecentItemsResponse.getDefaultInstance()))
+                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("ListRecentItems"))
                   .build();
           }
         }
      }
-     return getRequestRecentItemsMethod;
+     return getListRecentItemsMethod;
   }
 
   /**
@@ -350,62 +350,62 @@ public final class DataServiceGrpc {
 
     /**
      * <pre>
-     * Request Object entity from UUID (Optional ID)
+     * Get a Entity
      * </pre>
      */
-    public void requestObject(org.spin.grpc.util.ValueObjectRequest request,
-        io.grpc.stub.StreamObserver<org.spin.grpc.util.ValueObject> responseObserver) {
-      asyncUnimplementedUnaryCall(getRequestObjectMethod(), responseObserver);
+    public void getEntity(org.spin.grpc.util.GetEntityRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.Entity> responseObserver) {
+      asyncUnimplementedUnaryCall(getGetEntityMethod(), responseObserver);
     }
 
     /**
      * <pre>
-     * Request Object List
+     * List a Entities
      * </pre>
      */
-    public void requestObjectList(org.spin.grpc.util.ValueObjectRequest request,
-        io.grpc.stub.StreamObserver<org.spin.grpc.util.ValueObjectList> responseObserver) {
-      asyncUnimplementedUnaryCall(getRequestObjectListMethod(), responseObserver);
+    public void listEntities(org.spin.grpc.util.ListEntitiesRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.ListEntitiesResponse> responseObserver) {
+      asyncUnimplementedUnaryCall(getListEntitiesMethod(), responseObserver);
     }
 
     /**
      * <pre>
-     * Request Lookup
+     * Get Lookup Item
      * </pre>
      */
-    public void requestLookup(org.spin.grpc.util.ValueObjectRequest request,
-        io.grpc.stub.StreamObserver<org.spin.grpc.util.ValueObject> responseObserver) {
-      asyncUnimplementedUnaryCall(getRequestLookupMethod(), responseObserver);
+    public void getLookupItem(org.spin.grpc.util.GetLookupItemRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.LookupItem> responseObserver) {
+      asyncUnimplementedUnaryCall(getGetLookupItemMethod(), responseObserver);
     }
 
     /**
      * <pre>
-     * Request Lookup List
+     * List Lookup Item
      * </pre>
      */
-    public void requestLookupList(org.spin.grpc.util.ValueObjectRequest request,
-        io.grpc.stub.StreamObserver<org.spin.grpc.util.ValueObjectList> responseObserver) {
-      asyncUnimplementedUnaryCall(getRequestLookupListMethod(), responseObserver);
+    public void listLookupItems(org.spin.grpc.util.ListLookupItemsRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.ListLookupItemsResponse> responseObserver) {
+      asyncUnimplementedUnaryCall(getListLookupItemsMethod(), responseObserver);
     }
 
     /**
      * <pre>
-     * Request Callout
+     * Run a Callout
      * </pre>
      */
-    public void requestCallout(org.spin.grpc.util.CalloutRequest request,
-        io.grpc.stub.StreamObserver<org.spin.grpc.util.CalloutResponse> responseObserver) {
-      asyncUnimplementedUnaryCall(getRequestCalloutMethod(), responseObserver);
+    public void runCallout(org.spin.grpc.util.RunCalloutRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.Callout> responseObserver) {
+      asyncUnimplementedUnaryCall(getRunCalloutMethod(), responseObserver);
     }
 
     /**
      * <pre>
-     *	Request a Process / Report
+     *	Request a BusinessProcess / Report
      * </pre>
      */
-    public void requestProcess(org.spin.grpc.util.ProcessRequest request,
-        io.grpc.stub.StreamObserver<org.spin.grpc.util.ProcessResponse> responseObserver) {
-      asyncUnimplementedUnaryCall(getRequestProcessMethod(), responseObserver);
+    public void runBusinessProcess(org.spin.grpc.util.RunBusinessProcessRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.BusinessProcess> responseObserver) {
+      asyncUnimplementedUnaryCall(getRunBusinessProcessMethod(), responseObserver);
     }
 
     /**
@@ -413,19 +413,19 @@ public final class DataServiceGrpc {
      *	Request Browser Data
      * </pre>
      */
-    public void requestBrowser(org.spin.grpc.util.BrowserRequest request,
-        io.grpc.stub.StreamObserver<org.spin.grpc.util.ValueObjectList> responseObserver) {
-      asyncUnimplementedUnaryCall(getRequestBrowserMethod(), responseObserver);
+    public void listBrowserItems(org.spin.grpc.util.ListBrowserItemsRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.ListBrowserItemsResponse> responseObserver) {
+      asyncUnimplementedUnaryCall(getListBrowserItemsMethod(), responseObserver);
     }
 
     /**
      * <pre>
-     *	Request Process Activity from current session
+     *	Request BusinessProcess Activity from current session
      * </pre>
      */
-    public void requestProcessActivity(org.spin.grpc.util.ProcessActivityRequest request,
-        io.grpc.stub.StreamObserver<org.spin.grpc.util.ProcessResponseList> responseObserver) {
-      asyncUnimplementedUnaryCall(getRequestProcessActivityMethod(), responseObserver);
+    public void listActivities(org.spin.grpc.util.ListActivitiesRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.ListActivitiesResponse> responseObserver) {
+      asyncUnimplementedUnaryCall(getListActivitiesMethod(), responseObserver);
     }
 
     /**
@@ -433,76 +433,76 @@ public final class DataServiceGrpc {
      *	Request Recent Items
      * </pre>
      */
-    public void requestRecentItems(org.spin.grpc.util.RecentItemsRequest request,
-        io.grpc.stub.StreamObserver<org.spin.grpc.util.RecentItemsResponse> responseObserver) {
-      asyncUnimplementedUnaryCall(getRequestRecentItemsMethod(), responseObserver);
+    public void listRecentItems(org.spin.grpc.util.ListRecentItemsRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.ListRecentItemsResponse> responseObserver) {
+      asyncUnimplementedUnaryCall(getListRecentItemsMethod(), responseObserver);
     }
 
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
-            getRequestObjectMethod(),
+            getGetEntityMethod(),
             asyncUnaryCall(
               new MethodHandlers<
-                org.spin.grpc.util.ValueObjectRequest,
-                org.spin.grpc.util.ValueObject>(
-                  this, METHODID_REQUEST_OBJECT)))
+                org.spin.grpc.util.GetEntityRequest,
+                org.spin.grpc.util.Entity>(
+                  this, METHODID_GET_ENTITY)))
           .addMethod(
-            getRequestObjectListMethod(),
+            getListEntitiesMethod(),
             asyncUnaryCall(
               new MethodHandlers<
-                org.spin.grpc.util.ValueObjectRequest,
-                org.spin.grpc.util.ValueObjectList>(
-                  this, METHODID_REQUEST_OBJECT_LIST)))
+                org.spin.grpc.util.ListEntitiesRequest,
+                org.spin.grpc.util.ListEntitiesResponse>(
+                  this, METHODID_LIST_ENTITIES)))
           .addMethod(
-            getRequestLookupMethod(),
+            getGetLookupItemMethod(),
             asyncUnaryCall(
               new MethodHandlers<
-                org.spin.grpc.util.ValueObjectRequest,
-                org.spin.grpc.util.ValueObject>(
-                  this, METHODID_REQUEST_LOOKUP)))
+                org.spin.grpc.util.GetLookupItemRequest,
+                org.spin.grpc.util.LookupItem>(
+                  this, METHODID_GET_LOOKUP_ITEM)))
           .addMethod(
-            getRequestLookupListMethod(),
+            getListLookupItemsMethod(),
             asyncUnaryCall(
               new MethodHandlers<
-                org.spin.grpc.util.ValueObjectRequest,
-                org.spin.grpc.util.ValueObjectList>(
-                  this, METHODID_REQUEST_LOOKUP_LIST)))
+                org.spin.grpc.util.ListLookupItemsRequest,
+                org.spin.grpc.util.ListLookupItemsResponse>(
+                  this, METHODID_LIST_LOOKUP_ITEMS)))
           .addMethod(
-            getRequestCalloutMethod(),
+            getRunCalloutMethod(),
             asyncUnaryCall(
               new MethodHandlers<
-                org.spin.grpc.util.CalloutRequest,
-                org.spin.grpc.util.CalloutResponse>(
-                  this, METHODID_REQUEST_CALLOUT)))
+                org.spin.grpc.util.RunCalloutRequest,
+                org.spin.grpc.util.Callout>(
+                  this, METHODID_RUN_CALLOUT)))
           .addMethod(
-            getRequestProcessMethod(),
+            getRunBusinessProcessMethod(),
             asyncUnaryCall(
               new MethodHandlers<
-                org.spin.grpc.util.ProcessRequest,
-                org.spin.grpc.util.ProcessResponse>(
-                  this, METHODID_REQUEST_PROCESS)))
+                org.spin.grpc.util.RunBusinessProcessRequest,
+                org.spin.grpc.util.BusinessProcess>(
+                  this, METHODID_RUN_BUSINESS_PROCESS)))
           .addMethod(
-            getRequestBrowserMethod(),
+            getListBrowserItemsMethod(),
             asyncUnaryCall(
               new MethodHandlers<
-                org.spin.grpc.util.BrowserRequest,
-                org.spin.grpc.util.ValueObjectList>(
-                  this, METHODID_REQUEST_BROWSER)))
+                org.spin.grpc.util.ListBrowserItemsRequest,
+                org.spin.grpc.util.ListBrowserItemsResponse>(
+                  this, METHODID_LIST_BROWSER_ITEMS)))
           .addMethod(
-            getRequestProcessActivityMethod(),
+            getListActivitiesMethod(),
             asyncUnaryCall(
               new MethodHandlers<
-                org.spin.grpc.util.ProcessActivityRequest,
-                org.spin.grpc.util.ProcessResponseList>(
-                  this, METHODID_REQUEST_PROCESS_ACTIVITY)))
+                org.spin.grpc.util.ListActivitiesRequest,
+                org.spin.grpc.util.ListActivitiesResponse>(
+                  this, METHODID_LIST_ACTIVITIES)))
           .addMethod(
-            getRequestRecentItemsMethod(),
+            getListRecentItemsMethod(),
             asyncUnaryCall(
               new MethodHandlers<
-                org.spin.grpc.util.RecentItemsRequest,
-                org.spin.grpc.util.RecentItemsResponse>(
-                  this, METHODID_REQUEST_RECENT_ITEMS)))
+                org.spin.grpc.util.ListRecentItemsRequest,
+                org.spin.grpc.util.ListRecentItemsResponse>(
+                  this, METHODID_LIST_RECENT_ITEMS)))
           .build();
     }
   }
@@ -530,68 +530,68 @@ public final class DataServiceGrpc {
 
     /**
      * <pre>
-     * Request Object entity from UUID (Optional ID)
+     * Get a Entity
      * </pre>
      */
-    public void requestObject(org.spin.grpc.util.ValueObjectRequest request,
-        io.grpc.stub.StreamObserver<org.spin.grpc.util.ValueObject> responseObserver) {
+    public void getEntity(org.spin.grpc.util.GetEntityRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.Entity> responseObserver) {
       asyncUnaryCall(
-          getChannel().newCall(getRequestObjectMethod(), getCallOptions()), request, responseObserver);
+          getChannel().newCall(getGetEntityMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
      * <pre>
-     * Request Object List
+     * List a Entities
      * </pre>
      */
-    public void requestObjectList(org.spin.grpc.util.ValueObjectRequest request,
-        io.grpc.stub.StreamObserver<org.spin.grpc.util.ValueObjectList> responseObserver) {
+    public void listEntities(org.spin.grpc.util.ListEntitiesRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.ListEntitiesResponse> responseObserver) {
       asyncUnaryCall(
-          getChannel().newCall(getRequestObjectListMethod(), getCallOptions()), request, responseObserver);
+          getChannel().newCall(getListEntitiesMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
      * <pre>
-     * Request Lookup
+     * Get Lookup Item
      * </pre>
      */
-    public void requestLookup(org.spin.grpc.util.ValueObjectRequest request,
-        io.grpc.stub.StreamObserver<org.spin.grpc.util.ValueObject> responseObserver) {
+    public void getLookupItem(org.spin.grpc.util.GetLookupItemRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.LookupItem> responseObserver) {
       asyncUnaryCall(
-          getChannel().newCall(getRequestLookupMethod(), getCallOptions()), request, responseObserver);
+          getChannel().newCall(getGetLookupItemMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
      * <pre>
-     * Request Lookup List
+     * List Lookup Item
      * </pre>
      */
-    public void requestLookupList(org.spin.grpc.util.ValueObjectRequest request,
-        io.grpc.stub.StreamObserver<org.spin.grpc.util.ValueObjectList> responseObserver) {
+    public void listLookupItems(org.spin.grpc.util.ListLookupItemsRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.ListLookupItemsResponse> responseObserver) {
       asyncUnaryCall(
-          getChannel().newCall(getRequestLookupListMethod(), getCallOptions()), request, responseObserver);
+          getChannel().newCall(getListLookupItemsMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
      * <pre>
-     * Request Callout
+     * Run a Callout
      * </pre>
      */
-    public void requestCallout(org.spin.grpc.util.CalloutRequest request,
-        io.grpc.stub.StreamObserver<org.spin.grpc.util.CalloutResponse> responseObserver) {
+    public void runCallout(org.spin.grpc.util.RunCalloutRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.Callout> responseObserver) {
       asyncUnaryCall(
-          getChannel().newCall(getRequestCalloutMethod(), getCallOptions()), request, responseObserver);
+          getChannel().newCall(getRunCalloutMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
      * <pre>
-     *	Request a Process / Report
+     *	Request a BusinessProcess / Report
      * </pre>
      */
-    public void requestProcess(org.spin.grpc.util.ProcessRequest request,
-        io.grpc.stub.StreamObserver<org.spin.grpc.util.ProcessResponse> responseObserver) {
+    public void runBusinessProcess(org.spin.grpc.util.RunBusinessProcessRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.BusinessProcess> responseObserver) {
       asyncUnaryCall(
-          getChannel().newCall(getRequestProcessMethod(), getCallOptions()), request, responseObserver);
+          getChannel().newCall(getRunBusinessProcessMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
@@ -599,21 +599,21 @@ public final class DataServiceGrpc {
      *	Request Browser Data
      * </pre>
      */
-    public void requestBrowser(org.spin.grpc.util.BrowserRequest request,
-        io.grpc.stub.StreamObserver<org.spin.grpc.util.ValueObjectList> responseObserver) {
+    public void listBrowserItems(org.spin.grpc.util.ListBrowserItemsRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.ListBrowserItemsResponse> responseObserver) {
       asyncUnaryCall(
-          getChannel().newCall(getRequestBrowserMethod(), getCallOptions()), request, responseObserver);
+          getChannel().newCall(getListBrowserItemsMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
      * <pre>
-     *	Request Process Activity from current session
+     *	Request BusinessProcess Activity from current session
      * </pre>
      */
-    public void requestProcessActivity(org.spin.grpc.util.ProcessActivityRequest request,
-        io.grpc.stub.StreamObserver<org.spin.grpc.util.ProcessResponseList> responseObserver) {
+    public void listActivities(org.spin.grpc.util.ListActivitiesRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.ListActivitiesResponse> responseObserver) {
       asyncUnaryCall(
-          getChannel().newCall(getRequestProcessActivityMethod(), getCallOptions()), request, responseObserver);
+          getChannel().newCall(getListActivitiesMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
@@ -621,10 +621,10 @@ public final class DataServiceGrpc {
      *	Request Recent Items
      * </pre>
      */
-    public void requestRecentItems(org.spin.grpc.util.RecentItemsRequest request,
-        io.grpc.stub.StreamObserver<org.spin.grpc.util.RecentItemsResponse> responseObserver) {
+    public void listRecentItems(org.spin.grpc.util.ListRecentItemsRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.ListRecentItemsResponse> responseObserver) {
       asyncUnaryCall(
-          getChannel().newCall(getRequestRecentItemsMethod(), getCallOptions()), request, responseObserver);
+          getChannel().newCall(getListRecentItemsMethod(), getCallOptions()), request, responseObserver);
     }
   }
 
@@ -651,62 +651,62 @@ public final class DataServiceGrpc {
 
     /**
      * <pre>
-     * Request Object entity from UUID (Optional ID)
+     * Get a Entity
      * </pre>
      */
-    public org.spin.grpc.util.ValueObject requestObject(org.spin.grpc.util.ValueObjectRequest request) {
+    public org.spin.grpc.util.Entity getEntity(org.spin.grpc.util.GetEntityRequest request) {
       return blockingUnaryCall(
-          getChannel(), getRequestObjectMethod(), getCallOptions(), request);
+          getChannel(), getGetEntityMethod(), getCallOptions(), request);
     }
 
     /**
      * <pre>
-     * Request Object List
+     * List a Entities
      * </pre>
      */
-    public org.spin.grpc.util.ValueObjectList requestObjectList(org.spin.grpc.util.ValueObjectRequest request) {
+    public org.spin.grpc.util.ListEntitiesResponse listEntities(org.spin.grpc.util.ListEntitiesRequest request) {
       return blockingUnaryCall(
-          getChannel(), getRequestObjectListMethod(), getCallOptions(), request);
+          getChannel(), getListEntitiesMethod(), getCallOptions(), request);
     }
 
     /**
      * <pre>
-     * Request Lookup
+     * Get Lookup Item
      * </pre>
      */
-    public org.spin.grpc.util.ValueObject requestLookup(org.spin.grpc.util.ValueObjectRequest request) {
+    public org.spin.grpc.util.LookupItem getLookupItem(org.spin.grpc.util.GetLookupItemRequest request) {
       return blockingUnaryCall(
-          getChannel(), getRequestLookupMethod(), getCallOptions(), request);
+          getChannel(), getGetLookupItemMethod(), getCallOptions(), request);
     }
 
     /**
      * <pre>
-     * Request Lookup List
+     * List Lookup Item
      * </pre>
      */
-    public org.spin.grpc.util.ValueObjectList requestLookupList(org.spin.grpc.util.ValueObjectRequest request) {
+    public org.spin.grpc.util.ListLookupItemsResponse listLookupItems(org.spin.grpc.util.ListLookupItemsRequest request) {
       return blockingUnaryCall(
-          getChannel(), getRequestLookupListMethod(), getCallOptions(), request);
+          getChannel(), getListLookupItemsMethod(), getCallOptions(), request);
     }
 
     /**
      * <pre>
-     * Request Callout
+     * Run a Callout
      * </pre>
      */
-    public org.spin.grpc.util.CalloutResponse requestCallout(org.spin.grpc.util.CalloutRequest request) {
+    public org.spin.grpc.util.Callout runCallout(org.spin.grpc.util.RunCalloutRequest request) {
       return blockingUnaryCall(
-          getChannel(), getRequestCalloutMethod(), getCallOptions(), request);
+          getChannel(), getRunCalloutMethod(), getCallOptions(), request);
     }
 
     /**
      * <pre>
-     *	Request a Process / Report
+     *	Request a BusinessProcess / Report
      * </pre>
      */
-    public org.spin.grpc.util.ProcessResponse requestProcess(org.spin.grpc.util.ProcessRequest request) {
+    public org.spin.grpc.util.BusinessProcess runBusinessProcess(org.spin.grpc.util.RunBusinessProcessRequest request) {
       return blockingUnaryCall(
-          getChannel(), getRequestProcessMethod(), getCallOptions(), request);
+          getChannel(), getRunBusinessProcessMethod(), getCallOptions(), request);
     }
 
     /**
@@ -714,19 +714,19 @@ public final class DataServiceGrpc {
      *	Request Browser Data
      * </pre>
      */
-    public org.spin.grpc.util.ValueObjectList requestBrowser(org.spin.grpc.util.BrowserRequest request) {
+    public org.spin.grpc.util.ListBrowserItemsResponse listBrowserItems(org.spin.grpc.util.ListBrowserItemsRequest request) {
       return blockingUnaryCall(
-          getChannel(), getRequestBrowserMethod(), getCallOptions(), request);
+          getChannel(), getListBrowserItemsMethod(), getCallOptions(), request);
     }
 
     /**
      * <pre>
-     *	Request Process Activity from current session
+     *	Request BusinessProcess Activity from current session
      * </pre>
      */
-    public org.spin.grpc.util.ProcessResponseList requestProcessActivity(org.spin.grpc.util.ProcessActivityRequest request) {
+    public org.spin.grpc.util.ListActivitiesResponse listActivities(org.spin.grpc.util.ListActivitiesRequest request) {
       return blockingUnaryCall(
-          getChannel(), getRequestProcessActivityMethod(), getCallOptions(), request);
+          getChannel(), getListActivitiesMethod(), getCallOptions(), request);
     }
 
     /**
@@ -734,9 +734,9 @@ public final class DataServiceGrpc {
      *	Request Recent Items
      * </pre>
      */
-    public org.spin.grpc.util.RecentItemsResponse requestRecentItems(org.spin.grpc.util.RecentItemsRequest request) {
+    public org.spin.grpc.util.ListRecentItemsResponse listRecentItems(org.spin.grpc.util.ListRecentItemsRequest request) {
       return blockingUnaryCall(
-          getChannel(), getRequestRecentItemsMethod(), getCallOptions(), request);
+          getChannel(), getListRecentItemsMethod(), getCallOptions(), request);
     }
   }
 
@@ -763,68 +763,68 @@ public final class DataServiceGrpc {
 
     /**
      * <pre>
-     * Request Object entity from UUID (Optional ID)
+     * Get a Entity
      * </pre>
      */
-    public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.ValueObject> requestObject(
-        org.spin.grpc.util.ValueObjectRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.Entity> getEntity(
+        org.spin.grpc.util.GetEntityRequest request) {
       return futureUnaryCall(
-          getChannel().newCall(getRequestObjectMethod(), getCallOptions()), request);
+          getChannel().newCall(getGetEntityMethod(), getCallOptions()), request);
     }
 
     /**
      * <pre>
-     * Request Object List
+     * List a Entities
      * </pre>
      */
-    public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.ValueObjectList> requestObjectList(
-        org.spin.grpc.util.ValueObjectRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.ListEntitiesResponse> listEntities(
+        org.spin.grpc.util.ListEntitiesRequest request) {
       return futureUnaryCall(
-          getChannel().newCall(getRequestObjectListMethod(), getCallOptions()), request);
+          getChannel().newCall(getListEntitiesMethod(), getCallOptions()), request);
     }
 
     /**
      * <pre>
-     * Request Lookup
+     * Get Lookup Item
      * </pre>
      */
-    public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.ValueObject> requestLookup(
-        org.spin.grpc.util.ValueObjectRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.LookupItem> getLookupItem(
+        org.spin.grpc.util.GetLookupItemRequest request) {
       return futureUnaryCall(
-          getChannel().newCall(getRequestLookupMethod(), getCallOptions()), request);
+          getChannel().newCall(getGetLookupItemMethod(), getCallOptions()), request);
     }
 
     /**
      * <pre>
-     * Request Lookup List
+     * List Lookup Item
      * </pre>
      */
-    public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.ValueObjectList> requestLookupList(
-        org.spin.grpc.util.ValueObjectRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.ListLookupItemsResponse> listLookupItems(
+        org.spin.grpc.util.ListLookupItemsRequest request) {
       return futureUnaryCall(
-          getChannel().newCall(getRequestLookupListMethod(), getCallOptions()), request);
+          getChannel().newCall(getListLookupItemsMethod(), getCallOptions()), request);
     }
 
     /**
      * <pre>
-     * Request Callout
+     * Run a Callout
      * </pre>
      */
-    public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.CalloutResponse> requestCallout(
-        org.spin.grpc.util.CalloutRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.Callout> runCallout(
+        org.spin.grpc.util.RunCalloutRequest request) {
       return futureUnaryCall(
-          getChannel().newCall(getRequestCalloutMethod(), getCallOptions()), request);
+          getChannel().newCall(getRunCalloutMethod(), getCallOptions()), request);
     }
 
     /**
      * <pre>
-     *	Request a Process / Report
+     *	Request a BusinessProcess / Report
      * </pre>
      */
-    public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.ProcessResponse> requestProcess(
-        org.spin.grpc.util.ProcessRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.BusinessProcess> runBusinessProcess(
+        org.spin.grpc.util.RunBusinessProcessRequest request) {
       return futureUnaryCall(
-          getChannel().newCall(getRequestProcessMethod(), getCallOptions()), request);
+          getChannel().newCall(getRunBusinessProcessMethod(), getCallOptions()), request);
     }
 
     /**
@@ -832,21 +832,21 @@ public final class DataServiceGrpc {
      *	Request Browser Data
      * </pre>
      */
-    public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.ValueObjectList> requestBrowser(
-        org.spin.grpc.util.BrowserRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.ListBrowserItemsResponse> listBrowserItems(
+        org.spin.grpc.util.ListBrowserItemsRequest request) {
       return futureUnaryCall(
-          getChannel().newCall(getRequestBrowserMethod(), getCallOptions()), request);
+          getChannel().newCall(getListBrowserItemsMethod(), getCallOptions()), request);
     }
 
     /**
      * <pre>
-     *	Request Process Activity from current session
+     *	Request BusinessProcess Activity from current session
      * </pre>
      */
-    public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.ProcessResponseList> requestProcessActivity(
-        org.spin.grpc.util.ProcessActivityRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.ListActivitiesResponse> listActivities(
+        org.spin.grpc.util.ListActivitiesRequest request) {
       return futureUnaryCall(
-          getChannel().newCall(getRequestProcessActivityMethod(), getCallOptions()), request);
+          getChannel().newCall(getListActivitiesMethod(), getCallOptions()), request);
     }
 
     /**
@@ -854,22 +854,22 @@ public final class DataServiceGrpc {
      *	Request Recent Items
      * </pre>
      */
-    public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.RecentItemsResponse> requestRecentItems(
-        org.spin.grpc.util.RecentItemsRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.ListRecentItemsResponse> listRecentItems(
+        org.spin.grpc.util.ListRecentItemsRequest request) {
       return futureUnaryCall(
-          getChannel().newCall(getRequestRecentItemsMethod(), getCallOptions()), request);
+          getChannel().newCall(getListRecentItemsMethod(), getCallOptions()), request);
     }
   }
 
-  private static final int METHODID_REQUEST_OBJECT = 0;
-  private static final int METHODID_REQUEST_OBJECT_LIST = 1;
-  private static final int METHODID_REQUEST_LOOKUP = 2;
-  private static final int METHODID_REQUEST_LOOKUP_LIST = 3;
-  private static final int METHODID_REQUEST_CALLOUT = 4;
-  private static final int METHODID_REQUEST_PROCESS = 5;
-  private static final int METHODID_REQUEST_BROWSER = 6;
-  private static final int METHODID_REQUEST_PROCESS_ACTIVITY = 7;
-  private static final int METHODID_REQUEST_RECENT_ITEMS = 8;
+  private static final int METHODID_GET_ENTITY = 0;
+  private static final int METHODID_LIST_ENTITIES = 1;
+  private static final int METHODID_GET_LOOKUP_ITEM = 2;
+  private static final int METHODID_LIST_LOOKUP_ITEMS = 3;
+  private static final int METHODID_RUN_CALLOUT = 4;
+  private static final int METHODID_RUN_BUSINESS_PROCESS = 5;
+  private static final int METHODID_LIST_BROWSER_ITEMS = 6;
+  private static final int METHODID_LIST_ACTIVITIES = 7;
+  private static final int METHODID_LIST_RECENT_ITEMS = 8;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -888,41 +888,41 @@ public final class DataServiceGrpc {
     @java.lang.SuppressWarnings("unchecked")
     public void invoke(Req request, io.grpc.stub.StreamObserver<Resp> responseObserver) {
       switch (methodId) {
-        case METHODID_REQUEST_OBJECT:
-          serviceImpl.requestObject((org.spin.grpc.util.ValueObjectRequest) request,
-              (io.grpc.stub.StreamObserver<org.spin.grpc.util.ValueObject>) responseObserver);
+        case METHODID_GET_ENTITY:
+          serviceImpl.getEntity((org.spin.grpc.util.GetEntityRequest) request,
+              (io.grpc.stub.StreamObserver<org.spin.grpc.util.Entity>) responseObserver);
           break;
-        case METHODID_REQUEST_OBJECT_LIST:
-          serviceImpl.requestObjectList((org.spin.grpc.util.ValueObjectRequest) request,
-              (io.grpc.stub.StreamObserver<org.spin.grpc.util.ValueObjectList>) responseObserver);
+        case METHODID_LIST_ENTITIES:
+          serviceImpl.listEntities((org.spin.grpc.util.ListEntitiesRequest) request,
+              (io.grpc.stub.StreamObserver<org.spin.grpc.util.ListEntitiesResponse>) responseObserver);
           break;
-        case METHODID_REQUEST_LOOKUP:
-          serviceImpl.requestLookup((org.spin.grpc.util.ValueObjectRequest) request,
-              (io.grpc.stub.StreamObserver<org.spin.grpc.util.ValueObject>) responseObserver);
+        case METHODID_GET_LOOKUP_ITEM:
+          serviceImpl.getLookupItem((org.spin.grpc.util.GetLookupItemRequest) request,
+              (io.grpc.stub.StreamObserver<org.spin.grpc.util.LookupItem>) responseObserver);
           break;
-        case METHODID_REQUEST_LOOKUP_LIST:
-          serviceImpl.requestLookupList((org.spin.grpc.util.ValueObjectRequest) request,
-              (io.grpc.stub.StreamObserver<org.spin.grpc.util.ValueObjectList>) responseObserver);
+        case METHODID_LIST_LOOKUP_ITEMS:
+          serviceImpl.listLookupItems((org.spin.grpc.util.ListLookupItemsRequest) request,
+              (io.grpc.stub.StreamObserver<org.spin.grpc.util.ListLookupItemsResponse>) responseObserver);
           break;
-        case METHODID_REQUEST_CALLOUT:
-          serviceImpl.requestCallout((org.spin.grpc.util.CalloutRequest) request,
-              (io.grpc.stub.StreamObserver<org.spin.grpc.util.CalloutResponse>) responseObserver);
+        case METHODID_RUN_CALLOUT:
+          serviceImpl.runCallout((org.spin.grpc.util.RunCalloutRequest) request,
+              (io.grpc.stub.StreamObserver<org.spin.grpc.util.Callout>) responseObserver);
           break;
-        case METHODID_REQUEST_PROCESS:
-          serviceImpl.requestProcess((org.spin.grpc.util.ProcessRequest) request,
-              (io.grpc.stub.StreamObserver<org.spin.grpc.util.ProcessResponse>) responseObserver);
+        case METHODID_RUN_BUSINESS_PROCESS:
+          serviceImpl.runBusinessProcess((org.spin.grpc.util.RunBusinessProcessRequest) request,
+              (io.grpc.stub.StreamObserver<org.spin.grpc.util.BusinessProcess>) responseObserver);
           break;
-        case METHODID_REQUEST_BROWSER:
-          serviceImpl.requestBrowser((org.spin.grpc.util.BrowserRequest) request,
-              (io.grpc.stub.StreamObserver<org.spin.grpc.util.ValueObjectList>) responseObserver);
+        case METHODID_LIST_BROWSER_ITEMS:
+          serviceImpl.listBrowserItems((org.spin.grpc.util.ListBrowserItemsRequest) request,
+              (io.grpc.stub.StreamObserver<org.spin.grpc.util.ListBrowserItemsResponse>) responseObserver);
           break;
-        case METHODID_REQUEST_PROCESS_ACTIVITY:
-          serviceImpl.requestProcessActivity((org.spin.grpc.util.ProcessActivityRequest) request,
-              (io.grpc.stub.StreamObserver<org.spin.grpc.util.ProcessResponseList>) responseObserver);
+        case METHODID_LIST_ACTIVITIES:
+          serviceImpl.listActivities((org.spin.grpc.util.ListActivitiesRequest) request,
+              (io.grpc.stub.StreamObserver<org.spin.grpc.util.ListActivitiesResponse>) responseObserver);
           break;
-        case METHODID_REQUEST_RECENT_ITEMS:
-          serviceImpl.requestRecentItems((org.spin.grpc.util.RecentItemsRequest) request,
-              (io.grpc.stub.StreamObserver<org.spin.grpc.util.RecentItemsResponse>) responseObserver);
+        case METHODID_LIST_RECENT_ITEMS:
+          serviceImpl.listRecentItems((org.spin.grpc.util.ListRecentItemsRequest) request,
+              (io.grpc.stub.StreamObserver<org.spin.grpc.util.ListRecentItemsResponse>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -985,15 +985,15 @@ public final class DataServiceGrpc {
         if (result == null) {
           serviceDescriptor = result = io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
               .setSchemaDescriptor(new DataServiceFileDescriptorSupplier())
-              .addMethod(getRequestObjectMethod())
-              .addMethod(getRequestObjectListMethod())
-              .addMethod(getRequestLookupMethod())
-              .addMethod(getRequestLookupListMethod())
-              .addMethod(getRequestCalloutMethod())
-              .addMethod(getRequestProcessMethod())
-              .addMethod(getRequestBrowserMethod())
-              .addMethod(getRequestProcessActivityMethod())
-              .addMethod(getRequestRecentItemsMethod())
+              .addMethod(getGetEntityMethod())
+              .addMethod(getListEntitiesMethod())
+              .addMethod(getGetLookupItemMethod())
+              .addMethod(getListLookupItemsMethod())
+              .addMethod(getRunCalloutMethod())
+              .addMethod(getRunBusinessProcessMethod())
+              .addMethod(getListBrowserItemsMethod())
+              .addMethod(getListActivitiesMethod())
+              .addMethod(getListRecentItemsMethod())
               .build();
         }
       }

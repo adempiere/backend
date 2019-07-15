@@ -5,21 +5,21 @@ package org.spin.grpc.util;
 
 /**
  * <pre>
- * Process Request
+ * BusinessProcess Request
  * </pre>
  *
- * Protobuf type {@code data.ProcessRequest}
+ * Protobuf type {@code data.RunBusinessProcessRequest}
  */
-public  final class ProcessRequest extends
+public  final class RunBusinessProcessRequest extends
     com.google.protobuf.GeneratedMessageV3 implements
-    // @@protoc_insertion_point(message_implements:data.ProcessRequest)
-    ProcessRequestOrBuilder {
+    // @@protoc_insertion_point(message_implements:data.RunBusinessProcessRequest)
+    RunBusinessProcessRequestOrBuilder {
 private static final long serialVersionUID = 0L;
-  // Use ProcessRequest.newBuilder() to construct.
-  private ProcessRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+  // Use RunBusinessProcessRequest.newBuilder() to construct.
+  private RunBusinessProcessRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
   }
-  private ProcessRequest() {
+  private RunBusinessProcessRequest() {
     uuid_ = "";
     tableId_ = 0;
     recordId_ = 0;
@@ -34,7 +34,7 @@ private static final long serialVersionUID = 0L;
   getUnknownFields() {
     return this.unknownFields;
   }
-  private ProcessRequest(
+  private RunBusinessProcessRequest(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -138,14 +138,14 @@ private static final long serialVersionUID = 0L;
   }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-    return org.spin.grpc.util.ADempiereData.internal_static_data_ProcessRequest_descriptor;
+    return org.spin.grpc.util.ADempiereData.internal_static_data_RunBusinessProcessRequest_descriptor;
   }
 
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
-    return org.spin.grpc.util.ADempiereData.internal_static_data_ProcessRequest_fieldAccessorTable
+    return org.spin.grpc.util.ADempiereData.internal_static_data_RunBusinessProcessRequest_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
-            org.spin.grpc.util.ProcessRequest.class, org.spin.grpc.util.ProcessRequest.Builder.class);
+            org.spin.grpc.util.RunBusinessProcessRequest.class, org.spin.grpc.util.RunBusinessProcessRequest.Builder.class);
   }
 
   private int bitField0_;
@@ -419,10 +419,10 @@ private static final long serialVersionUID = 0L;
     if (obj == this) {
      return true;
     }
-    if (!(obj instanceof org.spin.grpc.util.ProcessRequest)) {
+    if (!(obj instanceof org.spin.grpc.util.RunBusinessProcessRequest)) {
       return super.equals(obj);
     }
-    org.spin.grpc.util.ProcessRequest other = (org.spin.grpc.util.ProcessRequest) obj;
+    org.spin.grpc.util.RunBusinessProcessRequest other = (org.spin.grpc.util.RunBusinessProcessRequest) obj;
 
     boolean result = true;
     result = result && (hasClientRequest() == other.hasClientRequest());
@@ -482,69 +482,69 @@ private static final long serialVersionUID = 0L;
     return hash;
   }
 
-  public static org.spin.grpc.util.ProcessRequest parseFrom(
+  public static org.spin.grpc.util.RunBusinessProcessRequest parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.spin.grpc.util.ProcessRequest parseFrom(
+  public static org.spin.grpc.util.RunBusinessProcessRequest parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.spin.grpc.util.ProcessRequest parseFrom(
+  public static org.spin.grpc.util.RunBusinessProcessRequest parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.spin.grpc.util.ProcessRequest parseFrom(
+  public static org.spin.grpc.util.RunBusinessProcessRequest parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.spin.grpc.util.ProcessRequest parseFrom(byte[] data)
+  public static org.spin.grpc.util.RunBusinessProcessRequest parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.spin.grpc.util.ProcessRequest parseFrom(
+  public static org.spin.grpc.util.RunBusinessProcessRequest parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.spin.grpc.util.ProcessRequest parseFrom(java.io.InputStream input)
+  public static org.spin.grpc.util.RunBusinessProcessRequest parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static org.spin.grpc.util.ProcessRequest parseFrom(
+  public static org.spin.grpc.util.RunBusinessProcessRequest parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input, extensionRegistry);
   }
-  public static org.spin.grpc.util.ProcessRequest parseDelimitedFrom(java.io.InputStream input)
+  public static org.spin.grpc.util.RunBusinessProcessRequest parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input);
   }
-  public static org.spin.grpc.util.ProcessRequest parseDelimitedFrom(
+  public static org.spin.grpc.util.RunBusinessProcessRequest parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
   }
-  public static org.spin.grpc.util.ProcessRequest parseFrom(
+  public static org.spin.grpc.util.RunBusinessProcessRequest parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static org.spin.grpc.util.ProcessRequest parseFrom(
+  public static org.spin.grpc.util.RunBusinessProcessRequest parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -556,7 +556,7 @@ private static final long serialVersionUID = 0L;
   public static Builder newBuilder() {
     return DEFAULT_INSTANCE.toBuilder();
   }
-  public static Builder newBuilder(org.spin.grpc.util.ProcessRequest prototype) {
+  public static Builder newBuilder(org.spin.grpc.util.RunBusinessProcessRequest prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
   public Builder toBuilder() {
@@ -572,28 +572,28 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * Process Request
+   * BusinessProcess Request
    * </pre>
    *
-   * Protobuf type {@code data.ProcessRequest}
+   * Protobuf type {@code data.RunBusinessProcessRequest}
    */
   public static final class Builder extends
       com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-      // @@protoc_insertion_point(builder_implements:data.ProcessRequest)
-      org.spin.grpc.util.ProcessRequestOrBuilder {
+      // @@protoc_insertion_point(builder_implements:data.RunBusinessProcessRequest)
+      org.spin.grpc.util.RunBusinessProcessRequestOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.spin.grpc.util.ADempiereData.internal_static_data_ProcessRequest_descriptor;
+      return org.spin.grpc.util.ADempiereData.internal_static_data_RunBusinessProcessRequest_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.spin.grpc.util.ADempiereData.internal_static_data_ProcessRequest_fieldAccessorTable
+      return org.spin.grpc.util.ADempiereData.internal_static_data_RunBusinessProcessRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.spin.grpc.util.ProcessRequest.class, org.spin.grpc.util.ProcessRequest.Builder.class);
+              org.spin.grpc.util.RunBusinessProcessRequest.class, org.spin.grpc.util.RunBusinessProcessRequest.Builder.class);
     }
 
-    // Construct using org.spin.grpc.util.ProcessRequest.newBuilder()
+    // Construct using org.spin.grpc.util.RunBusinessProcessRequest.newBuilder()
     private Builder() {
       maybeForceBuilderInitialization();
     }
@@ -645,23 +645,23 @@ private static final long serialVersionUID = 0L;
 
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
-      return org.spin.grpc.util.ADempiereData.internal_static_data_ProcessRequest_descriptor;
+      return org.spin.grpc.util.ADempiereData.internal_static_data_RunBusinessProcessRequest_descriptor;
     }
 
-    public org.spin.grpc.util.ProcessRequest getDefaultInstanceForType() {
-      return org.spin.grpc.util.ProcessRequest.getDefaultInstance();
+    public org.spin.grpc.util.RunBusinessProcessRequest getDefaultInstanceForType() {
+      return org.spin.grpc.util.RunBusinessProcessRequest.getDefaultInstance();
     }
 
-    public org.spin.grpc.util.ProcessRequest build() {
-      org.spin.grpc.util.ProcessRequest result = buildPartial();
+    public org.spin.grpc.util.RunBusinessProcessRequest build() {
+      org.spin.grpc.util.RunBusinessProcessRequest result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
       return result;
     }
 
-    public org.spin.grpc.util.ProcessRequest buildPartial() {
-      org.spin.grpc.util.ProcessRequest result = new org.spin.grpc.util.ProcessRequest(this);
+    public org.spin.grpc.util.RunBusinessProcessRequest buildPartial() {
+      org.spin.grpc.util.RunBusinessProcessRequest result = new org.spin.grpc.util.RunBusinessProcessRequest(this);
       int from_bitField0_ = bitField0_;
       int to_bitField0_ = 0;
       if (clientRequestBuilder_ == null) {
@@ -724,16 +724,16 @@ private static final long serialVersionUID = 0L;
       return (Builder) super.addRepeatedField(field, value);
     }
     public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof org.spin.grpc.util.ProcessRequest) {
-        return mergeFrom((org.spin.grpc.util.ProcessRequest)other);
+      if (other instanceof org.spin.grpc.util.RunBusinessProcessRequest) {
+        return mergeFrom((org.spin.grpc.util.RunBusinessProcessRequest)other);
       } else {
         super.mergeFrom(other);
         return this;
       }
     }
 
-    public Builder mergeFrom(org.spin.grpc.util.ProcessRequest other) {
-      if (other == org.spin.grpc.util.ProcessRequest.getDefaultInstance()) return this;
+    public Builder mergeFrom(org.spin.grpc.util.RunBusinessProcessRequest other) {
+      if (other == org.spin.grpc.util.RunBusinessProcessRequest.getDefaultInstance()) return this;
       if (other.hasClientRequest()) {
         mergeClientRequest(other.getClientRequest());
       }
@@ -819,11 +819,11 @@ private static final long serialVersionUID = 0L;
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      org.spin.grpc.util.ProcessRequest parsedMessage = null;
+      org.spin.grpc.util.RunBusinessProcessRequest parsedMessage = null;
       try {
         parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (org.spin.grpc.util.ProcessRequest) e.getUnfinishedMessage();
+        parsedMessage = (org.spin.grpc.util.RunBusinessProcessRequest) e.getUnfinishedMessage();
         throw e.unwrapIOException();
       } finally {
         if (parsedMessage != null) {
@@ -1657,39 +1657,39 @@ private static final long serialVersionUID = 0L;
     }
 
 
-    // @@protoc_insertion_point(builder_scope:data.ProcessRequest)
+    // @@protoc_insertion_point(builder_scope:data.RunBusinessProcessRequest)
   }
 
-  // @@protoc_insertion_point(class_scope:data.ProcessRequest)
-  private static final org.spin.grpc.util.ProcessRequest DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:data.RunBusinessProcessRequest)
+  private static final org.spin.grpc.util.RunBusinessProcessRequest DEFAULT_INSTANCE;
   static {
-    DEFAULT_INSTANCE = new org.spin.grpc.util.ProcessRequest();
+    DEFAULT_INSTANCE = new org.spin.grpc.util.RunBusinessProcessRequest();
   }
 
-  public static org.spin.grpc.util.ProcessRequest getDefaultInstance() {
+  public static org.spin.grpc.util.RunBusinessProcessRequest getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<ProcessRequest>
-      PARSER = new com.google.protobuf.AbstractParser<ProcessRequest>() {
-    public ProcessRequest parsePartialFrom(
+  private static final com.google.protobuf.Parser<RunBusinessProcessRequest>
+      PARSER = new com.google.protobuf.AbstractParser<RunBusinessProcessRequest>() {
+    public RunBusinessProcessRequest parsePartialFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return new ProcessRequest(input, extensionRegistry);
+      return new RunBusinessProcessRequest(input, extensionRegistry);
     }
   };
 
-  public static com.google.protobuf.Parser<ProcessRequest> parser() {
+  public static com.google.protobuf.Parser<RunBusinessProcessRequest> parser() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.protobuf.Parser<ProcessRequest> getParserForType() {
+  public com.google.protobuf.Parser<RunBusinessProcessRequest> getParserForType() {
     return PARSER;
   }
 
-  public org.spin.grpc.util.ProcessRequest getDefaultInstanceForType() {
+  public org.spin.grpc.util.RunBusinessProcessRequest getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }
 

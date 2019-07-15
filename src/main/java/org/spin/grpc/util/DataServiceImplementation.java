@@ -93,16 +93,18 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	private static CCache<String, MBrowse> browserRequested = new CCache<String, MBrowse>(I_AD_Browse.Table_Name + "_UUID", 30, 0);	//	no time-out
 	/**	Language */
 	private static CCache<String, String> languageCache = new CCache<String, String>("Language_ISO_Code", 30, 0);	//	no time-out
+	/**	Page Size	*/
+	private final int PAGE_SIZE = 100;
 	
 	@Override
-	public void requestObject(ValueObjectRequest request, StreamObserver<ValueObject> responseObserver) {
+	public void getEntity(GetEntityRequest request, StreamObserver<Entity> responseObserver) {
 		try {
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
 			log.fine("Object Requested = " + request.getUuid());
 			Properties context = getContext(request.getClientRequest());
-			ValueObject.Builder entityValue = convertObject(context, request);
+			Entity.Builder entityValue = convertObject(context, request);
 			responseObserver.onNext(entityValue.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -112,7 +114,7 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	}
 	
 	@Override
-	public void requestCallout(CalloutRequest request, StreamObserver<CalloutResponse> responseObserver) {
+	public void runCallout(RunCalloutRequest request, StreamObserver<org.spin.grpc.util.Callout> responseObserver) {
 		try {
 			if(request == null
 					|| Util.isEmpty(request.getCallout())) {
@@ -120,7 +122,7 @@ public class DataServiceImplementation extends DataServiceImplBase {
 			}
 			log.fine("Callout Requested = " + request.getCallout());
 			Properties context = getContext(request.getClientRequest());
-			CalloutResponse.Builder calloutResponse = runcallout(context, request);
+			org.spin.grpc.util.Callout.Builder calloutResponse = runcallout(context, request);
 			responseObserver.onNext(calloutResponse.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -130,15 +132,14 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	}
 	
 	@Override
-	public void requestObjectList(ValueObjectRequest request, StreamObserver<ValueObjectList> responseObserver) {
+	public void listEntities(ListEntitiesRequest request, StreamObserver<ListEntitiesResponse> responseObserver) {
 		try {
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			log.fine("Object List Requested = " + request.getUuid());
 			Properties context = getContext(request.getClientRequest());
-			ValueObjectList.Builder entutyValueList = convertObjectList(context, request);
-			responseObserver.onNext(entutyValueList.build());
+			ListEntitiesResponse.Builder entityValueList = convertEntitiesList(context, request);
+			responseObserver.onNext(entityValueList.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
@@ -147,14 +148,14 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	}
 	
 	@Override
-	public void requestLookup(ValueObjectRequest request, StreamObserver<ValueObject> responseObserver) {
+	public void getLookupItem(GetLookupItemRequest request, StreamObserver<LookupItem> responseObserver) {
 		try {
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
 			log.fine("Lookup Requested = " + request.getUuid());
 			Properties context = getContext(request.getClientRequest());
-			ValueObject.Builder lookupValue = convertLookup(context, request);
+			LookupItem.Builder lookupValue = convertLookupItem(context, request);
 			responseObserver.onNext(lookupValue.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -164,14 +165,14 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	}
 	
 	@Override
-	public void requestLookupList(ValueObjectRequest request, StreamObserver<ValueObjectList> responseObserver) {
+	public void listLookupItems(ListLookupItemsRequest request, StreamObserver<ListLookupItemsResponse> responseObserver) {
 		try {
 			if(request == null) {
 				throw new AdempiereException("Lookup Request Null");
 			}
 			log.fine("Lookup List Requested = " + request.getUuid());
 			Properties context = getContext(request.getClientRequest());
-			ValueObjectList.Builder entityValueList = convertLookupList(context, request);
+			ListLookupItemsResponse.Builder entityValueList = convertLookupItemsList(context, request);
 			responseObserver.onNext(entityValueList.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -181,7 +182,7 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	}
 	
 	@Override
-	public void requestProcess(ProcessRequest request, StreamObserver<ProcessResponse> responseObserver) {
+	public void runBusinessProcess(RunBusinessProcessRequest request, StreamObserver<BusinessProcess> responseObserver) {
 		try {
 			if(request == null
 					|| Util.isEmpty(request.getUuid())) {
@@ -190,7 +191,7 @@ public class DataServiceImplementation extends DataServiceImplBase {
 			log.fine("Lookup List Requested = " + request.getUuid());
 			Properties context = getContext(request.getClientRequest());
 			String language = getDefaultLanguage(request.getClientRequest().getLanguage());
-			ProcessResponse.Builder processReponse = runProcess(context, request, language);
+			BusinessProcess.Builder processReponse = runProcess(context, request, language);
 			responseObserver.onNext(processReponse.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -200,7 +201,7 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	}
 	
 	@Override
-	public void requestBrowser(BrowserRequest request, StreamObserver<ValueObjectList> responseObserver) {
+	public void listBrowserItems(ListBrowserItemsRequest request, StreamObserver<ListBrowserItemsResponse> responseObserver) {
 		try {
 			if(request == null
 					|| Util.isEmpty(request.getUuid())) {
@@ -209,7 +210,7 @@ public class DataServiceImplementation extends DataServiceImplBase {
 			log.fine("Object List Requested = " + request);
 			Properties context = getContext(request.getClientRequest());
 			
-			ValueObjectList.Builder entityValueList = convertBrowserList(context, request);
+			ListBrowserItemsResponse.Builder entityValueList = convertBrowserList(context, request);
 			
 			responseObserver.onNext(entityValueList.build());
 			responseObserver.onCompleted();
@@ -220,14 +221,14 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	}
 	
 	@Override
-	public void requestProcessActivity(ProcessActivityRequest request, StreamObserver<ProcessResponseList> responseObserver) {
+	public void listActivities(ListActivitiesRequest request, StreamObserver<ListActivitiesResponse> responseObserver) {
 		try {
 			if(request == null) {
 				throw new AdempiereException("Process Activity Requested is Null");
 			}
 			log.fine("Object List Requested = " + request);
 			Properties context = getContext(request.getClientRequest());
-			ProcessResponseList.Builder entityValueList = convertProcessActivity(context, request);
+			ListActivitiesResponse.Builder entityValueList = convertProcessActivity(context, request);
 			responseObserver.onNext(entityValueList.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -237,14 +238,14 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	}
 	
 	@Override
-	public void requestRecentItems(RecentItemsRequest request, StreamObserver<RecentItemsResponse> responseObserver) {
+	public void listRecentItems(ListRecentItemsRequest request, StreamObserver<ListRecentItemsResponse> responseObserver) {
 		try {
 			if(request == null) {
 				throw new AdempiereException("Process Activity Requested is Null");
 			}
 			log.fine("Recent Items Requested = " + request);
 			Properties context = getContext(request.getClientRequest());
-			RecentItemsResponse.Builder entityValueList = convertRecentItems(context, request);
+			ListRecentItemsResponse.Builder entityValueList = convertRecentItems(context, request);
 			responseObserver.onNext(entityValueList.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -262,8 +263,8 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	 * @throws IOException 
 	 * @throws FileNotFoundException 
 	 */
-	private ProcessResponse.Builder runProcess(Properties context, ProcessRequest request, String language) throws FileNotFoundException, IOException {
-		ProcessResponse.Builder response = ProcessResponse.newBuilder();
+	private BusinessProcess.Builder runProcess(Properties context, RunBusinessProcessRequest request, String language) throws FileNotFoundException, IOException {
+		BusinessProcess.Builder response = BusinessProcess.newBuilder();
 		//	Get Process definition
 		MProcess process = getProcess(context, request.getUuid(), language);
 		if(process == null
@@ -423,7 +424,7 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	 * @param request
 	 * @return
 	 */
-	private ValueObject.Builder convertObject(Properties context, ValueObjectRequest request) {
+	private Entity.Builder convertObject(Properties context, GetEntityRequest request) {
 		Criteria criteria = request.getCriteria();
 		StringBuffer whereClause = new StringBuffer();
 		List<Object> params = new ArrayList<>();
@@ -507,11 +508,11 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	 * @param request
 	 * @return
 	 */
-	private ValueObject.Builder convertLookup(Properties context, ValueObjectRequest request) {
+	private LookupItem.Builder convertLookupItem(Properties context, GetLookupItemRequest request) {
 		Criteria criteria = request.getCriteria();
 		String sql = criteria.getQuery();
 		List<Value> values = criteria.getValuesList();
-		ValueObject.Builder builder = ValueObject.newBuilder();
+		LookupItem.Builder builder = LookupItem.newBuilder();
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
@@ -555,13 +556,13 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	 * @param request
 	 * @return
 	 */
-	private ValueObjectList.Builder convertLookupList(Properties context, ValueObjectRequest request) {
+	private ListLookupItemsResponse.Builder convertLookupItemsList(Properties context, ListLookupItemsRequest request) {
 		Criteria criteria = request.getCriteria();
 		String sql = criteria.getQuery();
 		sql = MRole.getDefault(context, false).addAccessSQL(sql,
 				criteria.getTableName(), MRole.SQL_FULLYQUALIFIED, MRole.SQL_RO);
 		List<Value> values = criteria.getValuesList();
-		ValueObjectList.Builder builder = ValueObjectList.newBuilder();
+		ListLookupItemsResponse.Builder builder = ListLookupItemsResponse.newBuilder();
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		long recordCount = 0;
@@ -591,7 +592,7 @@ public class DataServiceImplementation extends DataServiceImplBase {
 					keyValue = rs.getInt(1);
 				}
 				//	
-				ValueObject.Builder valueObject = convertObjectFromResult(keyValue, null, rs.getString(2), rs.getString(3));
+				LookupItem.Builder valueObject = convertObjectFromResult(keyValue, null, rs.getString(2), rs.getString(3));
 				builder.addRecords(valueObject.build());
 				recordCount++;
 			}
@@ -655,31 +656,51 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	 * @param request
 	 * @return
 	 */
-	private ValueObjectList.Builder convertObjectList(Properties context, ValueObjectRequest request) {
+	private ListEntitiesResponse.Builder convertEntitiesList(Properties context, ListEntitiesRequest request) {
 		Criteria criteria = request.getCriteria();
 		StringBuffer whereClause = new StringBuffer();
 		List<Object> params = new ArrayList<>();
-		if(!Util.isEmpty(request.getUuid())) {
-			whereClause.append(I_AD_Element.COLUMNNAME_UUID + " = ?");
-			params.add(request.getUuid());
-		} else if(!Util.isEmpty(criteria.getWhereClause())) {
-			whereClause.append("(").append(criteria.getWhereClause()).append(")");
-		}
+		whereClause.append("(").append(criteria.getWhereClause()).append(")");
 		//	
 		List<PO> entityList = new Query(context, criteria.getTableName(), whereClause.toString(), null)
 				.setParameters(params)
 				.<PO>list();
 		//	
-		ValueObjectList.Builder builder = ValueObjectList.newBuilder()
+		ListEntitiesResponse.Builder builder = ListEntitiesResponse.newBuilder()
 				.setRecordCount(entityList.size());
-		//	Convert List
 		for(PO entity : entityList) {
-			ValueObject.Builder valueObject = convertObject(context, entity);
+			Entity.Builder valueObject = convertObject(context, entity);
 			builder.addRecords(valueObject.build());
 		}
 		//	Return
 		return builder;
 	}
+	
+	
+//	private ListEntitiesResponse.Builder convertObjectList(Properties context, ListEntitiesRequest request) {
+//		Criteria criteria = request.getCriteria();
+//		StringBuffer whereClause = new StringBuffer();
+//		List<Object> params = new ArrayList<>();
+//		if(!Util.isEmpty(request.getUuid())) {
+//			whereClause.append(I_AD_Element.COLUMNNAME_UUID + " = ?");
+//			params.add(request.getUuid());
+//		} else if(!Util.isEmpty(criteria.getWhereClause())) {
+//			whereClause.append("(").append(criteria.getWhereClause()).append(")");
+//		}
+//		//	
+//		List<PO> entityList = new Query(context, criteria.getTableName(), whereClause.toString(), null)
+//				.setParameters(params)
+//				.<PO>list();
+//		//	
+//		ListEntitiesResponse.Builder builder = ListEntitiesResponse.newBuilder()
+//				.setRecordCount(entityList.size());
+//		for(PO entity : entityList) {
+//			ListEntitiesResponse.Builder valueObject = convertObject(context, entity);
+//			builder.addRecords(valueObject.build());
+//		}
+//		//	Return
+//		return builder;
+//	}
 	
 	/**
 	 * Get Where clause for Smart Browse
@@ -797,8 +818,8 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	 * @param request
 	 * @return
 	 */
-	private ValueObjectList.Builder convertBrowserList(Properties context, BrowserRequest request) {
-		ValueObjectList.Builder builder = ValueObjectList.newBuilder();
+	private ListBrowserItemsResponse.Builder convertBrowserList(Properties context, ListBrowserItemsRequest request) {
+		ListBrowserItemsResponse.Builder builder = ListBrowserItemsResponse.newBuilder();
 		MBrowse browser = getBrowser(context, request.getUuid());
 		if(browser == null) {
 			return builder;
@@ -813,9 +834,12 @@ public class DataServiceImplementation extends DataServiceImplBase {
 		String whereClause = getBrowserWhereClause(browser, criteria.getWhereClause(), parameterMap, values);
 		//	Add SQL
 		//	TODO: Add parsed query from client
+		//	Page prefix
+		int page = getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
 		StringBuilder sql = new StringBuilder(criteria.getQuery());
+		sql.append(" WHERE ").append("ROWNUM >= ").append(page).append(" AND ROWNUM <= ").append(PAGE_SIZE);
 		if (whereClause.length() > 0) {
-			sql.append(" WHERE ").append(whereClause); // includes first AND
+			sql.append(" AND ").append(whereClause); // includes first AND
 		}
 		String tableName = browser.getAD_View().getParentEntityAliasName();
 		//	
@@ -835,15 +859,35 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	}
 	
 	/**
+	 * Get Page Number
+	 * @param sessionUuid
+	 * @param pageToken
+	 * @return
+	 */
+	private int getPageNumber(String sessionUuid, String pageToken) {
+		int page = 0;
+		String pagePrefix = sessionUuid + "-";
+		if(!Util.isEmpty(pageToken)) {
+			if(pageToken.startsWith(pagePrefix)) {
+				page = Integer.parseInt(pageToken.replace(pagePrefix, ""));
+			}
+		}
+		//	
+		return page;
+	}
+	
+	/**
 	 * Convert SQL to list values
+	 * @param pagePrefix
+	 * @param browser
 	 * @param sql
 	 * @param values
 	 * @return
 	 */
-	private ValueObjectList.Builder convertBrowserResult(MBrowse browser, String sql, List<Object> values) {
+	private ListBrowserItemsResponse.Builder convertBrowserResult(MBrowse browser, String sql, List<Object> values) {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		ValueObjectList.Builder builder = ValueObjectList.newBuilder();
+		ListBrowserItemsResponse.Builder builder = ListBrowserItemsResponse.newBuilder();
 		long recordCount = 0;
 		try {
 			LinkedHashMap<String, MBrowseField> fieldsMap = new LinkedHashMap<>();
@@ -856,11 +900,11 @@ public class DataServiceImplementation extends DataServiceImplBase {
 			AtomicInteger parameterIndex = new AtomicInteger(1);
 			for(Object value : values) {
 				setParameterFromObject(pstmt, value, parameterIndex.getAndIncrement());
-			}
+			} 
 			//	Get from Query
 			rs = pstmt.executeQuery();
 			while(rs.next()) {
-				ValueObject.Builder valueObjectBuilder = ValueObject.newBuilder();
+				Entity.Builder valueObjectBuilder = Entity.newBuilder();
 				ResultSetMetaData metaData = rs.getMetaData();
 				for (int index = 1; index <= metaData.getColumnCount(); index++) {
 					String columnName = metaData.getColumnName (index);
@@ -955,7 +999,7 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	 * @param request
 	 * @return
 	 */
-	private ProcessResponseList.Builder convertProcessActivity(Properties context, ProcessActivityRequest request) {
+	private ListActivitiesResponse.Builder convertProcessActivity(Properties context, ListActivitiesRequest request) {
 		String sql = null;
 		String uuid = null;
 		if(!Util.isEmpty(request.getUserUuid())) {
@@ -974,10 +1018,10 @@ public class DataServiceImplementation extends DataServiceImplBase {
 				.setOrderBy(I_AD_PInstance.COLUMNNAME_Created + " DESC")
 				.<MPInstance>list();
 		//	
-		ProcessResponseList.Builder builder = ProcessResponseList.newBuilder();
+		ListActivitiesResponse.Builder builder = ListActivitiesResponse.newBuilder();
 		//	Convert Process Instance
 		for(MPInstance processInstance : processInstanceList) {
-			ProcessResponse.Builder valueObject = convertProcessInstance(processInstance);
+			BusinessProcess.Builder valueObject = convertProcessInstance(processInstance);
 			builder.addResponses(valueObject.build());
 		}
 		//	Return
@@ -990,8 +1034,8 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	 * @param request
 	 * @return
 	 */
-	private RecentItemsResponse.Builder convertRecentItems(Properties context, RecentItemsRequest request) {
-		RecentItemsResponse.Builder builder = RecentItemsResponse.newBuilder();
+	private ListRecentItemsResponse.Builder convertRecentItems(Properties context, ListRecentItemsRequest request) {
+		ListRecentItemsResponse.Builder builder = ListRecentItemsResponse.newBuilder();
 		List<MRecentItem> recentItemsList = MRecentItem.getFromUserAndRole(context);
 		if(recentItemsList != null) {
 			for(MRecentItem recentItem : recentItemsList) {
@@ -1008,6 +1052,8 @@ public class DataServiceImplementation extends DataServiceImplBase {
 				if(recentItem.getAD_Menu_ID() > 0) {
 					recentItemBuilder.setMenuUuid(validateNull(recentItem.getAD_Menu().getUUID()));
 				}
+				//	Add time
+				recentItemBuilder.setUpdated(recentItem.getUpdated().getTime());
 				builder.addRecentItems(recentItemBuilder.build());
 			}
 		}
@@ -1020,8 +1066,8 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	 * @param instance
 	 * @return
 	 */
-	private ProcessResponse.Builder convertProcessInstance(MPInstance instance) {
-		ProcessResponse.Builder builder = ProcessResponse.newBuilder();
+	private BusinessProcess.Builder convertProcessInstance(MPInstance instance) {
+		BusinessProcess.Builder builder = BusinessProcess.newBuilder();
 		builder.setInstanceUuid(validateNull(instance.getUUID()));
 		builder.setIsError(!instance.isOK());
 		builder.setIsProcessing(instance.isProcessing());
@@ -1151,8 +1197,8 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	 * @param request
 	 * @return
 	 */
-	private CalloutResponse.Builder runcallout(Properties context, CalloutRequest request) {
-		CalloutResponse.Builder calloutBuilder = CalloutResponse.newBuilder();
+	private org.spin.grpc.util.Callout.Builder runcallout(Properties context, RunCalloutRequest request) {
+		org.spin.grpc.util.Callout.Builder calloutBuilder = org.spin.grpc.util.Callout.newBuilder();
 		//	TODO: GridTab and GridField bust be instanced
 		String result = processCallout(context, null, null);
 		calloutBuilder.setResult(validateNull(result));
@@ -1260,8 +1306,8 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	 * @param entity
 	 * @return
 	 */
-	private ValueObject.Builder convertObject(Properties context, PO entity) {
-		ValueObject.Builder builder = ValueObject.newBuilder();
+	private Entity.Builder convertObject(Properties context, PO entity) {
+		Entity.Builder builder = Entity.newBuilder();
 		if(entity == null) {
 			return builder;
 		}
@@ -1313,8 +1359,8 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	 * @param displayValue
 	 * @return
 	 */
-	private ValueObject.Builder convertObjectFromResult(Object keyValue, String uuidValue, String value, String displayValue) {
-		ValueObject.Builder builder = ValueObject.newBuilder();
+	private LookupItem.Builder convertObjectFromResult(Object keyValue, String uuidValue, String value, String displayValue) {
+		LookupItem.Builder builder = LookupItem.newBuilder();
 		if(keyValue == null) {
 			return builder;
 		}

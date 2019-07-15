@@ -3,8 +3,8 @@
 
 package org.spin.grpc.util;
 
-public interface BrowserRequestOrBuilder extends
-    // @@protoc_insertion_point(interface_extends:data.BrowserRequest)
+public interface ListBrowserItemsRequestOrBuilder extends
+    // @@protoc_insertion_point(interface_extends:data.ListBrowserItemsRequest)
     com.google.protobuf.MessageOrBuilder {
 
   /**
@@ -66,4 +66,19 @@ public interface BrowserRequestOrBuilder extends
    */
   org.spin.grpc.util.KeyValueOrBuilder getParametersOrBuilder(
       int index);
+
+  /**
+   * <code>int32 page_size = 5;</code>
+   */
+  int getPageSize();
+
+  /**
+   * <code>string page_token = 6;</code>
+   */
+  java.lang.String getPageToken();
+  /**
+   * <code>string page_token = 6;</code>
+   */
+  com.google.protobuf.ByteString
+      getPageTokenBytes();
 }

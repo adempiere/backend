@@ -5,7 +5,7 @@ package org.spin.grpc.util;
 
 /**
  * <pre>
- *	Process Selections
+ *	BusinessProcess Selections
  * </pre>
  *
  * Protobuf type {@code data.Selection}
@@ -307,7 +307,7 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   *	Process Selections
+   *	BusinessProcess Selections
    * </pre>
    *
    * Protobuf type {@code data.Selection}

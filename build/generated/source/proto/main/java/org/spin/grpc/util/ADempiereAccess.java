@@ -141,20 +141,20 @@ public final class ADempiereAccess {
       " \001(\t\022\022\n\nisReadOnly\030\010 \001(\010\022\021\n\tisSummary\030\t " +
       "\001(\010\022\017\n\007isSOTrx\030\n \001(\010\022\016\n\006action\030\013 \001(\t\022\025\n\r" +
       "referenceUuid\030\014 \001(\t\022\034\n\006childs\030\r \003(\0132\014.ac" +
-      "cess.Menu\022\020\n\010isActive\030\016 \001(\0102\326\003\n\rAccessSe" +
-      "rvice\022@\n\017RequestUserInfo\022\024.access.LoginR" +
-      "equest\032\025.access.UserInfoValue\"\000\0227\n\014Reque" +
-      "stLogin\022\024.access.LoginRequest\032\017.access.S" +
-      "ession\"\000\022>\n\023RequestLoginDefault\022\024.access" +
-      ".LoginRequest\032\017.access.Session\"\000\0229\n\rRequ" +
-      "estLogout\022\025.access.LogoutRequest\032\017.acces" +
-      "s.Session\"\000\022N\n\032RequestUserInfoFromSessio" +
-      "n\022\027.access.UserInfoRequest\032\025.access.User" +
-      "InfoValue\"\000\022>\n\023RequestMenuAndChild\022\027.acc" +
-      "ess.UserInfoRequest\032\014.access.Menu\"\000\022?\n\021R" +
-      "equestChangeRole\022\027.access.UserInfoReques" +
-      "t\032\017.access.Session\"\000B-\n\022org.spin.grpc.ut" +
-      "ilB\017ADempiereAccessP\001\242\002\003HLWb\006proto3"
+      "cess.Menu\022\020\n\010isActive\030\016 \001(\0102\272\003\n\rAccessSe" +
+      "rvice\022<\n\013GetUserInfo\022\024.access.LoginReque" +
+      "st\032\025.access.UserInfoValue\"\000\0223\n\010RunLogin\022" +
+      "\024.access.LoginRequest\032\017.access.Session\"\000" +
+      "\022:\n\017RunLoginDefault\022\024.access.LoginReques" +
+      "t\032\017.access.Session\"\000\0225\n\tRunLogout\022\025.acce" +
+      "ss.LogoutRequest\032\017.access.Session\"\000\022J\n\026G" +
+      "etUserInfoFromSession\022\027.access.UserInfoR" +
+      "equest\032\025.access.UserInfoValue\"\000\022:\n\017GetMe" +
+      "nuAndChild\022\027.access.UserInfoRequest\032\014.ac" +
+      "cess.Menu\"\000\022;\n\rRunChangeRole\022\027.access.Us" +
+      "erInfoRequest\032\017.access.Session\"\000B-\n\022org." +
+      "spin.grpc.utilB\017ADempiereAccessP\001\242\002\003HLWb" +
+      "\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {

@@ -18,8 +18,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.spin.grpc.util.Value.ValueType;
-
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
@@ -49,121 +47,6 @@ public class DataClient {
 	    channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
 	  }
 	  
-	  /** 
-	   * Request PO List. 
-	   */
-	  public void requestPOList() {
-		  ClientRequest clientRequest = ClientRequest.newBuilder()
-				  .build();
-		  ValueObjectRequest request = ValueObjectRequest.newBuilder()
-	    		.setClientRequest(clientRequest)
-	    		.build();
-		  ValueObjectList response;
-		  try {
-			  response = blockingStub.requestObjectList(request);
-			  logger.info("PO List: " + response);
-		  } catch (StatusRuntimeException e) {	
-			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
-		      return;
-		  }
-	  }
-	  
-	  /** 
-	   * Request PO. 
-	   */
-	  public void requestPO() {
-		  ClientRequest clientRequest = ClientRequest.newBuilder()
-				  .build();
-		  Criteria.Builder criteria = Criteria.newBuilder().setTableName("AD_Element");
-		  ValueObjectRequest request = ValueObjectRequest.newBuilder()
-	    		.setClientRequest(clientRequest)
-	    		.setUuid("8cc49692-fb40-11e8-a479-7a0060f0aa01")	// HR_JobOpening_ID
-	    		.setCriteria(criteria.build())
-	    		.build();
-		  ValueObject response;
-		  try {
-			  response = blockingStub.requestObject(request);
-			  logger.info("PO: " + response);
-		  } catch (StatusRuntimeException e) {
-			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
-		      return;
-		  }
-	  }
-	  
-	  /** 
-	   * Request Lookup. 
-	   */
-	  public void requestLookup() {
-		  ClientRequest clientRequest = ClientRequest.newBuilder()
-				  .build();
-		  Criteria.Builder criteria = Criteria.newBuilder().setTableName("C_PaymentTerm");
-		  criteria.setQuery("SELECT C_PaymentTerm.C_PaymentTerm_ID,NULL,NVL(C_PaymentTerm_Trl.Name,'-1'),C_PaymentTerm.IsActive "
-		  		+ "FROM C_PaymentTerm "
-		  		+ "INNER JOIN C_PaymentTerm_TRL ON (C_PaymentTerm.C_PaymentTerm_ID=C_PaymentTerm_Trl.C_PaymentTerm_ID AND C_PaymentTerm_Trl.AD_Language='es_MX') "
-		  		+ "WHERE C_PaymentTerm.C_PaymentTerm_ID=?");
-		  criteria.addValues(Value.newBuilder().setIntValue(106));
-		  ValueObjectRequest request = ValueObjectRequest.newBuilder()
-	    		.setClientRequest(clientRequest)
-	    		.setUuid("8cc49692-fb40-11e8-a479-7a0060f0aa01")	// HR_JobOpening_ID
-	    		.setCriteria(criteria.build())
-	    		.build();
-		  ValueObject response;
-		  try {
-			  response = blockingStub.requestLookup(request);
-			  logger.info("Lookup: " + response);
-		  } catch (StatusRuntimeException e) {
-			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
-		      return;
-		  }
-	  }
-	  
-	  /** 
-	   * Request Lookup List. 
-	   */
-	  public void requestLookupList() {
-		  ClientRequest clientRequest = ClientRequest.newBuilder()
-				  .build();
-		  Criteria.Builder criteria = Criteria.newBuilder().setTableName("M_DiscountSchema");
-		  criteria.setQuery("SELECT M_DiscountSchema.M_DiscountSchema_ID,NULL,NVL(M_DiscountSchema.Name,'-1'),M_DiscountSchema.IsActive "
-		  		+ "FROM M_DiscountSchema "
-		  		+ "WHERE M_DiscountSchema.DiscountType<>'P' ORDER BY 3");
-		  ValueObjectRequest request = ValueObjectRequest.newBuilder()
-	    		.setClientRequest(clientRequest)
-	    		.setUuid("8cc49692-fb40-11e8-a479-7a0060f0aa01")	// HR_JobOpening_ID
-	    		.setCriteria(criteria.build())
-	    		.build();
-		  ValueObjectList response;
-		  try {
-			  response = blockingStub.requestLookupList(request);
-			  logger.info("Lookup List: " + response);
-		  } catch (StatusRuntimeException e) {
-			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
-		      return;
-		  }
-	  }
-	  
-	  /** 
-	   * Request PO. 
-	   */
-	  public void requestPOWithSQL() {
-		  ClientRequest clientRequest = ClientRequest.newBuilder()
-				  .build();
-		  Criteria.Builder criteria = Criteria.newBuilder().setTableName("C_BPartner");
-		  criteria.setWhereClause("C_BPartner.IsCustomer = 'Y'");
-		  ValueObjectRequest request = ValueObjectRequest.newBuilder()
-	    		.setClientRequest(clientRequest)
-	    		.setCriteria(criteria.build())
-	    		.build();
-		  ValueObject response;
-		  try {
-			  response = blockingStub.requestObject(request);
-			  logger.info("PO With SQL: " + response);
-		  } catch (StatusRuntimeException e) {
-			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
-		      return;
-		  }
-	  }
-	  
 	  /**
 	   * Request a process
 	   */
@@ -171,13 +54,13 @@ public class DataClient {
 		  ClientRequest clientRequest = ClientRequest.newBuilder()
 				  .setSessionUuid("53c1c836-6e47-11e9-8160-3709b250e4e1")
 				  .build();
-		  ProcessRequest request = ProcessRequest.newBuilder()
+		  RunBusinessProcessRequest request = RunBusinessProcessRequest.newBuilder()
 				  .setClientRequest(clientRequest)
 				  .setUuid("a42acf86-fb40-11e8-a479-7a0060f0aa01")
 				  .build();
-		  ProcessResponse response;
+		  BusinessProcess response;
 		  try {
-			  response = blockingStub.requestProcess(request);
+			  response = blockingStub.runBusinessProcess(request);
 			  logger.info("Cache Reset: " + response);
 		  } catch (StatusRuntimeException e) {
 			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
@@ -186,121 +69,17 @@ public class DataClient {
 	  }
 	  
 	  /**
-	   * Request a process
-	   */
-	  public void requestReport() {
-		  ClientRequest clientRequest = ClientRequest.newBuilder()
-				  .setSessionUuid("966a230e-7022-11e9-b796-0f88cc28c4a8")
-				  .build();
-		  //	Open Items
-		  ProcessRequest.Builder request = ProcessRequest.newBuilder()
-				  .setClientRequest(clientRequest)
-				  .setUuid("a42b9c36-fb40-11e8-a479-7a0060f0aa01");
-		  //	Add parameters
-		  //	Is SOT
-		  Value.Builder isSOTrx = Value.newBuilder();
-		  isSOTrx.setBooleanValue(true);
-		  isSOTrx.setValueType(ValueType.BOOLEAN);
-		  KeyValue.Builder keyValue = KeyValue.newBuilder();
-		  keyValue.setKey("IsSOTrx");
-		  keyValue.setValue(isSOTrx.build());
-		  request.addParameters(keyValue);
-		  //	
-		  
-		  ProcessResponse response;
-		  try {
-			  response = blockingStub.requestProcess(request.build());
-			  logger.info("Open Item Report: " + response);
-		  } catch (StatusRuntimeException e) {
-			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
-		      return;
-		  }
-	  }
-	  
-	  /**
-	   * Request a process
-	   */
-	  public void requestProcessActivity() {
-		  ClientRequest clientRequest = ClientRequest.newBuilder()
-				  .setSessionUuid("2866df12-7be1-11e9-9f6a-c3c12ab1a3a5")
-				  .build();
-		  
-		  ProcessActivityRequest.Builder request = ProcessActivityRequest.newBuilder();
-		  request.setClientRequest(clientRequest);
-		  ProcessResponseList response = null;
-		  try {
-			  response = blockingStub.requestProcessActivity(request.build());
-			  logger.info("Open Item Report from session: " + response);
-		  } catch (StatusRuntimeException e) {
-			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
-		      return;
-		  }
-	  }
-	  
-	  /** 
-	   * Request PO List. 
-	   */
-	  public void requestPOListWithSQL() {
-		  ClientRequest clientRequest = ClientRequest.newBuilder()
-				  .build();
-		  Criteria.Builder criteria = Criteria.newBuilder().setTableName("C_Invoice");
-		  criteria.setWhereClause("C_Invoice.DocStatus IN('CO', 'CL')");
-		  criteria.setOrderByClause("C_Invoice.DateInvoiced DESC");
-		  ValueObjectRequest request = ValueObjectRequest.newBuilder()
-	    		.setClientRequest(clientRequest)
-	    		.setCriteria(criteria.build())
-	    		.build();
-		  ValueObjectList response;
-		  try {
-			  response = blockingStub.requestObjectList(request);
-			  logger.info("PO List With SQL: " + response);
-		  } catch (StatusRuntimeException e) {	
-			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
-		      return;
-		  }
-	  }
-	  
-	  /** 
-	   * Request Callout. 
-	   */
-	  public void requestCallout() {
-		  ClientRequest clientRequest = ClientRequest.newBuilder()
-				  .build();
-		  CalloutRequest request = CalloutRequest.newBuilder()
-	    		.setClientRequest(clientRequest)
-	    		.build();
-		  CalloutResponse response;
-		  try {
-			  response = blockingStub.requestCallout(request);
-			  logger.info("User Roles: " + response);
-		  } catch (StatusRuntimeException e) {
-			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
-		      return;
-		  }
-	  }  
-	  
-	  /**
 	   * Greet server. If provided, the first element of {@code args} is the name to use in the
 	   * greeting.
 	   */
 	  public static void main(String[] args) throws Exception {
 		DataClient client = new DataClient("localhost", 50052);
 	    try {
-//	    	logger.info("####################### PO #####################");
-//	    	client.requestPO();
-	    	//	
-//	    	client.requestPOWithSQL();
-	    	//	
-//	    	client.requestPOListWithSQL();
-//	    	client.requestProcess();
-	    	client.requestReport();
-//	    	logger.info("####################### PO List #####################");
-//	    	client.requestPOList();
-//	    	logger.info("####################### Callout #####################");
-//	    	client.requestPOList();
-//	    	client.requestProcessActivity();
-	    } finally {
+	    	logger.info("####################### Process #####################");
+	    	client.requestProcess();
 	      client.shutdown();
-	    }
+	    } catch (Exception e) {
+			e.printStackTrace();
+		}
 	  }
 }

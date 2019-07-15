@@ -5,22 +5,23 @@ package org.spin.grpc.util;
 
 /**
  * <pre>
- * Recent Items Request
+ * BusinessProcess Activity Request
  * </pre>
  *
- * Protobuf type {@code data.RecentItemsRequest}
+ * Protobuf type {@code data.ListActivitiesRequest}
  */
-public  final class RecentItemsRequest extends
+public  final class ListActivitiesRequest extends
     com.google.protobuf.GeneratedMessageV3 implements
-    // @@protoc_insertion_point(message_implements:data.RecentItemsRequest)
-    RecentItemsRequestOrBuilder {
+    // @@protoc_insertion_point(message_implements:data.ListActivitiesRequest)
+    ListActivitiesRequestOrBuilder {
 private static final long serialVersionUID = 0L;
-  // Use RecentItemsRequest.newBuilder() to construct.
-  private RecentItemsRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+  // Use ListActivitiesRequest.newBuilder() to construct.
+  private ListActivitiesRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
   }
-  private RecentItemsRequest() {
-    currentSession_ = false;
+  private ListActivitiesRequest() {
+    userUuid_ = "";
+    instanceUuid_ = "";
   }
 
   @java.lang.Override
@@ -28,7 +29,7 @@ private static final long serialVersionUID = 0L;
   getUnknownFields() {
     return this.unknownFields;
   }
-  private RecentItemsRequest(
+  private ListActivitiesRequest(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -67,9 +68,16 @@ private static final long serialVersionUID = 0L;
 
             break;
           }
-          case 16: {
+          case 18: {
+            java.lang.String s = input.readStringRequireUtf8();
 
-            currentSession_ = input.readBool();
+            userUuid_ = s;
+            break;
+          }
+          case 26: {
+            java.lang.String s = input.readStringRequireUtf8();
+
+            instanceUuid_ = s;
             break;
           }
         }
@@ -86,14 +94,14 @@ private static final long serialVersionUID = 0L;
   }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-    return org.spin.grpc.util.ADempiereData.internal_static_data_RecentItemsRequest_descriptor;
+    return org.spin.grpc.util.ADempiereData.internal_static_data_ListActivitiesRequest_descriptor;
   }
 
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
-    return org.spin.grpc.util.ADempiereData.internal_static_data_RecentItemsRequest_fieldAccessorTable
+    return org.spin.grpc.util.ADempiereData.internal_static_data_ListActivitiesRequest_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
-            org.spin.grpc.util.RecentItemsRequest.class, org.spin.grpc.util.RecentItemsRequest.Builder.class);
+            org.spin.grpc.util.ListActivitiesRequest.class, org.spin.grpc.util.ListActivitiesRequest.Builder.class);
   }
 
   public static final int CLIENTREQUEST_FIELD_NUMBER = 1;
@@ -117,13 +125,72 @@ private static final long serialVersionUID = 0L;
     return getClientRequest();
   }
 
-  public static final int CURRENTSESSION_FIELD_NUMBER = 2;
-  private boolean currentSession_;
+  public static final int USERUUID_FIELD_NUMBER = 2;
+  private volatile java.lang.Object userUuid_;
   /**
-   * <code>bool currentSession = 2;</code>
+   * <code>string userUuid = 2;</code>
    */
-  public boolean getCurrentSession() {
-    return currentSession_;
+  public java.lang.String getUserUuid() {
+    java.lang.Object ref = userUuid_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      userUuid_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string userUuid = 2;</code>
+   */
+  public com.google.protobuf.ByteString
+      getUserUuidBytes() {
+    java.lang.Object ref = userUuid_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      userUuid_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int INSTANCEUUID_FIELD_NUMBER = 3;
+  private volatile java.lang.Object instanceUuid_;
+  /**
+   * <code>string instanceUuid = 3;</code>
+   */
+  public java.lang.String getInstanceUuid() {
+    java.lang.Object ref = instanceUuid_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      instanceUuid_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string instanceUuid = 3;</code>
+   */
+  public com.google.protobuf.ByteString
+      getInstanceUuidBytes() {
+    java.lang.Object ref = instanceUuid_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      instanceUuid_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
   }
 
   private byte memoizedIsInitialized = -1;
@@ -141,8 +208,11 @@ private static final long serialVersionUID = 0L;
     if (clientRequest_ != null) {
       output.writeMessage(1, getClientRequest());
     }
-    if (currentSession_ != false) {
-      output.writeBool(2, currentSession_);
+    if (!getUserUuidBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, userUuid_);
+    }
+    if (!getInstanceUuidBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 3, instanceUuid_);
     }
     unknownFields.writeTo(output);
   }
@@ -156,9 +226,11 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(1, getClientRequest());
     }
-    if (currentSession_ != false) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeBoolSize(2, currentSession_);
+    if (!getUserUuidBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, userUuid_);
+    }
+    if (!getInstanceUuidBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, instanceUuid_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -170,10 +242,10 @@ private static final long serialVersionUID = 0L;
     if (obj == this) {
      return true;
     }
-    if (!(obj instanceof org.spin.grpc.util.RecentItemsRequest)) {
+    if (!(obj instanceof org.spin.grpc.util.ListActivitiesRequest)) {
       return super.equals(obj);
     }
-    org.spin.grpc.util.RecentItemsRequest other = (org.spin.grpc.util.RecentItemsRequest) obj;
+    org.spin.grpc.util.ListActivitiesRequest other = (org.spin.grpc.util.ListActivitiesRequest) obj;
 
     boolean result = true;
     result = result && (hasClientRequest() == other.hasClientRequest());
@@ -181,8 +253,10 @@ private static final long serialVersionUID = 0L;
       result = result && getClientRequest()
           .equals(other.getClientRequest());
     }
-    result = result && (getCurrentSession()
-        == other.getCurrentSession());
+    result = result && getUserUuid()
+        .equals(other.getUserUuid());
+    result = result && getInstanceUuid()
+        .equals(other.getInstanceUuid());
     result = result && unknownFields.equals(other.unknownFields);
     return result;
   }
@@ -198,77 +272,78 @@ private static final long serialVersionUID = 0L;
       hash = (37 * hash) + CLIENTREQUEST_FIELD_NUMBER;
       hash = (53 * hash) + getClientRequest().hashCode();
     }
-    hash = (37 * hash) + CURRENTSESSION_FIELD_NUMBER;
-    hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
-        getCurrentSession());
+    hash = (37 * hash) + USERUUID_FIELD_NUMBER;
+    hash = (53 * hash) + getUserUuid().hashCode();
+    hash = (37 * hash) + INSTANCEUUID_FIELD_NUMBER;
+    hash = (53 * hash) + getInstanceUuid().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
   }
 
-  public static org.spin.grpc.util.RecentItemsRequest parseFrom(
+  public static org.spin.grpc.util.ListActivitiesRequest parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.spin.grpc.util.RecentItemsRequest parseFrom(
+  public static org.spin.grpc.util.ListActivitiesRequest parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.spin.grpc.util.RecentItemsRequest parseFrom(
+  public static org.spin.grpc.util.ListActivitiesRequest parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.spin.grpc.util.RecentItemsRequest parseFrom(
+  public static org.spin.grpc.util.ListActivitiesRequest parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.spin.grpc.util.RecentItemsRequest parseFrom(byte[] data)
+  public static org.spin.grpc.util.ListActivitiesRequest parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.spin.grpc.util.RecentItemsRequest parseFrom(
+  public static org.spin.grpc.util.ListActivitiesRequest parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.spin.grpc.util.RecentItemsRequest parseFrom(java.io.InputStream input)
+  public static org.spin.grpc.util.ListActivitiesRequest parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static org.spin.grpc.util.RecentItemsRequest parseFrom(
+  public static org.spin.grpc.util.ListActivitiesRequest parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input, extensionRegistry);
   }
-  public static org.spin.grpc.util.RecentItemsRequest parseDelimitedFrom(java.io.InputStream input)
+  public static org.spin.grpc.util.ListActivitiesRequest parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input);
   }
-  public static org.spin.grpc.util.RecentItemsRequest parseDelimitedFrom(
+  public static org.spin.grpc.util.ListActivitiesRequest parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
   }
-  public static org.spin.grpc.util.RecentItemsRequest parseFrom(
+  public static org.spin.grpc.util.ListActivitiesRequest parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static org.spin.grpc.util.RecentItemsRequest parseFrom(
+  public static org.spin.grpc.util.ListActivitiesRequest parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -280,7 +355,7 @@ private static final long serialVersionUID = 0L;
   public static Builder newBuilder() {
     return DEFAULT_INSTANCE.toBuilder();
   }
-  public static Builder newBuilder(org.spin.grpc.util.RecentItemsRequest prototype) {
+  public static Builder newBuilder(org.spin.grpc.util.ListActivitiesRequest prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
   public Builder toBuilder() {
@@ -296,28 +371,28 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * Recent Items Request
+   * BusinessProcess Activity Request
    * </pre>
    *
-   * Protobuf type {@code data.RecentItemsRequest}
+   * Protobuf type {@code data.ListActivitiesRequest}
    */
   public static final class Builder extends
       com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-      // @@protoc_insertion_point(builder_implements:data.RecentItemsRequest)
-      org.spin.grpc.util.RecentItemsRequestOrBuilder {
+      // @@protoc_insertion_point(builder_implements:data.ListActivitiesRequest)
+      org.spin.grpc.util.ListActivitiesRequestOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.spin.grpc.util.ADempiereData.internal_static_data_RecentItemsRequest_descriptor;
+      return org.spin.grpc.util.ADempiereData.internal_static_data_ListActivitiesRequest_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.spin.grpc.util.ADempiereData.internal_static_data_RecentItemsRequest_fieldAccessorTable
+      return org.spin.grpc.util.ADempiereData.internal_static_data_ListActivitiesRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.spin.grpc.util.RecentItemsRequest.class, org.spin.grpc.util.RecentItemsRequest.Builder.class);
+              org.spin.grpc.util.ListActivitiesRequest.class, org.spin.grpc.util.ListActivitiesRequest.Builder.class);
     }
 
-    // Construct using org.spin.grpc.util.RecentItemsRequest.newBuilder()
+    // Construct using org.spin.grpc.util.ListActivitiesRequest.newBuilder()
     private Builder() {
       maybeForceBuilderInitialization();
     }
@@ -340,36 +415,39 @@ private static final long serialVersionUID = 0L;
         clientRequest_ = null;
         clientRequestBuilder_ = null;
       }
-      currentSession_ = false;
+      userUuid_ = "";
+
+      instanceUuid_ = "";
 
       return this;
     }
 
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
-      return org.spin.grpc.util.ADempiereData.internal_static_data_RecentItemsRequest_descriptor;
+      return org.spin.grpc.util.ADempiereData.internal_static_data_ListActivitiesRequest_descriptor;
     }
 
-    public org.spin.grpc.util.RecentItemsRequest getDefaultInstanceForType() {
-      return org.spin.grpc.util.RecentItemsRequest.getDefaultInstance();
+    public org.spin.grpc.util.ListActivitiesRequest getDefaultInstanceForType() {
+      return org.spin.grpc.util.ListActivitiesRequest.getDefaultInstance();
     }
 
-    public org.spin.grpc.util.RecentItemsRequest build() {
-      org.spin.grpc.util.RecentItemsRequest result = buildPartial();
+    public org.spin.grpc.util.ListActivitiesRequest build() {
+      org.spin.grpc.util.ListActivitiesRequest result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
       return result;
     }
 
-    public org.spin.grpc.util.RecentItemsRequest buildPartial() {
-      org.spin.grpc.util.RecentItemsRequest result = new org.spin.grpc.util.RecentItemsRequest(this);
+    public org.spin.grpc.util.ListActivitiesRequest buildPartial() {
+      org.spin.grpc.util.ListActivitiesRequest result = new org.spin.grpc.util.ListActivitiesRequest(this);
       if (clientRequestBuilder_ == null) {
         result.clientRequest_ = clientRequest_;
       } else {
         result.clientRequest_ = clientRequestBuilder_.build();
       }
-      result.currentSession_ = currentSession_;
+      result.userUuid_ = userUuid_;
+      result.instanceUuid_ = instanceUuid_;
       onBuilt();
       return result;
     }
@@ -401,21 +479,26 @@ private static final long serialVersionUID = 0L;
       return (Builder) super.addRepeatedField(field, value);
     }
     public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof org.spin.grpc.util.RecentItemsRequest) {
-        return mergeFrom((org.spin.grpc.util.RecentItemsRequest)other);
+      if (other instanceof org.spin.grpc.util.ListActivitiesRequest) {
+        return mergeFrom((org.spin.grpc.util.ListActivitiesRequest)other);
       } else {
         super.mergeFrom(other);
         return this;
       }
     }
 
-    public Builder mergeFrom(org.spin.grpc.util.RecentItemsRequest other) {
-      if (other == org.spin.grpc.util.RecentItemsRequest.getDefaultInstance()) return this;
+    public Builder mergeFrom(org.spin.grpc.util.ListActivitiesRequest other) {
+      if (other == org.spin.grpc.util.ListActivitiesRequest.getDefaultInstance()) return this;
       if (other.hasClientRequest()) {
         mergeClientRequest(other.getClientRequest());
       }
-      if (other.getCurrentSession() != false) {
-        setCurrentSession(other.getCurrentSession());
+      if (!other.getUserUuid().isEmpty()) {
+        userUuid_ = other.userUuid_;
+        onChanged();
+      }
+      if (!other.getInstanceUuid().isEmpty()) {
+        instanceUuid_ = other.instanceUuid_;
+        onChanged();
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -430,11 +513,11 @@ private static final long serialVersionUID = 0L;
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      org.spin.grpc.util.RecentItemsRequest parsedMessage = null;
+      org.spin.grpc.util.ListActivitiesRequest parsedMessage = null;
       try {
         parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (org.spin.grpc.util.RecentItemsRequest) e.getUnfinishedMessage();
+        parsedMessage = (org.spin.grpc.util.ListActivitiesRequest) e.getUnfinishedMessage();
         throw e.unwrapIOException();
       } finally {
         if (parsedMessage != null) {
@@ -561,28 +644,140 @@ private static final long serialVersionUID = 0L;
       return clientRequestBuilder_;
     }
 
-    private boolean currentSession_ ;
+    private java.lang.Object userUuid_ = "";
     /**
-     * <code>bool currentSession = 2;</code>
+     * <code>string userUuid = 2;</code>
      */
-    public boolean getCurrentSession() {
-      return currentSession_;
+    public java.lang.String getUserUuid() {
+      java.lang.Object ref = userUuid_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        userUuid_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
     }
     /**
-     * <code>bool currentSession = 2;</code>
+     * <code>string userUuid = 2;</code>
      */
-    public Builder setCurrentSession(boolean value) {
-      
-      currentSession_ = value;
+    public com.google.protobuf.ByteString
+        getUserUuidBytes() {
+      java.lang.Object ref = userUuid_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        userUuid_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string userUuid = 2;</code>
+     */
+    public Builder setUserUuid(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
+      userUuid_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>bool currentSession = 2;</code>
+     * <code>string userUuid = 2;</code>
      */
-    public Builder clearCurrentSession() {
+    public Builder clearUserUuid() {
       
-      currentSession_ = false;
+      userUuid_ = getDefaultInstance().getUserUuid();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string userUuid = 2;</code>
+     */
+    public Builder setUserUuidBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      
+      userUuid_ = value;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object instanceUuid_ = "";
+    /**
+     * <code>string instanceUuid = 3;</code>
+     */
+    public java.lang.String getInstanceUuid() {
+      java.lang.Object ref = instanceUuid_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        instanceUuid_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string instanceUuid = 3;</code>
+     */
+    public com.google.protobuf.ByteString
+        getInstanceUuidBytes() {
+      java.lang.Object ref = instanceUuid_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        instanceUuid_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string instanceUuid = 3;</code>
+     */
+    public Builder setInstanceUuid(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
+      instanceUuid_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string instanceUuid = 3;</code>
+     */
+    public Builder clearInstanceUuid() {
+      
+      instanceUuid_ = getDefaultInstance().getInstanceUuid();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string instanceUuid = 3;</code>
+     */
+    public Builder setInstanceUuidBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      
+      instanceUuid_ = value;
       onChanged();
       return this;
     }
@@ -597,39 +792,39 @@ private static final long serialVersionUID = 0L;
     }
 
 
-    // @@protoc_insertion_point(builder_scope:data.RecentItemsRequest)
+    // @@protoc_insertion_point(builder_scope:data.ListActivitiesRequest)
   }
 
-  // @@protoc_insertion_point(class_scope:data.RecentItemsRequest)
-  private static final org.spin.grpc.util.RecentItemsRequest DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:data.ListActivitiesRequest)
+  private static final org.spin.grpc.util.ListActivitiesRequest DEFAULT_INSTANCE;
   static {
-    DEFAULT_INSTANCE = new org.spin.grpc.util.RecentItemsRequest();
+    DEFAULT_INSTANCE = new org.spin.grpc.util.ListActivitiesRequest();
   }
 
-  public static org.spin.grpc.util.RecentItemsRequest getDefaultInstance() {
+  public static org.spin.grpc.util.ListActivitiesRequest getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<RecentItemsRequest>
-      PARSER = new com.google.protobuf.AbstractParser<RecentItemsRequest>() {
-    public RecentItemsRequest parsePartialFrom(
+  private static final com.google.protobuf.Parser<ListActivitiesRequest>
+      PARSER = new com.google.protobuf.AbstractParser<ListActivitiesRequest>() {
+    public ListActivitiesRequest parsePartialFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return new RecentItemsRequest(input, extensionRegistry);
+      return new ListActivitiesRequest(input, extensionRegistry);
     }
   };
 
-  public static com.google.protobuf.Parser<RecentItemsRequest> parser() {
+  public static com.google.protobuf.Parser<ListActivitiesRequest> parser() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.protobuf.Parser<RecentItemsRequest> getParserForType() {
+  public com.google.protobuf.Parser<ListActivitiesRequest> getParserForType() {
     return PARSER;
   }
 
-  public org.spin.grpc.util.RecentItemsRequest getDefaultInstanceForType() {
+  public org.spin.grpc.util.ListActivitiesRequest getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }
 

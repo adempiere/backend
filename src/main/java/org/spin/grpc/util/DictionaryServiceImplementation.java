@@ -73,22 +73,22 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	private static CCache<String, String> languageCache = new CCache<String, String>("Language_ISO_Code", 30, 0);	//	no time-out
 	
 	@Override
-	public void requestWindow(EntityRequest request, StreamObserver<Window> responseObserver) {
+	public void getWindow(EntityRequest request, StreamObserver<Window> responseObserver) {
 		requestWindow(request, responseObserver, false);
 	}
 	
 	@Override
-	public void requestWindowAndTabs(EntityRequest request, StreamObserver<Window> responseObserver) {
+	public void getWindowAndTabs(EntityRequest request, StreamObserver<Window> responseObserver) {
 		requestWindow(request, responseObserver, true);
 	}
 	
 	@Override
-	public void requestTab(EntityRequest request, StreamObserver<Tab> responseObserver) {
+	public void getTab(EntityRequest request, StreamObserver<Tab> responseObserver) {
 		requestTab(request, responseObserver, false);
 	}
 	
 	@Override
-	public void requestTabAndFields(EntityRequest request, StreamObserver<Tab> responseObserver) {
+	public void getTabAndFields(EntityRequest request, StreamObserver<Tab> responseObserver) {
 		requestTab(request, responseObserver, true);
 	}
 	
@@ -155,7 +155,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	}
 	
 	@Override
-	public void requestField(EntityRequest request, StreamObserver<Field> responseObserver) {
+	public void getField(EntityRequest request, StreamObserver<Field> responseObserver) {
 		try {
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
@@ -181,7 +181,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	}
 	
 	@Override
-	public void requestProcess(EntityRequest request, StreamObserver<Process> responseObserver) {
+	public void getProcess(EntityRequest request, StreamObserver<Process> responseObserver) {
 		try {
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
@@ -207,7 +207,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	}
 	
 	@Override
-	public void requestBrowser(EntityRequest request, StreamObserver<Browser> responseObserver) {
+	public void getBrowser(EntityRequest request, StreamObserver<Browser> responseObserver) {
 		try {
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");

@@ -3,8 +3,8 @@
 
 package org.spin.grpc.util;
 
-public interface RecentItemsRequestOrBuilder extends
-    // @@protoc_insertion_point(interface_extends:data.RecentItemsRequest)
+public interface ListRecentItemsRequestOrBuilder extends
+    // @@protoc_insertion_point(interface_extends:data.ListRecentItemsRequest)
     com.google.protobuf.MessageOrBuilder {
 
   /**

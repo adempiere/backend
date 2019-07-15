@@ -3,8 +3,8 @@
 
 package org.spin.grpc.util;
 
-public interface ProcessRequestOrBuilder extends
-    // @@protoc_insertion_point(interface_extends:data.ProcessRequest)
+public interface RunBusinessProcessRequestOrBuilder extends
+    // @@protoc_insertion_point(interface_extends:data.RunBusinessProcessRequest)
     com.google.protobuf.MessageOrBuilder {
 
   /**

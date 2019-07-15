@@ -8,18 +8,18 @@ package org.spin.grpc.util;
  * Value Object from ADempiere
  * </pre>
  *
- * Protobuf type {@code data.ValueObject}
+ * Protobuf type {@code data.Entity}
  */
-public  final class ValueObject extends
+public  final class Entity extends
     com.google.protobuf.GeneratedMessageV3 implements
-    // @@protoc_insertion_point(message_implements:data.ValueObject)
-    ValueObjectOrBuilder {
+    // @@protoc_insertion_point(message_implements:data.Entity)
+    EntityOrBuilder {
 private static final long serialVersionUID = 0L;
-  // Use ValueObject.newBuilder() to construct.
-  private ValueObject(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+  // Use Entity.newBuilder() to construct.
+  private Entity(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
   }
-  private ValueObject() {
+  private Entity() {
     id_ = 0;
     uuid_ = "";
     tableName_ = "";
@@ -30,7 +30,7 @@ private static final long serialVersionUID = 0L;
   getUnknownFields() {
     return this.unknownFields;
   }
-  private ValueObject(
+  private Entity(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -100,7 +100,7 @@ private static final long serialVersionUID = 0L;
   }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-    return org.spin.grpc.util.ADempiereData.internal_static_data_ValueObject_descriptor;
+    return org.spin.grpc.util.ADempiereData.internal_static_data_Entity_descriptor;
   }
 
   @SuppressWarnings({"rawtypes"})
@@ -116,9 +116,9 @@ private static final long serialVersionUID = 0L;
   }
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
-    return org.spin.grpc.util.ADempiereData.internal_static_data_ValueObject_fieldAccessorTable
+    return org.spin.grpc.util.ADempiereData.internal_static_data_Entity_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
-            org.spin.grpc.util.ValueObject.class, org.spin.grpc.util.ValueObject.Builder.class);
+            org.spin.grpc.util.Entity.class, org.spin.grpc.util.Entity.Builder.class);
   }
 
   private int bitField0_;
@@ -205,7 +205,7 @@ private static final long serialVersionUID = 0L;
         java.lang.String, org.spin.grpc.util.Value> defaultEntry =
             com.google.protobuf.MapEntry
             .<java.lang.String, org.spin.grpc.util.Value>newDefaultInstance(
-                org.spin.grpc.util.ADempiereData.internal_static_data_ValueObject_ValuesEntry_descriptor, 
+                org.spin.grpc.util.ADempiereData.internal_static_data_Entity_ValuesEntry_descriptor, 
                 com.google.protobuf.WireFormat.FieldType.STRING,
                 "",
                 com.google.protobuf.WireFormat.FieldType.MESSAGE,
@@ -340,10 +340,10 @@ private static final long serialVersionUID = 0L;
     if (obj == this) {
      return true;
     }
-    if (!(obj instanceof org.spin.grpc.util.ValueObject)) {
+    if (!(obj instanceof org.spin.grpc.util.Entity)) {
       return super.equals(obj);
     }
-    org.spin.grpc.util.ValueObject other = (org.spin.grpc.util.ValueObject) obj;
+    org.spin.grpc.util.Entity other = (org.spin.grpc.util.Entity) obj;
 
     boolean result = true;
     result = result && (getId()
@@ -380,69 +380,69 @@ private static final long serialVersionUID = 0L;
     return hash;
   }
 
-  public static org.spin.grpc.util.ValueObject parseFrom(
+  public static org.spin.grpc.util.Entity parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.spin.grpc.util.ValueObject parseFrom(
+  public static org.spin.grpc.util.Entity parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.spin.grpc.util.ValueObject parseFrom(
+  public static org.spin.grpc.util.Entity parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.spin.grpc.util.ValueObject parseFrom(
+  public static org.spin.grpc.util.Entity parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.spin.grpc.util.ValueObject parseFrom(byte[] data)
+  public static org.spin.grpc.util.Entity parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.spin.grpc.util.ValueObject parseFrom(
+  public static org.spin.grpc.util.Entity parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.spin.grpc.util.ValueObject parseFrom(java.io.InputStream input)
+  public static org.spin.grpc.util.Entity parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static org.spin.grpc.util.ValueObject parseFrom(
+  public static org.spin.grpc.util.Entity parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input, extensionRegistry);
   }
-  public static org.spin.grpc.util.ValueObject parseDelimitedFrom(java.io.InputStream input)
+  public static org.spin.grpc.util.Entity parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input);
   }
-  public static org.spin.grpc.util.ValueObject parseDelimitedFrom(
+  public static org.spin.grpc.util.Entity parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
   }
-  public static org.spin.grpc.util.ValueObject parseFrom(
+  public static org.spin.grpc.util.Entity parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static org.spin.grpc.util.ValueObject parseFrom(
+  public static org.spin.grpc.util.Entity parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -454,7 +454,7 @@ private static final long serialVersionUID = 0L;
   public static Builder newBuilder() {
     return DEFAULT_INSTANCE.toBuilder();
   }
-  public static Builder newBuilder(org.spin.grpc.util.ValueObject prototype) {
+  public static Builder newBuilder(org.spin.grpc.util.Entity prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
   public Builder toBuilder() {
@@ -473,15 +473,15 @@ private static final long serialVersionUID = 0L;
    * Value Object from ADempiere
    * </pre>
    *
-   * Protobuf type {@code data.ValueObject}
+   * Protobuf type {@code data.Entity}
    */
   public static final class Builder extends
       com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-      // @@protoc_insertion_point(builder_implements:data.ValueObject)
-      org.spin.grpc.util.ValueObjectOrBuilder {
+      // @@protoc_insertion_point(builder_implements:data.Entity)
+      org.spin.grpc.util.EntityOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.spin.grpc.util.ADempiereData.internal_static_data_ValueObject_descriptor;
+      return org.spin.grpc.util.ADempiereData.internal_static_data_Entity_descriptor;
     }
 
     @SuppressWarnings({"rawtypes"})
@@ -508,12 +508,12 @@ private static final long serialVersionUID = 0L;
     }
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.spin.grpc.util.ADempiereData.internal_static_data_ValueObject_fieldAccessorTable
+      return org.spin.grpc.util.ADempiereData.internal_static_data_Entity_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.spin.grpc.util.ValueObject.class, org.spin.grpc.util.ValueObject.Builder.class);
+              org.spin.grpc.util.Entity.class, org.spin.grpc.util.Entity.Builder.class);
     }
 
-    // Construct using org.spin.grpc.util.ValueObject.newBuilder()
+    // Construct using org.spin.grpc.util.Entity.newBuilder()
     private Builder() {
       maybeForceBuilderInitialization();
     }
@@ -542,23 +542,23 @@ private static final long serialVersionUID = 0L;
 
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
-      return org.spin.grpc.util.ADempiereData.internal_static_data_ValueObject_descriptor;
+      return org.spin.grpc.util.ADempiereData.internal_static_data_Entity_descriptor;
     }
 
-    public org.spin.grpc.util.ValueObject getDefaultInstanceForType() {
-      return org.spin.grpc.util.ValueObject.getDefaultInstance();
+    public org.spin.grpc.util.Entity getDefaultInstanceForType() {
+      return org.spin.grpc.util.Entity.getDefaultInstance();
     }
 
-    public org.spin.grpc.util.ValueObject build() {
-      org.spin.grpc.util.ValueObject result = buildPartial();
+    public org.spin.grpc.util.Entity build() {
+      org.spin.grpc.util.Entity result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
       return result;
     }
 
-    public org.spin.grpc.util.ValueObject buildPartial() {
-      org.spin.grpc.util.ValueObject result = new org.spin.grpc.util.ValueObject(this);
+    public org.spin.grpc.util.Entity buildPartial() {
+      org.spin.grpc.util.Entity result = new org.spin.grpc.util.Entity(this);
       int from_bitField0_ = bitField0_;
       int to_bitField0_ = 0;
       result.id_ = id_;
@@ -598,16 +598,16 @@ private static final long serialVersionUID = 0L;
       return (Builder) super.addRepeatedField(field, value);
     }
     public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof org.spin.grpc.util.ValueObject) {
-        return mergeFrom((org.spin.grpc.util.ValueObject)other);
+      if (other instanceof org.spin.grpc.util.Entity) {
+        return mergeFrom((org.spin.grpc.util.Entity)other);
       } else {
         super.mergeFrom(other);
         return this;
       }
     }
 
-    public Builder mergeFrom(org.spin.grpc.util.ValueObject other) {
-      if (other == org.spin.grpc.util.ValueObject.getDefaultInstance()) return this;
+    public Builder mergeFrom(org.spin.grpc.util.Entity other) {
+      if (other == org.spin.grpc.util.Entity.getDefaultInstance()) return this;
       if (other.getId() != 0) {
         setId(other.getId());
       }
@@ -634,11 +634,11 @@ private static final long serialVersionUID = 0L;
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      org.spin.grpc.util.ValueObject parsedMessage = null;
+      org.spin.grpc.util.Entity parsedMessage = null;
       try {
         parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (org.spin.grpc.util.ValueObject) e.getUnfinishedMessage();
+        parsedMessage = (org.spin.grpc.util.Entity) e.getUnfinishedMessage();
         throw e.unwrapIOException();
       } finally {
         if (parsedMessage != null) {
@@ -946,39 +946,39 @@ private static final long serialVersionUID = 0L;
     }
 
 
-    // @@protoc_insertion_point(builder_scope:data.ValueObject)
+    // @@protoc_insertion_point(builder_scope:data.Entity)
   }
 
-  // @@protoc_insertion_point(class_scope:data.ValueObject)
-  private static final org.spin.grpc.util.ValueObject DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:data.Entity)
+  private static final org.spin.grpc.util.Entity DEFAULT_INSTANCE;
   static {
-    DEFAULT_INSTANCE = new org.spin.grpc.util.ValueObject();
+    DEFAULT_INSTANCE = new org.spin.grpc.util.Entity();
   }
 
-  public static org.spin.grpc.util.ValueObject getDefaultInstance() {
+  public static org.spin.grpc.util.Entity getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<ValueObject>
-      PARSER = new com.google.protobuf.AbstractParser<ValueObject>() {
-    public ValueObject parsePartialFrom(
+  private static final com.google.protobuf.Parser<Entity>
+      PARSER = new com.google.protobuf.AbstractParser<Entity>() {
+    public Entity parsePartialFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return new ValueObject(input, extensionRegistry);
+      return new Entity(input, extensionRegistry);
     }
   };
 
-  public static com.google.protobuf.Parser<ValueObject> parser() {
+  public static com.google.protobuf.Parser<Entity> parser() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.protobuf.Parser<ValueObject> getParserForType() {
+  public com.google.protobuf.Parser<Entity> getParserForType() {
     return PARSER;
   }
 
-  public org.spin.grpc.util.ValueObject getDefaultInstanceForType() {
+  public org.spin.grpc.util.Entity getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }
 

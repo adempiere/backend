@@ -5,23 +5,24 @@ package org.spin.grpc.util;
 
 /**
  * <pre>
- * Object List
+ * List Entities Response
  * </pre>
  *
- * Protobuf type {@code data.ValueObjectList}
+ * Protobuf type {@code data.ListEntitiesResponse}
  */
-public  final class ValueObjectList extends
+public  final class ListEntitiesResponse extends
     com.google.protobuf.GeneratedMessageV3 implements
-    // @@protoc_insertion_point(message_implements:data.ValueObjectList)
-    ValueObjectListOrBuilder {
+    // @@protoc_insertion_point(message_implements:data.ListEntitiesResponse)
+    ListEntitiesResponseOrBuilder {
 private static final long serialVersionUID = 0L;
-  // Use ValueObjectList.newBuilder() to construct.
-  private ValueObjectList(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+  // Use ListEntitiesResponse.newBuilder() to construct.
+  private ListEntitiesResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
   }
-  private ValueObjectList() {
+  private ListEntitiesResponse() {
     recordCount_ = 0L;
     records_ = java.util.Collections.emptyList();
+    nextPageToken_ = "";
   }
 
   @java.lang.Override
@@ -29,7 +30,7 @@ private static final long serialVersionUID = 0L;
   getUnknownFields() {
     return this.unknownFields;
   }
-  private ValueObjectList(
+  private ListEntitiesResponse(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -62,11 +63,17 @@ private static final long serialVersionUID = 0L;
           }
           case 18: {
             if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
-              records_ = new java.util.ArrayList<org.spin.grpc.util.ValueObject>();
+              records_ = new java.util.ArrayList<org.spin.grpc.util.Entity>();
               mutable_bitField0_ |= 0x00000002;
             }
             records_.add(
-                input.readMessage(org.spin.grpc.util.ValueObject.parser(), extensionRegistry));
+                input.readMessage(org.spin.grpc.util.Entity.parser(), extensionRegistry));
+            break;
+          }
+          case 26: {
+            java.lang.String s = input.readStringRequireUtf8();
+
+            nextPageToken_ = s;
             break;
           }
         }
@@ -86,14 +93,14 @@ private static final long serialVersionUID = 0L;
   }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-    return org.spin.grpc.util.ADempiereData.internal_static_data_ValueObjectList_descriptor;
+    return org.spin.grpc.util.ADempiereData.internal_static_data_ListEntitiesResponse_descriptor;
   }
 
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
-    return org.spin.grpc.util.ADempiereData.internal_static_data_ValueObjectList_fieldAccessorTable
+    return org.spin.grpc.util.ADempiereData.internal_static_data_ListEntitiesResponse_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
-            org.spin.grpc.util.ValueObjectList.class, org.spin.grpc.util.ValueObjectList.Builder.class);
+            org.spin.grpc.util.ListEntitiesResponse.class, org.spin.grpc.util.ListEntitiesResponse.Builder.class);
   }
 
   private int bitField0_;
@@ -107,38 +114,72 @@ private static final long serialVersionUID = 0L;
   }
 
   public static final int RECORDS_FIELD_NUMBER = 2;
-  private java.util.List<org.spin.grpc.util.ValueObject> records_;
+  private java.util.List<org.spin.grpc.util.Entity> records_;
   /**
-   * <code>repeated .data.ValueObject records = 2;</code>
+   * <code>repeated .data.Entity records = 2;</code>
    */
-  public java.util.List<org.spin.grpc.util.ValueObject> getRecordsList() {
+  public java.util.List<org.spin.grpc.util.Entity> getRecordsList() {
     return records_;
   }
   /**
-   * <code>repeated .data.ValueObject records = 2;</code>
+   * <code>repeated .data.Entity records = 2;</code>
    */
-  public java.util.List<? extends org.spin.grpc.util.ValueObjectOrBuilder> 
+  public java.util.List<? extends org.spin.grpc.util.EntityOrBuilder> 
       getRecordsOrBuilderList() {
     return records_;
   }
   /**
-   * <code>repeated .data.ValueObject records = 2;</code>
+   * <code>repeated .data.Entity records = 2;</code>
    */
   public int getRecordsCount() {
     return records_.size();
   }
   /**
-   * <code>repeated .data.ValueObject records = 2;</code>
+   * <code>repeated .data.Entity records = 2;</code>
    */
-  public org.spin.grpc.util.ValueObject getRecords(int index) {
+  public org.spin.grpc.util.Entity getRecords(int index) {
     return records_.get(index);
   }
   /**
-   * <code>repeated .data.ValueObject records = 2;</code>
+   * <code>repeated .data.Entity records = 2;</code>
    */
-  public org.spin.grpc.util.ValueObjectOrBuilder getRecordsOrBuilder(
+  public org.spin.grpc.util.EntityOrBuilder getRecordsOrBuilder(
       int index) {
     return records_.get(index);
+  }
+
+  public static final int NEXT_PAGE_TOKEN_FIELD_NUMBER = 3;
+  private volatile java.lang.Object nextPageToken_;
+  /**
+   * <code>string next_page_token = 3;</code>
+   */
+  public java.lang.String getNextPageToken() {
+    java.lang.Object ref = nextPageToken_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      nextPageToken_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string next_page_token = 3;</code>
+   */
+  public com.google.protobuf.ByteString
+      getNextPageTokenBytes() {
+    java.lang.Object ref = nextPageToken_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      nextPageToken_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
   }
 
   private byte memoizedIsInitialized = -1;
@@ -159,6 +200,9 @@ private static final long serialVersionUID = 0L;
     for (int i = 0; i < records_.size(); i++) {
       output.writeMessage(2, records_.get(i));
     }
+    if (!getNextPageTokenBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 3, nextPageToken_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -175,6 +219,9 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(2, records_.get(i));
     }
+    if (!getNextPageTokenBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, nextPageToken_);
+    }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
     return size;
@@ -185,16 +232,18 @@ private static final long serialVersionUID = 0L;
     if (obj == this) {
      return true;
     }
-    if (!(obj instanceof org.spin.grpc.util.ValueObjectList)) {
+    if (!(obj instanceof org.spin.grpc.util.ListEntitiesResponse)) {
       return super.equals(obj);
     }
-    org.spin.grpc.util.ValueObjectList other = (org.spin.grpc.util.ValueObjectList) obj;
+    org.spin.grpc.util.ListEntitiesResponse other = (org.spin.grpc.util.ListEntitiesResponse) obj;
 
     boolean result = true;
     result = result && (getRecordCount()
         == other.getRecordCount());
     result = result && getRecordsList()
         .equals(other.getRecordsList());
+    result = result && getNextPageToken()
+        .equals(other.getNextPageToken());
     result = result && unknownFields.equals(other.unknownFields);
     return result;
   }
@@ -213,74 +262,76 @@ private static final long serialVersionUID = 0L;
       hash = (37 * hash) + RECORDS_FIELD_NUMBER;
       hash = (53 * hash) + getRecordsList().hashCode();
     }
+    hash = (37 * hash) + NEXT_PAGE_TOKEN_FIELD_NUMBER;
+    hash = (53 * hash) + getNextPageToken().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
   }
 
-  public static org.spin.grpc.util.ValueObjectList parseFrom(
+  public static org.spin.grpc.util.ListEntitiesResponse parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.spin.grpc.util.ValueObjectList parseFrom(
+  public static org.spin.grpc.util.ListEntitiesResponse parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.spin.grpc.util.ValueObjectList parseFrom(
+  public static org.spin.grpc.util.ListEntitiesResponse parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.spin.grpc.util.ValueObjectList parseFrom(
+  public static org.spin.grpc.util.ListEntitiesResponse parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.spin.grpc.util.ValueObjectList parseFrom(byte[] data)
+  public static org.spin.grpc.util.ListEntitiesResponse parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.spin.grpc.util.ValueObjectList parseFrom(
+  public static org.spin.grpc.util.ListEntitiesResponse parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.spin.grpc.util.ValueObjectList parseFrom(java.io.InputStream input)
+  public static org.spin.grpc.util.ListEntitiesResponse parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static org.spin.grpc.util.ValueObjectList parseFrom(
+  public static org.spin.grpc.util.ListEntitiesResponse parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input, extensionRegistry);
   }
-  public static org.spin.grpc.util.ValueObjectList parseDelimitedFrom(java.io.InputStream input)
+  public static org.spin.grpc.util.ListEntitiesResponse parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input);
   }
-  public static org.spin.grpc.util.ValueObjectList parseDelimitedFrom(
+  public static org.spin.grpc.util.ListEntitiesResponse parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
   }
-  public static org.spin.grpc.util.ValueObjectList parseFrom(
+  public static org.spin.grpc.util.ListEntitiesResponse parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static org.spin.grpc.util.ValueObjectList parseFrom(
+  public static org.spin.grpc.util.ListEntitiesResponse parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -292,7 +343,7 @@ private static final long serialVersionUID = 0L;
   public static Builder newBuilder() {
     return DEFAULT_INSTANCE.toBuilder();
   }
-  public static Builder newBuilder(org.spin.grpc.util.ValueObjectList prototype) {
+  public static Builder newBuilder(org.spin.grpc.util.ListEntitiesResponse prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
   public Builder toBuilder() {
@@ -308,28 +359,28 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * Object List
+   * List Entities Response
    * </pre>
    *
-   * Protobuf type {@code data.ValueObjectList}
+   * Protobuf type {@code data.ListEntitiesResponse}
    */
   public static final class Builder extends
       com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-      // @@protoc_insertion_point(builder_implements:data.ValueObjectList)
-      org.spin.grpc.util.ValueObjectListOrBuilder {
+      // @@protoc_insertion_point(builder_implements:data.ListEntitiesResponse)
+      org.spin.grpc.util.ListEntitiesResponseOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.spin.grpc.util.ADempiereData.internal_static_data_ValueObjectList_descriptor;
+      return org.spin.grpc.util.ADempiereData.internal_static_data_ListEntitiesResponse_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.spin.grpc.util.ADempiereData.internal_static_data_ValueObjectList_fieldAccessorTable
+      return org.spin.grpc.util.ADempiereData.internal_static_data_ListEntitiesResponse_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.spin.grpc.util.ValueObjectList.class, org.spin.grpc.util.ValueObjectList.Builder.class);
+              org.spin.grpc.util.ListEntitiesResponse.class, org.spin.grpc.util.ListEntitiesResponse.Builder.class);
     }
 
-    // Construct using org.spin.grpc.util.ValueObjectList.newBuilder()
+    // Construct using org.spin.grpc.util.ListEntitiesResponse.newBuilder()
     private Builder() {
       maybeForceBuilderInitialization();
     }
@@ -355,28 +406,30 @@ private static final long serialVersionUID = 0L;
       } else {
         recordsBuilder_.clear();
       }
+      nextPageToken_ = "";
+
       return this;
     }
 
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
-      return org.spin.grpc.util.ADempiereData.internal_static_data_ValueObjectList_descriptor;
+      return org.spin.grpc.util.ADempiereData.internal_static_data_ListEntitiesResponse_descriptor;
     }
 
-    public org.spin.grpc.util.ValueObjectList getDefaultInstanceForType() {
-      return org.spin.grpc.util.ValueObjectList.getDefaultInstance();
+    public org.spin.grpc.util.ListEntitiesResponse getDefaultInstanceForType() {
+      return org.spin.grpc.util.ListEntitiesResponse.getDefaultInstance();
     }
 
-    public org.spin.grpc.util.ValueObjectList build() {
-      org.spin.grpc.util.ValueObjectList result = buildPartial();
+    public org.spin.grpc.util.ListEntitiesResponse build() {
+      org.spin.grpc.util.ListEntitiesResponse result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
       return result;
     }
 
-    public org.spin.grpc.util.ValueObjectList buildPartial() {
-      org.spin.grpc.util.ValueObjectList result = new org.spin.grpc.util.ValueObjectList(this);
+    public org.spin.grpc.util.ListEntitiesResponse buildPartial() {
+      org.spin.grpc.util.ListEntitiesResponse result = new org.spin.grpc.util.ListEntitiesResponse(this);
       int from_bitField0_ = bitField0_;
       int to_bitField0_ = 0;
       result.recordCount_ = recordCount_;
@@ -389,6 +442,7 @@ private static final long serialVersionUID = 0L;
       } else {
         result.records_ = recordsBuilder_.build();
       }
+      result.nextPageToken_ = nextPageToken_;
       result.bitField0_ = to_bitField0_;
       onBuilt();
       return result;
@@ -421,16 +475,16 @@ private static final long serialVersionUID = 0L;
       return (Builder) super.addRepeatedField(field, value);
     }
     public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof org.spin.grpc.util.ValueObjectList) {
-        return mergeFrom((org.spin.grpc.util.ValueObjectList)other);
+      if (other instanceof org.spin.grpc.util.ListEntitiesResponse) {
+        return mergeFrom((org.spin.grpc.util.ListEntitiesResponse)other);
       } else {
         super.mergeFrom(other);
         return this;
       }
     }
 
-    public Builder mergeFrom(org.spin.grpc.util.ValueObjectList other) {
-      if (other == org.spin.grpc.util.ValueObjectList.getDefaultInstance()) return this;
+    public Builder mergeFrom(org.spin.grpc.util.ListEntitiesResponse other) {
+      if (other == org.spin.grpc.util.ListEntitiesResponse.getDefaultInstance()) return this;
       if (other.getRecordCount() != 0L) {
         setRecordCount(other.getRecordCount());
       }
@@ -460,6 +514,10 @@ private static final long serialVersionUID = 0L;
           }
         }
       }
+      if (!other.getNextPageToken().isEmpty()) {
+        nextPageToken_ = other.nextPageToken_;
+        onChanged();
+      }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
       return this;
@@ -473,11 +531,11 @@ private static final long serialVersionUID = 0L;
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      org.spin.grpc.util.ValueObjectList parsedMessage = null;
+      org.spin.grpc.util.ListEntitiesResponse parsedMessage = null;
       try {
         parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (org.spin.grpc.util.ValueObjectList) e.getUnfinishedMessage();
+        parsedMessage = (org.spin.grpc.util.ListEntitiesResponse) e.getUnfinishedMessage();
         throw e.unwrapIOException();
       } finally {
         if (parsedMessage != null) {
@@ -514,22 +572,22 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private java.util.List<org.spin.grpc.util.ValueObject> records_ =
+    private java.util.List<org.spin.grpc.util.Entity> records_ =
       java.util.Collections.emptyList();
     private void ensureRecordsIsMutable() {
       if (!((bitField0_ & 0x00000002) == 0x00000002)) {
-        records_ = new java.util.ArrayList<org.spin.grpc.util.ValueObject>(records_);
+        records_ = new java.util.ArrayList<org.spin.grpc.util.Entity>(records_);
         bitField0_ |= 0x00000002;
        }
     }
 
     private com.google.protobuf.RepeatedFieldBuilderV3<
-        org.spin.grpc.util.ValueObject, org.spin.grpc.util.ValueObject.Builder, org.spin.grpc.util.ValueObjectOrBuilder> recordsBuilder_;
+        org.spin.grpc.util.Entity, org.spin.grpc.util.Entity.Builder, org.spin.grpc.util.EntityOrBuilder> recordsBuilder_;
 
     /**
-     * <code>repeated .data.ValueObject records = 2;</code>
+     * <code>repeated .data.Entity records = 2;</code>
      */
-    public java.util.List<org.spin.grpc.util.ValueObject> getRecordsList() {
+    public java.util.List<org.spin.grpc.util.Entity> getRecordsList() {
       if (recordsBuilder_ == null) {
         return java.util.Collections.unmodifiableList(records_);
       } else {
@@ -537,7 +595,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.ValueObject records = 2;</code>
+     * <code>repeated .data.Entity records = 2;</code>
      */
     public int getRecordsCount() {
       if (recordsBuilder_ == null) {
@@ -547,9 +605,9 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.ValueObject records = 2;</code>
+     * <code>repeated .data.Entity records = 2;</code>
      */
-    public org.spin.grpc.util.ValueObject getRecords(int index) {
+    public org.spin.grpc.util.Entity getRecords(int index) {
       if (recordsBuilder_ == null) {
         return records_.get(index);
       } else {
@@ -557,10 +615,10 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.ValueObject records = 2;</code>
+     * <code>repeated .data.Entity records = 2;</code>
      */
     public Builder setRecords(
-        int index, org.spin.grpc.util.ValueObject value) {
+        int index, org.spin.grpc.util.Entity value) {
       if (recordsBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
@@ -574,10 +632,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.ValueObject records = 2;</code>
+     * <code>repeated .data.Entity records = 2;</code>
      */
     public Builder setRecords(
-        int index, org.spin.grpc.util.ValueObject.Builder builderForValue) {
+        int index, org.spin.grpc.util.Entity.Builder builderForValue) {
       if (recordsBuilder_ == null) {
         ensureRecordsIsMutable();
         records_.set(index, builderForValue.build());
@@ -588,9 +646,9 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.ValueObject records = 2;</code>
+     * <code>repeated .data.Entity records = 2;</code>
      */
-    public Builder addRecords(org.spin.grpc.util.ValueObject value) {
+    public Builder addRecords(org.spin.grpc.util.Entity value) {
       if (recordsBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
@@ -604,10 +662,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.ValueObject records = 2;</code>
+     * <code>repeated .data.Entity records = 2;</code>
      */
     public Builder addRecords(
-        int index, org.spin.grpc.util.ValueObject value) {
+        int index, org.spin.grpc.util.Entity value) {
       if (recordsBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
@@ -621,10 +679,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.ValueObject records = 2;</code>
+     * <code>repeated .data.Entity records = 2;</code>
      */
     public Builder addRecords(
-        org.spin.grpc.util.ValueObject.Builder builderForValue) {
+        org.spin.grpc.util.Entity.Builder builderForValue) {
       if (recordsBuilder_ == null) {
         ensureRecordsIsMutable();
         records_.add(builderForValue.build());
@@ -635,10 +693,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.ValueObject records = 2;</code>
+     * <code>repeated .data.Entity records = 2;</code>
      */
     public Builder addRecords(
-        int index, org.spin.grpc.util.ValueObject.Builder builderForValue) {
+        int index, org.spin.grpc.util.Entity.Builder builderForValue) {
       if (recordsBuilder_ == null) {
         ensureRecordsIsMutable();
         records_.add(index, builderForValue.build());
@@ -649,10 +707,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.ValueObject records = 2;</code>
+     * <code>repeated .data.Entity records = 2;</code>
      */
     public Builder addAllRecords(
-        java.lang.Iterable<? extends org.spin.grpc.util.ValueObject> values) {
+        java.lang.Iterable<? extends org.spin.grpc.util.Entity> values) {
       if (recordsBuilder_ == null) {
         ensureRecordsIsMutable();
         com.google.protobuf.AbstractMessageLite.Builder.addAll(
@@ -664,7 +722,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.ValueObject records = 2;</code>
+     * <code>repeated .data.Entity records = 2;</code>
      */
     public Builder clearRecords() {
       if (recordsBuilder_ == null) {
@@ -677,7 +735,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.ValueObject records = 2;</code>
+     * <code>repeated .data.Entity records = 2;</code>
      */
     public Builder removeRecords(int index) {
       if (recordsBuilder_ == null) {
@@ -690,16 +748,16 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.ValueObject records = 2;</code>
+     * <code>repeated .data.Entity records = 2;</code>
      */
-    public org.spin.grpc.util.ValueObject.Builder getRecordsBuilder(
+    public org.spin.grpc.util.Entity.Builder getRecordsBuilder(
         int index) {
       return getRecordsFieldBuilder().getBuilder(index);
     }
     /**
-     * <code>repeated .data.ValueObject records = 2;</code>
+     * <code>repeated .data.Entity records = 2;</code>
      */
-    public org.spin.grpc.util.ValueObjectOrBuilder getRecordsOrBuilder(
+    public org.spin.grpc.util.EntityOrBuilder getRecordsOrBuilder(
         int index) {
       if (recordsBuilder_ == null) {
         return records_.get(index);  } else {
@@ -707,9 +765,9 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.ValueObject records = 2;</code>
+     * <code>repeated .data.Entity records = 2;</code>
      */
-    public java.util.List<? extends org.spin.grpc.util.ValueObjectOrBuilder> 
+    public java.util.List<? extends org.spin.grpc.util.EntityOrBuilder> 
          getRecordsOrBuilderList() {
       if (recordsBuilder_ != null) {
         return recordsBuilder_.getMessageOrBuilderList();
@@ -718,33 +776,33 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.ValueObject records = 2;</code>
+     * <code>repeated .data.Entity records = 2;</code>
      */
-    public org.spin.grpc.util.ValueObject.Builder addRecordsBuilder() {
+    public org.spin.grpc.util.Entity.Builder addRecordsBuilder() {
       return getRecordsFieldBuilder().addBuilder(
-          org.spin.grpc.util.ValueObject.getDefaultInstance());
+          org.spin.grpc.util.Entity.getDefaultInstance());
     }
     /**
-     * <code>repeated .data.ValueObject records = 2;</code>
+     * <code>repeated .data.Entity records = 2;</code>
      */
-    public org.spin.grpc.util.ValueObject.Builder addRecordsBuilder(
+    public org.spin.grpc.util.Entity.Builder addRecordsBuilder(
         int index) {
       return getRecordsFieldBuilder().addBuilder(
-          index, org.spin.grpc.util.ValueObject.getDefaultInstance());
+          index, org.spin.grpc.util.Entity.getDefaultInstance());
     }
     /**
-     * <code>repeated .data.ValueObject records = 2;</code>
+     * <code>repeated .data.Entity records = 2;</code>
      */
-    public java.util.List<org.spin.grpc.util.ValueObject.Builder> 
+    public java.util.List<org.spin.grpc.util.Entity.Builder> 
          getRecordsBuilderList() {
       return getRecordsFieldBuilder().getBuilderList();
     }
     private com.google.protobuf.RepeatedFieldBuilderV3<
-        org.spin.grpc.util.ValueObject, org.spin.grpc.util.ValueObject.Builder, org.spin.grpc.util.ValueObjectOrBuilder> 
+        org.spin.grpc.util.Entity, org.spin.grpc.util.Entity.Builder, org.spin.grpc.util.EntityOrBuilder> 
         getRecordsFieldBuilder() {
       if (recordsBuilder_ == null) {
         recordsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
-            org.spin.grpc.util.ValueObject, org.spin.grpc.util.ValueObject.Builder, org.spin.grpc.util.ValueObjectOrBuilder>(
+            org.spin.grpc.util.Entity, org.spin.grpc.util.Entity.Builder, org.spin.grpc.util.EntityOrBuilder>(
                 records_,
                 ((bitField0_ & 0x00000002) == 0x00000002),
                 getParentForChildren(),
@@ -752,6 +810,75 @@ private static final long serialVersionUID = 0L;
         records_ = null;
       }
       return recordsBuilder_;
+    }
+
+    private java.lang.Object nextPageToken_ = "";
+    /**
+     * <code>string next_page_token = 3;</code>
+     */
+    public java.lang.String getNextPageToken() {
+      java.lang.Object ref = nextPageToken_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        nextPageToken_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string next_page_token = 3;</code>
+     */
+    public com.google.protobuf.ByteString
+        getNextPageTokenBytes() {
+      java.lang.Object ref = nextPageToken_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        nextPageToken_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string next_page_token = 3;</code>
+     */
+    public Builder setNextPageToken(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
+      nextPageToken_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string next_page_token = 3;</code>
+     */
+    public Builder clearNextPageToken() {
+      
+      nextPageToken_ = getDefaultInstance().getNextPageToken();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string next_page_token = 3;</code>
+     */
+    public Builder setNextPageTokenBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      
+      nextPageToken_ = value;
+      onChanged();
+      return this;
     }
     public final Builder setUnknownFields(
         final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -764,39 +891,39 @@ private static final long serialVersionUID = 0L;
     }
 
 
-    // @@protoc_insertion_point(builder_scope:data.ValueObjectList)
+    // @@protoc_insertion_point(builder_scope:data.ListEntitiesResponse)
   }
 
-  // @@protoc_insertion_point(class_scope:data.ValueObjectList)
-  private static final org.spin.grpc.util.ValueObjectList DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:data.ListEntitiesResponse)
+  private static final org.spin.grpc.util.ListEntitiesResponse DEFAULT_INSTANCE;
   static {
-    DEFAULT_INSTANCE = new org.spin.grpc.util.ValueObjectList();
+    DEFAULT_INSTANCE = new org.spin.grpc.util.ListEntitiesResponse();
   }
 
-  public static org.spin.grpc.util.ValueObjectList getDefaultInstance() {
+  public static org.spin.grpc.util.ListEntitiesResponse getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<ValueObjectList>
-      PARSER = new com.google.protobuf.AbstractParser<ValueObjectList>() {
-    public ValueObjectList parsePartialFrom(
+  private static final com.google.protobuf.Parser<ListEntitiesResponse>
+      PARSER = new com.google.protobuf.AbstractParser<ListEntitiesResponse>() {
+    public ListEntitiesResponse parsePartialFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return new ValueObjectList(input, extensionRegistry);
+      return new ListEntitiesResponse(input, extensionRegistry);
     }
   };
 
-  public static com.google.protobuf.Parser<ValueObjectList> parser() {
+  public static com.google.protobuf.Parser<ListEntitiesResponse> parser() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.protobuf.Parser<ValueObjectList> getParserForType() {
+  public com.google.protobuf.Parser<ListEntitiesResponse> getParserForType() {
     return PARSER;
   }
 
-  public org.spin.grpc.util.ValueObjectList getDefaultInstanceForType() {
+  public org.spin.grpc.util.ListEntitiesResponse getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }
 
