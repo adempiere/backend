@@ -170,7 +170,7 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 			if(request == null) {
 				throw new AdempiereException("Lookup Request Null");
 			}
-			log.fine("Lookup List Requested = " + request.getUuid());
+		//	log.fine("Lookup List Requested = " + request.getUuid());
 			Properties context = getContext(request.getClientRequest());
 			ListLookupItemsResponse.Builder entityValueList = convertLookupItemsList(context, request);
 			responseObserver.onNext(entityValueList.build());
