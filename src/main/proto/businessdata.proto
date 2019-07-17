@@ -116,11 +116,11 @@ message LookupItem {
 
 // List Lookup Item
 message ListLookupItemsRequest {
-	int32 id = 1;
-	string uuid = 2;
 	ClientRequest clientRequest = 3;
 	// Query
 	Criteria criteria = 4;
+	int32 page_size = 5;
+	string page_token = 6;
 }
 
 // List Lookup Item Response

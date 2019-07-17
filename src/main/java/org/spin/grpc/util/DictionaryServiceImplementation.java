@@ -936,6 +936,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setIsInfoOnly(browseField.isInfoOnly())
 				.setIsMandatory(browseField.isMandatory())
 				.setIsRange(browseField.isRange())
+				.setIsReadOnly(browseField.isReadOnly())
 				.setReadOnlyLogic(validateNull(browseField.getReadOnlyLogic()))
 				.setIsKey(browseField.isKey())
 				.setIsIdentifier(browseField.isIdentifier())
@@ -1191,9 +1192,24 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setTableName(validateNull(info.TableName))
 				.setKeyColumnName(validateNull(info.KeyColumn))
 				.setDisplayColumnName(validateNull(info.DisplayColumn))
-				.setQuery(validateNull(info.Query))
 				.setDirectQuery(validateNull(info.QueryDirect))
 				.setValidationCode(validateNull(info.ValidationCode));
+		//	For validation
+		String queryForLookup = info.Query;
+		int positionFrom = queryForLookup.lastIndexOf(" FROM ");
+		boolean hasWhereClause = queryForLookup.indexOf(" WHERE ", positionFrom) != -1;
+		//
+		int positionOrder = queryForLookup.lastIndexOf(" ORDER BY ");
+		if (positionOrder != -1) {
+			queryForLookup = queryForLookup.substring(0, positionOrder) 
+					+ (hasWhereClause ? " AND " : " WHERE ") 
+					+ info.ValidationCode
+					+ queryForLookup.substring(positionOrder);
+		} else {			
+			queryForLookup += (hasWhereClause ? " AND " : " WHERE ") + info.ValidationCode;
+		}
+		//	For Query
+		builder.setQuery(validateNull(queryForLookup));
 		//	Window Reference
 		if(info.ZoomWindow > 0) {
 			builder.addWindows(convertZoomWindow(context, info.ZoomWindow, language).build());

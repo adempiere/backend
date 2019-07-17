@@ -22,8 +22,8 @@ import org.compiere.Adempiere;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 
-public class DataServer {
-	private static final Logger logger = Logger.getLogger(DataServiceImplementation.class.getName());
+public class BusinessDataServer {
+	private static final Logger logger = Logger.getLogger(BusinessDataServiceImplementation.class.getName());
 
 	  private Server server;
 
@@ -31,7 +31,7 @@ public class DataServer {
 	    /* The port on which the server should run */
 	    int port = 50052;
 	    server = ServerBuilder.forPort(port)
-	        .addService(new DataServiceImplementation())
+	        .addService(new BusinessDataServiceImplementation())
 	        .build()
 	        .start();
 	    logger.info("Server started, listening on " + port);
@@ -40,7 +40,7 @@ public class DataServer {
 	      public void run() {
 	        // Use stderr here since the logger may have been reset by its JVM shutdown hook.
 	    	  logger.info("*** shutting down gRPC server since JVM is shutting down");
-	        DataServer.this.stop();
+	        BusinessDataServer.this.stop();
 	        logger.info("*** server shut down");
 	      }
 	    });
@@ -66,7 +66,7 @@ public class DataServer {
 	   */
 	  public static void main(String[] args) throws IOException, InterruptedException {
 		Adempiere.startup(false);
-	    final DataServer server = new DataServer();
+	    final BusinessDataServer server = new BusinessDataServer();
 	    server.start();
 	    server.blockUntilShutdown();
 	  }

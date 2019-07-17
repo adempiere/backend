@@ -78,9 +78,9 @@ import com.google.protobuf.ByteString;
 
 import io.grpc.stub.StreamObserver;
 
-public class DataServiceImplementation extends DataServiceImplBase {
+public class BusinessDataServiceImplementation extends DataServiceImplBase {
 	/**	Logger			*/
-	private CLogger log = CLogger.getCLogger(DataServiceImplementation.class);
+	private CLogger log = CLogger.getCLogger(BusinessDataServiceImplementation.class);
 	/**	Key column constant	*/
 	private final String KEY_COLUMN_KEY = "KeyColumn";
 	/**	Key column constant	*/
@@ -676,32 +676,6 @@ public class DataServiceImplementation extends DataServiceImplBase {
 		return builder;
 	}
 	
-	
-//	private ListEntitiesResponse.Builder convertObjectList(Properties context, ListEntitiesRequest request) {
-//		Criteria criteria = request.getCriteria();
-//		StringBuffer whereClause = new StringBuffer();
-//		List<Object> params = new ArrayList<>();
-//		if(!Util.isEmpty(request.getUuid())) {
-//			whereClause.append(I_AD_Element.COLUMNNAME_UUID + " = ?");
-//			params.add(request.getUuid());
-//		} else if(!Util.isEmpty(criteria.getWhereClause())) {
-//			whereClause.append("(").append(criteria.getWhereClause()).append(")");
-//		}
-//		//	
-//		List<PO> entityList = new Query(context, criteria.getTableName(), whereClause.toString(), null)
-//				.setParameters(params)
-//				.<PO>list();
-//		//	
-//		ListEntitiesResponse.Builder builder = ListEntitiesResponse.newBuilder()
-//				.setRecordCount(entityList.size());
-//		for(PO entity : entityList) {
-//			ListEntitiesResponse.Builder valueObject = convertObject(context, entity);
-//			builder.addRecords(valueObject.build());
-//		}
-//		//	Return
-//		return builder;
-//	}
-	
 	/**
 	 * Get Where clause for Smart Browse
 	 * @param browser
@@ -855,7 +829,10 @@ public class DataServiceImplementation extends DataServiceImplBase {
 		//	Add Order By
 		parsedSQL = parsedSQL + orderByClause;
 		//	Return
-		return convertBrowserResult(browser, parsedSQL, values);
+		builder = convertBrowserResult(browser, parsedSQL, values);
+		builder.setNextPageToken(getPagePrefix(request.getClientRequest().getSessionUuid()) + page + 1);
+		//	Return
+		return builder;
 	}
 	
 	/**
@@ -866,7 +843,7 @@ public class DataServiceImplementation extends DataServiceImplBase {
 	 */
 	private int getPageNumber(String sessionUuid, String pageToken) {
 		int page = 0;
-		String pagePrefix = sessionUuid + "-";
+		String pagePrefix = getPagePrefix(sessionUuid);
 		if(!Util.isEmpty(pageToken)) {
 			if(pageToken.startsWith(pagePrefix)) {
 				page = Integer.parseInt(pageToken.replace(pagePrefix, ""));
@@ -874,6 +851,15 @@ public class DataServiceImplementation extends DataServiceImplBase {
 		}
 		//	
 		return page;
+	}
+	
+	/**
+	 * Get Page Prefix
+	 * @param sessionUuid
+	 * @return
+	 */
+	private String getPagePrefix(String sessionUuid) {
+		return sessionUuid + "-";
 	}
 	
 	/**
