@@ -1196,17 +1196,19 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setValidationCode(validateNull(info.ValidationCode));
 		//	For validation
 		String queryForLookup = info.Query;
-		int positionFrom = queryForLookup.lastIndexOf(" FROM ");
-		boolean hasWhereClause = queryForLookup.indexOf(" WHERE ", positionFrom) != -1;
-		//
-		int positionOrder = queryForLookup.lastIndexOf(" ORDER BY ");
-		if (positionOrder != -1) {
-			queryForLookup = queryForLookup.substring(0, positionOrder) 
-					+ (hasWhereClause ? " AND " : " WHERE ") 
-					+ info.ValidationCode
-					+ queryForLookup.substring(positionOrder);
-		} else {			
-			queryForLookup += (hasWhereClause ? " AND " : " WHERE ") + info.ValidationCode;
+		if(!Util.isEmpty(info.ValidationCode)) {
+			int positionFrom = queryForLookup.lastIndexOf(" FROM ");
+			boolean hasWhereClause = queryForLookup.indexOf(" WHERE ", positionFrom) != -1;
+			//
+			int positionOrder = queryForLookup.lastIndexOf(" ORDER BY ");
+			if (positionOrder != -1) {
+				queryForLookup = queryForLookup.substring(0, positionOrder) 
+						+ (hasWhereClause ? " AND " : " WHERE ") 
+						+ info.ValidationCode
+						+ queryForLookup.substring(positionOrder);
+			} else {			
+				queryForLookup += (hasWhereClause ? " AND " : " WHERE ") + info.ValidationCode;
+			}
 		}
 		//	For Query
 		builder.setQuery(validateNull(queryForLookup));
