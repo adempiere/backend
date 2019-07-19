@@ -223,30 +223,37 @@ message ListActivitiesRequest {
 	ClientRequest clientRequest = 1;
 	string userUuid = 2;
 	string instanceUuid = 3;
+	int32 page_size = 4;
+	string page_token = 5;
 }
 
 // Recent Items Request
 message ListRecentItemsRequest {
 	ClientRequest clientRequest = 1;
 	bool currentSession = 2;
+	int32 page_size = 3;
+	string page_token = 4;
 }
 
 // Recent Item
 message RecentItem {
 	string menuUuid = 1;
 	string menuName = 2;
-	string windowUuid = 3;
-	string tabUuid = 4;
-	int32 tableId = 5;
-	int32 recordId = 6;
-	string displayName = 7;
-	int64 updated = 8;
+	string menuDescription = 3;
+	string windowUuid = 4;
+	string tabUuid = 5;
+	int32 tableId = 6;
+	int32 recordId = 7;
+	string displayName = 8;
+	string recordUuid = 9;
+	int64 updated = 10;
 }
 
 //	Recent Items List
 message ListRecentItemsResponse {
 	int64 recordCount = 1;
 	repeated RecentItem recentItems = 2;
+	string next_page_token = 3;
 }
 
 //	BusinessProcess Selections
@@ -259,6 +266,7 @@ message Selection {
 message ListActivitiesResponse {
 	int64 recordCount = 1;
 	repeated BusinessProcess responses = 2;
+	string next_page_token = 3;
 }
 
 //	Response with log and values from server

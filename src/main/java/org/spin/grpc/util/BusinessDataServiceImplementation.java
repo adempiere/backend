@@ -41,6 +41,8 @@ import org.adempiere.exceptions.AdempiereException;
 import org.adempiere.model.I_AD_Browse;
 import org.adempiere.model.MBrowse;
 import org.adempiere.model.MBrowseField;
+import org.adempiere.model.MView;
+import org.adempiere.model.MViewDefinition;
 import org.compiere.model.Callout;
 import org.compiere.model.GridField;
 import org.compiere.model.GridTab;
@@ -49,6 +51,7 @@ import org.compiere.model.I_AD_PInstance;
 import org.compiere.model.I_AD_PInstance_Log;
 import org.compiere.model.I_AD_Process;
 import org.compiere.model.I_AD_Session;
+import org.compiere.model.MMenu;
 import org.compiere.model.MPInstance;
 import org.compiere.model.MPInstancePara;
 import org.compiere.model.MProcess;
@@ -56,6 +59,9 @@ import org.compiere.model.MRecentItem;
 import org.compiere.model.MRole;
 import org.compiere.model.MRule;
 import org.compiere.model.MSession;
+import org.compiere.model.MTab;
+import org.compiere.model.MTable;
+import org.compiere.model.MWindow;
 import org.compiere.model.PO;
 import org.compiere.model.POInfo;
 import org.compiere.model.Query;
@@ -806,19 +812,19 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 		}
 		List<Object> values = new ArrayList<Object>();
 		String whereClause = getBrowserWhereClause(browser, criteria.getWhereClause(), parameterMap, values);
-		//	Add SQL
-		//	TODO: Add parsed query from client
 		//	Page prefix
 		int page = getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
 		StringBuilder sql = new StringBuilder(criteria.getQuery());
-		sql.append(" WHERE ").append("ROWNUM >= ").append(page).append(" AND ROWNUM <= ").append(PAGE_SIZE);
 		if (whereClause.length() > 0) {
-			sql.append(" AND ").append(whereClause); // includes first AND
+			sql.append(" WHERE ").append(whereClause); // includes first AND
 		}
-		String tableName = browser.getAD_View().getParentEntityAliasName();
+		MView view = browser.getAD_View();
+		MViewDefinition parentDefinition = view.getParentViewDefinition();
+		String tableNameAlias = parentDefinition.getTableAlias();
+		String tableName = parentDefinition.getAD_Table().getTableName();
 		//	
 		String parsedSQL = MRole.getDefault().addAccessSQL(sql.toString(),
-				tableName, MRole.SQL_FULLYQUALIFIED,
+				tableNameAlias, MRole.SQL_FULLYQUALIFIED,
 				MRole.SQL_RO);
 		String orderByClause = criteria.getOrderByClause();
 		if(Util.isEmpty(orderByClause)) {
@@ -826,13 +832,39 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 		} else {
 			orderByClause = " ORDER BY " + orderByClause;
 		}
+		//	Count records
+		int count = countRecords(context, parsedSQL, tableName, values);
+		String nexPageToken = null;
+		int pageMultiplier = page == 0? 1: page;
+		if(count > (PAGE_SIZE * pageMultiplier)) {
+			nexPageToken = getPagePrefix(request.getClientRequest().getSessionUuid()) + (page + 1);
+		}
+		//	Add Row Number
+		if(whereClause.length() > 0) {
+			parsedSQL = parsedSQL + " AND ROWNUM >= " + page + " AND ROWNUM <= " + PAGE_SIZE;
+		}
 		//	Add Order By
 		parsedSQL = parsedSQL + orderByClause;
 		//	Return
 		builder = convertBrowserResult(browser, parsedSQL, values);
-		builder.setNextPageToken(getPagePrefix(request.getClientRequest().getSessionUuid()) + page + 1);
+		//	Validate page token
+		builder.setNextPageToken(validateNull(nexPageToken));
 		//	Return
 		return builder;
+	}
+	
+	/**
+	 * Count records
+	 * @param context
+	 * @param sql
+	 * @param tableName
+	 * @param parameters
+	 * @return
+	 */
+	private int countRecords(Properties context, String sql, String tableName, List<Object> parameters) {
+		int positionFrom = sql.lastIndexOf(" FROM " + tableName);
+		String queryCount = "SELECT COUNT(*) " + sql.substring(positionFrom, sql.length());
+		return DB.getSQLValueEx(null, queryCount, parameters);
 	}
 	
 	/**
@@ -1029,17 +1061,55 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 						.setRecordId(recentItem.getRecord_ID())
 						.setTableId(recentItem.getAD_Table_ID())
 						.setDisplayName(validateNull(recentItem.getLabel()));
+				String menuName = "";
+				String menuDescription = "";
 				if(recentItem.getAD_Tab_ID() > 0) {
-					recentItemBuilder.setTabUuid(validateNull(recentItem.getAD_Tab().getUUID()));
+					MTab tab = MTab.get(context, recentItem.getAD_Tab_ID());
+					recentItemBuilder.setTabUuid(validateNull(tab.getUUID()));
+					menuName = tab.getName();
+					menuDescription = tab.getDescription();
+					if(Env.isBaseLanguage(context, "")) {
+						menuName = tab.get_Translation("Name");
+						menuDescription = tab.get_Translation("Description");
+					}
 				}
 				if(recentItem.getAD_Window_ID() > 0) {
-					recentItemBuilder.setWindowUuid(validateNull(recentItem.getAD_Window().getUUID()));
+					MWindow window = MWindow.get(context, recentItem.getAD_Window_ID());
+					recentItemBuilder.setWindowUuid(validateNull(window.getUUID()));
+					menuName = window.getName();
+					menuDescription = window.getDescription();
+					if(Env.isBaseLanguage(context, "")) {
+						menuName = window.get_Translation("Name");
+						menuDescription = window.get_Translation("Description");
+					}
 				}
 				if(recentItem.getAD_Menu_ID() > 0) {
-					recentItemBuilder.setMenuUuid(validateNull(recentItem.getAD_Menu().getUUID()));
+					MMenu menu = MMenu.getFromId(context, recentItem.getAD_Menu_ID());
+					recentItemBuilder.setMenuUuid(validateNull(menu.getUUID()));
+					if(!menu.isCentrallyMaintained()) {
+						menuName = menu.getName();
+						menuDescription = menu.getDescription();
+						if(Env.isBaseLanguage(context, "")) {
+							menuName = menu.get_Translation("Name");
+							menuDescription = menu.get_Translation("Description");
+						}
+					}
 				}
 				//	Add time
+				recentItemBuilder.setMenuName(validateNull(menuName));
+				recentItemBuilder.setMenuDescription(validateNull(menuDescription));
 				recentItemBuilder.setUpdated(recentItem.getUpdated().getTime());
+				//	For uuid
+				if(recentItem.getAD_Table_ID() != 0
+						&& recentItem.getRecord_ID() != 0) {
+					MTable table = MTable.get(context, recentItem.getAD_Table_ID());
+					if(table != null
+							&& table.getAD_Table_ID() != 0) {
+						recentItemBuilder.setRecordUuid(validateNull(table.getPO(recentItem.getRecord_ID(), null).get_UUID()));
+					}
+				}
+				
+				
 				builder.addRecentItems(recentItemBuilder.build());
 			}
 		}

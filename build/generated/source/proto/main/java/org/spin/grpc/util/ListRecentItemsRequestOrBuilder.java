@@ -24,4 +24,19 @@ public interface ListRecentItemsRequestOrBuilder extends
    * <code>bool currentSession = 2;</code>
    */
   boolean getCurrentSession();
+
+  /**
+   * <code>int32 page_size = 3;</code>
+   */
+  int getPageSize();
+
+  /**
+   * <code>string page_token = 4;</code>
+   */
+  java.lang.String getPageToken();
+  /**
+   * <code>string page_token = 4;</code>
+   */
+  com.google.protobuf.ByteString
+      getPageTokenBytes();
 }

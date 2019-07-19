@@ -21,6 +21,8 @@ private static final long serialVersionUID = 0L;
   }
   private ListRecentItemsRequest() {
     currentSession_ = false;
+    pageSize_ = 0;
+    pageToken_ = "";
   }
 
   @java.lang.Override
@@ -70,6 +72,17 @@ private static final long serialVersionUID = 0L;
           case 16: {
 
             currentSession_ = input.readBool();
+            break;
+          }
+          case 24: {
+
+            pageSize_ = input.readInt32();
+            break;
+          }
+          case 34: {
+            java.lang.String s = input.readStringRequireUtf8();
+
+            pageToken_ = s;
             break;
           }
         }
@@ -126,6 +139,49 @@ private static final long serialVersionUID = 0L;
     return currentSession_;
   }
 
+  public static final int PAGE_SIZE_FIELD_NUMBER = 3;
+  private int pageSize_;
+  /**
+   * <code>int32 page_size = 3;</code>
+   */
+  public int getPageSize() {
+    return pageSize_;
+  }
+
+  public static final int PAGE_TOKEN_FIELD_NUMBER = 4;
+  private volatile java.lang.Object pageToken_;
+  /**
+   * <code>string page_token = 4;</code>
+   */
+  public java.lang.String getPageToken() {
+    java.lang.Object ref = pageToken_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      pageToken_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string page_token = 4;</code>
+   */
+  public com.google.protobuf.ByteString
+      getPageTokenBytes() {
+    java.lang.Object ref = pageToken_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      pageToken_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
     byte isInitialized = memoizedIsInitialized;
@@ -144,6 +200,12 @@ private static final long serialVersionUID = 0L;
     if (currentSession_ != false) {
       output.writeBool(2, currentSession_);
     }
+    if (pageSize_ != 0) {
+      output.writeInt32(3, pageSize_);
+    }
+    if (!getPageTokenBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 4, pageToken_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -159,6 +221,13 @@ private static final long serialVersionUID = 0L;
     if (currentSession_ != false) {
       size += com.google.protobuf.CodedOutputStream
         .computeBoolSize(2, currentSession_);
+    }
+    if (pageSize_ != 0) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeInt32Size(3, pageSize_);
+    }
+    if (!getPageTokenBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, pageToken_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -183,6 +252,10 @@ private static final long serialVersionUID = 0L;
     }
     result = result && (getCurrentSession()
         == other.getCurrentSession());
+    result = result && (getPageSize()
+        == other.getPageSize());
+    result = result && getPageToken()
+        .equals(other.getPageToken());
     result = result && unknownFields.equals(other.unknownFields);
     return result;
   }
@@ -201,6 +274,10 @@ private static final long serialVersionUID = 0L;
     hash = (37 * hash) + CURRENTSESSION_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
         getCurrentSession());
+    hash = (37 * hash) + PAGE_SIZE_FIELD_NUMBER;
+    hash = (53 * hash) + getPageSize();
+    hash = (37 * hash) + PAGE_TOKEN_FIELD_NUMBER;
+    hash = (53 * hash) + getPageToken().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -342,6 +419,10 @@ private static final long serialVersionUID = 0L;
       }
       currentSession_ = false;
 
+      pageSize_ = 0;
+
+      pageToken_ = "";
+
       return this;
     }
 
@@ -370,6 +451,8 @@ private static final long serialVersionUID = 0L;
         result.clientRequest_ = clientRequestBuilder_.build();
       }
       result.currentSession_ = currentSession_;
+      result.pageSize_ = pageSize_;
+      result.pageToken_ = pageToken_;
       onBuilt();
       return result;
     }
@@ -416,6 +499,13 @@ private static final long serialVersionUID = 0L;
       }
       if (other.getCurrentSession() != false) {
         setCurrentSession(other.getCurrentSession());
+      }
+      if (other.getPageSize() != 0) {
+        setPageSize(other.getPageSize());
+      }
+      if (!other.getPageToken().isEmpty()) {
+        pageToken_ = other.pageToken_;
+        onChanged();
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -583,6 +673,101 @@ private static final long serialVersionUID = 0L;
     public Builder clearCurrentSession() {
       
       currentSession_ = false;
+      onChanged();
+      return this;
+    }
+
+    private int pageSize_ ;
+    /**
+     * <code>int32 page_size = 3;</code>
+     */
+    public int getPageSize() {
+      return pageSize_;
+    }
+    /**
+     * <code>int32 page_size = 3;</code>
+     */
+    public Builder setPageSize(int value) {
+      
+      pageSize_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>int32 page_size = 3;</code>
+     */
+    public Builder clearPageSize() {
+      
+      pageSize_ = 0;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object pageToken_ = "";
+    /**
+     * <code>string page_token = 4;</code>
+     */
+    public java.lang.String getPageToken() {
+      java.lang.Object ref = pageToken_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        pageToken_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string page_token = 4;</code>
+     */
+    public com.google.protobuf.ByteString
+        getPageTokenBytes() {
+      java.lang.Object ref = pageToken_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        pageToken_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string page_token = 4;</code>
+     */
+    public Builder setPageToken(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
+      pageToken_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string page_token = 4;</code>
+     */
+    public Builder clearPageToken() {
+      
+      pageToken_ = getDefaultInstance().getPageToken();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string page_token = 4;</code>
+     */
+    public Builder setPageTokenBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      
+      pageToken_ = value;
       onChanged();
       return this;
     }

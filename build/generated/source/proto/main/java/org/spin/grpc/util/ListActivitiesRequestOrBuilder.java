@@ -39,4 +39,19 @@ public interface ListActivitiesRequestOrBuilder extends
    */
   com.google.protobuf.ByteString
       getInstanceUuidBytes();
+
+  /**
+   * <code>int32 page_size = 4;</code>
+   */
+  int getPageSize();
+
+  /**
+   * <code>string page_token = 5;</code>
+   */
+  java.lang.String getPageToken();
+  /**
+   * <code>string page_token = 5;</code>
+   */
+  com.google.protobuf.ByteString
+      getPageTokenBytes();
 }

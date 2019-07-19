@@ -244,58 +244,63 @@ public final class ADempiereData {
       "ableSelectedId\030\005 \001(\005\022\030\n\020reportExportType" +
       "\030\006 \001(\t\022#\n\nselections\030\007 \003(\0132\017.data.Select" +
       "ion\022\"\n\nparameters\030\010 \003(\0132\016.data.KeyValue\"" +
-      "k\n\025ListActivitiesRequest\022*\n\rclientReques" +
-      "t\030\001 \001(\0132\023.data.ClientRequest\022\020\n\010userUuid" +
-      "\030\002 \001(\t\022\024\n\014instanceUuid\030\003 \001(\t\"\\\n\026ListRece" +
-      "ntItemsRequest\022*\n\rclientRequest\030\001 \001(\0132\023." +
-      "data.ClientRequest\022\026\n\016currentSession\030\002 \001" +
-      "(\010\"\236\001\n\nRecentItem\022\020\n\010menuUuid\030\001 \001(\t\022\020\n\010m" +
-      "enuName\030\002 \001(\t\022\022\n\nwindowUuid\030\003 \001(\t\022\017\n\007tab" +
-      "Uuid\030\004 \001(\t\022\017\n\007tableId\030\005 \001(\005\022\020\n\010recordId\030" +
-      "\006 \001(\005\022\023\n\013displayName\030\007 \001(\t\022\017\n\007updated\030\010 " +
-      "\001(\003\"U\n\027ListRecentItemsResponse\022\023\n\013record" +
-      "Count\030\001 \001(\003\022%\n\013recentItems\030\002 \003(\0132\020.data." +
-      "RecentItem\"@\n\tSelection\022\023\n\013selectionId\030\001" +
-      " \001(\005\022\036\n\006values\030\002 \003(\0132\016.data.KeyValue\"W\n\026" +
-      "ListActivitiesResponse\022\023\n\013recordCount\030\001 " +
-      "\001(\003\022(\n\tresponses\030\002 \003(\0132\025.data.BusinessPr" +
-      "ocess\"\310\002\n\017BusinessProcess\022\014\n\004uuid\030\001 \001(\t\022" +
-      "\024\n\014instanceUuid\030\002 \001(\t\022\017\n\007isError\030\003 \001(\010\022\017" +
-      "\n\007summary\030\004 \001(\t\022\025\n\rresultTableId\030\005 \001(\005\022\024" +
-      "\n\014isProcessing\030\006 \001(\010\022\"\n\004logs\030\007 \003(\0132\024.dat" +
-      "a.ProcessInfoLog\0229\n\nparameters\030\010 \003(\0132%.d" +
-      "ata.BusinessProcess.ParametersEntry\022#\n\006o" +
-      "utput\030\t \001(\0132\023.data.ProcessOutput\032>\n\017Para" +
-      "metersEntry\022\013\n\003key\030\001 \001(\t\022\032\n\005value\030\002 \001(\0132" +
-      "\013.data.Value:\0028\001\"/\n\016ProcessInfoLog\022\020\n\010re" +
-      "cordId\030\001 \001(\005\022\013\n\003log\030\002 \001(\t\"\244\001\n\rProcessOut" +
-      "put\022\014\n\004uuid\030\001 \001(\t\022\014\n\004name\030\002 \001(\t\022\023\n\013descr" +
-      "iption\030\003 \001(\t\022\020\n\010fileName\030\004 \001(\t\022\016\n\006output" +
-      "\030\005 \001(\t\022\020\n\010mimeType\030\006 \001(\t\022\024\n\014outputStream" +
-      "\030\007 \001(\014\022\030\n\020reportExportType\030\010 \001(\t\"\300\001\n\027Lis" +
-      "tBrowserItemsRequest\022\014\n\004uuid\030\001 \001(\t\022*\n\rcl" +
-      "ientRequest\030\002 \001(\0132\023.data.ClientRequest\022 " +
-      "\n\010criteria\030\003 \001(\0132\016.data.Criteria\022\"\n\npara" +
-      "meters\030\004 \003(\0132\016.data.KeyValue\022\021\n\tpage_siz" +
-      "e\030\005 \001(\005\022\022\n\npage_token\030\006 \001(\t2\234\005\n\013DataServ" +
-      "ice\0223\n\tGetEntity\022\026.data.GetEntityRequest" +
-      "\032\014.data.Entity\"\000\022G\n\014ListEntities\022\031.data." +
-      "ListEntitiesRequest\032\032.data.ListEntitiesR" +
-      "esponse\"\000\022?\n\rGetLookupItem\022\032.data.GetLoo" +
-      "kupItemRequest\032\020.data.LookupItem\"\000\022P\n\017Li" +
-      "stLookupItems\022\034.data.ListLookupItemsRequ" +
-      "est\032\035.data.ListLookupItemsResponse\"\000\0226\n\n" +
-      "RunCallout\022\027.data.RunCalloutRequest\032\r.da" +
-      "ta.Callout\"\000\022N\n\022RunBusinessProcess\022\037.dat" +
-      "a.RunBusinessProcessRequest\032\025.data.Busin" +
-      "essProcess\"\000\022S\n\020ListBrowserItems\022\035.data." +
-      "ListBrowserItemsRequest\032\036.data.ListBrows" +
-      "erItemsResponse\"\000\022M\n\016ListActivities\022\033.da" +
-      "ta.ListActivitiesRequest\032\034.data.ListActi" +
-      "vitiesResponse\"\000\022P\n\017ListRecentItems\022\034.da" +
-      "ta.ListRecentItemsRequest\032\035.data.ListRec" +
-      "entItemsResponse\"\000B+\n\022org.spin.grpc.util" +
-      "B\rADempiereDataP\001\242\002\003HLWb\006proto3"
+      "\222\001\n\025ListActivitiesRequest\022*\n\rclientReque" +
+      "st\030\001 \001(\0132\023.data.ClientRequest\022\020\n\010userUui" +
+      "d\030\002 \001(\t\022\024\n\014instanceUuid\030\003 \001(\t\022\021\n\tpage_si" +
+      "ze\030\004 \001(\005\022\022\n\npage_token\030\005 \001(\t\"\203\001\n\026ListRec" +
+      "entItemsRequest\022*\n\rclientRequest\030\001 \001(\0132\023" +
+      ".data.ClientRequest\022\026\n\016currentSession\030\002 " +
+      "\001(\010\022\021\n\tpage_size\030\003 \001(\005\022\022\n\npage_token\030\004 \001" +
+      "(\t\"\313\001\n\nRecentItem\022\020\n\010menuUuid\030\001 \001(\t\022\020\n\010m" +
+      "enuName\030\002 \001(\t\022\027\n\017menuDescription\030\003 \001(\t\022\022" +
+      "\n\nwindowUuid\030\004 \001(\t\022\017\n\007tabUuid\030\005 \001(\t\022\017\n\007t" +
+      "ableId\030\006 \001(\005\022\020\n\010recordId\030\007 \001(\005\022\023\n\013displa" +
+      "yName\030\010 \001(\t\022\022\n\nrecordUuid\030\t \001(\t\022\017\n\007updat" +
+      "ed\030\n \001(\003\"n\n\027ListRecentItemsResponse\022\023\n\013r" +
+      "ecordCount\030\001 \001(\003\022%\n\013recentItems\030\002 \003(\0132\020." +
+      "data.RecentItem\022\027\n\017next_page_token\030\003 \001(\t" +
+      "\"@\n\tSelection\022\023\n\013selectionId\030\001 \001(\005\022\036\n\006va" +
+      "lues\030\002 \003(\0132\016.data.KeyValue\"p\n\026ListActivi" +
+      "tiesResponse\022\023\n\013recordCount\030\001 \001(\003\022(\n\tres" +
+      "ponses\030\002 \003(\0132\025.data.BusinessProcess\022\027\n\017n" +
+      "ext_page_token\030\003 \001(\t\"\310\002\n\017BusinessProcess" +
+      "\022\014\n\004uuid\030\001 \001(\t\022\024\n\014instanceUuid\030\002 \001(\t\022\017\n\007" +
+      "isError\030\003 \001(\010\022\017\n\007summary\030\004 \001(\t\022\025\n\rresult" +
+      "TableId\030\005 \001(\005\022\024\n\014isProcessing\030\006 \001(\010\022\"\n\004l" +
+      "ogs\030\007 \003(\0132\024.data.ProcessInfoLog\0229\n\nparam" +
+      "eters\030\010 \003(\0132%.data.BusinessProcess.Param" +
+      "etersEntry\022#\n\006output\030\t \001(\0132\023.data.Proces" +
+      "sOutput\032>\n\017ParametersEntry\022\013\n\003key\030\001 \001(\t\022" +
+      "\032\n\005value\030\002 \001(\0132\013.data.Value:\0028\001\"/\n\016Proce" +
+      "ssInfoLog\022\020\n\010recordId\030\001 \001(\005\022\013\n\003log\030\002 \001(\t" +
+      "\"\244\001\n\rProcessOutput\022\014\n\004uuid\030\001 \001(\t\022\014\n\004name" +
+      "\030\002 \001(\t\022\023\n\013description\030\003 \001(\t\022\020\n\010fileName\030" +
+      "\004 \001(\t\022\016\n\006output\030\005 \001(\t\022\020\n\010mimeType\030\006 \001(\t\022" +
+      "\024\n\014outputStream\030\007 \001(\014\022\030\n\020reportExportTyp" +
+      "e\030\010 \001(\t\"\300\001\n\027ListBrowserItemsRequest\022\014\n\004u" +
+      "uid\030\001 \001(\t\022*\n\rclientRequest\030\002 \001(\0132\023.data." +
+      "ClientRequest\022 \n\010criteria\030\003 \001(\0132\016.data.C" +
+      "riteria\022\"\n\nparameters\030\004 \003(\0132\016.data.KeyVa" +
+      "lue\022\021\n\tpage_size\030\005 \001(\005\022\022\n\npage_token\030\006 \001" +
+      "(\t2\234\005\n\013DataService\0223\n\tGetEntity\022\026.data.G" +
+      "etEntityRequest\032\014.data.Entity\"\000\022G\n\014ListE" +
+      "ntities\022\031.data.ListEntitiesRequest\032\032.dat" +
+      "a.ListEntitiesResponse\"\000\022?\n\rGetLookupIte" +
+      "m\022\032.data.GetLookupItemRequest\032\020.data.Loo" +
+      "kupItem\"\000\022P\n\017ListLookupItems\022\034.data.List" +
+      "LookupItemsRequest\032\035.data.ListLookupItem" +
+      "sResponse\"\000\0226\n\nRunCallout\022\027.data.RunCall" +
+      "outRequest\032\r.data.Callout\"\000\022N\n\022RunBusine" +
+      "ssProcess\022\037.data.RunBusinessProcessReque" +
+      "st\032\025.data.BusinessProcess\"\000\022S\n\020ListBrows" +
+      "erItems\022\035.data.ListBrowserItemsRequest\032\036" +
+      ".data.ListBrowserItemsResponse\"\000\022M\n\016List" +
+      "Activities\022\033.data.ListActivitiesRequest\032" +
+      "\034.data.ListActivitiesResponse\"\000\022P\n\017ListR" +
+      "ecentItems\022\034.data.ListRecentItemsRequest" +
+      "\032\035.data.ListRecentItemsResponse\"\000B+\n\022org" +
+      ".spin.grpc.utilB\rADempiereDataP\001\242\002\003HLWb\006" +
+      "proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -434,25 +439,25 @@ public final class ADempiereData {
     internal_static_data_ListActivitiesRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_data_ListActivitiesRequest_descriptor,
-        new java.lang.String[] { "ClientRequest", "UserUuid", "InstanceUuid", });
+        new java.lang.String[] { "ClientRequest", "UserUuid", "InstanceUuid", "PageSize", "PageToken", });
     internal_static_data_ListRecentItemsRequest_descriptor =
       getDescriptor().getMessageTypes().get(19);
     internal_static_data_ListRecentItemsRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_data_ListRecentItemsRequest_descriptor,
-        new java.lang.String[] { "ClientRequest", "CurrentSession", });
+        new java.lang.String[] { "ClientRequest", "CurrentSession", "PageSize", "PageToken", });
     internal_static_data_RecentItem_descriptor =
       getDescriptor().getMessageTypes().get(20);
     internal_static_data_RecentItem_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_data_RecentItem_descriptor,
-        new java.lang.String[] { "MenuUuid", "MenuName", "WindowUuid", "TabUuid", "TableId", "RecordId", "DisplayName", "Updated", });
+        new java.lang.String[] { "MenuUuid", "MenuName", "MenuDescription", "WindowUuid", "TabUuid", "TableId", "RecordId", "DisplayName", "RecordUuid", "Updated", });
     internal_static_data_ListRecentItemsResponse_descriptor =
       getDescriptor().getMessageTypes().get(21);
     internal_static_data_ListRecentItemsResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_data_ListRecentItemsResponse_descriptor,
-        new java.lang.String[] { "RecordCount", "RecentItems", });
+        new java.lang.String[] { "RecordCount", "RecentItems", "NextPageToken", });
     internal_static_data_Selection_descriptor =
       getDescriptor().getMessageTypes().get(22);
     internal_static_data_Selection_fieldAccessorTable = new
@@ -464,7 +469,7 @@ public final class ADempiereData {
     internal_static_data_ListActivitiesResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_data_ListActivitiesResponse_descriptor,
-        new java.lang.String[] { "RecordCount", "Responses", });
+        new java.lang.String[] { "RecordCount", "Responses", "NextPageToken", });
     internal_static_data_BusinessProcess_descriptor =
       getDescriptor().getMessageTypes().get(24);
     internal_static_data_BusinessProcess_fieldAccessorTable = new

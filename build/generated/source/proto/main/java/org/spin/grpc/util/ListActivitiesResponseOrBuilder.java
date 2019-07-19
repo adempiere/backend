@@ -35,4 +35,14 @@ public interface ListActivitiesResponseOrBuilder extends
    */
   org.spin.grpc.util.BusinessProcessOrBuilder getResponsesOrBuilder(
       int index);
+
+  /**
+   * <code>string next_page_token = 3;</code>
+   */
+  java.lang.String getNextPageToken();
+  /**
+   * <code>string next_page_token = 3;</code>
+   */
+  com.google.protobuf.ByteString
+      getNextPageTokenBytes();
 }

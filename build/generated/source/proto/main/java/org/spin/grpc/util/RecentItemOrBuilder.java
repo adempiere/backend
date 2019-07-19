@@ -28,47 +28,67 @@ public interface RecentItemOrBuilder extends
       getMenuNameBytes();
 
   /**
-   * <code>string windowUuid = 3;</code>
+   * <code>string menuDescription = 3;</code>
+   */
+  java.lang.String getMenuDescription();
+  /**
+   * <code>string menuDescription = 3;</code>
+   */
+  com.google.protobuf.ByteString
+      getMenuDescriptionBytes();
+
+  /**
+   * <code>string windowUuid = 4;</code>
    */
   java.lang.String getWindowUuid();
   /**
-   * <code>string windowUuid = 3;</code>
+   * <code>string windowUuid = 4;</code>
    */
   com.google.protobuf.ByteString
       getWindowUuidBytes();
 
   /**
-   * <code>string tabUuid = 4;</code>
+   * <code>string tabUuid = 5;</code>
    */
   java.lang.String getTabUuid();
   /**
-   * <code>string tabUuid = 4;</code>
+   * <code>string tabUuid = 5;</code>
    */
   com.google.protobuf.ByteString
       getTabUuidBytes();
 
   /**
-   * <code>int32 tableId = 5;</code>
+   * <code>int32 tableId = 6;</code>
    */
   int getTableId();
 
   /**
-   * <code>int32 recordId = 6;</code>
+   * <code>int32 recordId = 7;</code>
    */
   int getRecordId();
 
   /**
-   * <code>string displayName = 7;</code>
+   * <code>string displayName = 8;</code>
    */
   java.lang.String getDisplayName();
   /**
-   * <code>string displayName = 7;</code>
+   * <code>string displayName = 8;</code>
    */
   com.google.protobuf.ByteString
       getDisplayNameBytes();
 
   /**
-   * <code>int64 updated = 8;</code>
+   * <code>string recordUuid = 9;</code>
+   */
+  java.lang.String getRecordUuid();
+  /**
+   * <code>string recordUuid = 9;</code>
+   */
+  com.google.protobuf.ByteString
+      getRecordUuidBytes();
+
+  /**
+   * <code>int64 updated = 10;</code>
    */
   long getUpdated();
 }

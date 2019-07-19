@@ -22,6 +22,7 @@ private static final long serialVersionUID = 0L;
   private ListActivitiesResponse() {
     recordCount_ = 0L;
     responses_ = java.util.Collections.emptyList();
+    nextPageToken_ = "";
   }
 
   @java.lang.Override
@@ -67,6 +68,12 @@ private static final long serialVersionUID = 0L;
             }
             responses_.add(
                 input.readMessage(org.spin.grpc.util.BusinessProcess.parser(), extensionRegistry));
+            break;
+          }
+          case 26: {
+            java.lang.String s = input.readStringRequireUtf8();
+
+            nextPageToken_ = s;
             break;
           }
         }
@@ -141,6 +148,40 @@ private static final long serialVersionUID = 0L;
     return responses_.get(index);
   }
 
+  public static final int NEXT_PAGE_TOKEN_FIELD_NUMBER = 3;
+  private volatile java.lang.Object nextPageToken_;
+  /**
+   * <code>string next_page_token = 3;</code>
+   */
+  public java.lang.String getNextPageToken() {
+    java.lang.Object ref = nextPageToken_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      nextPageToken_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string next_page_token = 3;</code>
+   */
+  public com.google.protobuf.ByteString
+      getNextPageTokenBytes() {
+    java.lang.Object ref = nextPageToken_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      nextPageToken_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
     byte isInitialized = memoizedIsInitialized;
@@ -159,6 +200,9 @@ private static final long serialVersionUID = 0L;
     for (int i = 0; i < responses_.size(); i++) {
       output.writeMessage(2, responses_.get(i));
     }
+    if (!getNextPageTokenBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 3, nextPageToken_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -174,6 +218,9 @@ private static final long serialVersionUID = 0L;
     for (int i = 0; i < responses_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(2, responses_.get(i));
+    }
+    if (!getNextPageTokenBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, nextPageToken_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -195,6 +242,8 @@ private static final long serialVersionUID = 0L;
         == other.getRecordCount());
     result = result && getResponsesList()
         .equals(other.getResponsesList());
+    result = result && getNextPageToken()
+        .equals(other.getNextPageToken());
     result = result && unknownFields.equals(other.unknownFields);
     return result;
   }
@@ -213,6 +262,8 @@ private static final long serialVersionUID = 0L;
       hash = (37 * hash) + RESPONSES_FIELD_NUMBER;
       hash = (53 * hash) + getResponsesList().hashCode();
     }
+    hash = (37 * hash) + NEXT_PAGE_TOKEN_FIELD_NUMBER;
+    hash = (53 * hash) + getNextPageToken().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -355,6 +406,8 @@ private static final long serialVersionUID = 0L;
       } else {
         responsesBuilder_.clear();
       }
+      nextPageToken_ = "";
+
       return this;
     }
 
@@ -389,6 +442,7 @@ private static final long serialVersionUID = 0L;
       } else {
         result.responses_ = responsesBuilder_.build();
       }
+      result.nextPageToken_ = nextPageToken_;
       result.bitField0_ = to_bitField0_;
       onBuilt();
       return result;
@@ -459,6 +513,10 @@ private static final long serialVersionUID = 0L;
             responsesBuilder_.addAllMessages(other.responses_);
           }
         }
+      }
+      if (!other.getNextPageToken().isEmpty()) {
+        nextPageToken_ = other.nextPageToken_;
+        onChanged();
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -752,6 +810,75 @@ private static final long serialVersionUID = 0L;
         responses_ = null;
       }
       return responsesBuilder_;
+    }
+
+    private java.lang.Object nextPageToken_ = "";
+    /**
+     * <code>string next_page_token = 3;</code>
+     */
+    public java.lang.String getNextPageToken() {
+      java.lang.Object ref = nextPageToken_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        nextPageToken_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string next_page_token = 3;</code>
+     */
+    public com.google.protobuf.ByteString
+        getNextPageTokenBytes() {
+      java.lang.Object ref = nextPageToken_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        nextPageToken_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string next_page_token = 3;</code>
+     */
+    public Builder setNextPageToken(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
+      nextPageToken_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string next_page_token = 3;</code>
+     */
+    public Builder clearNextPageToken() {
+      
+      nextPageToken_ = getDefaultInstance().getNextPageToken();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string next_page_token = 3;</code>
+     */
+    public Builder setNextPageTokenBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      
+      nextPageToken_ = value;
+      onChanged();
+      return this;
     }
     public final Builder setUnknownFields(
         final com.google.protobuf.UnknownFieldSet unknownFields) {
