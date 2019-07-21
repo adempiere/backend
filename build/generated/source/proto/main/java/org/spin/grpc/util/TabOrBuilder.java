@@ -189,11 +189,31 @@ public interface TabOrBuilder extends
       getCommitWarningBytes();
 
   /**
-   * <code>string orderByClause = 26;</code>
+   * <code>string query = 26;</code>
+   */
+  java.lang.String getQuery();
+  /**
+   * <code>string query = 26;</code>
+   */
+  com.google.protobuf.ByteString
+      getQueryBytes();
+
+  /**
+   * <code>string whereClause = 27;</code>
+   */
+  java.lang.String getWhereClause();
+  /**
+   * <code>string whereClause = 27;</code>
+   */
+  com.google.protobuf.ByteString
+      getWhereClauseBytes();
+
+  /**
+   * <code>string orderByClause = 28;</code>
    */
   java.lang.String getOrderByClause();
   /**
-   * <code>string orderByClause = 26;</code>
+   * <code>string orderByClause = 28;</code>
    */
   com.google.protobuf.ByteString
       getOrderByClauseBytes();
@@ -203,7 +223,7 @@ public interface TabOrBuilder extends
    * External Info
    * </pre>
    *
-   * <code>.dictionary.ContextInfo contextInfo = 27;</code>
+   * <code>.dictionary.ContextInfo contextInfo = 29;</code>
    */
   boolean hasContextInfo();
   /**
@@ -211,7 +231,7 @@ public interface TabOrBuilder extends
    * External Info
    * </pre>
    *
-   * <code>.dictionary.ContextInfo contextInfo = 27;</code>
+   * <code>.dictionary.ContextInfo contextInfo = 29;</code>
    */
   org.spin.grpc.util.ContextInfo getContextInfo();
   /**
@@ -219,68 +239,68 @@ public interface TabOrBuilder extends
    * External Info
    * </pre>
    *
-   * <code>.dictionary.ContextInfo contextInfo = 27;</code>
+   * <code>.dictionary.ContextInfo contextInfo = 29;</code>
    */
   org.spin.grpc.util.ContextInfoOrBuilder getContextInfoOrBuilder();
 
   /**
-   * <code>repeated .dictionary.Process processes = 28;</code>
+   * <code>repeated .dictionary.Process processes = 30;</code>
    */
   java.util.List<org.spin.grpc.util.Process> 
       getProcessesList();
   /**
-   * <code>repeated .dictionary.Process processes = 28;</code>
+   * <code>repeated .dictionary.Process processes = 30;</code>
    */
   org.spin.grpc.util.Process getProcesses(int index);
   /**
-   * <code>repeated .dictionary.Process processes = 28;</code>
+   * <code>repeated .dictionary.Process processes = 30;</code>
    */
   int getProcessesCount();
   /**
-   * <code>repeated .dictionary.Process processes = 28;</code>
+   * <code>repeated .dictionary.Process processes = 30;</code>
    */
   java.util.List<? extends org.spin.grpc.util.ProcessOrBuilder> 
       getProcessesOrBuilderList();
   /**
-   * <code>repeated .dictionary.Process processes = 28;</code>
+   * <code>repeated .dictionary.Process processes = 30;</code>
    */
   org.spin.grpc.util.ProcessOrBuilder getProcessesOrBuilder(
       int index);
 
   /**
-   * <code>repeated .dictionary.Field fields = 29;</code>
+   * <code>repeated .dictionary.Field fields = 31;</code>
    */
   java.util.List<org.spin.grpc.util.Field> 
       getFieldsList();
   /**
-   * <code>repeated .dictionary.Field fields = 29;</code>
+   * <code>repeated .dictionary.Field fields = 31;</code>
    */
   org.spin.grpc.util.Field getFields(int index);
   /**
-   * <code>repeated .dictionary.Field fields = 29;</code>
+   * <code>repeated .dictionary.Field fields = 31;</code>
    */
   int getFieldsCount();
   /**
-   * <code>repeated .dictionary.Field fields = 29;</code>
+   * <code>repeated .dictionary.Field fields = 31;</code>
    */
   java.util.List<? extends org.spin.grpc.util.FieldOrBuilder> 
       getFieldsOrBuilderList();
   /**
-   * <code>repeated .dictionary.Field fields = 29;</code>
+   * <code>repeated .dictionary.Field fields = 31;</code>
    */
   org.spin.grpc.util.FieldOrBuilder getFieldsOrBuilder(
       int index);
 
   /**
-   * <code>.dictionary.FieldGroup fieldGroup = 30;</code>
+   * <code>.dictionary.FieldGroup fieldGroup = 32;</code>
    */
   boolean hasFieldGroup();
   /**
-   * <code>.dictionary.FieldGroup fieldGroup = 30;</code>
+   * <code>.dictionary.FieldGroup fieldGroup = 32;</code>
    */
   org.spin.grpc.util.FieldGroup getFieldGroup();
   /**
-   * <code>.dictionary.FieldGroup fieldGroup = 30;</code>
+   * <code>.dictionary.FieldGroup fieldGroup = 32;</code>
    */
   org.spin.grpc.util.FieldGroupOrBuilder getFieldGroupOrBuilder();
 }

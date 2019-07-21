@@ -112,7 +112,7 @@ public final class ADempiereDictionary {
       "\003 \001(\t\022\023\n\013description\030\004 \001(\t\022\014\n\004help\030\005 \001(\t" +
       "\022\020\n\010isActive\030\006 \001(\010\022\017\n\007isSOTrx\030\007 \001(\010\022,\n\013c" +
       "ontextInfo\030\010 \001(\0132\027.dictionary.ContextInf" +
-      "o\022\035\n\004tabs\030\t \003(\0132\017.dictionary.Tab\"\256\005\n\003Tab" +
+      "o\022\035\n\004tabs\030\t \003(\0132\017.dictionary.Tab\"\322\005\n\003Tab" +
       "\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(\t\022\014\n\004name\030\003 \001(\t" +
       "\022\023\n\013description\030\004 \001(\t\022\014\n\004help\030\005 \001(\t\022\021\n\tt" +
       "ableName\030\006 \001(\t\022\020\n\010sequence\030\007 \001(\005\022\020\n\010tabL" +
@@ -125,102 +125,103 @@ public final class ADempiereDictionary {
       "\nisDocument\030\024 \001(\010\022\023\n\013accessLevel\030\025 \001(\005\022\026" +
       "\n\016linkColumnName\030\026 \001(\t\022\030\n\020parentColumnNa" +
       "me\030\027 \001(\t\022\024\n\014displayLogic\030\030 \001(\t\022\025\n\rcommit" +
-      "Warning\030\031 \001(\t\022\025\n\rorderByClause\030\032 \001(\t\022,\n\013" +
-      "contextInfo\030\033 \001(\0132\027.dictionary.ContextIn" +
-      "fo\022&\n\tprocesses\030\034 \003(\0132\023.dictionary.Proce" +
-      "ss\022!\n\006fields\030\035 \003(\0132\021.dictionary.Field\022*\n" +
-      "\nfieldGroup\030\036 \001(\0132\026.dictionary.FieldGrou" +
-      "p\"\367\010\n\005Field\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(\t\022\014\n" +
-      "\004name\030\003 \001(\t\022\023\n\013description\030\004 \001(\t\022\014\n\004help" +
-      "\030\005 \001(\t\022\020\n\010sequence\030\006 \001(\005\022\022\n\ncolumnName\030\007" +
-      " \001(\t\022\023\n\013isDisplayed\030\010 \001(\010\022\027\n\017isDisplayed" +
-      "Grid\030\t \001(\010\022\022\n\nisReadOnly\030\n \001(\010\022\023\n\013isAllo" +
-      "wCopy\030\013 \001(\010\022\023\n\013isEncrypted\030\014 \001(\010\022\022\n\nisSa" +
-      "meLine\030\r \001(\010\022\021\n\tisHeading\030\016 \001(\010\022\023\n\013isFie" +
-      "ldOnly\030\017 \001(\010\022\024\n\014isQuickEntry\030\020 \001(\010\022\023\n\013is" +
-      "Mandatory\030\021 \001(\010\022\r\n\005isKey\030\022 \001(\010\022\020\n\010isPare" +
-      "nt\030\023 \001(\010\022\024\n\014isUpdateable\030\024 \001(\010\022\024\n\014isIden" +
-      "tifier\030\025 \001(\010\022\026\n\016isAllowLogging\030\026 \001(\010\022\031\n\021" +
-      "isSelectionColumn\030\027 \001(\010\022\017\n\007isRange\030\030 \001(\010" +
-      "\022\032\n\022isAlwaysUpdateable\030\031 \001(\010\022\024\n\014isTransl" +
-      "ated\030\032 \001(\010\022\032\n\022identifierSequence\030M \001(\005\022\024" +
-      "\n\014displayLogic\030\034 \001(\t\022\023\n\013displayType\030\035 \001(" +
-      "\005\022\024\n\014defaultValue\030\036 \001(\t\022\025\n\rreadOnlyLogic" +
-      "\030\037 \001(\t\022\026\n\016mandatoryLogic\030  \001(\t\022\017\n\007callou" +
-      "t\030! \001(\t\022\021\n\tcolumnSQL\030\" \001(\t\022\017\n\007vFormat\030# " +
-      "\001(\t\022\020\n\010valueMin\030$ \001(\t\022\020\n\010valueMax\030% \001(\t\022" +
-      "\025\n\rformatPattern\030& \001(\t\022,\n\013contextInfo\030\' " +
-      "\001(\0132\027.dictionary.ContextInfo\022*\n\nfieldGro" +
-      "up\030( \001(\0132\026.dictionary.FieldGroup\0224\n\017fiel" +
-      "dDefinition\030) \001(\0132\033.dictionary.FieldDefi" +
-      "nition\022(\n\treference\030* \001(\0132\025.dictionary.R" +
-      "eference\022$\n\007process\030+ \001(\0132\023.dictionary.P" +
-      "rocess\022\027\n\017isQueryCriteria\030, \001(\010\022\021\n\tisOrd" +
-      "erBy\030- \001(\010\022\021\n\tseqNoGrid\030. \001(\005\022\016\n\006sortNo\030" +
-      "/ \001(\005\022\022\n\nisInfoOnly\0300 \001(\010\022\020\n\010isActive\0301 " +
-      "\001(\010\022\026\n\016defaultValueTo\0302 \001(\t\"\240\001\n\013ContextI" +
-      "nfo\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(\t\022\014\n\004name\030\003 " +
-      "\001(\t\022\023\n\013description\030\004 \001(\t\022,\n\013messageText\030" +
-      "\005 \001(\0132\027.dictionary.MessageText\022\024\n\014sqlSta" +
-      "tement\030\006 \001(\t\022\020\n\010isActive\030\007 \001(\010\"z\n\013Messag" +
-      "eText\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(\t\022\r\n\005value" +
-      "\030\003 \001(\t\022\017\n\007msgType\030\004 \001(\t\022\017\n\007msgText\030\005 \001(\t" +
-      "\022\016\n\006msgTip\030\006 \001(\t\022\020\n\010isActive\030\007 \001(\010\"^\n\nFi" +
-      "eldGroup\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(\t\022\014\n\004na" +
-      "me\030\003 \001(\t\022\026\n\016fieldGroupType\030\004 \001(\t\022\020\n\010isAc" +
-      "tive\030\005 \001(\010\"\242\001\n\017FieldDefinition\022\n\n\002id\030\001 \001" +
-      "(\005\022\014\n\004uuid\030\002 \001(\t\022\r\n\005value\030\003 \001(\t\022\014\n\004name\030" +
-      "\004 \001(\t\022\026\n\016fieldGroupType\030\005 \001(\t\022.\n\nconditi" +
-      "ons\030\006 \003(\0132\032.dictionary.FieldCondition\022\020\n" +
-      "\010isActive\030\007 \001(\010\"c\n\016FieldCondition\022\n\n\002id\030" +
-      "\001 \001(\005\022\014\n\004uuid\030\002 \001(\t\022\021\n\tcondition\030\003 \001(\t\022\022" +
-      "\n\nstylesheet\030\004 \001(\t\022\020\n\010isActive\030\005 \001(\010\"\245\002\n" +
-      "\007Process\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(\t\022\r\n\005va" +
-      "lue\030\003 \001(\t\022\014\n\004name\030\004 \001(\t\022\023\n\013description\030\005" +
-      " \001(\t\022\014\n\004help\030\006 \001(\t\022\020\n\010isReport\030\007 \001(\010\022\023\n\013" +
-      "accessLevel\030\010 \001(\005\022\020\n\010showHelp\030\t \001(\t\022\025\n\ri" +
-      "sDirectPrint\030\n \001(\010\022%\n\nparameters\030\013 \003(\0132\021" +
-      ".dictionary.Field\022\020\n\010isActive\030\014 \001(\010\0227\n\021r" +
-      "eportExportTypes\030\r \003(\0132\034.dictionary.Repo" +
-      "rtExportType\"\213\001\n\004Form\022\n\n\002id\030\001 \001(\005\022\014\n\004uui" +
-      "d\030\002 \001(\t\022\014\n\004name\030\003 \001(\t\022\023\n\013description\030\004 \001" +
-      "(\t\022\014\n\004help\030\005 \001(\t\022\023\n\013accessLevel\030\006 \001(\005\022\021\n" +
-      "\tclassName\030\007 \001(\t\022\020\n\010isActive\030\010 \001(\010\"\344\003\n\007B" +
-      "rowser\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(\t\022\r\n\005valu" +
-      "e\030\003 \001(\t\022\014\n\004name\030\004 \001(\t\022\023\n\013description\030\005 \001" +
-      "(\t\022\014\n\004help\030\006 \001(\t\022\023\n\013accessLevel\030\010 \001(\005\022\r\n" +
-      "\005query\030\t \001(\t\022\023\n\013whereClause\030\n \001(\t\022\025\n\rord" +
-      "erByClause\030\013 \001(\t\022\024\n\014isUpdateable\030\014 \001(\010\022\024" +
-      "\n\014IsDeleteable\030\r \001(\010\022\033\n\023IsSelectedByDefa" +
-      "ult\030\016 \001(\010\022\036\n\026IsCollapsibleByDefault\030\017 \001(" +
-      "\010\022 \n\030IsExecutedQueryByDefault\030\020 \001(\010\022\023\n\013I" +
-      "sShowTotal\030\021 \001(\010\022\020\n\010viewUuid\030\022 \001(\t\022\"\n\006wi" +
-      "ndow\030\023 \001(\0132\022.dictionary.Window\022$\n\007proces" +
-      "s\030\024 \001(\0132\023.dictionary.Process\022!\n\006fields\030\025" +
-      " \003(\0132\021.dictionary.Field\022\020\n\010isActive\030\026 \001(" +
-      "\010\"l\n\nZoomWindow\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(" +
-      "\t\022\014\n\004name\030\003 \001(\t\022\023\n\013description\030\004 \001(\t\022\017\n\007" +
-      "isSOTrx\030\005 \001(\010\022\020\n\010isActive\030\006 \001(\010\"\265\001\n\tRefe" +
-      "rence\022\021\n\ttableName\030\001 \001(\t\022\025\n\rkeyColumnNam" +
-      "e\030\002 \001(\t\022\031\n\021displayColumnName\030\003 \001(\t\022\r\n\005qu" +
-      "ery\030\004 \001(\t\022\023\n\013directQuery\030\005 \001(\t\022\026\n\016valida" +
-      "tionCode\030\006 \001(\t\022\'\n\007windows\030\007 \003(\0132\026.dictio" +
-      "nary.ZoomWindow\"C\n\020ReportExportType\022\014\n\004n" +
-      "ame\030\001 \001(\t\022\023\n\013description\030\002 \001(\t\022\014\n\004type\030\003" +
-      " \001(\t2\313\003\n\021DictionaryService\022<\n\tGetWindow\022" +
-      "\031.dictionary.EntityRequest\032\022.dictionary." +
-      "Window\"\000\022C\n\020GetWindowAndTabs\022\031.dictionar" +
-      "y.EntityRequest\032\022.dictionary.Window\"\000\0226\n" +
-      "\006GetTab\022\031.dictionary.EntityRequest\032\017.dic" +
-      "tionary.Tab\"\000\022?\n\017GetTabAndFields\022\031.dicti" +
-      "onary.EntityRequest\032\017.dictionary.Tab\"\000\022:" +
-      "\n\010GetField\022\031.dictionary.EntityRequest\032\021." +
-      "dictionary.Field\"\000\022>\n\nGetProcess\022\031.dicti" +
-      "onary.EntityRequest\032\023.dictionary.Process" +
-      "\"\000\022>\n\nGetBrowser\022\031.dictionary.EntityRequ" +
-      "est\032\023.dictionary.Browser\"\000B1\n\022org.spin.g" +
-      "rpc.utilB\023ADempiereDictionaryP\001\242\002\003HLWb\006p" +
-      "roto3"
+      "Warning\030\031 \001(\t\022\r\n\005query\030\032 \001(\t\022\023\n\013whereCla" +
+      "use\030\033 \001(\t\022\025\n\rorderByClause\030\034 \001(\t\022,\n\013cont" +
+      "extInfo\030\035 \001(\0132\027.dictionary.ContextInfo\022&" +
+      "\n\tprocesses\030\036 \003(\0132\023.dictionary.Process\022!" +
+      "\n\006fields\030\037 \003(\0132\021.dictionary.Field\022*\n\nfie" +
+      "ldGroup\030  \001(\0132\026.dictionary.FieldGroup\"\367\010" +
+      "\n\005Field\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(\t\022\014\n\004nam" +
+      "e\030\003 \001(\t\022\023\n\013description\030\004 \001(\t\022\014\n\004help\030\005 \001" +
+      "(\t\022\020\n\010sequence\030\006 \001(\005\022\022\n\ncolumnName\030\007 \001(\t" +
+      "\022\023\n\013isDisplayed\030\010 \001(\010\022\027\n\017isDisplayedGrid" +
+      "\030\t \001(\010\022\022\n\nisReadOnly\030\n \001(\010\022\023\n\013isAllowCop" +
+      "y\030\013 \001(\010\022\023\n\013isEncrypted\030\014 \001(\010\022\022\n\nisSameLi" +
+      "ne\030\r \001(\010\022\021\n\tisHeading\030\016 \001(\010\022\023\n\013isFieldOn" +
+      "ly\030\017 \001(\010\022\024\n\014isQuickEntry\030\020 \001(\010\022\023\n\013isMand" +
+      "atory\030\021 \001(\010\022\r\n\005isKey\030\022 \001(\010\022\020\n\010isParent\030\023" +
+      " \001(\010\022\024\n\014isUpdateable\030\024 \001(\010\022\024\n\014isIdentifi" +
+      "er\030\025 \001(\010\022\026\n\016isAllowLogging\030\026 \001(\010\022\031\n\021isSe" +
+      "lectionColumn\030\027 \001(\010\022\017\n\007isRange\030\030 \001(\010\022\032\n\022" +
+      "isAlwaysUpdateable\030\031 \001(\010\022\024\n\014isTranslated" +
+      "\030\032 \001(\010\022\032\n\022identifierSequence\030M \001(\005\022\024\n\014di" +
+      "splayLogic\030\034 \001(\t\022\023\n\013displayType\030\035 \001(\005\022\024\n" +
+      "\014defaultValue\030\036 \001(\t\022\025\n\rreadOnlyLogic\030\037 \001" +
+      "(\t\022\026\n\016mandatoryLogic\030  \001(\t\022\017\n\007callout\030! " +
+      "\001(\t\022\021\n\tcolumnSQL\030\" \001(\t\022\017\n\007vFormat\030# \001(\t\022" +
+      "\020\n\010valueMin\030$ \001(\t\022\020\n\010valueMax\030% \001(\t\022\025\n\rf" +
+      "ormatPattern\030& \001(\t\022,\n\013contextInfo\030\' \001(\0132" +
+      "\027.dictionary.ContextInfo\022*\n\nfieldGroup\030(" +
+      " \001(\0132\026.dictionary.FieldGroup\0224\n\017fieldDef" +
+      "inition\030) \001(\0132\033.dictionary.FieldDefiniti" +
+      "on\022(\n\treference\030* \001(\0132\025.dictionary.Refer" +
+      "ence\022$\n\007process\030+ \001(\0132\023.dictionary.Proce" +
+      "ss\022\027\n\017isQueryCriteria\030, \001(\010\022\021\n\tisOrderBy" +
+      "\030- \001(\010\022\021\n\tseqNoGrid\030. \001(\005\022\016\n\006sortNo\030/ \001(" +
+      "\005\022\022\n\nisInfoOnly\0300 \001(\010\022\020\n\010isActive\0301 \001(\010\022" +
+      "\026\n\016defaultValueTo\0302 \001(\t\"\240\001\n\013ContextInfo\022" +
+      "\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(\t\022\014\n\004name\030\003 \001(\t\022" +
+      "\023\n\013description\030\004 \001(\t\022,\n\013messageText\030\005 \001(" +
+      "\0132\027.dictionary.MessageText\022\024\n\014sqlStateme" +
+      "nt\030\006 \001(\t\022\020\n\010isActive\030\007 \001(\010\"z\n\013MessageTex" +
+      "t\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(\t\022\r\n\005value\030\003 \001" +
+      "(\t\022\017\n\007msgType\030\004 \001(\t\022\017\n\007msgText\030\005 \001(\t\022\016\n\006" +
+      "msgTip\030\006 \001(\t\022\020\n\010isActive\030\007 \001(\010\"^\n\nFieldG" +
+      "roup\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(\t\022\014\n\004name\030\003" +
+      " \001(\t\022\026\n\016fieldGroupType\030\004 \001(\t\022\020\n\010isActive" +
+      "\030\005 \001(\010\"\242\001\n\017FieldDefinition\022\n\n\002id\030\001 \001(\005\022\014" +
+      "\n\004uuid\030\002 \001(\t\022\r\n\005value\030\003 \001(\t\022\014\n\004name\030\004 \001(" +
+      "\t\022\026\n\016fieldGroupType\030\005 \001(\t\022.\n\nconditions\030" +
+      "\006 \003(\0132\032.dictionary.FieldCondition\022\020\n\010isA" +
+      "ctive\030\007 \001(\010\"c\n\016FieldCondition\022\n\n\002id\030\001 \001(" +
+      "\005\022\014\n\004uuid\030\002 \001(\t\022\021\n\tcondition\030\003 \001(\t\022\022\n\nst" +
+      "ylesheet\030\004 \001(\t\022\020\n\010isActive\030\005 \001(\010\"\245\002\n\007Pro" +
+      "cess\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(\t\022\r\n\005value\030" +
+      "\003 \001(\t\022\014\n\004name\030\004 \001(\t\022\023\n\013description\030\005 \001(\t" +
+      "\022\014\n\004help\030\006 \001(\t\022\020\n\010isReport\030\007 \001(\010\022\023\n\013acce" +
+      "ssLevel\030\010 \001(\005\022\020\n\010showHelp\030\t \001(\t\022\025\n\risDir" +
+      "ectPrint\030\n \001(\010\022%\n\nparameters\030\013 \003(\0132\021.dic" +
+      "tionary.Field\022\020\n\010isActive\030\014 \001(\010\0227\n\021repor" +
+      "tExportTypes\030\r \003(\0132\034.dictionary.ReportEx" +
+      "portType\"\213\001\n\004Form\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 " +
+      "\001(\t\022\014\n\004name\030\003 \001(\t\022\023\n\013description\030\004 \001(\t\022\014" +
+      "\n\004help\030\005 \001(\t\022\023\n\013accessLevel\030\006 \001(\005\022\021\n\tcla" +
+      "ssName\030\007 \001(\t\022\020\n\010isActive\030\010 \001(\010\"\344\003\n\007Brows" +
+      "er\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(\t\022\r\n\005value\030\003 " +
+      "\001(\t\022\014\n\004name\030\004 \001(\t\022\023\n\013description\030\005 \001(\t\022\014" +
+      "\n\004help\030\006 \001(\t\022\023\n\013accessLevel\030\010 \001(\005\022\r\n\005que" +
+      "ry\030\t \001(\t\022\023\n\013whereClause\030\n \001(\t\022\025\n\rorderBy" +
+      "Clause\030\013 \001(\t\022\024\n\014isUpdateable\030\014 \001(\010\022\024\n\014Is" +
+      "Deleteable\030\r \001(\010\022\033\n\023IsSelectedByDefault\030" +
+      "\016 \001(\010\022\036\n\026IsCollapsibleByDefault\030\017 \001(\010\022 \n" +
+      "\030IsExecutedQueryByDefault\030\020 \001(\010\022\023\n\013IsSho" +
+      "wTotal\030\021 \001(\010\022\020\n\010viewUuid\030\022 \001(\t\022\"\n\006window" +
+      "\030\023 \001(\0132\022.dictionary.Window\022$\n\007process\030\024 " +
+      "\001(\0132\023.dictionary.Process\022!\n\006fields\030\025 \003(\013" +
+      "2\021.dictionary.Field\022\020\n\010isActive\030\026 \001(\010\"l\n" +
+      "\nZoomWindow\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(\t\022\014\n" +
+      "\004name\030\003 \001(\t\022\023\n\013description\030\004 \001(\t\022\017\n\007isSO" +
+      "Trx\030\005 \001(\010\022\020\n\010isActive\030\006 \001(\010\"\265\001\n\tReferenc" +
+      "e\022\021\n\ttableName\030\001 \001(\t\022\025\n\rkeyColumnName\030\002 " +
+      "\001(\t\022\031\n\021displayColumnName\030\003 \001(\t\022\r\n\005query\030" +
+      "\004 \001(\t\022\023\n\013directQuery\030\005 \001(\t\022\026\n\016validation" +
+      "Code\030\006 \001(\t\022\'\n\007windows\030\007 \003(\0132\026.dictionary" +
+      ".ZoomWindow\"C\n\020ReportExportType\022\014\n\004name\030" +
+      "\001 \001(\t\022\023\n\013description\030\002 \001(\t\022\014\n\004type\030\003 \001(\t" +
+      "2\313\003\n\021DictionaryService\022<\n\tGetWindow\022\031.di" +
+      "ctionary.EntityRequest\032\022.dictionary.Wind" +
+      "ow\"\000\022C\n\020GetWindowAndTabs\022\031.dictionary.En" +
+      "tityRequest\032\022.dictionary.Window\"\000\0226\n\006Get" +
+      "Tab\022\031.dictionary.EntityRequest\032\017.diction" +
+      "ary.Tab\"\000\022?\n\017GetTabAndFields\022\031.dictionar" +
+      "y.EntityRequest\032\017.dictionary.Tab\"\000\022:\n\010Ge" +
+      "tField\022\031.dictionary.EntityRequest\032\021.dict" +
+      "ionary.Field\"\000\022>\n\nGetProcess\022\031.dictionar" +
+      "y.EntityRequest\032\023.dictionary.Process\"\000\022>" +
+      "\n\nGetBrowser\022\031.dictionary.EntityRequest\032" +
+      "\023.dictionary.Browser\"\000B1\n\022org.spin.grpc." +
+      "utilB\023ADempiereDictionaryP\001\242\002\003HLWb\006proto" +
+      "3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -257,7 +258,7 @@ public final class ADempiereDictionary {
     internal_static_dictionary_Tab_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_dictionary_Tab_descriptor,
-        new java.lang.String[] { "Id", "Uuid", "Name", "Description", "Help", "TableName", "Sequence", "TabLevel", "IsActive", "IsSingleRow", "IsAdvancedTab", "IsHasTree", "IsInfoTab", "IsSortTab", "IsTranslationTab", "IsReadOnly", "IsInsertRecord", "IsView", "IsDeleteable", "IsDocument", "AccessLevel", "LinkColumnName", "ParentColumnName", "DisplayLogic", "CommitWarning", "OrderByClause", "ContextInfo", "Processes", "Fields", "FieldGroup", });
+        new java.lang.String[] { "Id", "Uuid", "Name", "Description", "Help", "TableName", "Sequence", "TabLevel", "IsActive", "IsSingleRow", "IsAdvancedTab", "IsHasTree", "IsInfoTab", "IsSortTab", "IsTranslationTab", "IsReadOnly", "IsInsertRecord", "IsView", "IsDeleteable", "IsDocument", "AccessLevel", "LinkColumnName", "ParentColumnName", "DisplayLogic", "CommitWarning", "Query", "WhereClause", "OrderByClause", "ContextInfo", "Processes", "Fields", "FieldGroup", });
     internal_static_dictionary_Field_descriptor =
       getDescriptor().getMessageTypes().get(4);
     internal_static_dictionary_Field_fieldAccessorTable = new

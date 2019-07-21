@@ -51,6 +51,7 @@ import org.compiere.model.I_AD_PInstance;
 import org.compiere.model.I_AD_PInstance_Log;
 import org.compiere.model.I_AD_Process;
 import org.compiere.model.I_AD_Session;
+import org.compiere.model.MColumn;
 import org.compiere.model.MMenu;
 import org.compiere.model.MPInstance;
 import org.compiere.model.MPInstancePara;
@@ -110,7 +111,56 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 			}
 			log.fine("Object Requested = " + request.getUuid());
 			Properties context = getContext(request.getClientRequest());
-			Entity.Builder entityValue = convertObject(context, request);
+			Entity.Builder entityValue = getEntity(context, request);
+			responseObserver.onNext(entityValue.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(e);
+		}
+	}
+	
+	@Override
+	public void createEntity(CreateEntityRequest request, StreamObserver<Entity> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			Properties context = getContext(request.getClientRequest());
+			Entity.Builder entityValue = createEntity(context, request);
+			responseObserver.onNext(entityValue.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(e);
+		}
+	}
+	
+	@Override
+	public void updateEntity(UpdateEntityRequest request, StreamObserver<Entity> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			Properties context = getContext(request.getClientRequest());
+			Entity.Builder entityValue = updateEntity(context, request);
+			responseObserver.onNext(entityValue.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(e);
+		}
+	}
+	
+	@Override
+	public void deleteEntity(DeleteEntityRequest request, StreamObserver<Empty> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Object Requested = " + request.getUuid());
+			Properties context = getContext(request.getClientRequest());
+			Empty.Builder entityValue = deleteEntity(context, request);
 			responseObserver.onNext(entityValue.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -176,7 +226,6 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 			if(request == null) {
 				throw new AdempiereException("Lookup Request Null");
 			}
-		//	log.fine("Lookup List Requested = " + request.getUuid());
 			Properties context = getContext(request.getClientRequest());
 			ListLookupItemsResponse.Builder entityValueList = convertLookupItemsList(context, request);
 			responseObserver.onNext(entityValueList.build());
@@ -215,9 +264,7 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 			}
 			log.fine("Object List Requested = " + request);
 			Properties context = getContext(request.getClientRequest());
-			
 			ListBrowserItemsResponse.Builder entityValueList = convertBrowserList(context, request);
-			
 			responseObserver.onNext(entityValueList.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -430,21 +477,129 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 	 * @param request
 	 * @return
 	 */
-	private Entity.Builder convertObject(Properties context, GetEntityRequest request) {
+	private Entity.Builder getEntity(Properties context, GetEntityRequest request) {
 		Criteria criteria = request.getCriteria();
+		String tableName = null;
+		if(request.getTableId() > 0) {
+			tableName = MTable.get(context, request.getTableId()).getTableName();
+		} else if(request.getCriteria() != null) {
+			tableName = request.getCriteria().getTableName();
+		}
 		StringBuffer whereClause = new StringBuffer();
 		List<Object> params = new ArrayList<>();
 		if(!Util.isEmpty(request.getUuid())) {
 			whereClause.append(I_AD_Element.COLUMNNAME_UUID + " = ?");
 			params.add(request.getUuid());
+		} else if(request.getRecordId() > 0) {
+			whereClause.append(tableName + "_ID = ?");
+			params.add(request.getRecordId());
 		} else if(!Util.isEmpty(criteria.getWhereClause())) {
 			whereClause.append("(").append(criteria.getWhereClause()).append(")");
 		}
-		PO entity = new Query(context, request.getCriteria().getTableName(), whereClause.toString(), null)
+		PO entity = new Query(context, tableName, whereClause.toString(), null)
 				.setParameters(params)
 				.first();
 		//	Return
-		return convertObject(context, entity);
+		return convertEntity(context, entity);
+	}
+	
+	/**
+	 * Delete a entity
+	 * @param context
+	 * @param request
+	 * @return
+	 */
+	private Empty.Builder deleteEntity(Properties context, DeleteEntityRequest request) {
+		//	Validate ID
+		if(request.getRecordId() == 0
+				&& Util.isEmpty(request.getUuid())) {
+			throw new AdempiereException("@Record_ID@ @NotFound@");
+		}
+		String tableName = null;
+		if(request.getTableId() > 0) {
+			tableName = MTable.get(context, request.getTableId()).getTableName();
+		} else {
+			throw new AdempiereException("@AD_Table_ID@ @NotFount@");
+		}
+		StringBuffer whereClause = new StringBuffer();
+		List<Object> params = new ArrayList<>();
+		if(!Util.isEmpty(request.getUuid())) {
+			whereClause.append(I_AD_Element.COLUMNNAME_UUID + " = ?");
+			params.add(request.getUuid());
+		} else if(request.getRecordId() > 0) {
+			whereClause.append(tableName + "_ID = ?");
+			params.add(request.getRecordId());
+		}
+		PO entity = new Query(context, tableName, whereClause.toString(), null)
+				.setParameters(params)
+				.first();
+		if(entity != null
+				&& entity.get_ID() >= 0) {
+			entity.deleteEx(true);
+		}
+		//	Return
+		return Empty.newBuilder();
+	}
+	
+	/**
+	 * Create Entity
+	 * @param context
+	 * @param request
+	 * @return
+	 */
+	private Entity.Builder createEntity(Properties context, CreateEntityRequest request) {
+		if(request.getTableId() == 0) {
+			throw new AdempiereException("@AD_Table_ID@ @NotFound@");
+		}
+		MTable table = MTable.get(context, request.getTableId());
+		PO entity = table.getPO(0, null);
+		if(entity == null) {
+			throw new AdempiereException("@Error@ PO is null");
+		}
+		LinkedHashMap<String, Object> attributes = convertValues(request.getAttributesList());
+		for(Entry<String, Object> attribute : attributes.entrySet()) {
+			entity.set_ValueOfColumn(attribute.getKey(), attribute.getValue());
+		}
+		//	Save entity
+		entity.saveEx();
+		//	Return
+		return convertEntity(context, entity);
+	}
+	
+	/**
+	 * Update Entity
+	 * @param context
+	 * @param request
+	 * @return
+	 */
+	private Entity.Builder updateEntity(Properties context, UpdateEntityRequest request) {
+		if(request.getTableId() == 0) {
+			throw new AdempiereException("@AD_Table_ID@ @NotFound@");
+		}
+		String tableName = MTable.get(context, request.getTableId()).getTableName();
+		StringBuffer whereClause = new StringBuffer();
+		List<Object> params = new ArrayList<>();
+		if(!Util.isEmpty(request.getUuid())) {
+			whereClause.append(I_AD_Element.COLUMNNAME_UUID + " = ?");
+			params.add(request.getUuid());
+		} else if(request.getRecordId() > 0) {
+			whereClause.append(tableName + "_ID = ?");
+			params.add(request.getRecordId());
+		}
+		PO entity = new Query(context, tableName, whereClause.toString(), null)
+				.setParameters(params)
+				.first();
+		if(entity != null
+				&& entity.get_ID() >= 0) {
+			LinkedHashMap<String, Object> attributes = convertValues(request.getAttributesList());
+			for(Entry<String, Object> attribute : attributes.entrySet()) {
+				entity.set_ValueOfColumn(attribute.getKey(), attribute.getValue());
+			}
+			//	Save entity
+			entity.saveEx();
+		}
+		//	Return
+		return convertEntity(context, entity);
 	}
 	
 	/**
@@ -666,18 +821,152 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 		Criteria criteria = request.getCriteria();
 		StringBuffer whereClause = new StringBuffer();
 		List<Object> params = new ArrayList<>();
-		whereClause.append("(").append(criteria.getWhereClause()).append(")");
-		//	
-		List<PO> entityList = new Query(context, criteria.getTableName(), whereClause.toString(), null)
-				.setParameters(params)
-				.<PO>list();
-		//	
-		ListEntitiesResponse.Builder builder = ListEntitiesResponse.newBuilder()
-				.setRecordCount(entityList.size());
-		for(PO entity : entityList) {
-			Entity.Builder valueObject = convertObject(context, entity);
-			builder.addRecords(valueObject.build());
+		if(!Util.isEmpty(criteria.getWhereClause())) {
+			whereClause.append("(").append(criteria.getWhereClause()).append(")");
 		}
+		//	Get page and count
+		String nexPageToken = null;
+		int page = getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
+		int pageMultiplier = page == 0? 1: page;
+		Query query = new Query(context, criteria.getTableName(), whereClause.toString(), null)
+				.setParameters(params);
+		int count = query.count();
+		ListEntitiesResponse.Builder builder = ListEntitiesResponse.newBuilder();
+		//	
+		if(Util.isEmpty(criteria.getQuery())) {
+			if(!Util.isEmpty(criteria.getOrderByClause())) {
+				query.setOrderBy(criteria.getOrderByClause());
+			}
+			List<PO> entityList = query
+					.setLimit(PAGE_SIZE, page)
+					.<PO>list();
+			//	
+			for(PO entity : entityList) {
+				Entity.Builder valueObject = convertEntity(context, entity);
+				builder.addRecords(valueObject.build());
+			}
+		} else {
+			StringBuilder sql = new StringBuilder(criteria.getQuery());
+			if (whereClause.length() > 0) {
+				sql.append(" WHERE ").append(whereClause); // includes first AND
+			}
+			//	
+			String parsedSQL = MRole.getDefault().addAccessSQL(sql.toString(),
+					criteria.getTableName(), MRole.SQL_FULLYQUALIFIED,
+					MRole.SQL_RO);
+			String orderByClause = criteria.getOrderByClause();
+			if(Util.isEmpty(orderByClause)) {
+				orderByClause = "";
+			} else {
+				orderByClause = " ORDER BY " + orderByClause;
+			}
+			//	Count records
+			count = countRecords(context, parsedSQL, criteria.getTableName(), null);
+			//	Add Row Number
+			if(whereClause.length() > 0) {
+				parsedSQL = parsedSQL + " AND ROWNUM >= " + page + " AND ROWNUM <= " + PAGE_SIZE;
+			}
+			//	Add Order By
+			parsedSQL = parsedSQL + orderByClause;
+			builder = convertListEntitiesResult(MTable.get(context, criteria.getTableName()), parsedSQL);
+		}
+		//	
+		builder.setRecordCount(count);
+		//	Set page token
+		if(count > (PAGE_SIZE * pageMultiplier)) {
+			nexPageToken = getPagePrefix(request.getClientRequest().getSessionUuid()) + (page + 1);
+		}
+		//	Set netxt page
+		builder.setNextPageToken(validateNull(nexPageToken));
+		//	Return
+		return builder;
+	}
+	
+	/**
+	 * Convert Entities List
+	 * @param table
+	 * @param sql
+	 * @return
+	 */
+	private ListEntitiesResponse.Builder convertListEntitiesResult(MTable table, String sql) {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		ListEntitiesResponse.Builder builder = ListEntitiesResponse.newBuilder();
+		long recordCount = 0;
+		try {
+			LinkedHashMap<String, MColumn> columnsMap = new LinkedHashMap<>();
+			//	Add field to map
+			for(MColumn column: table.getColumnsAsList()) {
+				columnsMap.put(column.getColumnName().toUpperCase(), column);
+			}
+			//	SELECT Key, Value, Name FROM ...
+			pstmt = DB.prepareStatement(sql, null);
+			//	Get from Query
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				Entity.Builder valueObjectBuilder = Entity.newBuilder();
+				ResultSetMetaData metaData = rs.getMetaData();
+				for (int index = 1; index <= metaData.getColumnCount(); index++) {
+					String columnName = metaData.getColumnName (index);
+					MColumn column = columnsMap.get(columnName.toUpperCase());
+					Value.Builder valueBuilder = Value.newBuilder();
+					boolean isFilled = false;
+					//	Display Columns
+					if(column == null) {
+						String value = rs.getString(index);
+						if(!Util.isEmpty(value)) {
+							isFilled = true;
+							valueBuilder.setStringValue(value);
+							valueBuilder.setValueType(ValueType.STRING);
+							valueObjectBuilder.putValues(columnName, valueBuilder.build());
+						}
+						continue;
+					} else if(DisplayType.isID(column.getAD_Reference_ID())) {
+						isFilled = true;
+						valueBuilder.setIntValue(rs.getInt(index));
+						valueBuilder.setValueType(ValueType.INTEGER);
+					} else if(DisplayType.isNumeric(column.getAD_Reference_ID())) {
+						BigDecimal value = rs.getBigDecimal(index);
+						if(value != null) {
+							isFilled = true;
+							valueBuilder.setDoubleValue(value.doubleValue());
+							valueBuilder.setValueType(ValueType.DOUBLE);
+						}
+					} else if(DisplayType.YesNo == column.getAD_Reference_ID()) {
+						isFilled = true;
+						String value = rs.getString(index);
+						valueBuilder.setBooleanValue(!Util.isEmpty(value) && value.equals("Y"));
+						valueBuilder.setValueType(ValueType.BOOLEAN);
+					} else if(DisplayType.isDate(column.getAD_Reference_ID())) {
+						Timestamp value = rs.getTimestamp(index);
+						if(value != null) {
+							isFilled = true;
+							valueBuilder.setLongValue(value.getTime());
+						}
+						valueBuilder.setValueType(ValueType.DATE);
+					} else if(DisplayType.isText(column.getAD_Reference_ID())) {
+						String value = rs.getString(index);
+						if(!Util.isEmpty(value)) {
+							isFilled = true;
+							valueBuilder.setStringValue(value);
+							valueBuilder.setValueType(ValueType.STRING);
+						}
+					}
+					if(isFilled) {
+						valueObjectBuilder.putValues(column.getColumnName(), valueBuilder.build());
+					}
+				}
+				//	
+				builder.addRecords(valueObjectBuilder.build());
+				recordCount++;
+			}
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+		} finally {
+			DB.close(rs, pstmt);
+		}
+		//	Set record counts
+		builder.setRecordCount(recordCount);
 		//	Return
 		return builder;
 	}
@@ -1362,7 +1651,7 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 	 * @param entity
 	 * @return
 	 */
-	private Entity.Builder convertObject(Properties context, PO entity) {
+	private Entity.Builder convertEntity(Properties context, PO entity) {
 		Entity.Builder builder = Entity.newBuilder();
 		if(entity == null) {
 			return builder;

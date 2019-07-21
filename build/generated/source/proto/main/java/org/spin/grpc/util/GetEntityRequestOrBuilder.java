@@ -8,30 +8,35 @@ public interface GetEntityRequestOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
   /**
-   * <code>int32 id = 1;</code>
-   */
-  int getId();
-
-  /**
-   * <code>string uuid = 2;</code>
+   * <code>string uuid = 1;</code>
    */
   java.lang.String getUuid();
   /**
-   * <code>string uuid = 2;</code>
+   * <code>string uuid = 1;</code>
    */
   com.google.protobuf.ByteString
       getUuidBytes();
 
   /**
-   * <code>.data.ClientRequest clientRequest = 3;</code>
+   * <code>int32 tableId = 2;</code>
+   */
+  int getTableId();
+
+  /**
+   * <code>int32 recordId = 3;</code>
+   */
+  int getRecordId();
+
+  /**
+   * <code>.data.ClientRequest clientRequest = 4;</code>
    */
   boolean hasClientRequest();
   /**
-   * <code>.data.ClientRequest clientRequest = 3;</code>
+   * <code>.data.ClientRequest clientRequest = 4;</code>
    */
   org.spin.grpc.util.ClientRequest getClientRequest();
   /**
-   * <code>.data.ClientRequest clientRequest = 3;</code>
+   * <code>.data.ClientRequest clientRequest = 4;</code>
    */
   org.spin.grpc.util.ClientRequestOrBuilder getClientRequestOrBuilder();
 
@@ -40,7 +45,7 @@ public interface GetEntityRequestOrBuilder extends
    * Query
    * </pre>
    *
-   * <code>.data.Criteria criteria = 4;</code>
+   * <code>.data.Criteria criteria = 5;</code>
    */
   boolean hasCriteria();
   /**
@@ -48,7 +53,7 @@ public interface GetEntityRequestOrBuilder extends
    * Query
    * </pre>
    *
-   * <code>.data.Criteria criteria = 4;</code>
+   * <code>.data.Criteria criteria = 5;</code>
    */
   org.spin.grpc.util.Criteria getCriteria();
   /**
@@ -56,7 +61,7 @@ public interface GetEntityRequestOrBuilder extends
    * Query
    * </pre>
    *
-   * <code>.data.Criteria criteria = 4;</code>
+   * <code>.data.Criteria criteria = 5;</code>
    */
   org.spin.grpc.util.CriteriaOrBuilder getCriteriaOrBuilder();
 }

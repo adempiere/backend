@@ -20,8 +20,9 @@ private static final long serialVersionUID = 0L;
     super(builder);
   }
   private GetEntityRequest() {
-    id_ = 0;
     uuid_ = "";
+    tableId_ = 0;
+    recordId_ = 0;
   }
 
   @java.lang.Override
@@ -55,18 +56,23 @@ private static final long serialVersionUID = 0L;
             }
             break;
           }
-          case 8: {
-
-            id_ = input.readInt32();
-            break;
-          }
-          case 18: {
+          case 10: {
             java.lang.String s = input.readStringRequireUtf8();
 
             uuid_ = s;
             break;
           }
-          case 26: {
+          case 16: {
+
+            tableId_ = input.readInt32();
+            break;
+          }
+          case 24: {
+
+            recordId_ = input.readInt32();
+            break;
+          }
+          case 34: {
             org.spin.grpc.util.ClientRequest.Builder subBuilder = null;
             if (clientRequest_ != null) {
               subBuilder = clientRequest_.toBuilder();
@@ -79,7 +85,7 @@ private static final long serialVersionUID = 0L;
 
             break;
           }
-          case 34: {
+          case 42: {
             org.spin.grpc.util.Criteria.Builder subBuilder = null;
             if (criteria_ != null) {
               subBuilder = criteria_.toBuilder();
@@ -116,19 +122,10 @@ private static final long serialVersionUID = 0L;
             org.spin.grpc.util.GetEntityRequest.class, org.spin.grpc.util.GetEntityRequest.Builder.class);
   }
 
-  public static final int ID_FIELD_NUMBER = 1;
-  private int id_;
-  /**
-   * <code>int32 id = 1;</code>
-   */
-  public int getId() {
-    return id_;
-  }
-
-  public static final int UUID_FIELD_NUMBER = 2;
+  public static final int UUID_FIELD_NUMBER = 1;
   private volatile java.lang.Object uuid_;
   /**
-   * <code>string uuid = 2;</code>
+   * <code>string uuid = 1;</code>
    */
   public java.lang.String getUuid() {
     java.lang.Object ref = uuid_;
@@ -143,7 +140,7 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <code>string uuid = 2;</code>
+   * <code>string uuid = 1;</code>
    */
   public com.google.protobuf.ByteString
       getUuidBytes() {
@@ -159,35 +156,53 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int CLIENTREQUEST_FIELD_NUMBER = 3;
+  public static final int TABLEID_FIELD_NUMBER = 2;
+  private int tableId_;
+  /**
+   * <code>int32 tableId = 2;</code>
+   */
+  public int getTableId() {
+    return tableId_;
+  }
+
+  public static final int RECORDID_FIELD_NUMBER = 3;
+  private int recordId_;
+  /**
+   * <code>int32 recordId = 3;</code>
+   */
+  public int getRecordId() {
+    return recordId_;
+  }
+
+  public static final int CLIENTREQUEST_FIELD_NUMBER = 4;
   private org.spin.grpc.util.ClientRequest clientRequest_;
   /**
-   * <code>.data.ClientRequest clientRequest = 3;</code>
+   * <code>.data.ClientRequest clientRequest = 4;</code>
    */
   public boolean hasClientRequest() {
     return clientRequest_ != null;
   }
   /**
-   * <code>.data.ClientRequest clientRequest = 3;</code>
+   * <code>.data.ClientRequest clientRequest = 4;</code>
    */
   public org.spin.grpc.util.ClientRequest getClientRequest() {
     return clientRequest_ == null ? org.spin.grpc.util.ClientRequest.getDefaultInstance() : clientRequest_;
   }
   /**
-   * <code>.data.ClientRequest clientRequest = 3;</code>
+   * <code>.data.ClientRequest clientRequest = 4;</code>
    */
   public org.spin.grpc.util.ClientRequestOrBuilder getClientRequestOrBuilder() {
     return getClientRequest();
   }
 
-  public static final int CRITERIA_FIELD_NUMBER = 4;
+  public static final int CRITERIA_FIELD_NUMBER = 5;
   private org.spin.grpc.util.Criteria criteria_;
   /**
    * <pre>
    * Query
    * </pre>
    *
-   * <code>.data.Criteria criteria = 4;</code>
+   * <code>.data.Criteria criteria = 5;</code>
    */
   public boolean hasCriteria() {
     return criteria_ != null;
@@ -197,7 +212,7 @@ private static final long serialVersionUID = 0L;
    * Query
    * </pre>
    *
-   * <code>.data.Criteria criteria = 4;</code>
+   * <code>.data.Criteria criteria = 5;</code>
    */
   public org.spin.grpc.util.Criteria getCriteria() {
     return criteria_ == null ? org.spin.grpc.util.Criteria.getDefaultInstance() : criteria_;
@@ -207,7 +222,7 @@ private static final long serialVersionUID = 0L;
    * Query
    * </pre>
    *
-   * <code>.data.Criteria criteria = 4;</code>
+   * <code>.data.Criteria criteria = 5;</code>
    */
   public org.spin.grpc.util.CriteriaOrBuilder getCriteriaOrBuilder() {
     return getCriteria();
@@ -225,17 +240,20 @@ private static final long serialVersionUID = 0L;
 
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
-    if (id_ != 0) {
-      output.writeInt32(1, id_);
-    }
     if (!getUuidBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, uuid_);
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, uuid_);
+    }
+    if (tableId_ != 0) {
+      output.writeInt32(2, tableId_);
+    }
+    if (recordId_ != 0) {
+      output.writeInt32(3, recordId_);
     }
     if (clientRequest_ != null) {
-      output.writeMessage(3, getClientRequest());
+      output.writeMessage(4, getClientRequest());
     }
     if (criteria_ != null) {
-      output.writeMessage(4, getCriteria());
+      output.writeMessage(5, getCriteria());
     }
     unknownFields.writeTo(output);
   }
@@ -245,20 +263,24 @@ private static final long serialVersionUID = 0L;
     if (size != -1) return size;
 
     size = 0;
-    if (id_ != 0) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeInt32Size(1, id_);
-    }
     if (!getUuidBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, uuid_);
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, uuid_);
+    }
+    if (tableId_ != 0) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeInt32Size(2, tableId_);
+    }
+    if (recordId_ != 0) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeInt32Size(3, recordId_);
     }
     if (clientRequest_ != null) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(3, getClientRequest());
+        .computeMessageSize(4, getClientRequest());
     }
     if (criteria_ != null) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(4, getCriteria());
+        .computeMessageSize(5, getCriteria());
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -276,10 +298,12 @@ private static final long serialVersionUID = 0L;
     org.spin.grpc.util.GetEntityRequest other = (org.spin.grpc.util.GetEntityRequest) obj;
 
     boolean result = true;
-    result = result && (getId()
-        == other.getId());
     result = result && getUuid()
         .equals(other.getUuid());
+    result = result && (getTableId()
+        == other.getTableId());
+    result = result && (getRecordId()
+        == other.getRecordId());
     result = result && (hasClientRequest() == other.hasClientRequest());
     if (hasClientRequest()) {
       result = result && getClientRequest()
@@ -301,10 +325,12 @@ private static final long serialVersionUID = 0L;
     }
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
-    hash = (37 * hash) + ID_FIELD_NUMBER;
-    hash = (53 * hash) + getId();
     hash = (37 * hash) + UUID_FIELD_NUMBER;
     hash = (53 * hash) + getUuid().hashCode();
+    hash = (37 * hash) + TABLEID_FIELD_NUMBER;
+    hash = (53 * hash) + getTableId();
+    hash = (37 * hash) + RECORDID_FIELD_NUMBER;
+    hash = (53 * hash) + getRecordId();
     if (hasClientRequest()) {
       hash = (37 * hash) + CLIENTREQUEST_FIELD_NUMBER;
       hash = (53 * hash) + getClientRequest().hashCode();
@@ -446,9 +472,11 @@ private static final long serialVersionUID = 0L;
     }
     public Builder clear() {
       super.clear();
-      id_ = 0;
-
       uuid_ = "";
+
+      tableId_ = 0;
+
+      recordId_ = 0;
 
       if (clientRequestBuilder_ == null) {
         clientRequest_ = null;
@@ -484,8 +512,9 @@ private static final long serialVersionUID = 0L;
 
     public org.spin.grpc.util.GetEntityRequest buildPartial() {
       org.spin.grpc.util.GetEntityRequest result = new org.spin.grpc.util.GetEntityRequest(this);
-      result.id_ = id_;
       result.uuid_ = uuid_;
+      result.tableId_ = tableId_;
+      result.recordId_ = recordId_;
       if (clientRequestBuilder_ == null) {
         result.clientRequest_ = clientRequest_;
       } else {
@@ -537,12 +566,15 @@ private static final long serialVersionUID = 0L;
 
     public Builder mergeFrom(org.spin.grpc.util.GetEntityRequest other) {
       if (other == org.spin.grpc.util.GetEntityRequest.getDefaultInstance()) return this;
-      if (other.getId() != 0) {
-        setId(other.getId());
-      }
       if (!other.getUuid().isEmpty()) {
         uuid_ = other.uuid_;
         onChanged();
+      }
+      if (other.getTableId() != 0) {
+        setTableId(other.getTableId());
+      }
+      if (other.getRecordId() != 0) {
+        setRecordId(other.getRecordId());
       }
       if (other.hasClientRequest()) {
         mergeClientRequest(other.getClientRequest());
@@ -577,35 +609,9 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private int id_ ;
-    /**
-     * <code>int32 id = 1;</code>
-     */
-    public int getId() {
-      return id_;
-    }
-    /**
-     * <code>int32 id = 1;</code>
-     */
-    public Builder setId(int value) {
-      
-      id_ = value;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>int32 id = 1;</code>
-     */
-    public Builder clearId() {
-      
-      id_ = 0;
-      onChanged();
-      return this;
-    }
-
     private java.lang.Object uuid_ = "";
     /**
-     * <code>string uuid = 2;</code>
+     * <code>string uuid = 1;</code>
      */
     public java.lang.String getUuid() {
       java.lang.Object ref = uuid_;
@@ -620,7 +626,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string uuid = 2;</code>
+     * <code>string uuid = 1;</code>
      */
     public com.google.protobuf.ByteString
         getUuidBytes() {
@@ -636,7 +642,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string uuid = 2;</code>
+     * <code>string uuid = 1;</code>
      */
     public Builder setUuid(
         java.lang.String value) {
@@ -649,7 +655,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string uuid = 2;</code>
+     * <code>string uuid = 1;</code>
      */
     public Builder clearUuid() {
       
@@ -658,7 +664,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string uuid = 2;</code>
+     * <code>string uuid = 1;</code>
      */
     public Builder setUuidBytes(
         com.google.protobuf.ByteString value) {
@@ -672,17 +678,69 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
+    private int tableId_ ;
+    /**
+     * <code>int32 tableId = 2;</code>
+     */
+    public int getTableId() {
+      return tableId_;
+    }
+    /**
+     * <code>int32 tableId = 2;</code>
+     */
+    public Builder setTableId(int value) {
+      
+      tableId_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>int32 tableId = 2;</code>
+     */
+    public Builder clearTableId() {
+      
+      tableId_ = 0;
+      onChanged();
+      return this;
+    }
+
+    private int recordId_ ;
+    /**
+     * <code>int32 recordId = 3;</code>
+     */
+    public int getRecordId() {
+      return recordId_;
+    }
+    /**
+     * <code>int32 recordId = 3;</code>
+     */
+    public Builder setRecordId(int value) {
+      
+      recordId_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>int32 recordId = 3;</code>
+     */
+    public Builder clearRecordId() {
+      
+      recordId_ = 0;
+      onChanged();
+      return this;
+    }
+
     private org.spin.grpc.util.ClientRequest clientRequest_ = null;
     private com.google.protobuf.SingleFieldBuilderV3<
         org.spin.grpc.util.ClientRequest, org.spin.grpc.util.ClientRequest.Builder, org.spin.grpc.util.ClientRequestOrBuilder> clientRequestBuilder_;
     /**
-     * <code>.data.ClientRequest clientRequest = 3;</code>
+     * <code>.data.ClientRequest clientRequest = 4;</code>
      */
     public boolean hasClientRequest() {
       return clientRequestBuilder_ != null || clientRequest_ != null;
     }
     /**
-     * <code>.data.ClientRequest clientRequest = 3;</code>
+     * <code>.data.ClientRequest clientRequest = 4;</code>
      */
     public org.spin.grpc.util.ClientRequest getClientRequest() {
       if (clientRequestBuilder_ == null) {
@@ -692,7 +750,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>.data.ClientRequest clientRequest = 3;</code>
+     * <code>.data.ClientRequest clientRequest = 4;</code>
      */
     public Builder setClientRequest(org.spin.grpc.util.ClientRequest value) {
       if (clientRequestBuilder_ == null) {
@@ -708,7 +766,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.data.ClientRequest clientRequest = 3;</code>
+     * <code>.data.ClientRequest clientRequest = 4;</code>
      */
     public Builder setClientRequest(
         org.spin.grpc.util.ClientRequest.Builder builderForValue) {
@@ -722,7 +780,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.data.ClientRequest clientRequest = 3;</code>
+     * <code>.data.ClientRequest clientRequest = 4;</code>
      */
     public Builder mergeClientRequest(org.spin.grpc.util.ClientRequest value) {
       if (clientRequestBuilder_ == null) {
@@ -740,7 +798,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.data.ClientRequest clientRequest = 3;</code>
+     * <code>.data.ClientRequest clientRequest = 4;</code>
      */
     public Builder clearClientRequest() {
       if (clientRequestBuilder_ == null) {
@@ -754,7 +812,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.data.ClientRequest clientRequest = 3;</code>
+     * <code>.data.ClientRequest clientRequest = 4;</code>
      */
     public org.spin.grpc.util.ClientRequest.Builder getClientRequestBuilder() {
       
@@ -762,7 +820,7 @@ private static final long serialVersionUID = 0L;
       return getClientRequestFieldBuilder().getBuilder();
     }
     /**
-     * <code>.data.ClientRequest clientRequest = 3;</code>
+     * <code>.data.ClientRequest clientRequest = 4;</code>
      */
     public org.spin.grpc.util.ClientRequestOrBuilder getClientRequestOrBuilder() {
       if (clientRequestBuilder_ != null) {
@@ -773,7 +831,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>.data.ClientRequest clientRequest = 3;</code>
+     * <code>.data.ClientRequest clientRequest = 4;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
         org.spin.grpc.util.ClientRequest, org.spin.grpc.util.ClientRequest.Builder, org.spin.grpc.util.ClientRequestOrBuilder> 
@@ -797,7 +855,7 @@ private static final long serialVersionUID = 0L;
      * Query
      * </pre>
      *
-     * <code>.data.Criteria criteria = 4;</code>
+     * <code>.data.Criteria criteria = 5;</code>
      */
     public boolean hasCriteria() {
       return criteriaBuilder_ != null || criteria_ != null;
@@ -807,7 +865,7 @@ private static final long serialVersionUID = 0L;
      * Query
      * </pre>
      *
-     * <code>.data.Criteria criteria = 4;</code>
+     * <code>.data.Criteria criteria = 5;</code>
      */
     public org.spin.grpc.util.Criteria getCriteria() {
       if (criteriaBuilder_ == null) {
@@ -821,7 +879,7 @@ private static final long serialVersionUID = 0L;
      * Query
      * </pre>
      *
-     * <code>.data.Criteria criteria = 4;</code>
+     * <code>.data.Criteria criteria = 5;</code>
      */
     public Builder setCriteria(org.spin.grpc.util.Criteria value) {
       if (criteriaBuilder_ == null) {
@@ -841,7 +899,7 @@ private static final long serialVersionUID = 0L;
      * Query
      * </pre>
      *
-     * <code>.data.Criteria criteria = 4;</code>
+     * <code>.data.Criteria criteria = 5;</code>
      */
     public Builder setCriteria(
         org.spin.grpc.util.Criteria.Builder builderForValue) {
@@ -859,7 +917,7 @@ private static final long serialVersionUID = 0L;
      * Query
      * </pre>
      *
-     * <code>.data.Criteria criteria = 4;</code>
+     * <code>.data.Criteria criteria = 5;</code>
      */
     public Builder mergeCriteria(org.spin.grpc.util.Criteria value) {
       if (criteriaBuilder_ == null) {
@@ -881,7 +939,7 @@ private static final long serialVersionUID = 0L;
      * Query
      * </pre>
      *
-     * <code>.data.Criteria criteria = 4;</code>
+     * <code>.data.Criteria criteria = 5;</code>
      */
     public Builder clearCriteria() {
       if (criteriaBuilder_ == null) {
@@ -899,7 +957,7 @@ private static final long serialVersionUID = 0L;
      * Query
      * </pre>
      *
-     * <code>.data.Criteria criteria = 4;</code>
+     * <code>.data.Criteria criteria = 5;</code>
      */
     public org.spin.grpc.util.Criteria.Builder getCriteriaBuilder() {
       
@@ -911,7 +969,7 @@ private static final long serialVersionUID = 0L;
      * Query
      * </pre>
      *
-     * <code>.data.Criteria criteria = 4;</code>
+     * <code>.data.Criteria criteria = 5;</code>
      */
     public org.spin.grpc.util.CriteriaOrBuilder getCriteriaOrBuilder() {
       if (criteriaBuilder_ != null) {
@@ -926,7 +984,7 @@ private static final long serialVersionUID = 0L;
      * Query
      * </pre>
      *
-     * <code>.data.Criteria criteria = 4;</code>
+     * <code>.data.Criteria criteria = 5;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
         org.spin.grpc.util.Criteria, org.spin.grpc.util.Criteria.Builder, org.spin.grpc.util.CriteriaOrBuilder> 

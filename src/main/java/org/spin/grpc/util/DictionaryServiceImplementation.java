@@ -505,6 +505,8 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setIsView(table.isView())
 				.setTabLevel(tab.getTabLevel())
 				.setTableName(validateNull(table.getTableName()))
+				.setQuery(validateNull(getQueryWithReferencesFromTab(tab)))
+				.setWhereClause(validateNull(tab.getWhereClause()))
 				.setOrderByClause(validateNull(tab.getOrderByClause()))
 				.setIsActive(tab.isActive());
 		//	For link
@@ -671,7 +673,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		if(Util.isEmpty(help)) {
 			help = browser.getHelp();
 		}
-		String query = addQueryReferences(browser, MView.getSQLFromView(browser.getAD_View_ID(), null));
+		String query = addQueryReferencesFromBrowser(browser, MView.getSQLFromView(browser.getAD_View_ID(), null));
 		String orderByClause = getSQLOrderBy(browser);
 		Browser.Builder builder = Browser.newBuilder()
 				.setId(browser.getAD_Process_ID())
@@ -717,11 +719,11 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	}
 	
 	/**
-	 * Add references to original query
+	 * Add references to original query from smart browser
 	 * @param originalQuery
 	 * @return
 	 */
-	private String addQueryReferences(MBrowse browser, String originalQuery) {
+	private String addQueryReferencesFromBrowser(MBrowse browser, String originalQuery) {
 		int fromIndex = originalQuery.toUpperCase().indexOf(" FROM ");
 		StringBuffer queryToAdd = new StringBuffer(originalQuery.substring(0, fromIndex));
 		StringBuffer joinsToAdd = new StringBuffer(originalQuery.substring(fromIndex, originalQuery.length() - 1));
@@ -741,6 +743,48 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				ReferenceInfo referenceInfo = ReferenceUtil.getInstance(Env.getCtx()).getReferenceInfo(displayTypeId, referenceValueId, columnName, language.getAD_Language(), tableName);
 				if(referenceInfo != null) {
 					queryToAdd.append(referenceInfo.getDisplayValue(browseField.getAD_View_Column().getColumnName()));
+					joinsToAdd.append(referenceInfo.getJoinValue(columnName, tableName));
+				}
+			}
+		}
+		queryToAdd.append(joinsToAdd);
+		return queryToAdd.toString();
+	}
+	
+	/**
+	 * Add references to original query from tab
+	 * @param originalQuery
+	 * @return
+	 */
+	private String getQueryWithReferencesFromTab(MTab tab) {
+		MTable table = MTable.get(Env.getCtx(), tab.getAD_Table_ID());
+		String originalQuery = "SELECT " + table.getTableName() + ".* FROM " + table.getTableName() + " ";
+		int fromIndex = originalQuery.toUpperCase().indexOf(" FROM ");
+		StringBuffer queryToAdd = new StringBuffer(originalQuery.substring(0, fromIndex));
+		StringBuffer joinsToAdd = new StringBuffer(originalQuery.substring(fromIndex, originalQuery.length() - 1));
+		Language language = Language.getLanguage(Env.getAD_Language(Env.getCtx()));
+		for (MField field : tab.getFields(false, null)) {
+			if(!field.isDisplayed()) {
+				continue;
+			}
+			MColumn column = MColumn.get(Env.getCtx(), field.getAD_Column_ID());
+			int displayTypeId = field.getAD_Reference_ID();
+			if(displayTypeId == 0) {
+				displayTypeId = column.getAD_Reference_ID();
+			}
+			if(DisplayType.isLookup(displayTypeId)) {
+				//	Reference Value
+				int referenceValueId = field.getAD_Reference_Value_ID();
+				if(referenceValueId == 0) {
+					referenceValueId = column.getAD_Reference_Value_ID();
+				}
+				//	Validation Code
+				String columnName = column.getColumnName();
+				String tableName = table.getTableName();
+				queryToAdd.append(", ");
+				ReferenceInfo referenceInfo = ReferenceUtil.getInstance(Env.getCtx()).getReferenceInfo(displayTypeId, referenceValueId, columnName, language.getAD_Language(), tableName);
+				if(referenceInfo != null) {
+					queryToAdd.append(referenceInfo.getDisplayValue(columnName));
 					joinsToAdd.append(referenceInfo.getJoinValue(columnName, tableName));
 				}
 			}

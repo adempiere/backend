@@ -25,6 +25,12 @@ package data;
 service DataService {
 	// Get a Entity
 	rpc GetEntity(GetEntityRequest) returns (Entity) {}
+	// Create Entity Request
+	rpc CreateEntity(CreateEntityRequest) returns (Entity) {}
+	// Update Entity Request
+	rpc UpdateEntity(UpdateEntityRequest) returns (Entity) {}
+	// Delete Entity Request
+	rpc DeleteEntity(DeleteEntityRequest) returns (Empty) {}
 	// List a Entities
 	rpc ListEntities(ListEntitiesRequest) returns (ListEntitiesResponse) {}
 	// Get Lookup Item
@@ -47,6 +53,45 @@ service DataService {
 message ClientRequest {
 	string sessionUuid = 1;
 	string language = 2;
+}
+
+// Get Entity Request
+message GetEntityRequest {
+	string uuid = 1;
+	int32 tableId = 2;
+	int32 recordId = 3;
+	ClientRequest clientRequest = 4;
+	// Query
+	Criteria criteria = 5;
+}
+
+// Create Entity Request
+message CreateEntityRequest {
+	ClientRequest clientRequest = 1;
+	int32 tableId = 2;
+	repeated KeyValue attributes = 3;
+}
+
+//  Empty message
+message Empty {
+
+}
+
+// Update Entity Request
+message UpdateEntityRequest {
+	ClientRequest clientRequest = 1;
+	string uuid = 2;
+	int32 tableId = 3;
+	int32 recordId = 4;
+	repeated KeyValue attributes = 5;
+}
+
+// Delete Entity Request
+message DeleteEntityRequest {
+	ClientRequest clientRequest = 1;
+	string uuid = 2;
+	int32 tableId = 3;
+	int32 recordId = 4;
 }
 
 // Browsers List
@@ -86,15 +131,6 @@ message Value {
 		DATE = 5;
 	}
 	ValueType valueType = 6;
-}
-
-// Get Entity Request
-message GetEntityRequest {
-	int32 id = 1;
-	string uuid = 2;
-	ClientRequest clientRequest = 3;
-	// Query
-	Criteria criteria = 4;
 }
 
 // Get Lookup Item

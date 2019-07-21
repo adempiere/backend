@@ -62,6 +62,102 @@ public final class DataServiceGrpc {
      return getGetEntityMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.CreateEntityRequest,
+      org.spin.grpc.util.Entity> getCreateEntityMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "CreateEntity",
+      requestType = org.spin.grpc.util.CreateEntityRequest.class,
+      responseType = org.spin.grpc.util.Entity.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<org.spin.grpc.util.CreateEntityRequest,
+      org.spin.grpc.util.Entity> getCreateEntityMethod() {
+    io.grpc.MethodDescriptor<org.spin.grpc.util.CreateEntityRequest, org.spin.grpc.util.Entity> getCreateEntityMethod;
+    if ((getCreateEntityMethod = DataServiceGrpc.getCreateEntityMethod) == null) {
+      synchronized (DataServiceGrpc.class) {
+        if ((getCreateEntityMethod = DataServiceGrpc.getCreateEntityMethod) == null) {
+          DataServiceGrpc.getCreateEntityMethod = getCreateEntityMethod = 
+              io.grpc.MethodDescriptor.<org.spin.grpc.util.CreateEntityRequest, org.spin.grpc.util.Entity>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(
+                  "data.DataService", "CreateEntity"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  org.spin.grpc.util.CreateEntityRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  org.spin.grpc.util.Entity.getDefaultInstance()))
+                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("CreateEntity"))
+                  .build();
+          }
+        }
+     }
+     return getCreateEntityMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.UpdateEntityRequest,
+      org.spin.grpc.util.Entity> getUpdateEntityMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "UpdateEntity",
+      requestType = org.spin.grpc.util.UpdateEntityRequest.class,
+      responseType = org.spin.grpc.util.Entity.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<org.spin.grpc.util.UpdateEntityRequest,
+      org.spin.grpc.util.Entity> getUpdateEntityMethod() {
+    io.grpc.MethodDescriptor<org.spin.grpc.util.UpdateEntityRequest, org.spin.grpc.util.Entity> getUpdateEntityMethod;
+    if ((getUpdateEntityMethod = DataServiceGrpc.getUpdateEntityMethod) == null) {
+      synchronized (DataServiceGrpc.class) {
+        if ((getUpdateEntityMethod = DataServiceGrpc.getUpdateEntityMethod) == null) {
+          DataServiceGrpc.getUpdateEntityMethod = getUpdateEntityMethod = 
+              io.grpc.MethodDescriptor.<org.spin.grpc.util.UpdateEntityRequest, org.spin.grpc.util.Entity>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(
+                  "data.DataService", "UpdateEntity"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  org.spin.grpc.util.UpdateEntityRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  org.spin.grpc.util.Entity.getDefaultInstance()))
+                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("UpdateEntity"))
+                  .build();
+          }
+        }
+     }
+     return getUpdateEntityMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.DeleteEntityRequest,
+      org.spin.grpc.util.Empty> getDeleteEntityMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "DeleteEntity",
+      requestType = org.spin.grpc.util.DeleteEntityRequest.class,
+      responseType = org.spin.grpc.util.Empty.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<org.spin.grpc.util.DeleteEntityRequest,
+      org.spin.grpc.util.Empty> getDeleteEntityMethod() {
+    io.grpc.MethodDescriptor<org.spin.grpc.util.DeleteEntityRequest, org.spin.grpc.util.Empty> getDeleteEntityMethod;
+    if ((getDeleteEntityMethod = DataServiceGrpc.getDeleteEntityMethod) == null) {
+      synchronized (DataServiceGrpc.class) {
+        if ((getDeleteEntityMethod = DataServiceGrpc.getDeleteEntityMethod) == null) {
+          DataServiceGrpc.getDeleteEntityMethod = getDeleteEntityMethod = 
+              io.grpc.MethodDescriptor.<org.spin.grpc.util.DeleteEntityRequest, org.spin.grpc.util.Empty>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(
+                  "data.DataService", "DeleteEntity"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  org.spin.grpc.util.DeleteEntityRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  org.spin.grpc.util.Empty.getDefaultInstance()))
+                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("DeleteEntity"))
+                  .build();
+          }
+        }
+     }
+     return getDeleteEntityMethod;
+  }
+
   private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.ListEntitiesRequest,
       org.spin.grpc.util.ListEntitiesResponse> getListEntitiesMethod;
 
@@ -360,6 +456,36 @@ public final class DataServiceGrpc {
 
     /**
      * <pre>
+     * Create Entity Request
+     * </pre>
+     */
+    public void createEntity(org.spin.grpc.util.CreateEntityRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.Entity> responseObserver) {
+      asyncUnimplementedUnaryCall(getCreateEntityMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
+     * Update Entity Request
+     * </pre>
+     */
+    public void updateEntity(org.spin.grpc.util.UpdateEntityRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.Entity> responseObserver) {
+      asyncUnimplementedUnaryCall(getUpdateEntityMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
+     * Delete Entity Request
+     * </pre>
+     */
+    public void deleteEntity(org.spin.grpc.util.DeleteEntityRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.Empty> responseObserver) {
+      asyncUnimplementedUnaryCall(getDeleteEntityMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
      * List a Entities
      * </pre>
      */
@@ -447,6 +573,27 @@ public final class DataServiceGrpc {
                 org.spin.grpc.util.GetEntityRequest,
                 org.spin.grpc.util.Entity>(
                   this, METHODID_GET_ENTITY)))
+          .addMethod(
+            getCreateEntityMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                org.spin.grpc.util.CreateEntityRequest,
+                org.spin.grpc.util.Entity>(
+                  this, METHODID_CREATE_ENTITY)))
+          .addMethod(
+            getUpdateEntityMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                org.spin.grpc.util.UpdateEntityRequest,
+                org.spin.grpc.util.Entity>(
+                  this, METHODID_UPDATE_ENTITY)))
+          .addMethod(
+            getDeleteEntityMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                org.spin.grpc.util.DeleteEntityRequest,
+                org.spin.grpc.util.Empty>(
+                  this, METHODID_DELETE_ENTITY)))
           .addMethod(
             getListEntitiesMethod(),
             asyncUnaryCall(
@@ -537,6 +684,39 @@ public final class DataServiceGrpc {
         io.grpc.stub.StreamObserver<org.spin.grpc.util.Entity> responseObserver) {
       asyncUnaryCall(
           getChannel().newCall(getGetEntityMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
+     * Create Entity Request
+     * </pre>
+     */
+    public void createEntity(org.spin.grpc.util.CreateEntityRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.Entity> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getCreateEntityMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
+     * Update Entity Request
+     * </pre>
+     */
+    public void updateEntity(org.spin.grpc.util.UpdateEntityRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.Entity> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getUpdateEntityMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
+     * Delete Entity Request
+     * </pre>
+     */
+    public void deleteEntity(org.spin.grpc.util.DeleteEntityRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.Empty> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getDeleteEntityMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
@@ -661,6 +841,36 @@ public final class DataServiceGrpc {
 
     /**
      * <pre>
+     * Create Entity Request
+     * </pre>
+     */
+    public org.spin.grpc.util.Entity createEntity(org.spin.grpc.util.CreateEntityRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getCreateEntityMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * Update Entity Request
+     * </pre>
+     */
+    public org.spin.grpc.util.Entity updateEntity(org.spin.grpc.util.UpdateEntityRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getUpdateEntityMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * Delete Entity Request
+     * </pre>
+     */
+    public org.spin.grpc.util.Empty deleteEntity(org.spin.grpc.util.DeleteEntityRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getDeleteEntityMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
      * List a Entities
      * </pre>
      */
@@ -774,6 +984,39 @@ public final class DataServiceGrpc {
 
     /**
      * <pre>
+     * Create Entity Request
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.Entity> createEntity(
+        org.spin.grpc.util.CreateEntityRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getCreateEntityMethod(), getCallOptions()), request);
+    }
+
+    /**
+     * <pre>
+     * Update Entity Request
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.Entity> updateEntity(
+        org.spin.grpc.util.UpdateEntityRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getUpdateEntityMethod(), getCallOptions()), request);
+    }
+
+    /**
+     * <pre>
+     * Delete Entity Request
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.Empty> deleteEntity(
+        org.spin.grpc.util.DeleteEntityRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getDeleteEntityMethod(), getCallOptions()), request);
+    }
+
+    /**
+     * <pre>
      * List a Entities
      * </pre>
      */
@@ -862,14 +1105,17 @@ public final class DataServiceGrpc {
   }
 
   private static final int METHODID_GET_ENTITY = 0;
-  private static final int METHODID_LIST_ENTITIES = 1;
-  private static final int METHODID_GET_LOOKUP_ITEM = 2;
-  private static final int METHODID_LIST_LOOKUP_ITEMS = 3;
-  private static final int METHODID_RUN_CALLOUT = 4;
-  private static final int METHODID_RUN_BUSINESS_PROCESS = 5;
-  private static final int METHODID_LIST_BROWSER_ITEMS = 6;
-  private static final int METHODID_LIST_ACTIVITIES = 7;
-  private static final int METHODID_LIST_RECENT_ITEMS = 8;
+  private static final int METHODID_CREATE_ENTITY = 1;
+  private static final int METHODID_UPDATE_ENTITY = 2;
+  private static final int METHODID_DELETE_ENTITY = 3;
+  private static final int METHODID_LIST_ENTITIES = 4;
+  private static final int METHODID_GET_LOOKUP_ITEM = 5;
+  private static final int METHODID_LIST_LOOKUP_ITEMS = 6;
+  private static final int METHODID_RUN_CALLOUT = 7;
+  private static final int METHODID_RUN_BUSINESS_PROCESS = 8;
+  private static final int METHODID_LIST_BROWSER_ITEMS = 9;
+  private static final int METHODID_LIST_ACTIVITIES = 10;
+  private static final int METHODID_LIST_RECENT_ITEMS = 11;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -891,6 +1137,18 @@ public final class DataServiceGrpc {
         case METHODID_GET_ENTITY:
           serviceImpl.getEntity((org.spin.grpc.util.GetEntityRequest) request,
               (io.grpc.stub.StreamObserver<org.spin.grpc.util.Entity>) responseObserver);
+          break;
+        case METHODID_CREATE_ENTITY:
+          serviceImpl.createEntity((org.spin.grpc.util.CreateEntityRequest) request,
+              (io.grpc.stub.StreamObserver<org.spin.grpc.util.Entity>) responseObserver);
+          break;
+        case METHODID_UPDATE_ENTITY:
+          serviceImpl.updateEntity((org.spin.grpc.util.UpdateEntityRequest) request,
+              (io.grpc.stub.StreamObserver<org.spin.grpc.util.Entity>) responseObserver);
+          break;
+        case METHODID_DELETE_ENTITY:
+          serviceImpl.deleteEntity((org.spin.grpc.util.DeleteEntityRequest) request,
+              (io.grpc.stub.StreamObserver<org.spin.grpc.util.Empty>) responseObserver);
           break;
         case METHODID_LIST_ENTITIES:
           serviceImpl.listEntities((org.spin.grpc.util.ListEntitiesRequest) request,
@@ -986,6 +1244,9 @@ public final class DataServiceGrpc {
           serviceDescriptor = result = io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
               .setSchemaDescriptor(new DataServiceFileDescriptorSupplier())
               .addMethod(getGetEntityMethod())
+              .addMethod(getCreateEntityMethod())
+              .addMethod(getUpdateEntityMethod())
+              .addMethod(getDeleteEntityMethod())
               .addMethod(getListEntitiesMethod())
               .addMethod(getGetLookupItemMethod())
               .addMethod(getListLookupItemsMethod())
