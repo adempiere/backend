@@ -861,7 +861,7 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 				orderByClause = " ORDER BY " + orderByClause;
 			}
 			//	Count records
-			count = countRecords(context, parsedSQL, criteria.getTableName(), null);
+			count = countRecords(context, parsedSQL, criteria.getTableName(), new ArrayList<>());
 			//	Add Row Number
 			if(whereClause.length() > 0) {
 				parsedSQL = parsedSQL + " AND ROWNUM >= " + page + " AND ROWNUM <= " + PAGE_SIZE;
