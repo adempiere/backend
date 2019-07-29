@@ -21,7 +21,7 @@ private static final long serialVersionUID = 0L;
   }
   private GetEntityRequest() {
     uuid_ = "";
-    tableId_ = 0;
+    tableName_ = "";
     recordId_ = 0;
   }
 
@@ -62,9 +62,10 @@ private static final long serialVersionUID = 0L;
             uuid_ = s;
             break;
           }
-          case 16: {
+          case 18: {
+            java.lang.String s = input.readStringRequireUtf8();
 
-            tableId_ = input.readInt32();
+            tableName_ = s;
             break;
           }
           case 24: {
@@ -156,13 +157,38 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int TABLEID_FIELD_NUMBER = 2;
-  private int tableId_;
+  public static final int TABLENAME_FIELD_NUMBER = 2;
+  private volatile java.lang.Object tableName_;
   /**
-   * <code>int32 tableId = 2;</code>
+   * <code>string tableName = 2;</code>
    */
-  public int getTableId() {
-    return tableId_;
+  public java.lang.String getTableName() {
+    java.lang.Object ref = tableName_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      tableName_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string tableName = 2;</code>
+   */
+  public com.google.protobuf.ByteString
+      getTableNameBytes() {
+    java.lang.Object ref = tableName_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      tableName_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
   }
 
   public static final int RECORDID_FIELD_NUMBER = 3;
@@ -243,8 +269,8 @@ private static final long serialVersionUID = 0L;
     if (!getUuidBytes().isEmpty()) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 1, uuid_);
     }
-    if (tableId_ != 0) {
-      output.writeInt32(2, tableId_);
+    if (!getTableNameBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, tableName_);
     }
     if (recordId_ != 0) {
       output.writeInt32(3, recordId_);
@@ -266,9 +292,8 @@ private static final long serialVersionUID = 0L;
     if (!getUuidBytes().isEmpty()) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, uuid_);
     }
-    if (tableId_ != 0) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeInt32Size(2, tableId_);
+    if (!getTableNameBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, tableName_);
     }
     if (recordId_ != 0) {
       size += com.google.protobuf.CodedOutputStream
@@ -300,8 +325,8 @@ private static final long serialVersionUID = 0L;
     boolean result = true;
     result = result && getUuid()
         .equals(other.getUuid());
-    result = result && (getTableId()
-        == other.getTableId());
+    result = result && getTableName()
+        .equals(other.getTableName());
     result = result && (getRecordId()
         == other.getRecordId());
     result = result && (hasClientRequest() == other.hasClientRequest());
@@ -327,8 +352,8 @@ private static final long serialVersionUID = 0L;
     hash = (19 * hash) + getDescriptor().hashCode();
     hash = (37 * hash) + UUID_FIELD_NUMBER;
     hash = (53 * hash) + getUuid().hashCode();
-    hash = (37 * hash) + TABLEID_FIELD_NUMBER;
-    hash = (53 * hash) + getTableId();
+    hash = (37 * hash) + TABLENAME_FIELD_NUMBER;
+    hash = (53 * hash) + getTableName().hashCode();
     hash = (37 * hash) + RECORDID_FIELD_NUMBER;
     hash = (53 * hash) + getRecordId();
     if (hasClientRequest()) {
@@ -474,7 +499,7 @@ private static final long serialVersionUID = 0L;
       super.clear();
       uuid_ = "";
 
-      tableId_ = 0;
+      tableName_ = "";
 
       recordId_ = 0;
 
@@ -513,7 +538,7 @@ private static final long serialVersionUID = 0L;
     public org.spin.grpc.util.GetEntityRequest buildPartial() {
       org.spin.grpc.util.GetEntityRequest result = new org.spin.grpc.util.GetEntityRequest(this);
       result.uuid_ = uuid_;
-      result.tableId_ = tableId_;
+      result.tableName_ = tableName_;
       result.recordId_ = recordId_;
       if (clientRequestBuilder_ == null) {
         result.clientRequest_ = clientRequest_;
@@ -570,8 +595,9 @@ private static final long serialVersionUID = 0L;
         uuid_ = other.uuid_;
         onChanged();
       }
-      if (other.getTableId() != 0) {
-        setTableId(other.getTableId());
+      if (!other.getTableName().isEmpty()) {
+        tableName_ = other.tableName_;
+        onChanged();
       }
       if (other.getRecordId() != 0) {
         setRecordId(other.getRecordId());
@@ -678,28 +704,71 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private int tableId_ ;
+    private java.lang.Object tableName_ = "";
     /**
-     * <code>int32 tableId = 2;</code>
+     * <code>string tableName = 2;</code>
      */
-    public int getTableId() {
-      return tableId_;
+    public java.lang.String getTableName() {
+      java.lang.Object ref = tableName_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        tableName_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
     }
     /**
-     * <code>int32 tableId = 2;</code>
+     * <code>string tableName = 2;</code>
      */
-    public Builder setTableId(int value) {
-      
-      tableId_ = value;
+    public com.google.protobuf.ByteString
+        getTableNameBytes() {
+      java.lang.Object ref = tableName_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        tableName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string tableName = 2;</code>
+     */
+    public Builder setTableName(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
+      tableName_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>int32 tableId = 2;</code>
+     * <code>string tableName = 2;</code>
      */
-    public Builder clearTableId() {
+    public Builder clearTableName() {
       
-      tableId_ = 0;
+      tableName_ = getDefaultInstance().getTableName();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string tableName = 2;</code>
+     */
+    public Builder setTableNameBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      
+      tableName_ = value;
       onChanged();
       return this;
     }

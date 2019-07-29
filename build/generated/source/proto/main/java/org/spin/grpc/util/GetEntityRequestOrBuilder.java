@@ -18,9 +18,14 @@ public interface GetEntityRequestOrBuilder extends
       getUuidBytes();
 
   /**
-   * <code>int32 tableId = 2;</code>
+   * <code>string tableName = 2;</code>
    */
-  int getTableId();
+  java.lang.String getTableName();
+  /**
+   * <code>string tableName = 2;</code>
+   */
+  com.google.protobuf.ByteString
+      getTableNameBytes();
 
   /**
    * <code>int32 recordId = 3;</code>

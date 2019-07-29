@@ -58,7 +58,7 @@ message ClientRequest {
 // Get Entity Request
 message GetEntityRequest {
 	string uuid = 1;
-	int32 tableId = 2;
+	string tableName = 2;
 	int32 recordId = 3;
 	ClientRequest clientRequest = 4;
 	// Query
@@ -68,7 +68,7 @@ message GetEntityRequest {
 // Create Entity Request
 message CreateEntityRequest {
 	ClientRequest clientRequest = 1;
-	int32 tableId = 2;
+	string tableName = 2;
 	repeated KeyValue attributes = 3;
 }
 
@@ -80,8 +80,8 @@ message Empty {
 // Update Entity Request
 message UpdateEntityRequest {
 	ClientRequest clientRequest = 1;
-	string uuid = 2;
-	int32 tableId = 3;
+	string tableName = 2;
+	string uuid = 3;
 	int32 recordId = 4;
 	repeated KeyValue attributes = 5;
 }
@@ -89,8 +89,8 @@ message UpdateEntityRequest {
 // Delete Entity Request
 message DeleteEntityRequest {
 	ClientRequest clientRequest = 1;
-	string uuid = 2;
-	int32 tableId = 3;
+	string tableName = 2;
+	string uuid = 3;
 	int32 recordId = 4;
 }
 

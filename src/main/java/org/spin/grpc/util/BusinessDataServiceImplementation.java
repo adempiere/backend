@@ -479,11 +479,15 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 	 */
 	private Entity.Builder getEntity(Properties context, GetEntityRequest request) {
 		Criteria criteria = request.getCriteria();
-		String tableName = null;
-		if(request.getTableId() > 0) {
-			tableName = MTable.get(context, request.getTableId()).getTableName();
-		} else if(request.getCriteria() != null) {
-			tableName = request.getCriteria().getTableName();
+		String tableName = request.getTableName();
+		if(Util.isEmpty(request.getTableName())) {
+			if(request.getCriteria() != null) {
+				tableName = request.getCriteria().getTableName();
+			}
+		}
+		//	Validate
+		if(Util.isEmpty(request.getTableName())) {
+			throw new AdempiereException("@AD_Table_ID@ @NotFound@");
 		}
 		StringBuffer whereClause = new StringBuffer();
 		List<Object> params = new ArrayList<>();
@@ -515,12 +519,11 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 				&& Util.isEmpty(request.getUuid())) {
 			throw new AdempiereException("@Record_ID@ @NotFound@");
 		}
-		String tableName = null;
-		if(request.getTableId() > 0) {
-			tableName = MTable.get(context, request.getTableId()).getTableName();
-		} else {
-			throw new AdempiereException("@AD_Table_ID@ @NotFount@");
+		
+		if(Util.isEmpty(request.getTableName())) {
+			throw new AdempiereException("@AD_Table_ID@ @NotFound@");
 		}
+		String tableName = request.getTableName();
 		StringBuffer whereClause = new StringBuffer();
 		List<Object> params = new ArrayList<>();
 		if(!Util.isEmpty(request.getUuid())) {
@@ -548,10 +551,11 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 	 * @return
 	 */
 	private Entity.Builder createEntity(Properties context, CreateEntityRequest request) {
-		if(request.getTableId() == 0) {
+		if(Util.isEmpty(request.getTableName())) {
 			throw new AdempiereException("@AD_Table_ID@ @NotFound@");
 		}
-		MTable table = MTable.get(context, request.getTableId());
+		String tableName = request.getTableName();
+		MTable table = MTable.get(context, tableName);
 		PO entity = table.getPO(0, null);
 		if(entity == null) {
 			throw new AdempiereException("@Error@ PO is null");
@@ -573,10 +577,10 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 	 * @return
 	 */
 	private Entity.Builder updateEntity(Properties context, UpdateEntityRequest request) {
-		if(request.getTableId() == 0) {
+		if(Util.isEmpty(request.getTableName())) {
 			throw new AdempiereException("@AD_Table_ID@ @NotFound@");
 		}
-		String tableName = MTable.get(context, request.getTableId()).getTableName();
+		String tableName = request.getTableName();
 		StringBuffer whereClause = new StringBuffer();
 		List<Object> params = new ArrayList<>();
 		if(!Util.isEmpty(request.getUuid())) {
