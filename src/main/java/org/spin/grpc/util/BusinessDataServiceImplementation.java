@@ -486,7 +486,7 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 			}
 		}
 		//	Validate
-		if(Util.isEmpty(request.getTableName())) {
+		if(Util.isEmpty(tableName)) {
 			throw new AdempiereException("@AD_Table_ID@ @NotFound@");
 		}
 		StringBuffer whereClause = new StringBuffer();
