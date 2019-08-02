@@ -817,6 +817,8 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 			pstmt.setString(index, (String) value);
 		} else if(value instanceof Timestamp) {
 			pstmt.setTimestamp(index, (Timestamp) value);
+		} else if(value instanceof Boolean) {
+			pstmt.setString(index, ((Boolean) value)? "Y": "N");
 		}
 	}
 	
