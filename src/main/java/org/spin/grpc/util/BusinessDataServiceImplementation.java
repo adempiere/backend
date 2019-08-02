@@ -532,6 +532,8 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 		} else if(request.getRecordId() > 0) {
 			whereClause.append(tableName + "_ID = ?");
 			params.add(request.getRecordId());
+		} else {
+			throw new AdempiereException("@Record_ID@ @NotFound@");
 		}
 		PO entity = new Query(context, tableName, whereClause.toString(), null)
 				.setParameters(params)
@@ -589,6 +591,8 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 		} else if(request.getRecordId() > 0) {
 			whereClause.append(tableName + "_ID = ?");
 			params.add(request.getRecordId());
+		} else {
+			throw new AdempiereException("@Record_ID@ @NotFound@");
 		}
 		PO entity = new Query(context, tableName, whereClause.toString(), null)
 				.setParameters(params)
@@ -867,9 +871,7 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 			//	Count records
 			count = countRecords(context, parsedSQL, criteria.getTableName(), new ArrayList<>());
 			//	Add Row Number
-			if(whereClause.length() > 0) {
-				parsedSQL = parsedSQL + " AND ROWNUM >= " + page + " AND ROWNUM <= " + PAGE_SIZE;
-			}
+			parsedSQL = parsedSQL + " AND ROWNUM >= " + page + " AND ROWNUM <= " + PAGE_SIZE;
 			//	Add Order By
 			parsedSQL = parsedSQL + orderByClause;
 			builder = convertListEntitiesResult(MTable.get(context, criteria.getTableName()), parsedSQL);

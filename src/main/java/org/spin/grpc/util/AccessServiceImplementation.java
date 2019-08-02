@@ -172,7 +172,6 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 				throw new AdempiereException("Object Request Null");
 			}
 			log.fine("Menu Requested = " + request.getClientVersion());
-			
 			Properties context = getContext(request);
 			String language = getDefaultLanguage(request.getLanguage());
 			Menu.Builder menuBuilder = convertMenu(context, language);
@@ -742,7 +741,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 			treeId = MTree.getDefaultTreeIdFromTableId(menu.getAD_Client_ID(), I_AD_Menu.Table_ID);
 		}
 		if(treeId != 0) {
-			MTree tree = new MTree(Env.getCtx(), treeId, true, false, null, null);
+			MTree tree = new MTree(Env.getCtx(), treeId, false, false, null, null);
 			//	
 			builder = convertMenu(context, menu, 0, language);
 			//	Get main node
