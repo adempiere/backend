@@ -62,6 +62,7 @@ import org.spin.model.MADFieldDefinition;
 import org.spin.util.AbstractExportFormat;
 import org.spin.util.ReportExportHandler;
 
+import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 
 public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
@@ -176,7 +177,11 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
-			responseObserver.onError(e);
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
 		}
 	}
 	
@@ -202,7 +207,11 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
-			responseObserver.onError(e);
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
 		}
 	}
 	
@@ -228,7 +237,11 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
-			responseObserver.onError(e);
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
 		}
 	}
 	
@@ -256,7 +269,11 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
-			responseObserver.onError(e);
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
 		}
 	}
 	
@@ -287,7 +304,11 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
-			responseObserver.onError(e);
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
 		}
 	}
 	

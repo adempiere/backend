@@ -80,6 +80,7 @@ import org.compiere.util.Util;
 import org.eevolution.service.dsl.ProcessBuilder;
 import org.spin.grpc.util.DataServiceGrpc.DataServiceImplBase;
 import org.spin.grpc.util.Value.ValueType;
+import io.grpc.Status;
 
 import com.google.protobuf.ByteString;
 
@@ -116,7 +117,11 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
-			responseObserver.onError(e);
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
 		}
 	}
 	
@@ -132,7 +137,11 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
-			responseObserver.onError(e);
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
 		}
 	}
 	
@@ -148,7 +157,11 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
-			responseObserver.onError(e);
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
 		}
 	}
 	
@@ -165,7 +178,11 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
-			responseObserver.onError(e);
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
 		}
 	}
 	
@@ -183,7 +200,11 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
-			responseObserver.onError(e);
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
 		}
 	}
 	
@@ -199,7 +220,11 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
-			responseObserver.onError(e);
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
 		}
 	}
 	
@@ -216,7 +241,11 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
-			responseObserver.onError(e);
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
 		}
 	}
 	
@@ -232,7 +261,11 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
-			responseObserver.onError(e);
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
 		}
 	}
 	
@@ -251,7 +284,11 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
-			responseObserver.onError(e);
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
 		}
 	}
 	
@@ -269,7 +306,11 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
-			responseObserver.onError(e);
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
 		}
 	}
 	
@@ -286,7 +327,11 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
-			responseObserver.onError(e);
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
 		}
 	}
 	
@@ -303,7 +348,11 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
-			responseObserver.onError(e);
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
 		}
 	}
 	

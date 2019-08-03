@@ -75,6 +75,7 @@ import org.spin.grpc.util.TableAccess.AccessTypeRule;
 import org.spin.model.I_AD_Dashboard_Access;
 import org.spin.model.X_AD_Dashboard_Access;
 
+import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 
 public class AccessServiceImplementation extends AccessServiceImplBase {
@@ -97,7 +98,11 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
-			responseObserver.onError(e);
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
 		}
 	}
 	
@@ -113,7 +118,11 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
-			responseObserver.onError(e);
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
 		}
 	}
 	
@@ -129,7 +138,11 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
-			responseObserver.onError(e);
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
 		}
 	}
 	
@@ -145,7 +158,11 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
-			responseObserver.onError(e);
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
 		}
 	}
 	
@@ -161,7 +178,11 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
-			responseObserver.onError(e);
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
 		}
 	}
 	
@@ -179,7 +200,11 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
-			responseObserver.onError(e);
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
 		}
 	}
 	
@@ -195,7 +220,11 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
-			responseObserver.onError(e);
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
 		}
 	}
 	
