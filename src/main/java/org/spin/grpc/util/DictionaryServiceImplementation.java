@@ -779,7 +779,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	 */
 	private String getQueryWithReferencesFromTab(MTab tab) {
 		MTable table = MTable.get(Env.getCtx(), tab.getAD_Table_ID());
-		String originalQuery = "SELECT " + table.getTableName() + ".* FROM " + table.getTableName() + " ";
+		String originalQuery = "SELECT " + table.getTableName() + ".* FROM " + table.getTableName() + " AS " + table.getTableName() + " ";
 		int fromIndex = originalQuery.toUpperCase().indexOf(" FROM ");
 		StringBuffer queryToAdd = new StringBuffer(originalQuery.substring(0, fromIndex));
 		StringBuffer joinsToAdd = new StringBuffer(originalQuery.substring(fromIndex, originalQuery.length() - 1));
