@@ -499,7 +499,11 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 		} else if(valueToConvert.getValueType().equals(ValueType.INTEGER)) {
 			value = valueToConvert.getIntValue();
 		} else if(valueToConvert.getValueType().equals(ValueType.STRING)) {
-			value = valueToConvert.getStringValue();
+			String stringValue = valueToConvert.getStringValue();
+			if(Util.isEmpty(stringValue)) {
+				stringValue = null;
+			}
+			value = stringValue;
 		} else if(valueToConvert.getValueType().equals(ValueType.DATE)) {
 			if(valueToConvert.getLongValue() > 0) {
 				value = new Timestamp(valueToConvert.getLongValue());
