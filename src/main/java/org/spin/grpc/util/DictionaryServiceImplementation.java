@@ -366,6 +366,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 					.setName(name)
 					.setDescription(validateNull(description))
 					.setHelp(validateNull(help))
+					.setWindowType(validateNull(window.getWindowType()))
 					.setIsSOTrx(window.isSOTrx())
 					.setIsActive(window.isActive());
 			if(contextInfoBuilder != null) {

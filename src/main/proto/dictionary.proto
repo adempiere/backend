@@ -62,9 +62,10 @@ message Window {
 	string help = 5;
 	bool isActive = 6;
 	bool isSOTrx = 7;
+	string windowType = 8;
 	//	External Info
-	ContextInfo contextInfo = 8;
-	repeated Tab tabs = 9;
+	ContextInfo contextInfo = 9;
+	repeated Tab tabs = 10;
 }
 
 // Tab

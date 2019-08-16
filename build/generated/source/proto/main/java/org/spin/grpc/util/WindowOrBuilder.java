@@ -63,11 +63,21 @@ public interface WindowOrBuilder extends
   boolean getIsSOTrx();
 
   /**
+   * <code>string windowType = 8;</code>
+   */
+  java.lang.String getWindowType();
+  /**
+   * <code>string windowType = 8;</code>
+   */
+  com.google.protobuf.ByteString
+      getWindowTypeBytes();
+
+  /**
    * <pre>
    *	External Info
    * </pre>
    *
-   * <code>.dictionary.ContextInfo contextInfo = 8;</code>
+   * <code>.dictionary.ContextInfo contextInfo = 9;</code>
    */
   boolean hasContextInfo();
   /**
@@ -75,7 +85,7 @@ public interface WindowOrBuilder extends
    *	External Info
    * </pre>
    *
-   * <code>.dictionary.ContextInfo contextInfo = 8;</code>
+   * <code>.dictionary.ContextInfo contextInfo = 9;</code>
    */
   org.spin.grpc.util.ContextInfo getContextInfo();
   /**
@@ -83,30 +93,30 @@ public interface WindowOrBuilder extends
    *	External Info
    * </pre>
    *
-   * <code>.dictionary.ContextInfo contextInfo = 8;</code>
+   * <code>.dictionary.ContextInfo contextInfo = 9;</code>
    */
   org.spin.grpc.util.ContextInfoOrBuilder getContextInfoOrBuilder();
 
   /**
-   * <code>repeated .dictionary.Tab tabs = 9;</code>
+   * <code>repeated .dictionary.Tab tabs = 10;</code>
    */
   java.util.List<org.spin.grpc.util.Tab> 
       getTabsList();
   /**
-   * <code>repeated .dictionary.Tab tabs = 9;</code>
+   * <code>repeated .dictionary.Tab tabs = 10;</code>
    */
   org.spin.grpc.util.Tab getTabs(int index);
   /**
-   * <code>repeated .dictionary.Tab tabs = 9;</code>
+   * <code>repeated .dictionary.Tab tabs = 10;</code>
    */
   int getTabsCount();
   /**
-   * <code>repeated .dictionary.Tab tabs = 9;</code>
+   * <code>repeated .dictionary.Tab tabs = 10;</code>
    */
   java.util.List<? extends org.spin.grpc.util.TabOrBuilder> 
       getTabsOrBuilderList();
   /**
-   * <code>repeated .dictionary.Tab tabs = 9;</code>
+   * <code>repeated .dictionary.Tab tabs = 10;</code>
    */
   org.spin.grpc.util.TabOrBuilder getTabsOrBuilder(
       int index);
