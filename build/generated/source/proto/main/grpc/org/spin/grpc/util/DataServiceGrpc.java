@@ -414,6 +414,38 @@ public final class DataServiceGrpc {
      return getListRecentItemsMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.ListReferencesRequest,
+      org.spin.grpc.util.ListReferencesResponse> getListReferencesMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "ListReferences",
+      requestType = org.spin.grpc.util.ListReferencesRequest.class,
+      responseType = org.spin.grpc.util.ListReferencesResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<org.spin.grpc.util.ListReferencesRequest,
+      org.spin.grpc.util.ListReferencesResponse> getListReferencesMethod() {
+    io.grpc.MethodDescriptor<org.spin.grpc.util.ListReferencesRequest, org.spin.grpc.util.ListReferencesResponse> getListReferencesMethod;
+    if ((getListReferencesMethod = DataServiceGrpc.getListReferencesMethod) == null) {
+      synchronized (DataServiceGrpc.class) {
+        if ((getListReferencesMethod = DataServiceGrpc.getListReferencesMethod) == null) {
+          DataServiceGrpc.getListReferencesMethod = getListReferencesMethod = 
+              io.grpc.MethodDescriptor.<org.spin.grpc.util.ListReferencesRequest, org.spin.grpc.util.ListReferencesResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(
+                  "data.DataService", "ListReferences"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  org.spin.grpc.util.ListReferencesRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  org.spin.grpc.util.ListReferencesResponse.getDefaultInstance()))
+                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("ListReferences"))
+                  .build();
+          }
+        }
+     }
+     return getListReferencesMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -564,6 +596,16 @@ public final class DataServiceGrpc {
       asyncUnimplementedUnaryCall(getListRecentItemsMethod(), responseObserver);
     }
 
+    /**
+     * <pre>
+     * List a References
+     * </pre>
+     */
+    public void listReferences(org.spin.grpc.util.ListReferencesRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.ListReferencesResponse> responseObserver) {
+      asyncUnimplementedUnaryCall(getListReferencesMethod(), responseObserver);
+    }
+
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
@@ -650,6 +692,13 @@ public final class DataServiceGrpc {
                 org.spin.grpc.util.ListRecentItemsRequest,
                 org.spin.grpc.util.ListRecentItemsResponse>(
                   this, METHODID_LIST_RECENT_ITEMS)))
+          .addMethod(
+            getListReferencesMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                org.spin.grpc.util.ListReferencesRequest,
+                org.spin.grpc.util.ListReferencesResponse>(
+                  this, METHODID_LIST_REFERENCES)))
           .build();
     }
   }
@@ -806,6 +855,17 @@ public final class DataServiceGrpc {
       asyncUnaryCall(
           getChannel().newCall(getListRecentItemsMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     * <pre>
+     * List a References
+     * </pre>
+     */
+    public void listReferences(org.spin.grpc.util.ListReferencesRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.ListReferencesResponse> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getListReferencesMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -947,6 +1007,16 @@ public final class DataServiceGrpc {
     public org.spin.grpc.util.ListRecentItemsResponse listRecentItems(org.spin.grpc.util.ListRecentItemsRequest request) {
       return blockingUnaryCall(
           getChannel(), getListRecentItemsMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * List a References
+     * </pre>
+     */
+    public org.spin.grpc.util.ListReferencesResponse listReferences(org.spin.grpc.util.ListReferencesRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getListReferencesMethod(), getCallOptions(), request);
     }
   }
 
@@ -1102,6 +1172,17 @@ public final class DataServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getListRecentItemsMethod(), getCallOptions()), request);
     }
+
+    /**
+     * <pre>
+     * List a References
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.ListReferencesResponse> listReferences(
+        org.spin.grpc.util.ListReferencesRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getListReferencesMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_GET_ENTITY = 0;
@@ -1116,6 +1197,7 @@ public final class DataServiceGrpc {
   private static final int METHODID_LIST_BROWSER_ITEMS = 9;
   private static final int METHODID_LIST_ACTIVITIES = 10;
   private static final int METHODID_LIST_RECENT_ITEMS = 11;
+  private static final int METHODID_LIST_REFERENCES = 12;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1181,6 +1263,10 @@ public final class DataServiceGrpc {
         case METHODID_LIST_RECENT_ITEMS:
           serviceImpl.listRecentItems((org.spin.grpc.util.ListRecentItemsRequest) request,
               (io.grpc.stub.StreamObserver<org.spin.grpc.util.ListRecentItemsResponse>) responseObserver);
+          break;
+        case METHODID_LIST_REFERENCES:
+          serviceImpl.listReferences((org.spin.grpc.util.ListReferencesRequest) request,
+              (io.grpc.stub.StreamObserver<org.spin.grpc.util.ListReferencesResponse>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -1255,6 +1341,7 @@ public final class DataServiceGrpc {
               .addMethod(getListBrowserItemsMethod())
               .addMethod(getListActivitiesMethod())
               .addMethod(getListRecentItemsMethod())
+              .addMethod(getListReferencesMethod())
               .build();
         }
       }

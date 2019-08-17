@@ -189,6 +189,21 @@ public final class ADempiereData {
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_data_ListBrowserItemsRequest_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_data_ListReferencesRequest_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_data_ListReferencesRequest_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_data_ListReferencesResponse_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_data_ListReferencesResponse_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_data_RecordReferenceInfo_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_data_RecordReferenceInfo_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -312,30 +327,42 @@ public final class ADempiereData {
       "*\n\rclientRequest\030\002 \001(\0132\023.data.ClientRequ" +
       "est\022 \n\010criteria\030\003 \001(\0132\016.data.Criteria\022\"\n" +
       "\nparameters\030\004 \003(\0132\016.data.KeyValue\022\021\n\tpag" +
-      "e_size\030\005 \001(\005\022\022\n\npage_token\030\006 \001(\t2\314\006\n\013Dat" +
-      "aService\0223\n\tGetEntity\022\026.data.GetEntityRe" +
-      "quest\032\014.data.Entity\"\000\0229\n\014CreateEntity\022\031." +
-      "data.CreateEntityRequest\032\014.data.Entity\"\000" +
-      "\0229\n\014UpdateEntity\022\031.data.UpdateEntityRequ" +
-      "est\032\014.data.Entity\"\000\0228\n\014DeleteEntity\022\031.da" +
-      "ta.DeleteEntityRequest\032\013.data.Empty\"\000\022G\n" +
-      "\014ListEntities\022\031.data.ListEntitiesRequest" +
-      "\032\032.data.ListEntitiesResponse\"\000\022?\n\rGetLoo" +
-      "kupItem\022\032.data.GetLookupItemRequest\032\020.da" +
-      "ta.LookupItem\"\000\022P\n\017ListLookupItems\022\034.dat" +
-      "a.ListLookupItemsRequest\032\035.data.ListLook" +
-      "upItemsResponse\"\000\0226\n\nRunCallout\022\027.data.R" +
-      "unCalloutRequest\032\r.data.Callout\"\000\022N\n\022Run" +
-      "BusinessProcess\022\037.data.RunBusinessProces" +
-      "sRequest\032\025.data.BusinessProcess\"\000\022S\n\020Lis" +
-      "tBrowserItems\022\035.data.ListBrowserItemsReq" +
-      "uest\032\036.data.ListBrowserItemsResponse\"\000\022M" +
-      "\n\016ListActivities\022\033.data.ListActivitiesRe" +
-      "quest\032\034.data.ListActivitiesResponse\"\000\022P\n" +
-      "\017ListRecentItems\022\034.data.ListRecentItemsR" +
-      "equest\032\035.data.ListRecentItemsResponse\"\000B" +
-      "+\n\022org.spin.grpc.utilB\rADempiereDataP\001\242\002" +
-      "\003HLWb\006proto3"
+      "e_size\030\005 \001(\005\022\022\n\npage_token\030\006 \001(\t\"\261\001\n\025Lis" +
+      "tReferencesRequest\022\014\n\004uuid\030\001 \001(\t\022\021\n\ttabl" +
+      "eName\030\002 \001(\t\022\020\n\010recordId\030\003 \001(\005\022\022\n\nwindowU" +
+      "uid\030\004 \001(\t\022*\n\rclientRequest\030\005 \001(\0132\023.data." +
+      "ClientRequest\022\021\n\tpage_size\030\006 \001(\005\022\022\n\npage" +
+      "_token\030\007 \001(\t\"u\n\026ListReferencesResponse\022\023" +
+      "\n\013recordCount\030\001 \001(\003\022-\n\nreferences\030\002 \003(\0132" +
+      "\031.data.RecordReferenceInfo\022\027\n\017next_page_" +
+      "token\030\003 \001(\t\"{\n\023RecordReferenceInfo\022\022\n\nwi" +
+      "ndowUuid\030\001 \001(\t\022\023\n\013displayName\030\002 \001(\t\022\021\n\tt" +
+      "ableName\030\003 \001(\t\022\023\n\013whereClause\030\004 \001(\t\022\023\n\013r" +
+      "ecordCount\030\005 \001(\0032\233\007\n\013DataService\0223\n\tGetE" +
+      "ntity\022\026.data.GetEntityRequest\032\014.data.Ent" +
+      "ity\"\000\0229\n\014CreateEntity\022\031.data.CreateEntit" +
+      "yRequest\032\014.data.Entity\"\000\0229\n\014UpdateEntity" +
+      "\022\031.data.UpdateEntityRequest\032\014.data.Entit" +
+      "y\"\000\0228\n\014DeleteEntity\022\031.data.DeleteEntityR" +
+      "equest\032\013.data.Empty\"\000\022G\n\014ListEntities\022\031." +
+      "data.ListEntitiesRequest\032\032.data.ListEnti" +
+      "tiesResponse\"\000\022?\n\rGetLookupItem\022\032.data.G" +
+      "etLookupItemRequest\032\020.data.LookupItem\"\000\022" +
+      "P\n\017ListLookupItems\022\034.data.ListLookupItem" +
+      "sRequest\032\035.data.ListLookupItemsResponse\"" +
+      "\000\0226\n\nRunCallout\022\027.data.RunCalloutRequest" +
+      "\032\r.data.Callout\"\000\022N\n\022RunBusinessProcess\022" +
+      "\037.data.RunBusinessProcessRequest\032\025.data." +
+      "BusinessProcess\"\000\022S\n\020ListBrowserItems\022\035." +
+      "data.ListBrowserItemsRequest\032\036.data.List" +
+      "BrowserItemsResponse\"\000\022M\n\016ListActivities" +
+      "\022\033.data.ListActivitiesRequest\032\034.data.Lis" +
+      "tActivitiesResponse\"\000\022P\n\017ListRecentItems" +
+      "\022\034.data.ListRecentItemsRequest\032\035.data.Li" +
+      "stRecentItemsResponse\"\000\022M\n\016ListReference" +
+      "s\022\033.data.ListReferencesRequest\032\034.data.Li" +
+      "stReferencesResponse\"\000B+\n\022org.spin.grpc." +
+      "utilB\rADempiereDataP\001\242\002\003HLWb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -559,6 +586,24 @@ public final class ADempiereData {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_data_ListBrowserItemsRequest_descriptor,
         new java.lang.String[] { "Uuid", "ClientRequest", "Criteria", "Parameters", "PageSize", "PageToken", });
+    internal_static_data_ListReferencesRequest_descriptor =
+      getDescriptor().getMessageTypes().get(32);
+    internal_static_data_ListReferencesRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_data_ListReferencesRequest_descriptor,
+        new java.lang.String[] { "Uuid", "TableName", "RecordId", "WindowUuid", "ClientRequest", "PageSize", "PageToken", });
+    internal_static_data_ListReferencesResponse_descriptor =
+      getDescriptor().getMessageTypes().get(33);
+    internal_static_data_ListReferencesResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_data_ListReferencesResponse_descriptor,
+        new java.lang.String[] { "RecordCount", "References", "NextPageToken", });
+    internal_static_data_RecordReferenceInfo_descriptor =
+      getDescriptor().getMessageTypes().get(34);
+    internal_static_data_RecordReferenceInfo_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_data_RecordReferenceInfo_descriptor,
+        new java.lang.String[] { "WindowUuid", "DisplayName", "TableName", "WhereClause", "RecordCount", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

@@ -43,6 +43,7 @@ import org.adempiere.model.MBrowse;
 import org.adempiere.model.MBrowseField;
 import org.adempiere.model.MView;
 import org.adempiere.model.MViewDefinition;
+import org.adempiere.model.ZoomInfoFactory;
 import org.compiere.model.Callout;
 import org.compiere.model.GridField;
 import org.compiere.model.GridTab;
@@ -51,6 +52,7 @@ import org.compiere.model.I_AD_PInstance;
 import org.compiere.model.I_AD_PInstance_Log;
 import org.compiere.model.I_AD_Process;
 import org.compiere.model.I_AD_Session;
+import org.compiere.model.I_AD_Window;
 import org.compiere.model.MColumn;
 import org.compiere.model.MMenu;
 import org.compiere.model.MPInstance;
@@ -354,6 +356,88 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 					.withCause(e)
 					.asRuntimeException());
 		}
+	}
+	
+	@Override
+	public void listReferences(ListReferencesRequest request, StreamObserver<ListReferencesResponse> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Process Activity Requested is Null");
+			}
+			log.fine("References Info Requested = " + request);
+			Properties context = getContext(request.getClientRequest());
+			ListReferencesResponse.Builder entityValueList = convertRecordReferences(context, request);
+			responseObserver.onNext(entityValueList.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	/**
+	 * Convert references to gRPC
+	 * @param context
+	 * @param request
+	 * @return
+	 */
+	private ListReferencesResponse.Builder convertRecordReferences(Properties context, ListReferencesRequest request) {
+		ListReferencesResponse.Builder builder = ListReferencesResponse.newBuilder();
+		//	Get entity
+		if(request.getRecordId() == 0
+				&& Util.isEmpty(request.getUuid())) {
+			throw new AdempiereException("@Record_ID@ @NotFound@");
+		}
+		
+		if(Util.isEmpty(request.getTableName())) {
+			throw new AdempiereException("@AD_Table_ID@ @NotFound@");
+		}
+		String tableName = request.getTableName();
+		StringBuffer whereClause = new StringBuffer();
+		List<Object> params = new ArrayList<>();
+		if(!Util.isEmpty(request.getUuid())) {
+			whereClause.append(I_AD_Element.COLUMNNAME_UUID + " = ?");
+			params.add(request.getUuid());
+		} else if(request.getRecordId() > 0) {
+			whereClause.append(tableName + "_ID = ?");
+			params.add(request.getRecordId());
+		} else {
+			throw new AdempiereException("@Record_ID@ @NotFound@");
+		}
+		PO entity = new Query(context, tableName, whereClause.toString(), null)
+				.setParameters(params)
+				.first();
+		if(entity != null
+				&& entity.get_ID() >= 0) {
+			MWindow window = new Query(context, I_AD_Window.Table_Name, I_AD_Window.COLUMNNAME_UUID + " = ?", null)
+					.setParameters(request.getWindowUuid())
+					.setOnlyActiveRecords(true)
+					.first();
+			if(window != null
+					&& window.get_ID() > 0) {
+				for (ZoomInfoFactory.ZoomInfo zoomInfo : ZoomInfoFactory.retrieveZoomInfos(entity, window.getAD_Window_ID())) {
+					if (zoomInfo.query.getRecordCount() == 0) {
+						continue;
+					}
+					MWindow referenceWindow = MWindow.get(context, zoomInfo.windowId);
+					//	
+					RecordReferenceInfo.Builder recordReferenceBuilder = RecordReferenceInfo.newBuilder();
+					recordReferenceBuilder.setDisplayName(zoomInfo.destinationDisplay + " (#" + zoomInfo.query.getRecordCount() + ")");
+					recordReferenceBuilder.setRecordCount(zoomInfo.query.getRecordCount());
+					recordReferenceBuilder.setWindowUuid(validateNull(referenceWindow.get_UUID()));
+					recordReferenceBuilder.setTableName(validateNull(zoomInfo.query.getTableName()));
+					recordReferenceBuilder.setWhereClause(validateNull(zoomInfo.query.getWhereClause()));
+					//	Add to list
+					builder.addReferences(recordReferenceBuilder.build());
+				}
+			}
+		}
+		//	Return
+		return builder;
 	}
 	
 	/**

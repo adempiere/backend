@@ -47,6 +47,8 @@ service DataService {
 	rpc ListActivities(ListActivitiesRequest) returns (ListActivitiesResponse) {}
 	//	Request Recent Items
 	rpc ListRecentItems(ListRecentItemsRequest) returns (ListRecentItemsResponse) {}
+	// List a References
+	rpc ListReferences(ListReferencesRequest) returns (ListReferencesResponse) {}
 }
 
 // The client request contains client info for request.
@@ -345,4 +347,31 @@ message ListBrowserItemsRequest {
 	repeated KeyValue parameters = 4;
 	int32 page_size = 5;
 	string page_token = 6;
+}
+
+// List References
+message ListReferencesRequest {
+	string uuid = 1;
+	string tableName = 2;
+	int32 recordId = 3;
+	string windowUuid = 4;
+	ClientRequest clientRequest = 5;
+	int32 page_size = 6;
+	string page_token = 7;
+}
+
+// List References Response
+message ListReferencesResponse {
+	int64 recordCount = 1;
+	repeated RecordReferenceInfo references = 2;
+	string next_page_token = 3;
+}
+
+// Zoom Information
+message RecordReferenceInfo {
+	string windowUuid = 1;
+	string displayName = 2;
+	string tableName = 3;
+	string whereClause = 4;
+	int64 recordCount = 5;
 }
