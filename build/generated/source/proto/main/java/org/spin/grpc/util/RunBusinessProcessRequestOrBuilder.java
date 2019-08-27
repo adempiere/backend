@@ -21,19 +21,24 @@ public interface RunBusinessProcessRequestOrBuilder extends
   org.spin.grpc.util.ClientRequestOrBuilder getClientRequestOrBuilder();
 
   /**
-   * <code>string uuid = 2;</code>
+   * <code>string tableName = 2;</code>
+   */
+  java.lang.String getTableName();
+  /**
+   * <code>string tableName = 2;</code>
+   */
+  com.google.protobuf.ByteString
+      getTableNameBytes();
+
+  /**
+   * <code>string uuid = 3;</code>
    */
   java.lang.String getUuid();
   /**
-   * <code>string uuid = 2;</code>
+   * <code>string uuid = 3;</code>
    */
   com.google.protobuf.ByteString
       getUuidBytes();
-
-  /**
-   * <code>int32 tableId = 3;</code>
-   */
-  int getTableId();
 
   /**
    * <code>int32 recordId = 4;</code>

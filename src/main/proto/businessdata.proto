@@ -247,8 +247,8 @@ message Callout {
 // BusinessProcess Request
 message RunBusinessProcessRequest {
 	ClientRequest clientRequest = 1;
-	string uuid = 2;
-	int32 tableId = 3;
+	string tableName = 2;
+	string uuid = 3;
 	int32 recordId = 4;
 	int32 tableSelectedId = 5;
 	string reportExportType = 6;

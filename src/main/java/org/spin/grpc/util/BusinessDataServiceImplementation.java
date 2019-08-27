@@ -457,10 +457,27 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 				|| process.getAD_Process_ID() <= 0) {
 			throw new AdempiereException("@AD_Process_ID@ @NotFound@");
 		}
+		int tableId = 0;
+		int recordId = request.getRecordId();
+		if(!Util.isEmpty(request.getTableName())) {
+			MTable table = MTable.get(context, request.getTableName());
+			if(table != null
+					&& table.getAD_Table_ID() != 0) {
+				tableId = table.getAD_Table_ID();
+			}
+		}
+		if(recordId == 0
+				&& !Util.isEmpty(request.getUuid())
+				&& !Util.isEmpty(request.getTableName())) {
+			PO entity = getEntity(context, request.getTableName(), request.getUuid(), request.getRecordId());
+			if(entity != null) {
+				recordId = entity.get_ID();
+			}
+		}
 		//	Call process builder
 		ProcessBuilder builder = ProcessBuilder.create(context)
 				.process(process.getAD_Process_ID())
-				.withRecordId(request.getTableId(), request.getRecordId())
+				.withRecordId(tableId, recordId)
 				.withBatchMode()
 				.withoutPrintPreview()
 				.withWindowNo(0)
@@ -615,31 +632,13 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 	 * @return
 	 */
 	private Entity.Builder getEntity(Properties context, GetEntityRequest request) {
-		Criteria criteria = request.getCriteria();
 		String tableName = request.getTableName();
 		if(Util.isEmpty(request.getTableName())) {
 			if(request.getCriteria() != null) {
 				tableName = request.getCriteria().getTableName();
 			}
 		}
-		//	Validate
-		if(Util.isEmpty(tableName)) {
-			throw new AdempiereException("@AD_Table_ID@ @NotFound@");
-		}
-		StringBuffer whereClause = new StringBuffer();
-		List<Object> params = new ArrayList<>();
-		if(!Util.isEmpty(request.getUuid())) {
-			whereClause.append(I_AD_Element.COLUMNNAME_UUID + " = ?");
-			params.add(request.getUuid());
-		} else if(request.getRecordId() > 0) {
-			whereClause.append(tableName + "_ID = ?");
-			params.add(request.getRecordId());
-		} else if(!Util.isEmpty(criteria.getWhereClause())) {
-			whereClause.append("(").append(criteria.getWhereClause()).append(")");
-		}
-		PO entity = new Query(context, tableName, whereClause.toString(), null)
-				.setParameters(params)
-				.first();
+		PO entity = getEntity(context, tableName, request.getUuid(), request.getRecordId());
 		//	Return
 		return convertEntity(context, entity);
 	}
@@ -651,36 +650,48 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 	 * @return
 	 */
 	private Empty.Builder deleteEntity(Properties context, DeleteEntityRequest request) {
-		//	Validate ID
-		if(request.getRecordId() == 0
-				&& Util.isEmpty(request.getUuid())) {
-			throw new AdempiereException("@Record_ID@ @NotFound@");
-		}
-		
-		if(Util.isEmpty(request.getTableName())) {
-			throw new AdempiereException("@AD_Table_ID@ @NotFound@");
-		}
-		String tableName = request.getTableName();
-		StringBuffer whereClause = new StringBuffer();
-		List<Object> params = new ArrayList<>();
-		if(!Util.isEmpty(request.getUuid())) {
-			whereClause.append(I_AD_Element.COLUMNNAME_UUID + " = ?");
-			params.add(request.getUuid());
-		} else if(request.getRecordId() > 0) {
-			whereClause.append(tableName + "_ID = ?");
-			params.add(request.getRecordId());
-		} else {
-			throw new AdempiereException("@Record_ID@ @NotFound@");
-		}
-		PO entity = new Query(context, tableName, whereClause.toString(), null)
-				.setParameters(params)
-				.first();
+		PO entity = getEntity(context, request.getTableName(), request.getUuid(), request.getRecordId());
 		if(entity != null
 				&& entity.get_ID() >= 0) {
 			entity.deleteEx(true);
 		}
 		//	Return
 		return Empty.newBuilder();
+	}
+	
+	/**
+	 * get Entity from Table and (UUID / Record ID)
+	 * @param context
+	 * @param tableName
+	 * @param uuid
+	 * @param recordId
+	 * @return
+	 */
+	private PO getEntity(Properties context, String tableName, String uuid, int recordId) {
+		//	Validate ID
+		if(recordId == 0
+				&& Util.isEmpty(uuid)) {
+			throw new AdempiereException("@Record_ID@ @NotFound@");
+		}
+		
+		if(Util.isEmpty(tableName)) {
+			throw new AdempiereException("@AD_Table_ID@ @NotFound@");
+		}
+		StringBuffer whereClause = new StringBuffer();
+		List<Object> params = new ArrayList<>();
+		if(!Util.isEmpty(uuid)) {
+			whereClause.append(I_AD_Element.COLUMNNAME_UUID + " = ?");
+			params.add(uuid);
+		} else if(recordId > 0) {
+			whereClause.append(tableName + "_ID = ?");
+			params.add(recordId);
+		} else {
+			throw new AdempiereException("@Record_ID@ @NotFound@");
+		}
+		//	Default
+		return new Query(context, tableName, whereClause.toString(), null)
+				.setParameters(params)
+				.first();
 	}
 	
 	/**
@@ -716,24 +727,7 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 	 * @return
 	 */
 	private Entity.Builder updateEntity(Properties context, UpdateEntityRequest request) {
-		if(Util.isEmpty(request.getTableName())) {
-			throw new AdempiereException("@AD_Table_ID@ @NotFound@");
-		}
-		String tableName = request.getTableName();
-		StringBuffer whereClause = new StringBuffer();
-		List<Object> params = new ArrayList<>();
-		if(!Util.isEmpty(request.getUuid())) {
-			whereClause.append(I_AD_Element.COLUMNNAME_UUID + " = ?");
-			params.add(request.getUuid());
-		} else if(request.getRecordId() > 0) {
-			whereClause.append(tableName + "_ID = ?");
-			params.add(request.getRecordId());
-		} else {
-			throw new AdempiereException("@Record_ID@ @NotFound@");
-		}
-		PO entity = new Query(context, tableName, whereClause.toString(), null)
-				.setParameters(params)
-				.first();
+		PO entity = getEntity(context, request.getTableName(), request.getUuid(), request.getRecordId());
 		if(entity != null
 				&& entity.get_ID() >= 0) {
 			LinkedHashMap<String, Object> attributes = convertValues(request.getAttributesList());
