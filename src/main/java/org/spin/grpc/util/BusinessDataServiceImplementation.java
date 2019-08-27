@@ -968,7 +968,7 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 		//	Get page and count
 		String nexPageToken = null;
 		int pageNumber = getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
-		int offset = 0;//(pageNumber == 0? 1: pageNumber) * PAGE_SIZE;
+		int offset = (pageNumber > 0? pageNumber - 1: 0) * PAGE_SIZE;
 		int limit = (pageNumber == 0? 1: pageNumber) * PAGE_SIZE;
 		Query query = new Query(context, criteria.getTableName(), whereClause.toString(), null)
 				.setParameters(params);
