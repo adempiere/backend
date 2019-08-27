@@ -967,8 +967,9 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 		}
 		//	Get page and count
 		String nexPageToken = null;
-		int page = getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
-		int pageMultiplier = page == 0? 1: page;
+		int pageNumber = getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
+		int offset = 0;//(pageNumber == 0? 1: pageNumber) * PAGE_SIZE;
+		int limit = (pageNumber == 0? 1: pageNumber) * PAGE_SIZE;
 		Query query = new Query(context, criteria.getTableName(), whereClause.toString(), null)
 				.setParameters(params);
 		int count = query.count();
@@ -979,7 +980,7 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 				query.setOrderBy(criteria.getOrderByClause());
 			}
 			List<PO> entityList = query
-					.setLimit(PAGE_SIZE, page)
+					.setLimit(limit, offset)
 					.<PO>list();
 			//	
 			for(PO entity : entityList) {
@@ -1004,7 +1005,7 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 			//	Count records
 			count = countRecords(context, parsedSQL, criteria.getTableName(), new ArrayList<>());
 			//	Add Row Number
-			parsedSQL = parsedSQL + " AND ROWNUM >= " + page + " AND ROWNUM <= " + PAGE_SIZE;
+			parsedSQL = parsedSQL + " AND ROWNUM >= " + offset + " AND ROWNUM <= " + limit;
 			//	Add Order By
 			parsedSQL = parsedSQL + orderByClause;
 			builder = convertListEntitiesResult(MTable.get(context, criteria.getTableName()), parsedSQL);
@@ -1012,8 +1013,8 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 		//	
 		builder.setRecordCount(count);
 		//	Set page token
-		if(count > (PAGE_SIZE * pageMultiplier)) {
-			nexPageToken = getPagePrefix(request.getClientRequest().getSessionUuid()) + (page + 1);
+		if(count > limit) {
+			nexPageToken = getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
 		}
 		//	Set netxt page
 		builder.setNextPageToken(validateNull(nexPageToken));
@@ -1306,7 +1307,11 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 		String pagePrefix = getPagePrefix(sessionUuid);
 		if(!Util.isEmpty(pageToken)) {
 			if(pageToken.startsWith(pagePrefix)) {
-				page = Integer.parseInt(pageToken.replace(pagePrefix, ""));
+				try {
+					page = Integer.parseInt(pageToken.replace(pagePrefix, ""));
+				} catch (Exception e) {
+					log.severe(e.getMessage());
+				}
 			}
 		}
 		//	
