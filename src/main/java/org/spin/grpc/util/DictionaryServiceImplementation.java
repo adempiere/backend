@@ -115,9 +115,9 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		}
 		Env.setContext (context, "#AD_Session_ID", session.getAD_Session_ID());
 		Env.setContext(context, "#AD_User_ID", session.getCreatedBy());
-		Env.setContext(context, "#AD_Role_ID", 0);
-		Env.setContext(context, "#AD_Client_ID", 0);
-		Env.setContext(context, "#AD_Org_ID", 0);
+		Env.setContext(context, "#AD_Role_ID", session.getAD_Role_ID());
+		Env.setContext(context, "#AD_Client_ID", session.getAD_Client_ID());
+		Env.setContext(context, "#AD_Org_ID", session.getAD_Org_ID());
 		Env.setContext(context, "#Date", new Timestamp(System.currentTimeMillis()));
 		Env.setContext(context, Env.LANGUAGE, getDefaultLanguage(request.getLanguage()));
 		//	Save to Cache
