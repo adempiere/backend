@@ -16,8 +16,14 @@ package org.spin.grpc.util;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import org.adempiere.exceptions.AdempiereException;
 import org.adempiere.model.I_AD_Browse;
@@ -375,11 +381,12 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			//	With Tabs
 			if(withTabs) {
 				List<Tab.Builder> tabListForGroup = new ArrayList<>();
-				for(MTab tab : window.getTabs(false, null)) {
+				List<MTab> tabs = Arrays.asList(window.getTabs(false, null));
+				for(MTab tab : tabs) {
 					if(!tab.isActive()) {
 						continue;
 					}
-					Tab.Builder tabBuilder = convertTab(context, tab, language, false);
+					Tab.Builder tabBuilder = convertTab(context, tab, tabs, language, false);
 					builder.addTabs(tabBuilder.build());
 					//	Get field group
 					int [] fieldGroupIdArray = getFieldGroupIdsFromTab(tab.getAD_Tab_ID());
@@ -472,6 +479,15 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	 * @return
 	 */
 	private Tab.Builder convertTab(Properties context, MTab tab, String language, boolean withFields) {
+		return convertTab(context, tab, null, language, withFields);
+	}
+	
+	/**
+	 * Convert Model tab to builder tab
+	 * @param tab
+	 * @return
+	 */
+	private Tab.Builder convertTab(Properties context, MTab tab, List<MTab> tabs, String language, boolean withFields) {
 		//	Translation
 		String name = null;
 		String description = null;
@@ -503,6 +519,91 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		if(contextInfoId <= 0) {
 			contextInfoId = table.getAD_ContextInfo_ID();
 		}
+		StringBuffer whereClause = new StringBuffer();
+		//	Create where clause for children
+		if(tab.getTabLevel() > 0
+				&& tabs != null) {
+			Optional<MTab> optionalTab = tabs.stream()
+					.filter(parentTab -> parentTab.getAD_Tab_ID() != tab.getAD_Tab_ID())
+					.filter(parentTab -> parentTab.getTabLevel() == 0)
+					.findFirst();
+			String mainColumnName = null;
+			MTable mainTable = null;
+			if(optionalTab.isPresent()) {
+				mainTable = MTable.get(context, optionalTab.get().getAD_Table_ID());
+				mainColumnName = mainTable.getKeyColumns()[0];
+			}
+			List<MTab> tabList = tabs.stream()
+					.filter(parentTab -> parentTab.getAD_Tab_ID() != tab.getAD_Tab_ID())
+					.filter(parentTab -> parentTab.getAD_Tab_ID() != optionalTab.get().getAD_Tab_ID())
+					.filter(parentTab -> parentTab.getSeqNo() < tab.getSeqNo())
+					.filter(parentTab -> parentTab.getTabLevel() < tab.getTabLevel())
+					.sorted(Comparator.comparing(MTab::getSeqNo).thenComparing(MTab::getTabLevel).reversed())
+					.collect(Collectors.toList());
+			//	Validate direct child
+			if(tabList.size() == 0) {
+				if(tab.getParent_Column_ID() != 0) {
+					mainColumnName = MColumn.getColumnName(context, tab.getParent_Column_ID());
+				}
+				String childColumn = mainColumnName;
+				if(tab.getAD_Column_ID() != 0) {
+					childColumn = MColumn.getColumnName(context, tab.getAD_Column_ID());
+				}
+				//	
+				whereClause.append(table.getTableName()).append(".").append(childColumn).append(" = ").append("@").append(mainColumnName).append("@");
+			} else {
+				whereClause.append("EXISTS(SELECT 1 FROM");
+				Map<Integer, MTab> tablesMap = new HashMap<>();
+				int aliasIndex = 0;
+				boolean firstResult = true;
+				for(MTab currentTab : tabList) {
+					tablesMap.put(aliasIndex, currentTab);
+					MTable currentTable = MTable.get(context, currentTab.getAD_Table_ID());
+					if(firstResult) {
+						whereClause.append(" ").append(currentTable.getTableName()).append(" AS t").append(aliasIndex);
+						firstResult = false;
+					} else {
+						MTab childTab = tablesMap.get(aliasIndex -1);
+						String childColumnName = getParentColumnNameFromTab(childTab);
+						String childLinkColumnName = getLinkColumnNameFromTab(childTab);
+						//	Get from parent
+						if(Util.isEmpty(childColumnName)) {
+							MTable childTable = MTable.get(context, currentTab.getAD_Table_ID());
+							childColumnName = childTable.getKeyColumns()[0];
+						}
+						if(Util.isEmpty(childLinkColumnName)) {
+							childLinkColumnName = childColumnName;
+						}
+						whereClause.append(" INNER JOIN ").append(currentTable.getTableName()).append(" AS t").append(aliasIndex)
+							.append(" ON(").append("t").append(aliasIndex).append(".").append(childLinkColumnName)
+							.append("=").append("t").append(aliasIndex - 1).append(".").append(childColumnName).append(")");
+					}
+					aliasIndex++;
+				}
+				whereClause.append(" WHERE t").append(aliasIndex - 1).append(".").append(mainColumnName).append(" = ").append("@").append(mainColumnName).append("@");
+				//	Add support to child
+				MTab parentTab = tablesMap.get(aliasIndex -1);
+				String parentColumnName = getParentColumnNameFromTab(tab);
+				String linkColumnName = getLinkColumnNameFromTab(tab);
+				if(Util.isEmpty(parentColumnName)) {
+					MTable parentTable = MTable.get(context, parentTab.getAD_Table_ID());
+					parentColumnName = parentTable.getKeyColumns()[0];
+				}
+				if(Util.isEmpty(linkColumnName)) {
+					linkColumnName = parentColumnName;
+				}
+				whereClause.append(" AND t").append(0).append(".").append(parentColumnName).append(" = ").append(table.getTableName()).append(".").append(linkColumnName);
+				whereClause.append(")");
+			}
+		}
+		//	Set where clause for tab
+		if(whereClause.length() > 0) {
+			if(!Util.isEmpty(tab.getWhereClause())) {
+				whereClause.append(" AND ").append("(").append(tab.getWhereClause()).append(")");
+			}
+		} else {
+			whereClause.append(validateNull(tab.getWhereClause()));
+		}
 		//	create build
 		Tab.Builder builder = Tab.newBuilder()
 				.setId(tab.getAD_Tab_ID())
@@ -519,7 +620,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setIsDocument(table.isDocument())
 				.setIsHasTree(tab.isHasTree())
 				.setIsInfoTab(tab.isInfoTab())
-				.setIsInsertRecord(isReadOnly && tab.isInsertRecord())
+				.setIsInsertRecord(!isReadOnly && tab.isInsertRecord())
 				.setIsReadOnly(isReadOnly)
 				.setIsSingleRow(tab.isSingleRow())
 				.setIsSortTab(tab.isSortTab())
@@ -528,7 +629,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setTabLevel(tab.getTabLevel())
 				.setTableName(validateNull(table.getTableName()))
 				.setQuery(validateNull(getQueryWithReferencesFromTab(tab)))
-				.setWhereClause(validateNull(tab.getWhereClause()))
+				.setWhereClause(whereClause.toString())
 				.setOrderByClause(validateNull(tab.getOrderByClause()))
 				.setIsActive(tab.isActive());
 		//	For link
@@ -563,6 +664,32 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		}
 		//	
 		return builder;
+	}
+	
+	/**
+	 * Get Parent column name from tab
+	 * @param tab
+	 * @return
+	 */
+	private String getParentColumnNameFromTab(MTab tab) {
+		String parentColumnName = null;
+		if(tab.getParent_Column_ID() != 0) {
+			parentColumnName = MColumn.getColumnName(tab.getCtx(), tab.getParent_Column_ID());
+		}
+		return parentColumnName;
+	}
+	
+	/**
+	 * Get Link column name from tab
+	 * @param tab
+	 * @return
+	 */
+	private String getLinkColumnNameFromTab(MTab tab) {
+		String parentColumnName = null;
+		if(tab.getAD_Column_ID() != 0) {
+			parentColumnName = MColumn.getColumnName(tab.getCtx(), tab.getAD_Column_ID());
+		}
+		return parentColumnName;
 	}
 	
 	/**
@@ -1034,8 +1161,12 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			}
 			
 			MLookupInfo info = MLookupFactory.getLookupInfo(context, 0, 0, displayTypeId, Language.getLanguage(language), columnName, referenceValueId, false, validationCode, false);
-			Reference.Builder referenceBuilder = convertReference(context, info, language);
-			builder.setReference(referenceBuilder.build());
+			if(info != null) {
+				Reference.Builder referenceBuilder = convertReference(context, info, language);
+				builder.setReference(referenceBuilder.build());
+			} else {
+				builder.setDisplayType(DisplayType.String);
+			}
 		}
 		return builder;
 	}
@@ -1166,8 +1297,12 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				validationCode = validationRule.getCode();
 			}
 			MLookupInfo info = MLookupFactory.getLookupInfo(context, 0, column.getAD_Column_ID(), displayTypeId, Language.getLanguage(language), column.getColumnName(), referenceValueId, false, validationCode, false);
-			Reference.Builder referenceBuilder = convertReference(context, info, language);
-			builder.setReference(referenceBuilder.build());
+			if(info != null) {
+				Reference.Builder referenceBuilder = convertReference(context, info, language);
+				builder.setReference(referenceBuilder.build());
+			} else {
+				builder.setDisplayType(DisplayType.String);
+			}
 		}
 		
 		//	Field Definition

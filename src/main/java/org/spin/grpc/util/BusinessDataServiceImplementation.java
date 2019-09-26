@@ -1244,7 +1244,7 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 		//	Page prefix
 		int page = getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
 		StringBuilder sql = new StringBuilder(criteria.getQuery());
-		if (whereClause.length() > 0) {
+		if (!Util.isEmpty(whereClause)) {
 			sql.append(" WHERE ").append(whereClause); // includes first AND
 		}
 		MView view = browser.getAD_View();
@@ -1269,7 +1269,7 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 			nexPageToken = getPagePrefix(request.getClientRequest().getSessionUuid()) + (page + 1);
 		}
 		//	Add Row Number
-		if(whereClause.length() > 0) {
+		if(!Util.isEmpty(whereClause)) {
 			parsedSQL = parsedSQL + " AND ROWNUM >= " + page + " AND ROWNUM <= " + PAGE_SIZE;
 		}
 		//	Add Order By
