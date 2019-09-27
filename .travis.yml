@@ -14,7 +14,7 @@ before_script:
   - wget http://github.com/erpcya/adempiere/releases/latest/download/Adempiere_392LTS.tar.gz  -c -O Adempiere.tar.gz
   - tar --extract --file=Adempiere.tar.gz Adempiere/lib/Adempiere.jar
   - mv Adempiere/lib/Adempiere.jar dependences/Adempiere.jar
-  - mv Adempiere/lib/CSTools.jar dependences/CSTools.jar
+  - mv Adempiere/lib/CCTools.jar dependences/CCTools.jar
 jobs:
   include:
     - stage: Compilation
