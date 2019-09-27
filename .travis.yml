@@ -12,7 +12,7 @@ addons:
 before_script:
   - mkdir dependences
   - wget http://github.com/erpcya/adempiere/releases/latest/download/Adempiere_392LTS.tar.gz  -c -O Adempiere.tar.gz
-  - tar --extract --file=Adempiere.tar.gz Adempiere/lib/Adempiere.jar
+  - tar -xzf Adempiere.tar.gz
   - mv Adempiere/lib/Adempiere.jar dependences/Adempiere.jar
   - mv Adempiere/lib/CCTools.jar dependences/CCTools.jar
 jobs:
