@@ -429,7 +429,7 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 					recordReferenceBuilder.setDisplayName(zoomInfo.destinationDisplay + " (#" + zoomInfo.query.getRecordCount() + ")");
 					recordReferenceBuilder.setRecordCount(zoomInfo.query.getRecordCount());
 					recordReferenceBuilder.setWindowUuid(validateNull(referenceWindow.get_UUID()));
-					recordReferenceBuilder.setTableName(validateNull(zoomInfo.query.getTableName()));
+					recordReferenceBuilder.setTableName(validateNull(zoomInfo.query.getZoomTableName()));
 					recordReferenceBuilder.setWhereClause(validateNull(zoomInfo.query.getWhereClause()));
 					//	Add to list
 					builder.addReferences(recordReferenceBuilder.build());
