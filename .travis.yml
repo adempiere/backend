@@ -1,0 +1,30 @@
+language: java
+jdk:
+- openjdk8
+install: gradle wrapper
+os:
+- linux
+sudo: required
+addons:
+  apt:
+    packages:
+      gradle
+before_script:
+  - mkdir dependences
+  - wget http://github.com/erpcya/adempiere/releases/latest/download/Adempiere_392LTS.tar.gz  -c -O Adempiere.tar.gz
+  - tar --extract --file=Adempiere.tar.gz Adempiere/lib/Adempiere.jar
+  - mv Adempiere/lib/Adempiere.jar dependences/Adempiere.jar
+  - mv Adempiere/lib/CSTools.jar dependences/CSTools.jar
+jobs:
+  include:
+    - stage: Compilation
+      script: ./gradlew build
+deploy:
+  provider: releases
+  api_key: $GITHUB_TOKEN_KEY
+  file: 
+    - "$TRAVIS_BUILD_DIR/build/distributions/adempiere-gRPC-Server.zip"
+    - "$TRAVIS_BUILD_DIR/build/distributions/adempiere-gRPC-Server.tar"
+  skip_cleanup: true
+  on:
+    tags: true
