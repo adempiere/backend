@@ -15,9 +15,12 @@
 package org.spin.grpc.util;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import org.compiere.Adempiere;
+import org.compiere.util.Util;
 
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
@@ -27,9 +30,7 @@ public class DictionaryServer {
 
 	  private Server server;
 
-	  private void start() throws IOException {
-	    /* The port on which the server should run */
-	    int port = 50051;
+	  private void start(int port) throws IOException {
 	    server = ServerBuilder.forPort(port)
 	        .addService(new DictionaryServiceImplementation())
 	        .build()
@@ -67,7 +68,16 @@ public class DictionaryServer {
 	  public static void main(String[] args) throws IOException, InterruptedException {
 		Adempiere.startup(false);
 	    final DictionaryServer server = new DictionaryServer();
-	    server.start();
+	    int defaultPort = 50051;
+	    if(args != null) {
+	    	Optional<String> parameter = Arrays.asList(args).stream()
+	    			.filter(arg -> !Util.isEmpty(arg))
+	    			.filter(arg -> arg.matches("[+-]?\\d*(\\.\\d+)?")).findFirst();
+	    	if(parameter.isPresent()) {
+	    		defaultPort = Integer.parseInt(parameter.get());
+	    	}
+		}
+	    server.start(defaultPort);
 	    server.blockUntilShutdown();
 	  }
 }

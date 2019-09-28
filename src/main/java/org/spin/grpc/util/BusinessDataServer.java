@@ -15,9 +15,12 @@
 package org.spin.grpc.util;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import org.compiere.Adempiere;
+import org.compiere.util.Util;
 
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
@@ -27,9 +30,7 @@ public class BusinessDataServer {
 
 	  private Server server;
 
-	  private void start() throws IOException {
-	    /* The port on which the server should run */
-	    int port = 50052;
+	  private void start(int port) throws IOException {
 	    server = ServerBuilder.forPort(port)
 	        .addService(new BusinessDataServiceImplementation())
 	        .build()
@@ -65,9 +66,18 @@ public class BusinessDataServer {
 	   * Main launches the server from the command line.
 	   */
 	  public static void main(String[] args) throws IOException, InterruptedException {
-		Adempiere.startup(false);
-	    final BusinessDataServer server = new BusinessDataServer();
-	    server.start();
-	    server.blockUntilShutdown();
+			Adempiere.startup(false);
+		    final BusinessDataServer server = new BusinessDataServer();
+		    int defaultPort = 50052;
+		    if(args != null) {
+		    	Optional<String> parameter = Arrays.asList(args).stream()
+		    			.filter(arg -> !Util.isEmpty(arg))
+		    			.filter(arg -> arg.matches("[+-]?\\d*(\\.\\d+)?")).findFirst();
+		    	if(parameter.isPresent()) {
+		    		defaultPort = Integer.parseInt(parameter.get());
+		    	}
+			}
+		    server.start(defaultPort);
+		    server.blockUntilShutdown();
 	  }
 }
