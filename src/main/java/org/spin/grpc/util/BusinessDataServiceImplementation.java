@@ -1271,6 +1271,8 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 		//	Add Row Number
 		if(!Util.isEmpty(whereClause)) {
 			parsedSQL = parsedSQL + " AND ROWNUM >= " + page + " AND ROWNUM <= " + PAGE_SIZE;
+		} else {
+			parsedSQL = parsedSQL + " WHERE ROWNUM >= " + page + " AND ROWNUM <= " + PAGE_SIZE;	
 		}
 		//	Add Order By
 		parsedSQL = parsedSQL + orderByClause;
@@ -1358,53 +1360,65 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 				Entity.Builder valueObjectBuilder = Entity.newBuilder();
 				ResultSetMetaData metaData = rs.getMetaData();
 				for (int index = 1; index <= metaData.getColumnCount(); index++) {
-					String columnName = metaData.getColumnName (index);
-					MBrowseField field = fieldsMap.get(columnName.toUpperCase());
-					Value.Builder valueBuilder = Value.newBuilder();
-					boolean isFilled = false;
-					//	Display Columns
-					if(field == null) {
-						String value = rs.getString(index);
-						if(!Util.isEmpty(value)) {
-							isFilled = true;
-							valueBuilder.setStringValue(value);
-							valueBuilder.setValueType(ValueType.STRING);
-							valueObjectBuilder.putValues(columnName, valueBuilder.build());
+					try {
+						String columnName = metaData.getColumnName (index);
+						MBrowseField field = fieldsMap.get(columnName.toUpperCase());
+						Value.Builder valueBuilder = Value.newBuilder();
+						boolean isFilled = false;
+						//	Display Columns
+						if(field == null) {
+							String value = rs.getString(index);
+							if(!Util.isEmpty(value)) {
+								isFilled = true;
+								valueBuilder.setStringValue(value);
+								valueBuilder.setValueType(ValueType.STRING);
+								valueObjectBuilder.putValues(columnName, valueBuilder.build());
+							}
+							continue;
 						}
-						continue;
-					} else if(DisplayType.isID(field.getAD_Reference_ID())) {
-						isFilled = true;
-						valueBuilder.setIntValue(rs.getInt(index));
-						valueBuilder.setValueType(ValueType.INTEGER);
-					} else if(DisplayType.isNumeric(field.getAD_Reference_ID())) {
-						BigDecimal value = rs.getBigDecimal(index);
-						if(value != null) {
+						//	From field
+						String fieldColumnName = field.getAD_View_Column().getColumnName();
+						if(DisplayType.isID(field.getAD_Reference_ID())) {
 							isFilled = true;
-							valueBuilder.setDoubleValue(value.doubleValue());
-							valueBuilder.setValueType(ValueType.DOUBLE);
-						}
-					} else if(DisplayType.YesNo == field.getAD_Reference_ID()) {
-						isFilled = true;
-						String value = rs.getString(index);
-						valueBuilder.setBooleanValue(!Util.isEmpty(value) && value.equals("Y"));
-						valueBuilder.setValueType(ValueType.BOOLEAN);
-					} else if(DisplayType.isDate(field.getAD_Reference_ID())) {
-						Timestamp value = rs.getTimestamp(index);
-						if(value != null) {
+							if(metaData.getColumnType(index) != Types.DECIMAL) {
+								valueBuilder.setStringValue(rs.getString(index));
+								valueBuilder.setValueType(ValueType.STRING);
+							} else {
+								valueBuilder.setIntValue(rs.getInt(index));
+								valueBuilder.setValueType(ValueType.INTEGER);
+							}
+						} else if(DisplayType.isNumeric(field.getAD_Reference_ID())) {
+							BigDecimal value = rs.getBigDecimal(index);
+							if(value != null) {
+								isFilled = true;
+								valueBuilder.setDoubleValue(value.doubleValue());
+								valueBuilder.setValueType(ValueType.DOUBLE);
+							}
+						} else if(DisplayType.YesNo == field.getAD_Reference_ID()) {
 							isFilled = true;
-							valueBuilder.setLongValue(value.getTime());
+							String value = rs.getString(index);
+							valueBuilder.setBooleanValue(!Util.isEmpty(value) && value.equals("Y"));
+							valueBuilder.setValueType(ValueType.BOOLEAN);
+						} else if(DisplayType.isDate(field.getAD_Reference_ID())) {
+							Timestamp value = rs.getTimestamp(index);
+							if(value != null) {
+								isFilled = true;
+								valueBuilder.setLongValue(value.getTime());
+							}
+							valueBuilder.setValueType(ValueType.DATE);
+						} else if(DisplayType.isText(field.getAD_Reference_ID())) {
+							String value = rs.getString(index);
+							if(!Util.isEmpty(value)) {
+								isFilled = true;
+								valueBuilder.setStringValue(value);
+								valueBuilder.setValueType(ValueType.STRING);
+							}
 						}
-						valueBuilder.setValueType(ValueType.DATE);
-					} else if(DisplayType.isText(field.getAD_Reference_ID())) {
-						String value = rs.getString(index);
-						if(!Util.isEmpty(value)) {
-							isFilled = true;
-							valueBuilder.setStringValue(value);
-							valueBuilder.setValueType(ValueType.STRING);
+						if(isFilled) {
+							valueObjectBuilder.putValues(fieldColumnName, valueBuilder.build());
 						}
-					}
-					if(isFilled) {
-						valueObjectBuilder.putValues(field.getAD_View_Column().getColumnName(), valueBuilder.build());
+					} catch (Exception e) {
+						log.severe(e.getLocalizedMessage());
 					}
 				}
 				//	
