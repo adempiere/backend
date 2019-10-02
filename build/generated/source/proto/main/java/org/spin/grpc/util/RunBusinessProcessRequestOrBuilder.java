@@ -51,60 +51,60 @@ public interface RunBusinessProcessRequestOrBuilder extends
   int getTableSelectedId();
 
   /**
-   * <code>string reportExportType = 6;</code>
+   * <code>string reportType = 6;</code>
    */
-  java.lang.String getReportExportType();
+  java.lang.String getReportType();
   /**
-   * <code>string reportExportType = 6;</code>
+   * <code>string reportType = 6;</code>
    */
   com.google.protobuf.ByteString
-      getReportExportTypeBytes();
+      getReportTypeBytes();
 
   /**
-   * <code>repeated .data.Selection selections = 7;</code>
-   */
-  java.util.List<org.spin.grpc.util.Selection> 
-      getSelectionsList();
-  /**
-   * <code>repeated .data.Selection selections = 7;</code>
-   */
-  org.spin.grpc.util.Selection getSelections(int index);
-  /**
-   * <code>repeated .data.Selection selections = 7;</code>
-   */
-  int getSelectionsCount();
-  /**
-   * <code>repeated .data.Selection selections = 7;</code>
-   */
-  java.util.List<? extends org.spin.grpc.util.SelectionOrBuilder> 
-      getSelectionsOrBuilderList();
-  /**
-   * <code>repeated .data.Selection selections = 7;</code>
-   */
-  org.spin.grpc.util.SelectionOrBuilder getSelectionsOrBuilder(
-      int index);
-
-  /**
-   * <code>repeated .data.KeyValue parameters = 8;</code>
+   * <code>repeated .data.KeyValue parameters = 7;</code>
    */
   java.util.List<org.spin.grpc.util.KeyValue> 
       getParametersList();
   /**
-   * <code>repeated .data.KeyValue parameters = 8;</code>
+   * <code>repeated .data.KeyValue parameters = 7;</code>
    */
   org.spin.grpc.util.KeyValue getParameters(int index);
   /**
-   * <code>repeated .data.KeyValue parameters = 8;</code>
+   * <code>repeated .data.KeyValue parameters = 7;</code>
    */
   int getParametersCount();
   /**
-   * <code>repeated .data.KeyValue parameters = 8;</code>
+   * <code>repeated .data.KeyValue parameters = 7;</code>
    */
   java.util.List<? extends org.spin.grpc.util.KeyValueOrBuilder> 
       getParametersOrBuilderList();
   /**
-   * <code>repeated .data.KeyValue parameters = 8;</code>
+   * <code>repeated .data.KeyValue parameters = 7;</code>
    */
   org.spin.grpc.util.KeyValueOrBuilder getParametersOrBuilder(
+      int index);
+
+  /**
+   * <code>repeated .data.KeyValueSelection selections = 8;</code>
+   */
+  java.util.List<org.spin.grpc.util.KeyValueSelection> 
+      getSelectionsList();
+  /**
+   * <code>repeated .data.KeyValueSelection selections = 8;</code>
+   */
+  org.spin.grpc.util.KeyValueSelection getSelections(int index);
+  /**
+   * <code>repeated .data.KeyValueSelection selections = 8;</code>
+   */
+  int getSelectionsCount();
+  /**
+   * <code>repeated .data.KeyValueSelection selections = 8;</code>
+   */
+  java.util.List<? extends org.spin.grpc.util.KeyValueSelectionOrBuilder> 
+      getSelectionsOrBuilderList();
+  /**
+   * <code>repeated .data.KeyValueSelection selections = 8;</code>
+   */
+  org.spin.grpc.util.KeyValueSelectionOrBuilder getSelectionsOrBuilder(
       int index);
 }

@@ -77,16 +77,16 @@ public interface ProcessOutputOrBuilder extends
    *	Output Type
    * </pre>
    *
-   * <code>string reportExportType = 8;</code>
+   * <code>string reportType = 8;</code>
    */
-  java.lang.String getReportExportType();
+  java.lang.String getReportType();
   /**
    * <pre>
    *	Output Type
    * </pre>
    *
-   * <code>string reportExportType = 8;</code>
+   * <code>string reportType = 8;</code>
    */
   com.google.protobuf.ByteString
-      getReportExportTypeBytes();
+      getReportTypeBytes();
 }

@@ -24,9 +24,9 @@ private static final long serialVersionUID = 0L;
     uuid_ = "";
     recordId_ = 0;
     tableSelectedId_ = 0;
-    reportExportType_ = "";
-    selections_ = java.util.Collections.emptyList();
+    reportType_ = "";
     parameters_ = java.util.Collections.emptyList();
+    selections_ = java.util.Collections.emptyList();
   }
 
   @java.lang.Override
@@ -98,25 +98,25 @@ private static final long serialVersionUID = 0L;
           case 50: {
             java.lang.String s = input.readStringRequireUtf8();
 
-            reportExportType_ = s;
+            reportType_ = s;
             break;
           }
           case 58: {
             if (!((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
-              selections_ = new java.util.ArrayList<org.spin.grpc.util.Selection>();
+              parameters_ = new java.util.ArrayList<org.spin.grpc.util.KeyValue>();
               mutable_bitField0_ |= 0x00000040;
             }
-            selections_.add(
-                input.readMessage(org.spin.grpc.util.Selection.parser(), extensionRegistry));
+            parameters_.add(
+                input.readMessage(org.spin.grpc.util.KeyValue.parser(), extensionRegistry));
             break;
           }
           case 66: {
             if (!((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
-              parameters_ = new java.util.ArrayList<org.spin.grpc.util.KeyValue>();
+              selections_ = new java.util.ArrayList<org.spin.grpc.util.KeyValueSelection>();
               mutable_bitField0_ |= 0x00000080;
             }
-            parameters_.add(
-                input.readMessage(org.spin.grpc.util.KeyValue.parser(), extensionRegistry));
+            selections_.add(
+                input.readMessage(org.spin.grpc.util.KeyValueSelection.parser(), extensionRegistry));
             break;
           }
         }
@@ -128,10 +128,10 @@ private static final long serialVersionUID = 0L;
           e).setUnfinishedMessage(this);
     } finally {
       if (((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
-        selections_ = java.util.Collections.unmodifiableList(selections_);
+        parameters_ = java.util.Collections.unmodifiableList(parameters_);
       }
       if (((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
-        parameters_ = java.util.Collections.unmodifiableList(parameters_);
+        selections_ = java.util.Collections.unmodifiableList(selections_);
       }
       this.unknownFields = unknownFields.build();
       makeExtensionsImmutable();
@@ -257,108 +257,108 @@ private static final long serialVersionUID = 0L;
     return tableSelectedId_;
   }
 
-  public static final int REPORTEXPORTTYPE_FIELD_NUMBER = 6;
-  private volatile java.lang.Object reportExportType_;
+  public static final int REPORTTYPE_FIELD_NUMBER = 6;
+  private volatile java.lang.Object reportType_;
   /**
-   * <code>string reportExportType = 6;</code>
+   * <code>string reportType = 6;</code>
    */
-  public java.lang.String getReportExportType() {
-    java.lang.Object ref = reportExportType_;
+  public java.lang.String getReportType() {
+    java.lang.Object ref = reportType_;
     if (ref instanceof java.lang.String) {
       return (java.lang.String) ref;
     } else {
       com.google.protobuf.ByteString bs = 
           (com.google.protobuf.ByteString) ref;
       java.lang.String s = bs.toStringUtf8();
-      reportExportType_ = s;
+      reportType_ = s;
       return s;
     }
   }
   /**
-   * <code>string reportExportType = 6;</code>
+   * <code>string reportType = 6;</code>
    */
   public com.google.protobuf.ByteString
-      getReportExportTypeBytes() {
-    java.lang.Object ref = reportExportType_;
+      getReportTypeBytes() {
+    java.lang.Object ref = reportType_;
     if (ref instanceof java.lang.String) {
       com.google.protobuf.ByteString b = 
           com.google.protobuf.ByteString.copyFromUtf8(
               (java.lang.String) ref);
-      reportExportType_ = b;
+      reportType_ = b;
       return b;
     } else {
       return (com.google.protobuf.ByteString) ref;
     }
   }
 
-  public static final int SELECTIONS_FIELD_NUMBER = 7;
-  private java.util.List<org.spin.grpc.util.Selection> selections_;
-  /**
-   * <code>repeated .data.Selection selections = 7;</code>
-   */
-  public java.util.List<org.spin.grpc.util.Selection> getSelectionsList() {
-    return selections_;
-  }
-  /**
-   * <code>repeated .data.Selection selections = 7;</code>
-   */
-  public java.util.List<? extends org.spin.grpc.util.SelectionOrBuilder> 
-      getSelectionsOrBuilderList() {
-    return selections_;
-  }
-  /**
-   * <code>repeated .data.Selection selections = 7;</code>
-   */
-  public int getSelectionsCount() {
-    return selections_.size();
-  }
-  /**
-   * <code>repeated .data.Selection selections = 7;</code>
-   */
-  public org.spin.grpc.util.Selection getSelections(int index) {
-    return selections_.get(index);
-  }
-  /**
-   * <code>repeated .data.Selection selections = 7;</code>
-   */
-  public org.spin.grpc.util.SelectionOrBuilder getSelectionsOrBuilder(
-      int index) {
-    return selections_.get(index);
-  }
-
-  public static final int PARAMETERS_FIELD_NUMBER = 8;
+  public static final int PARAMETERS_FIELD_NUMBER = 7;
   private java.util.List<org.spin.grpc.util.KeyValue> parameters_;
   /**
-   * <code>repeated .data.KeyValue parameters = 8;</code>
+   * <code>repeated .data.KeyValue parameters = 7;</code>
    */
   public java.util.List<org.spin.grpc.util.KeyValue> getParametersList() {
     return parameters_;
   }
   /**
-   * <code>repeated .data.KeyValue parameters = 8;</code>
+   * <code>repeated .data.KeyValue parameters = 7;</code>
    */
   public java.util.List<? extends org.spin.grpc.util.KeyValueOrBuilder> 
       getParametersOrBuilderList() {
     return parameters_;
   }
   /**
-   * <code>repeated .data.KeyValue parameters = 8;</code>
+   * <code>repeated .data.KeyValue parameters = 7;</code>
    */
   public int getParametersCount() {
     return parameters_.size();
   }
   /**
-   * <code>repeated .data.KeyValue parameters = 8;</code>
+   * <code>repeated .data.KeyValue parameters = 7;</code>
    */
   public org.spin.grpc.util.KeyValue getParameters(int index) {
     return parameters_.get(index);
   }
   /**
-   * <code>repeated .data.KeyValue parameters = 8;</code>
+   * <code>repeated .data.KeyValue parameters = 7;</code>
    */
   public org.spin.grpc.util.KeyValueOrBuilder getParametersOrBuilder(
       int index) {
     return parameters_.get(index);
+  }
+
+  public static final int SELECTIONS_FIELD_NUMBER = 8;
+  private java.util.List<org.spin.grpc.util.KeyValueSelection> selections_;
+  /**
+   * <code>repeated .data.KeyValueSelection selections = 8;</code>
+   */
+  public java.util.List<org.spin.grpc.util.KeyValueSelection> getSelectionsList() {
+    return selections_;
+  }
+  /**
+   * <code>repeated .data.KeyValueSelection selections = 8;</code>
+   */
+  public java.util.List<? extends org.spin.grpc.util.KeyValueSelectionOrBuilder> 
+      getSelectionsOrBuilderList() {
+    return selections_;
+  }
+  /**
+   * <code>repeated .data.KeyValueSelection selections = 8;</code>
+   */
+  public int getSelectionsCount() {
+    return selections_.size();
+  }
+  /**
+   * <code>repeated .data.KeyValueSelection selections = 8;</code>
+   */
+  public org.spin.grpc.util.KeyValueSelection getSelections(int index) {
+    return selections_.get(index);
+  }
+  /**
+   * <code>repeated .data.KeyValueSelection selections = 8;</code>
+   */
+  public org.spin.grpc.util.KeyValueSelectionOrBuilder getSelectionsOrBuilder(
+      int index) {
+    return selections_.get(index);
   }
 
   private byte memoizedIsInitialized = -1;
@@ -388,14 +388,14 @@ private static final long serialVersionUID = 0L;
     if (tableSelectedId_ != 0) {
       output.writeInt32(5, tableSelectedId_);
     }
-    if (!getReportExportTypeBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 6, reportExportType_);
-    }
-    for (int i = 0; i < selections_.size(); i++) {
-      output.writeMessage(7, selections_.get(i));
+    if (!getReportTypeBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 6, reportType_);
     }
     for (int i = 0; i < parameters_.size(); i++) {
-      output.writeMessage(8, parameters_.get(i));
+      output.writeMessage(7, parameters_.get(i));
+    }
+    for (int i = 0; i < selections_.size(); i++) {
+      output.writeMessage(8, selections_.get(i));
     }
     unknownFields.writeTo(output);
   }
@@ -423,16 +423,16 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeInt32Size(5, tableSelectedId_);
     }
-    if (!getReportExportTypeBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, reportExportType_);
-    }
-    for (int i = 0; i < selections_.size(); i++) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(7, selections_.get(i));
+    if (!getReportTypeBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, reportType_);
     }
     for (int i = 0; i < parameters_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(8, parameters_.get(i));
+        .computeMessageSize(7, parameters_.get(i));
+    }
+    for (int i = 0; i < selections_.size(); i++) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(8, selections_.get(i));
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -463,12 +463,12 @@ private static final long serialVersionUID = 0L;
         == other.getRecordId());
     result = result && (getTableSelectedId()
         == other.getTableSelectedId());
-    result = result && getReportExportType()
-        .equals(other.getReportExportType());
-    result = result && getSelectionsList()
-        .equals(other.getSelectionsList());
+    result = result && getReportType()
+        .equals(other.getReportType());
     result = result && getParametersList()
         .equals(other.getParametersList());
+    result = result && getSelectionsList()
+        .equals(other.getSelectionsList());
     result = result && unknownFields.equals(other.unknownFields);
     return result;
   }
@@ -492,15 +492,15 @@ private static final long serialVersionUID = 0L;
     hash = (53 * hash) + getRecordId();
     hash = (37 * hash) + TABLESELECTEDID_FIELD_NUMBER;
     hash = (53 * hash) + getTableSelectedId();
-    hash = (37 * hash) + REPORTEXPORTTYPE_FIELD_NUMBER;
-    hash = (53 * hash) + getReportExportType().hashCode();
-    if (getSelectionsCount() > 0) {
-      hash = (37 * hash) + SELECTIONS_FIELD_NUMBER;
-      hash = (53 * hash) + getSelectionsList().hashCode();
-    }
+    hash = (37 * hash) + REPORTTYPE_FIELD_NUMBER;
+    hash = (53 * hash) + getReportType().hashCode();
     if (getParametersCount() > 0) {
       hash = (37 * hash) + PARAMETERS_FIELD_NUMBER;
       hash = (53 * hash) + getParametersList().hashCode();
+    }
+    if (getSelectionsCount() > 0) {
+      hash = (37 * hash) + SELECTIONS_FIELD_NUMBER;
+      hash = (53 * hash) + getSelectionsList().hashCode();
     }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
@@ -631,8 +631,8 @@ private static final long serialVersionUID = 0L;
     private void maybeForceBuilderInitialization() {
       if (com.google.protobuf.GeneratedMessageV3
               .alwaysUseFieldBuilders) {
-        getSelectionsFieldBuilder();
         getParametersFieldBuilder();
+        getSelectionsFieldBuilder();
       }
     }
     public Builder clear() {
@@ -651,19 +651,19 @@ private static final long serialVersionUID = 0L;
 
       tableSelectedId_ = 0;
 
-      reportExportType_ = "";
+      reportType_ = "";
 
-      if (selectionsBuilder_ == null) {
-        selections_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000040);
-      } else {
-        selectionsBuilder_.clear();
-      }
       if (parametersBuilder_ == null) {
         parameters_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000080);
+        bitField0_ = (bitField0_ & ~0x00000040);
       } else {
         parametersBuilder_.clear();
+      }
+      if (selectionsBuilder_ == null) {
+        selections_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000080);
+      } else {
+        selectionsBuilder_.clear();
       }
       return this;
     }
@@ -698,24 +698,24 @@ private static final long serialVersionUID = 0L;
       result.uuid_ = uuid_;
       result.recordId_ = recordId_;
       result.tableSelectedId_ = tableSelectedId_;
-      result.reportExportType_ = reportExportType_;
-      if (selectionsBuilder_ == null) {
-        if (((bitField0_ & 0x00000040) == 0x00000040)) {
-          selections_ = java.util.Collections.unmodifiableList(selections_);
-          bitField0_ = (bitField0_ & ~0x00000040);
-        }
-        result.selections_ = selections_;
-      } else {
-        result.selections_ = selectionsBuilder_.build();
-      }
+      result.reportType_ = reportType_;
       if (parametersBuilder_ == null) {
-        if (((bitField0_ & 0x00000080) == 0x00000080)) {
+        if (((bitField0_ & 0x00000040) == 0x00000040)) {
           parameters_ = java.util.Collections.unmodifiableList(parameters_);
-          bitField0_ = (bitField0_ & ~0x00000080);
+          bitField0_ = (bitField0_ & ~0x00000040);
         }
         result.parameters_ = parameters_;
       } else {
         result.parameters_ = parametersBuilder_.build();
+      }
+      if (selectionsBuilder_ == null) {
+        if (((bitField0_ & 0x00000080) == 0x00000080)) {
+          selections_ = java.util.Collections.unmodifiableList(selections_);
+          bitField0_ = (bitField0_ & ~0x00000080);
+        }
+        result.selections_ = selections_;
+      } else {
+        result.selections_ = selectionsBuilder_.build();
       }
       result.bitField0_ = to_bitField0_;
       onBuilt();
@@ -776,41 +776,15 @@ private static final long serialVersionUID = 0L;
       if (other.getTableSelectedId() != 0) {
         setTableSelectedId(other.getTableSelectedId());
       }
-      if (!other.getReportExportType().isEmpty()) {
-        reportExportType_ = other.reportExportType_;
+      if (!other.getReportType().isEmpty()) {
+        reportType_ = other.reportType_;
         onChanged();
-      }
-      if (selectionsBuilder_ == null) {
-        if (!other.selections_.isEmpty()) {
-          if (selections_.isEmpty()) {
-            selections_ = other.selections_;
-            bitField0_ = (bitField0_ & ~0x00000040);
-          } else {
-            ensureSelectionsIsMutable();
-            selections_.addAll(other.selections_);
-          }
-          onChanged();
-        }
-      } else {
-        if (!other.selections_.isEmpty()) {
-          if (selectionsBuilder_.isEmpty()) {
-            selectionsBuilder_.dispose();
-            selectionsBuilder_ = null;
-            selections_ = other.selections_;
-            bitField0_ = (bitField0_ & ~0x00000040);
-            selectionsBuilder_ = 
-              com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
-                 getSelectionsFieldBuilder() : null;
-          } else {
-            selectionsBuilder_.addAllMessages(other.selections_);
-          }
-        }
       }
       if (parametersBuilder_ == null) {
         if (!other.parameters_.isEmpty()) {
           if (parameters_.isEmpty()) {
             parameters_ = other.parameters_;
-            bitField0_ = (bitField0_ & ~0x00000080);
+            bitField0_ = (bitField0_ & ~0x00000040);
           } else {
             ensureParametersIsMutable();
             parameters_.addAll(other.parameters_);
@@ -823,12 +797,38 @@ private static final long serialVersionUID = 0L;
             parametersBuilder_.dispose();
             parametersBuilder_ = null;
             parameters_ = other.parameters_;
-            bitField0_ = (bitField0_ & ~0x00000080);
+            bitField0_ = (bitField0_ & ~0x00000040);
             parametersBuilder_ = 
               com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                  getParametersFieldBuilder() : null;
           } else {
             parametersBuilder_.addAllMessages(other.parameters_);
+          }
+        }
+      }
+      if (selectionsBuilder_ == null) {
+        if (!other.selections_.isEmpty()) {
+          if (selections_.isEmpty()) {
+            selections_ = other.selections_;
+            bitField0_ = (bitField0_ & ~0x00000080);
+          } else {
+            ensureSelectionsIsMutable();
+            selections_.addAll(other.selections_);
+          }
+          onChanged();
+        }
+      } else {
+        if (!other.selections_.isEmpty()) {
+          if (selectionsBuilder_.isEmpty()) {
+            selectionsBuilder_.dispose();
+            selectionsBuilder_ = null;
+            selections_ = other.selections_;
+            bitField0_ = (bitField0_ & ~0x00000080);
+            selectionsBuilder_ = 
+              com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                 getSelectionsFieldBuilder() : null;
+          } else {
+            selectionsBuilder_.addAllMessages(other.selections_);
           }
         }
       }
@@ -1167,321 +1167,81 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private java.lang.Object reportExportType_ = "";
+    private java.lang.Object reportType_ = "";
     /**
-     * <code>string reportExportType = 6;</code>
+     * <code>string reportType = 6;</code>
      */
-    public java.lang.String getReportExportType() {
-      java.lang.Object ref = reportExportType_;
+    public java.lang.String getReportType() {
+      java.lang.Object ref = reportType_;
       if (!(ref instanceof java.lang.String)) {
         com.google.protobuf.ByteString bs =
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        reportExportType_ = s;
+        reportType_ = s;
         return s;
       } else {
         return (java.lang.String) ref;
       }
     }
     /**
-     * <code>string reportExportType = 6;</code>
+     * <code>string reportType = 6;</code>
      */
     public com.google.protobuf.ByteString
-        getReportExportTypeBytes() {
-      java.lang.Object ref = reportExportType_;
+        getReportTypeBytes() {
+      java.lang.Object ref = reportType_;
       if (ref instanceof String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
-        reportExportType_ = b;
+        reportType_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
     /**
-     * <code>string reportExportType = 6;</code>
+     * <code>string reportType = 6;</code>
      */
-    public Builder setReportExportType(
+    public Builder setReportType(
         java.lang.String value) {
       if (value == null) {
     throw new NullPointerException();
   }
   
-      reportExportType_ = value;
+      reportType_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>string reportExportType = 6;</code>
+     * <code>string reportType = 6;</code>
      */
-    public Builder clearReportExportType() {
+    public Builder clearReportType() {
       
-      reportExportType_ = getDefaultInstance().getReportExportType();
+      reportType_ = getDefaultInstance().getReportType();
       onChanged();
       return this;
     }
     /**
-     * <code>string reportExportType = 6;</code>
+     * <code>string reportType = 6;</code>
      */
-    public Builder setReportExportTypeBytes(
+    public Builder setReportTypeBytes(
         com.google.protobuf.ByteString value) {
       if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
       
-      reportExportType_ = value;
+      reportType_ = value;
       onChanged();
       return this;
-    }
-
-    private java.util.List<org.spin.grpc.util.Selection> selections_ =
-      java.util.Collections.emptyList();
-    private void ensureSelectionsIsMutable() {
-      if (!((bitField0_ & 0x00000040) == 0x00000040)) {
-        selections_ = new java.util.ArrayList<org.spin.grpc.util.Selection>(selections_);
-        bitField0_ |= 0x00000040;
-       }
-    }
-
-    private com.google.protobuf.RepeatedFieldBuilderV3<
-        org.spin.grpc.util.Selection, org.spin.grpc.util.Selection.Builder, org.spin.grpc.util.SelectionOrBuilder> selectionsBuilder_;
-
-    /**
-     * <code>repeated .data.Selection selections = 7;</code>
-     */
-    public java.util.List<org.spin.grpc.util.Selection> getSelectionsList() {
-      if (selectionsBuilder_ == null) {
-        return java.util.Collections.unmodifiableList(selections_);
-      } else {
-        return selectionsBuilder_.getMessageList();
-      }
-    }
-    /**
-     * <code>repeated .data.Selection selections = 7;</code>
-     */
-    public int getSelectionsCount() {
-      if (selectionsBuilder_ == null) {
-        return selections_.size();
-      } else {
-        return selectionsBuilder_.getCount();
-      }
-    }
-    /**
-     * <code>repeated .data.Selection selections = 7;</code>
-     */
-    public org.spin.grpc.util.Selection getSelections(int index) {
-      if (selectionsBuilder_ == null) {
-        return selections_.get(index);
-      } else {
-        return selectionsBuilder_.getMessage(index);
-      }
-    }
-    /**
-     * <code>repeated .data.Selection selections = 7;</code>
-     */
-    public Builder setSelections(
-        int index, org.spin.grpc.util.Selection value) {
-      if (selectionsBuilder_ == null) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        ensureSelectionsIsMutable();
-        selections_.set(index, value);
-        onChanged();
-      } else {
-        selectionsBuilder_.setMessage(index, value);
-      }
-      return this;
-    }
-    /**
-     * <code>repeated .data.Selection selections = 7;</code>
-     */
-    public Builder setSelections(
-        int index, org.spin.grpc.util.Selection.Builder builderForValue) {
-      if (selectionsBuilder_ == null) {
-        ensureSelectionsIsMutable();
-        selections_.set(index, builderForValue.build());
-        onChanged();
-      } else {
-        selectionsBuilder_.setMessage(index, builderForValue.build());
-      }
-      return this;
-    }
-    /**
-     * <code>repeated .data.Selection selections = 7;</code>
-     */
-    public Builder addSelections(org.spin.grpc.util.Selection value) {
-      if (selectionsBuilder_ == null) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        ensureSelectionsIsMutable();
-        selections_.add(value);
-        onChanged();
-      } else {
-        selectionsBuilder_.addMessage(value);
-      }
-      return this;
-    }
-    /**
-     * <code>repeated .data.Selection selections = 7;</code>
-     */
-    public Builder addSelections(
-        int index, org.spin.grpc.util.Selection value) {
-      if (selectionsBuilder_ == null) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        ensureSelectionsIsMutable();
-        selections_.add(index, value);
-        onChanged();
-      } else {
-        selectionsBuilder_.addMessage(index, value);
-      }
-      return this;
-    }
-    /**
-     * <code>repeated .data.Selection selections = 7;</code>
-     */
-    public Builder addSelections(
-        org.spin.grpc.util.Selection.Builder builderForValue) {
-      if (selectionsBuilder_ == null) {
-        ensureSelectionsIsMutable();
-        selections_.add(builderForValue.build());
-        onChanged();
-      } else {
-        selectionsBuilder_.addMessage(builderForValue.build());
-      }
-      return this;
-    }
-    /**
-     * <code>repeated .data.Selection selections = 7;</code>
-     */
-    public Builder addSelections(
-        int index, org.spin.grpc.util.Selection.Builder builderForValue) {
-      if (selectionsBuilder_ == null) {
-        ensureSelectionsIsMutable();
-        selections_.add(index, builderForValue.build());
-        onChanged();
-      } else {
-        selectionsBuilder_.addMessage(index, builderForValue.build());
-      }
-      return this;
-    }
-    /**
-     * <code>repeated .data.Selection selections = 7;</code>
-     */
-    public Builder addAllSelections(
-        java.lang.Iterable<? extends org.spin.grpc.util.Selection> values) {
-      if (selectionsBuilder_ == null) {
-        ensureSelectionsIsMutable();
-        com.google.protobuf.AbstractMessageLite.Builder.addAll(
-            values, selections_);
-        onChanged();
-      } else {
-        selectionsBuilder_.addAllMessages(values);
-      }
-      return this;
-    }
-    /**
-     * <code>repeated .data.Selection selections = 7;</code>
-     */
-    public Builder clearSelections() {
-      if (selectionsBuilder_ == null) {
-        selections_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000040);
-        onChanged();
-      } else {
-        selectionsBuilder_.clear();
-      }
-      return this;
-    }
-    /**
-     * <code>repeated .data.Selection selections = 7;</code>
-     */
-    public Builder removeSelections(int index) {
-      if (selectionsBuilder_ == null) {
-        ensureSelectionsIsMutable();
-        selections_.remove(index);
-        onChanged();
-      } else {
-        selectionsBuilder_.remove(index);
-      }
-      return this;
-    }
-    /**
-     * <code>repeated .data.Selection selections = 7;</code>
-     */
-    public org.spin.grpc.util.Selection.Builder getSelectionsBuilder(
-        int index) {
-      return getSelectionsFieldBuilder().getBuilder(index);
-    }
-    /**
-     * <code>repeated .data.Selection selections = 7;</code>
-     */
-    public org.spin.grpc.util.SelectionOrBuilder getSelectionsOrBuilder(
-        int index) {
-      if (selectionsBuilder_ == null) {
-        return selections_.get(index);  } else {
-        return selectionsBuilder_.getMessageOrBuilder(index);
-      }
-    }
-    /**
-     * <code>repeated .data.Selection selections = 7;</code>
-     */
-    public java.util.List<? extends org.spin.grpc.util.SelectionOrBuilder> 
-         getSelectionsOrBuilderList() {
-      if (selectionsBuilder_ != null) {
-        return selectionsBuilder_.getMessageOrBuilderList();
-      } else {
-        return java.util.Collections.unmodifiableList(selections_);
-      }
-    }
-    /**
-     * <code>repeated .data.Selection selections = 7;</code>
-     */
-    public org.spin.grpc.util.Selection.Builder addSelectionsBuilder() {
-      return getSelectionsFieldBuilder().addBuilder(
-          org.spin.grpc.util.Selection.getDefaultInstance());
-    }
-    /**
-     * <code>repeated .data.Selection selections = 7;</code>
-     */
-    public org.spin.grpc.util.Selection.Builder addSelectionsBuilder(
-        int index) {
-      return getSelectionsFieldBuilder().addBuilder(
-          index, org.spin.grpc.util.Selection.getDefaultInstance());
-    }
-    /**
-     * <code>repeated .data.Selection selections = 7;</code>
-     */
-    public java.util.List<org.spin.grpc.util.Selection.Builder> 
-         getSelectionsBuilderList() {
-      return getSelectionsFieldBuilder().getBuilderList();
-    }
-    private com.google.protobuf.RepeatedFieldBuilderV3<
-        org.spin.grpc.util.Selection, org.spin.grpc.util.Selection.Builder, org.spin.grpc.util.SelectionOrBuilder> 
-        getSelectionsFieldBuilder() {
-      if (selectionsBuilder_ == null) {
-        selectionsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
-            org.spin.grpc.util.Selection, org.spin.grpc.util.Selection.Builder, org.spin.grpc.util.SelectionOrBuilder>(
-                selections_,
-                ((bitField0_ & 0x00000040) == 0x00000040),
-                getParentForChildren(),
-                isClean());
-        selections_ = null;
-      }
-      return selectionsBuilder_;
     }
 
     private java.util.List<org.spin.grpc.util.KeyValue> parameters_ =
       java.util.Collections.emptyList();
     private void ensureParametersIsMutable() {
-      if (!((bitField0_ & 0x00000080) == 0x00000080)) {
+      if (!((bitField0_ & 0x00000040) == 0x00000040)) {
         parameters_ = new java.util.ArrayList<org.spin.grpc.util.KeyValue>(parameters_);
-        bitField0_ |= 0x00000080;
+        bitField0_ |= 0x00000040;
        }
     }
 
@@ -1489,7 +1249,7 @@ private static final long serialVersionUID = 0L;
         org.spin.grpc.util.KeyValue, org.spin.grpc.util.KeyValue.Builder, org.spin.grpc.util.KeyValueOrBuilder> parametersBuilder_;
 
     /**
-     * <code>repeated .data.KeyValue parameters = 8;</code>
+     * <code>repeated .data.KeyValue parameters = 7;</code>
      */
     public java.util.List<org.spin.grpc.util.KeyValue> getParametersList() {
       if (parametersBuilder_ == null) {
@@ -1499,7 +1259,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.KeyValue parameters = 8;</code>
+     * <code>repeated .data.KeyValue parameters = 7;</code>
      */
     public int getParametersCount() {
       if (parametersBuilder_ == null) {
@@ -1509,7 +1269,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.KeyValue parameters = 8;</code>
+     * <code>repeated .data.KeyValue parameters = 7;</code>
      */
     public org.spin.grpc.util.KeyValue getParameters(int index) {
       if (parametersBuilder_ == null) {
@@ -1519,7 +1279,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.KeyValue parameters = 8;</code>
+     * <code>repeated .data.KeyValue parameters = 7;</code>
      */
     public Builder setParameters(
         int index, org.spin.grpc.util.KeyValue value) {
@@ -1536,7 +1296,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.KeyValue parameters = 8;</code>
+     * <code>repeated .data.KeyValue parameters = 7;</code>
      */
     public Builder setParameters(
         int index, org.spin.grpc.util.KeyValue.Builder builderForValue) {
@@ -1550,7 +1310,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.KeyValue parameters = 8;</code>
+     * <code>repeated .data.KeyValue parameters = 7;</code>
      */
     public Builder addParameters(org.spin.grpc.util.KeyValue value) {
       if (parametersBuilder_ == null) {
@@ -1566,7 +1326,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.KeyValue parameters = 8;</code>
+     * <code>repeated .data.KeyValue parameters = 7;</code>
      */
     public Builder addParameters(
         int index, org.spin.grpc.util.KeyValue value) {
@@ -1583,7 +1343,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.KeyValue parameters = 8;</code>
+     * <code>repeated .data.KeyValue parameters = 7;</code>
      */
     public Builder addParameters(
         org.spin.grpc.util.KeyValue.Builder builderForValue) {
@@ -1597,7 +1357,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.KeyValue parameters = 8;</code>
+     * <code>repeated .data.KeyValue parameters = 7;</code>
      */
     public Builder addParameters(
         int index, org.spin.grpc.util.KeyValue.Builder builderForValue) {
@@ -1611,7 +1371,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.KeyValue parameters = 8;</code>
+     * <code>repeated .data.KeyValue parameters = 7;</code>
      */
     public Builder addAllParameters(
         java.lang.Iterable<? extends org.spin.grpc.util.KeyValue> values) {
@@ -1626,12 +1386,12 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.KeyValue parameters = 8;</code>
+     * <code>repeated .data.KeyValue parameters = 7;</code>
      */
     public Builder clearParameters() {
       if (parametersBuilder_ == null) {
         parameters_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000080);
+        bitField0_ = (bitField0_ & ~0x00000040);
         onChanged();
       } else {
         parametersBuilder_.clear();
@@ -1639,7 +1399,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.KeyValue parameters = 8;</code>
+     * <code>repeated .data.KeyValue parameters = 7;</code>
      */
     public Builder removeParameters(int index) {
       if (parametersBuilder_ == null) {
@@ -1652,14 +1412,14 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.KeyValue parameters = 8;</code>
+     * <code>repeated .data.KeyValue parameters = 7;</code>
      */
     public org.spin.grpc.util.KeyValue.Builder getParametersBuilder(
         int index) {
       return getParametersFieldBuilder().getBuilder(index);
     }
     /**
-     * <code>repeated .data.KeyValue parameters = 8;</code>
+     * <code>repeated .data.KeyValue parameters = 7;</code>
      */
     public org.spin.grpc.util.KeyValueOrBuilder getParametersOrBuilder(
         int index) {
@@ -1669,7 +1429,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.KeyValue parameters = 8;</code>
+     * <code>repeated .data.KeyValue parameters = 7;</code>
      */
     public java.util.List<? extends org.spin.grpc.util.KeyValueOrBuilder> 
          getParametersOrBuilderList() {
@@ -1680,14 +1440,14 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.KeyValue parameters = 8;</code>
+     * <code>repeated .data.KeyValue parameters = 7;</code>
      */
     public org.spin.grpc.util.KeyValue.Builder addParametersBuilder() {
       return getParametersFieldBuilder().addBuilder(
           org.spin.grpc.util.KeyValue.getDefaultInstance());
     }
     /**
-     * <code>repeated .data.KeyValue parameters = 8;</code>
+     * <code>repeated .data.KeyValue parameters = 7;</code>
      */
     public org.spin.grpc.util.KeyValue.Builder addParametersBuilder(
         int index) {
@@ -1695,7 +1455,7 @@ private static final long serialVersionUID = 0L;
           index, org.spin.grpc.util.KeyValue.getDefaultInstance());
     }
     /**
-     * <code>repeated .data.KeyValue parameters = 8;</code>
+     * <code>repeated .data.KeyValue parameters = 7;</code>
      */
     public java.util.List<org.spin.grpc.util.KeyValue.Builder> 
          getParametersBuilderList() {
@@ -1708,12 +1468,252 @@ private static final long serialVersionUID = 0L;
         parametersBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
             org.spin.grpc.util.KeyValue, org.spin.grpc.util.KeyValue.Builder, org.spin.grpc.util.KeyValueOrBuilder>(
                 parameters_,
-                ((bitField0_ & 0x00000080) == 0x00000080),
+                ((bitField0_ & 0x00000040) == 0x00000040),
                 getParentForChildren(),
                 isClean());
         parameters_ = null;
       }
       return parametersBuilder_;
+    }
+
+    private java.util.List<org.spin.grpc.util.KeyValueSelection> selections_ =
+      java.util.Collections.emptyList();
+    private void ensureSelectionsIsMutable() {
+      if (!((bitField0_ & 0x00000080) == 0x00000080)) {
+        selections_ = new java.util.ArrayList<org.spin.grpc.util.KeyValueSelection>(selections_);
+        bitField0_ |= 0x00000080;
+       }
+    }
+
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+        org.spin.grpc.util.KeyValueSelection, org.spin.grpc.util.KeyValueSelection.Builder, org.spin.grpc.util.KeyValueSelectionOrBuilder> selectionsBuilder_;
+
+    /**
+     * <code>repeated .data.KeyValueSelection selections = 8;</code>
+     */
+    public java.util.List<org.spin.grpc.util.KeyValueSelection> getSelectionsList() {
+      if (selectionsBuilder_ == null) {
+        return java.util.Collections.unmodifiableList(selections_);
+      } else {
+        return selectionsBuilder_.getMessageList();
+      }
+    }
+    /**
+     * <code>repeated .data.KeyValueSelection selections = 8;</code>
+     */
+    public int getSelectionsCount() {
+      if (selectionsBuilder_ == null) {
+        return selections_.size();
+      } else {
+        return selectionsBuilder_.getCount();
+      }
+    }
+    /**
+     * <code>repeated .data.KeyValueSelection selections = 8;</code>
+     */
+    public org.spin.grpc.util.KeyValueSelection getSelections(int index) {
+      if (selectionsBuilder_ == null) {
+        return selections_.get(index);
+      } else {
+        return selectionsBuilder_.getMessage(index);
+      }
+    }
+    /**
+     * <code>repeated .data.KeyValueSelection selections = 8;</code>
+     */
+    public Builder setSelections(
+        int index, org.spin.grpc.util.KeyValueSelection value) {
+      if (selectionsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureSelectionsIsMutable();
+        selections_.set(index, value);
+        onChanged();
+      } else {
+        selectionsBuilder_.setMessage(index, value);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.KeyValueSelection selections = 8;</code>
+     */
+    public Builder setSelections(
+        int index, org.spin.grpc.util.KeyValueSelection.Builder builderForValue) {
+      if (selectionsBuilder_ == null) {
+        ensureSelectionsIsMutable();
+        selections_.set(index, builderForValue.build());
+        onChanged();
+      } else {
+        selectionsBuilder_.setMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.KeyValueSelection selections = 8;</code>
+     */
+    public Builder addSelections(org.spin.grpc.util.KeyValueSelection value) {
+      if (selectionsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureSelectionsIsMutable();
+        selections_.add(value);
+        onChanged();
+      } else {
+        selectionsBuilder_.addMessage(value);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.KeyValueSelection selections = 8;</code>
+     */
+    public Builder addSelections(
+        int index, org.spin.grpc.util.KeyValueSelection value) {
+      if (selectionsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureSelectionsIsMutable();
+        selections_.add(index, value);
+        onChanged();
+      } else {
+        selectionsBuilder_.addMessage(index, value);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.KeyValueSelection selections = 8;</code>
+     */
+    public Builder addSelections(
+        org.spin.grpc.util.KeyValueSelection.Builder builderForValue) {
+      if (selectionsBuilder_ == null) {
+        ensureSelectionsIsMutable();
+        selections_.add(builderForValue.build());
+        onChanged();
+      } else {
+        selectionsBuilder_.addMessage(builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.KeyValueSelection selections = 8;</code>
+     */
+    public Builder addSelections(
+        int index, org.spin.grpc.util.KeyValueSelection.Builder builderForValue) {
+      if (selectionsBuilder_ == null) {
+        ensureSelectionsIsMutable();
+        selections_.add(index, builderForValue.build());
+        onChanged();
+      } else {
+        selectionsBuilder_.addMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.KeyValueSelection selections = 8;</code>
+     */
+    public Builder addAllSelections(
+        java.lang.Iterable<? extends org.spin.grpc.util.KeyValueSelection> values) {
+      if (selectionsBuilder_ == null) {
+        ensureSelectionsIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, selections_);
+        onChanged();
+      } else {
+        selectionsBuilder_.addAllMessages(values);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.KeyValueSelection selections = 8;</code>
+     */
+    public Builder clearSelections() {
+      if (selectionsBuilder_ == null) {
+        selections_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000080);
+        onChanged();
+      } else {
+        selectionsBuilder_.clear();
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.KeyValueSelection selections = 8;</code>
+     */
+    public Builder removeSelections(int index) {
+      if (selectionsBuilder_ == null) {
+        ensureSelectionsIsMutable();
+        selections_.remove(index);
+        onChanged();
+      } else {
+        selectionsBuilder_.remove(index);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.KeyValueSelection selections = 8;</code>
+     */
+    public org.spin.grpc.util.KeyValueSelection.Builder getSelectionsBuilder(
+        int index) {
+      return getSelectionsFieldBuilder().getBuilder(index);
+    }
+    /**
+     * <code>repeated .data.KeyValueSelection selections = 8;</code>
+     */
+    public org.spin.grpc.util.KeyValueSelectionOrBuilder getSelectionsOrBuilder(
+        int index) {
+      if (selectionsBuilder_ == null) {
+        return selections_.get(index);  } else {
+        return selectionsBuilder_.getMessageOrBuilder(index);
+      }
+    }
+    /**
+     * <code>repeated .data.KeyValueSelection selections = 8;</code>
+     */
+    public java.util.List<? extends org.spin.grpc.util.KeyValueSelectionOrBuilder> 
+         getSelectionsOrBuilderList() {
+      if (selectionsBuilder_ != null) {
+        return selectionsBuilder_.getMessageOrBuilderList();
+      } else {
+        return java.util.Collections.unmodifiableList(selections_);
+      }
+    }
+    /**
+     * <code>repeated .data.KeyValueSelection selections = 8;</code>
+     */
+    public org.spin.grpc.util.KeyValueSelection.Builder addSelectionsBuilder() {
+      return getSelectionsFieldBuilder().addBuilder(
+          org.spin.grpc.util.KeyValueSelection.getDefaultInstance());
+    }
+    /**
+     * <code>repeated .data.KeyValueSelection selections = 8;</code>
+     */
+    public org.spin.grpc.util.KeyValueSelection.Builder addSelectionsBuilder(
+        int index) {
+      return getSelectionsFieldBuilder().addBuilder(
+          index, org.spin.grpc.util.KeyValueSelection.getDefaultInstance());
+    }
+    /**
+     * <code>repeated .data.KeyValueSelection selections = 8;</code>
+     */
+    public java.util.List<org.spin.grpc.util.KeyValueSelection.Builder> 
+         getSelectionsBuilderList() {
+      return getSelectionsFieldBuilder().getBuilderList();
+    }
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+        org.spin.grpc.util.KeyValueSelection, org.spin.grpc.util.KeyValueSelection.Builder, org.spin.grpc.util.KeyValueSelectionOrBuilder> 
+        getSelectionsFieldBuilder() {
+      if (selectionsBuilder_ == null) {
+        selectionsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+            org.spin.grpc.util.KeyValueSelection, org.spin.grpc.util.KeyValueSelection.Builder, org.spin.grpc.util.KeyValueSelectionOrBuilder>(
+                selections_,
+                ((bitField0_ & 0x00000080) == 0x00000080),
+                getParentForChildren(),
+                isClean());
+        selections_ = null;
+      }
+      return selectionsBuilder_;
     }
     public final Builder setUnknownFields(
         final com.google.protobuf.UnknownFieldSet unknownFields) {

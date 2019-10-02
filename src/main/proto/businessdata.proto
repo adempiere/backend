@@ -111,6 +111,12 @@ message Entity {
 	map<string, Value> values = 4;
 }
 
+//	BusinessProcess Selections
+message KeyValueSelection {
+	int32 selectionId = 1;
+	repeated KeyValue values = 2;
+}
+
 // Key and Value pairs
 message KeyValue {
 	string key = 1;
@@ -209,9 +215,10 @@ message OrderByProperty {
 
 // Condition for query data
 message Condition {
-	Value value = 1;
-	Value valueTo = 2;
-	repeated Value values = 3;
+	string columnName = 1;
+	Value value = 2;
+	Value valueTo = 3;
+	repeated Value values = 4;
 	enum Operator {
 		EQUAL = 0;
 		NOT_EQUAL = 1;
@@ -228,7 +235,7 @@ message Condition {
 		NOT_IN = 12;
 	}
 	//	Operators
-	Operator operator = 4;
+	Operator operator = 5;
 }
 
 // Callout Request
@@ -251,9 +258,9 @@ message RunBusinessProcessRequest {
 	string uuid = 3;
 	int32 recordId = 4;
 	int32 tableSelectedId = 5;
-	string reportExportType = 6;
-	repeated Selection selections = 7;
-	repeated KeyValue parameters = 8;
+	string reportType = 6;
+	repeated KeyValue parameters = 7;
+	repeated KeyValueSelection selections = 8;
 }
 
 // BusinessProcess Activity Request
@@ -294,12 +301,6 @@ message ListRecentItemsResponse {
 	string next_page_token = 3;
 }
 
-//	BusinessProcess Selections
-message Selection {
-	int32 selectionId = 1;
-	repeated KeyValue values = 2;
-}
-
 // BusinessProcess Response List
 message ListActivitiesResponse {
 	int64 recordCount = 1;
@@ -336,7 +337,7 @@ message ProcessOutput {
 	string mimeType = 6;
 	bytes outputStream = 7;
 	//	Output Type
-	string reportExportType = 8;
+	string reportType = 8;
 }
 
 // Browser request

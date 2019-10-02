@@ -8,18 +8,18 @@ package org.spin.grpc.util;
  *	BusinessProcess Selections
  * </pre>
  *
- * Protobuf type {@code data.Selection}
+ * Protobuf type {@code data.KeyValueSelection}
  */
-public  final class Selection extends
+public  final class KeyValueSelection extends
     com.google.protobuf.GeneratedMessageV3 implements
-    // @@protoc_insertion_point(message_implements:data.Selection)
-    SelectionOrBuilder {
+    // @@protoc_insertion_point(message_implements:data.KeyValueSelection)
+    KeyValueSelectionOrBuilder {
 private static final long serialVersionUID = 0L;
-  // Use Selection.newBuilder() to construct.
-  private Selection(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+  // Use KeyValueSelection.newBuilder() to construct.
+  private KeyValueSelection(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
   }
-  private Selection() {
+  private KeyValueSelection() {
     selectionId_ = 0;
     values_ = java.util.Collections.emptyList();
   }
@@ -29,7 +29,7 @@ private static final long serialVersionUID = 0L;
   getUnknownFields() {
     return this.unknownFields;
   }
-  private Selection(
+  private KeyValueSelection(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -86,14 +86,14 @@ private static final long serialVersionUID = 0L;
   }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-    return org.spin.grpc.util.ADempiereData.internal_static_data_Selection_descriptor;
+    return org.spin.grpc.util.ADempiereData.internal_static_data_KeyValueSelection_descriptor;
   }
 
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
-    return org.spin.grpc.util.ADempiereData.internal_static_data_Selection_fieldAccessorTable
+    return org.spin.grpc.util.ADempiereData.internal_static_data_KeyValueSelection_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
-            org.spin.grpc.util.Selection.class, org.spin.grpc.util.Selection.Builder.class);
+            org.spin.grpc.util.KeyValueSelection.class, org.spin.grpc.util.KeyValueSelection.Builder.class);
   }
 
   private int bitField0_;
@@ -185,10 +185,10 @@ private static final long serialVersionUID = 0L;
     if (obj == this) {
      return true;
     }
-    if (!(obj instanceof org.spin.grpc.util.Selection)) {
+    if (!(obj instanceof org.spin.grpc.util.KeyValueSelection)) {
       return super.equals(obj);
     }
-    org.spin.grpc.util.Selection other = (org.spin.grpc.util.Selection) obj;
+    org.spin.grpc.util.KeyValueSelection other = (org.spin.grpc.util.KeyValueSelection) obj;
 
     boolean result = true;
     result = result && (getSelectionId()
@@ -217,69 +217,69 @@ private static final long serialVersionUID = 0L;
     return hash;
   }
 
-  public static org.spin.grpc.util.Selection parseFrom(
+  public static org.spin.grpc.util.KeyValueSelection parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.spin.grpc.util.Selection parseFrom(
+  public static org.spin.grpc.util.KeyValueSelection parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.spin.grpc.util.Selection parseFrom(
+  public static org.spin.grpc.util.KeyValueSelection parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.spin.grpc.util.Selection parseFrom(
+  public static org.spin.grpc.util.KeyValueSelection parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.spin.grpc.util.Selection parseFrom(byte[] data)
+  public static org.spin.grpc.util.KeyValueSelection parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.spin.grpc.util.Selection parseFrom(
+  public static org.spin.grpc.util.KeyValueSelection parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.spin.grpc.util.Selection parseFrom(java.io.InputStream input)
+  public static org.spin.grpc.util.KeyValueSelection parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static org.spin.grpc.util.Selection parseFrom(
+  public static org.spin.grpc.util.KeyValueSelection parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input, extensionRegistry);
   }
-  public static org.spin.grpc.util.Selection parseDelimitedFrom(java.io.InputStream input)
+  public static org.spin.grpc.util.KeyValueSelection parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input);
   }
-  public static org.spin.grpc.util.Selection parseDelimitedFrom(
+  public static org.spin.grpc.util.KeyValueSelection parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
   }
-  public static org.spin.grpc.util.Selection parseFrom(
+  public static org.spin.grpc.util.KeyValueSelection parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static org.spin.grpc.util.Selection parseFrom(
+  public static org.spin.grpc.util.KeyValueSelection parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -291,7 +291,7 @@ private static final long serialVersionUID = 0L;
   public static Builder newBuilder() {
     return DEFAULT_INSTANCE.toBuilder();
   }
-  public static Builder newBuilder(org.spin.grpc.util.Selection prototype) {
+  public static Builder newBuilder(org.spin.grpc.util.KeyValueSelection prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
   public Builder toBuilder() {
@@ -310,25 +310,25 @@ private static final long serialVersionUID = 0L;
    *	BusinessProcess Selections
    * </pre>
    *
-   * Protobuf type {@code data.Selection}
+   * Protobuf type {@code data.KeyValueSelection}
    */
   public static final class Builder extends
       com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-      // @@protoc_insertion_point(builder_implements:data.Selection)
-      org.spin.grpc.util.SelectionOrBuilder {
+      // @@protoc_insertion_point(builder_implements:data.KeyValueSelection)
+      org.spin.grpc.util.KeyValueSelectionOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.spin.grpc.util.ADempiereData.internal_static_data_Selection_descriptor;
+      return org.spin.grpc.util.ADempiereData.internal_static_data_KeyValueSelection_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.spin.grpc.util.ADempiereData.internal_static_data_Selection_fieldAccessorTable
+      return org.spin.grpc.util.ADempiereData.internal_static_data_KeyValueSelection_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.spin.grpc.util.Selection.class, org.spin.grpc.util.Selection.Builder.class);
+              org.spin.grpc.util.KeyValueSelection.class, org.spin.grpc.util.KeyValueSelection.Builder.class);
     }
 
-    // Construct using org.spin.grpc.util.Selection.newBuilder()
+    // Construct using org.spin.grpc.util.KeyValueSelection.newBuilder()
     private Builder() {
       maybeForceBuilderInitialization();
     }
@@ -359,23 +359,23 @@ private static final long serialVersionUID = 0L;
 
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
-      return org.spin.grpc.util.ADempiereData.internal_static_data_Selection_descriptor;
+      return org.spin.grpc.util.ADempiereData.internal_static_data_KeyValueSelection_descriptor;
     }
 
-    public org.spin.grpc.util.Selection getDefaultInstanceForType() {
-      return org.spin.grpc.util.Selection.getDefaultInstance();
+    public org.spin.grpc.util.KeyValueSelection getDefaultInstanceForType() {
+      return org.spin.grpc.util.KeyValueSelection.getDefaultInstance();
     }
 
-    public org.spin.grpc.util.Selection build() {
-      org.spin.grpc.util.Selection result = buildPartial();
+    public org.spin.grpc.util.KeyValueSelection build() {
+      org.spin.grpc.util.KeyValueSelection result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
       return result;
     }
 
-    public org.spin.grpc.util.Selection buildPartial() {
-      org.spin.grpc.util.Selection result = new org.spin.grpc.util.Selection(this);
+    public org.spin.grpc.util.KeyValueSelection buildPartial() {
+      org.spin.grpc.util.KeyValueSelection result = new org.spin.grpc.util.KeyValueSelection(this);
       int from_bitField0_ = bitField0_;
       int to_bitField0_ = 0;
       result.selectionId_ = selectionId_;
@@ -420,16 +420,16 @@ private static final long serialVersionUID = 0L;
       return (Builder) super.addRepeatedField(field, value);
     }
     public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof org.spin.grpc.util.Selection) {
-        return mergeFrom((org.spin.grpc.util.Selection)other);
+      if (other instanceof org.spin.grpc.util.KeyValueSelection) {
+        return mergeFrom((org.spin.grpc.util.KeyValueSelection)other);
       } else {
         super.mergeFrom(other);
         return this;
       }
     }
 
-    public Builder mergeFrom(org.spin.grpc.util.Selection other) {
-      if (other == org.spin.grpc.util.Selection.getDefaultInstance()) return this;
+    public Builder mergeFrom(org.spin.grpc.util.KeyValueSelection other) {
+      if (other == org.spin.grpc.util.KeyValueSelection.getDefaultInstance()) return this;
       if (other.getSelectionId() != 0) {
         setSelectionId(other.getSelectionId());
       }
@@ -472,11 +472,11 @@ private static final long serialVersionUID = 0L;
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      org.spin.grpc.util.Selection parsedMessage = null;
+      org.spin.grpc.util.KeyValueSelection parsedMessage = null;
       try {
         parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (org.spin.grpc.util.Selection) e.getUnfinishedMessage();
+        parsedMessage = (org.spin.grpc.util.KeyValueSelection) e.getUnfinishedMessage();
         throw e.unwrapIOException();
       } finally {
         if (parsedMessage != null) {
@@ -763,39 +763,39 @@ private static final long serialVersionUID = 0L;
     }
 
 
-    // @@protoc_insertion_point(builder_scope:data.Selection)
+    // @@protoc_insertion_point(builder_scope:data.KeyValueSelection)
   }
 
-  // @@protoc_insertion_point(class_scope:data.Selection)
-  private static final org.spin.grpc.util.Selection DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:data.KeyValueSelection)
+  private static final org.spin.grpc.util.KeyValueSelection DEFAULT_INSTANCE;
   static {
-    DEFAULT_INSTANCE = new org.spin.grpc.util.Selection();
+    DEFAULT_INSTANCE = new org.spin.grpc.util.KeyValueSelection();
   }
 
-  public static org.spin.grpc.util.Selection getDefaultInstance() {
+  public static org.spin.grpc.util.KeyValueSelection getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<Selection>
-      PARSER = new com.google.protobuf.AbstractParser<Selection>() {
-    public Selection parsePartialFrom(
+  private static final com.google.protobuf.Parser<KeyValueSelection>
+      PARSER = new com.google.protobuf.AbstractParser<KeyValueSelection>() {
+    public KeyValueSelection parsePartialFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return new Selection(input, extensionRegistry);
+      return new KeyValueSelection(input, extensionRegistry);
     }
   };
 
-  public static com.google.protobuf.Parser<Selection> parser() {
+  public static com.google.protobuf.Parser<KeyValueSelection> parser() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.protobuf.Parser<Selection> getParserForType() {
+  public com.google.protobuf.Parser<KeyValueSelection> getParserForType() {
     return PARSER;
   }
 
-  public org.spin.grpc.util.Selection getDefaultInstanceForType() {
+  public org.spin.grpc.util.KeyValueSelection getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }
 

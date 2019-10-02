@@ -3,8 +3,8 @@
 
 package org.spin.grpc.util;
 
-public interface SelectionOrBuilder extends
-    // @@protoc_insertion_point(interface_extends:data.Selection)
+public interface KeyValueSelectionOrBuilder extends
+    // @@protoc_insertion_point(interface_extends:data.KeyValueSelection)
     com.google.protobuf.MessageOrBuilder {
 
   /**

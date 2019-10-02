@@ -484,13 +484,13 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 				.withTitle(process.getName());
 		//	Set Report Export Type
 		if(process.isReport()) {
-			builder.withReportExportFormat(request.getReportExportType());
+			builder.withReportExportFormat(request.getReportType());
 		}
 		//	Selection
 		if(request.getSelectionsCount() > 0) {
 			List<Integer> selectionKeys = new ArrayList<>();
 			LinkedHashMap<Integer, LinkedHashMap<String, Object>> selection = new LinkedHashMap<>();
-			for(Selection selectionKey : request.getSelectionsList()) {
+			for(KeyValueSelection selectionKey : request.getSelectionsList()) {
 				selectionKeys.add(selectionKey.getSelectionId());
 				if(selectionKey.getValuesCount() > 0) {
 					selection.put(selectionKey.getSelectionId(), convertValues(selectionKey.getValuesList()));
@@ -533,10 +533,10 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 				output.setMimeType(validateNull(MimeType.getMimeType(validFileName)));
 				output.setDescription(validateNull(process.getDescription()));
 				//	Type
-				output.setReportExportType(request.getReportExportType());
+				output.setReportType(request.getReportType());
 				ByteString resultFile = ByteString.readFrom(new FileInputStream(reportFile));
-				if(request.getReportExportType().endsWith("html")
-						|| request.getReportExportType().endsWith("txt")) {
+				if(request.getReportType().endsWith("html")
+						|| request.getReportType().endsWith("txt")) {
 					output.setOutputBytes(resultFile);
 				}
 				output.setOutputStream(resultFile);
@@ -835,7 +835,7 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 						|| keyValueType == Types.NVARCHAR
 						|| keyValueType == Types.CHAR
 						|| keyValueType == Types.NCHAR) {
-					keyValue = rs.getString(1);
+					keyValue = rs.getString(2);
 				} else {
 					keyValue = rs.getInt(1);
 				}
@@ -1583,7 +1583,7 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 		builder.setUuid(validateNull(process.getUUID()));
 		if(process.isReport()) {
 			ProcessOutput.Builder outputBuilder = ProcessOutput.newBuilder();
-			outputBuilder.setReportExportType(validateNull(instance.getReportType()));
+			outputBuilder.setReportType(validateNull(instance.getReportType()));
 			outputBuilder.setName(validateNull(instance.getName()));
 			builder.setOutput(outputBuilder.build());
 		}
