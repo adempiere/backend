@@ -8,51 +8,61 @@ public interface ConditionOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
   /**
-   * <code>.data.Value value = 1;</code>
+   * <code>string columnName = 1;</code>
+   */
+  java.lang.String getColumnName();
+  /**
+   * <code>string columnName = 1;</code>
+   */
+  com.google.protobuf.ByteString
+      getColumnNameBytes();
+
+  /**
+   * <code>.data.Value value = 2;</code>
    */
   boolean hasValue();
   /**
-   * <code>.data.Value value = 1;</code>
+   * <code>.data.Value value = 2;</code>
    */
   org.spin.grpc.util.Value getValue();
   /**
-   * <code>.data.Value value = 1;</code>
+   * <code>.data.Value value = 2;</code>
    */
   org.spin.grpc.util.ValueOrBuilder getValueOrBuilder();
 
   /**
-   * <code>.data.Value valueTo = 2;</code>
+   * <code>.data.Value valueTo = 3;</code>
    */
   boolean hasValueTo();
   /**
-   * <code>.data.Value valueTo = 2;</code>
+   * <code>.data.Value valueTo = 3;</code>
    */
   org.spin.grpc.util.Value getValueTo();
   /**
-   * <code>.data.Value valueTo = 2;</code>
+   * <code>.data.Value valueTo = 3;</code>
    */
   org.spin.grpc.util.ValueOrBuilder getValueToOrBuilder();
 
   /**
-   * <code>repeated .data.Value values = 3;</code>
+   * <code>repeated .data.Value values = 4;</code>
    */
   java.util.List<org.spin.grpc.util.Value> 
       getValuesList();
   /**
-   * <code>repeated .data.Value values = 3;</code>
+   * <code>repeated .data.Value values = 4;</code>
    */
   org.spin.grpc.util.Value getValues(int index);
   /**
-   * <code>repeated .data.Value values = 3;</code>
+   * <code>repeated .data.Value values = 4;</code>
    */
   int getValuesCount();
   /**
-   * <code>repeated .data.Value values = 3;</code>
+   * <code>repeated .data.Value values = 4;</code>
    */
   java.util.List<? extends org.spin.grpc.util.ValueOrBuilder> 
       getValuesOrBuilderList();
   /**
-   * <code>repeated .data.Value values = 3;</code>
+   * <code>repeated .data.Value values = 4;</code>
    */
   org.spin.grpc.util.ValueOrBuilder getValuesOrBuilder(
       int index);
@@ -62,7 +72,7 @@ public interface ConditionOrBuilder extends
    *	Operators
    * </pre>
    *
-   * <code>.data.Condition.Operator operator = 4;</code>
+   * <code>.data.Condition.Operator operator = 5;</code>
    */
   int getOperatorValue();
   /**
@@ -70,7 +80,7 @@ public interface ConditionOrBuilder extends
    *	Operators
    * </pre>
    *
-   * <code>.data.Condition.Operator operator = 4;</code>
+   * <code>.data.Condition.Operator operator = 5;</code>
    */
   org.spin.grpc.util.Condition.Operator getOperator();
 }
