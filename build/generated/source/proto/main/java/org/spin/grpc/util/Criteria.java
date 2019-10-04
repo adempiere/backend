@@ -24,6 +24,7 @@ private static final long serialVersionUID = 0L;
     query_ = "";
     whereClause_ = "";
     orderByClause_ = "";
+    referenceUuid_ = "";
     conditions_ = java.util.Collections.emptyList();
     values_ = java.util.Collections.emptyList();
     orderByColumn_ = java.util.Collections.emptyList();
@@ -86,33 +87,39 @@ private static final long serialVersionUID = 0L;
             break;
           }
           case 42: {
-            if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+            java.lang.String s = input.readStringRequireUtf8();
+
+            referenceUuid_ = s;
+            break;
+          }
+          case 50: {
+            if (!((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
               conditions_ = new java.util.ArrayList<org.spin.grpc.util.Condition>();
-              mutable_bitField0_ |= 0x00000010;
+              mutable_bitField0_ |= 0x00000020;
             }
             conditions_.add(
                 input.readMessage(org.spin.grpc.util.Condition.parser(), extensionRegistry));
             break;
           }
-          case 50: {
-            if (!((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
+          case 58: {
+            if (!((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
               values_ = new java.util.ArrayList<org.spin.grpc.util.Value>();
-              mutable_bitField0_ |= 0x00000020;
+              mutable_bitField0_ |= 0x00000040;
             }
             values_.add(
                 input.readMessage(org.spin.grpc.util.Value.parser(), extensionRegistry));
             break;
           }
-          case 58: {
-            if (!((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
+          case 66: {
+            if (!((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
               orderByColumn_ = new java.util.ArrayList<org.spin.grpc.util.OrderByProperty>();
-              mutable_bitField0_ |= 0x00000040;
+              mutable_bitField0_ |= 0x00000080;
             }
             orderByColumn_.add(
                 input.readMessage(org.spin.grpc.util.OrderByProperty.parser(), extensionRegistry));
             break;
           }
-          case 64: {
+          case 72: {
 
             limit_ = input.readInt64();
             break;
@@ -125,13 +132,13 @@ private static final long serialVersionUID = 0L;
       throw new com.google.protobuf.InvalidProtocolBufferException(
           e).setUnfinishedMessage(this);
     } finally {
-      if (((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+      if (((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
         conditions_ = java.util.Collections.unmodifiableList(conditions_);
       }
-      if (((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
+      if (((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
         values_ = java.util.Collections.unmodifiableList(values_);
       }
-      if (((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
+      if (((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
         orderByColumn_ = java.util.Collections.unmodifiableList(orderByColumn_);
       }
       this.unknownFields = unknownFields.build();
@@ -287,115 +294,149 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int CONDITIONS_FIELD_NUMBER = 5;
+  public static final int REFERENCEUUID_FIELD_NUMBER = 5;
+  private volatile java.lang.Object referenceUuid_;
+  /**
+   * <code>string referenceUuid = 5;</code>
+   */
+  public java.lang.String getReferenceUuid() {
+    java.lang.Object ref = referenceUuid_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      referenceUuid_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string referenceUuid = 5;</code>
+   */
+  public com.google.protobuf.ByteString
+      getReferenceUuidBytes() {
+    java.lang.Object ref = referenceUuid_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      referenceUuid_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int CONDITIONS_FIELD_NUMBER = 6;
   private java.util.List<org.spin.grpc.util.Condition> conditions_;
   /**
-   * <code>repeated .data.Condition conditions = 5;</code>
+   * <code>repeated .data.Condition conditions = 6;</code>
    */
   public java.util.List<org.spin.grpc.util.Condition> getConditionsList() {
     return conditions_;
   }
   /**
-   * <code>repeated .data.Condition conditions = 5;</code>
+   * <code>repeated .data.Condition conditions = 6;</code>
    */
   public java.util.List<? extends org.spin.grpc.util.ConditionOrBuilder> 
       getConditionsOrBuilderList() {
     return conditions_;
   }
   /**
-   * <code>repeated .data.Condition conditions = 5;</code>
+   * <code>repeated .data.Condition conditions = 6;</code>
    */
   public int getConditionsCount() {
     return conditions_.size();
   }
   /**
-   * <code>repeated .data.Condition conditions = 5;</code>
+   * <code>repeated .data.Condition conditions = 6;</code>
    */
   public org.spin.grpc.util.Condition getConditions(int index) {
     return conditions_.get(index);
   }
   /**
-   * <code>repeated .data.Condition conditions = 5;</code>
+   * <code>repeated .data.Condition conditions = 6;</code>
    */
   public org.spin.grpc.util.ConditionOrBuilder getConditionsOrBuilder(
       int index) {
     return conditions_.get(index);
   }
 
-  public static final int VALUES_FIELD_NUMBER = 6;
+  public static final int VALUES_FIELD_NUMBER = 7;
   private java.util.List<org.spin.grpc.util.Value> values_;
   /**
-   * <code>repeated .data.Value values = 6;</code>
+   * <code>repeated .data.Value values = 7;</code>
    */
   public java.util.List<org.spin.grpc.util.Value> getValuesList() {
     return values_;
   }
   /**
-   * <code>repeated .data.Value values = 6;</code>
+   * <code>repeated .data.Value values = 7;</code>
    */
   public java.util.List<? extends org.spin.grpc.util.ValueOrBuilder> 
       getValuesOrBuilderList() {
     return values_;
   }
   /**
-   * <code>repeated .data.Value values = 6;</code>
+   * <code>repeated .data.Value values = 7;</code>
    */
   public int getValuesCount() {
     return values_.size();
   }
   /**
-   * <code>repeated .data.Value values = 6;</code>
+   * <code>repeated .data.Value values = 7;</code>
    */
   public org.spin.grpc.util.Value getValues(int index) {
     return values_.get(index);
   }
   /**
-   * <code>repeated .data.Value values = 6;</code>
+   * <code>repeated .data.Value values = 7;</code>
    */
   public org.spin.grpc.util.ValueOrBuilder getValuesOrBuilder(
       int index) {
     return values_.get(index);
   }
 
-  public static final int ORDERBYCOLUMN_FIELD_NUMBER = 7;
+  public static final int ORDERBYCOLUMN_FIELD_NUMBER = 8;
   private java.util.List<org.spin.grpc.util.OrderByProperty> orderByColumn_;
   /**
-   * <code>repeated .data.OrderByProperty orderByColumn = 7;</code>
+   * <code>repeated .data.OrderByProperty orderByColumn = 8;</code>
    */
   public java.util.List<org.spin.grpc.util.OrderByProperty> getOrderByColumnList() {
     return orderByColumn_;
   }
   /**
-   * <code>repeated .data.OrderByProperty orderByColumn = 7;</code>
+   * <code>repeated .data.OrderByProperty orderByColumn = 8;</code>
    */
   public java.util.List<? extends org.spin.grpc.util.OrderByPropertyOrBuilder> 
       getOrderByColumnOrBuilderList() {
     return orderByColumn_;
   }
   /**
-   * <code>repeated .data.OrderByProperty orderByColumn = 7;</code>
+   * <code>repeated .data.OrderByProperty orderByColumn = 8;</code>
    */
   public int getOrderByColumnCount() {
     return orderByColumn_.size();
   }
   /**
-   * <code>repeated .data.OrderByProperty orderByColumn = 7;</code>
+   * <code>repeated .data.OrderByProperty orderByColumn = 8;</code>
    */
   public org.spin.grpc.util.OrderByProperty getOrderByColumn(int index) {
     return orderByColumn_.get(index);
   }
   /**
-   * <code>repeated .data.OrderByProperty orderByColumn = 7;</code>
+   * <code>repeated .data.OrderByProperty orderByColumn = 8;</code>
    */
   public org.spin.grpc.util.OrderByPropertyOrBuilder getOrderByColumnOrBuilder(
       int index) {
     return orderByColumn_.get(index);
   }
 
-  public static final int LIMIT_FIELD_NUMBER = 8;
+  public static final int LIMIT_FIELD_NUMBER = 9;
   private long limit_;
   /**
-   * <code>int64 limit = 8;</code>
+   * <code>int64 limit = 9;</code>
    */
   public long getLimit() {
     return limit_;
@@ -425,17 +466,20 @@ private static final long serialVersionUID = 0L;
     if (!getOrderByClauseBytes().isEmpty()) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 4, orderByClause_);
     }
+    if (!getReferenceUuidBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 5, referenceUuid_);
+    }
     for (int i = 0; i < conditions_.size(); i++) {
-      output.writeMessage(5, conditions_.get(i));
+      output.writeMessage(6, conditions_.get(i));
     }
     for (int i = 0; i < values_.size(); i++) {
-      output.writeMessage(6, values_.get(i));
+      output.writeMessage(7, values_.get(i));
     }
     for (int i = 0; i < orderByColumn_.size(); i++) {
-      output.writeMessage(7, orderByColumn_.get(i));
+      output.writeMessage(8, orderByColumn_.get(i));
     }
     if (limit_ != 0L) {
-      output.writeInt64(8, limit_);
+      output.writeInt64(9, limit_);
     }
     unknownFields.writeTo(output);
   }
@@ -457,21 +501,24 @@ private static final long serialVersionUID = 0L;
     if (!getOrderByClauseBytes().isEmpty()) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, orderByClause_);
     }
+    if (!getReferenceUuidBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, referenceUuid_);
+    }
     for (int i = 0; i < conditions_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(5, conditions_.get(i));
+        .computeMessageSize(6, conditions_.get(i));
     }
     for (int i = 0; i < values_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(6, values_.get(i));
+        .computeMessageSize(7, values_.get(i));
     }
     for (int i = 0; i < orderByColumn_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(7, orderByColumn_.get(i));
+        .computeMessageSize(8, orderByColumn_.get(i));
     }
     if (limit_ != 0L) {
       size += com.google.protobuf.CodedOutputStream
-        .computeInt64Size(8, limit_);
+        .computeInt64Size(9, limit_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -497,6 +544,8 @@ private static final long serialVersionUID = 0L;
         .equals(other.getWhereClause());
     result = result && getOrderByClause()
         .equals(other.getOrderByClause());
+    result = result && getReferenceUuid()
+        .equals(other.getReferenceUuid());
     result = result && getConditionsList()
         .equals(other.getConditionsList());
     result = result && getValuesList()
@@ -524,6 +573,8 @@ private static final long serialVersionUID = 0L;
     hash = (53 * hash) + getWhereClause().hashCode();
     hash = (37 * hash) + ORDERBYCLAUSE_FIELD_NUMBER;
     hash = (53 * hash) + getOrderByClause().hashCode();
+    hash = (37 * hash) + REFERENCEUUID_FIELD_NUMBER;
+    hash = (53 * hash) + getReferenceUuid().hashCode();
     if (getConditionsCount() > 0) {
       hash = (37 * hash) + CONDITIONS_FIELD_NUMBER;
       hash = (53 * hash) + getConditionsList().hashCode();
@@ -683,21 +734,23 @@ private static final long serialVersionUID = 0L;
 
       orderByClause_ = "";
 
+      referenceUuid_ = "";
+
       if (conditionsBuilder_ == null) {
         conditions_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000010);
+        bitField0_ = (bitField0_ & ~0x00000020);
       } else {
         conditionsBuilder_.clear();
       }
       if (valuesBuilder_ == null) {
         values_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000020);
+        bitField0_ = (bitField0_ & ~0x00000040);
       } else {
         valuesBuilder_.clear();
       }
       if (orderByColumnBuilder_ == null) {
         orderByColumn_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000040);
+        bitField0_ = (bitField0_ & ~0x00000080);
       } else {
         orderByColumnBuilder_.clear();
       }
@@ -731,28 +784,29 @@ private static final long serialVersionUID = 0L;
       result.query_ = query_;
       result.whereClause_ = whereClause_;
       result.orderByClause_ = orderByClause_;
+      result.referenceUuid_ = referenceUuid_;
       if (conditionsBuilder_ == null) {
-        if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        if (((bitField0_ & 0x00000020) == 0x00000020)) {
           conditions_ = java.util.Collections.unmodifiableList(conditions_);
-          bitField0_ = (bitField0_ & ~0x00000010);
+          bitField0_ = (bitField0_ & ~0x00000020);
         }
         result.conditions_ = conditions_;
       } else {
         result.conditions_ = conditionsBuilder_.build();
       }
       if (valuesBuilder_ == null) {
-        if (((bitField0_ & 0x00000020) == 0x00000020)) {
+        if (((bitField0_ & 0x00000040) == 0x00000040)) {
           values_ = java.util.Collections.unmodifiableList(values_);
-          bitField0_ = (bitField0_ & ~0x00000020);
+          bitField0_ = (bitField0_ & ~0x00000040);
         }
         result.values_ = values_;
       } else {
         result.values_ = valuesBuilder_.build();
       }
       if (orderByColumnBuilder_ == null) {
-        if (((bitField0_ & 0x00000040) == 0x00000040)) {
+        if (((bitField0_ & 0x00000080) == 0x00000080)) {
           orderByColumn_ = java.util.Collections.unmodifiableList(orderByColumn_);
-          bitField0_ = (bitField0_ & ~0x00000040);
+          bitField0_ = (bitField0_ & ~0x00000080);
         }
         result.orderByColumn_ = orderByColumn_;
       } else {
@@ -817,11 +871,15 @@ private static final long serialVersionUID = 0L;
         orderByClause_ = other.orderByClause_;
         onChanged();
       }
+      if (!other.getReferenceUuid().isEmpty()) {
+        referenceUuid_ = other.referenceUuid_;
+        onChanged();
+      }
       if (conditionsBuilder_ == null) {
         if (!other.conditions_.isEmpty()) {
           if (conditions_.isEmpty()) {
             conditions_ = other.conditions_;
-            bitField0_ = (bitField0_ & ~0x00000010);
+            bitField0_ = (bitField0_ & ~0x00000020);
           } else {
             ensureConditionsIsMutable();
             conditions_.addAll(other.conditions_);
@@ -834,7 +892,7 @@ private static final long serialVersionUID = 0L;
             conditionsBuilder_.dispose();
             conditionsBuilder_ = null;
             conditions_ = other.conditions_;
-            bitField0_ = (bitField0_ & ~0x00000010);
+            bitField0_ = (bitField0_ & ~0x00000020);
             conditionsBuilder_ = 
               com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                  getConditionsFieldBuilder() : null;
@@ -847,7 +905,7 @@ private static final long serialVersionUID = 0L;
         if (!other.values_.isEmpty()) {
           if (values_.isEmpty()) {
             values_ = other.values_;
-            bitField0_ = (bitField0_ & ~0x00000020);
+            bitField0_ = (bitField0_ & ~0x00000040);
           } else {
             ensureValuesIsMutable();
             values_.addAll(other.values_);
@@ -860,7 +918,7 @@ private static final long serialVersionUID = 0L;
             valuesBuilder_.dispose();
             valuesBuilder_ = null;
             values_ = other.values_;
-            bitField0_ = (bitField0_ & ~0x00000020);
+            bitField0_ = (bitField0_ & ~0x00000040);
             valuesBuilder_ = 
               com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                  getValuesFieldBuilder() : null;
@@ -873,7 +931,7 @@ private static final long serialVersionUID = 0L;
         if (!other.orderByColumn_.isEmpty()) {
           if (orderByColumn_.isEmpty()) {
             orderByColumn_ = other.orderByColumn_;
-            bitField0_ = (bitField0_ & ~0x00000040);
+            bitField0_ = (bitField0_ & ~0x00000080);
           } else {
             ensureOrderByColumnIsMutable();
             orderByColumn_.addAll(other.orderByColumn_);
@@ -886,7 +944,7 @@ private static final long serialVersionUID = 0L;
             orderByColumnBuilder_.dispose();
             orderByColumnBuilder_ = null;
             orderByColumn_ = other.orderByColumn_;
-            bitField0_ = (bitField0_ & ~0x00000040);
+            bitField0_ = (bitField0_ & ~0x00000080);
             orderByColumnBuilder_ = 
               com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                  getOrderByColumnFieldBuilder() : null;
@@ -1202,12 +1260,81 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
+    private java.lang.Object referenceUuid_ = "";
+    /**
+     * <code>string referenceUuid = 5;</code>
+     */
+    public java.lang.String getReferenceUuid() {
+      java.lang.Object ref = referenceUuid_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        referenceUuid_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string referenceUuid = 5;</code>
+     */
+    public com.google.protobuf.ByteString
+        getReferenceUuidBytes() {
+      java.lang.Object ref = referenceUuid_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        referenceUuid_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string referenceUuid = 5;</code>
+     */
+    public Builder setReferenceUuid(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
+      referenceUuid_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string referenceUuid = 5;</code>
+     */
+    public Builder clearReferenceUuid() {
+      
+      referenceUuid_ = getDefaultInstance().getReferenceUuid();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string referenceUuid = 5;</code>
+     */
+    public Builder setReferenceUuidBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      
+      referenceUuid_ = value;
+      onChanged();
+      return this;
+    }
+
     private java.util.List<org.spin.grpc.util.Condition> conditions_ =
       java.util.Collections.emptyList();
     private void ensureConditionsIsMutable() {
-      if (!((bitField0_ & 0x00000010) == 0x00000010)) {
+      if (!((bitField0_ & 0x00000020) == 0x00000020)) {
         conditions_ = new java.util.ArrayList<org.spin.grpc.util.Condition>(conditions_);
-        bitField0_ |= 0x00000010;
+        bitField0_ |= 0x00000020;
        }
     }
 
@@ -1215,7 +1342,7 @@ private static final long serialVersionUID = 0L;
         org.spin.grpc.util.Condition, org.spin.grpc.util.Condition.Builder, org.spin.grpc.util.ConditionOrBuilder> conditionsBuilder_;
 
     /**
-     * <code>repeated .data.Condition conditions = 5;</code>
+     * <code>repeated .data.Condition conditions = 6;</code>
      */
     public java.util.List<org.spin.grpc.util.Condition> getConditionsList() {
       if (conditionsBuilder_ == null) {
@@ -1225,7 +1352,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.Condition conditions = 5;</code>
+     * <code>repeated .data.Condition conditions = 6;</code>
      */
     public int getConditionsCount() {
       if (conditionsBuilder_ == null) {
@@ -1235,7 +1362,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.Condition conditions = 5;</code>
+     * <code>repeated .data.Condition conditions = 6;</code>
      */
     public org.spin.grpc.util.Condition getConditions(int index) {
       if (conditionsBuilder_ == null) {
@@ -1245,7 +1372,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.Condition conditions = 5;</code>
+     * <code>repeated .data.Condition conditions = 6;</code>
      */
     public Builder setConditions(
         int index, org.spin.grpc.util.Condition value) {
@@ -1262,7 +1389,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.Condition conditions = 5;</code>
+     * <code>repeated .data.Condition conditions = 6;</code>
      */
     public Builder setConditions(
         int index, org.spin.grpc.util.Condition.Builder builderForValue) {
@@ -1276,7 +1403,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.Condition conditions = 5;</code>
+     * <code>repeated .data.Condition conditions = 6;</code>
      */
     public Builder addConditions(org.spin.grpc.util.Condition value) {
       if (conditionsBuilder_ == null) {
@@ -1292,7 +1419,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.Condition conditions = 5;</code>
+     * <code>repeated .data.Condition conditions = 6;</code>
      */
     public Builder addConditions(
         int index, org.spin.grpc.util.Condition value) {
@@ -1309,7 +1436,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.Condition conditions = 5;</code>
+     * <code>repeated .data.Condition conditions = 6;</code>
      */
     public Builder addConditions(
         org.spin.grpc.util.Condition.Builder builderForValue) {
@@ -1323,7 +1450,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.Condition conditions = 5;</code>
+     * <code>repeated .data.Condition conditions = 6;</code>
      */
     public Builder addConditions(
         int index, org.spin.grpc.util.Condition.Builder builderForValue) {
@@ -1337,7 +1464,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.Condition conditions = 5;</code>
+     * <code>repeated .data.Condition conditions = 6;</code>
      */
     public Builder addAllConditions(
         java.lang.Iterable<? extends org.spin.grpc.util.Condition> values) {
@@ -1352,12 +1479,12 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.Condition conditions = 5;</code>
+     * <code>repeated .data.Condition conditions = 6;</code>
      */
     public Builder clearConditions() {
       if (conditionsBuilder_ == null) {
         conditions_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000010);
+        bitField0_ = (bitField0_ & ~0x00000020);
         onChanged();
       } else {
         conditionsBuilder_.clear();
@@ -1365,7 +1492,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.Condition conditions = 5;</code>
+     * <code>repeated .data.Condition conditions = 6;</code>
      */
     public Builder removeConditions(int index) {
       if (conditionsBuilder_ == null) {
@@ -1378,14 +1505,14 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.Condition conditions = 5;</code>
+     * <code>repeated .data.Condition conditions = 6;</code>
      */
     public org.spin.grpc.util.Condition.Builder getConditionsBuilder(
         int index) {
       return getConditionsFieldBuilder().getBuilder(index);
     }
     /**
-     * <code>repeated .data.Condition conditions = 5;</code>
+     * <code>repeated .data.Condition conditions = 6;</code>
      */
     public org.spin.grpc.util.ConditionOrBuilder getConditionsOrBuilder(
         int index) {
@@ -1395,7 +1522,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.Condition conditions = 5;</code>
+     * <code>repeated .data.Condition conditions = 6;</code>
      */
     public java.util.List<? extends org.spin.grpc.util.ConditionOrBuilder> 
          getConditionsOrBuilderList() {
@@ -1406,14 +1533,14 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.Condition conditions = 5;</code>
+     * <code>repeated .data.Condition conditions = 6;</code>
      */
     public org.spin.grpc.util.Condition.Builder addConditionsBuilder() {
       return getConditionsFieldBuilder().addBuilder(
           org.spin.grpc.util.Condition.getDefaultInstance());
     }
     /**
-     * <code>repeated .data.Condition conditions = 5;</code>
+     * <code>repeated .data.Condition conditions = 6;</code>
      */
     public org.spin.grpc.util.Condition.Builder addConditionsBuilder(
         int index) {
@@ -1421,7 +1548,7 @@ private static final long serialVersionUID = 0L;
           index, org.spin.grpc.util.Condition.getDefaultInstance());
     }
     /**
-     * <code>repeated .data.Condition conditions = 5;</code>
+     * <code>repeated .data.Condition conditions = 6;</code>
      */
     public java.util.List<org.spin.grpc.util.Condition.Builder> 
          getConditionsBuilderList() {
@@ -1434,7 +1561,7 @@ private static final long serialVersionUID = 0L;
         conditionsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
             org.spin.grpc.util.Condition, org.spin.grpc.util.Condition.Builder, org.spin.grpc.util.ConditionOrBuilder>(
                 conditions_,
-                ((bitField0_ & 0x00000010) == 0x00000010),
+                ((bitField0_ & 0x00000020) == 0x00000020),
                 getParentForChildren(),
                 isClean());
         conditions_ = null;
@@ -1445,9 +1572,9 @@ private static final long serialVersionUID = 0L;
     private java.util.List<org.spin.grpc.util.Value> values_ =
       java.util.Collections.emptyList();
     private void ensureValuesIsMutable() {
-      if (!((bitField0_ & 0x00000020) == 0x00000020)) {
+      if (!((bitField0_ & 0x00000040) == 0x00000040)) {
         values_ = new java.util.ArrayList<org.spin.grpc.util.Value>(values_);
-        bitField0_ |= 0x00000020;
+        bitField0_ |= 0x00000040;
        }
     }
 
@@ -1455,7 +1582,7 @@ private static final long serialVersionUID = 0L;
         org.spin.grpc.util.Value, org.spin.grpc.util.Value.Builder, org.spin.grpc.util.ValueOrBuilder> valuesBuilder_;
 
     /**
-     * <code>repeated .data.Value values = 6;</code>
+     * <code>repeated .data.Value values = 7;</code>
      */
     public java.util.List<org.spin.grpc.util.Value> getValuesList() {
       if (valuesBuilder_ == null) {
@@ -1465,7 +1592,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.Value values = 6;</code>
+     * <code>repeated .data.Value values = 7;</code>
      */
     public int getValuesCount() {
       if (valuesBuilder_ == null) {
@@ -1475,7 +1602,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.Value values = 6;</code>
+     * <code>repeated .data.Value values = 7;</code>
      */
     public org.spin.grpc.util.Value getValues(int index) {
       if (valuesBuilder_ == null) {
@@ -1485,7 +1612,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.Value values = 6;</code>
+     * <code>repeated .data.Value values = 7;</code>
      */
     public Builder setValues(
         int index, org.spin.grpc.util.Value value) {
@@ -1502,7 +1629,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.Value values = 6;</code>
+     * <code>repeated .data.Value values = 7;</code>
      */
     public Builder setValues(
         int index, org.spin.grpc.util.Value.Builder builderForValue) {
@@ -1516,7 +1643,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.Value values = 6;</code>
+     * <code>repeated .data.Value values = 7;</code>
      */
     public Builder addValues(org.spin.grpc.util.Value value) {
       if (valuesBuilder_ == null) {
@@ -1532,7 +1659,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.Value values = 6;</code>
+     * <code>repeated .data.Value values = 7;</code>
      */
     public Builder addValues(
         int index, org.spin.grpc.util.Value value) {
@@ -1549,7 +1676,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.Value values = 6;</code>
+     * <code>repeated .data.Value values = 7;</code>
      */
     public Builder addValues(
         org.spin.grpc.util.Value.Builder builderForValue) {
@@ -1563,7 +1690,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.Value values = 6;</code>
+     * <code>repeated .data.Value values = 7;</code>
      */
     public Builder addValues(
         int index, org.spin.grpc.util.Value.Builder builderForValue) {
@@ -1577,7 +1704,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.Value values = 6;</code>
+     * <code>repeated .data.Value values = 7;</code>
      */
     public Builder addAllValues(
         java.lang.Iterable<? extends org.spin.grpc.util.Value> values) {
@@ -1592,12 +1719,12 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.Value values = 6;</code>
+     * <code>repeated .data.Value values = 7;</code>
      */
     public Builder clearValues() {
       if (valuesBuilder_ == null) {
         values_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000020);
+        bitField0_ = (bitField0_ & ~0x00000040);
         onChanged();
       } else {
         valuesBuilder_.clear();
@@ -1605,7 +1732,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.Value values = 6;</code>
+     * <code>repeated .data.Value values = 7;</code>
      */
     public Builder removeValues(int index) {
       if (valuesBuilder_ == null) {
@@ -1618,14 +1745,14 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.Value values = 6;</code>
+     * <code>repeated .data.Value values = 7;</code>
      */
     public org.spin.grpc.util.Value.Builder getValuesBuilder(
         int index) {
       return getValuesFieldBuilder().getBuilder(index);
     }
     /**
-     * <code>repeated .data.Value values = 6;</code>
+     * <code>repeated .data.Value values = 7;</code>
      */
     public org.spin.grpc.util.ValueOrBuilder getValuesOrBuilder(
         int index) {
@@ -1635,7 +1762,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.Value values = 6;</code>
+     * <code>repeated .data.Value values = 7;</code>
      */
     public java.util.List<? extends org.spin.grpc.util.ValueOrBuilder> 
          getValuesOrBuilderList() {
@@ -1646,14 +1773,14 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.Value values = 6;</code>
+     * <code>repeated .data.Value values = 7;</code>
      */
     public org.spin.grpc.util.Value.Builder addValuesBuilder() {
       return getValuesFieldBuilder().addBuilder(
           org.spin.grpc.util.Value.getDefaultInstance());
     }
     /**
-     * <code>repeated .data.Value values = 6;</code>
+     * <code>repeated .data.Value values = 7;</code>
      */
     public org.spin.grpc.util.Value.Builder addValuesBuilder(
         int index) {
@@ -1661,7 +1788,7 @@ private static final long serialVersionUID = 0L;
           index, org.spin.grpc.util.Value.getDefaultInstance());
     }
     /**
-     * <code>repeated .data.Value values = 6;</code>
+     * <code>repeated .data.Value values = 7;</code>
      */
     public java.util.List<org.spin.grpc.util.Value.Builder> 
          getValuesBuilderList() {
@@ -1674,7 +1801,7 @@ private static final long serialVersionUID = 0L;
         valuesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
             org.spin.grpc.util.Value, org.spin.grpc.util.Value.Builder, org.spin.grpc.util.ValueOrBuilder>(
                 values_,
-                ((bitField0_ & 0x00000020) == 0x00000020),
+                ((bitField0_ & 0x00000040) == 0x00000040),
                 getParentForChildren(),
                 isClean());
         values_ = null;
@@ -1685,9 +1812,9 @@ private static final long serialVersionUID = 0L;
     private java.util.List<org.spin.grpc.util.OrderByProperty> orderByColumn_ =
       java.util.Collections.emptyList();
     private void ensureOrderByColumnIsMutable() {
-      if (!((bitField0_ & 0x00000040) == 0x00000040)) {
+      if (!((bitField0_ & 0x00000080) == 0x00000080)) {
         orderByColumn_ = new java.util.ArrayList<org.spin.grpc.util.OrderByProperty>(orderByColumn_);
-        bitField0_ |= 0x00000040;
+        bitField0_ |= 0x00000080;
        }
     }
 
@@ -1695,7 +1822,7 @@ private static final long serialVersionUID = 0L;
         org.spin.grpc.util.OrderByProperty, org.spin.grpc.util.OrderByProperty.Builder, org.spin.grpc.util.OrderByPropertyOrBuilder> orderByColumnBuilder_;
 
     /**
-     * <code>repeated .data.OrderByProperty orderByColumn = 7;</code>
+     * <code>repeated .data.OrderByProperty orderByColumn = 8;</code>
      */
     public java.util.List<org.spin.grpc.util.OrderByProperty> getOrderByColumnList() {
       if (orderByColumnBuilder_ == null) {
@@ -1705,7 +1832,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.OrderByProperty orderByColumn = 7;</code>
+     * <code>repeated .data.OrderByProperty orderByColumn = 8;</code>
      */
     public int getOrderByColumnCount() {
       if (orderByColumnBuilder_ == null) {
@@ -1715,7 +1842,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.OrderByProperty orderByColumn = 7;</code>
+     * <code>repeated .data.OrderByProperty orderByColumn = 8;</code>
      */
     public org.spin.grpc.util.OrderByProperty getOrderByColumn(int index) {
       if (orderByColumnBuilder_ == null) {
@@ -1725,7 +1852,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.OrderByProperty orderByColumn = 7;</code>
+     * <code>repeated .data.OrderByProperty orderByColumn = 8;</code>
      */
     public Builder setOrderByColumn(
         int index, org.spin.grpc.util.OrderByProperty value) {
@@ -1742,7 +1869,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.OrderByProperty orderByColumn = 7;</code>
+     * <code>repeated .data.OrderByProperty orderByColumn = 8;</code>
      */
     public Builder setOrderByColumn(
         int index, org.spin.grpc.util.OrderByProperty.Builder builderForValue) {
@@ -1756,7 +1883,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.OrderByProperty orderByColumn = 7;</code>
+     * <code>repeated .data.OrderByProperty orderByColumn = 8;</code>
      */
     public Builder addOrderByColumn(org.spin.grpc.util.OrderByProperty value) {
       if (orderByColumnBuilder_ == null) {
@@ -1772,7 +1899,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.OrderByProperty orderByColumn = 7;</code>
+     * <code>repeated .data.OrderByProperty orderByColumn = 8;</code>
      */
     public Builder addOrderByColumn(
         int index, org.spin.grpc.util.OrderByProperty value) {
@@ -1789,7 +1916,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.OrderByProperty orderByColumn = 7;</code>
+     * <code>repeated .data.OrderByProperty orderByColumn = 8;</code>
      */
     public Builder addOrderByColumn(
         org.spin.grpc.util.OrderByProperty.Builder builderForValue) {
@@ -1803,7 +1930,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.OrderByProperty orderByColumn = 7;</code>
+     * <code>repeated .data.OrderByProperty orderByColumn = 8;</code>
      */
     public Builder addOrderByColumn(
         int index, org.spin.grpc.util.OrderByProperty.Builder builderForValue) {
@@ -1817,7 +1944,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.OrderByProperty orderByColumn = 7;</code>
+     * <code>repeated .data.OrderByProperty orderByColumn = 8;</code>
      */
     public Builder addAllOrderByColumn(
         java.lang.Iterable<? extends org.spin.grpc.util.OrderByProperty> values) {
@@ -1832,12 +1959,12 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.OrderByProperty orderByColumn = 7;</code>
+     * <code>repeated .data.OrderByProperty orderByColumn = 8;</code>
      */
     public Builder clearOrderByColumn() {
       if (orderByColumnBuilder_ == null) {
         orderByColumn_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000040);
+        bitField0_ = (bitField0_ & ~0x00000080);
         onChanged();
       } else {
         orderByColumnBuilder_.clear();
@@ -1845,7 +1972,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.OrderByProperty orderByColumn = 7;</code>
+     * <code>repeated .data.OrderByProperty orderByColumn = 8;</code>
      */
     public Builder removeOrderByColumn(int index) {
       if (orderByColumnBuilder_ == null) {
@@ -1858,14 +1985,14 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.OrderByProperty orderByColumn = 7;</code>
+     * <code>repeated .data.OrderByProperty orderByColumn = 8;</code>
      */
     public org.spin.grpc.util.OrderByProperty.Builder getOrderByColumnBuilder(
         int index) {
       return getOrderByColumnFieldBuilder().getBuilder(index);
     }
     /**
-     * <code>repeated .data.OrderByProperty orderByColumn = 7;</code>
+     * <code>repeated .data.OrderByProperty orderByColumn = 8;</code>
      */
     public org.spin.grpc.util.OrderByPropertyOrBuilder getOrderByColumnOrBuilder(
         int index) {
@@ -1875,7 +2002,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.OrderByProperty orderByColumn = 7;</code>
+     * <code>repeated .data.OrderByProperty orderByColumn = 8;</code>
      */
     public java.util.List<? extends org.spin.grpc.util.OrderByPropertyOrBuilder> 
          getOrderByColumnOrBuilderList() {
@@ -1886,14 +2013,14 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.OrderByProperty orderByColumn = 7;</code>
+     * <code>repeated .data.OrderByProperty orderByColumn = 8;</code>
      */
     public org.spin.grpc.util.OrderByProperty.Builder addOrderByColumnBuilder() {
       return getOrderByColumnFieldBuilder().addBuilder(
           org.spin.grpc.util.OrderByProperty.getDefaultInstance());
     }
     /**
-     * <code>repeated .data.OrderByProperty orderByColumn = 7;</code>
+     * <code>repeated .data.OrderByProperty orderByColumn = 8;</code>
      */
     public org.spin.grpc.util.OrderByProperty.Builder addOrderByColumnBuilder(
         int index) {
@@ -1901,7 +2028,7 @@ private static final long serialVersionUID = 0L;
           index, org.spin.grpc.util.OrderByProperty.getDefaultInstance());
     }
     /**
-     * <code>repeated .data.OrderByProperty orderByColumn = 7;</code>
+     * <code>repeated .data.OrderByProperty orderByColumn = 8;</code>
      */
     public java.util.List<org.spin.grpc.util.OrderByProperty.Builder> 
          getOrderByColumnBuilderList() {
@@ -1914,7 +2041,7 @@ private static final long serialVersionUID = 0L;
         orderByColumnBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
             org.spin.grpc.util.OrderByProperty, org.spin.grpc.util.OrderByProperty.Builder, org.spin.grpc.util.OrderByPropertyOrBuilder>(
                 orderByColumn_,
-                ((bitField0_ & 0x00000040) == 0x00000040),
+                ((bitField0_ & 0x00000080) == 0x00000080),
                 getParentForChildren(),
                 isClean());
         orderByColumn_ = null;
@@ -1924,13 +2051,13 @@ private static final long serialVersionUID = 0L;
 
     private long limit_ ;
     /**
-     * <code>int64 limit = 8;</code>
+     * <code>int64 limit = 9;</code>
      */
     public long getLimit() {
       return limit_;
     }
     /**
-     * <code>int64 limit = 8;</code>
+     * <code>int64 limit = 9;</code>
      */
     public Builder setLimit(long value) {
       
@@ -1939,7 +2066,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>int64 limit = 8;</code>
+     * <code>int64 limit = 9;</code>
      */
     public Builder clearLimit() {
       

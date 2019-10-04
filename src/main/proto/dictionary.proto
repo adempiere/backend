@@ -100,11 +100,12 @@ message Tab {
 	string query = 26;
 	string whereClause = 27;
 	string orderByClause = 28;
+	string parentTabUuid = 29;
 	// External Info
-	ContextInfo contextInfo = 29;
-	repeated Process processes = 30;
-	repeated Field fields = 31;
-	FieldGroup fieldGroup = 32;
+	ContextInfo contextInfo = 30;
+	repeated Process processes = 31;
+	repeated Field fields = 32;
+	FieldGroup fieldGroup = 33;
 }
 
 // Field

@@ -20,6 +20,7 @@ private static final long serialVersionUID = 0L;
     super(builder);
   }
   private RecordReferenceInfo() {
+    uuid_ = "";
     windowUuid_ = "";
     displayName_ = "";
     tableName_ = "";
@@ -61,28 +62,34 @@ private static final long serialVersionUID = 0L;
           case 10: {
             java.lang.String s = input.readStringRequireUtf8();
 
-            windowUuid_ = s;
+            uuid_ = s;
             break;
           }
           case 18: {
             java.lang.String s = input.readStringRequireUtf8();
 
-            displayName_ = s;
+            windowUuid_ = s;
             break;
           }
           case 26: {
             java.lang.String s = input.readStringRequireUtf8();
 
-            tableName_ = s;
+            displayName_ = s;
             break;
           }
           case 34: {
             java.lang.String s = input.readStringRequireUtf8();
 
+            tableName_ = s;
+            break;
+          }
+          case 42: {
+            java.lang.String s = input.readStringRequireUtf8();
+
             whereClause_ = s;
             break;
           }
-          case 40: {
+          case 48: {
 
             recordCount_ = input.readInt64();
             break;
@@ -111,10 +118,44 @@ private static final long serialVersionUID = 0L;
             org.spin.grpc.util.RecordReferenceInfo.class, org.spin.grpc.util.RecordReferenceInfo.Builder.class);
   }
 
-  public static final int WINDOWUUID_FIELD_NUMBER = 1;
+  public static final int UUID_FIELD_NUMBER = 1;
+  private volatile java.lang.Object uuid_;
+  /**
+   * <code>string uuid = 1;</code>
+   */
+  public java.lang.String getUuid() {
+    java.lang.Object ref = uuid_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      uuid_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string uuid = 1;</code>
+   */
+  public com.google.protobuf.ByteString
+      getUuidBytes() {
+    java.lang.Object ref = uuid_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      uuid_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int WINDOWUUID_FIELD_NUMBER = 2;
   private volatile java.lang.Object windowUuid_;
   /**
-   * <code>string windowUuid = 1;</code>
+   * <code>string windowUuid = 2;</code>
    */
   public java.lang.String getWindowUuid() {
     java.lang.Object ref = windowUuid_;
@@ -129,7 +170,7 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <code>string windowUuid = 1;</code>
+   * <code>string windowUuid = 2;</code>
    */
   public com.google.protobuf.ByteString
       getWindowUuidBytes() {
@@ -145,10 +186,10 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int DISPLAYNAME_FIELD_NUMBER = 2;
+  public static final int DISPLAYNAME_FIELD_NUMBER = 3;
   private volatile java.lang.Object displayName_;
   /**
-   * <code>string displayName = 2;</code>
+   * <code>string displayName = 3;</code>
    */
   public java.lang.String getDisplayName() {
     java.lang.Object ref = displayName_;
@@ -163,7 +204,7 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <code>string displayName = 2;</code>
+   * <code>string displayName = 3;</code>
    */
   public com.google.protobuf.ByteString
       getDisplayNameBytes() {
@@ -179,10 +220,10 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int TABLENAME_FIELD_NUMBER = 3;
+  public static final int TABLENAME_FIELD_NUMBER = 4;
   private volatile java.lang.Object tableName_;
   /**
-   * <code>string tableName = 3;</code>
+   * <code>string tableName = 4;</code>
    */
   public java.lang.String getTableName() {
     java.lang.Object ref = tableName_;
@@ -197,7 +238,7 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <code>string tableName = 3;</code>
+   * <code>string tableName = 4;</code>
    */
   public com.google.protobuf.ByteString
       getTableNameBytes() {
@@ -213,10 +254,10 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int WHERECLAUSE_FIELD_NUMBER = 4;
+  public static final int WHERECLAUSE_FIELD_NUMBER = 5;
   private volatile java.lang.Object whereClause_;
   /**
-   * <code>string whereClause = 4;</code>
+   * <code>string whereClause = 5;</code>
    */
   public java.lang.String getWhereClause() {
     java.lang.Object ref = whereClause_;
@@ -231,7 +272,7 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <code>string whereClause = 4;</code>
+   * <code>string whereClause = 5;</code>
    */
   public com.google.protobuf.ByteString
       getWhereClauseBytes() {
@@ -247,10 +288,10 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int RECORDCOUNT_FIELD_NUMBER = 5;
+  public static final int RECORDCOUNT_FIELD_NUMBER = 6;
   private long recordCount_;
   /**
-   * <code>int64 recordCount = 5;</code>
+   * <code>int64 recordCount = 6;</code>
    */
   public long getRecordCount() {
     return recordCount_;
@@ -268,20 +309,23 @@ private static final long serialVersionUID = 0L;
 
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
+    if (!getUuidBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, uuid_);
+    }
     if (!getWindowUuidBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, windowUuid_);
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, windowUuid_);
     }
     if (!getDisplayNameBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, displayName_);
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 3, displayName_);
     }
     if (!getTableNameBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 3, tableName_);
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 4, tableName_);
     }
     if (!getWhereClauseBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 4, whereClause_);
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 5, whereClause_);
     }
     if (recordCount_ != 0L) {
-      output.writeInt64(5, recordCount_);
+      output.writeInt64(6, recordCount_);
     }
     unknownFields.writeTo(output);
   }
@@ -291,21 +335,24 @@ private static final long serialVersionUID = 0L;
     if (size != -1) return size;
 
     size = 0;
+    if (!getUuidBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, uuid_);
+    }
     if (!getWindowUuidBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, windowUuid_);
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, windowUuid_);
     }
     if (!getDisplayNameBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, displayName_);
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, displayName_);
     }
     if (!getTableNameBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, tableName_);
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, tableName_);
     }
     if (!getWhereClauseBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, whereClause_);
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, whereClause_);
     }
     if (recordCount_ != 0L) {
       size += com.google.protobuf.CodedOutputStream
-        .computeInt64Size(5, recordCount_);
+        .computeInt64Size(6, recordCount_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -323,6 +370,8 @@ private static final long serialVersionUID = 0L;
     org.spin.grpc.util.RecordReferenceInfo other = (org.spin.grpc.util.RecordReferenceInfo) obj;
 
     boolean result = true;
+    result = result && getUuid()
+        .equals(other.getUuid());
     result = result && getWindowUuid()
         .equals(other.getWindowUuid());
     result = result && getDisplayName()
@@ -344,6 +393,8 @@ private static final long serialVersionUID = 0L;
     }
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
+    hash = (37 * hash) + UUID_FIELD_NUMBER;
+    hash = (53 * hash) + getUuid().hashCode();
     hash = (37 * hash) + WINDOWUUID_FIELD_NUMBER;
     hash = (53 * hash) + getWindowUuid().hashCode();
     hash = (37 * hash) + DISPLAYNAME_FIELD_NUMBER;
@@ -488,6 +539,8 @@ private static final long serialVersionUID = 0L;
     }
     public Builder clear() {
       super.clear();
+      uuid_ = "";
+
       windowUuid_ = "";
 
       displayName_ = "";
@@ -520,6 +573,7 @@ private static final long serialVersionUID = 0L;
 
     public org.spin.grpc.util.RecordReferenceInfo buildPartial() {
       org.spin.grpc.util.RecordReferenceInfo result = new org.spin.grpc.util.RecordReferenceInfo(this);
+      result.uuid_ = uuid_;
       result.windowUuid_ = windowUuid_;
       result.displayName_ = displayName_;
       result.tableName_ = tableName_;
@@ -566,6 +620,10 @@ private static final long serialVersionUID = 0L;
 
     public Builder mergeFrom(org.spin.grpc.util.RecordReferenceInfo other) {
       if (other == org.spin.grpc.util.RecordReferenceInfo.getDefaultInstance()) return this;
+      if (!other.getUuid().isEmpty()) {
+        uuid_ = other.uuid_;
+        onChanged();
+      }
       if (!other.getWindowUuid().isEmpty()) {
         windowUuid_ = other.windowUuid_;
         onChanged();
@@ -612,9 +670,78 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
+    private java.lang.Object uuid_ = "";
+    /**
+     * <code>string uuid = 1;</code>
+     */
+    public java.lang.String getUuid() {
+      java.lang.Object ref = uuid_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        uuid_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string uuid = 1;</code>
+     */
+    public com.google.protobuf.ByteString
+        getUuidBytes() {
+      java.lang.Object ref = uuid_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        uuid_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string uuid = 1;</code>
+     */
+    public Builder setUuid(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
+      uuid_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string uuid = 1;</code>
+     */
+    public Builder clearUuid() {
+      
+      uuid_ = getDefaultInstance().getUuid();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string uuid = 1;</code>
+     */
+    public Builder setUuidBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      
+      uuid_ = value;
+      onChanged();
+      return this;
+    }
+
     private java.lang.Object windowUuid_ = "";
     /**
-     * <code>string windowUuid = 1;</code>
+     * <code>string windowUuid = 2;</code>
      */
     public java.lang.String getWindowUuid() {
       java.lang.Object ref = windowUuid_;
@@ -629,7 +756,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string windowUuid = 1;</code>
+     * <code>string windowUuid = 2;</code>
      */
     public com.google.protobuf.ByteString
         getWindowUuidBytes() {
@@ -645,7 +772,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string windowUuid = 1;</code>
+     * <code>string windowUuid = 2;</code>
      */
     public Builder setWindowUuid(
         java.lang.String value) {
@@ -658,7 +785,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string windowUuid = 1;</code>
+     * <code>string windowUuid = 2;</code>
      */
     public Builder clearWindowUuid() {
       
@@ -667,7 +794,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string windowUuid = 1;</code>
+     * <code>string windowUuid = 2;</code>
      */
     public Builder setWindowUuidBytes(
         com.google.protobuf.ByteString value) {
@@ -683,7 +810,7 @@ private static final long serialVersionUID = 0L;
 
     private java.lang.Object displayName_ = "";
     /**
-     * <code>string displayName = 2;</code>
+     * <code>string displayName = 3;</code>
      */
     public java.lang.String getDisplayName() {
       java.lang.Object ref = displayName_;
@@ -698,7 +825,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string displayName = 2;</code>
+     * <code>string displayName = 3;</code>
      */
     public com.google.protobuf.ByteString
         getDisplayNameBytes() {
@@ -714,7 +841,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string displayName = 2;</code>
+     * <code>string displayName = 3;</code>
      */
     public Builder setDisplayName(
         java.lang.String value) {
@@ -727,7 +854,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string displayName = 2;</code>
+     * <code>string displayName = 3;</code>
      */
     public Builder clearDisplayName() {
       
@@ -736,7 +863,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string displayName = 2;</code>
+     * <code>string displayName = 3;</code>
      */
     public Builder setDisplayNameBytes(
         com.google.protobuf.ByteString value) {
@@ -752,7 +879,7 @@ private static final long serialVersionUID = 0L;
 
     private java.lang.Object tableName_ = "";
     /**
-     * <code>string tableName = 3;</code>
+     * <code>string tableName = 4;</code>
      */
     public java.lang.String getTableName() {
       java.lang.Object ref = tableName_;
@@ -767,7 +894,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string tableName = 3;</code>
+     * <code>string tableName = 4;</code>
      */
     public com.google.protobuf.ByteString
         getTableNameBytes() {
@@ -783,7 +910,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string tableName = 3;</code>
+     * <code>string tableName = 4;</code>
      */
     public Builder setTableName(
         java.lang.String value) {
@@ -796,7 +923,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string tableName = 3;</code>
+     * <code>string tableName = 4;</code>
      */
     public Builder clearTableName() {
       
@@ -805,7 +932,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string tableName = 3;</code>
+     * <code>string tableName = 4;</code>
      */
     public Builder setTableNameBytes(
         com.google.protobuf.ByteString value) {
@@ -821,7 +948,7 @@ private static final long serialVersionUID = 0L;
 
     private java.lang.Object whereClause_ = "";
     /**
-     * <code>string whereClause = 4;</code>
+     * <code>string whereClause = 5;</code>
      */
     public java.lang.String getWhereClause() {
       java.lang.Object ref = whereClause_;
@@ -836,7 +963,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string whereClause = 4;</code>
+     * <code>string whereClause = 5;</code>
      */
     public com.google.protobuf.ByteString
         getWhereClauseBytes() {
@@ -852,7 +979,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string whereClause = 4;</code>
+     * <code>string whereClause = 5;</code>
      */
     public Builder setWhereClause(
         java.lang.String value) {
@@ -865,7 +992,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string whereClause = 4;</code>
+     * <code>string whereClause = 5;</code>
      */
     public Builder clearWhereClause() {
       
@@ -874,7 +1001,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string whereClause = 4;</code>
+     * <code>string whereClause = 5;</code>
      */
     public Builder setWhereClauseBytes(
         com.google.protobuf.ByteString value) {
@@ -890,13 +1017,13 @@ private static final long serialVersionUID = 0L;
 
     private long recordCount_ ;
     /**
-     * <code>int64 recordCount = 5;</code>
+     * <code>int64 recordCount = 6;</code>
      */
     public long getRecordCount() {
       return recordCount_;
     }
     /**
-     * <code>int64 recordCount = 5;</code>
+     * <code>int64 recordCount = 6;</code>
      */
     public Builder setRecordCount(long value) {
       
@@ -905,7 +1032,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>int64 recordCount = 5;</code>
+     * <code>int64 recordCount = 6;</code>
      */
     public Builder clearRecordCount() {
       

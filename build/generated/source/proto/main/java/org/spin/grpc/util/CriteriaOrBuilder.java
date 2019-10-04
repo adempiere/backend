@@ -48,79 +48,89 @@ public interface CriteriaOrBuilder extends
       getOrderByClauseBytes();
 
   /**
-   * <code>repeated .data.Condition conditions = 5;</code>
+   * <code>string referenceUuid = 5;</code>
+   */
+  java.lang.String getReferenceUuid();
+  /**
+   * <code>string referenceUuid = 5;</code>
+   */
+  com.google.protobuf.ByteString
+      getReferenceUuidBytes();
+
+  /**
+   * <code>repeated .data.Condition conditions = 6;</code>
    */
   java.util.List<org.spin.grpc.util.Condition> 
       getConditionsList();
   /**
-   * <code>repeated .data.Condition conditions = 5;</code>
+   * <code>repeated .data.Condition conditions = 6;</code>
    */
   org.spin.grpc.util.Condition getConditions(int index);
   /**
-   * <code>repeated .data.Condition conditions = 5;</code>
+   * <code>repeated .data.Condition conditions = 6;</code>
    */
   int getConditionsCount();
   /**
-   * <code>repeated .data.Condition conditions = 5;</code>
+   * <code>repeated .data.Condition conditions = 6;</code>
    */
   java.util.List<? extends org.spin.grpc.util.ConditionOrBuilder> 
       getConditionsOrBuilderList();
   /**
-   * <code>repeated .data.Condition conditions = 5;</code>
+   * <code>repeated .data.Condition conditions = 6;</code>
    */
   org.spin.grpc.util.ConditionOrBuilder getConditionsOrBuilder(
       int index);
 
   /**
-   * <code>repeated .data.Value values = 6;</code>
+   * <code>repeated .data.Value values = 7;</code>
    */
   java.util.List<org.spin.grpc.util.Value> 
       getValuesList();
   /**
-   * <code>repeated .data.Value values = 6;</code>
+   * <code>repeated .data.Value values = 7;</code>
    */
   org.spin.grpc.util.Value getValues(int index);
   /**
-   * <code>repeated .data.Value values = 6;</code>
+   * <code>repeated .data.Value values = 7;</code>
    */
   int getValuesCount();
   /**
-   * <code>repeated .data.Value values = 6;</code>
+   * <code>repeated .data.Value values = 7;</code>
    */
   java.util.List<? extends org.spin.grpc.util.ValueOrBuilder> 
       getValuesOrBuilderList();
   /**
-   * <code>repeated .data.Value values = 6;</code>
+   * <code>repeated .data.Value values = 7;</code>
    */
   org.spin.grpc.util.ValueOrBuilder getValuesOrBuilder(
       int index);
 
   /**
-   * <code>repeated .data.OrderByProperty orderByColumn = 7;</code>
+   * <code>repeated .data.OrderByProperty orderByColumn = 8;</code>
    */
   java.util.List<org.spin.grpc.util.OrderByProperty> 
       getOrderByColumnList();
   /**
-   * <code>repeated .data.OrderByProperty orderByColumn = 7;</code>
+   * <code>repeated .data.OrderByProperty orderByColumn = 8;</code>
    */
   org.spin.grpc.util.OrderByProperty getOrderByColumn(int index);
   /**
-   * <code>repeated .data.OrderByProperty orderByColumn = 7;</code>
+   * <code>repeated .data.OrderByProperty orderByColumn = 8;</code>
    */
   int getOrderByColumnCount();
   /**
-   * <code>repeated .data.OrderByProperty orderByColumn = 7;</code>
+   * <code>repeated .data.OrderByProperty orderByColumn = 8;</code>
    */
   java.util.List<? extends org.spin.grpc.util.OrderByPropertyOrBuilder> 
       getOrderByColumnOrBuilderList();
   /**
-   * <code>repeated .data.OrderByProperty orderByColumn = 7;</code>
+   * <code>repeated .data.OrderByProperty orderByColumn = 8;</code>
    */
   org.spin.grpc.util.OrderByPropertyOrBuilder getOrderByColumnOrBuilder(
       int index);
 
   /**
-   * <code>int64 limit = 8;</code>
+   * <code>int64 limit = 9;</code>
    */
   long getLimit();
 }

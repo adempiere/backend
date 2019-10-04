@@ -219,11 +219,21 @@ public interface TabOrBuilder extends
       getOrderByClauseBytes();
 
   /**
+   * <code>string parentTabUuid = 29;</code>
+   */
+  java.lang.String getParentTabUuid();
+  /**
+   * <code>string parentTabUuid = 29;</code>
+   */
+  com.google.protobuf.ByteString
+      getParentTabUuidBytes();
+
+  /**
    * <pre>
    * External Info
    * </pre>
    *
-   * <code>.dictionary.ContextInfo contextInfo = 29;</code>
+   * <code>.dictionary.ContextInfo contextInfo = 30;</code>
    */
   boolean hasContextInfo();
   /**
@@ -231,7 +241,7 @@ public interface TabOrBuilder extends
    * External Info
    * </pre>
    *
-   * <code>.dictionary.ContextInfo contextInfo = 29;</code>
+   * <code>.dictionary.ContextInfo contextInfo = 30;</code>
    */
   org.spin.grpc.util.ContextInfo getContextInfo();
   /**
@@ -239,68 +249,68 @@ public interface TabOrBuilder extends
    * External Info
    * </pre>
    *
-   * <code>.dictionary.ContextInfo contextInfo = 29;</code>
+   * <code>.dictionary.ContextInfo contextInfo = 30;</code>
    */
   org.spin.grpc.util.ContextInfoOrBuilder getContextInfoOrBuilder();
 
   /**
-   * <code>repeated .dictionary.Process processes = 30;</code>
+   * <code>repeated .dictionary.Process processes = 31;</code>
    */
   java.util.List<org.spin.grpc.util.Process> 
       getProcessesList();
   /**
-   * <code>repeated .dictionary.Process processes = 30;</code>
+   * <code>repeated .dictionary.Process processes = 31;</code>
    */
   org.spin.grpc.util.Process getProcesses(int index);
   /**
-   * <code>repeated .dictionary.Process processes = 30;</code>
+   * <code>repeated .dictionary.Process processes = 31;</code>
    */
   int getProcessesCount();
   /**
-   * <code>repeated .dictionary.Process processes = 30;</code>
+   * <code>repeated .dictionary.Process processes = 31;</code>
    */
   java.util.List<? extends org.spin.grpc.util.ProcessOrBuilder> 
       getProcessesOrBuilderList();
   /**
-   * <code>repeated .dictionary.Process processes = 30;</code>
+   * <code>repeated .dictionary.Process processes = 31;</code>
    */
   org.spin.grpc.util.ProcessOrBuilder getProcessesOrBuilder(
       int index);
 
   /**
-   * <code>repeated .dictionary.Field fields = 31;</code>
+   * <code>repeated .dictionary.Field fields = 32;</code>
    */
   java.util.List<org.spin.grpc.util.Field> 
       getFieldsList();
   /**
-   * <code>repeated .dictionary.Field fields = 31;</code>
+   * <code>repeated .dictionary.Field fields = 32;</code>
    */
   org.spin.grpc.util.Field getFields(int index);
   /**
-   * <code>repeated .dictionary.Field fields = 31;</code>
+   * <code>repeated .dictionary.Field fields = 32;</code>
    */
   int getFieldsCount();
   /**
-   * <code>repeated .dictionary.Field fields = 31;</code>
+   * <code>repeated .dictionary.Field fields = 32;</code>
    */
   java.util.List<? extends org.spin.grpc.util.FieldOrBuilder> 
       getFieldsOrBuilderList();
   /**
-   * <code>repeated .dictionary.Field fields = 31;</code>
+   * <code>repeated .dictionary.Field fields = 32;</code>
    */
   org.spin.grpc.util.FieldOrBuilder getFieldsOrBuilder(
       int index);
 
   /**
-   * <code>.dictionary.FieldGroup fieldGroup = 32;</code>
+   * <code>.dictionary.FieldGroup fieldGroup = 33;</code>
    */
   boolean hasFieldGroup();
   /**
-   * <code>.dictionary.FieldGroup fieldGroup = 32;</code>
+   * <code>.dictionary.FieldGroup fieldGroup = 33;</code>
    */
   org.spin.grpc.util.FieldGroup getFieldGroup();
   /**
-   * <code>.dictionary.FieldGroup fieldGroup = 32;</code>
+   * <code>.dictionary.FieldGroup fieldGroup = 33;</code>
    */
   org.spin.grpc.util.FieldGroupOrBuilder getFieldGroupOrBuilder();
 }

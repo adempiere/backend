@@ -493,6 +493,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		String description = null;
 		String help = null;
 		String commitWarning = null;
+		String parentTabUuid = null;
 		if(!Util.isEmpty(language)) {
 			name = tab.get_Translation(I_AD_Tab.COLUMNNAME_Name, language);
 			description = tab.get_Translation(I_AD_Tab.COLUMNNAME_Description, language);
@@ -551,6 +552,9 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				}
 				//	
 				whereClause.append(table.getTableName()).append(".").append(childColumn).append(" = ").append("@").append(mainColumnName).append("@");
+				if(optionalTab.isPresent()) {
+					parentTabUuid = optionalTab.get().getUUID();
+				}
 			} else {
 				whereClause.append("EXISTS(SELECT 1 FROM");
 				Map<Integer, MTab> tablesMap = new HashMap<>();
@@ -579,6 +583,9 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 							.append("=").append("t").append(aliasIndex - 1).append(".").append(childColumnName).append(")");
 					}
 					aliasIndex++;
+					if(Util.isEmpty(parentTabUuid)) {
+						parentTabUuid = currentTab.getUUID();
+					}
 				}
 				whereClause.append(" WHERE t").append(aliasIndex - 1).append(".").append(mainColumnName).append(" = ").append("@").append(mainColumnName).append("@");
 				//	Add support to child
@@ -631,6 +638,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setQuery(validateNull(getQueryWithReferencesFromTab(tab)))
 				.setWhereClause(whereClause.toString())
 				.setOrderByClause(validateNull(tab.getOrderByClause()))
+				.setParentTabUuid(validateNull(parentTabUuid))
 				.setIsActive(tab.isActive());
 		//	For link
 		if(contextInfoId > 0) {

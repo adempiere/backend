@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
@@ -103,6 +104,8 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 	private static CCache<String, MBrowse> browserRequested = new CCache<String, MBrowse>(I_AD_Browse.Table_Name + "_UUID", 30, 0);	//	no time-out
 	/**	Language */
 	private static CCache<String, String> languageCache = new CCache<String, String>("Language_ISO_Code", 30, 0);	//	no time-out
+	/**	Reference cache	*/
+	private static CCache<String, String> referenceWhereClauseCache = new CCache<String, String>("Reference_WhereClause", 30, 0);	//	no time-out
 	/**	Page Size	*/
 	private final int PAGE_SIZE = 100;
 	
@@ -425,12 +428,15 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 					}
 					MWindow referenceWindow = MWindow.get(context, zoomInfo.windowId);
 					//	
+					String uuid = UUID.randomUUID().toString();
 					RecordReferenceInfo.Builder recordReferenceBuilder = RecordReferenceInfo.newBuilder();
 					recordReferenceBuilder.setDisplayName(zoomInfo.destinationDisplay + " (#" + zoomInfo.query.getRecordCount() + ")");
 					recordReferenceBuilder.setRecordCount(zoomInfo.query.getRecordCount());
 					recordReferenceBuilder.setWindowUuid(validateNull(referenceWindow.get_UUID()));
 					recordReferenceBuilder.setTableName(validateNull(zoomInfo.query.getZoomTableName()));
 					recordReferenceBuilder.setWhereClause(validateNull(zoomInfo.query.getWhereClause()));
+					recordReferenceBuilder.setUuid(uuid);
+					referenceWhereClauseCache.put(uuid, zoomInfo.query.getWhereClause());
 					//	Add to list
 					builder.addReferences(recordReferenceBuilder.build());
 				}
@@ -965,6 +971,19 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 		if(!Util.isEmpty(criteria.getWhereClause())) {
 			whereClause.append("(").append(criteria.getWhereClause()).append(")");
 		}
+		criteria.getValuesList().forEach(value -> {
+			params.add(getValueFromType(value));
+		});
+		//	Add from reference
+		if(!Util.isEmpty(criteria.getReferenceUuid())) {
+			String referenceWhereClause = referenceWhereClauseCache.get(criteria.getReferenceUuid());
+			if(!Util.isEmpty(referenceWhereClause)) {
+				if(whereClause.length() > 0) {
+					whereClause.append(" AND ");
+				}
+				whereClause.append("(").append(referenceWhereClause).append(")");
+			}
+		}
 		//	Get page and count
 		String nexPageToken = null;
 		int pageNumber = getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
@@ -1047,53 +1066,65 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 				Entity.Builder valueObjectBuilder = Entity.newBuilder();
 				ResultSetMetaData metaData = rs.getMetaData();
 				for (int index = 1; index <= metaData.getColumnCount(); index++) {
-					String columnName = metaData.getColumnName (index);
-					MColumn column = columnsMap.get(columnName.toUpperCase());
-					Value.Builder valueBuilder = Value.newBuilder();
-					boolean isFilled = false;
-					//	Display Columns
-					if(column == null) {
-						String value = rs.getString(index);
-						if(!Util.isEmpty(value)) {
-							isFilled = true;
-							valueBuilder.setStringValue(value);
-							valueBuilder.setValueType(ValueType.STRING);
-							valueObjectBuilder.putValues(columnName, valueBuilder.build());
+					try {
+						String columnName = metaData.getColumnName (index);
+						MColumn field = columnsMap.get(columnName.toUpperCase());
+						Value.Builder valueBuilder = Value.newBuilder();
+						boolean isFilled = false;
+						//	Display Columns
+						if(field == null) {
+							String value = rs.getString(index);
+							if(!Util.isEmpty(value)) {
+								isFilled = true;
+								valueBuilder.setStringValue(value);
+								valueBuilder.setValueType(ValueType.STRING);
+								valueObjectBuilder.putValues(columnName, valueBuilder.build());
+							}
+							continue;
 						}
-						continue;
-					} else if(DisplayType.isID(column.getAD_Reference_ID())) {
-						isFilled = true;
-						valueBuilder.setIntValue(rs.getInt(index));
-						valueBuilder.setValueType(ValueType.INTEGER);
-					} else if(DisplayType.isNumeric(column.getAD_Reference_ID())) {
-						BigDecimal value = rs.getBigDecimal(index);
-						if(value != null) {
+						//	From field
+						String fieldColumnName = field.getColumnName();
+						if(DisplayType.isID(field.getAD_Reference_ID())) {
 							isFilled = true;
-							valueBuilder.setDoubleValue(value.doubleValue());
-							valueBuilder.setValueType(ValueType.DOUBLE);
-						}
-					} else if(DisplayType.YesNo == column.getAD_Reference_ID()) {
-						isFilled = true;
-						String value = rs.getString(index);
-						valueBuilder.setBooleanValue(!Util.isEmpty(value) && value.equals("Y"));
-						valueBuilder.setValueType(ValueType.BOOLEAN);
-					} else if(DisplayType.isDate(column.getAD_Reference_ID())) {
-						Timestamp value = rs.getTimestamp(index);
-						if(value != null) {
+							if(metaData.getColumnType(index) != Types.DECIMAL) {
+								valueBuilder.setStringValue(rs.getString(index));
+								valueBuilder.setValueType(ValueType.STRING);
+							} else {
+								valueBuilder.setIntValue(rs.getInt(index));
+								valueBuilder.setValueType(ValueType.INTEGER);
+							}
+						} else if(DisplayType.isNumeric(field.getAD_Reference_ID())) {
+							BigDecimal value = rs.getBigDecimal(index);
+							if(value != null) {
+								isFilled = true;
+								valueBuilder.setDoubleValue(value.doubleValue());
+								valueBuilder.setValueType(ValueType.DOUBLE);
+							}
+						} else if(DisplayType.YesNo == field.getAD_Reference_ID()) {
 							isFilled = true;
-							valueBuilder.setLongValue(value.getTime());
+							String value = rs.getString(index);
+							valueBuilder.setBooleanValue(!Util.isEmpty(value) && value.equals("Y"));
+							valueBuilder.setValueType(ValueType.BOOLEAN);
+						} else if(DisplayType.isDate(field.getAD_Reference_ID())) {
+							Timestamp value = rs.getTimestamp(index);
+							if(value != null) {
+								isFilled = true;
+								valueBuilder.setLongValue(value.getTime());
+							}
+							valueBuilder.setValueType(ValueType.DATE);
+						} else if(DisplayType.isText(field.getAD_Reference_ID())) {
+							String value = rs.getString(index);
+							if(!Util.isEmpty(value)) {
+								isFilled = true;
+								valueBuilder.setStringValue(value);
+								valueBuilder.setValueType(ValueType.STRING);
+							}
 						}
-						valueBuilder.setValueType(ValueType.DATE);
-					} else if(DisplayType.isText(column.getAD_Reference_ID())) {
-						String value = rs.getString(index);
-						if(!Util.isEmpty(value)) {
-							isFilled = true;
-							valueBuilder.setStringValue(value);
-							valueBuilder.setValueType(ValueType.STRING);
+						if(isFilled) {
+							valueObjectBuilder.putValues(fieldColumnName, valueBuilder.build());
 						}
-					}
-					if(isFilled) {
-						valueObjectBuilder.putValues(column.getColumnName(), valueBuilder.build());
+					} catch (Exception e) {
+						log.severe(e.getLocalizedMessage());
 					}
 				}
 				//	

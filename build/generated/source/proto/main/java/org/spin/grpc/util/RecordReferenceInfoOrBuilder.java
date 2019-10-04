@@ -8,47 +8,57 @@ public interface RecordReferenceInfoOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
   /**
-   * <code>string windowUuid = 1;</code>
+   * <code>string uuid = 1;</code>
+   */
+  java.lang.String getUuid();
+  /**
+   * <code>string uuid = 1;</code>
+   */
+  com.google.protobuf.ByteString
+      getUuidBytes();
+
+  /**
+   * <code>string windowUuid = 2;</code>
    */
   java.lang.String getWindowUuid();
   /**
-   * <code>string windowUuid = 1;</code>
+   * <code>string windowUuid = 2;</code>
    */
   com.google.protobuf.ByteString
       getWindowUuidBytes();
 
   /**
-   * <code>string displayName = 2;</code>
+   * <code>string displayName = 3;</code>
    */
   java.lang.String getDisplayName();
   /**
-   * <code>string displayName = 2;</code>
+   * <code>string displayName = 3;</code>
    */
   com.google.protobuf.ByteString
       getDisplayNameBytes();
 
   /**
-   * <code>string tableName = 3;</code>
+   * <code>string tableName = 4;</code>
    */
   java.lang.String getTableName();
   /**
-   * <code>string tableName = 3;</code>
+   * <code>string tableName = 4;</code>
    */
   com.google.protobuf.ByteString
       getTableNameBytes();
 
   /**
-   * <code>string whereClause = 4;</code>
+   * <code>string whereClause = 5;</code>
    */
   java.lang.String getWhereClause();
   /**
-   * <code>string whereClause = 4;</code>
+   * <code>string whereClause = 5;</code>
    */
   com.google.protobuf.ByteString
       getWhereClauseBytes();
 
   /**
-   * <code>int64 recordCount = 5;</code>
+   * <code>int64 recordCount = 6;</code>
    */
   long getRecordCount();
 }

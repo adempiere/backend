@@ -196,10 +196,11 @@ message Criteria {
 	string query = 2;
 	string whereClause = 3;
 	string orderByClause = 4;
-	repeated Condition conditions = 5;
-	repeated Value values = 6;
-	repeated OrderByProperty orderByColumn = 7;
-	int64 limit = 8;
+	string referenceUuid = 5;
+	repeated Condition conditions = 6;
+	repeated Value values = 7;
+	repeated OrderByProperty orderByColumn = 8;
+	int64 limit = 9;
 }
 
 // Order By Property
@@ -370,9 +371,10 @@ message ListReferencesResponse {
 
 // Zoom Information
 message RecordReferenceInfo {
-	string windowUuid = 1;
-	string displayName = 2;
-	string tableName = 3;
-	string whereClause = 4;
-	int64 recordCount = 5;
+	string uuid = 1;
+	string windowUuid = 2;
+	string displayName = 3;
+	string tableName = 4;
+	string whereClause = 5;
+	int64 recordCount = 6;
 }
