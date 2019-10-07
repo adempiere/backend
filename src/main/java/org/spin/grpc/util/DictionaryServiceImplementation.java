@@ -33,19 +33,24 @@ import org.adempiere.model.MBrowseField;
 import org.adempiere.model.MView;
 import org.compiere.model.I_AD_Field;
 import org.compiere.model.I_AD_FieldGroup;
+import org.compiere.model.I_AD_Form;
+import org.compiere.model.I_AD_Menu;
 import org.compiere.model.I_AD_Message;
 import org.compiere.model.I_AD_Process;
 import org.compiere.model.I_AD_Process_Para;
 import org.compiere.model.I_AD_Session;
 import org.compiere.model.I_AD_Tab;
 import org.compiere.model.I_AD_Window;
+import org.compiere.model.I_AD_Workflow;
 import org.compiere.model.MColumn;
 import org.compiere.model.MField;
 import org.compiere.model.MLookupFactory;
 import org.compiere.model.MLookupInfo;
+import org.compiere.model.MMenu;
 import org.compiere.model.MMessage;
 import org.compiere.model.MProcess;
 import org.compiere.model.MProcessPara;
+import org.compiere.model.MRecentItem;
 import org.compiere.model.MReportView;
 import org.compiere.model.MSession;
 import org.compiere.model.MTab;
@@ -406,9 +411,39 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 					builder.addTabs(tabFieldGroup.build());
 				}
 			}
+			//	Add to recent Item
+			addToRecentItem(MMenu.ACTION_Window, window.getAD_Window_ID());
 		}
 		//	return
 		return builder;
+	}
+	
+	/**
+	 * Add element to recent item
+	 * @param action
+	 * @param optionId
+	 */
+	private void addToRecentItem(String action, int optionId) {
+		if(Util.isEmpty(action)) {
+			return;
+		}
+		String whereClause = null;
+		if(action.equals(MMenu.ACTION_Window)) {
+			whereClause = I_AD_Window.COLUMNNAME_AD_Window_ID + " = ?";
+		} else if(action.equals(MMenu.ACTION_Form)) {
+			whereClause = I_AD_Form.COLUMNNAME_AD_Form_ID + " = ?";
+		} else if(action.equals(MMenu.ACTION_Process) || action.equals(MMenu.ACTION_Report)) {
+			whereClause = I_AD_Process.COLUMNNAME_AD_Process_ID + " = ?";
+		} else if(action.equals(MMenu.ACTION_WorkFlow)) {
+			whereClause = I_AD_Workflow.COLUMNNAME_AD_Workflow_ID + " = ?";
+		} else if(action.equals(MMenu.ACTION_SmartBrowse)) {
+			whereClause = I_AD_Browse.COLUMNNAME_AD_Browse_ID + " = ?";
+		}
+		//	Get menu
+		int menuId = new Query(Env.getCtx(), I_AD_Menu.Table_Name, whereClause, null)
+			.setParameters(optionId)
+			.firstId();
+		MRecentItem.addMenuOption(Env.getCtx(), menuId, optionId);
 	}
 	
 	/**
@@ -872,6 +907,8 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				builder.addFields(fieldBuilder.build());
 			}
 		}
+		//	Add to recent Item
+		addToRecentItem(MMenu.ACTION_SmartBrowse, browser.getAD_Window_ID());
 		return builder;
 	}
 	
