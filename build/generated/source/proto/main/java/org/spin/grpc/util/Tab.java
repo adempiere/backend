@@ -40,6 +40,7 @@ private static final long serialVersionUID = 0L;
     isView_ = false;
     isDeleteable_ = false;
     isDocument_ = false;
+    isChangeLog_ = false;
     accessLevel_ = 0;
     linkColumnName_ = "";
     parentColumnName_ = "";
@@ -192,58 +193,63 @@ private static final long serialVersionUID = 0L;
           }
           case 168: {
 
-            accessLevel_ = input.readInt32();
+            isChangeLog_ = input.readBool();
             break;
           }
-          case 178: {
-            java.lang.String s = input.readStringRequireUtf8();
+          case 176: {
 
-            linkColumnName_ = s;
+            accessLevel_ = input.readInt32();
             break;
           }
           case 186: {
             java.lang.String s = input.readStringRequireUtf8();
 
-            parentColumnName_ = s;
+            linkColumnName_ = s;
             break;
           }
           case 194: {
             java.lang.String s = input.readStringRequireUtf8();
 
-            displayLogic_ = s;
+            parentColumnName_ = s;
             break;
           }
           case 202: {
             java.lang.String s = input.readStringRequireUtf8();
 
-            commitWarning_ = s;
+            displayLogic_ = s;
             break;
           }
           case 210: {
             java.lang.String s = input.readStringRequireUtf8();
 
-            query_ = s;
+            commitWarning_ = s;
             break;
           }
           case 218: {
             java.lang.String s = input.readStringRequireUtf8();
 
-            whereClause_ = s;
+            query_ = s;
             break;
           }
           case 226: {
             java.lang.String s = input.readStringRequireUtf8();
 
-            orderByClause_ = s;
+            whereClause_ = s;
             break;
           }
           case 234: {
             java.lang.String s = input.readStringRequireUtf8();
 
-            parentTabUuid_ = s;
+            orderByClause_ = s;
             break;
           }
           case 242: {
+            java.lang.String s = input.readStringRequireUtf8();
+
+            parentTabUuid_ = s;
+            break;
+          }
+          case 250: {
             org.spin.grpc.util.ContextInfo.Builder subBuilder = null;
             if (contextInfo_ != null) {
               subBuilder = contextInfo_.toBuilder();
@@ -256,25 +262,25 @@ private static final long serialVersionUID = 0L;
 
             break;
           }
-          case 250: {
-            if (!((mutable_bitField0_ & 0x40000000) == 0x40000000)) {
+          case 258: {
+            if (!((mutable_bitField0_ & 0x80000000) == 0x80000000)) {
               processes_ = new java.util.ArrayList<org.spin.grpc.util.Process>();
-              mutable_bitField0_ |= 0x40000000;
+              mutable_bitField0_ |= 0x80000000;
             }
             processes_.add(
                 input.readMessage(org.spin.grpc.util.Process.parser(), extensionRegistry));
             break;
           }
-          case 258: {
-            if (!((mutable_bitField0_ & 0x80000000) == 0x80000000)) {
+          case 266: {
+            if (!((mutable_bitField1_ & 0x00000001) == 0x00000001)) {
               fields_ = new java.util.ArrayList<org.spin.grpc.util.Field>();
-              mutable_bitField0_ |= 0x80000000;
+              mutable_bitField1_ |= 0x00000001;
             }
             fields_.add(
                 input.readMessage(org.spin.grpc.util.Field.parser(), extensionRegistry));
             break;
           }
-          case 266: {
+          case 274: {
             org.spin.grpc.util.FieldGroup.Builder subBuilder = null;
             if (fieldGroup_ != null) {
               subBuilder = fieldGroup_.toBuilder();
@@ -295,10 +301,10 @@ private static final long serialVersionUID = 0L;
       throw new com.google.protobuf.InvalidProtocolBufferException(
           e).setUnfinishedMessage(this);
     } finally {
-      if (((mutable_bitField0_ & 0x40000000) == 0x40000000)) {
+      if (((mutable_bitField0_ & 0x80000000) == 0x80000000)) {
         processes_ = java.util.Collections.unmodifiableList(processes_);
       }
-      if (((mutable_bitField0_ & 0x80000000) == 0x80000000)) {
+      if (((mutable_bitField1_ & 0x00000001) == 0x00000001)) {
         fields_ = java.util.Collections.unmodifiableList(fields_);
       }
       this.unknownFields = unknownFields.build();
@@ -634,19 +640,28 @@ private static final long serialVersionUID = 0L;
     return isDocument_;
   }
 
-  public static final int ACCESSLEVEL_FIELD_NUMBER = 21;
+  public static final int ISCHANGELOG_FIELD_NUMBER = 21;
+  private boolean isChangeLog_;
+  /**
+   * <code>bool isChangeLog = 21;</code>
+   */
+  public boolean getIsChangeLog() {
+    return isChangeLog_;
+  }
+
+  public static final int ACCESSLEVEL_FIELD_NUMBER = 22;
   private int accessLevel_;
   /**
-   * <code>int32 accessLevel = 21;</code>
+   * <code>int32 accessLevel = 22;</code>
    */
   public int getAccessLevel() {
     return accessLevel_;
   }
 
-  public static final int LINKCOLUMNNAME_FIELD_NUMBER = 22;
+  public static final int LINKCOLUMNNAME_FIELD_NUMBER = 23;
   private volatile java.lang.Object linkColumnName_;
   /**
-   * <code>string linkColumnName = 22;</code>
+   * <code>string linkColumnName = 23;</code>
    */
   public java.lang.String getLinkColumnName() {
     java.lang.Object ref = linkColumnName_;
@@ -661,7 +676,7 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <code>string linkColumnName = 22;</code>
+   * <code>string linkColumnName = 23;</code>
    */
   public com.google.protobuf.ByteString
       getLinkColumnNameBytes() {
@@ -677,10 +692,10 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int PARENTCOLUMNNAME_FIELD_NUMBER = 23;
+  public static final int PARENTCOLUMNNAME_FIELD_NUMBER = 24;
   private volatile java.lang.Object parentColumnName_;
   /**
-   * <code>string parentColumnName = 23;</code>
+   * <code>string parentColumnName = 24;</code>
    */
   public java.lang.String getParentColumnName() {
     java.lang.Object ref = parentColumnName_;
@@ -695,7 +710,7 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <code>string parentColumnName = 23;</code>
+   * <code>string parentColumnName = 24;</code>
    */
   public com.google.protobuf.ByteString
       getParentColumnNameBytes() {
@@ -711,10 +726,10 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int DISPLAYLOGIC_FIELD_NUMBER = 24;
+  public static final int DISPLAYLOGIC_FIELD_NUMBER = 25;
   private volatile java.lang.Object displayLogic_;
   /**
-   * <code>string displayLogic = 24;</code>
+   * <code>string displayLogic = 25;</code>
    */
   public java.lang.String getDisplayLogic() {
     java.lang.Object ref = displayLogic_;
@@ -729,7 +744,7 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <code>string displayLogic = 24;</code>
+   * <code>string displayLogic = 25;</code>
    */
   public com.google.protobuf.ByteString
       getDisplayLogicBytes() {
@@ -745,10 +760,10 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int COMMITWARNING_FIELD_NUMBER = 25;
+  public static final int COMMITWARNING_FIELD_NUMBER = 26;
   private volatile java.lang.Object commitWarning_;
   /**
-   * <code>string commitWarning = 25;</code>
+   * <code>string commitWarning = 26;</code>
    */
   public java.lang.String getCommitWarning() {
     java.lang.Object ref = commitWarning_;
@@ -763,7 +778,7 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <code>string commitWarning = 25;</code>
+   * <code>string commitWarning = 26;</code>
    */
   public com.google.protobuf.ByteString
       getCommitWarningBytes() {
@@ -779,10 +794,10 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int QUERY_FIELD_NUMBER = 26;
+  public static final int QUERY_FIELD_NUMBER = 27;
   private volatile java.lang.Object query_;
   /**
-   * <code>string query = 26;</code>
+   * <code>string query = 27;</code>
    */
   public java.lang.String getQuery() {
     java.lang.Object ref = query_;
@@ -797,7 +812,7 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <code>string query = 26;</code>
+   * <code>string query = 27;</code>
    */
   public com.google.protobuf.ByteString
       getQueryBytes() {
@@ -813,10 +828,10 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int WHERECLAUSE_FIELD_NUMBER = 27;
+  public static final int WHERECLAUSE_FIELD_NUMBER = 28;
   private volatile java.lang.Object whereClause_;
   /**
-   * <code>string whereClause = 27;</code>
+   * <code>string whereClause = 28;</code>
    */
   public java.lang.String getWhereClause() {
     java.lang.Object ref = whereClause_;
@@ -831,7 +846,7 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <code>string whereClause = 27;</code>
+   * <code>string whereClause = 28;</code>
    */
   public com.google.protobuf.ByteString
       getWhereClauseBytes() {
@@ -847,10 +862,10 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int ORDERBYCLAUSE_FIELD_NUMBER = 28;
+  public static final int ORDERBYCLAUSE_FIELD_NUMBER = 29;
   private volatile java.lang.Object orderByClause_;
   /**
-   * <code>string orderByClause = 28;</code>
+   * <code>string orderByClause = 29;</code>
    */
   public java.lang.String getOrderByClause() {
     java.lang.Object ref = orderByClause_;
@@ -865,7 +880,7 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <code>string orderByClause = 28;</code>
+   * <code>string orderByClause = 29;</code>
    */
   public com.google.protobuf.ByteString
       getOrderByClauseBytes() {
@@ -881,10 +896,10 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int PARENTTABUUID_FIELD_NUMBER = 29;
+  public static final int PARENTTABUUID_FIELD_NUMBER = 30;
   private volatile java.lang.Object parentTabUuid_;
   /**
-   * <code>string parentTabUuid = 29;</code>
+   * <code>string parentTabUuid = 30;</code>
    */
   public java.lang.String getParentTabUuid() {
     java.lang.Object ref = parentTabUuid_;
@@ -899,7 +914,7 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <code>string parentTabUuid = 29;</code>
+   * <code>string parentTabUuid = 30;</code>
    */
   public com.google.protobuf.ByteString
       getParentTabUuidBytes() {
@@ -915,14 +930,14 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int CONTEXTINFO_FIELD_NUMBER = 30;
+  public static final int CONTEXTINFO_FIELD_NUMBER = 31;
   private org.spin.grpc.util.ContextInfo contextInfo_;
   /**
    * <pre>
    * External Info
    * </pre>
    *
-   * <code>.dictionary.ContextInfo contextInfo = 30;</code>
+   * <code>.dictionary.ContextInfo contextInfo = 31;</code>
    */
   public boolean hasContextInfo() {
     return contextInfo_ != null;
@@ -932,7 +947,7 @@ private static final long serialVersionUID = 0L;
    * External Info
    * </pre>
    *
-   * <code>.dictionary.ContextInfo contextInfo = 30;</code>
+   * <code>.dictionary.ContextInfo contextInfo = 31;</code>
    */
   public org.spin.grpc.util.ContextInfo getContextInfo() {
     return contextInfo_ == null ? org.spin.grpc.util.ContextInfo.getDefaultInstance() : contextInfo_;
@@ -942,98 +957,98 @@ private static final long serialVersionUID = 0L;
    * External Info
    * </pre>
    *
-   * <code>.dictionary.ContextInfo contextInfo = 30;</code>
+   * <code>.dictionary.ContextInfo contextInfo = 31;</code>
    */
   public org.spin.grpc.util.ContextInfoOrBuilder getContextInfoOrBuilder() {
     return getContextInfo();
   }
 
-  public static final int PROCESSES_FIELD_NUMBER = 31;
+  public static final int PROCESSES_FIELD_NUMBER = 32;
   private java.util.List<org.spin.grpc.util.Process> processes_;
   /**
-   * <code>repeated .dictionary.Process processes = 31;</code>
+   * <code>repeated .dictionary.Process processes = 32;</code>
    */
   public java.util.List<org.spin.grpc.util.Process> getProcessesList() {
     return processes_;
   }
   /**
-   * <code>repeated .dictionary.Process processes = 31;</code>
+   * <code>repeated .dictionary.Process processes = 32;</code>
    */
   public java.util.List<? extends org.spin.grpc.util.ProcessOrBuilder> 
       getProcessesOrBuilderList() {
     return processes_;
   }
   /**
-   * <code>repeated .dictionary.Process processes = 31;</code>
+   * <code>repeated .dictionary.Process processes = 32;</code>
    */
   public int getProcessesCount() {
     return processes_.size();
   }
   /**
-   * <code>repeated .dictionary.Process processes = 31;</code>
+   * <code>repeated .dictionary.Process processes = 32;</code>
    */
   public org.spin.grpc.util.Process getProcesses(int index) {
     return processes_.get(index);
   }
   /**
-   * <code>repeated .dictionary.Process processes = 31;</code>
+   * <code>repeated .dictionary.Process processes = 32;</code>
    */
   public org.spin.grpc.util.ProcessOrBuilder getProcessesOrBuilder(
       int index) {
     return processes_.get(index);
   }
 
-  public static final int FIELDS_FIELD_NUMBER = 32;
+  public static final int FIELDS_FIELD_NUMBER = 33;
   private java.util.List<org.spin.grpc.util.Field> fields_;
   /**
-   * <code>repeated .dictionary.Field fields = 32;</code>
+   * <code>repeated .dictionary.Field fields = 33;</code>
    */
   public java.util.List<org.spin.grpc.util.Field> getFieldsList() {
     return fields_;
   }
   /**
-   * <code>repeated .dictionary.Field fields = 32;</code>
+   * <code>repeated .dictionary.Field fields = 33;</code>
    */
   public java.util.List<? extends org.spin.grpc.util.FieldOrBuilder> 
       getFieldsOrBuilderList() {
     return fields_;
   }
   /**
-   * <code>repeated .dictionary.Field fields = 32;</code>
+   * <code>repeated .dictionary.Field fields = 33;</code>
    */
   public int getFieldsCount() {
     return fields_.size();
   }
   /**
-   * <code>repeated .dictionary.Field fields = 32;</code>
+   * <code>repeated .dictionary.Field fields = 33;</code>
    */
   public org.spin.grpc.util.Field getFields(int index) {
     return fields_.get(index);
   }
   /**
-   * <code>repeated .dictionary.Field fields = 32;</code>
+   * <code>repeated .dictionary.Field fields = 33;</code>
    */
   public org.spin.grpc.util.FieldOrBuilder getFieldsOrBuilder(
       int index) {
     return fields_.get(index);
   }
 
-  public static final int FIELDGROUP_FIELD_NUMBER = 33;
+  public static final int FIELDGROUP_FIELD_NUMBER = 34;
   private org.spin.grpc.util.FieldGroup fieldGroup_;
   /**
-   * <code>.dictionary.FieldGroup fieldGroup = 33;</code>
+   * <code>.dictionary.FieldGroup fieldGroup = 34;</code>
    */
   public boolean hasFieldGroup() {
     return fieldGroup_ != null;
   }
   /**
-   * <code>.dictionary.FieldGroup fieldGroup = 33;</code>
+   * <code>.dictionary.FieldGroup fieldGroup = 34;</code>
    */
   public org.spin.grpc.util.FieldGroup getFieldGroup() {
     return fieldGroup_ == null ? org.spin.grpc.util.FieldGroup.getDefaultInstance() : fieldGroup_;
   }
   /**
-   * <code>.dictionary.FieldGroup fieldGroup = 33;</code>
+   * <code>.dictionary.FieldGroup fieldGroup = 34;</code>
    */
   public org.spin.grpc.util.FieldGroupOrBuilder getFieldGroupOrBuilder() {
     return getFieldGroup();
@@ -1111,44 +1126,47 @@ private static final long serialVersionUID = 0L;
     if (isDocument_ != false) {
       output.writeBool(20, isDocument_);
     }
+    if (isChangeLog_ != false) {
+      output.writeBool(21, isChangeLog_);
+    }
     if (accessLevel_ != 0) {
-      output.writeInt32(21, accessLevel_);
+      output.writeInt32(22, accessLevel_);
     }
     if (!getLinkColumnNameBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 22, linkColumnName_);
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 23, linkColumnName_);
     }
     if (!getParentColumnNameBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 23, parentColumnName_);
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 24, parentColumnName_);
     }
     if (!getDisplayLogicBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 24, displayLogic_);
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 25, displayLogic_);
     }
     if (!getCommitWarningBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 25, commitWarning_);
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 26, commitWarning_);
     }
     if (!getQueryBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 26, query_);
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 27, query_);
     }
     if (!getWhereClauseBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 27, whereClause_);
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 28, whereClause_);
     }
     if (!getOrderByClauseBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 28, orderByClause_);
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 29, orderByClause_);
     }
     if (!getParentTabUuidBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 29, parentTabUuid_);
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 30, parentTabUuid_);
     }
     if (contextInfo_ != null) {
-      output.writeMessage(30, getContextInfo());
+      output.writeMessage(31, getContextInfo());
     }
     for (int i = 0; i < processes_.size(); i++) {
-      output.writeMessage(31, processes_.get(i));
+      output.writeMessage(32, processes_.get(i));
     }
     for (int i = 0; i < fields_.size(); i++) {
-      output.writeMessage(32, fields_.get(i));
+      output.writeMessage(33, fields_.get(i));
     }
     if (fieldGroup_ != null) {
-      output.writeMessage(33, getFieldGroup());
+      output.writeMessage(34, getFieldGroup());
     }
     unknownFields.writeTo(output);
   }
@@ -1233,49 +1251,53 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeBoolSize(20, isDocument_);
     }
+    if (isChangeLog_ != false) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeBoolSize(21, isChangeLog_);
+    }
     if (accessLevel_ != 0) {
       size += com.google.protobuf.CodedOutputStream
-        .computeInt32Size(21, accessLevel_);
+        .computeInt32Size(22, accessLevel_);
     }
     if (!getLinkColumnNameBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(22, linkColumnName_);
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(23, linkColumnName_);
     }
     if (!getParentColumnNameBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(23, parentColumnName_);
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(24, parentColumnName_);
     }
     if (!getDisplayLogicBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(24, displayLogic_);
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(25, displayLogic_);
     }
     if (!getCommitWarningBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(25, commitWarning_);
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(26, commitWarning_);
     }
     if (!getQueryBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(26, query_);
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(27, query_);
     }
     if (!getWhereClauseBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(27, whereClause_);
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(28, whereClause_);
     }
     if (!getOrderByClauseBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(28, orderByClause_);
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(29, orderByClause_);
     }
     if (!getParentTabUuidBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(29, parentTabUuid_);
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(30, parentTabUuid_);
     }
     if (contextInfo_ != null) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(30, getContextInfo());
+        .computeMessageSize(31, getContextInfo());
     }
     for (int i = 0; i < processes_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(31, processes_.get(i));
+        .computeMessageSize(32, processes_.get(i));
     }
     for (int i = 0; i < fields_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(32, fields_.get(i));
+        .computeMessageSize(33, fields_.get(i));
     }
     if (fieldGroup_ != null) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(33, getFieldGroup());
+        .computeMessageSize(34, getFieldGroup());
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -1333,6 +1355,8 @@ private static final long serialVersionUID = 0L;
         == other.getIsDeleteable());
     result = result && (getIsDocument()
         == other.getIsDocument());
+    result = result && (getIsChangeLog()
+        == other.getIsChangeLog());
     result = result && (getAccessLevel()
         == other.getAccessLevel());
     result = result && getLinkColumnName()
@@ -1428,6 +1452,9 @@ private static final long serialVersionUID = 0L;
     hash = (37 * hash) + ISDOCUMENT_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
         getIsDocument());
+    hash = (37 * hash) + ISCHANGELOG_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
+        getIsChangeLog());
     hash = (37 * hash) + ACCESSLEVEL_FIELD_NUMBER;
     hash = (53 * hash) + getAccessLevel();
     hash = (37 * hash) + LINKCOLUMNNAME_FIELD_NUMBER;
@@ -1637,6 +1664,8 @@ private static final long serialVersionUID = 0L;
 
       isDocument_ = false;
 
+      isChangeLog_ = false;
+
       accessLevel_ = 0;
 
       linkColumnName_ = "";
@@ -1663,13 +1692,13 @@ private static final long serialVersionUID = 0L;
       }
       if (processesBuilder_ == null) {
         processes_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x40000000);
+        bitField0_ = (bitField0_ & ~0x80000000);
       } else {
         processesBuilder_.clear();
       }
       if (fieldsBuilder_ == null) {
         fields_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x80000000);
+        bitField1_ = (bitField1_ & ~0x00000001);
       } else {
         fieldsBuilder_.clear();
       }
@@ -1724,6 +1753,7 @@ private static final long serialVersionUID = 0L;
       result.isView_ = isView_;
       result.isDeleteable_ = isDeleteable_;
       result.isDocument_ = isDocument_;
+      result.isChangeLog_ = isChangeLog_;
       result.accessLevel_ = accessLevel_;
       result.linkColumnName_ = linkColumnName_;
       result.parentColumnName_ = parentColumnName_;
@@ -1739,18 +1769,18 @@ private static final long serialVersionUID = 0L;
         result.contextInfo_ = contextInfoBuilder_.build();
       }
       if (processesBuilder_ == null) {
-        if (((bitField0_ & 0x40000000) == 0x40000000)) {
+        if (((bitField0_ & 0x80000000) == 0x80000000)) {
           processes_ = java.util.Collections.unmodifiableList(processes_);
-          bitField0_ = (bitField0_ & ~0x40000000);
+          bitField0_ = (bitField0_ & ~0x80000000);
         }
         result.processes_ = processes_;
       } else {
         result.processes_ = processesBuilder_.build();
       }
       if (fieldsBuilder_ == null) {
-        if (((bitField0_ & 0x80000000) == 0x80000000)) {
+        if (((bitField1_ & 0x00000001) == 0x00000001)) {
           fields_ = java.util.Collections.unmodifiableList(fields_);
-          bitField0_ = (bitField0_ & ~0x80000000);
+          bitField1_ = (bitField1_ & ~0x00000001);
         }
         result.fields_ = fields_;
       } else {
@@ -1868,6 +1898,9 @@ private static final long serialVersionUID = 0L;
       if (other.getIsDocument() != false) {
         setIsDocument(other.getIsDocument());
       }
+      if (other.getIsChangeLog() != false) {
+        setIsChangeLog(other.getIsChangeLog());
+      }
       if (other.getAccessLevel() != 0) {
         setAccessLevel(other.getAccessLevel());
       }
@@ -1910,7 +1943,7 @@ private static final long serialVersionUID = 0L;
         if (!other.processes_.isEmpty()) {
           if (processes_.isEmpty()) {
             processes_ = other.processes_;
-            bitField0_ = (bitField0_ & ~0x40000000);
+            bitField0_ = (bitField0_ & ~0x80000000);
           } else {
             ensureProcessesIsMutable();
             processes_.addAll(other.processes_);
@@ -1923,7 +1956,7 @@ private static final long serialVersionUID = 0L;
             processesBuilder_.dispose();
             processesBuilder_ = null;
             processes_ = other.processes_;
-            bitField0_ = (bitField0_ & ~0x40000000);
+            bitField0_ = (bitField0_ & ~0x80000000);
             processesBuilder_ = 
               com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                  getProcessesFieldBuilder() : null;
@@ -1936,7 +1969,7 @@ private static final long serialVersionUID = 0L;
         if (!other.fields_.isEmpty()) {
           if (fields_.isEmpty()) {
             fields_ = other.fields_;
-            bitField0_ = (bitField0_ & ~0x80000000);
+            bitField1_ = (bitField1_ & ~0x00000001);
           } else {
             ensureFieldsIsMutable();
             fields_.addAll(other.fields_);
@@ -1949,7 +1982,7 @@ private static final long serialVersionUID = 0L;
             fieldsBuilder_.dispose();
             fieldsBuilder_ = null;
             fields_ = other.fields_;
-            bitField0_ = (bitField0_ & ~0x80000000);
+            bitField1_ = (bitField1_ & ~0x00000001);
             fieldsBuilder_ = 
               com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                  getFieldsFieldBuilder() : null;
@@ -2754,15 +2787,41 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
+    private boolean isChangeLog_ ;
+    /**
+     * <code>bool isChangeLog = 21;</code>
+     */
+    public boolean getIsChangeLog() {
+      return isChangeLog_;
+    }
+    /**
+     * <code>bool isChangeLog = 21;</code>
+     */
+    public Builder setIsChangeLog(boolean value) {
+      
+      isChangeLog_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>bool isChangeLog = 21;</code>
+     */
+    public Builder clearIsChangeLog() {
+      
+      isChangeLog_ = false;
+      onChanged();
+      return this;
+    }
+
     private int accessLevel_ ;
     /**
-     * <code>int32 accessLevel = 21;</code>
+     * <code>int32 accessLevel = 22;</code>
      */
     public int getAccessLevel() {
       return accessLevel_;
     }
     /**
-     * <code>int32 accessLevel = 21;</code>
+     * <code>int32 accessLevel = 22;</code>
      */
     public Builder setAccessLevel(int value) {
       
@@ -2771,7 +2830,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>int32 accessLevel = 21;</code>
+     * <code>int32 accessLevel = 22;</code>
      */
     public Builder clearAccessLevel() {
       
@@ -2782,7 +2841,7 @@ private static final long serialVersionUID = 0L;
 
     private java.lang.Object linkColumnName_ = "";
     /**
-     * <code>string linkColumnName = 22;</code>
+     * <code>string linkColumnName = 23;</code>
      */
     public java.lang.String getLinkColumnName() {
       java.lang.Object ref = linkColumnName_;
@@ -2797,7 +2856,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string linkColumnName = 22;</code>
+     * <code>string linkColumnName = 23;</code>
      */
     public com.google.protobuf.ByteString
         getLinkColumnNameBytes() {
@@ -2813,7 +2872,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string linkColumnName = 22;</code>
+     * <code>string linkColumnName = 23;</code>
      */
     public Builder setLinkColumnName(
         java.lang.String value) {
@@ -2826,7 +2885,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string linkColumnName = 22;</code>
+     * <code>string linkColumnName = 23;</code>
      */
     public Builder clearLinkColumnName() {
       
@@ -2835,7 +2894,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string linkColumnName = 22;</code>
+     * <code>string linkColumnName = 23;</code>
      */
     public Builder setLinkColumnNameBytes(
         com.google.protobuf.ByteString value) {
@@ -2851,7 +2910,7 @@ private static final long serialVersionUID = 0L;
 
     private java.lang.Object parentColumnName_ = "";
     /**
-     * <code>string parentColumnName = 23;</code>
+     * <code>string parentColumnName = 24;</code>
      */
     public java.lang.String getParentColumnName() {
       java.lang.Object ref = parentColumnName_;
@@ -2866,7 +2925,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string parentColumnName = 23;</code>
+     * <code>string parentColumnName = 24;</code>
      */
     public com.google.protobuf.ByteString
         getParentColumnNameBytes() {
@@ -2882,7 +2941,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string parentColumnName = 23;</code>
+     * <code>string parentColumnName = 24;</code>
      */
     public Builder setParentColumnName(
         java.lang.String value) {
@@ -2895,7 +2954,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string parentColumnName = 23;</code>
+     * <code>string parentColumnName = 24;</code>
      */
     public Builder clearParentColumnName() {
       
@@ -2904,7 +2963,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string parentColumnName = 23;</code>
+     * <code>string parentColumnName = 24;</code>
      */
     public Builder setParentColumnNameBytes(
         com.google.protobuf.ByteString value) {
@@ -2920,7 +2979,7 @@ private static final long serialVersionUID = 0L;
 
     private java.lang.Object displayLogic_ = "";
     /**
-     * <code>string displayLogic = 24;</code>
+     * <code>string displayLogic = 25;</code>
      */
     public java.lang.String getDisplayLogic() {
       java.lang.Object ref = displayLogic_;
@@ -2935,7 +2994,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string displayLogic = 24;</code>
+     * <code>string displayLogic = 25;</code>
      */
     public com.google.protobuf.ByteString
         getDisplayLogicBytes() {
@@ -2951,7 +3010,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string displayLogic = 24;</code>
+     * <code>string displayLogic = 25;</code>
      */
     public Builder setDisplayLogic(
         java.lang.String value) {
@@ -2964,7 +3023,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string displayLogic = 24;</code>
+     * <code>string displayLogic = 25;</code>
      */
     public Builder clearDisplayLogic() {
       
@@ -2973,7 +3032,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string displayLogic = 24;</code>
+     * <code>string displayLogic = 25;</code>
      */
     public Builder setDisplayLogicBytes(
         com.google.protobuf.ByteString value) {
@@ -2989,7 +3048,7 @@ private static final long serialVersionUID = 0L;
 
     private java.lang.Object commitWarning_ = "";
     /**
-     * <code>string commitWarning = 25;</code>
+     * <code>string commitWarning = 26;</code>
      */
     public java.lang.String getCommitWarning() {
       java.lang.Object ref = commitWarning_;
@@ -3004,7 +3063,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string commitWarning = 25;</code>
+     * <code>string commitWarning = 26;</code>
      */
     public com.google.protobuf.ByteString
         getCommitWarningBytes() {
@@ -3020,7 +3079,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string commitWarning = 25;</code>
+     * <code>string commitWarning = 26;</code>
      */
     public Builder setCommitWarning(
         java.lang.String value) {
@@ -3033,7 +3092,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string commitWarning = 25;</code>
+     * <code>string commitWarning = 26;</code>
      */
     public Builder clearCommitWarning() {
       
@@ -3042,7 +3101,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string commitWarning = 25;</code>
+     * <code>string commitWarning = 26;</code>
      */
     public Builder setCommitWarningBytes(
         com.google.protobuf.ByteString value) {
@@ -3058,7 +3117,7 @@ private static final long serialVersionUID = 0L;
 
     private java.lang.Object query_ = "";
     /**
-     * <code>string query = 26;</code>
+     * <code>string query = 27;</code>
      */
     public java.lang.String getQuery() {
       java.lang.Object ref = query_;
@@ -3073,7 +3132,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string query = 26;</code>
+     * <code>string query = 27;</code>
      */
     public com.google.protobuf.ByteString
         getQueryBytes() {
@@ -3089,7 +3148,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string query = 26;</code>
+     * <code>string query = 27;</code>
      */
     public Builder setQuery(
         java.lang.String value) {
@@ -3102,7 +3161,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string query = 26;</code>
+     * <code>string query = 27;</code>
      */
     public Builder clearQuery() {
       
@@ -3111,7 +3170,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string query = 26;</code>
+     * <code>string query = 27;</code>
      */
     public Builder setQueryBytes(
         com.google.protobuf.ByteString value) {
@@ -3127,7 +3186,7 @@ private static final long serialVersionUID = 0L;
 
     private java.lang.Object whereClause_ = "";
     /**
-     * <code>string whereClause = 27;</code>
+     * <code>string whereClause = 28;</code>
      */
     public java.lang.String getWhereClause() {
       java.lang.Object ref = whereClause_;
@@ -3142,7 +3201,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string whereClause = 27;</code>
+     * <code>string whereClause = 28;</code>
      */
     public com.google.protobuf.ByteString
         getWhereClauseBytes() {
@@ -3158,7 +3217,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string whereClause = 27;</code>
+     * <code>string whereClause = 28;</code>
      */
     public Builder setWhereClause(
         java.lang.String value) {
@@ -3171,7 +3230,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string whereClause = 27;</code>
+     * <code>string whereClause = 28;</code>
      */
     public Builder clearWhereClause() {
       
@@ -3180,7 +3239,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string whereClause = 27;</code>
+     * <code>string whereClause = 28;</code>
      */
     public Builder setWhereClauseBytes(
         com.google.protobuf.ByteString value) {
@@ -3196,7 +3255,7 @@ private static final long serialVersionUID = 0L;
 
     private java.lang.Object orderByClause_ = "";
     /**
-     * <code>string orderByClause = 28;</code>
+     * <code>string orderByClause = 29;</code>
      */
     public java.lang.String getOrderByClause() {
       java.lang.Object ref = orderByClause_;
@@ -3211,7 +3270,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string orderByClause = 28;</code>
+     * <code>string orderByClause = 29;</code>
      */
     public com.google.protobuf.ByteString
         getOrderByClauseBytes() {
@@ -3227,7 +3286,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string orderByClause = 28;</code>
+     * <code>string orderByClause = 29;</code>
      */
     public Builder setOrderByClause(
         java.lang.String value) {
@@ -3240,7 +3299,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string orderByClause = 28;</code>
+     * <code>string orderByClause = 29;</code>
      */
     public Builder clearOrderByClause() {
       
@@ -3249,7 +3308,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string orderByClause = 28;</code>
+     * <code>string orderByClause = 29;</code>
      */
     public Builder setOrderByClauseBytes(
         com.google.protobuf.ByteString value) {
@@ -3265,7 +3324,7 @@ private static final long serialVersionUID = 0L;
 
     private java.lang.Object parentTabUuid_ = "";
     /**
-     * <code>string parentTabUuid = 29;</code>
+     * <code>string parentTabUuid = 30;</code>
      */
     public java.lang.String getParentTabUuid() {
       java.lang.Object ref = parentTabUuid_;
@@ -3280,7 +3339,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string parentTabUuid = 29;</code>
+     * <code>string parentTabUuid = 30;</code>
      */
     public com.google.protobuf.ByteString
         getParentTabUuidBytes() {
@@ -3296,7 +3355,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string parentTabUuid = 29;</code>
+     * <code>string parentTabUuid = 30;</code>
      */
     public Builder setParentTabUuid(
         java.lang.String value) {
@@ -3309,7 +3368,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string parentTabUuid = 29;</code>
+     * <code>string parentTabUuid = 30;</code>
      */
     public Builder clearParentTabUuid() {
       
@@ -3318,7 +3377,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string parentTabUuid = 29;</code>
+     * <code>string parentTabUuid = 30;</code>
      */
     public Builder setParentTabUuidBytes(
         com.google.protobuf.ByteString value) {
@@ -3340,7 +3399,7 @@ private static final long serialVersionUID = 0L;
      * External Info
      * </pre>
      *
-     * <code>.dictionary.ContextInfo contextInfo = 30;</code>
+     * <code>.dictionary.ContextInfo contextInfo = 31;</code>
      */
     public boolean hasContextInfo() {
       return contextInfoBuilder_ != null || contextInfo_ != null;
@@ -3350,7 +3409,7 @@ private static final long serialVersionUID = 0L;
      * External Info
      * </pre>
      *
-     * <code>.dictionary.ContextInfo contextInfo = 30;</code>
+     * <code>.dictionary.ContextInfo contextInfo = 31;</code>
      */
     public org.spin.grpc.util.ContextInfo getContextInfo() {
       if (contextInfoBuilder_ == null) {
@@ -3364,7 +3423,7 @@ private static final long serialVersionUID = 0L;
      * External Info
      * </pre>
      *
-     * <code>.dictionary.ContextInfo contextInfo = 30;</code>
+     * <code>.dictionary.ContextInfo contextInfo = 31;</code>
      */
     public Builder setContextInfo(org.spin.grpc.util.ContextInfo value) {
       if (contextInfoBuilder_ == null) {
@@ -3384,7 +3443,7 @@ private static final long serialVersionUID = 0L;
      * External Info
      * </pre>
      *
-     * <code>.dictionary.ContextInfo contextInfo = 30;</code>
+     * <code>.dictionary.ContextInfo contextInfo = 31;</code>
      */
     public Builder setContextInfo(
         org.spin.grpc.util.ContextInfo.Builder builderForValue) {
@@ -3402,7 +3461,7 @@ private static final long serialVersionUID = 0L;
      * External Info
      * </pre>
      *
-     * <code>.dictionary.ContextInfo contextInfo = 30;</code>
+     * <code>.dictionary.ContextInfo contextInfo = 31;</code>
      */
     public Builder mergeContextInfo(org.spin.grpc.util.ContextInfo value) {
       if (contextInfoBuilder_ == null) {
@@ -3424,7 +3483,7 @@ private static final long serialVersionUID = 0L;
      * External Info
      * </pre>
      *
-     * <code>.dictionary.ContextInfo contextInfo = 30;</code>
+     * <code>.dictionary.ContextInfo contextInfo = 31;</code>
      */
     public Builder clearContextInfo() {
       if (contextInfoBuilder_ == null) {
@@ -3442,7 +3501,7 @@ private static final long serialVersionUID = 0L;
      * External Info
      * </pre>
      *
-     * <code>.dictionary.ContextInfo contextInfo = 30;</code>
+     * <code>.dictionary.ContextInfo contextInfo = 31;</code>
      */
     public org.spin.grpc.util.ContextInfo.Builder getContextInfoBuilder() {
       
@@ -3454,7 +3513,7 @@ private static final long serialVersionUID = 0L;
      * External Info
      * </pre>
      *
-     * <code>.dictionary.ContextInfo contextInfo = 30;</code>
+     * <code>.dictionary.ContextInfo contextInfo = 31;</code>
      */
     public org.spin.grpc.util.ContextInfoOrBuilder getContextInfoOrBuilder() {
       if (contextInfoBuilder_ != null) {
@@ -3469,7 +3528,7 @@ private static final long serialVersionUID = 0L;
      * External Info
      * </pre>
      *
-     * <code>.dictionary.ContextInfo contextInfo = 30;</code>
+     * <code>.dictionary.ContextInfo contextInfo = 31;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
         org.spin.grpc.util.ContextInfo, org.spin.grpc.util.ContextInfo.Builder, org.spin.grpc.util.ContextInfoOrBuilder> 
@@ -3488,9 +3547,9 @@ private static final long serialVersionUID = 0L;
     private java.util.List<org.spin.grpc.util.Process> processes_ =
       java.util.Collections.emptyList();
     private void ensureProcessesIsMutable() {
-      if (!((bitField0_ & 0x40000000) == 0x40000000)) {
+      if (!((bitField0_ & 0x80000000) == 0x80000000)) {
         processes_ = new java.util.ArrayList<org.spin.grpc.util.Process>(processes_);
-        bitField0_ |= 0x40000000;
+        bitField0_ |= 0x80000000;
        }
     }
 
@@ -3498,7 +3557,7 @@ private static final long serialVersionUID = 0L;
         org.spin.grpc.util.Process, org.spin.grpc.util.Process.Builder, org.spin.grpc.util.ProcessOrBuilder> processesBuilder_;
 
     /**
-     * <code>repeated .dictionary.Process processes = 31;</code>
+     * <code>repeated .dictionary.Process processes = 32;</code>
      */
     public java.util.List<org.spin.grpc.util.Process> getProcessesList() {
       if (processesBuilder_ == null) {
@@ -3508,7 +3567,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .dictionary.Process processes = 31;</code>
+     * <code>repeated .dictionary.Process processes = 32;</code>
      */
     public int getProcessesCount() {
       if (processesBuilder_ == null) {
@@ -3518,7 +3577,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .dictionary.Process processes = 31;</code>
+     * <code>repeated .dictionary.Process processes = 32;</code>
      */
     public org.spin.grpc.util.Process getProcesses(int index) {
       if (processesBuilder_ == null) {
@@ -3528,7 +3587,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .dictionary.Process processes = 31;</code>
+     * <code>repeated .dictionary.Process processes = 32;</code>
      */
     public Builder setProcesses(
         int index, org.spin.grpc.util.Process value) {
@@ -3545,7 +3604,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .dictionary.Process processes = 31;</code>
+     * <code>repeated .dictionary.Process processes = 32;</code>
      */
     public Builder setProcesses(
         int index, org.spin.grpc.util.Process.Builder builderForValue) {
@@ -3559,7 +3618,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .dictionary.Process processes = 31;</code>
+     * <code>repeated .dictionary.Process processes = 32;</code>
      */
     public Builder addProcesses(org.spin.grpc.util.Process value) {
       if (processesBuilder_ == null) {
@@ -3575,7 +3634,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .dictionary.Process processes = 31;</code>
+     * <code>repeated .dictionary.Process processes = 32;</code>
      */
     public Builder addProcesses(
         int index, org.spin.grpc.util.Process value) {
@@ -3592,7 +3651,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .dictionary.Process processes = 31;</code>
+     * <code>repeated .dictionary.Process processes = 32;</code>
      */
     public Builder addProcesses(
         org.spin.grpc.util.Process.Builder builderForValue) {
@@ -3606,7 +3665,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .dictionary.Process processes = 31;</code>
+     * <code>repeated .dictionary.Process processes = 32;</code>
      */
     public Builder addProcesses(
         int index, org.spin.grpc.util.Process.Builder builderForValue) {
@@ -3620,7 +3679,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .dictionary.Process processes = 31;</code>
+     * <code>repeated .dictionary.Process processes = 32;</code>
      */
     public Builder addAllProcesses(
         java.lang.Iterable<? extends org.spin.grpc.util.Process> values) {
@@ -3635,12 +3694,12 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .dictionary.Process processes = 31;</code>
+     * <code>repeated .dictionary.Process processes = 32;</code>
      */
     public Builder clearProcesses() {
       if (processesBuilder_ == null) {
         processes_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x40000000);
+        bitField0_ = (bitField0_ & ~0x80000000);
         onChanged();
       } else {
         processesBuilder_.clear();
@@ -3648,7 +3707,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .dictionary.Process processes = 31;</code>
+     * <code>repeated .dictionary.Process processes = 32;</code>
      */
     public Builder removeProcesses(int index) {
       if (processesBuilder_ == null) {
@@ -3661,14 +3720,14 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .dictionary.Process processes = 31;</code>
+     * <code>repeated .dictionary.Process processes = 32;</code>
      */
     public org.spin.grpc.util.Process.Builder getProcessesBuilder(
         int index) {
       return getProcessesFieldBuilder().getBuilder(index);
     }
     /**
-     * <code>repeated .dictionary.Process processes = 31;</code>
+     * <code>repeated .dictionary.Process processes = 32;</code>
      */
     public org.spin.grpc.util.ProcessOrBuilder getProcessesOrBuilder(
         int index) {
@@ -3678,7 +3737,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .dictionary.Process processes = 31;</code>
+     * <code>repeated .dictionary.Process processes = 32;</code>
      */
     public java.util.List<? extends org.spin.grpc.util.ProcessOrBuilder> 
          getProcessesOrBuilderList() {
@@ -3689,14 +3748,14 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .dictionary.Process processes = 31;</code>
+     * <code>repeated .dictionary.Process processes = 32;</code>
      */
     public org.spin.grpc.util.Process.Builder addProcessesBuilder() {
       return getProcessesFieldBuilder().addBuilder(
           org.spin.grpc.util.Process.getDefaultInstance());
     }
     /**
-     * <code>repeated .dictionary.Process processes = 31;</code>
+     * <code>repeated .dictionary.Process processes = 32;</code>
      */
     public org.spin.grpc.util.Process.Builder addProcessesBuilder(
         int index) {
@@ -3704,7 +3763,7 @@ private static final long serialVersionUID = 0L;
           index, org.spin.grpc.util.Process.getDefaultInstance());
     }
     /**
-     * <code>repeated .dictionary.Process processes = 31;</code>
+     * <code>repeated .dictionary.Process processes = 32;</code>
      */
     public java.util.List<org.spin.grpc.util.Process.Builder> 
          getProcessesBuilderList() {
@@ -3717,7 +3776,7 @@ private static final long serialVersionUID = 0L;
         processesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
             org.spin.grpc.util.Process, org.spin.grpc.util.Process.Builder, org.spin.grpc.util.ProcessOrBuilder>(
                 processes_,
-                ((bitField0_ & 0x40000000) == 0x40000000),
+                ((bitField0_ & 0x80000000) == 0x80000000),
                 getParentForChildren(),
                 isClean());
         processes_ = null;
@@ -3728,9 +3787,9 @@ private static final long serialVersionUID = 0L;
     private java.util.List<org.spin.grpc.util.Field> fields_ =
       java.util.Collections.emptyList();
     private void ensureFieldsIsMutable() {
-      if (!((bitField0_ & 0x80000000) == 0x80000000)) {
+      if (!((bitField1_ & 0x00000001) == 0x00000001)) {
         fields_ = new java.util.ArrayList<org.spin.grpc.util.Field>(fields_);
-        bitField0_ |= 0x80000000;
+        bitField1_ |= 0x00000001;
        }
     }
 
@@ -3738,7 +3797,7 @@ private static final long serialVersionUID = 0L;
         org.spin.grpc.util.Field, org.spin.grpc.util.Field.Builder, org.spin.grpc.util.FieldOrBuilder> fieldsBuilder_;
 
     /**
-     * <code>repeated .dictionary.Field fields = 32;</code>
+     * <code>repeated .dictionary.Field fields = 33;</code>
      */
     public java.util.List<org.spin.grpc.util.Field> getFieldsList() {
       if (fieldsBuilder_ == null) {
@@ -3748,7 +3807,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .dictionary.Field fields = 32;</code>
+     * <code>repeated .dictionary.Field fields = 33;</code>
      */
     public int getFieldsCount() {
       if (fieldsBuilder_ == null) {
@@ -3758,7 +3817,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .dictionary.Field fields = 32;</code>
+     * <code>repeated .dictionary.Field fields = 33;</code>
      */
     public org.spin.grpc.util.Field getFields(int index) {
       if (fieldsBuilder_ == null) {
@@ -3768,7 +3827,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .dictionary.Field fields = 32;</code>
+     * <code>repeated .dictionary.Field fields = 33;</code>
      */
     public Builder setFields(
         int index, org.spin.grpc.util.Field value) {
@@ -3785,7 +3844,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .dictionary.Field fields = 32;</code>
+     * <code>repeated .dictionary.Field fields = 33;</code>
      */
     public Builder setFields(
         int index, org.spin.grpc.util.Field.Builder builderForValue) {
@@ -3799,7 +3858,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .dictionary.Field fields = 32;</code>
+     * <code>repeated .dictionary.Field fields = 33;</code>
      */
     public Builder addFields(org.spin.grpc.util.Field value) {
       if (fieldsBuilder_ == null) {
@@ -3815,7 +3874,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .dictionary.Field fields = 32;</code>
+     * <code>repeated .dictionary.Field fields = 33;</code>
      */
     public Builder addFields(
         int index, org.spin.grpc.util.Field value) {
@@ -3832,7 +3891,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .dictionary.Field fields = 32;</code>
+     * <code>repeated .dictionary.Field fields = 33;</code>
      */
     public Builder addFields(
         org.spin.grpc.util.Field.Builder builderForValue) {
@@ -3846,7 +3905,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .dictionary.Field fields = 32;</code>
+     * <code>repeated .dictionary.Field fields = 33;</code>
      */
     public Builder addFields(
         int index, org.spin.grpc.util.Field.Builder builderForValue) {
@@ -3860,7 +3919,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .dictionary.Field fields = 32;</code>
+     * <code>repeated .dictionary.Field fields = 33;</code>
      */
     public Builder addAllFields(
         java.lang.Iterable<? extends org.spin.grpc.util.Field> values) {
@@ -3875,12 +3934,12 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .dictionary.Field fields = 32;</code>
+     * <code>repeated .dictionary.Field fields = 33;</code>
      */
     public Builder clearFields() {
       if (fieldsBuilder_ == null) {
         fields_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x80000000);
+        bitField1_ = (bitField1_ & ~0x00000001);
         onChanged();
       } else {
         fieldsBuilder_.clear();
@@ -3888,7 +3947,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .dictionary.Field fields = 32;</code>
+     * <code>repeated .dictionary.Field fields = 33;</code>
      */
     public Builder removeFields(int index) {
       if (fieldsBuilder_ == null) {
@@ -3901,14 +3960,14 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .dictionary.Field fields = 32;</code>
+     * <code>repeated .dictionary.Field fields = 33;</code>
      */
     public org.spin.grpc.util.Field.Builder getFieldsBuilder(
         int index) {
       return getFieldsFieldBuilder().getBuilder(index);
     }
     /**
-     * <code>repeated .dictionary.Field fields = 32;</code>
+     * <code>repeated .dictionary.Field fields = 33;</code>
      */
     public org.spin.grpc.util.FieldOrBuilder getFieldsOrBuilder(
         int index) {
@@ -3918,7 +3977,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .dictionary.Field fields = 32;</code>
+     * <code>repeated .dictionary.Field fields = 33;</code>
      */
     public java.util.List<? extends org.spin.grpc.util.FieldOrBuilder> 
          getFieldsOrBuilderList() {
@@ -3929,14 +3988,14 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .dictionary.Field fields = 32;</code>
+     * <code>repeated .dictionary.Field fields = 33;</code>
      */
     public org.spin.grpc.util.Field.Builder addFieldsBuilder() {
       return getFieldsFieldBuilder().addBuilder(
           org.spin.grpc.util.Field.getDefaultInstance());
     }
     /**
-     * <code>repeated .dictionary.Field fields = 32;</code>
+     * <code>repeated .dictionary.Field fields = 33;</code>
      */
     public org.spin.grpc.util.Field.Builder addFieldsBuilder(
         int index) {
@@ -3944,7 +4003,7 @@ private static final long serialVersionUID = 0L;
           index, org.spin.grpc.util.Field.getDefaultInstance());
     }
     /**
-     * <code>repeated .dictionary.Field fields = 32;</code>
+     * <code>repeated .dictionary.Field fields = 33;</code>
      */
     public java.util.List<org.spin.grpc.util.Field.Builder> 
          getFieldsBuilderList() {
@@ -3957,7 +4016,7 @@ private static final long serialVersionUID = 0L;
         fieldsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
             org.spin.grpc.util.Field, org.spin.grpc.util.Field.Builder, org.spin.grpc.util.FieldOrBuilder>(
                 fields_,
-                ((bitField0_ & 0x80000000) == 0x80000000),
+                ((bitField1_ & 0x00000001) == 0x00000001),
                 getParentForChildren(),
                 isClean());
         fields_ = null;
@@ -3969,13 +4028,13 @@ private static final long serialVersionUID = 0L;
     private com.google.protobuf.SingleFieldBuilderV3<
         org.spin.grpc.util.FieldGroup, org.spin.grpc.util.FieldGroup.Builder, org.spin.grpc.util.FieldGroupOrBuilder> fieldGroupBuilder_;
     /**
-     * <code>.dictionary.FieldGroup fieldGroup = 33;</code>
+     * <code>.dictionary.FieldGroup fieldGroup = 34;</code>
      */
     public boolean hasFieldGroup() {
       return fieldGroupBuilder_ != null || fieldGroup_ != null;
     }
     /**
-     * <code>.dictionary.FieldGroup fieldGroup = 33;</code>
+     * <code>.dictionary.FieldGroup fieldGroup = 34;</code>
      */
     public org.spin.grpc.util.FieldGroup getFieldGroup() {
       if (fieldGroupBuilder_ == null) {
@@ -3985,7 +4044,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>.dictionary.FieldGroup fieldGroup = 33;</code>
+     * <code>.dictionary.FieldGroup fieldGroup = 34;</code>
      */
     public Builder setFieldGroup(org.spin.grpc.util.FieldGroup value) {
       if (fieldGroupBuilder_ == null) {
@@ -4001,7 +4060,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.dictionary.FieldGroup fieldGroup = 33;</code>
+     * <code>.dictionary.FieldGroup fieldGroup = 34;</code>
      */
     public Builder setFieldGroup(
         org.spin.grpc.util.FieldGroup.Builder builderForValue) {
@@ -4015,7 +4074,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.dictionary.FieldGroup fieldGroup = 33;</code>
+     * <code>.dictionary.FieldGroup fieldGroup = 34;</code>
      */
     public Builder mergeFieldGroup(org.spin.grpc.util.FieldGroup value) {
       if (fieldGroupBuilder_ == null) {
@@ -4033,7 +4092,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.dictionary.FieldGroup fieldGroup = 33;</code>
+     * <code>.dictionary.FieldGroup fieldGroup = 34;</code>
      */
     public Builder clearFieldGroup() {
       if (fieldGroupBuilder_ == null) {
@@ -4047,7 +4106,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.dictionary.FieldGroup fieldGroup = 33;</code>
+     * <code>.dictionary.FieldGroup fieldGroup = 34;</code>
      */
     public org.spin.grpc.util.FieldGroup.Builder getFieldGroupBuilder() {
       
@@ -4055,7 +4114,7 @@ private static final long serialVersionUID = 0L;
       return getFieldGroupFieldBuilder().getBuilder();
     }
     /**
-     * <code>.dictionary.FieldGroup fieldGroup = 33;</code>
+     * <code>.dictionary.FieldGroup fieldGroup = 34;</code>
      */
     public org.spin.grpc.util.FieldGroupOrBuilder getFieldGroupOrBuilder() {
       if (fieldGroupBuilder_ != null) {
@@ -4066,7 +4125,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>.dictionary.FieldGroup fieldGroup = 33;</code>
+     * <code>.dictionary.FieldGroup fieldGroup = 34;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
         org.spin.grpc.util.FieldGroup, org.spin.grpc.util.FieldGroup.Builder, org.spin.grpc.util.FieldGroupOrBuilder> 

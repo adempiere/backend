@@ -144,86 +144,91 @@ public interface TabOrBuilder extends
   boolean getIsDocument();
 
   /**
-   * <code>int32 accessLevel = 21;</code>
+   * <code>bool isChangeLog = 21;</code>
+   */
+  boolean getIsChangeLog();
+
+  /**
+   * <code>int32 accessLevel = 22;</code>
    */
   int getAccessLevel();
 
   /**
-   * <code>string linkColumnName = 22;</code>
+   * <code>string linkColumnName = 23;</code>
    */
   java.lang.String getLinkColumnName();
   /**
-   * <code>string linkColumnName = 22;</code>
+   * <code>string linkColumnName = 23;</code>
    */
   com.google.protobuf.ByteString
       getLinkColumnNameBytes();
 
   /**
-   * <code>string parentColumnName = 23;</code>
+   * <code>string parentColumnName = 24;</code>
    */
   java.lang.String getParentColumnName();
   /**
-   * <code>string parentColumnName = 23;</code>
+   * <code>string parentColumnName = 24;</code>
    */
   com.google.protobuf.ByteString
       getParentColumnNameBytes();
 
   /**
-   * <code>string displayLogic = 24;</code>
+   * <code>string displayLogic = 25;</code>
    */
   java.lang.String getDisplayLogic();
   /**
-   * <code>string displayLogic = 24;</code>
+   * <code>string displayLogic = 25;</code>
    */
   com.google.protobuf.ByteString
       getDisplayLogicBytes();
 
   /**
-   * <code>string commitWarning = 25;</code>
+   * <code>string commitWarning = 26;</code>
    */
   java.lang.String getCommitWarning();
   /**
-   * <code>string commitWarning = 25;</code>
+   * <code>string commitWarning = 26;</code>
    */
   com.google.protobuf.ByteString
       getCommitWarningBytes();
 
   /**
-   * <code>string query = 26;</code>
+   * <code>string query = 27;</code>
    */
   java.lang.String getQuery();
   /**
-   * <code>string query = 26;</code>
+   * <code>string query = 27;</code>
    */
   com.google.protobuf.ByteString
       getQueryBytes();
 
   /**
-   * <code>string whereClause = 27;</code>
+   * <code>string whereClause = 28;</code>
    */
   java.lang.String getWhereClause();
   /**
-   * <code>string whereClause = 27;</code>
+   * <code>string whereClause = 28;</code>
    */
   com.google.protobuf.ByteString
       getWhereClauseBytes();
 
   /**
-   * <code>string orderByClause = 28;</code>
+   * <code>string orderByClause = 29;</code>
    */
   java.lang.String getOrderByClause();
   /**
-   * <code>string orderByClause = 28;</code>
+   * <code>string orderByClause = 29;</code>
    */
   com.google.protobuf.ByteString
       getOrderByClauseBytes();
 
   /**
-   * <code>string parentTabUuid = 29;</code>
+   * <code>string parentTabUuid = 30;</code>
    */
   java.lang.String getParentTabUuid();
   /**
-   * <code>string parentTabUuid = 29;</code>
+   * <code>string parentTabUuid = 30;</code>
    */
   com.google.protobuf.ByteString
       getParentTabUuidBytes();
@@ -233,7 +238,7 @@ public interface TabOrBuilder extends
    * External Info
    * </pre>
    *
-   * <code>.dictionary.ContextInfo contextInfo = 30;</code>
+   * <code>.dictionary.ContextInfo contextInfo = 31;</code>
    */
   boolean hasContextInfo();
   /**
@@ -241,7 +246,7 @@ public interface TabOrBuilder extends
    * External Info
    * </pre>
    *
-   * <code>.dictionary.ContextInfo contextInfo = 30;</code>
+   * <code>.dictionary.ContextInfo contextInfo = 31;</code>
    */
   org.spin.grpc.util.ContextInfo getContextInfo();
   /**
@@ -249,68 +254,68 @@ public interface TabOrBuilder extends
    * External Info
    * </pre>
    *
-   * <code>.dictionary.ContextInfo contextInfo = 30;</code>
+   * <code>.dictionary.ContextInfo contextInfo = 31;</code>
    */
   org.spin.grpc.util.ContextInfoOrBuilder getContextInfoOrBuilder();
 
   /**
-   * <code>repeated .dictionary.Process processes = 31;</code>
+   * <code>repeated .dictionary.Process processes = 32;</code>
    */
   java.util.List<org.spin.grpc.util.Process> 
       getProcessesList();
   /**
-   * <code>repeated .dictionary.Process processes = 31;</code>
+   * <code>repeated .dictionary.Process processes = 32;</code>
    */
   org.spin.grpc.util.Process getProcesses(int index);
   /**
-   * <code>repeated .dictionary.Process processes = 31;</code>
+   * <code>repeated .dictionary.Process processes = 32;</code>
    */
   int getProcessesCount();
   /**
-   * <code>repeated .dictionary.Process processes = 31;</code>
+   * <code>repeated .dictionary.Process processes = 32;</code>
    */
   java.util.List<? extends org.spin.grpc.util.ProcessOrBuilder> 
       getProcessesOrBuilderList();
   /**
-   * <code>repeated .dictionary.Process processes = 31;</code>
+   * <code>repeated .dictionary.Process processes = 32;</code>
    */
   org.spin.grpc.util.ProcessOrBuilder getProcessesOrBuilder(
       int index);
 
   /**
-   * <code>repeated .dictionary.Field fields = 32;</code>
+   * <code>repeated .dictionary.Field fields = 33;</code>
    */
   java.util.List<org.spin.grpc.util.Field> 
       getFieldsList();
   /**
-   * <code>repeated .dictionary.Field fields = 32;</code>
+   * <code>repeated .dictionary.Field fields = 33;</code>
    */
   org.spin.grpc.util.Field getFields(int index);
   /**
-   * <code>repeated .dictionary.Field fields = 32;</code>
+   * <code>repeated .dictionary.Field fields = 33;</code>
    */
   int getFieldsCount();
   /**
-   * <code>repeated .dictionary.Field fields = 32;</code>
+   * <code>repeated .dictionary.Field fields = 33;</code>
    */
   java.util.List<? extends org.spin.grpc.util.FieldOrBuilder> 
       getFieldsOrBuilderList();
   /**
-   * <code>repeated .dictionary.Field fields = 32;</code>
+   * <code>repeated .dictionary.Field fields = 33;</code>
    */
   org.spin.grpc.util.FieldOrBuilder getFieldsOrBuilder(
       int index);
 
   /**
-   * <code>.dictionary.FieldGroup fieldGroup = 33;</code>
+   * <code>.dictionary.FieldGroup fieldGroup = 34;</code>
    */
   boolean hasFieldGroup();
   /**
-   * <code>.dictionary.FieldGroup fieldGroup = 33;</code>
+   * <code>.dictionary.FieldGroup fieldGroup = 34;</code>
    */
   org.spin.grpc.util.FieldGroup getFieldGroup();
   /**
-   * <code>.dictionary.FieldGroup fieldGroup = 33;</code>
+   * <code>.dictionary.FieldGroup fieldGroup = 34;</code>
    */
   org.spin.grpc.util.FieldGroupOrBuilder getFieldGroupOrBuilder();
 }

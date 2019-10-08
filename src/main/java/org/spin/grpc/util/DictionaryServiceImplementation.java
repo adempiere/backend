@@ -674,6 +674,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setWhereClause(whereClause.toString())
 				.setOrderByClause(validateNull(tab.getOrderByClause()))
 				.setParentTabUuid(validateNull(parentTabUuid))
+				.setIsChangeLog(table.isChangeLog())
 				.setIsActive(tab.isActive());
 		//	For link
 		if(contextInfoId > 0) {

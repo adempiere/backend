@@ -92,20 +92,21 @@ message Tab {
 	bool isView = 18;
 	bool isDeleteable = 19;
 	bool isDocument = 20;
-	int32 accessLevel = 21;
-	string linkColumnName = 22;
-	string parentColumnName = 23;
-	string displayLogic = 24;
-	string commitWarning = 25;
-	string query = 26;
-	string whereClause = 27;
-	string orderByClause = 28;
-	string parentTabUuid = 29;
+	bool isChangeLog = 21;
+	int32 accessLevel = 22;
+	string linkColumnName = 23;
+	string parentColumnName = 24;
+	string displayLogic = 25;
+	string commitWarning = 26;
+	string query = 27;
+	string whereClause = 28;
+	string orderByClause = 29;
+	string parentTabUuid = 30;
 	// External Info
-	ContextInfo contextInfo = 30;
-	repeated Process processes = 31;
-	repeated Field fields = 32;
-	FieldGroup fieldGroup = 33;
+	ContextInfo contextInfo = 31;
+	repeated Process processes = 32;
+	repeated Field fields = 33;
+	FieldGroup fieldGroup = 34;
 }
 
 // Field
