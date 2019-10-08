@@ -158,6 +158,38 @@ public final class DataServiceGrpc {
      return getDeleteEntityMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.RollbackEntityRequest,
+      org.spin.grpc.util.Entity> getRollbackEntityMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "RollbackEntity",
+      requestType = org.spin.grpc.util.RollbackEntityRequest.class,
+      responseType = org.spin.grpc.util.Entity.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<org.spin.grpc.util.RollbackEntityRequest,
+      org.spin.grpc.util.Entity> getRollbackEntityMethod() {
+    io.grpc.MethodDescriptor<org.spin.grpc.util.RollbackEntityRequest, org.spin.grpc.util.Entity> getRollbackEntityMethod;
+    if ((getRollbackEntityMethod = DataServiceGrpc.getRollbackEntityMethod) == null) {
+      synchronized (DataServiceGrpc.class) {
+        if ((getRollbackEntityMethod = DataServiceGrpc.getRollbackEntityMethod) == null) {
+          DataServiceGrpc.getRollbackEntityMethod = getRollbackEntityMethod = 
+              io.grpc.MethodDescriptor.<org.spin.grpc.util.RollbackEntityRequest, org.spin.grpc.util.Entity>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(
+                  "data.DataService", "RollbackEntity"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  org.spin.grpc.util.RollbackEntityRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  org.spin.grpc.util.Entity.getDefaultInstance()))
+                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("RollbackEntity"))
+                  .build();
+          }
+        }
+     }
+     return getRollbackEntityMethod;
+  }
+
   private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.ListEntitiesRequest,
       org.spin.grpc.util.ListEntitiesResponse> getListEntitiesMethod;
 
@@ -518,6 +550,16 @@ public final class DataServiceGrpc {
 
     /**
      * <pre>
+     * Rollback Entity Request
+     * </pre>
+     */
+    public void rollbackEntity(org.spin.grpc.util.RollbackEntityRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.Entity> responseObserver) {
+      asyncUnimplementedUnaryCall(getRollbackEntityMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
      * List a Entities
      * </pre>
      */
@@ -636,6 +678,13 @@ public final class DataServiceGrpc {
                 org.spin.grpc.util.DeleteEntityRequest,
                 org.spin.grpc.util.Empty>(
                   this, METHODID_DELETE_ENTITY)))
+          .addMethod(
+            getRollbackEntityMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                org.spin.grpc.util.RollbackEntityRequest,
+                org.spin.grpc.util.Entity>(
+                  this, METHODID_ROLLBACK_ENTITY)))
           .addMethod(
             getListEntitiesMethod(),
             asyncUnaryCall(
@@ -766,6 +815,17 @@ public final class DataServiceGrpc {
         io.grpc.stub.StreamObserver<org.spin.grpc.util.Empty> responseObserver) {
       asyncUnaryCall(
           getChannel().newCall(getDeleteEntityMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
+     * Rollback Entity Request
+     * </pre>
+     */
+    public void rollbackEntity(org.spin.grpc.util.RollbackEntityRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.Entity> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getRollbackEntityMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
@@ -931,6 +991,16 @@ public final class DataServiceGrpc {
 
     /**
      * <pre>
+     * Rollback Entity Request
+     * </pre>
+     */
+    public org.spin.grpc.util.Entity rollbackEntity(org.spin.grpc.util.RollbackEntityRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getRollbackEntityMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
      * List a Entities
      * </pre>
      */
@@ -1087,6 +1157,17 @@ public final class DataServiceGrpc {
 
     /**
      * <pre>
+     * Rollback Entity Request
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.Entity> rollbackEntity(
+        org.spin.grpc.util.RollbackEntityRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getRollbackEntityMethod(), getCallOptions()), request);
+    }
+
+    /**
+     * <pre>
      * List a Entities
      * </pre>
      */
@@ -1189,15 +1270,16 @@ public final class DataServiceGrpc {
   private static final int METHODID_CREATE_ENTITY = 1;
   private static final int METHODID_UPDATE_ENTITY = 2;
   private static final int METHODID_DELETE_ENTITY = 3;
-  private static final int METHODID_LIST_ENTITIES = 4;
-  private static final int METHODID_GET_LOOKUP_ITEM = 5;
-  private static final int METHODID_LIST_LOOKUP_ITEMS = 6;
-  private static final int METHODID_RUN_CALLOUT = 7;
-  private static final int METHODID_RUN_BUSINESS_PROCESS = 8;
-  private static final int METHODID_LIST_BROWSER_ITEMS = 9;
-  private static final int METHODID_LIST_ACTIVITIES = 10;
-  private static final int METHODID_LIST_RECENT_ITEMS = 11;
-  private static final int METHODID_LIST_REFERENCES = 12;
+  private static final int METHODID_ROLLBACK_ENTITY = 4;
+  private static final int METHODID_LIST_ENTITIES = 5;
+  private static final int METHODID_GET_LOOKUP_ITEM = 6;
+  private static final int METHODID_LIST_LOOKUP_ITEMS = 7;
+  private static final int METHODID_RUN_CALLOUT = 8;
+  private static final int METHODID_RUN_BUSINESS_PROCESS = 9;
+  private static final int METHODID_LIST_BROWSER_ITEMS = 10;
+  private static final int METHODID_LIST_ACTIVITIES = 11;
+  private static final int METHODID_LIST_RECENT_ITEMS = 12;
+  private static final int METHODID_LIST_REFERENCES = 13;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1231,6 +1313,10 @@ public final class DataServiceGrpc {
         case METHODID_DELETE_ENTITY:
           serviceImpl.deleteEntity((org.spin.grpc.util.DeleteEntityRequest) request,
               (io.grpc.stub.StreamObserver<org.spin.grpc.util.Empty>) responseObserver);
+          break;
+        case METHODID_ROLLBACK_ENTITY:
+          serviceImpl.rollbackEntity((org.spin.grpc.util.RollbackEntityRequest) request,
+              (io.grpc.stub.StreamObserver<org.spin.grpc.util.Entity>) responseObserver);
           break;
         case METHODID_LIST_ENTITIES:
           serviceImpl.listEntities((org.spin.grpc.util.ListEntitiesRequest) request,
@@ -1333,6 +1419,7 @@ public final class DataServiceGrpc {
               .addMethod(getCreateEntityMethod())
               .addMethod(getUpdateEntityMethod())
               .addMethod(getDeleteEntityMethod())
+              .addMethod(getRollbackEntityMethod())
               .addMethod(getListEntitiesMethod())
               .addMethod(getGetLookupItemMethod())
               .addMethod(getListLookupItemsMethod())

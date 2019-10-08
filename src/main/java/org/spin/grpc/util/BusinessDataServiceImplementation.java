@@ -48,6 +48,7 @@ import org.adempiere.model.ZoomInfoFactory;
 import org.compiere.model.Callout;
 import org.compiere.model.GridField;
 import org.compiere.model.GridTab;
+import org.compiere.model.I_AD_ChangeLog;
 import org.compiere.model.I_AD_Element;
 import org.compiere.model.I_AD_Form;
 import org.compiere.model.I_AD_Menu;
@@ -57,6 +58,7 @@ import org.compiere.model.I_AD_Process;
 import org.compiere.model.I_AD_Session;
 import org.compiere.model.I_AD_Window;
 import org.compiere.model.I_AD_Workflow;
+import org.compiere.model.MChangeLog;
 import org.compiere.model.MColumn;
 import org.compiere.model.MMenu;
 import org.compiere.model.MPInstance;
@@ -85,6 +87,7 @@ import org.compiere.util.Msg;
 import org.compiere.util.Util;
 import org.eevolution.service.dsl.ProcessBuilder;
 import org.spin.grpc.util.DataServiceGrpc.DataServiceImplBase;
+import org.spin.grpc.util.RollbackEntityRequest.EventType;
 import org.spin.grpc.util.Value.ValueType;
 import io.grpc.Status;
 
@@ -182,6 +185,27 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 			log.fine("Object Requested = " + request.getUuid());
 			Properties context = getContext(request.getClientRequest());
 			Empty.Builder entityValue = deleteEntity(context, request);
+			responseObserver.onNext(entityValue.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void rollbackEntity(RollbackEntityRequest request, StreamObserver<Entity> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Rollback Requested = " + request.getRecordId());
+			Properties context = getContext(request.getClientRequest());
+			Entity.Builder entityValue = rollbackLastEntityAction(context, request);
 			responseObserver.onNext(entityValue.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -698,6 +722,116 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 	}
 	
 	/**
+	 * Rollback entity
+	 * @param context
+	 * @param request
+	 * @return
+	 */
+	private Entity.Builder rollbackLastEntityAction(Properties context, RollbackEntityRequest request) {
+		if(Util.isEmpty(request.getTableName())) {
+			throw new AdempiereException("@AD_Table_ID@ @NotFound@");
+		}
+		MTable table = MTable.get(context, request.getTableName());
+		if(table == null
+				|| table.getAD_Table_ID() == 0) {
+			throw new AdempiereException("@AD_Table_ID@ @Invalid@");
+		}
+		String eventType = MChangeLog.EVENTCHANGELOG_Delete;
+		if(request.getEventTypeValue() == EventType.INSERT_VALUE) {
+			eventType = MChangeLog.EVENTCHANGELOG_Insert;
+		} else if(request.getEventTypeValue() == EventType.UPDATE_VALUE) {
+			eventType = MChangeLog.EVENTCHANGELOG_Update;
+		}
+		Entity.Builder builder = Entity.newBuilder();
+		//	get Table from table name
+		int lastChangeLogId = getLastChangeLogId(Env.getContextAsInt(context, "#AD_Session_ID"), table.getAD_Table_ID(), request.getRecordId(), eventType);
+		if(lastChangeLogId > 0) {
+			if(eventType.equals(MChangeLog.EVENTCHANGELOG_Insert)) {
+				MChangeLog changeLog = new MChangeLog(context, lastChangeLogId, null);
+				PO entity = getEntity(context, table.getTableName(), null, changeLog.getRecord_ID());
+				if(entity != null
+						&& entity.get_ID() >= 0) {
+					entity.delete(true);
+				}
+			} else if(eventType.equals(MChangeLog.EVENTCHANGELOG_Delete)
+					|| eventType.equals(MChangeLog.EVENTCHANGELOG_Update)) {
+				PO entity = table.getPO(0, null);
+				if(entity == null) {
+					throw new AdempiereException("@Error@ PO is null");
+				}
+				new Query(context, I_AD_ChangeLog.Table_Name, I_AD_ChangeLog.COLUMNNAME_AD_ChangeLog_ID + " = ?", null)
+					.setParameters(lastChangeLogId)
+					.<MChangeLog>list().forEach(changeLog -> {
+						setValueFromChangeLog(entity, changeLog);
+					});
+			}
+		} else {
+			throw new AdempiereException("@AD_ChangeLog_ID@ @NotFound@");
+		}
+		//	Return
+		return builder;
+	}
+
+	/**
+	 * set value for PO from change log
+	 * @param entity
+	 * @param changeLog
+	 */
+	private void setValueFromChangeLog(PO entity, MChangeLog changeLog) {
+		Object value = null;
+		try {
+			if(!changeLog.isOldNull()) {
+				MColumn column = MColumn.get(Env.getCtx(), changeLog.getAD_Column_ID());
+				value = stringToObject(column, changeLog.getOldValue());
+			}
+		} catch (Exception e) {
+			log.severe(e.getMessage());
+		}
+		//	Set value
+		entity.set_ValueOfColumn(changeLog.getAD_Column_ID(), value);
+	}
+	
+	/**
+	 * Convert string representation to appropriate object type
+	 * for column
+	 * @param column
+	 * @param value
+	 * @return
+	 */
+	private Object stringToObject(MColumn column, String value) {
+		if ( value == null )
+			return null;
+		
+		if ( DisplayType.isText(column.getAD_Reference_ID()) 
+				|| column.getAD_Reference_ID() == DisplayType.List  
+				|| column.getColumnName().equals("EntityType") 
+				|| column.getColumnName().equals("AD_Language")) {
+			return value;
+		}
+		else if ( DisplayType.isNumeric(column.getAD_Reference_ID()) ){
+			return new BigDecimal(value);
+		}
+		else if (DisplayType.isID(column.getAD_Reference_ID()) ) {
+			return Integer.valueOf(value);
+		}	
+		else if (DisplayType.YesNo == column.getAD_Reference_ID() ) {
+			return "true".equalsIgnoreCase(value);
+		}
+		else if (DisplayType.Button == column.getAD_Reference_ID() && column.getAD_Reference_Value_ID() == 0) {
+			return "true".equalsIgnoreCase(value) ? "Y" : "N";
+		}
+		else if (DisplayType.Button == column.getAD_Reference_ID() && column.getAD_Reference_Value_ID() != 0) {
+			return value;
+		}
+		else if (DisplayType.isDate(column.getAD_Reference_ID())) {
+			return Timestamp.valueOf(value);
+		}
+	//Binary,  Radio, RowID, Image not supported
+		else 
+			return null;
+	}
+	
+	/**
 	 * get Entity from Table and (UUID / Record ID)
 	 * @param context
 	 * @param tableName
@@ -777,6 +911,25 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 		}
 		//	Return
 		return convertEntity(context, entity);
+	}
+	
+	/**
+	 * Get Last change Log
+	 * @param sessionId
+	 * @param tableId
+	 * @param recordId
+	 * @param eventType
+	 * @return
+	 */
+	private int getLastChangeLogId(int sessionId, int tableId, int recordId, String eventType) {
+		return DB.getSQLValue(null, "SELECT AD_ChangeLog_ID "
+				+ "FROM AD_ChangeLog "
+				+ "WHERE AD_Session_ID = ? "
+				+ "AND AD_Table_ID = ? "
+				+ "AND Record_ID = ? "
+				+ "AND EventChangeLog = ? "
+				+ "AND ROWNUM <= 1 "
+				+ "ORDER BY Updated DESC", sessionId, tableId, recordId, eventType);
 	}
 	
 	/**

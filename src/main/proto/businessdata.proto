@@ -31,6 +31,8 @@ service DataService {
 	rpc UpdateEntity(UpdateEntityRequest) returns (Entity) {}
 	// Delete Entity Request
 	rpc DeleteEntity(DeleteEntityRequest) returns (Empty) {}
+	// Rollback Entity Request
+	rpc RollbackEntity(RollbackEntityRequest) returns (Entity) {}
 	// List a Entities
 	rpc ListEntities(ListEntitiesRequest) returns (ListEntitiesResponse) {}
 	// Get Lookup Item
@@ -76,7 +78,20 @@ message CreateEntityRequest {
 
 //  Empty message
 message Empty {
+	
+}
 
+//  Empty message
+message RollbackEntityRequest {
+	ClientRequest clientRequest = 1;
+	string tableName = 2;
+	int32 recordId = 3;
+	enum EventType {
+		INSERT = 0;
+		UPDATE = 1;
+		DELETE = 2;
+	}
+	EventType eventType = 4;
 }
 
 // Update Entity Request
