@@ -43,9 +43,14 @@ public interface BusinessProcessOrBuilder extends
       getSummaryBytes();
 
   /**
-   * <code>int32 resultTableId = 5;</code>
+   * <code>string resultTableName = 5;</code>
    */
-  int getResultTableId();
+  java.lang.String getResultTableName();
+  /**
+   * <code>string resultTableName = 5;</code>
+   */
+  com.google.protobuf.ByteString
+      getResultTableNameBytes();
 
   /**
    * <code>bool isProcessing = 6;</code>

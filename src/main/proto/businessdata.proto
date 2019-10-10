@@ -330,7 +330,7 @@ message BusinessProcess {
 	string instanceUuid = 2;
 	bool isError = 3;
 	string summary = 4;
-	int32 resultTableId = 5;
+	string resultTableName = 5;
 	bool isProcessing = 6;
 	repeated ProcessInfoLog logs = 7;
 	map<string, Value> parameters = 8;

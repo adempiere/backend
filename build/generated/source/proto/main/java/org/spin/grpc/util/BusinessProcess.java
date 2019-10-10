@@ -24,7 +24,7 @@ private static final long serialVersionUID = 0L;
     instanceUuid_ = "";
     isError_ = false;
     summary_ = "";
-    resultTableId_ = 0;
+    resultTableName_ = "";
     isProcessing_ = false;
     logs_ = java.util.Collections.emptyList();
   }
@@ -83,9 +83,10 @@ private static final long serialVersionUID = 0L;
             summary_ = s;
             break;
           }
-          case 40: {
+          case 42: {
+            java.lang.String s = input.readStringRequireUtf8();
 
-            resultTableId_ = input.readInt32();
+            resultTableName_ = s;
             break;
           }
           case 48: {
@@ -278,13 +279,38 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int RESULTTABLEID_FIELD_NUMBER = 5;
-  private int resultTableId_;
+  public static final int RESULTTABLENAME_FIELD_NUMBER = 5;
+  private volatile java.lang.Object resultTableName_;
   /**
-   * <code>int32 resultTableId = 5;</code>
+   * <code>string resultTableName = 5;</code>
    */
-  public int getResultTableId() {
-    return resultTableId_;
+  public java.lang.String getResultTableName() {
+    java.lang.Object ref = resultTableName_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      resultTableName_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string resultTableName = 5;</code>
+   */
+  public com.google.protobuf.ByteString
+      getResultTableNameBytes() {
+    java.lang.Object ref = resultTableName_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      resultTableName_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
   }
 
   public static final int ISPROCESSING_FIELD_NUMBER = 6;
@@ -452,8 +478,8 @@ private static final long serialVersionUID = 0L;
     if (!getSummaryBytes().isEmpty()) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 4, summary_);
     }
-    if (resultTableId_ != 0) {
-      output.writeInt32(5, resultTableId_);
+    if (!getResultTableNameBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 5, resultTableName_);
     }
     if (isProcessing_ != false) {
       output.writeBool(6, isProcessing_);
@@ -491,9 +517,8 @@ private static final long serialVersionUID = 0L;
     if (!getSummaryBytes().isEmpty()) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, summary_);
     }
-    if (resultTableId_ != 0) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeInt32Size(5, resultTableId_);
+    if (!getResultTableNameBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, resultTableName_);
     }
     if (isProcessing_ != false) {
       size += com.google.protobuf.CodedOutputStream
@@ -541,8 +566,8 @@ private static final long serialVersionUID = 0L;
         == other.getIsError());
     result = result && getSummary()
         .equals(other.getSummary());
-    result = result && (getResultTableId()
-        == other.getResultTableId());
+    result = result && getResultTableName()
+        .equals(other.getResultTableName());
     result = result && (getIsProcessing()
         == other.getIsProcessing());
     result = result && getLogsList()
@@ -574,8 +599,8 @@ private static final long serialVersionUID = 0L;
         getIsError());
     hash = (37 * hash) + SUMMARY_FIELD_NUMBER;
     hash = (53 * hash) + getSummary().hashCode();
-    hash = (37 * hash) + RESULTTABLEID_FIELD_NUMBER;
-    hash = (53 * hash) + getResultTableId();
+    hash = (37 * hash) + RESULTTABLENAME_FIELD_NUMBER;
+    hash = (53 * hash) + getResultTableName().hashCode();
     hash = (37 * hash) + ISPROCESSING_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
         getIsProcessing());
@@ -755,7 +780,7 @@ private static final long serialVersionUID = 0L;
 
       summary_ = "";
 
-      resultTableId_ = 0;
+      resultTableName_ = "";
 
       isProcessing_ = false;
 
@@ -800,7 +825,7 @@ private static final long serialVersionUID = 0L;
       result.instanceUuid_ = instanceUuid_;
       result.isError_ = isError_;
       result.summary_ = summary_;
-      result.resultTableId_ = resultTableId_;
+      result.resultTableName_ = resultTableName_;
       result.isProcessing_ = isProcessing_;
       if (logsBuilder_ == null) {
         if (((bitField0_ & 0x00000040) == 0x00000040)) {
@@ -875,8 +900,9 @@ private static final long serialVersionUID = 0L;
         summary_ = other.summary_;
         onChanged();
       }
-      if (other.getResultTableId() != 0) {
-        setResultTableId(other.getResultTableId());
+      if (!other.getResultTableName().isEmpty()) {
+        resultTableName_ = other.resultTableName_;
+        onChanged();
       }
       if (other.getIsProcessing() != false) {
         setIsProcessing(other.getIsProcessing());
@@ -1173,28 +1199,71 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private int resultTableId_ ;
+    private java.lang.Object resultTableName_ = "";
     /**
-     * <code>int32 resultTableId = 5;</code>
+     * <code>string resultTableName = 5;</code>
      */
-    public int getResultTableId() {
-      return resultTableId_;
+    public java.lang.String getResultTableName() {
+      java.lang.Object ref = resultTableName_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        resultTableName_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
     }
     /**
-     * <code>int32 resultTableId = 5;</code>
+     * <code>string resultTableName = 5;</code>
      */
-    public Builder setResultTableId(int value) {
-      
-      resultTableId_ = value;
+    public com.google.protobuf.ByteString
+        getResultTableNameBytes() {
+      java.lang.Object ref = resultTableName_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        resultTableName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string resultTableName = 5;</code>
+     */
+    public Builder setResultTableName(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
+      resultTableName_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>int32 resultTableId = 5;</code>
+     * <code>string resultTableName = 5;</code>
      */
-    public Builder clearResultTableId() {
+    public Builder clearResultTableName() {
       
-      resultTableId_ = 0;
+      resultTableName_ = getDefaultInstance().getResultTableName();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string resultTableName = 5;</code>
+     */
+    public Builder setResultTableNameBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      
+      resultTableName_ = value;
       onChanged();
       return this;
     }

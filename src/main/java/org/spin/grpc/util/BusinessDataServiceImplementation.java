@@ -64,6 +64,7 @@ import org.compiere.model.MMenu;
 import org.compiere.model.MPInstance;
 import org.compiere.model.MPInstancePara;
 import org.compiere.model.MProcess;
+import org.compiere.model.MQuery;
 import org.compiere.model.MRecentItem;
 import org.compiere.model.MRole;
 import org.compiere.model.MRule;
@@ -86,6 +87,7 @@ import org.compiere.util.MimeType;
 import org.compiere.util.Msg;
 import org.compiere.util.Util;
 import org.eevolution.service.dsl.ProcessBuilder;
+import org.spin.grpc.util.Condition.Operator;
 import org.spin.grpc.util.DataServiceGrpc.DataServiceImplBase;
 import org.spin.grpc.util.RollbackEntityRequest.EventType;
 import org.spin.grpc.util.Value.ValueType;
@@ -548,8 +550,10 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 		response.setInstanceUuid(validateNull(instanceUuid));
 		response.setIsError(result.isError());
 		if(!Util.isEmpty(result.getSummary())) {
-			response.setSummary(result.getSummary());
+			response.setSummary(Msg.parseTranslation(context, result.getSummary()));
 		}
+		//	
+		response.setResultTableName(validateNull(result.getResultTableName()));
 		//	Convert Log
 		if(result.getLogList() != null) {
 			for(org.compiere.process.ProcessInfoLog log : result.getLogList()) {
@@ -629,7 +633,7 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 	private ProcessInfoLog.Builder convertProcessInfoLog(org.compiere.process.ProcessInfoLog log) {
 		ProcessInfoLog.Builder processLog = ProcessInfoLog.newBuilder();
 		processLog.setRecordId(log.getP_ID());
-		processLog.setLog(validateNull(log.getP_Msg()));
+		processLog.setLog(validateNull(Msg.parseTranslation(Env.getCtx(), log.getP_Msg())));
 		return processLog;
 	}
 	
@@ -673,6 +677,59 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 			}
 		}
 		return value;
+	}
+	
+	/**
+	 * Convert operator from gRPC to SQL
+	 * @param gRpcOperator
+	 * @return
+	 */
+	private String convertOperator(int gRpcOperator) {
+		String operator = MQuery.EQUAL;
+		switch (gRpcOperator) {
+			case Operator.BETWEEN_VALUE:
+				operator = MQuery.BETWEEN;
+				break;
+			case Operator.EQUAL_VALUE:
+				operator = MQuery.EQUAL;
+				break;
+			case Operator.GREATER_EQUAL_VALUE:
+				operator = MQuery.GREATER_EQUAL;
+				break;
+			case Operator.GREATER_VALUE:
+				operator = MQuery.GREATER;
+				break;
+			case Operator.IN_VALUE:
+				operator = " IN ";
+				break;
+			case Operator.LESS_EQUAL_VALUE:
+				operator = MQuery.LESS_EQUAL;
+				break;
+			case Operator.LESS_VALUE:
+				operator = MQuery.LESS;
+				break;
+			case Operator.LIKE_VALUE:
+				operator = MQuery.LIKE;
+				break;
+			case Operator.NOT_EQUAL_VALUE:
+				operator = MQuery.NOT_EQUAL;
+				break;
+			case Operator.NOT_IN_VALUE:
+				operator = " NOT IN ";
+				break;
+			case Operator.NOT_LIKE_VALUE:
+				operator = MQuery.NOT_LIKE;
+				break;
+			case Operator.NOT_NULL_VALUE:
+				operator = MQuery.NOT_NULL;
+				break;
+			case Operator.NULL_VALUE:
+				operator = MQuery.NULL;
+				break;
+			default:
+				break;
+			}
+		return operator;
 	}
 	
 	/**
@@ -1145,6 +1202,51 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 	}
 	
 	/**
+	 * Get Where Clause from criteria and dynamic condition
+	 * @param criteria
+	 * @param params
+	 * @return
+	 */
+	private String getWhereClauseFromCriteria(Criteria criteria, List<Object> params) {
+		StringBuffer whereClause = new StringBuffer();
+		criteria.getConditionsList().stream()
+			.filter(condition -> !Util.isEmpty(condition.getColumnName()))
+			.forEach(condition -> {
+				if(whereClause.length() > 0) {
+					whereClause.append(" AND ");
+				}
+				//	Open
+				whereClause.append("(");
+				//	Add operator
+				whereClause.append(condition.getColumnName()).append(convertOperator(condition.getOperatorValue()));
+				//	For in or not in
+				if(condition.getOperatorValue() == Operator.IN_VALUE
+						|| condition.getOperatorValue() == Operator.NOT_IN_VALUE) {
+					StringBuffer parameter = new StringBuffer();
+					condition.getValuesList().forEach(value -> {
+						if(parameter.length() > 0) {
+							parameter.append(", ");
+						}
+						parameter.append("?");
+						params.add(getValueFromType(value));
+					});
+					whereClause.append("(").append(parameter).append(")");
+				} else if(condition.getOperatorValue() == Operator.BETWEEN_VALUE) {
+					whereClause.append(" ? ").append(" AND ").append(" ?");
+					params.add(getValueFromType(condition.getValue()));
+					params.add(getValueFromType(condition.getValueTo()));
+				} else {
+					whereClause.append("?");
+					params.add(getValueFromType(condition.getValue()));
+				}
+				//	Close
+				whereClause.append(")");
+		});
+		//	Return where clause
+		return whereClause.toString();
+	}
+	
+	/**
 	 * Convert Object to list
 	 * @param request
 	 * @return
@@ -1159,6 +1261,15 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 		criteria.getValuesList().forEach(value -> {
 			params.add(getValueFromType(value));
 		});
+		//	For dynamic condition
+		String dynamicWhere = getWhereClauseFromCriteria(criteria, params);
+		if(!Util.isEmpty(dynamicWhere)) {
+			if(whereClause.length() > 0) {
+				whereClause.append(" AND ");
+			}
+			//	Add
+			whereClause.append(dynamicWhere);
+		}
 		//	Add from reference
 		if(!Util.isEmpty(criteria.getReferenceUuid())) {
 			String referenceWhereClause = referenceWhereClauseCache.get(criteria.getReferenceUuid());
