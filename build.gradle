@@ -102,9 +102,18 @@ task ADempiereBusinessData(type: CreateStartScripts) {
     classpath = jar.outputs.files + project.configurations.runtime
 }
 
+task ADempiereManagementEnrollment(type: CreateStartScripts) {
+    mainClassName = 'org.spin.grpc.util.EnrollmentServer'
+    applicationName = 'adempiere-enrollment-server'
+    defaultJvmOpts = Arrays.asList("-DPropertyFile=Enrollment.properties", "-Dorg.adempiere.server.embedded=true")
+    outputDir = new File(project.buildDir, 'tmp')
+    classpath = jar.outputs.files + project.configurations.runtime
+}
+
 applicationDistribution.into('bin') {
 	from(ADempiereAccess)
 	from(ADempiereDictionary)
     from(ADempiereBusinessData)
+    from(ADempiereManagementEnrollment)
     fileMode = 0755
 }

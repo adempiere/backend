@@ -1,0 +1,63 @@
+/*************************************************************************************
+ * Copyright (C) 2012-2018 E.R.P. Consultores y Asociados, C.A.                      *
+ * Contributor(s): Yamel Senih ysenih@erpya.com                                      *
+ * This program is free software: you can redistribute it and/or modify              *
+ * it under the terms of the GNU General Public License as published by              *
+ * the Free Software Foundation, either version 2 of the License, or                 *
+ * (at your option) any later version.                                               *
+ * This program is distributed in the hope that it will be useful,                   *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of                    *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                     *
+ * GNU General Public License for more details.                                      *
+ * You should have received a copy of the GNU General Public License                 *
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.            *
+ ************************************************************************************/
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "org.spin.grpc.util";
+option java_outer_classname = "Enrollment";
+option objc_class_prefix = "HLW";
+
+package enrollment;
+
+// The greeting service definition.
+service EnrollmentService {
+  // Request enroll User
+  rpc EnrollUser(EnrollUserRequest) returns (User) {}
+  // 
+  rpc ResetPassword(ResetPasswordRequest) returns (ResetPasswordResponse) {}
+}
+
+// Request a Enroll for a user
+message EnrollUserRequest {
+	string userName = 1;
+	string name = 2;
+	string lastName = 3;
+	string eMail = 4;
+}
+
+// Request a Password Reset
+message ResetPasswordRequest {
+	string userName = 1;
+	string eMail = 2;
+}
+
+// user enrolled
+message User {
+	string userName = 1;
+	string name = 2;
+	string lastName = 3;
+	string eMail = 4;
+	string token = 5;
+}
+
+// Reset Password Response
+message ResetPasswordResponse {
+	enum ResponseType {
+		OK = 0;
+		USER_NOT_FOUND = 1;
+		ERROR = 2;
+	}
+	ResponseType responseType = 1;
+}
