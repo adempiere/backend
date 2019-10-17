@@ -1913,6 +1913,7 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 		builder.setInstanceUuid(validateNull(instance.getUUID()));
 		builder.setIsError(!instance.isOK());
 		builder.setIsProcessing(instance.isProcessing());
+		builder.setLastRun(instance.getUpdated().getTime());
 		String summary = instance.getErrorMsg();
 		if(!Util.isEmpty(summary)) {
 			summary = Msg.parseTranslation(Env.getCtx(), summary);

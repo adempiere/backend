@@ -332,9 +332,10 @@ message BusinessProcess {
 	string summary = 4;
 	string resultTableName = 5;
 	bool isProcessing = 6;
-	repeated ProcessInfoLog logs = 7;
-	map<string, Value> parameters = 8;
-	ProcessOutput output = 9;
+	int64 lastRun = 7;
+	repeated ProcessInfoLog logs = 8;
+	map<string, Value> parameters = 9;
+	ProcessOutput output = 10;
 }
 
 //	BusinessProcess Log result

@@ -58,35 +58,40 @@ public interface BusinessProcessOrBuilder extends
   boolean getIsProcessing();
 
   /**
-   * <code>repeated .data.ProcessInfoLog logs = 7;</code>
+   * <code>int64 lastRun = 7;</code>
+   */
+  long getLastRun();
+
+  /**
+   * <code>repeated .data.ProcessInfoLog logs = 8;</code>
    */
   java.util.List<org.spin.grpc.util.ProcessInfoLog> 
       getLogsList();
   /**
-   * <code>repeated .data.ProcessInfoLog logs = 7;</code>
+   * <code>repeated .data.ProcessInfoLog logs = 8;</code>
    */
   org.spin.grpc.util.ProcessInfoLog getLogs(int index);
   /**
-   * <code>repeated .data.ProcessInfoLog logs = 7;</code>
+   * <code>repeated .data.ProcessInfoLog logs = 8;</code>
    */
   int getLogsCount();
   /**
-   * <code>repeated .data.ProcessInfoLog logs = 7;</code>
+   * <code>repeated .data.ProcessInfoLog logs = 8;</code>
    */
   java.util.List<? extends org.spin.grpc.util.ProcessInfoLogOrBuilder> 
       getLogsOrBuilderList();
   /**
-   * <code>repeated .data.ProcessInfoLog logs = 7;</code>
+   * <code>repeated .data.ProcessInfoLog logs = 8;</code>
    */
   org.spin.grpc.util.ProcessInfoLogOrBuilder getLogsOrBuilder(
       int index);
 
   /**
-   * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
+   * <code>map&lt;string, .data.Value&gt; parameters = 9;</code>
    */
   int getParametersCount();
   /**
-   * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
+   * <code>map&lt;string, .data.Value&gt; parameters = 9;</code>
    */
   boolean containsParameters(
       java.lang.String key);
@@ -97,34 +102,34 @@ public interface BusinessProcessOrBuilder extends
   java.util.Map<java.lang.String, org.spin.grpc.util.Value>
   getParameters();
   /**
-   * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
+   * <code>map&lt;string, .data.Value&gt; parameters = 9;</code>
    */
   java.util.Map<java.lang.String, org.spin.grpc.util.Value>
   getParametersMap();
   /**
-   * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
+   * <code>map&lt;string, .data.Value&gt; parameters = 9;</code>
    */
 
   org.spin.grpc.util.Value getParametersOrDefault(
       java.lang.String key,
       org.spin.grpc.util.Value defaultValue);
   /**
-   * <code>map&lt;string, .data.Value&gt; parameters = 8;</code>
+   * <code>map&lt;string, .data.Value&gt; parameters = 9;</code>
    */
 
   org.spin.grpc.util.Value getParametersOrThrow(
       java.lang.String key);
 
   /**
-   * <code>.data.ProcessOutput output = 9;</code>
+   * <code>.data.ProcessOutput output = 10;</code>
    */
   boolean hasOutput();
   /**
-   * <code>.data.ProcessOutput output = 9;</code>
+   * <code>.data.ProcessOutput output = 10;</code>
    */
   org.spin.grpc.util.ProcessOutput getOutput();
   /**
-   * <code>.data.ProcessOutput output = 9;</code>
+   * <code>.data.ProcessOutput output = 10;</code>
    */
   org.spin.grpc.util.ProcessOutputOrBuilder getOutputOrBuilder();
 }
