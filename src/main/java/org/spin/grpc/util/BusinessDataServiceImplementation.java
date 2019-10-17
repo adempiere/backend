@@ -545,7 +545,12 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 			}
 		}
 		//	Execute Process
-		ProcessInfo result = builder.execute();
+		ProcessInfo result = null;
+		try {
+			result = builder.execute();
+		} catch (Exception e) {
+			result = builder.getProcessInfo();
+		}
 		String instanceUuid = DB.getSQLValueString(null, "SELECT UUID FROM AD_PInstance WHERE AD_PInstance_ID = ?", result.getAD_PInstance_ID());
 		response.setInstanceUuid(validateNull(instanceUuid));
 		response.setIsError(result.isError());
@@ -1318,12 +1323,12 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 				orderByClause = " ORDER BY " + orderByClause;
 			}
 			//	Count records
-			count = countRecords(context, parsedSQL, criteria.getTableName(), new ArrayList<>());
+			count = countRecords(context, parsedSQL, criteria.getTableName(), params);
 			//	Add Row Number
 			parsedSQL = parsedSQL + " AND ROWNUM >= " + offset + " AND ROWNUM <= " + limit;
 			//	Add Order By
 			parsedSQL = parsedSQL + orderByClause;
-			builder = convertListEntitiesResult(MTable.get(context, criteria.getTableName()), parsedSQL);
+			builder = convertListEntitiesResult(MTable.get(context, criteria.getTableName()), parsedSQL, params);
 		}
 		//	
 		builder.setRecordCount(count);
@@ -1343,7 +1348,7 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 	 * @param sql
 	 * @return
 	 */
-	private ListEntitiesResponse.Builder convertListEntitiesResult(MTable table, String sql) {
+	private ListEntitiesResponse.Builder convertListEntitiesResult(MTable table, String sql, List<Object> params) {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		ListEntitiesResponse.Builder builder = ListEntitiesResponse.newBuilder();
@@ -1356,6 +1361,10 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 			}
 			//	SELECT Key, Value, Name FROM ...
 			pstmt = DB.prepareStatement(sql, null);
+			AtomicInteger parameterIndex = new AtomicInteger(1);
+			for(Object value : params) {
+				setParameterFromObject(pstmt, value, parameterIndex.getAndIncrement());
+			} 
 			//	Get from Query
 			rs = pstmt.executeQuery();
 			while(rs.next()) {
