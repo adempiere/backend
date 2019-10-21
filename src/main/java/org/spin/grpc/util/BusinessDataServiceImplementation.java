@@ -1220,10 +1220,11 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 				if(whereClause.length() > 0) {
 					whereClause.append(" AND ");
 				}
+				String colummName = criteria.getTableName() + "." + condition.getColumnName(); 
 				//	Open
 				whereClause.append("(");
 				//	Add operator
-				whereClause.append(condition.getColumnName()).append(convertOperator(condition.getOperatorValue()));
+				whereClause.append(colummName).append(convertOperator(condition.getOperatorValue()));
 				//	For in or not in
 				if(condition.getOperatorValue() == Operator.IN_VALUE
 						|| condition.getOperatorValue() == Operator.NOT_IN_VALUE) {
