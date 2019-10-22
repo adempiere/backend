@@ -551,8 +551,15 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 		} catch (Exception e) {
 			result = builder.getProcessInfo();
 		}
-		String instanceUuid = DB.getSQLValueString(null, "SELECT UUID FROM AD_PInstance WHERE AD_PInstance_ID = ?", result.getAD_PInstance_ID());
-		response.setInstanceUuid(validateNull(instanceUuid));
+		//	Get process instance from identifier
+		if(result.getAD_PInstance_ID() != 0) {
+			MPInstance instance = new Query(context, I_AD_PInstance.Table_Name, I_AD_PInstance.COLUMNNAME_AD_PInstance_ID + " = ?", null)
+					.setParameters(result.getAD_PInstance_ID())
+					.first();
+			response.setInstanceUuid(validateNull(instance.getUUID()));
+			response.setLastRun(instance.getUpdated().getTime());
+		}
+		//	
 		response.setIsError(result.isError());
 		if(!Util.isEmpty(result.getSummary())) {
 			response.setSummary(Msg.parseTranslation(context, result.getSummary()));
@@ -657,11 +664,20 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 	}
 	
 	/**
-	 * Get value from parameter type
+	 * Default get value from type
 	 * @param valueToConvert
 	 * @return
 	 */
 	private Object getValueFromType(Value valueToConvert) {
+		return getValueFromType(valueToConvert, false);
+	}
+	
+	/**
+	 * Get value from parameter type
+	 * @param valueToConvert
+	 * @return
+	 */
+	private Object getValueFromType(Value valueToConvert, boolean uppercase) {
 		Object value = null;
 		if(valueToConvert.getValueType().equals(ValueType.BOOLEAN)) {
 			value = valueToConvert.getBooleanValue();
@@ -674,6 +690,10 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 			String stringValue = valueToConvert.getStringValue();
 			if(Util.isEmpty(stringValue)) {
 				stringValue = null;
+			}
+			//	To Upper case
+			if(uppercase) {
+				stringValue = stringValue.toUpperCase();
 			}
 			value = stringValue;
 		} else if(valueToConvert.getValueType().equals(ValueType.DATE)) {
@@ -1223,6 +1243,10 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 				String colummName = criteria.getTableName() + "." + condition.getColumnName(); 
 				//	Open
 				whereClause.append("(");
+				if(condition.getOperatorValue() == Operator.LIKE_VALUE
+						|| condition.getOperatorValue() == Operator.NOT_LIKE_VALUE) {
+					colummName = "UPPER(" + colummName + ")";
+				}
 				//	Add operator
 				whereClause.append(colummName).append(convertOperator(condition.getOperatorValue()));
 				//	For in or not in
@@ -1241,6 +1265,10 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 					whereClause.append(" ? ").append(" AND ").append(" ?");
 					params.add(getValueFromType(condition.getValue()));
 					params.add(getValueFromType(condition.getValueTo()));
+				} else if(condition.getOperatorValue() == Operator.LIKE_VALUE
+						|| condition.getOperatorValue() == Operator.NOT_LIKE_VALUE) {
+					whereClause.append("?");
+					params.add(getValueFromType(condition.getValue(), true));
 				} else {
 					whereClause.append("?");
 					params.add(getValueFromType(condition.getValue()));
@@ -1390,7 +1418,7 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 						}
 						//	From field
 						String fieldColumnName = field.getColumnName();
-						if(DisplayType.isID(field.getAD_Reference_ID())) {
+						if(isLookup(field.getAD_Reference_ID())) {
 							isFilled = true;
 							if(metaData.getColumnType(index) != Types.DECIMAL) {
 								valueBuilder.setStringValue(rs.getString(index));
@@ -1715,7 +1743,7 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 						}
 						//	From field
 						String fieldColumnName = field.getAD_View_Column().getColumnName();
-						if(DisplayType.isID(field.getAD_Reference_ID())) {
+						if(isLookup(field.getAD_Reference_ID())) {
 							isFilled = true;
 							if(metaData.getColumnType(index) != Types.DECIMAL) {
 								valueBuilder.setStringValue(rs.getString(index));
@@ -2193,6 +2221,19 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 		}
 		//	
 		return builder;
+	}
+	
+	/**
+	 * Is lookup include location
+	 * @param displayType
+	 * @return
+	 */
+	private boolean isLookup(int displayType) {
+		return DisplayType.isLookup(displayType)
+				|| DisplayType.Account == displayType
+				|| DisplayType.Location == displayType
+				|| DisplayType.Locator == displayType
+				|| DisplayType.PAttribute == displayType;
 	}
 	
 	/**
