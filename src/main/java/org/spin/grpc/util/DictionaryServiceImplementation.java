@@ -1186,6 +1186,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setVFormat(validateNull(browseField.getVFormat()))
 				.setIsActive(browseField.isActive())
 				.setCallout(validateNull(browseField.getCallout()))
+				.setFieldLength(browseField.getFieldLength())
 				.setDisplayType(browseField.getAD_Reference_ID());
 		builder.setColumnName(validateNull(browseField.getAD_View_Column().getColumnName()));
 		//	
@@ -1312,6 +1313,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setSequence(field.getSeqNo())
 				.setValueMax(validateNull(column.getValueMax()))
 				.setValueMin(validateNull(column.getValueMin()))
+				.setFieldLength(column.getFieldLength())
 				.setIsActive(field.isActive());
 		//	Context Info
 		if(field.getAD_ContextInfo_ID() > 0) {

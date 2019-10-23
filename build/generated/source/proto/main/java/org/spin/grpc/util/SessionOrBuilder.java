@@ -64,36 +64,36 @@ public interface SessionOrBuilder extends
   boolean getProcessed();
 
   /**
-   * <code>map&lt;string, .access.ContextValue&gt; defailtContext = 7;</code>
+   * <code>map&lt;string, .access.ContextValue&gt; defaultContext = 7;</code>
    */
-  int getDefailtContextCount();
+  int getDefaultContextCount();
   /**
-   * <code>map&lt;string, .access.ContextValue&gt; defailtContext = 7;</code>
+   * <code>map&lt;string, .access.ContextValue&gt; defaultContext = 7;</code>
    */
-  boolean containsDefailtContext(
+  boolean containsDefaultContext(
       java.lang.String key);
   /**
-   * Use {@link #getDefailtContextMap()} instead.
+   * Use {@link #getDefaultContextMap()} instead.
    */
   @java.lang.Deprecated
   java.util.Map<java.lang.String, org.spin.grpc.util.ContextValue>
-  getDefailtContext();
+  getDefaultContext();
   /**
-   * <code>map&lt;string, .access.ContextValue&gt; defailtContext = 7;</code>
+   * <code>map&lt;string, .access.ContextValue&gt; defaultContext = 7;</code>
    */
   java.util.Map<java.lang.String, org.spin.grpc.util.ContextValue>
-  getDefailtContextMap();
+  getDefaultContextMap();
   /**
-   * <code>map&lt;string, .access.ContextValue&gt; defailtContext = 7;</code>
+   * <code>map&lt;string, .access.ContextValue&gt; defaultContext = 7;</code>
    */
 
-  org.spin.grpc.util.ContextValue getDefailtContextOrDefault(
+  org.spin.grpc.util.ContextValue getDefaultContextOrDefault(
       java.lang.String key,
       org.spin.grpc.util.ContextValue defaultValue);
   /**
-   * <code>map&lt;string, .access.ContextValue&gt; defailtContext = 7;</code>
+   * <code>map&lt;string, .access.ContextValue&gt; defaultContext = 7;</code>
    */
 
-  org.spin.grpc.util.ContextValue getDefailtContextOrThrow(
+  org.spin.grpc.util.ContextValue getDefaultContextOrThrow(
       java.lang.String key);
 }

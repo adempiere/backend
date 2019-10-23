@@ -99,7 +99,7 @@ message Session {
 	UserInfo userInfo = 4;
 	Role role = 5;
 	bool processed = 6;
-	map<string, ContextValue> defailtContext = 7;
+	map<string, ContextValue> defaultContext = 7;
 }
 
 // Define value for object

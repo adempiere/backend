@@ -65,6 +65,7 @@ private static final long serialVersionUID = 0L;
     isInfoOnly_ = false;
     isActive_ = false;
     defaultValueTo_ = "";
+    fieldLength_ = 0;
   }
 
   @java.lang.Override
@@ -398,6 +399,11 @@ private static final long serialVersionUID = 0L;
             java.lang.String s = input.readStringRequireUtf8();
 
             defaultValueTo_ = s;
+            break;
+          }
+          case 408: {
+
+            fieldLength_ = input.readInt32();
             break;
           }
           case 616: {
@@ -1363,6 +1369,15 @@ private static final long serialVersionUID = 0L;
     }
   }
 
+  public static final int FIELDLENGTH_FIELD_NUMBER = 51;
+  private int fieldLength_;
+  /**
+   * <code>int32 fieldLength = 51;</code>
+   */
+  public int getFieldLength() {
+    return fieldLength_;
+  }
+
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
     byte isInitialized = memoizedIsInitialized;
@@ -1521,6 +1536,9 @@ private static final long serialVersionUID = 0L;
     }
     if (!getDefaultValueToBytes().isEmpty()) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 50, defaultValueTo_);
+    }
+    if (fieldLength_ != 0) {
+      output.writeInt32(51, fieldLength_);
     }
     if (identifierSequence_ != 0) {
       output.writeInt32(77, identifierSequence_);
@@ -1713,6 +1731,10 @@ private static final long serialVersionUID = 0L;
     if (!getDefaultValueToBytes().isEmpty()) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(50, defaultValueTo_);
     }
+    if (fieldLength_ != 0) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeInt32Size(51, fieldLength_);
+    }
     if (identifierSequence_ != 0) {
       size += com.google.protobuf.CodedOutputStream
         .computeInt32Size(77, identifierSequence_);
@@ -1848,6 +1870,8 @@ private static final long serialVersionUID = 0L;
         == other.getIsActive());
     result = result && getDefaultValueTo()
         .equals(other.getDefaultValueTo());
+    result = result && (getFieldLength()
+        == other.getFieldLength());
     result = result && unknownFields.equals(other.unknownFields);
     return result;
   }
@@ -1992,6 +2016,8 @@ private static final long serialVersionUID = 0L;
         getIsActive());
     hash = (37 * hash) + DEFAULTVALUETO_FIELD_NUMBER;
     hash = (53 * hash) + getDefaultValueTo().hashCode();
+    hash = (37 * hash) + FIELDLENGTH_FIELD_NUMBER;
+    hash = (53 * hash) + getFieldLength();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -2245,6 +2271,8 @@ private static final long serialVersionUID = 0L;
 
       defaultValueTo_ = "";
 
+      fieldLength_ = 0;
+
       return this;
     }
 
@@ -2337,6 +2365,7 @@ private static final long serialVersionUID = 0L;
       result.isInfoOnly_ = isInfoOnly_;
       result.isActive_ = isActive_;
       result.defaultValueTo_ = defaultValueTo_;
+      result.fieldLength_ = fieldLength_;
       onBuilt();
       return result;
     }
@@ -2543,6 +2572,9 @@ private static final long serialVersionUID = 0L;
       if (!other.getDefaultValueTo().isEmpty()) {
         defaultValueTo_ = other.defaultValueTo_;
         onChanged();
+      }
+      if (other.getFieldLength() != 0) {
+        setFieldLength(other.getFieldLength());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -5078,6 +5110,32 @@ private static final long serialVersionUID = 0L;
   checkByteStringIsUtf8(value);
       
       defaultValueTo_ = value;
+      onChanged();
+      return this;
+    }
+
+    private int fieldLength_ ;
+    /**
+     * <code>int32 fieldLength = 51;</code>
+     */
+    public int getFieldLength() {
+      return fieldLength_;
+    }
+    /**
+     * <code>int32 fieldLength = 51;</code>
+     */
+    public Builder setFieldLength(int value) {
+      
+      fieldLength_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>int32 fieldLength = 51;</code>
+     */
+    public Builder clearFieldLength() {
+      
+      fieldLength_ = 0;
       onChanged();
       return this;
     }

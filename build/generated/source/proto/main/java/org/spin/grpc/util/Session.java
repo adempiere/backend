@@ -107,15 +107,15 @@ private static final long serialVersionUID = 0L;
           }
           case 58: {
             if (!((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
-              defailtContext_ = com.google.protobuf.MapField.newMapField(
-                  DefailtContextDefaultEntryHolder.defaultEntry);
+              defaultContext_ = com.google.protobuf.MapField.newMapField(
+                  DefaultContextDefaultEntryHolder.defaultEntry);
               mutable_bitField0_ |= 0x00000040;
             }
             com.google.protobuf.MapEntry<java.lang.String, org.spin.grpc.util.ContextValue>
-            defailtContext__ = input.readMessage(
-                DefailtContextDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
-            defailtContext_.getMutableMap().put(
-                defailtContext__.getKey(), defailtContext__.getValue());
+            defaultContext__ = input.readMessage(
+                DefaultContextDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
+            defaultContext_.getMutableMap().put(
+                defaultContext__.getKey(), defaultContext__.getValue());
             break;
           }
         }
@@ -140,7 +140,7 @@ private static final long serialVersionUID = 0L;
       int number) {
     switch (number) {
       case 7:
-        return internalGetDefailtContext();
+        return internalGetDefaultContext();
       default:
         throw new RuntimeException(
             "Invalid map field number: " + number);
@@ -282,76 +282,76 @@ private static final long serialVersionUID = 0L;
     return processed_;
   }
 
-  public static final int DEFAILTCONTEXT_FIELD_NUMBER = 7;
-  private static final class DefailtContextDefaultEntryHolder {
+  public static final int DEFAULTCONTEXT_FIELD_NUMBER = 7;
+  private static final class DefaultContextDefaultEntryHolder {
     static final com.google.protobuf.MapEntry<
         java.lang.String, org.spin.grpc.util.ContextValue> defaultEntry =
             com.google.protobuf.MapEntry
             .<java.lang.String, org.spin.grpc.util.ContextValue>newDefaultInstance(
-                org.spin.grpc.util.ADempiereAccess.internal_static_access_Session_DefailtContextEntry_descriptor, 
+                org.spin.grpc.util.ADempiereAccess.internal_static_access_Session_DefaultContextEntry_descriptor, 
                 com.google.protobuf.WireFormat.FieldType.STRING,
                 "",
                 com.google.protobuf.WireFormat.FieldType.MESSAGE,
                 org.spin.grpc.util.ContextValue.getDefaultInstance());
   }
   private com.google.protobuf.MapField<
-      java.lang.String, org.spin.grpc.util.ContextValue> defailtContext_;
+      java.lang.String, org.spin.grpc.util.ContextValue> defaultContext_;
   private com.google.protobuf.MapField<java.lang.String, org.spin.grpc.util.ContextValue>
-  internalGetDefailtContext() {
-    if (defailtContext_ == null) {
+  internalGetDefaultContext() {
+    if (defaultContext_ == null) {
       return com.google.protobuf.MapField.emptyMapField(
-          DefailtContextDefaultEntryHolder.defaultEntry);
+          DefaultContextDefaultEntryHolder.defaultEntry);
     }
-    return defailtContext_;
+    return defaultContext_;
   }
 
-  public int getDefailtContextCount() {
-    return internalGetDefailtContext().getMap().size();
+  public int getDefaultContextCount() {
+    return internalGetDefaultContext().getMap().size();
   }
   /**
-   * <code>map&lt;string, .access.ContextValue&gt; defailtContext = 7;</code>
+   * <code>map&lt;string, .access.ContextValue&gt; defaultContext = 7;</code>
    */
 
-  public boolean containsDefailtContext(
+  public boolean containsDefaultContext(
       java.lang.String key) {
     if (key == null) { throw new java.lang.NullPointerException(); }
-    return internalGetDefailtContext().getMap().containsKey(key);
+    return internalGetDefaultContext().getMap().containsKey(key);
   }
   /**
-   * Use {@link #getDefailtContextMap()} instead.
+   * Use {@link #getDefaultContextMap()} instead.
    */
   @java.lang.Deprecated
-  public java.util.Map<java.lang.String, org.spin.grpc.util.ContextValue> getDefailtContext() {
-    return getDefailtContextMap();
+  public java.util.Map<java.lang.String, org.spin.grpc.util.ContextValue> getDefaultContext() {
+    return getDefaultContextMap();
   }
   /**
-   * <code>map&lt;string, .access.ContextValue&gt; defailtContext = 7;</code>
+   * <code>map&lt;string, .access.ContextValue&gt; defaultContext = 7;</code>
    */
 
-  public java.util.Map<java.lang.String, org.spin.grpc.util.ContextValue> getDefailtContextMap() {
-    return internalGetDefailtContext().getMap();
+  public java.util.Map<java.lang.String, org.spin.grpc.util.ContextValue> getDefaultContextMap() {
+    return internalGetDefaultContext().getMap();
   }
   /**
-   * <code>map&lt;string, .access.ContextValue&gt; defailtContext = 7;</code>
+   * <code>map&lt;string, .access.ContextValue&gt; defaultContext = 7;</code>
    */
 
-  public org.spin.grpc.util.ContextValue getDefailtContextOrDefault(
+  public org.spin.grpc.util.ContextValue getDefaultContextOrDefault(
       java.lang.String key,
       org.spin.grpc.util.ContextValue defaultValue) {
     if (key == null) { throw new java.lang.NullPointerException(); }
     java.util.Map<java.lang.String, org.spin.grpc.util.ContextValue> map =
-        internalGetDefailtContext().getMap();
+        internalGetDefaultContext().getMap();
     return map.containsKey(key) ? map.get(key) : defaultValue;
   }
   /**
-   * <code>map&lt;string, .access.ContextValue&gt; defailtContext = 7;</code>
+   * <code>map&lt;string, .access.ContextValue&gt; defaultContext = 7;</code>
    */
 
-  public org.spin.grpc.util.ContextValue getDefailtContextOrThrow(
+  public org.spin.grpc.util.ContextValue getDefaultContextOrThrow(
       java.lang.String key) {
     if (key == null) { throw new java.lang.NullPointerException(); }
     java.util.Map<java.lang.String, org.spin.grpc.util.ContextValue> map =
-        internalGetDefailtContext().getMap();
+        internalGetDefaultContext().getMap();
     if (!map.containsKey(key)) {
       throw new java.lang.IllegalArgumentException();
     }
@@ -391,8 +391,8 @@ private static final long serialVersionUID = 0L;
     com.google.protobuf.GeneratedMessageV3
       .serializeStringMapTo(
         output,
-        internalGetDefailtContext(),
-        DefailtContextDefaultEntryHolder.defaultEntry,
+        internalGetDefaultContext(),
+        DefaultContextDefaultEntryHolder.defaultEntry,
         7);
     unknownFields.writeTo(output);
   }
@@ -425,14 +425,14 @@ private static final long serialVersionUID = 0L;
         .computeBoolSize(6, processed_);
     }
     for (java.util.Map.Entry<java.lang.String, org.spin.grpc.util.ContextValue> entry
-         : internalGetDefailtContext().getMap().entrySet()) {
+         : internalGetDefaultContext().getMap().entrySet()) {
       com.google.protobuf.MapEntry<java.lang.String, org.spin.grpc.util.ContextValue>
-      defailtContext__ = DefailtContextDefaultEntryHolder.defaultEntry.newBuilderForType()
+      defaultContext__ = DefaultContextDefaultEntryHolder.defaultEntry.newBuilderForType()
           .setKey(entry.getKey())
           .setValue(entry.getValue())
           .build();
       size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(7, defailtContext__);
+          .computeMessageSize(7, defaultContext__);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -468,8 +468,8 @@ private static final long serialVersionUID = 0L;
     }
     result = result && (getProcessed()
         == other.getProcessed());
-    result = result && internalGetDefailtContext().equals(
-        other.internalGetDefailtContext());
+    result = result && internalGetDefaultContext().equals(
+        other.internalGetDefaultContext());
     result = result && unknownFields.equals(other.unknownFields);
     return result;
   }
@@ -498,9 +498,9 @@ private static final long serialVersionUID = 0L;
     hash = (37 * hash) + PROCESSED_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
         getProcessed());
-    if (!internalGetDefailtContext().getMap().isEmpty()) {
-      hash = (37 * hash) + DEFAILTCONTEXT_FIELD_NUMBER;
-      hash = (53 * hash) + internalGetDefailtContext().hashCode();
+    if (!internalGetDefaultContext().getMap().isEmpty()) {
+      hash = (37 * hash) + DEFAULTCONTEXT_FIELD_NUMBER;
+      hash = (53 * hash) + internalGetDefaultContext().hashCode();
     }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
@@ -616,7 +616,7 @@ private static final long serialVersionUID = 0L;
         int number) {
       switch (number) {
         case 7:
-          return internalGetDefailtContext();
+          return internalGetDefaultContext();
         default:
           throw new RuntimeException(
               "Invalid map field number: " + number);
@@ -627,7 +627,7 @@ private static final long serialVersionUID = 0L;
         int number) {
       switch (number) {
         case 7:
-          return internalGetMutableDefailtContext();
+          return internalGetMutableDefaultContext();
         default:
           throw new RuntimeException(
               "Invalid map field number: " + number);
@@ -677,7 +677,7 @@ private static final long serialVersionUID = 0L;
       }
       processed_ = false;
 
-      internalGetMutableDefailtContext().clear();
+      internalGetMutableDefaultContext().clear();
       return this;
     }
 
@@ -716,8 +716,8 @@ private static final long serialVersionUID = 0L;
         result.role_ = roleBuilder_.build();
       }
       result.processed_ = processed_;
-      result.defailtContext_ = internalGetDefailtContext();
-      result.defailtContext_.makeImmutable();
+      result.defaultContext_ = internalGetDefaultContext();
+      result.defaultContext_.makeImmutable();
       result.bitField0_ = to_bitField0_;
       onBuilt();
       return result;
@@ -780,8 +780,8 @@ private static final long serialVersionUID = 0L;
       if (other.getProcessed() != false) {
         setProcessed(other.getProcessed());
       }
-      internalGetMutableDefailtContext().mergeFrom(
-          other.internalGetDefailtContext());
+      internalGetMutableDefaultContext().mergeFrom(
+          other.internalGetDefaultContext());
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
       return this;
@@ -1235,94 +1235,94 @@ private static final long serialVersionUID = 0L;
     }
 
     private com.google.protobuf.MapField<
-        java.lang.String, org.spin.grpc.util.ContextValue> defailtContext_;
+        java.lang.String, org.spin.grpc.util.ContextValue> defaultContext_;
     private com.google.protobuf.MapField<java.lang.String, org.spin.grpc.util.ContextValue>
-    internalGetDefailtContext() {
-      if (defailtContext_ == null) {
+    internalGetDefaultContext() {
+      if (defaultContext_ == null) {
         return com.google.protobuf.MapField.emptyMapField(
-            DefailtContextDefaultEntryHolder.defaultEntry);
+            DefaultContextDefaultEntryHolder.defaultEntry);
       }
-      return defailtContext_;
+      return defaultContext_;
     }
     private com.google.protobuf.MapField<java.lang.String, org.spin.grpc.util.ContextValue>
-    internalGetMutableDefailtContext() {
+    internalGetMutableDefaultContext() {
       onChanged();;
-      if (defailtContext_ == null) {
-        defailtContext_ = com.google.protobuf.MapField.newMapField(
-            DefailtContextDefaultEntryHolder.defaultEntry);
+      if (defaultContext_ == null) {
+        defaultContext_ = com.google.protobuf.MapField.newMapField(
+            DefaultContextDefaultEntryHolder.defaultEntry);
       }
-      if (!defailtContext_.isMutable()) {
-        defailtContext_ = defailtContext_.copy();
+      if (!defaultContext_.isMutable()) {
+        defaultContext_ = defaultContext_.copy();
       }
-      return defailtContext_;
+      return defaultContext_;
     }
 
-    public int getDefailtContextCount() {
-      return internalGetDefailtContext().getMap().size();
+    public int getDefaultContextCount() {
+      return internalGetDefaultContext().getMap().size();
     }
     /**
-     * <code>map&lt;string, .access.ContextValue&gt; defailtContext = 7;</code>
+     * <code>map&lt;string, .access.ContextValue&gt; defaultContext = 7;</code>
      */
 
-    public boolean containsDefailtContext(
+    public boolean containsDefaultContext(
         java.lang.String key) {
       if (key == null) { throw new java.lang.NullPointerException(); }
-      return internalGetDefailtContext().getMap().containsKey(key);
+      return internalGetDefaultContext().getMap().containsKey(key);
     }
     /**
-     * Use {@link #getDefailtContextMap()} instead.
+     * Use {@link #getDefaultContextMap()} instead.
      */
     @java.lang.Deprecated
-    public java.util.Map<java.lang.String, org.spin.grpc.util.ContextValue> getDefailtContext() {
-      return getDefailtContextMap();
+    public java.util.Map<java.lang.String, org.spin.grpc.util.ContextValue> getDefaultContext() {
+      return getDefaultContextMap();
     }
     /**
-     * <code>map&lt;string, .access.ContextValue&gt; defailtContext = 7;</code>
+     * <code>map&lt;string, .access.ContextValue&gt; defaultContext = 7;</code>
      */
 
-    public java.util.Map<java.lang.String, org.spin.grpc.util.ContextValue> getDefailtContextMap() {
-      return internalGetDefailtContext().getMap();
+    public java.util.Map<java.lang.String, org.spin.grpc.util.ContextValue> getDefaultContextMap() {
+      return internalGetDefaultContext().getMap();
     }
     /**
-     * <code>map&lt;string, .access.ContextValue&gt; defailtContext = 7;</code>
+     * <code>map&lt;string, .access.ContextValue&gt; defaultContext = 7;</code>
      */
 
-    public org.spin.grpc.util.ContextValue getDefailtContextOrDefault(
+    public org.spin.grpc.util.ContextValue getDefaultContextOrDefault(
         java.lang.String key,
         org.spin.grpc.util.ContextValue defaultValue) {
       if (key == null) { throw new java.lang.NullPointerException(); }
       java.util.Map<java.lang.String, org.spin.grpc.util.ContextValue> map =
-          internalGetDefailtContext().getMap();
+          internalGetDefaultContext().getMap();
       return map.containsKey(key) ? map.get(key) : defaultValue;
     }
     /**
-     * <code>map&lt;string, .access.ContextValue&gt; defailtContext = 7;</code>
+     * <code>map&lt;string, .access.ContextValue&gt; defaultContext = 7;</code>
      */
 
-    public org.spin.grpc.util.ContextValue getDefailtContextOrThrow(
+    public org.spin.grpc.util.ContextValue getDefaultContextOrThrow(
         java.lang.String key) {
       if (key == null) { throw new java.lang.NullPointerException(); }
       java.util.Map<java.lang.String, org.spin.grpc.util.ContextValue> map =
-          internalGetDefailtContext().getMap();
+          internalGetDefaultContext().getMap();
       if (!map.containsKey(key)) {
         throw new java.lang.IllegalArgumentException();
       }
       return map.get(key);
     }
 
-    public Builder clearDefailtContext() {
-      internalGetMutableDefailtContext().getMutableMap()
+    public Builder clearDefaultContext() {
+      internalGetMutableDefaultContext().getMutableMap()
           .clear();
       return this;
     }
     /**
-     * <code>map&lt;string, .access.ContextValue&gt; defailtContext = 7;</code>
+     * <code>map&lt;string, .access.ContextValue&gt; defaultContext = 7;</code>
      */
 
-    public Builder removeDefailtContext(
+    public Builder removeDefaultContext(
         java.lang.String key) {
       if (key == null) { throw new java.lang.NullPointerException(); }
-      internalGetMutableDefailtContext().getMutableMap()
+      internalGetMutableDefaultContext().getMutableMap()
           .remove(key);
       return this;
     }
@@ -1331,28 +1331,28 @@ private static final long serialVersionUID = 0L;
      */
     @java.lang.Deprecated
     public java.util.Map<java.lang.String, org.spin.grpc.util.ContextValue>
-    getMutableDefailtContext() {
-      return internalGetMutableDefailtContext().getMutableMap();
+    getMutableDefaultContext() {
+      return internalGetMutableDefaultContext().getMutableMap();
     }
     /**
-     * <code>map&lt;string, .access.ContextValue&gt; defailtContext = 7;</code>
+     * <code>map&lt;string, .access.ContextValue&gt; defaultContext = 7;</code>
      */
-    public Builder putDefailtContext(
+    public Builder putDefaultContext(
         java.lang.String key,
         org.spin.grpc.util.ContextValue value) {
       if (key == null) { throw new java.lang.NullPointerException(); }
       if (value == null) { throw new java.lang.NullPointerException(); }
-      internalGetMutableDefailtContext().getMutableMap()
+      internalGetMutableDefaultContext().getMutableMap()
           .put(key, value);
       return this;
     }
     /**
-     * <code>map&lt;string, .access.ContextValue&gt; defailtContext = 7;</code>
+     * <code>map&lt;string, .access.ContextValue&gt; defaultContext = 7;</code>
      */
 
-    public Builder putAllDefailtContext(
+    public Builder putAllDefaultContext(
         java.util.Map<java.lang.String, org.spin.grpc.util.ContextValue> values) {
-      internalGetMutableDefailtContext().getMutableMap()
+      internalGetMutableDefaultContext().getMutableMap()
           .putAll(values);
       return this;
     }

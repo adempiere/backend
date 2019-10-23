@@ -400,4 +400,9 @@ public interface FieldOrBuilder extends
    */
   com.google.protobuf.ByteString
       getDefaultValueToBytes();
+
+  /**
+   * <code>int32 fieldLength = 51;</code>
+   */
+  int getFieldLength();
 }

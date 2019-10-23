@@ -402,7 +402,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 		context.entrySet().stream()
 			.filter(keyValue -> String.valueOf(keyValue.getKey()).startsWith("#") || String.valueOf(keyValue.getKey()).startsWith("$"))
 			.forEach(contextKeyValue -> {
-				builder.putDefailtContext(contextKeyValue.getKey().toString(), convertObjectFromContext(contextKeyValue.getValue()).build());
+				builder.putDefaultContext(contextKeyValue.getKey().toString(), convertObjectFromContext(contextKeyValue.getValue()).build());
 			});
 		//	Return session
 		return builder;
@@ -705,7 +705,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 		context.entrySet().stream()
 			.filter(keyValue -> String.valueOf(keyValue.getKey()).startsWith("#") || String.valueOf(keyValue.getKey()).startsWith("$"))
 			.forEach(contextKeyValue -> {
-				builder.putDefailtContext(contextKeyValue.getKey().toString(), convertObjectFromContext(contextKeyValue.getValue()).build());
+				builder.putDefaultContext(contextKeyValue.getKey().toString(), convertObjectFromContext(contextKeyValue.getValue()).build());
 			});
 		//	Set role
 		Role.Builder roleBuilder = convertRole(role, true);

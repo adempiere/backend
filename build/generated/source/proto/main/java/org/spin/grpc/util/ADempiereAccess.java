@@ -50,10 +50,10 @@ public final class ADempiereAccess {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_access_Session_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_access_Session_DefailtContextEntry_descriptor;
+    internal_static_access_Session_DefaultContextEntry_descriptor;
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_access_Session_DefailtContextEntry_fieldAccessorTable;
+      internal_static_access_Session_DefaultContextEntry_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
     internal_static_access_ContextValue_descriptor;
   static final 
@@ -119,8 +119,8 @@ public final class ADempiereAccess {
       "n\022\n\n\002id\030\001 \001(\005\022\014\n\004uuid\030\002 \001(\t\022\014\n\004name\030\003 \001(" +
       "\t\022\"\n\010userInfo\030\004 \001(\0132\020.access.UserInfo\022\032\n" +
       "\004role\030\005 \001(\0132\014.access.Role\022\021\n\tprocessed\030\006" +
-      " \001(\010\022;\n\016defailtContext\030\007 \003(\0132#.access.Se" +
-      "ssion.DefailtContextEntry\032K\n\023DefailtCont" +
+      " \001(\010\022;\n\016defaultContext\030\007 \003(\0132#.access.Se" +
+      "ssion.DefaultContextEntry\032K\n\023DefaultCont" +
       "extEntry\022\013\n\003key\030\001 \001(\t\022#\n\005value\030\002 \001(\0132\024.a" +
       "ccess.ContextValue:\0028\001\"\371\001\n\014ContextValue\022" +
       "\020\n\010intValue\030\001 \001(\005\022\021\n\tlongValue\030\002 \001(\003\022\023\n\013" +
@@ -228,12 +228,12 @@ public final class ADempiereAccess {
     internal_static_access_Session_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_access_Session_descriptor,
-        new java.lang.String[] { "Id", "Uuid", "Name", "UserInfo", "Role", "Processed", "DefailtContext", });
-    internal_static_access_Session_DefailtContextEntry_descriptor =
+        new java.lang.String[] { "Id", "Uuid", "Name", "UserInfo", "Role", "Processed", "DefaultContext", });
+    internal_static_access_Session_DefaultContextEntry_descriptor =
       internal_static_access_Session_descriptor.getNestedTypes().get(0);
-    internal_static_access_Session_DefailtContextEntry_fieldAccessorTable = new
+    internal_static_access_Session_DefaultContextEntry_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_access_Session_DefailtContextEntry_descriptor,
+        internal_static_access_Session_DefaultContextEntry_descriptor,
         new java.lang.String[] { "Key", "Value", });
     internal_static_access_ContextValue_descriptor =
       getDescriptor().getMessageTypes().get(7);

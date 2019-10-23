@@ -164,6 +164,7 @@ message Field {
 	bool isActive = 49;
 	// Process Parameter Compatibility
 	string defaultValueTo = 50;
+	int32 fieldLength = 51;
 }
 
 // Context Info

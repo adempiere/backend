@@ -1418,7 +1418,8 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 						}
 						//	From field
 						String fieldColumnName = field.getColumnName();
-						if(isLookup(field.getAD_Reference_ID())) {
+						if(isLookup(field.getAD_Reference_ID())
+								|| DisplayType.isID(field.getAD_Reference_ID())) {
 							isFilled = true;
 							if(metaData.getColumnType(index) != Types.DECIMAL) {
 								valueBuilder.setStringValue(rs.getString(index));
@@ -1743,7 +1744,8 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 						}
 						//	From field
 						String fieldColumnName = field.getAD_View_Column().getColumnName();
-						if(isLookup(field.getAD_Reference_ID())) {
+						if(isLookup(field.getAD_Reference_ID())
+								|| DisplayType.isID(field.getAD_Reference_ID())) {
 							isFilled = true;
 							if(metaData.getColumnType(index) != Types.DECIMAL) {
 								valueBuilder.setStringValue(rs.getString(index));
