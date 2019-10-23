@@ -157,6 +157,26 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 	}
 	
 	@Override
+	public void getSession(SessionRequest request, StreamObserver<Session> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Session Requested = " + request.getSessionUuid());
+			Session.Builder sessionBuilder = getSessionInfo(request);
+			responseObserver.onNext(sessionBuilder.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
 	public void runLoginDefault(LoginRequest request, StreamObserver<Session> responseObserver) {
 		try {
 			if(request == null) {
@@ -743,6 +763,34 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 		}
 		//	Logout
 		session.logout();
+		//	Session values
+		builder.setId(session.getAD_Session_ID());
+		builder.setUuid(validateNull(session.getUUID()));
+		builder.setName(validateNull(session.getDescription()));
+		builder.setUserInfo(convertUserInfo(MUser.get(context, session.getCreatedBy())).build());
+		//	Return session
+		return builder;
+	}
+	
+	/**
+	 * Logout session
+	 * @param request
+	 * @return
+	 */
+	private Session.Builder getSessionInfo(SessionRequest request) {
+		Session.Builder builder = Session.newBuilder();
+		//	Get Session
+		if(Util.isEmpty(request.getSessionUuid())) {
+			throw new AdempiereException("@AD_Session_ID@ @NotFound@");
+		}
+		Properties context = Env.getCtx();
+		MSession session = new Query(context, I_AD_Session.Table_Name, I_AD_Session.COLUMNNAME_UUID + " = ?", null)
+				.setParameters(request.getSessionUuid())
+				.first();
+		if(session == null
+				|| session.getAD_Session_ID() <= 0) {
+			throw new AdempiereException("@AD_Session_ID@ @NotFound@");
+		}
 		//	Session values
 		builder.setId(session.getAD_Session_ID());
 		builder.setUuid(validateNull(session.getUUID()));

@@ -14,6 +14,7 @@
  ************************************************************************************/
 package org.spin.grpc.util;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
@@ -24,27 +25,84 @@ import org.compiere.util.Util;
 
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
+import io.grpc.netty.GrpcSslContexts;
+import io.grpc.netty.NettyServerBuilder;
+import io.netty.handler.ssl.ClientAuth;
+import io.netty.handler.ssl.SslContextBuilder;
 
 public class DictionaryServer {
 	private static final Logger logger = Logger.getLogger(DictionaryServiceImplementation.class.getName());
 
 	  private Server server;
-
-	  private void start(int port) throws IOException {
-	    server = ServerBuilder.forPort(port)
-	        .addService(new DictionaryServiceImplementation())
-	        .build()
-	        .start();
-	    logger.info("Server started, listening on " + port);
-	    Runtime.getRuntime().addShutdownHook(new Thread() {
-	      @Override
-	      public void run() {
-	        // Use stderr here since the logger may have been reset by its JVM shutdown hook.
-	    	  logger.info("*** shutting down gRPC server since JVM is shutting down");
-	        DictionaryServer.this.stop();
-	        logger.info("*** server shut down");
-	      }
-	    });
+	  private final int port;
+	  private final String certChainFilePath;
+	  private final String privateKeyFilePath;
+	  private final String trustCertCollectionFilePath;
+	  private final boolean isTlsEnabled;
+	  
+	  /**
+	   * Default values
+	   * @param port
+	   * @param certChainFilePath
+	   * @param privateKeyFilePath
+	   * @param trustCertCollectionFilePath
+	   */
+	  public DictionaryServer(int port,
+              String certChainFilePath,
+              String privateKeyFilePath,
+              String trustCertCollectionFilePath) {
+		  this.port = port;
+		  this.certChainFilePath = certChainFilePath;
+		  this.privateKeyFilePath = privateKeyFilePath;
+		  this.trustCertCollectionFilePath = trustCertCollectionFilePath;
+		  this.isTlsEnabled = !Util.isEmpty(certChainFilePath) && !Util.isEmpty(privateKeyFilePath); 
+	  }
+	  
+	  /**
+	   * With TLS disabled
+	   * @param port
+	   */
+	  public DictionaryServer(int port) {
+		  this(port, null, null, null);
+	  }
+	  
+	  /**
+	   * Get SSL / TLS context
+	   * @return
+	   */
+	  private SslContextBuilder getSslContextBuilder() {
+	        SslContextBuilder sslClientContextBuilder = SslContextBuilder.forServer(new File(certChainFilePath),
+	                new File(privateKeyFilePath));
+	        if (trustCertCollectionFilePath != null) {
+	            sslClientContextBuilder.trustManager(new File(trustCertCollectionFilePath));
+	            sslClientContextBuilder.clientAuth(ClientAuth.REQUIRE);
+	        }
+	        return GrpcSslContexts.configure(sslClientContextBuilder);
+	  }
+	  
+	  private void start() throws IOException {
+		  if(isTlsEnabled) {
+			  server = NettyServerBuilder.forPort(port)
+		                .addService(new DictionaryServiceImplementation())
+		                .sslContext(getSslContextBuilder().build())
+		                .build()
+		                .start();
+		  } else {
+			  server = ServerBuilder.forPort(port)
+				        .addService(new DictionaryServiceImplementation())
+				        .build()
+				        .start();
+		  }
+		  logger.info("Server started, listening on " + port);
+		    Runtime.getRuntime().addShutdownHook(new Thread() {
+		      @Override
+		      public void run() {
+		        // Use stderr here since the logger may have been reset by its JVM shutdown hook.
+		    	  logger.info("*** shutting down gRPC server since JVM is shutting down");
+		        DictionaryServer.this.stop();
+		        logger.info("*** server shut down");
+		      }
+		    });
 	  }
 
 	  private void stop() {
@@ -67,7 +125,6 @@ public class DictionaryServer {
 	   */
 	  public static void main(String[] args) throws IOException, InterruptedException {
 		Adempiere.startup(false);
-	    final DictionaryServer server = new DictionaryServer();
 	    int defaultPort = 50051;
 	    if(args != null) {
 	    	Optional<String> parameter = Arrays.asList(args).stream()
@@ -77,7 +134,14 @@ public class DictionaryServer {
 	    		defaultPort = Integer.parseInt(parameter.get());
 	    	}
 		}
-	    server.start(defaultPort);
+	    String certChainFilePath = (args.length > 1? args[1]: null);
+	    String privateKeyFilePath = (args.length > 2? args[2]: null);
+	    String trustCertCollectionFilePath = (args.length > 3? args[3]: null);
+	    final DictionaryServer server = new DictionaryServer(defaultPort, 
+	    		certChainFilePath,
+	    		privateKeyFilePath,
+	    		trustCertCollectionFilePath);
+	    server.start();
 	    server.blockUntilShutdown();
 	  }
 }

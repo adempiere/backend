@@ -254,6 +254,38 @@ public final class AccessServiceGrpc {
      return getRunChangeRoleMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.SessionRequest,
+      org.spin.grpc.util.Session> getGetSessionMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetSession",
+      requestType = org.spin.grpc.util.SessionRequest.class,
+      responseType = org.spin.grpc.util.Session.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<org.spin.grpc.util.SessionRequest,
+      org.spin.grpc.util.Session> getGetSessionMethod() {
+    io.grpc.MethodDescriptor<org.spin.grpc.util.SessionRequest, org.spin.grpc.util.Session> getGetSessionMethod;
+    if ((getGetSessionMethod = AccessServiceGrpc.getGetSessionMethod) == null) {
+      synchronized (AccessServiceGrpc.class) {
+        if ((getGetSessionMethod = AccessServiceGrpc.getGetSessionMethod) == null) {
+          AccessServiceGrpc.getGetSessionMethod = getGetSessionMethod = 
+              io.grpc.MethodDescriptor.<org.spin.grpc.util.SessionRequest, org.spin.grpc.util.Session>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(
+                  "access.AccessService", "GetSession"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  org.spin.grpc.util.SessionRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  org.spin.grpc.util.Session.getDefaultInstance()))
+                  .setSchemaDescriptor(new AccessServiceMethodDescriptorSupplier("GetSession"))
+                  .build();
+          }
+        }
+     }
+     return getGetSessionMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -354,6 +386,16 @@ public final class AccessServiceGrpc {
       asyncUnimplementedUnaryCall(getRunChangeRoleMethod(), responseObserver);
     }
 
+    /**
+     * <pre>
+     * Request session
+     * </pre>
+     */
+    public void getSession(org.spin.grpc.util.SessionRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.Session> responseObserver) {
+      asyncUnimplementedUnaryCall(getGetSessionMethod(), responseObserver);
+    }
+
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
@@ -405,6 +447,13 @@ public final class AccessServiceGrpc {
                 org.spin.grpc.util.UserInfoRequest,
                 org.spin.grpc.util.Session>(
                   this, METHODID_RUN_CHANGE_ROLE)))
+          .addMethod(
+            getGetSessionMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                org.spin.grpc.util.SessionRequest,
+                org.spin.grpc.util.Session>(
+                  this, METHODID_GET_SESSION)))
           .build();
     }
   }
@@ -506,6 +555,17 @@ public final class AccessServiceGrpc {
       asyncUnaryCall(
           getChannel().newCall(getRunChangeRoleMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     * <pre>
+     * Request session
+     * </pre>
+     */
+    public void getSession(org.spin.grpc.util.SessionRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.Session> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetSessionMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -597,6 +657,16 @@ public final class AccessServiceGrpc {
     public org.spin.grpc.util.Session runChangeRole(org.spin.grpc.util.UserInfoRequest request) {
       return blockingUnaryCall(
           getChannel(), getRunChangeRoleMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * Request session
+     * </pre>
+     */
+    public org.spin.grpc.util.Session getSession(org.spin.grpc.util.SessionRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getGetSessionMethod(), getCallOptions(), request);
     }
   }
 
@@ -697,6 +767,17 @@ public final class AccessServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getRunChangeRoleMethod(), getCallOptions()), request);
     }
+
+    /**
+     * <pre>
+     * Request session
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.Session> getSession(
+        org.spin.grpc.util.SessionRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetSessionMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_GET_USER_INFO = 0;
@@ -706,6 +787,7 @@ public final class AccessServiceGrpc {
   private static final int METHODID_GET_USER_INFO_FROM_SESSION = 4;
   private static final int METHODID_GET_MENU_AND_CHILD = 5;
   private static final int METHODID_RUN_CHANGE_ROLE = 6;
+  private static final int METHODID_GET_SESSION = 7;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -750,6 +832,10 @@ public final class AccessServiceGrpc {
           break;
         case METHODID_RUN_CHANGE_ROLE:
           serviceImpl.runChangeRole((org.spin.grpc.util.UserInfoRequest) request,
+              (io.grpc.stub.StreamObserver<org.spin.grpc.util.Session>) responseObserver);
+          break;
+        case METHODID_GET_SESSION:
+          serviceImpl.getSession((org.spin.grpc.util.SessionRequest) request,
               (io.grpc.stub.StreamObserver<org.spin.grpc.util.Session>) responseObserver);
           break;
         default:
@@ -820,6 +906,7 @@ public final class AccessServiceGrpc {
               .addMethod(getGetUserInfoFromSessionMethod())
               .addMethod(getGetMenuAndChildMethod())
               .addMethod(getRunChangeRoleMethod())
+              .addMethod(getGetSessionMethod())
               .build();
         }
       }

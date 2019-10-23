@@ -37,6 +37,8 @@ service AccessService {
   rpc GetMenuAndChild(UserInfoRequest) returns (Menu) {}
   // Request change role
   rpc RunChangeRole(UserInfoRequest) returns (Session) {}
+  // Request session
+  rpc GetSession(SessionRequest) returns (Session) {}
 }
 
 // Request a Login Session
@@ -55,6 +57,12 @@ message LogoutRequest {
 	string sessionUuid = 1;
 	string language = 2;
 	string clientVersion = 3;
+}
+
+// Request a Session
+message SessionRequest {
+	string sessionUuid = 1;
+	string clientVersion = 2;
 }
 
 // Request a Change Role
