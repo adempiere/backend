@@ -15,10 +15,14 @@
 package org.spin.grpc.util;
 
 import java.math.BigDecimal;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Level;
 
 import org.adempiere.exceptions.AdempiereException;
 import org.adempiere.model.I_AD_Browse_Access;
@@ -37,9 +41,12 @@ import org.compiere.model.I_AD_Table_Access;
 import org.compiere.model.I_AD_Task_Access;
 import org.compiere.model.I_AD_Window_Access;
 import org.compiere.model.I_AD_Workflow_Access;
+import org.compiere.model.MAcctSchema;
 import org.compiere.model.MClient;
+import org.compiere.model.MClientInfo;
 import org.compiere.model.MColumn;
 import org.compiere.model.MColumnAccess;
+import org.compiere.model.MCountry;
 import org.compiere.model.MDocType;
 import org.compiere.model.MForm;
 import org.compiere.model.MFormAccess;
@@ -58,6 +65,7 @@ import org.compiere.model.MTreeNode;
 import org.compiere.model.MUser;
 import org.compiere.model.MWindow;
 import org.compiere.model.MWindowAccess;
+import org.compiere.model.ModelValidationEngine;
 import org.compiere.model.Query;
 import org.compiere.model.X_AD_Document_Action_Access;
 import org.compiere.model.X_AD_Table_Access;
@@ -66,6 +74,7 @@ import org.compiere.util.CCache;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
+import org.compiere.util.Ini;
 import org.compiere.util.Language;
 import org.compiere.util.Login;
 import org.compiere.util.Msg;
@@ -355,17 +364,32 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 			throw new AdempiereException("@AD_User_ID@ / @AD_Role_ID@ / @AD_Org_ID@ @NotFound@");
 		}
 		MRole role = MRole.get(context, roleId);
+		MUser user = MUser.get(context, userId);
+		//	Warehouse / Org
+		Env.setContext (context, "#M_Warehouse_ID", warehouseId);
 		Env.setContext (context, "#AD_Session_ID", 0);
-		Env.setContext(context, "#AD_User_ID", userId);
-		Env.setContext(context, "#AD_Role_ID", roleId);
-		Env.setContext(context, "#AD_Client_ID", role.getAD_Client_ID());
+		//  Client Info
+		MClient client = MClient.get(context, role.getAD_Client_ID());
+		Env.setContext(context, "#AD_Client_ID", client.getAD_Client_ID());
+		Env.setContext(context, "#AD_Client_Name", client.getName());
 		Env.setContext(context, "#AD_Org_ID", organizationId);
 		Env.setContext(context, "#Date", new Timestamp(System.currentTimeMillis()));
 		Env.setContext(context, Env.LANGUAGE, request.getLanguage());
+		//	Role Info
+		Env.setContext(context, "#AD_Role_ID", roleId);
+		Env.setContext(context, "#AD_Role_Name", role.getName());
+		//	User Info
+		Env.setContext(context, "#AD_User_ID", userId);
+		Env.setContext(context, "#AD_User_Name", user.getName());
+		Env.setContext(context, "#AD_User_Description", user.getDescription());
+		//	
 		MSession session = MSession.get(context, true);
 		if(!Util.isEmpty(request.getClientVersion())) {
 			session.setWebSession(request.getClientVersion());
 		}
+		Env.setContext (context, "#AD_Session_ID", session.getAD_Session_ID());
+		//	Load preferences
+		loadPreferences(context);
 		//	Session values
 		builder.setId(session.getAD_Session_ID());
 		builder.setUuid(validateNull(session.getUUID()));
@@ -383,6 +407,200 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 		//	Return session
 		return builder;
 	}
+	
+	/**
+	 *	Load Preferences into Context for selected client.
+	 *  <p>
+	 *  Sets Org info in context and loads relevant field from
+	 *	- AD_Client/Info,
+	 *  - C_AcctSchema,
+	 *  - C_AcctSchema_Elements
+	 *	- AD_Preference
+	 *  <p>
+	 *  Assumes that the context is set for #AD_Client_ID, #AD_User_ID, #AD_Role_ID
+	 *  @param context
+	 *  @return AD_Message of error (NoValidAcctInfo) or ""
+	 */
+	public void loadPreferences(Properties context) {
+		if (context == null)
+			throw new IllegalArgumentException("Required parameter missing");
+		if (Env.getContext(context,"#AD_Client_ID").length() == 0)
+			throw new UnsupportedOperationException("Missing Context #AD_Client_ID");
+		if (Env.getContext(context,"#AD_User_ID").length() == 0)
+			throw new UnsupportedOperationException("Missing Context #AD_User_ID");
+		if (Env.getContext(context,"#AD_Role_ID").length() == 0)
+			throw new UnsupportedOperationException("Missing Context #AD_Role_ID");
+		//	Load Role Info
+		MRole.getDefault(context, true);
+		//	Other
+		Env.setAutoCommit(context, Ini.isPropertyBool(Ini.P_A_COMMIT));
+		Env.setAutoNew(context, Ini.isPropertyBool(Ini.P_A_NEW));
+		if (MRole.getDefault(context, false).isShowAcct()) {
+			Env.setContext(context, "#ShowAcct", Ini.getProperty(Ini.P_SHOW_ACCT));
+		} else {
+			Env.setContext(context, "#ShowAcct", "N");
+		}
+		Env.setContext(context, "#ShowTrl", Ini.getProperty(Ini.P_SHOW_TRL));
+		Env.setContext(context, "#ShowAdvanced", Ini.getProperty(Ini.P_SHOW_ADVANCED));
+
+		//	Other Settings
+		Env.setContext(context, "#YYYY", "Y");
+		Env.setContext(context, "#StdPrecision", 2);
+		int clientId = Env.getAD_Client_ID(context);
+		int orgId = Env.getAD_Org_ID(context);
+		//	AccountSchema Info (first)
+		String sql = "SELECT * "
+			+ "FROM C_AcctSchema a, AD_ClientInfo c "
+			+ "WHERE a.C_AcctSchema_ID=c.C_AcctSchema1_ID "
+			+ "AND c.AD_Client_ID=?";
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			int acctSchemaId = 0;
+			
+			pstmt = DB.prepareStatement(sql, null);
+			pstmt.setInt(1, clientId);
+			rs = pstmt.executeQuery();
+
+			if (rs.next()) {
+				//	Accounting Info
+				acctSchemaId = rs.getInt("C_AcctSchema_ID");
+				Env.setContext(context, "$C_AcctSchema_ID", acctSchemaId);
+				Env.setContext(context, "$C_Currency_ID", rs.getInt("C_Currency_ID"));
+				Env.setContext(context, "$HasAlias", rs.getString("HasAlias"));
+			}
+			rs.close();
+			pstmt.close();
+			/**Define AcctSchema , Currency, HasAlias for Multi AcctSchema**/
+			MAcctSchema[] ass = MAcctSchema.getClientAcctSchema(Env.getCtx(), clientId);
+			if(ass != null && ass.length > 1) {
+				for(MAcctSchema as : ass) {
+					acctSchemaId  = MClientInfo.get(Env.getCtx(), clientId).getC_AcctSchema1_ID(); 			 
+					if (as.getAD_OrgOnly_ID() != 0) {
+						if (as.isSkipOrg(orgId)) {
+							continue;
+						} else {
+							acctSchemaId = as.getC_AcctSchema_ID();
+							Env.setContext(context, "$C_AcctSchema_ID", acctSchemaId);
+							Env.setContext(context, "$C_Currency_ID", as.getC_Currency_ID());
+							Env.setContext(context, "$HasAlias", as.isHasAlias());
+							break;
+						}
+					}
+				}
+			}	
+
+			//	Accounting Elements
+			sql = "SELECT ElementType "
+				+ "FROM C_AcctSchema_Element "
+				+ "WHERE C_AcctSchema_ID=?"
+				+ " AND IsActive='Y'";
+			pstmt = DB.prepareStatement(sql, null);
+			pstmt.setInt(1, acctSchemaId);
+			rs = pstmt.executeQuery();
+			while (rs.next())
+				Env.setContext(context, "$Element_" + rs.getString("ElementType"), "Y");
+			rs.close();
+			pstmt.close();
+
+			//	This reads all relevant window neutral defaults
+			//	overwriting superseeded ones.  Window specific is read in Mainain
+			sql = "SELECT Attribute, Value, AD_Window_ID "
+				+ "FROM AD_Preference "
+				+ "WHERE AD_Client_ID IN (0, @#AD_Client_ID@)"
+				+ " AND AD_Org_ID IN (0, @#AD_Org_ID@)"
+				+ " AND (AD_User_ID IS NULL OR AD_User_ID=0 OR AD_User_ID=@#AD_User_ID@)"
+				+ " AND IsActive='Y' "
+				+ "ORDER BY Attribute, AD_Client_ID, AD_User_ID DESC, AD_Org_ID";
+				//	the last one overwrites - System - Client - User - Org - Window
+			sql = Env.parseContext(context, 0, sql, false);
+			if (sql.length() == 0) {
+				log.log(Level.SEVERE, "loadPreferences - Missing Environment");
+			} else {
+				pstmt = DB.prepareStatement(sql, null);
+				rs = pstmt.executeQuery();
+				while (rs.next()) {
+					int AD_Window_ID = rs.getInt(3);
+					String at = "";
+					if (rs.wasNull())
+						at = "P|" + rs.getString(1);
+					else
+						at = "P" + AD_Window_ID + "|" + rs.getString(1);
+					String va = rs.getString(2);
+					Env.setContext(context, at, va);
+				}
+				rs.close();
+				pstmt.close();
+			}
+
+			//	Default Values
+			log.info("Default Values ...");
+			sql = "SELECT t.TableName, c.ColumnName "
+				+ "FROM AD_Column c "
+				+ " INNER JOIN AD_Table t ON (c.AD_Table_ID=t.AD_Table_ID) "
+				+ "WHERE c.IsKey='Y' AND t.IsActive='Y'"
+				+ " AND EXISTS (SELECT * FROM AD_Column cc "
+				+ " WHERE ColumnName = 'IsDefault' AND t.AD_Table_ID=cc.AD_Table_ID AND cc.IsActive='Y')";
+			pstmt = DB.prepareStatement(sql, null);
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				loadDefault (context, rs.getString(1), rs.getString(2));
+			}
+			rs.close();
+			pstmt.close();
+			pstmt = null;
+		} catch (SQLException e) {
+			log.log(Level.SEVERE, "loadPreferences", e);
+		} finally {
+			DB.close(rs, pstmt);
+		}
+		//	Country
+		Env.setContext(context, "#C_Country_ID", MCountry.getDefault(context).getC_Country_ID());
+		// Call ModelValidators afterLoadPreferences - teo_sarca FR [ 1670025 ]
+		ModelValidationEngine.get().afterLoadPreferences(context);
+	}	//	loadPreferences
+	
+	/**
+	 *	Load Default Value for Table into Context.
+	 *  @param tableName table name
+	 *  @param columnName column name
+	 */
+	private void loadDefault (Properties context, String tableName, String columnName) {
+		if (tableName.startsWith("AD_Window")
+			|| tableName.startsWith("AD_PrintFormat")
+			|| tableName.startsWith("AD_Workflow") )
+			return;
+		String value = null;
+		//
+		String sql = "SELECT " + columnName + " FROM " + tableName	//	most specific first
+			+ " WHERE IsDefault='Y' AND IsActive='Y' ORDER BY AD_Client_ID DESC, AD_Org_ID DESC";
+		sql = MRole.getDefault(Env.getCtx(), false).addAccessSQL(sql, 
+			tableName, MRole.SQL_NOTQUALIFIED, MRole.SQL_RO);
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			pstmt = DB.prepareStatement(sql, null);
+			rs = pstmt.executeQuery();
+			if (rs.next())
+				value = rs.getString(1);
+			rs.close();
+			pstmt.close();
+			pstmt = null;
+		} catch (SQLException e) {
+			log.log(Level.SEVERE, tableName + " (" + sql + ")", e);
+			return;
+		} finally {
+			DB.close(rs, pstmt);
+		}
+		//	Set Context Value
+		if (value != null && value.length() != 0)
+		{
+			if (tableName.equals("C_DocType"))
+				Env.setContext(context, "#C_DocTypeTarget_ID", value);
+			else
+				Env.setContext(context, "#" + columnName, value);
+		}
+	}	//	loadDefault
 	
 	/**
 	 * Convert Values from Context
@@ -447,6 +665,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 			throw new AdempiereException("@AD_User_ID@ / @AD_Role_ID@ / @AD_Org_ID@ @NotFound@");
 		}
 		MRole role = MRole.get(context, roleId);
+		MUser user = MUser.get(context, userId);
 		Env.setContext (context, "#AD_Session_ID", 0);
 		Env.setContext(context, "#AD_User_ID", userId);
 		Env.setContext(context, "#AD_Role_ID", roleId);
@@ -458,11 +677,36 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 		if(!Util.isEmpty(request.getClientVersion())) {
 			session.setWebSession(request.getClientVersion());
 		}
+		//	Warehouse / Org
+		Env.setContext (context, "#M_Warehouse_ID", warehouseId);
+		Env.setContext (context, "#AD_Session_ID", session.getAD_Session_ID());
+		//  Client Info
+		MClient client = MClient.get(context, role.getAD_Client_ID());
+		Env.setContext(context, "#AD_Client_ID", client.getAD_Client_ID());
+		Env.setContext(context, "#AD_Client_Name", client.getName());
+		Env.setContext(context, "#AD_Org_ID", organizationId);
+		Env.setContext(context, "#Date", new Timestamp(System.currentTimeMillis()));
+		Env.setContext(context, Env.LANGUAGE, request.getLanguage());
+		//	Role Info
+		Env.setContext(context, "#AD_Role_ID", roleId);
+		Env.setContext(context, "#AD_Role_Name", role.getName());
+		//	User Info
+		Env.setContext(context, "#AD_User_ID", userId);
+		Env.setContext(context, "#AD_User_Name", user.getName());
+		Env.setContext(context, "#AD_User_Description", user.getDescription());
+		//	Load preferences
+		loadPreferences(context);
 		//	Session values
 		builder.setId(session.getAD_Session_ID());
 		builder.setUuid(validateNull(session.getUUID()));
 		builder.setName(validateNull(session.getDescription()));
 		builder.setUserInfo(convertUserInfo(MUser.get(Env.getCtx(), userId)).build());
+		//	Set default context
+		context.entrySet().stream()
+			.filter(keyValue -> String.valueOf(keyValue.getKey()).startsWith("#") || String.valueOf(keyValue.getKey()).startsWith("$"))
+			.forEach(contextKeyValue -> {
+				builder.putDefailtContext(contextKeyValue.getKey().toString(), convertObjectFromContext(contextKeyValue.getValue()).build());
+			});
 		//	Set role
 		Role.Builder roleBuilder = convertRole(role, true);
 		builder.setRole(roleBuilder.build());

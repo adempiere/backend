@@ -622,7 +622,7 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 		int menuId = new Query(Env.getCtx(), I_AD_Menu.Table_Name, whereClause, null)
 			.setParameters(optionId)
 			.firstId();
-		MRecentItem.addMenuOption(Env.getCtx(), menuId, optionId);
+		MRecentItem.addMenuOption(Env.getCtx(), menuId, 0);
 	}
 	
 	/**
@@ -1885,6 +1885,8 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 							menuName = tab.get_Translation("Name");
 							menuDescription = tab.get_Translation("Description");
 						}
+						//	Add Action
+						recentItemBuilder.setAction(validateNull(MMenu.ACTION_Window));
 					}
 					if(recentItem.getAD_Window_ID() > 0) {
 						MWindow window = MWindow.get(context, recentItem.getAD_Window_ID());
@@ -1895,6 +1897,8 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 							menuName = window.get_Translation("Name");
 							menuDescription = window.get_Translation("Description");
 						}
+						//	Add Action
+						recentItemBuilder.setAction(validateNull(MMenu.ACTION_Window));
 					}
 					if(recentItem.getAD_Menu_ID() > 0) {
 						MMenu menu = MMenu.getFromId(context, recentItem.getAD_Menu_ID());
@@ -1907,6 +1911,8 @@ public class BusinessDataServiceImplementation extends DataServiceImplBase {
 								menuDescription = menu.get_Translation("Description");
 							}
 						}
+						//	Add Action
+						recentItemBuilder.setAction(validateNull(menu.getAction()));
 					}
 					//	Add time
 					recentItemBuilder.setMenuName(validateNull(menuName));

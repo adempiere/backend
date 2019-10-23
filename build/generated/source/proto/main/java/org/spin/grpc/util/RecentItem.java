@@ -30,6 +30,7 @@ private static final long serialVersionUID = 0L;
     displayName_ = "";
     recordUuid_ = "";
     updated_ = 0L;
+    action_ = "";
   }
 
   @java.lang.Override
@@ -118,6 +119,12 @@ private static final long serialVersionUID = 0L;
           case 80: {
 
             updated_ = input.readInt64();
+            break;
+          }
+          case 90: {
+            java.lang.String s = input.readStringRequireUtf8();
+
+            action_ = s;
             break;
           }
         }
@@ -409,6 +416,40 @@ private static final long serialVersionUID = 0L;
     return updated_;
   }
 
+  public static final int ACTION_FIELD_NUMBER = 11;
+  private volatile java.lang.Object action_;
+  /**
+   * <code>string action = 11;</code>
+   */
+  public java.lang.String getAction() {
+    java.lang.Object ref = action_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      action_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string action = 11;</code>
+   */
+  public com.google.protobuf.ByteString
+      getActionBytes() {
+    java.lang.Object ref = action_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      action_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
     byte isInitialized = memoizedIsInitialized;
@@ -451,6 +492,9 @@ private static final long serialVersionUID = 0L;
     if (updated_ != 0L) {
       output.writeInt64(10, updated_);
     }
+    if (!getActionBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 11, action_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -492,6 +536,9 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeInt64Size(10, updated_);
     }
+    if (!getActionBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(11, action_);
+    }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
     return size;
@@ -528,6 +575,8 @@ private static final long serialVersionUID = 0L;
         .equals(other.getRecordUuid());
     result = result && (getUpdated()
         == other.getUpdated());
+    result = result && getAction()
+        .equals(other.getAction());
     result = result && unknownFields.equals(other.unknownFields);
     return result;
   }
@@ -560,6 +609,8 @@ private static final long serialVersionUID = 0L;
     hash = (37 * hash) + UPDATED_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
         getUpdated());
+    hash = (37 * hash) + ACTION_FIELD_NUMBER;
+    hash = (53 * hash) + getAction().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -713,6 +764,8 @@ private static final long serialVersionUID = 0L;
 
       updated_ = 0L;
 
+      action_ = "";
+
       return this;
     }
 
@@ -745,6 +798,7 @@ private static final long serialVersionUID = 0L;
       result.displayName_ = displayName_;
       result.recordUuid_ = recordUuid_;
       result.updated_ = updated_;
+      result.action_ = action_;
       onBuilt();
       return result;
     }
@@ -822,6 +876,10 @@ private static final long serialVersionUID = 0L;
       }
       if (other.getUpdated() != 0L) {
         setUpdated(other.getUpdated());
+      }
+      if (!other.getAction().isEmpty()) {
+        action_ = other.action_;
+        onChanged();
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -1407,6 +1465,75 @@ private static final long serialVersionUID = 0L;
     public Builder clearUpdated() {
       
       updated_ = 0L;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object action_ = "";
+    /**
+     * <code>string action = 11;</code>
+     */
+    public java.lang.String getAction() {
+      java.lang.Object ref = action_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        action_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string action = 11;</code>
+     */
+    public com.google.protobuf.ByteString
+        getActionBytes() {
+      java.lang.Object ref = action_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        action_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string action = 11;</code>
+     */
+    public Builder setAction(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
+      action_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string action = 11;</code>
+     */
+    public Builder clearAction() {
+      
+      action_ = getDefaultInstance().getAction();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string action = 11;</code>
+     */
+    public Builder setActionBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      
+      action_ = value;
       onChanged();
       return this;
     }

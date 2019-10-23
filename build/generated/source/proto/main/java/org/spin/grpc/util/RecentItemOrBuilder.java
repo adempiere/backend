@@ -91,4 +91,14 @@ public interface RecentItemOrBuilder extends
    * <code>int64 updated = 10;</code>
    */
   long getUpdated();
+
+  /**
+   * <code>string action = 11;</code>
+   */
+  java.lang.String getAction();
+  /**
+   * <code>string action = 11;</code>
+   */
+  com.google.protobuf.ByteString
+      getActionBytes();
 }

@@ -308,6 +308,7 @@ message RecentItem {
 	string displayName = 8;
 	string recordUuid = 9;
 	int64 updated = 10;
+	string action = 11;
 }
 
 //	Recent Items List
