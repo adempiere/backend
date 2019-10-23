@@ -99,6 +99,25 @@ message Session {
 	UserInfo userInfo = 4;
 	Role role = 5;
 	bool processed = 6;
+	map<string, ContextValue> defailtContext = 7;
+}
+
+// Define value for object
+message ContextValue {
+	int32 intValue = 1;
+	int64 longValue = 2;
+	double doubleValue = 3;
+	bool booleanValue = 4;
+	string stringValue = 5;
+	enum ValueType {
+		INTEGER = 0;
+		LONG = 1;
+		DOUBLE = 2;
+		BOOLEAN = 3;
+		STRING = 4;
+		DATE = 5;
+	}
+	ValueType valueType = 6;
 }
 
 // Role Definition

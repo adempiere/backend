@@ -105,6 +105,19 @@ private static final long serialVersionUID = 0L;
             processed_ = input.readBool();
             break;
           }
+          case 58: {
+            if (!((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
+              defailtContext_ = com.google.protobuf.MapField.newMapField(
+                  DefailtContextDefaultEntryHolder.defaultEntry);
+              mutable_bitField0_ |= 0x00000040;
+            }
+            com.google.protobuf.MapEntry<java.lang.String, org.spin.grpc.util.ContextValue>
+            defailtContext__ = input.readMessage(
+                DefailtContextDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
+            defailtContext_.getMutableMap().put(
+                defailtContext__.getKey(), defailtContext__.getValue());
+            break;
+          }
         }
       }
     } catch (com.google.protobuf.InvalidProtocolBufferException e) {
@@ -122,6 +135,17 @@ private static final long serialVersionUID = 0L;
     return org.spin.grpc.util.ADempiereAccess.internal_static_access_Session_descriptor;
   }
 
+  @SuppressWarnings({"rawtypes"})
+  protected com.google.protobuf.MapField internalGetMapField(
+      int number) {
+    switch (number) {
+      case 7:
+        return internalGetDefailtContext();
+      default:
+        throw new RuntimeException(
+            "Invalid map field number: " + number);
+    }
+  }
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
     return org.spin.grpc.util.ADempiereAccess.internal_static_access_Session_fieldAccessorTable
@@ -129,6 +153,7 @@ private static final long serialVersionUID = 0L;
             org.spin.grpc.util.Session.class, org.spin.grpc.util.Session.Builder.class);
   }
 
+  private int bitField0_;
   public static final int ID_FIELD_NUMBER = 1;
   private int id_;
   /**
@@ -257,6 +282,82 @@ private static final long serialVersionUID = 0L;
     return processed_;
   }
 
+  public static final int DEFAILTCONTEXT_FIELD_NUMBER = 7;
+  private static final class DefailtContextDefaultEntryHolder {
+    static final com.google.protobuf.MapEntry<
+        java.lang.String, org.spin.grpc.util.ContextValue> defaultEntry =
+            com.google.protobuf.MapEntry
+            .<java.lang.String, org.spin.grpc.util.ContextValue>newDefaultInstance(
+                org.spin.grpc.util.ADempiereAccess.internal_static_access_Session_DefailtContextEntry_descriptor, 
+                com.google.protobuf.WireFormat.FieldType.STRING,
+                "",
+                com.google.protobuf.WireFormat.FieldType.MESSAGE,
+                org.spin.grpc.util.ContextValue.getDefaultInstance());
+  }
+  private com.google.protobuf.MapField<
+      java.lang.String, org.spin.grpc.util.ContextValue> defailtContext_;
+  private com.google.protobuf.MapField<java.lang.String, org.spin.grpc.util.ContextValue>
+  internalGetDefailtContext() {
+    if (defailtContext_ == null) {
+      return com.google.protobuf.MapField.emptyMapField(
+          DefailtContextDefaultEntryHolder.defaultEntry);
+    }
+    return defailtContext_;
+  }
+
+  public int getDefailtContextCount() {
+    return internalGetDefailtContext().getMap().size();
+  }
+  /**
+   * <code>map&lt;string, .access.ContextValue&gt; defailtContext = 7;</code>
+   */
+
+  public boolean containsDefailtContext(
+      java.lang.String key) {
+    if (key == null) { throw new java.lang.NullPointerException(); }
+    return internalGetDefailtContext().getMap().containsKey(key);
+  }
+  /**
+   * Use {@link #getDefailtContextMap()} instead.
+   */
+  @java.lang.Deprecated
+  public java.util.Map<java.lang.String, org.spin.grpc.util.ContextValue> getDefailtContext() {
+    return getDefailtContextMap();
+  }
+  /**
+   * <code>map&lt;string, .access.ContextValue&gt; defailtContext = 7;</code>
+   */
+
+  public java.util.Map<java.lang.String, org.spin.grpc.util.ContextValue> getDefailtContextMap() {
+    return internalGetDefailtContext().getMap();
+  }
+  /**
+   * <code>map&lt;string, .access.ContextValue&gt; defailtContext = 7;</code>
+   */
+
+  public org.spin.grpc.util.ContextValue getDefailtContextOrDefault(
+      java.lang.String key,
+      org.spin.grpc.util.ContextValue defaultValue) {
+    if (key == null) { throw new java.lang.NullPointerException(); }
+    java.util.Map<java.lang.String, org.spin.grpc.util.ContextValue> map =
+        internalGetDefailtContext().getMap();
+    return map.containsKey(key) ? map.get(key) : defaultValue;
+  }
+  /**
+   * <code>map&lt;string, .access.ContextValue&gt; defailtContext = 7;</code>
+   */
+
+  public org.spin.grpc.util.ContextValue getDefailtContextOrThrow(
+      java.lang.String key) {
+    if (key == null) { throw new java.lang.NullPointerException(); }
+    java.util.Map<java.lang.String, org.spin.grpc.util.ContextValue> map =
+        internalGetDefailtContext().getMap();
+    if (!map.containsKey(key)) {
+      throw new java.lang.IllegalArgumentException();
+    }
+    return map.get(key);
+  }
+
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
     byte isInitialized = memoizedIsInitialized;
@@ -287,6 +388,12 @@ private static final long serialVersionUID = 0L;
     if (processed_ != false) {
       output.writeBool(6, processed_);
     }
+    com.google.protobuf.GeneratedMessageV3
+      .serializeStringMapTo(
+        output,
+        internalGetDefailtContext(),
+        DefailtContextDefaultEntryHolder.defaultEntry,
+        7);
     unknownFields.writeTo(output);
   }
 
@@ -316,6 +423,16 @@ private static final long serialVersionUID = 0L;
     if (processed_ != false) {
       size += com.google.protobuf.CodedOutputStream
         .computeBoolSize(6, processed_);
+    }
+    for (java.util.Map.Entry<java.lang.String, org.spin.grpc.util.ContextValue> entry
+         : internalGetDefailtContext().getMap().entrySet()) {
+      com.google.protobuf.MapEntry<java.lang.String, org.spin.grpc.util.ContextValue>
+      defailtContext__ = DefailtContextDefaultEntryHolder.defaultEntry.newBuilderForType()
+          .setKey(entry.getKey())
+          .setValue(entry.getValue())
+          .build();
+      size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(7, defailtContext__);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -351,6 +468,8 @@ private static final long serialVersionUID = 0L;
     }
     result = result && (getProcessed()
         == other.getProcessed());
+    result = result && internalGetDefailtContext().equals(
+        other.internalGetDefailtContext());
     result = result && unknownFields.equals(other.unknownFields);
     return result;
   }
@@ -379,6 +498,10 @@ private static final long serialVersionUID = 0L;
     hash = (37 * hash) + PROCESSED_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
         getProcessed());
+    if (!internalGetDefailtContext().getMap().isEmpty()) {
+      hash = (37 * hash) + DEFAILTCONTEXT_FIELD_NUMBER;
+      hash = (53 * hash) + internalGetDefailtContext().hashCode();
+    }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -488,6 +611,28 @@ private static final long serialVersionUID = 0L;
       return org.spin.grpc.util.ADempiereAccess.internal_static_access_Session_descriptor;
     }
 
+    @SuppressWarnings({"rawtypes"})
+    protected com.google.protobuf.MapField internalGetMapField(
+        int number) {
+      switch (number) {
+        case 7:
+          return internalGetDefailtContext();
+        default:
+          throw new RuntimeException(
+              "Invalid map field number: " + number);
+      }
+    }
+    @SuppressWarnings({"rawtypes"})
+    protected com.google.protobuf.MapField internalGetMutableMapField(
+        int number) {
+      switch (number) {
+        case 7:
+          return internalGetMutableDefailtContext();
+        default:
+          throw new RuntimeException(
+              "Invalid map field number: " + number);
+      }
+    }
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return org.spin.grpc.util.ADempiereAccess.internal_static_access_Session_fieldAccessorTable
@@ -532,6 +677,7 @@ private static final long serialVersionUID = 0L;
       }
       processed_ = false;
 
+      internalGetMutableDefailtContext().clear();
       return this;
     }
 
@@ -554,6 +700,8 @@ private static final long serialVersionUID = 0L;
 
     public org.spin.grpc.util.Session buildPartial() {
       org.spin.grpc.util.Session result = new org.spin.grpc.util.Session(this);
+      int from_bitField0_ = bitField0_;
+      int to_bitField0_ = 0;
       result.id_ = id_;
       result.uuid_ = uuid_;
       result.name_ = name_;
@@ -568,6 +716,9 @@ private static final long serialVersionUID = 0L;
         result.role_ = roleBuilder_.build();
       }
       result.processed_ = processed_;
+      result.defailtContext_ = internalGetDefailtContext();
+      result.defailtContext_.makeImmutable();
+      result.bitField0_ = to_bitField0_;
       onBuilt();
       return result;
     }
@@ -629,6 +780,8 @@ private static final long serialVersionUID = 0L;
       if (other.getProcessed() != false) {
         setProcessed(other.getProcessed());
       }
+      internalGetMutableDefailtContext().mergeFrom(
+          other.internalGetDefailtContext());
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
       return this;
@@ -655,6 +808,7 @@ private static final long serialVersionUID = 0L;
       }
       return this;
     }
+    private int bitField0_;
 
     private int id_ ;
     /**
@@ -1077,6 +1231,129 @@ private static final long serialVersionUID = 0L;
       
       processed_ = false;
       onChanged();
+      return this;
+    }
+
+    private com.google.protobuf.MapField<
+        java.lang.String, org.spin.grpc.util.ContextValue> defailtContext_;
+    private com.google.protobuf.MapField<java.lang.String, org.spin.grpc.util.ContextValue>
+    internalGetDefailtContext() {
+      if (defailtContext_ == null) {
+        return com.google.protobuf.MapField.emptyMapField(
+            DefailtContextDefaultEntryHolder.defaultEntry);
+      }
+      return defailtContext_;
+    }
+    private com.google.protobuf.MapField<java.lang.String, org.spin.grpc.util.ContextValue>
+    internalGetMutableDefailtContext() {
+      onChanged();;
+      if (defailtContext_ == null) {
+        defailtContext_ = com.google.protobuf.MapField.newMapField(
+            DefailtContextDefaultEntryHolder.defaultEntry);
+      }
+      if (!defailtContext_.isMutable()) {
+        defailtContext_ = defailtContext_.copy();
+      }
+      return defailtContext_;
+    }
+
+    public int getDefailtContextCount() {
+      return internalGetDefailtContext().getMap().size();
+    }
+    /**
+     * <code>map&lt;string, .access.ContextValue&gt; defailtContext = 7;</code>
+     */
+
+    public boolean containsDefailtContext(
+        java.lang.String key) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      return internalGetDefailtContext().getMap().containsKey(key);
+    }
+    /**
+     * Use {@link #getDefailtContextMap()} instead.
+     */
+    @java.lang.Deprecated
+    public java.util.Map<java.lang.String, org.spin.grpc.util.ContextValue> getDefailtContext() {
+      return getDefailtContextMap();
+    }
+    /**
+     * <code>map&lt;string, .access.ContextValue&gt; defailtContext = 7;</code>
+     */
+
+    public java.util.Map<java.lang.String, org.spin.grpc.util.ContextValue> getDefailtContextMap() {
+      return internalGetDefailtContext().getMap();
+    }
+    /**
+     * <code>map&lt;string, .access.ContextValue&gt; defailtContext = 7;</code>
+     */
+
+    public org.spin.grpc.util.ContextValue getDefailtContextOrDefault(
+        java.lang.String key,
+        org.spin.grpc.util.ContextValue defaultValue) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      java.util.Map<java.lang.String, org.spin.grpc.util.ContextValue> map =
+          internalGetDefailtContext().getMap();
+      return map.containsKey(key) ? map.get(key) : defaultValue;
+    }
+    /**
+     * <code>map&lt;string, .access.ContextValue&gt; defailtContext = 7;</code>
+     */
+
+    public org.spin.grpc.util.ContextValue getDefailtContextOrThrow(
+        java.lang.String key) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      java.util.Map<java.lang.String, org.spin.grpc.util.ContextValue> map =
+          internalGetDefailtContext().getMap();
+      if (!map.containsKey(key)) {
+        throw new java.lang.IllegalArgumentException();
+      }
+      return map.get(key);
+    }
+
+    public Builder clearDefailtContext() {
+      internalGetMutableDefailtContext().getMutableMap()
+          .clear();
+      return this;
+    }
+    /**
+     * <code>map&lt;string, .access.ContextValue&gt; defailtContext = 7;</code>
+     */
+
+    public Builder removeDefailtContext(
+        java.lang.String key) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      internalGetMutableDefailtContext().getMutableMap()
+          .remove(key);
+      return this;
+    }
+    /**
+     * Use alternate mutation accessors instead.
+     */
+    @java.lang.Deprecated
+    public java.util.Map<java.lang.String, org.spin.grpc.util.ContextValue>
+    getMutableDefailtContext() {
+      return internalGetMutableDefailtContext().getMutableMap();
+    }
+    /**
+     * <code>map&lt;string, .access.ContextValue&gt; defailtContext = 7;</code>
+     */
+    public Builder putDefailtContext(
+        java.lang.String key,
+        org.spin.grpc.util.ContextValue value) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      if (value == null) { throw new java.lang.NullPointerException(); }
+      internalGetMutableDefailtContext().getMutableMap()
+          .put(key, value);
+      return this;
+    }
+    /**
+     * <code>map&lt;string, .access.ContextValue&gt; defailtContext = 7;</code>
+     */
+
+    public Builder putAllDefailtContext(
+        java.util.Map<java.lang.String, org.spin.grpc.util.ContextValue> values) {
+      internalGetMutableDefailtContext().getMutableMap()
+          .putAll(values);
       return this;
     }
     public final Builder setUnknownFields(

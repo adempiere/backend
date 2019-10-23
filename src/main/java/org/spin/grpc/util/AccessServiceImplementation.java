@@ -14,6 +14,7 @@
  ************************************************************************************/
 package org.spin.grpc.util;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Enumeration;
 import java.util.List;
@@ -373,7 +374,47 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 		//	Set role
 		Role.Builder roleBuilder = convertRole(role, true);
 		builder.setRole(roleBuilder.build());
+		//	Set default context
+		context.entrySet().stream()
+			.filter(keyValue -> String.valueOf(keyValue.getKey()).startsWith("#") || String.valueOf(keyValue.getKey()).startsWith("$"))
+			.forEach(contextKeyValue -> {
+				builder.putDefailtContext(contextKeyValue.getKey().toString(), convertObjectFromContext(contextKeyValue.getValue()).build());
+			});
 		//	Return session
+		return builder;
+	}
+	
+	/**
+	 * Convert Values from Context
+	 * @param value
+	 * @return
+	 */
+	private ContextValue.Builder convertObjectFromContext(Object value) {
+		ContextValue.Builder builder = ContextValue.newBuilder();
+		if(value == null) {
+			return builder;
+		}
+		if(value instanceof Integer) {
+			builder.setValueType(ContextValue.ValueType.INTEGER);
+			builder.setIntValue((Integer) value);
+		} if(value instanceof Double
+				|| value instanceof Float) {
+			builder.setValueType(ContextValue.ValueType.DOUBLE);
+			builder.setDoubleValue((Double) value);
+		} if(value instanceof BigDecimal) {
+			builder.setValueType(ContextValue.ValueType.DOUBLE);
+			builder.setDoubleValue(((BigDecimal) value).doubleValue());
+		} if(value instanceof Timestamp) {
+			builder.setValueType(ContextValue.ValueType.DATE);
+			builder.setLongValue(((Timestamp) value).getTime());
+		} if(value instanceof Long) {
+			builder.setValueType(ContextValue.ValueType.LONG);
+			builder.setLongValue((Long) value);
+		} else {
+			builder.setValueType(ContextValue.ValueType.STRING);
+			builder.setStringValue(validateNull((String) value));
+		}
+		//	
 		return builder;
 	}
 	
