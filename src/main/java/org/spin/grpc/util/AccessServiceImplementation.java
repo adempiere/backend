@@ -796,6 +796,9 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 		builder.setUuid(validateNull(session.getUUID()));
 		builder.setName(validateNull(session.getDescription()));
 		builder.setUserInfo(convertUserInfo(MUser.get(context, session.getCreatedBy())).build());
+		//	Set role
+		Role.Builder roleBuilder = convertRole(MRole.get(context, session.getAD_Role_ID()), true);
+		builder.setRole(roleBuilder.build());
 		//	Set default context
 		context.entrySet().stream()
 			.filter(keyValue -> String.valueOf(keyValue.getKey()).startsWith("#") || String.valueOf(keyValue.getKey()).startsWith("$"))
