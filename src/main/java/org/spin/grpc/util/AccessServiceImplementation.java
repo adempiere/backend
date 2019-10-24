@@ -796,6 +796,12 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 		builder.setUuid(validateNull(session.getUUID()));
 		builder.setName(validateNull(session.getDescription()));
 		builder.setUserInfo(convertUserInfo(MUser.get(context, session.getCreatedBy())).build());
+		//	Set default context
+		context.entrySet().stream()
+			.filter(keyValue -> String.valueOf(keyValue.getKey()).startsWith("#") || String.valueOf(keyValue.getKey()).startsWith("$"))
+			.forEach(contextKeyValue -> {
+				builder.putDefaultContext(contextKeyValue.getKey().toString(), convertObjectFromContext(contextKeyValue.getValue()).build());
+			});
 		//	Return session
 		return builder;
 	}
