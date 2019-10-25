@@ -56,19 +56,19 @@ public final class Enrollment {
       "st\022\r\n\005token\030\001 \001(\t\022\020\n\010password\030\002 \001(\t\"V\n\004U" +
       "ser\022\020\n\010userName\030\001 \001(\t\022\014\n\004name\030\002 \001(\t\022\020\n\010l" +
       "astName\030\003 \001(\t\022\r\n\005eMail\030\004 \001(\t\022\r\n\005token\030\005 " +
-      "\001(\t\"\270\001\n\025ResetPasswordResponse\022\r\n\005token\030\001" +
-      " \001(\t\022D\n\014responseType\030\002 \001(\0162..enrollment." +
-      "ResetPasswordResponse.ResponseType\"J\n\014Re" +
-      "sponseType\022\006\n\002OK\020\000\022\022\n\016USER_NOT_FOUND\020\001\022\023" +
-      "\n\017TOKEN_NOT_FOUND\020\002\022\t\n\005ERROR\020\0032\222\002\n\021Enrol" +
-      "lmentService\022?\n\nEnrollUser\022\035.enrollment." +
-      "EnrollUserRequest\032\020.enrollment.User\"\000\022V\n" +
-      "\rResetPassword\022 .enrollment.ResetPasswor" +
-      "dRequest\032!.enrollment.ResetPasswordRespo" +
-      "nse\"\000\022d\n\026ResetPasswordFromToken\022%.enroll" +
-      "ment.ResetPasswordTokenRequest\032!.enrollm" +
-      "ent.ResetPasswordResponse\"\000B(\n\022org.spin." +
-      "grpc.utilB\nEnrollmentP\001\242\002\003HLWb\006proto3"
+      "\001(\t\"\251\001\n\025ResetPasswordResponse\022D\n\014respons" +
+      "eType\030\001 \001(\0162..enrollment.ResetPasswordRe" +
+      "sponse.ResponseType\"J\n\014ResponseType\022\006\n\002O" +
+      "K\020\000\022\022\n\016USER_NOT_FOUND\020\001\022\023\n\017TOKEN_NOT_FOU" +
+      "ND\020\002\022\t\n\005ERROR\020\0032\222\002\n\021EnrollmentService\022?\n" +
+      "\nEnrollUser\022\035.enrollment.EnrollUserReque" +
+      "st\032\020.enrollment.User\"\000\022V\n\rResetPassword\022" +
+      " .enrollment.ResetPasswordRequest\032!.enro" +
+      "llment.ResetPasswordResponse\"\000\022d\n\026ResetP" +
+      "asswordFromToken\022%.enrollment.ResetPassw" +
+      "ordTokenRequest\032!.enrollment.ResetPasswo" +
+      "rdResponse\"\000B(\n\022org.spin.grpc.utilB\nEnro" +
+      "llmentP\001\242\002\003HLWb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -111,7 +111,7 @@ public final class Enrollment {
     internal_static_enrollment_ResetPasswordResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_enrollment_ResetPasswordResponse_descriptor,
-        new java.lang.String[] { "Token", "ResponseType", });
+        new java.lang.String[] { "ResponseType", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)
