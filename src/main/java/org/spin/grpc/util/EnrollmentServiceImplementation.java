@@ -161,8 +161,7 @@ public class EnrollmentServiceImplementation extends EnrollmentServiceImplBase {
 		}
 		//	Generate reset
 		try {
-			String token = generateToken(user);
-			builder.setToken(validateNull(token));
+			generateToken(user);
 		} catch (Exception e) {
 			builder.setResponseType(ResponseType.ERROR);
 			throw new AdempiereException(e.getMessage());

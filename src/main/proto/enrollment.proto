@@ -62,12 +62,11 @@ message User {
 
 // Reset Password Response
 message ResetPasswordResponse {
-	string token = 1;
 	enum ResponseType {
 		OK = 0;
 		USER_NOT_FOUND = 1;
 		TOKEN_NOT_FOUND = 2;
 		ERROR = 3;
 	}
-	ResponseType responseType = 2;
+	ResponseType responseType = 1;
 }
