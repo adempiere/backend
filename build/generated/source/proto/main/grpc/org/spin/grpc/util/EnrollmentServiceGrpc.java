@@ -94,6 +94,38 @@ public final class EnrollmentServiceGrpc {
      return getResetPasswordMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.ResetPasswordTokenRequest,
+      org.spin.grpc.util.ResetPasswordResponse> getResetPasswordFromTokenMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "ResetPasswordFromToken",
+      requestType = org.spin.grpc.util.ResetPasswordTokenRequest.class,
+      responseType = org.spin.grpc.util.ResetPasswordResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<org.spin.grpc.util.ResetPasswordTokenRequest,
+      org.spin.grpc.util.ResetPasswordResponse> getResetPasswordFromTokenMethod() {
+    io.grpc.MethodDescriptor<org.spin.grpc.util.ResetPasswordTokenRequest, org.spin.grpc.util.ResetPasswordResponse> getResetPasswordFromTokenMethod;
+    if ((getResetPasswordFromTokenMethod = EnrollmentServiceGrpc.getResetPasswordFromTokenMethod) == null) {
+      synchronized (EnrollmentServiceGrpc.class) {
+        if ((getResetPasswordFromTokenMethod = EnrollmentServiceGrpc.getResetPasswordFromTokenMethod) == null) {
+          EnrollmentServiceGrpc.getResetPasswordFromTokenMethod = getResetPasswordFromTokenMethod = 
+              io.grpc.MethodDescriptor.<org.spin.grpc.util.ResetPasswordTokenRequest, org.spin.grpc.util.ResetPasswordResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(
+                  "enrollment.EnrollmentService", "ResetPasswordFromToken"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  org.spin.grpc.util.ResetPasswordTokenRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  org.spin.grpc.util.ResetPasswordResponse.getDefaultInstance()))
+                  .setSchemaDescriptor(new EnrollmentServiceMethodDescriptorSupplier("ResetPasswordFromToken"))
+                  .build();
+          }
+        }
+     }
+     return getResetPasswordFromTokenMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -144,6 +176,16 @@ public final class EnrollmentServiceGrpc {
       asyncUnimplementedUnaryCall(getResetPasswordMethod(), responseObserver);
     }
 
+    /**
+     * <pre>
+     * 
+     * </pre>
+     */
+    public void resetPasswordFromToken(org.spin.grpc.util.ResetPasswordTokenRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.ResetPasswordResponse> responseObserver) {
+      asyncUnimplementedUnaryCall(getResetPasswordFromTokenMethod(), responseObserver);
+    }
+
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
@@ -160,6 +202,13 @@ public final class EnrollmentServiceGrpc {
                 org.spin.grpc.util.ResetPasswordRequest,
                 org.spin.grpc.util.ResetPasswordResponse>(
                   this, METHODID_RESET_PASSWORD)))
+          .addMethod(
+            getResetPasswordFromTokenMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                org.spin.grpc.util.ResetPasswordTokenRequest,
+                org.spin.grpc.util.ResetPasswordResponse>(
+                  this, METHODID_RESET_PASSWORD_FROM_TOKEN)))
           .build();
     }
   }
@@ -206,6 +255,17 @@ public final class EnrollmentServiceGrpc {
       asyncUnaryCall(
           getChannel().newCall(getResetPasswordMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     * <pre>
+     * 
+     * </pre>
+     */
+    public void resetPasswordFromToken(org.spin.grpc.util.ResetPasswordTokenRequest request,
+        io.grpc.stub.StreamObserver<org.spin.grpc.util.ResetPasswordResponse> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getResetPasswordFromTokenMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -247,6 +307,16 @@ public final class EnrollmentServiceGrpc {
     public org.spin.grpc.util.ResetPasswordResponse resetPassword(org.spin.grpc.util.ResetPasswordRequest request) {
       return blockingUnaryCall(
           getChannel(), getResetPasswordMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * 
+     * </pre>
+     */
+    public org.spin.grpc.util.ResetPasswordResponse resetPasswordFromToken(org.spin.grpc.util.ResetPasswordTokenRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getResetPasswordFromTokenMethod(), getCallOptions(), request);
     }
   }
 
@@ -292,10 +362,22 @@ public final class EnrollmentServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getResetPasswordMethod(), getCallOptions()), request);
     }
+
+    /**
+     * <pre>
+     * 
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<org.spin.grpc.util.ResetPasswordResponse> resetPasswordFromToken(
+        org.spin.grpc.util.ResetPasswordTokenRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getResetPasswordFromTokenMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_ENROLL_USER = 0;
   private static final int METHODID_RESET_PASSWORD = 1;
+  private static final int METHODID_RESET_PASSWORD_FROM_TOKEN = 2;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -320,6 +402,10 @@ public final class EnrollmentServiceGrpc {
           break;
         case METHODID_RESET_PASSWORD:
           serviceImpl.resetPassword((org.spin.grpc.util.ResetPasswordRequest) request,
+              (io.grpc.stub.StreamObserver<org.spin.grpc.util.ResetPasswordResponse>) responseObserver);
+          break;
+        case METHODID_RESET_PASSWORD_FROM_TOKEN:
+          serviceImpl.resetPasswordFromToken((org.spin.grpc.util.ResetPasswordTokenRequest) request,
               (io.grpc.stub.StreamObserver<org.spin.grpc.util.ResetPasswordResponse>) responseObserver);
           break;
         default:
@@ -385,6 +471,7 @@ public final class EnrollmentServiceGrpc {
               .setSchemaDescriptor(new EnrollmentServiceFileDescriptorSupplier())
               .addMethod(getEnrollUserMethod())
               .addMethod(getResetPasswordMethod())
+              .addMethod(getResetPasswordFromTokenMethod())
               .build();
         }
       }

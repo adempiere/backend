@@ -27,6 +27,8 @@ service EnrollmentService {
   rpc EnrollUser(EnrollUserRequest) returns (User) {}
   // 
   rpc ResetPassword(ResetPasswordRequest) returns (ResetPasswordResponse) {}
+  // 
+  rpc ResetPasswordFromToken(ResetPasswordTokenRequest) returns (ResetPasswordResponse) {}
 }
 
 // Request a Enroll for a user
@@ -43,6 +45,12 @@ message ResetPasswordRequest {
 	string eMail = 2;
 }
 
+// Request a Password Reset
+message ResetPasswordTokenRequest {
+	string token = 1;
+	string password = 2;
+}
+
 // user enrolled
 message User {
 	string userName = 1;
@@ -54,10 +62,12 @@ message User {
 
 // Reset Password Response
 message ResetPasswordResponse {
+	string token = 1;
 	enum ResponseType {
 		OK = 0;
 		USER_NOT_FOUND = 1;
-		ERROR = 2;
+		TOKEN_NOT_FOUND = 2;
+		ERROR = 3;
 	}
-	ResponseType responseType = 1;
+	ResponseType responseType = 2;
 }

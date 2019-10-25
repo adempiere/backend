@@ -20,6 +20,7 @@ private static final long serialVersionUID = 0L;
     super(builder);
   }
   private ResetPasswordResponse() {
+    token_ = "";
     responseType_ = 0;
   }
 
@@ -54,7 +55,13 @@ private static final long serialVersionUID = 0L;
             }
             break;
           }
-          case 8: {
+          case 10: {
+            java.lang.String s = input.readStringRequireUtf8();
+
+            token_ = s;
+            break;
+          }
+          case 16: {
             int rawValue = input.readEnum();
 
             responseType_ = rawValue;
@@ -98,9 +105,13 @@ private static final long serialVersionUID = 0L;
      */
     USER_NOT_FOUND(1),
     /**
-     * <code>ERROR = 2;</code>
+     * <code>TOKEN_NOT_FOUND = 2;</code>
      */
-    ERROR(2),
+    TOKEN_NOT_FOUND(2),
+    /**
+     * <code>ERROR = 3;</code>
+     */
+    ERROR(3),
     UNRECOGNIZED(-1),
     ;
 
@@ -113,9 +124,13 @@ private static final long serialVersionUID = 0L;
      */
     public static final int USER_NOT_FOUND_VALUE = 1;
     /**
-     * <code>ERROR = 2;</code>
+     * <code>TOKEN_NOT_FOUND = 2;</code>
      */
-    public static final int ERROR_VALUE = 2;
+    public static final int TOKEN_NOT_FOUND_VALUE = 2;
+    /**
+     * <code>ERROR = 3;</code>
+     */
+    public static final int ERROR_VALUE = 3;
 
 
     public final int getNumber() {
@@ -138,7 +153,8 @@ private static final long serialVersionUID = 0L;
       switch (value) {
         case 0: return OK;
         case 1: return USER_NOT_FOUND;
-        case 2: return ERROR;
+        case 2: return TOKEN_NOT_FOUND;
+        case 3: return ERROR;
         default: return null;
       }
     }
@@ -191,16 +207,50 @@ private static final long serialVersionUID = 0L;
     // @@protoc_insertion_point(enum_scope:enrollment.ResetPasswordResponse.ResponseType)
   }
 
-  public static final int RESPONSETYPE_FIELD_NUMBER = 1;
+  public static final int TOKEN_FIELD_NUMBER = 1;
+  private volatile java.lang.Object token_;
+  /**
+   * <code>string token = 1;</code>
+   */
+  public java.lang.String getToken() {
+    java.lang.Object ref = token_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      token_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string token = 1;</code>
+   */
+  public com.google.protobuf.ByteString
+      getTokenBytes() {
+    java.lang.Object ref = token_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      token_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int RESPONSETYPE_FIELD_NUMBER = 2;
   private int responseType_;
   /**
-   * <code>.enrollment.ResetPasswordResponse.ResponseType responseType = 1;</code>
+   * <code>.enrollment.ResetPasswordResponse.ResponseType responseType = 2;</code>
    */
   public int getResponseTypeValue() {
     return responseType_;
   }
   /**
-   * <code>.enrollment.ResetPasswordResponse.ResponseType responseType = 1;</code>
+   * <code>.enrollment.ResetPasswordResponse.ResponseType responseType = 2;</code>
    */
   public org.spin.grpc.util.ResetPasswordResponse.ResponseType getResponseType() {
     org.spin.grpc.util.ResetPasswordResponse.ResponseType result = org.spin.grpc.util.ResetPasswordResponse.ResponseType.valueOf(responseType_);
@@ -219,8 +269,11 @@ private static final long serialVersionUID = 0L;
 
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
+    if (!getTokenBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, token_);
+    }
     if (responseType_ != org.spin.grpc.util.ResetPasswordResponse.ResponseType.OK.getNumber()) {
-      output.writeEnum(1, responseType_);
+      output.writeEnum(2, responseType_);
     }
     unknownFields.writeTo(output);
   }
@@ -230,9 +283,12 @@ private static final long serialVersionUID = 0L;
     if (size != -1) return size;
 
     size = 0;
+    if (!getTokenBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, token_);
+    }
     if (responseType_ != org.spin.grpc.util.ResetPasswordResponse.ResponseType.OK.getNumber()) {
       size += com.google.protobuf.CodedOutputStream
-        .computeEnumSize(1, responseType_);
+        .computeEnumSize(2, responseType_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -250,6 +306,8 @@ private static final long serialVersionUID = 0L;
     org.spin.grpc.util.ResetPasswordResponse other = (org.spin.grpc.util.ResetPasswordResponse) obj;
 
     boolean result = true;
+    result = result && getToken()
+        .equals(other.getToken());
     result = result && responseType_ == other.responseType_;
     result = result && unknownFields.equals(other.unknownFields);
     return result;
@@ -262,6 +320,8 @@ private static final long serialVersionUID = 0L;
     }
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
+    hash = (37 * hash) + TOKEN_FIELD_NUMBER;
+    hash = (53 * hash) + getToken().hashCode();
     hash = (37 * hash) + RESPONSETYPE_FIELD_NUMBER;
     hash = (53 * hash) + responseType_;
     hash = (29 * hash) + unknownFields.hashCode();
@@ -397,6 +457,8 @@ private static final long serialVersionUID = 0L;
     }
     public Builder clear() {
       super.clear();
+      token_ = "";
+
       responseType_ = 0;
 
       return this;
@@ -421,6 +483,7 @@ private static final long serialVersionUID = 0L;
 
     public org.spin.grpc.util.ResetPasswordResponse buildPartial() {
       org.spin.grpc.util.ResetPasswordResponse result = new org.spin.grpc.util.ResetPasswordResponse(this);
+      result.token_ = token_;
       result.responseType_ = responseType_;
       onBuilt();
       return result;
@@ -463,6 +526,10 @@ private static final long serialVersionUID = 0L;
 
     public Builder mergeFrom(org.spin.grpc.util.ResetPasswordResponse other) {
       if (other == org.spin.grpc.util.ResetPasswordResponse.getDefaultInstance()) return this;
+      if (!other.getToken().isEmpty()) {
+        token_ = other.token_;
+        onChanged();
+      }
       if (other.responseType_ != 0) {
         setResponseTypeValue(other.getResponseTypeValue());
       }
@@ -493,15 +560,84 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
+    private java.lang.Object token_ = "";
+    /**
+     * <code>string token = 1;</code>
+     */
+    public java.lang.String getToken() {
+      java.lang.Object ref = token_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        token_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string token = 1;</code>
+     */
+    public com.google.protobuf.ByteString
+        getTokenBytes() {
+      java.lang.Object ref = token_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        token_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string token = 1;</code>
+     */
+    public Builder setToken(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
+      token_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string token = 1;</code>
+     */
+    public Builder clearToken() {
+      
+      token_ = getDefaultInstance().getToken();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string token = 1;</code>
+     */
+    public Builder setTokenBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      
+      token_ = value;
+      onChanged();
+      return this;
+    }
+
     private int responseType_ = 0;
     /**
-     * <code>.enrollment.ResetPasswordResponse.ResponseType responseType = 1;</code>
+     * <code>.enrollment.ResetPasswordResponse.ResponseType responseType = 2;</code>
      */
     public int getResponseTypeValue() {
       return responseType_;
     }
     /**
-     * <code>.enrollment.ResetPasswordResponse.ResponseType responseType = 1;</code>
+     * <code>.enrollment.ResetPasswordResponse.ResponseType responseType = 2;</code>
      */
     public Builder setResponseTypeValue(int value) {
       responseType_ = value;
@@ -509,14 +645,14 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.enrollment.ResetPasswordResponse.ResponseType responseType = 1;</code>
+     * <code>.enrollment.ResetPasswordResponse.ResponseType responseType = 2;</code>
      */
     public org.spin.grpc.util.ResetPasswordResponse.ResponseType getResponseType() {
       org.spin.grpc.util.ResetPasswordResponse.ResponseType result = org.spin.grpc.util.ResetPasswordResponse.ResponseType.valueOf(responseType_);
       return result == null ? org.spin.grpc.util.ResetPasswordResponse.ResponseType.UNRECOGNIZED : result;
     }
     /**
-     * <code>.enrollment.ResetPasswordResponse.ResponseType responseType = 1;</code>
+     * <code>.enrollment.ResetPasswordResponse.ResponseType responseType = 2;</code>
      */
     public Builder setResponseType(org.spin.grpc.util.ResetPasswordResponse.ResponseType value) {
       if (value == null) {
@@ -528,7 +664,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.enrollment.ResetPasswordResponse.ResponseType responseType = 1;</code>
+     * <code>.enrollment.ResetPasswordResponse.ResponseType responseType = 2;</code>
      */
     public Builder clearResponseType() {
       

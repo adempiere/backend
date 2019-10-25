@@ -28,6 +28,7 @@ import org.compiere.util.Env;
 import org.compiere.util.Util;
 import org.spin.grpc.util.EnrollmentServiceGrpc.EnrollmentServiceImplBase;
 import org.spin.grpc.util.ResetPasswordResponse.ResponseType;
+import org.spin.model.I_AD_Token;
 import org.spin.model.MADToken;
 import org.spin.model.MADTokenDefinition;
 import org.spin.util.TokenGeneratorHandler;
@@ -80,6 +81,63 @@ public class EnrollmentServiceImplementation extends EnrollmentServiceImplBase {
 		}
 	}
 	
+	@Override
+	public void resetPasswordFromToken(ResetPasswordTokenRequest request,
+			StreamObserver<ResetPasswordResponse> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Object Requested = " + request.getToken());
+			ResetPasswordResponse.Builder passwordResetReponse = resetPasswordFromToken(request);
+			responseObserver.onNext(passwordResetReponse.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	/**
+	 * Reset password
+	 * @param request
+	 * @return
+	 */
+	private ResetPasswordResponse.Builder resetPasswordFromToken(ResetPasswordTokenRequest request) {
+		//	User Name
+		if(Util.isEmpty(request.getToken())
+				&& Util.isEmpty(request.getPassword())) {
+			throw new AdempiereException("@Token@ / @Password@ @IsMandatory@");
+		}
+		ResetPasswordResponse.Builder builder = ResetPasswordResponse.newBuilder();
+		MADToken token = new Query(Env.getCtx(), I_AD_Token.Table_Name, I_AD_Token.COLUMNNAME_TokenValue + " = ?", null)
+			.setParameters(request.getToken())
+			.first();
+		if(token == null
+				|| token.getAD_Token_ID() == 0) {
+			builder.setResponseType(ResponseType.TOKEN_NOT_FOUND);
+			throw new AdempiereException("@Token@ @NotFound@");
+		}
+		//	Generate reset
+		try {
+			if(!TokenGeneratorHandler.getInstance().validateToken(MADTokenDefinition.TOKENTYPE_URLTokenUsedAsURL, request.getToken(), token.getAD_User_ID())) {
+				throw new AdempiereException("@Token@ @NotFound@");
+			}
+			MUser user = MUser.get(Env.getCtx(), token.getAD_User_ID());
+			user.setPassword(request.getPassword());
+			user.saveEx();
+		} catch (Exception e) {
+			builder.setResponseType(ResponseType.ERROR);
+			throw new AdempiereException(e.getMessage());
+		}
+		builder.setResponseType(ResponseType.OK);
+		return builder;
+	}
+	
 	/**
 	 * Reset password
 	 * @param request
@@ -103,7 +161,8 @@ public class EnrollmentServiceImplementation extends EnrollmentServiceImplBase {
 		}
 		//	Generate reset
 		try {
-			generateToken(user);
+			String token = generateToken(user);
+			builder.setToken(validateNull(token));
 		} catch (Exception e) {
 			builder.setResponseType(ResponseType.ERROR);
 			throw new AdempiereException(e.getMessage());
