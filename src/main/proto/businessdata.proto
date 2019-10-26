@@ -22,7 +22,7 @@ option objc_class_prefix = "HLW";
 package data;
 
 // The greeting service definition.
-service DataService {
+service BusinessDataService {
 	// Get a Entity
 	rpc GetEntity(GetEntityRequest) returns (Entity) {}
 	// Create Entity Request

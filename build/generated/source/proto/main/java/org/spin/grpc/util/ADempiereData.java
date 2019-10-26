@@ -351,33 +351,33 @@ public final class ADempiereData {
       "ReferenceInfo\022\014\n\004uuid\030\001 \001(\t\022\022\n\nwindowUui" +
       "d\030\002 \001(\t\022\023\n\013displayName\030\003 \001(\t\022\021\n\ttableNam" +
       "e\030\004 \001(\t\022\023\n\013whereClause\030\005 \001(\t\022\023\n\013recordCo" +
-      "unt\030\006 \001(\0032\332\007\n\013DataService\0223\n\tGetEntity\022\026" +
-      ".data.GetEntityRequest\032\014.data.Entity\"\000\0229" +
-      "\n\014CreateEntity\022\031.data.CreateEntityReques" +
-      "t\032\014.data.Entity\"\000\0229\n\014UpdateEntity\022\031.data" +
-      ".UpdateEntityRequest\032\014.data.Entity\"\000\0228\n\014" +
-      "DeleteEntity\022\031.data.DeleteEntityRequest\032" +
-      "\013.data.Empty\"\000\022=\n\016RollbackEntity\022\033.data." +
-      "RollbackEntityRequest\032\014.data.Entity\"\000\022G\n" +
-      "\014ListEntities\022\031.data.ListEntitiesRequest" +
-      "\032\032.data.ListEntitiesResponse\"\000\022?\n\rGetLoo" +
-      "kupItem\022\032.data.GetLookupItemRequest\032\020.da" +
-      "ta.LookupItem\"\000\022P\n\017ListLookupItems\022\034.dat" +
-      "a.ListLookupItemsRequest\032\035.data.ListLook" +
-      "upItemsResponse\"\000\0226\n\nRunCallout\022\027.data.R" +
-      "unCalloutRequest\032\r.data.Callout\"\000\022N\n\022Run" +
-      "BusinessProcess\022\037.data.RunBusinessProces" +
-      "sRequest\032\025.data.BusinessProcess\"\000\022S\n\020Lis" +
-      "tBrowserItems\022\035.data.ListBrowserItemsReq" +
-      "uest\032\036.data.ListBrowserItemsResponse\"\000\022M" +
-      "\n\016ListActivities\022\033.data.ListActivitiesRe" +
-      "quest\032\034.data.ListActivitiesResponse\"\000\022P\n" +
-      "\017ListRecentItems\022\034.data.ListRecentItemsR" +
-      "equest\032\035.data.ListRecentItemsResponse\"\000\022" +
-      "M\n\016ListReferences\022\033.data.ListReferencesR" +
-      "equest\032\034.data.ListReferencesResponse\"\000B+" +
-      "\n\022org.spin.grpc.utilB\rADempiereDataP\001\242\002\003" +
-      "HLWb\006proto3"
+      "unt\030\006 \001(\0032\342\007\n\023BusinessDataService\0223\n\tGet" +
+      "Entity\022\026.data.GetEntityRequest\032\014.data.En" +
+      "tity\"\000\0229\n\014CreateEntity\022\031.data.CreateEnti" +
+      "tyRequest\032\014.data.Entity\"\000\0229\n\014UpdateEntit" +
+      "y\022\031.data.UpdateEntityRequest\032\014.data.Enti" +
+      "ty\"\000\0228\n\014DeleteEntity\022\031.data.DeleteEntity" +
+      "Request\032\013.data.Empty\"\000\022=\n\016RollbackEntity" +
+      "\022\033.data.RollbackEntityRequest\032\014.data.Ent" +
+      "ity\"\000\022G\n\014ListEntities\022\031.data.ListEntitie" +
+      "sRequest\032\032.data.ListEntitiesResponse\"\000\022?" +
+      "\n\rGetLookupItem\022\032.data.GetLookupItemRequ" +
+      "est\032\020.data.LookupItem\"\000\022P\n\017ListLookupIte" +
+      "ms\022\034.data.ListLookupItemsRequest\032\035.data." +
+      "ListLookupItemsResponse\"\000\0226\n\nRunCallout\022" +
+      "\027.data.RunCalloutRequest\032\r.data.Callout\"" +
+      "\000\022N\n\022RunBusinessProcess\022\037.data.RunBusine" +
+      "ssProcessRequest\032\025.data.BusinessProcess\"" +
+      "\000\022S\n\020ListBrowserItems\022\035.data.ListBrowser" +
+      "ItemsRequest\032\036.data.ListBrowserItemsResp" +
+      "onse\"\000\022M\n\016ListActivities\022\033.data.ListActi" +
+      "vitiesRequest\032\034.data.ListActivitiesRespo" +
+      "nse\"\000\022P\n\017ListRecentItems\022\034.data.ListRece" +
+      "ntItemsRequest\032\035.data.ListRecentItemsRes" +
+      "ponse\"\000\022M\n\016ListReferences\022\033.data.ListRef" +
+      "erencesRequest\032\034.data.ListReferencesResp" +
+      "onse\"\000B+\n\022org.spin.grpc.utilB\rADempiereD" +
+      "ataP\001\242\002\003HLWb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {

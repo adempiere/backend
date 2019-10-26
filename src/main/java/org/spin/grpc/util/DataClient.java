@@ -26,7 +26,7 @@ public class DataClient {
 	  private static final Logger logger = Logger.getLogger(DataClient.class.getName());
 
 	  private final ManagedChannel channel;
-	  private final DataServiceGrpc.DataServiceBlockingStub blockingStub;
+	  private final BusinessDataServiceGrpc.BusinessDataServiceBlockingStub blockingStub;
 
 	  /** Construct client connecting to HelloWorld server at {@code host:port}. */
 	  public DataClient(String host, int port) {
@@ -40,7 +40,7 @@ public class DataClient {
 	  /** Construct client for accessing HelloWorld server using the existing channel. */
 	  DataClient(ManagedChannel channel) {
 	    this.channel = channel;
-	    blockingStub = DataServiceGrpc.newBlockingStub(channel);
+	    blockingStub = BusinessDataServiceGrpc.newBlockingStub(channel);
 	  }
 
 	  public void shutdown() throws InterruptedException {

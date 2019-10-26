@@ -23,11 +23,11 @@ import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
 @javax.annotation.Generated(
     value = "by gRPC proto compiler (version 1.17.0)",
     comments = "Source: businessdata.proto")
-public final class DataServiceGrpc {
+public final class BusinessDataServiceGrpc {
 
-  private DataServiceGrpc() {}
+  private BusinessDataServiceGrpc() {}
 
-  public static final String SERVICE_NAME = "data.DataService";
+  public static final String SERVICE_NAME = "data.BusinessDataService";
 
   // Static method descriptors that strictly reflect the proto.
   private static volatile io.grpc.MethodDescriptor<org.spin.grpc.util.GetEntityRequest,
@@ -41,20 +41,20 @@ public final class DataServiceGrpc {
   public static io.grpc.MethodDescriptor<org.spin.grpc.util.GetEntityRequest,
       org.spin.grpc.util.Entity> getGetEntityMethod() {
     io.grpc.MethodDescriptor<org.spin.grpc.util.GetEntityRequest, org.spin.grpc.util.Entity> getGetEntityMethod;
-    if ((getGetEntityMethod = DataServiceGrpc.getGetEntityMethod) == null) {
-      synchronized (DataServiceGrpc.class) {
-        if ((getGetEntityMethod = DataServiceGrpc.getGetEntityMethod) == null) {
-          DataServiceGrpc.getGetEntityMethod = getGetEntityMethod = 
+    if ((getGetEntityMethod = BusinessDataServiceGrpc.getGetEntityMethod) == null) {
+      synchronized (BusinessDataServiceGrpc.class) {
+        if ((getGetEntityMethod = BusinessDataServiceGrpc.getGetEntityMethod) == null) {
+          BusinessDataServiceGrpc.getGetEntityMethod = getGetEntityMethod = 
               io.grpc.MethodDescriptor.<org.spin.grpc.util.GetEntityRequest, org.spin.grpc.util.Entity>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
-                  "data.DataService", "GetEntity"))
+                  "data.BusinessDataService", "GetEntity"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.GetEntityRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.Entity.getDefaultInstance()))
-                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("GetEntity"))
+                  .setSchemaDescriptor(new BusinessDataServiceMethodDescriptorSupplier("GetEntity"))
                   .build();
           }
         }
@@ -73,20 +73,20 @@ public final class DataServiceGrpc {
   public static io.grpc.MethodDescriptor<org.spin.grpc.util.CreateEntityRequest,
       org.spin.grpc.util.Entity> getCreateEntityMethod() {
     io.grpc.MethodDescriptor<org.spin.grpc.util.CreateEntityRequest, org.spin.grpc.util.Entity> getCreateEntityMethod;
-    if ((getCreateEntityMethod = DataServiceGrpc.getCreateEntityMethod) == null) {
-      synchronized (DataServiceGrpc.class) {
-        if ((getCreateEntityMethod = DataServiceGrpc.getCreateEntityMethod) == null) {
-          DataServiceGrpc.getCreateEntityMethod = getCreateEntityMethod = 
+    if ((getCreateEntityMethod = BusinessDataServiceGrpc.getCreateEntityMethod) == null) {
+      synchronized (BusinessDataServiceGrpc.class) {
+        if ((getCreateEntityMethod = BusinessDataServiceGrpc.getCreateEntityMethod) == null) {
+          BusinessDataServiceGrpc.getCreateEntityMethod = getCreateEntityMethod = 
               io.grpc.MethodDescriptor.<org.spin.grpc.util.CreateEntityRequest, org.spin.grpc.util.Entity>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
-                  "data.DataService", "CreateEntity"))
+                  "data.BusinessDataService", "CreateEntity"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.CreateEntityRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.Entity.getDefaultInstance()))
-                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("CreateEntity"))
+                  .setSchemaDescriptor(new BusinessDataServiceMethodDescriptorSupplier("CreateEntity"))
                   .build();
           }
         }
@@ -105,20 +105,20 @@ public final class DataServiceGrpc {
   public static io.grpc.MethodDescriptor<org.spin.grpc.util.UpdateEntityRequest,
       org.spin.grpc.util.Entity> getUpdateEntityMethod() {
     io.grpc.MethodDescriptor<org.spin.grpc.util.UpdateEntityRequest, org.spin.grpc.util.Entity> getUpdateEntityMethod;
-    if ((getUpdateEntityMethod = DataServiceGrpc.getUpdateEntityMethod) == null) {
-      synchronized (DataServiceGrpc.class) {
-        if ((getUpdateEntityMethod = DataServiceGrpc.getUpdateEntityMethod) == null) {
-          DataServiceGrpc.getUpdateEntityMethod = getUpdateEntityMethod = 
+    if ((getUpdateEntityMethod = BusinessDataServiceGrpc.getUpdateEntityMethod) == null) {
+      synchronized (BusinessDataServiceGrpc.class) {
+        if ((getUpdateEntityMethod = BusinessDataServiceGrpc.getUpdateEntityMethod) == null) {
+          BusinessDataServiceGrpc.getUpdateEntityMethod = getUpdateEntityMethod = 
               io.grpc.MethodDescriptor.<org.spin.grpc.util.UpdateEntityRequest, org.spin.grpc.util.Entity>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
-                  "data.DataService", "UpdateEntity"))
+                  "data.BusinessDataService", "UpdateEntity"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.UpdateEntityRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.Entity.getDefaultInstance()))
-                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("UpdateEntity"))
+                  .setSchemaDescriptor(new BusinessDataServiceMethodDescriptorSupplier("UpdateEntity"))
                   .build();
           }
         }
@@ -137,20 +137,20 @@ public final class DataServiceGrpc {
   public static io.grpc.MethodDescriptor<org.spin.grpc.util.DeleteEntityRequest,
       org.spin.grpc.util.Empty> getDeleteEntityMethod() {
     io.grpc.MethodDescriptor<org.spin.grpc.util.DeleteEntityRequest, org.spin.grpc.util.Empty> getDeleteEntityMethod;
-    if ((getDeleteEntityMethod = DataServiceGrpc.getDeleteEntityMethod) == null) {
-      synchronized (DataServiceGrpc.class) {
-        if ((getDeleteEntityMethod = DataServiceGrpc.getDeleteEntityMethod) == null) {
-          DataServiceGrpc.getDeleteEntityMethod = getDeleteEntityMethod = 
+    if ((getDeleteEntityMethod = BusinessDataServiceGrpc.getDeleteEntityMethod) == null) {
+      synchronized (BusinessDataServiceGrpc.class) {
+        if ((getDeleteEntityMethod = BusinessDataServiceGrpc.getDeleteEntityMethod) == null) {
+          BusinessDataServiceGrpc.getDeleteEntityMethod = getDeleteEntityMethod = 
               io.grpc.MethodDescriptor.<org.spin.grpc.util.DeleteEntityRequest, org.spin.grpc.util.Empty>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
-                  "data.DataService", "DeleteEntity"))
+                  "data.BusinessDataService", "DeleteEntity"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.DeleteEntityRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.Empty.getDefaultInstance()))
-                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("DeleteEntity"))
+                  .setSchemaDescriptor(new BusinessDataServiceMethodDescriptorSupplier("DeleteEntity"))
                   .build();
           }
         }
@@ -169,20 +169,20 @@ public final class DataServiceGrpc {
   public static io.grpc.MethodDescriptor<org.spin.grpc.util.RollbackEntityRequest,
       org.spin.grpc.util.Entity> getRollbackEntityMethod() {
     io.grpc.MethodDescriptor<org.spin.grpc.util.RollbackEntityRequest, org.spin.grpc.util.Entity> getRollbackEntityMethod;
-    if ((getRollbackEntityMethod = DataServiceGrpc.getRollbackEntityMethod) == null) {
-      synchronized (DataServiceGrpc.class) {
-        if ((getRollbackEntityMethod = DataServiceGrpc.getRollbackEntityMethod) == null) {
-          DataServiceGrpc.getRollbackEntityMethod = getRollbackEntityMethod = 
+    if ((getRollbackEntityMethod = BusinessDataServiceGrpc.getRollbackEntityMethod) == null) {
+      synchronized (BusinessDataServiceGrpc.class) {
+        if ((getRollbackEntityMethod = BusinessDataServiceGrpc.getRollbackEntityMethod) == null) {
+          BusinessDataServiceGrpc.getRollbackEntityMethod = getRollbackEntityMethod = 
               io.grpc.MethodDescriptor.<org.spin.grpc.util.RollbackEntityRequest, org.spin.grpc.util.Entity>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
-                  "data.DataService", "RollbackEntity"))
+                  "data.BusinessDataService", "RollbackEntity"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.RollbackEntityRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.Entity.getDefaultInstance()))
-                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("RollbackEntity"))
+                  .setSchemaDescriptor(new BusinessDataServiceMethodDescriptorSupplier("RollbackEntity"))
                   .build();
           }
         }
@@ -201,20 +201,20 @@ public final class DataServiceGrpc {
   public static io.grpc.MethodDescriptor<org.spin.grpc.util.ListEntitiesRequest,
       org.spin.grpc.util.ListEntitiesResponse> getListEntitiesMethod() {
     io.grpc.MethodDescriptor<org.spin.grpc.util.ListEntitiesRequest, org.spin.grpc.util.ListEntitiesResponse> getListEntitiesMethod;
-    if ((getListEntitiesMethod = DataServiceGrpc.getListEntitiesMethod) == null) {
-      synchronized (DataServiceGrpc.class) {
-        if ((getListEntitiesMethod = DataServiceGrpc.getListEntitiesMethod) == null) {
-          DataServiceGrpc.getListEntitiesMethod = getListEntitiesMethod = 
+    if ((getListEntitiesMethod = BusinessDataServiceGrpc.getListEntitiesMethod) == null) {
+      synchronized (BusinessDataServiceGrpc.class) {
+        if ((getListEntitiesMethod = BusinessDataServiceGrpc.getListEntitiesMethod) == null) {
+          BusinessDataServiceGrpc.getListEntitiesMethod = getListEntitiesMethod = 
               io.grpc.MethodDescriptor.<org.spin.grpc.util.ListEntitiesRequest, org.spin.grpc.util.ListEntitiesResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
-                  "data.DataService", "ListEntities"))
+                  "data.BusinessDataService", "ListEntities"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.ListEntitiesRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.ListEntitiesResponse.getDefaultInstance()))
-                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("ListEntities"))
+                  .setSchemaDescriptor(new BusinessDataServiceMethodDescriptorSupplier("ListEntities"))
                   .build();
           }
         }
@@ -233,20 +233,20 @@ public final class DataServiceGrpc {
   public static io.grpc.MethodDescriptor<org.spin.grpc.util.GetLookupItemRequest,
       org.spin.grpc.util.LookupItem> getGetLookupItemMethod() {
     io.grpc.MethodDescriptor<org.spin.grpc.util.GetLookupItemRequest, org.spin.grpc.util.LookupItem> getGetLookupItemMethod;
-    if ((getGetLookupItemMethod = DataServiceGrpc.getGetLookupItemMethod) == null) {
-      synchronized (DataServiceGrpc.class) {
-        if ((getGetLookupItemMethod = DataServiceGrpc.getGetLookupItemMethod) == null) {
-          DataServiceGrpc.getGetLookupItemMethod = getGetLookupItemMethod = 
+    if ((getGetLookupItemMethod = BusinessDataServiceGrpc.getGetLookupItemMethod) == null) {
+      synchronized (BusinessDataServiceGrpc.class) {
+        if ((getGetLookupItemMethod = BusinessDataServiceGrpc.getGetLookupItemMethod) == null) {
+          BusinessDataServiceGrpc.getGetLookupItemMethod = getGetLookupItemMethod = 
               io.grpc.MethodDescriptor.<org.spin.grpc.util.GetLookupItemRequest, org.spin.grpc.util.LookupItem>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
-                  "data.DataService", "GetLookupItem"))
+                  "data.BusinessDataService", "GetLookupItem"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.GetLookupItemRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.LookupItem.getDefaultInstance()))
-                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("GetLookupItem"))
+                  .setSchemaDescriptor(new BusinessDataServiceMethodDescriptorSupplier("GetLookupItem"))
                   .build();
           }
         }
@@ -265,20 +265,20 @@ public final class DataServiceGrpc {
   public static io.grpc.MethodDescriptor<org.spin.grpc.util.ListLookupItemsRequest,
       org.spin.grpc.util.ListLookupItemsResponse> getListLookupItemsMethod() {
     io.grpc.MethodDescriptor<org.spin.grpc.util.ListLookupItemsRequest, org.spin.grpc.util.ListLookupItemsResponse> getListLookupItemsMethod;
-    if ((getListLookupItemsMethod = DataServiceGrpc.getListLookupItemsMethod) == null) {
-      synchronized (DataServiceGrpc.class) {
-        if ((getListLookupItemsMethod = DataServiceGrpc.getListLookupItemsMethod) == null) {
-          DataServiceGrpc.getListLookupItemsMethod = getListLookupItemsMethod = 
+    if ((getListLookupItemsMethod = BusinessDataServiceGrpc.getListLookupItemsMethod) == null) {
+      synchronized (BusinessDataServiceGrpc.class) {
+        if ((getListLookupItemsMethod = BusinessDataServiceGrpc.getListLookupItemsMethod) == null) {
+          BusinessDataServiceGrpc.getListLookupItemsMethod = getListLookupItemsMethod = 
               io.grpc.MethodDescriptor.<org.spin.grpc.util.ListLookupItemsRequest, org.spin.grpc.util.ListLookupItemsResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
-                  "data.DataService", "ListLookupItems"))
+                  "data.BusinessDataService", "ListLookupItems"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.ListLookupItemsRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.ListLookupItemsResponse.getDefaultInstance()))
-                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("ListLookupItems"))
+                  .setSchemaDescriptor(new BusinessDataServiceMethodDescriptorSupplier("ListLookupItems"))
                   .build();
           }
         }
@@ -297,20 +297,20 @@ public final class DataServiceGrpc {
   public static io.grpc.MethodDescriptor<org.spin.grpc.util.RunCalloutRequest,
       org.spin.grpc.util.Callout> getRunCalloutMethod() {
     io.grpc.MethodDescriptor<org.spin.grpc.util.RunCalloutRequest, org.spin.grpc.util.Callout> getRunCalloutMethod;
-    if ((getRunCalloutMethod = DataServiceGrpc.getRunCalloutMethod) == null) {
-      synchronized (DataServiceGrpc.class) {
-        if ((getRunCalloutMethod = DataServiceGrpc.getRunCalloutMethod) == null) {
-          DataServiceGrpc.getRunCalloutMethod = getRunCalloutMethod = 
+    if ((getRunCalloutMethod = BusinessDataServiceGrpc.getRunCalloutMethod) == null) {
+      synchronized (BusinessDataServiceGrpc.class) {
+        if ((getRunCalloutMethod = BusinessDataServiceGrpc.getRunCalloutMethod) == null) {
+          BusinessDataServiceGrpc.getRunCalloutMethod = getRunCalloutMethod = 
               io.grpc.MethodDescriptor.<org.spin.grpc.util.RunCalloutRequest, org.spin.grpc.util.Callout>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
-                  "data.DataService", "RunCallout"))
+                  "data.BusinessDataService", "RunCallout"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.RunCalloutRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.Callout.getDefaultInstance()))
-                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("RunCallout"))
+                  .setSchemaDescriptor(new BusinessDataServiceMethodDescriptorSupplier("RunCallout"))
                   .build();
           }
         }
@@ -329,20 +329,20 @@ public final class DataServiceGrpc {
   public static io.grpc.MethodDescriptor<org.spin.grpc.util.RunBusinessProcessRequest,
       org.spin.grpc.util.BusinessProcess> getRunBusinessProcessMethod() {
     io.grpc.MethodDescriptor<org.spin.grpc.util.RunBusinessProcessRequest, org.spin.grpc.util.BusinessProcess> getRunBusinessProcessMethod;
-    if ((getRunBusinessProcessMethod = DataServiceGrpc.getRunBusinessProcessMethod) == null) {
-      synchronized (DataServiceGrpc.class) {
-        if ((getRunBusinessProcessMethod = DataServiceGrpc.getRunBusinessProcessMethod) == null) {
-          DataServiceGrpc.getRunBusinessProcessMethod = getRunBusinessProcessMethod = 
+    if ((getRunBusinessProcessMethod = BusinessDataServiceGrpc.getRunBusinessProcessMethod) == null) {
+      synchronized (BusinessDataServiceGrpc.class) {
+        if ((getRunBusinessProcessMethod = BusinessDataServiceGrpc.getRunBusinessProcessMethod) == null) {
+          BusinessDataServiceGrpc.getRunBusinessProcessMethod = getRunBusinessProcessMethod = 
               io.grpc.MethodDescriptor.<org.spin.grpc.util.RunBusinessProcessRequest, org.spin.grpc.util.BusinessProcess>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
-                  "data.DataService", "RunBusinessProcess"))
+                  "data.BusinessDataService", "RunBusinessProcess"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.RunBusinessProcessRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.BusinessProcess.getDefaultInstance()))
-                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("RunBusinessProcess"))
+                  .setSchemaDescriptor(new BusinessDataServiceMethodDescriptorSupplier("RunBusinessProcess"))
                   .build();
           }
         }
@@ -361,20 +361,20 @@ public final class DataServiceGrpc {
   public static io.grpc.MethodDescriptor<org.spin.grpc.util.ListBrowserItemsRequest,
       org.spin.grpc.util.ListBrowserItemsResponse> getListBrowserItemsMethod() {
     io.grpc.MethodDescriptor<org.spin.grpc.util.ListBrowserItemsRequest, org.spin.grpc.util.ListBrowserItemsResponse> getListBrowserItemsMethod;
-    if ((getListBrowserItemsMethod = DataServiceGrpc.getListBrowserItemsMethod) == null) {
-      synchronized (DataServiceGrpc.class) {
-        if ((getListBrowserItemsMethod = DataServiceGrpc.getListBrowserItemsMethod) == null) {
-          DataServiceGrpc.getListBrowserItemsMethod = getListBrowserItemsMethod = 
+    if ((getListBrowserItemsMethod = BusinessDataServiceGrpc.getListBrowserItemsMethod) == null) {
+      synchronized (BusinessDataServiceGrpc.class) {
+        if ((getListBrowserItemsMethod = BusinessDataServiceGrpc.getListBrowserItemsMethod) == null) {
+          BusinessDataServiceGrpc.getListBrowserItemsMethod = getListBrowserItemsMethod = 
               io.grpc.MethodDescriptor.<org.spin.grpc.util.ListBrowserItemsRequest, org.spin.grpc.util.ListBrowserItemsResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
-                  "data.DataService", "ListBrowserItems"))
+                  "data.BusinessDataService", "ListBrowserItems"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.ListBrowserItemsRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.ListBrowserItemsResponse.getDefaultInstance()))
-                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("ListBrowserItems"))
+                  .setSchemaDescriptor(new BusinessDataServiceMethodDescriptorSupplier("ListBrowserItems"))
                   .build();
           }
         }
@@ -393,20 +393,20 @@ public final class DataServiceGrpc {
   public static io.grpc.MethodDescriptor<org.spin.grpc.util.ListActivitiesRequest,
       org.spin.grpc.util.ListActivitiesResponse> getListActivitiesMethod() {
     io.grpc.MethodDescriptor<org.spin.grpc.util.ListActivitiesRequest, org.spin.grpc.util.ListActivitiesResponse> getListActivitiesMethod;
-    if ((getListActivitiesMethod = DataServiceGrpc.getListActivitiesMethod) == null) {
-      synchronized (DataServiceGrpc.class) {
-        if ((getListActivitiesMethod = DataServiceGrpc.getListActivitiesMethod) == null) {
-          DataServiceGrpc.getListActivitiesMethod = getListActivitiesMethod = 
+    if ((getListActivitiesMethod = BusinessDataServiceGrpc.getListActivitiesMethod) == null) {
+      synchronized (BusinessDataServiceGrpc.class) {
+        if ((getListActivitiesMethod = BusinessDataServiceGrpc.getListActivitiesMethod) == null) {
+          BusinessDataServiceGrpc.getListActivitiesMethod = getListActivitiesMethod = 
               io.grpc.MethodDescriptor.<org.spin.grpc.util.ListActivitiesRequest, org.spin.grpc.util.ListActivitiesResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
-                  "data.DataService", "ListActivities"))
+                  "data.BusinessDataService", "ListActivities"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.ListActivitiesRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.ListActivitiesResponse.getDefaultInstance()))
-                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("ListActivities"))
+                  .setSchemaDescriptor(new BusinessDataServiceMethodDescriptorSupplier("ListActivities"))
                   .build();
           }
         }
@@ -425,20 +425,20 @@ public final class DataServiceGrpc {
   public static io.grpc.MethodDescriptor<org.spin.grpc.util.ListRecentItemsRequest,
       org.spin.grpc.util.ListRecentItemsResponse> getListRecentItemsMethod() {
     io.grpc.MethodDescriptor<org.spin.grpc.util.ListRecentItemsRequest, org.spin.grpc.util.ListRecentItemsResponse> getListRecentItemsMethod;
-    if ((getListRecentItemsMethod = DataServiceGrpc.getListRecentItemsMethod) == null) {
-      synchronized (DataServiceGrpc.class) {
-        if ((getListRecentItemsMethod = DataServiceGrpc.getListRecentItemsMethod) == null) {
-          DataServiceGrpc.getListRecentItemsMethod = getListRecentItemsMethod = 
+    if ((getListRecentItemsMethod = BusinessDataServiceGrpc.getListRecentItemsMethod) == null) {
+      synchronized (BusinessDataServiceGrpc.class) {
+        if ((getListRecentItemsMethod = BusinessDataServiceGrpc.getListRecentItemsMethod) == null) {
+          BusinessDataServiceGrpc.getListRecentItemsMethod = getListRecentItemsMethod = 
               io.grpc.MethodDescriptor.<org.spin.grpc.util.ListRecentItemsRequest, org.spin.grpc.util.ListRecentItemsResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
-                  "data.DataService", "ListRecentItems"))
+                  "data.BusinessDataService", "ListRecentItems"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.ListRecentItemsRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.ListRecentItemsResponse.getDefaultInstance()))
-                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("ListRecentItems"))
+                  .setSchemaDescriptor(new BusinessDataServiceMethodDescriptorSupplier("ListRecentItems"))
                   .build();
           }
         }
@@ -457,20 +457,20 @@ public final class DataServiceGrpc {
   public static io.grpc.MethodDescriptor<org.spin.grpc.util.ListReferencesRequest,
       org.spin.grpc.util.ListReferencesResponse> getListReferencesMethod() {
     io.grpc.MethodDescriptor<org.spin.grpc.util.ListReferencesRequest, org.spin.grpc.util.ListReferencesResponse> getListReferencesMethod;
-    if ((getListReferencesMethod = DataServiceGrpc.getListReferencesMethod) == null) {
-      synchronized (DataServiceGrpc.class) {
-        if ((getListReferencesMethod = DataServiceGrpc.getListReferencesMethod) == null) {
-          DataServiceGrpc.getListReferencesMethod = getListReferencesMethod = 
+    if ((getListReferencesMethod = BusinessDataServiceGrpc.getListReferencesMethod) == null) {
+      synchronized (BusinessDataServiceGrpc.class) {
+        if ((getListReferencesMethod = BusinessDataServiceGrpc.getListReferencesMethod) == null) {
+          BusinessDataServiceGrpc.getListReferencesMethod = getListReferencesMethod = 
               io.grpc.MethodDescriptor.<org.spin.grpc.util.ListReferencesRequest, org.spin.grpc.util.ListReferencesResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
-                  "data.DataService", "ListReferences"))
+                  "data.BusinessDataService", "ListReferences"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.ListReferencesRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.spin.grpc.util.ListReferencesResponse.getDefaultInstance()))
-                  .setSchemaDescriptor(new DataServiceMethodDescriptorSupplier("ListReferences"))
+                  .setSchemaDescriptor(new BusinessDataServiceMethodDescriptorSupplier("ListReferences"))
                   .build();
           }
         }
@@ -481,24 +481,24 @@ public final class DataServiceGrpc {
   /**
    * Creates a new async stub that supports all call types for the service
    */
-  public static DataServiceStub newStub(io.grpc.Channel channel) {
-    return new DataServiceStub(channel);
+  public static BusinessDataServiceStub newStub(io.grpc.Channel channel) {
+    return new BusinessDataServiceStub(channel);
   }
 
   /**
    * Creates a new blocking-style stub that supports unary and streaming output calls on the service
    */
-  public static DataServiceBlockingStub newBlockingStub(
+  public static BusinessDataServiceBlockingStub newBlockingStub(
       io.grpc.Channel channel) {
-    return new DataServiceBlockingStub(channel);
+    return new BusinessDataServiceBlockingStub(channel);
   }
 
   /**
    * Creates a new ListenableFuture-style stub that supports unary calls on the service
    */
-  public static DataServiceFutureStub newFutureStub(
+  public static BusinessDataServiceFutureStub newFutureStub(
       io.grpc.Channel channel) {
-    return new DataServiceFutureStub(channel);
+    return new BusinessDataServiceFutureStub(channel);
   }
 
   /**
@@ -506,7 +506,7 @@ public final class DataServiceGrpc {
    * The greeting service definition.
    * </pre>
    */
-  public static abstract class DataServiceImplBase implements io.grpc.BindableService {
+  public static abstract class BusinessDataServiceImplBase implements io.grpc.BindableService {
 
     /**
      * <pre>
@@ -757,20 +757,20 @@ public final class DataServiceGrpc {
    * The greeting service definition.
    * </pre>
    */
-  public static final class DataServiceStub extends io.grpc.stub.AbstractStub<DataServiceStub> {
-    private DataServiceStub(io.grpc.Channel channel) {
+  public static final class BusinessDataServiceStub extends io.grpc.stub.AbstractStub<BusinessDataServiceStub> {
+    private BusinessDataServiceStub(io.grpc.Channel channel) {
       super(channel);
     }
 
-    private DataServiceStub(io.grpc.Channel channel,
+    private BusinessDataServiceStub(io.grpc.Channel channel,
         io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
     }
 
     @java.lang.Override
-    protected DataServiceStub build(io.grpc.Channel channel,
+    protected BusinessDataServiceStub build(io.grpc.Channel channel,
         io.grpc.CallOptions callOptions) {
-      return new DataServiceStub(channel, callOptions);
+      return new BusinessDataServiceStub(channel, callOptions);
     }
 
     /**
@@ -933,20 +933,20 @@ public final class DataServiceGrpc {
    * The greeting service definition.
    * </pre>
    */
-  public static final class DataServiceBlockingStub extends io.grpc.stub.AbstractStub<DataServiceBlockingStub> {
-    private DataServiceBlockingStub(io.grpc.Channel channel) {
+  public static final class BusinessDataServiceBlockingStub extends io.grpc.stub.AbstractStub<BusinessDataServiceBlockingStub> {
+    private BusinessDataServiceBlockingStub(io.grpc.Channel channel) {
       super(channel);
     }
 
-    private DataServiceBlockingStub(io.grpc.Channel channel,
+    private BusinessDataServiceBlockingStub(io.grpc.Channel channel,
         io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
     }
 
     @java.lang.Override
-    protected DataServiceBlockingStub build(io.grpc.Channel channel,
+    protected BusinessDataServiceBlockingStub build(io.grpc.Channel channel,
         io.grpc.CallOptions callOptions) {
-      return new DataServiceBlockingStub(channel, callOptions);
+      return new BusinessDataServiceBlockingStub(channel, callOptions);
     }
 
     /**
@@ -1095,20 +1095,20 @@ public final class DataServiceGrpc {
    * The greeting service definition.
    * </pre>
    */
-  public static final class DataServiceFutureStub extends io.grpc.stub.AbstractStub<DataServiceFutureStub> {
-    private DataServiceFutureStub(io.grpc.Channel channel) {
+  public static final class BusinessDataServiceFutureStub extends io.grpc.stub.AbstractStub<BusinessDataServiceFutureStub> {
+    private BusinessDataServiceFutureStub(io.grpc.Channel channel) {
       super(channel);
     }
 
-    private DataServiceFutureStub(io.grpc.Channel channel,
+    private BusinessDataServiceFutureStub(io.grpc.Channel channel,
         io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
     }
 
     @java.lang.Override
-    protected DataServiceFutureStub build(io.grpc.Channel channel,
+    protected BusinessDataServiceFutureStub build(io.grpc.Channel channel,
         io.grpc.CallOptions callOptions) {
-      return new DataServiceFutureStub(channel, callOptions);
+      return new BusinessDataServiceFutureStub(channel, callOptions);
     }
 
     /**
@@ -1286,10 +1286,10 @@ public final class DataServiceGrpc {
       io.grpc.stub.ServerCalls.ServerStreamingMethod<Req, Resp>,
       io.grpc.stub.ServerCalls.ClientStreamingMethod<Req, Resp>,
       io.grpc.stub.ServerCalls.BidiStreamingMethod<Req, Resp> {
-    private final DataServiceImplBase serviceImpl;
+    private final BusinessDataServiceImplBase serviceImpl;
     private final int methodId;
 
-    MethodHandlers(DataServiceImplBase serviceImpl, int methodId) {
+    MethodHandlers(BusinessDataServiceImplBase serviceImpl, int methodId) {
       this.serviceImpl = serviceImpl;
       this.methodId = methodId;
     }
@@ -1370,9 +1370,9 @@ public final class DataServiceGrpc {
     }
   }
 
-  private static abstract class DataServiceBaseDescriptorSupplier
+  private static abstract class BusinessDataServiceBaseDescriptorSupplier
       implements io.grpc.protobuf.ProtoFileDescriptorSupplier, io.grpc.protobuf.ProtoServiceDescriptorSupplier {
-    DataServiceBaseDescriptorSupplier() {}
+    BusinessDataServiceBaseDescriptorSupplier() {}
 
     @java.lang.Override
     public com.google.protobuf.Descriptors.FileDescriptor getFileDescriptor() {
@@ -1381,21 +1381,21 @@ public final class DataServiceGrpc {
 
     @java.lang.Override
     public com.google.protobuf.Descriptors.ServiceDescriptor getServiceDescriptor() {
-      return getFileDescriptor().findServiceByName("DataService");
+      return getFileDescriptor().findServiceByName("BusinessDataService");
     }
   }
 
-  private static final class DataServiceFileDescriptorSupplier
-      extends DataServiceBaseDescriptorSupplier {
-    DataServiceFileDescriptorSupplier() {}
+  private static final class BusinessDataServiceFileDescriptorSupplier
+      extends BusinessDataServiceBaseDescriptorSupplier {
+    BusinessDataServiceFileDescriptorSupplier() {}
   }
 
-  private static final class DataServiceMethodDescriptorSupplier
-      extends DataServiceBaseDescriptorSupplier
+  private static final class BusinessDataServiceMethodDescriptorSupplier
+      extends BusinessDataServiceBaseDescriptorSupplier
       implements io.grpc.protobuf.ProtoMethodDescriptorSupplier {
     private final String methodName;
 
-    DataServiceMethodDescriptorSupplier(String methodName) {
+    BusinessDataServiceMethodDescriptorSupplier(String methodName) {
       this.methodName = methodName;
     }
 
@@ -1410,11 +1410,11 @@ public final class DataServiceGrpc {
   public static io.grpc.ServiceDescriptor getServiceDescriptor() {
     io.grpc.ServiceDescriptor result = serviceDescriptor;
     if (result == null) {
-      synchronized (DataServiceGrpc.class) {
+      synchronized (BusinessDataServiceGrpc.class) {
         result = serviceDescriptor;
         if (result == null) {
           serviceDescriptor = result = io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
-              .setSchemaDescriptor(new DataServiceFileDescriptorSupplier())
+              .setSchemaDescriptor(new BusinessDataServiceFileDescriptorSupplier())
               .addMethod(getGetEntityMethod())
               .addMethod(getCreateEntityMethod())
               .addMethod(getUpdateEntityMethod())

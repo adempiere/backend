@@ -88,7 +88,7 @@ import org.compiere.util.Msg;
 import org.compiere.util.Util;
 import org.eevolution.service.dsl.ProcessBuilder;
 import org.spin.grpc.util.Condition.Operator;
-import org.spin.grpc.util.DataServiceGrpc.DataServiceImplBase;
+import org.spin.grpc.util.BusinessDataServiceGrpc.BusinessDataServiceImplBase;
 import org.spin.grpc.util.RollbackEntityRequest.EventType;
 import org.spin.grpc.util.Value.ValueType;
 import io.grpc.Status;
@@ -97,7 +97,7 @@ import com.google.protobuf.ByteString;
 
 import io.grpc.stub.StreamObserver;
 
-public class BusinessDataServiceImplementation extends DataServiceImplBase {
+public class BusinessDataServiceImplementation extends BusinessDataServiceImplBase {
 	/**	Logger			*/
 	private CLogger log = CLogger.getCLogger(BusinessDataServiceImplementation.class);
 	/**	Key column constant	*/
