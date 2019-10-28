@@ -48,7 +48,7 @@ public class EnrollmentServiceImplementation extends EnrollmentServiceImplBase {
 				throw new AdempiereException("Object Request Null");
 			}
 			log.fine("Object Requested = " + request.getUserName() + " - " + request.getEMail());
-			User.Builder userInfoValue = convertUser(request);
+			User.Builder userInfoValue = enrollUser(request);
 			responseObserver.onNext(userInfoValue.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -161,7 +161,10 @@ public class EnrollmentServiceImplementation extends EnrollmentServiceImplBase {
 		}
 		//	Generate reset
 		try {
-			generateToken(user);
+			MADToken token = generateToken(user);
+			builder.setToken(validateNull(token.getTokenValue()));
+			//	Send mail
+			sendEMail(user, token);
 		} catch (Exception e) {
 			builder.setResponseType(ResponseType.ERROR);
 			throw new AdempiereException(e.getMessage());
@@ -175,7 +178,7 @@ public class EnrollmentServiceImplementation extends EnrollmentServiceImplBase {
 	 * @param request
 	 * @return
 	 */
-	private User.Builder convertUser(EnrollUserRequest request) {
+	private User.Builder enrollUser(EnrollUserRequest request) {
 		//	User Name
 		if(Util.isEmpty(request.getUserName())) {
 			throw new AdempiereException("@UserName@ @IsMandatory@");
@@ -209,8 +212,10 @@ public class EnrollmentServiceImplementation extends EnrollmentServiceImplBase {
 		newUser.saveEx();
 		//	Request a Password
 		try {
-			String token = generateToken(newUser);
-			builder.setToken(validateNull(token));
+			MADToken token = generateToken(newUser);
+			builder.setToken(validateNull(token.getTokenValue()));
+			//	Send mail
+			sendEMail(newUser, token);
 		} catch (Exception e) {
 			throw new AdempiereException(e.getMessage());
 		}
@@ -226,7 +231,7 @@ public class EnrollmentServiceImplementation extends EnrollmentServiceImplBase {
 	 * @return
 	 * @throws Exception
 	 */
-	private String generateToken(MUser user) throws Exception {
+	private MADToken generateToken(MUser user) throws Exception {
 		if(user == null) {
 			throw new AdempiereException("@AD_User_ID@ @NotFound@");
 		}
@@ -234,11 +239,19 @@ public class EnrollmentServiceImplementation extends EnrollmentServiceImplBase {
 		if (Util.isEmpty(user.getEMail())) {
 			throw new AdempiereException("@AD_User_ID@ - @Email@ @NotFound@");
 		}
-		MClient client = MClient.get(user.getCtx(), user.getAD_Client_ID());
-		MClientInfo clientInfo = client.getInfo();
 		//	
 		TokenGeneratorHandler.getInstance().generateToken(MADTokenDefinition.TOKENTYPE_URLTokenUsedAsURL, user.getAD_User_ID());
-		MADToken token = TokenGeneratorHandler.getInstance().getToken(MADTokenDefinition.TOKENTYPE_URLTokenUsedAsURL);
+		return TokenGeneratorHandler.getInstance().getToken(MADTokenDefinition.TOKENTYPE_URLTokenUsedAsURL);
+	}
+	
+	/**
+	 * Send EMail for user
+	 * @param user
+	 * @param token
+	 */
+	private void sendEMail(MUser user, MADToken token) {
+		MClient client = MClient.get(user.getCtx(), user.getAD_Client_ID());
+		MClientInfo clientInfo = client.getInfo();
 		//	Get
 		int mailTextId = clientInfo.getRestorePassword_MailText_ID();
 		if(mailTextId <= 0) {
@@ -266,8 +279,6 @@ public class EnrollmentServiceImplementation extends EnrollmentServiceImplBase {
 		if (!msg.equals(EMail.SENT_OK)) {
 			throw new AdempiereException(user.getName() + " @RequestActionEMailError@ " + msg);
 		}
-		//	
-  	  	return token.getTokenValue();
 	}
 	
 	/**

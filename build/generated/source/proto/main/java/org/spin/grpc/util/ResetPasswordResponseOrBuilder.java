@@ -15,4 +15,14 @@ public interface ResetPasswordResponseOrBuilder extends
    * <code>.enrollment.ResetPasswordResponse.ResponseType responseType = 1;</code>
    */
   org.spin.grpc.util.ResetPasswordResponse.ResponseType getResponseType();
+
+  /**
+   * <code>string token = 2;</code>
+   */
+  java.lang.String getToken();
+  /**
+   * <code>string token = 2;</code>
+   */
+  com.google.protobuf.ByteString
+      getTokenBytes();
 }

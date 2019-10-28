@@ -69,4 +69,5 @@ message ResetPasswordResponse {
 		ERROR = 3;
 	}
 	ResponseType responseType = 1;
+	string token= 2;
 }
