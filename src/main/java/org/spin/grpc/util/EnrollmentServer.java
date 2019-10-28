@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 import org.compiere.Adempiere;
+import org.compiere.util.Env;
 import org.compiere.util.Util;
 
 import io.grpc.Server;
@@ -127,16 +128,22 @@ public class EnrollmentServer {
 		  Adempiere.startup(false);
 		  int defaultPort = 50047;
 		    if(args != null) {
-		    	Optional<String> parameter = Arrays.asList(args).stream()
-		    			.filter(arg -> !Util.isEmpty(arg))
-		    			.filter(arg -> arg.matches("[+-]?\\d*(\\.\\d+)?")).findFirst();
-		    	if(parameter.isPresent()) {
-		    		defaultPort = Integer.parseInt(parameter.get());
-		    	}
+		    	String portAsString = (args.length > 0? args[0]: null);
+			    if(!Util.isEmpty(portAsString)
+			    		&& portAsString.matches("[+-]?\\d*(\\.\\d+)?")) {
+			    	defaultPort = Integer.parseInt(portAsString);
+			    }
+			    int clientId = 0;
+			    String clientIdAsString = (args.length > 1? args[1]: null);
+			    if(!Util.isEmpty(clientIdAsString)
+			    		&& clientIdAsString.matches("[+-]?\\d*(\\.\\d+)?")) {
+			    	clientId = Integer.parseInt(clientIdAsString);
+			    }
+			    Env.setContext(Env.getCtx(), "#AD_Client_ID", clientId);
 			}
-		    String certChainFilePath = (args.length > 1? args[1]: null);
-		    String privateKeyFilePath = (args.length > 2? args[2]: null);
-		    String trustCertCollectionFilePath = (args.length > 3? args[3]: null);
+		    String certChainFilePath = (args.length > 2? args[2]: null);
+		    String privateKeyFilePath = (args.length > 3? args[3]: null);
+		    String trustCertCollectionFilePath = (args.length > 4? args[4]: null);
 		    final EnrollmentServer server = new EnrollmentServer(defaultPort, 
 		    		certChainFilePath,
 		    		privateKeyFilePath,

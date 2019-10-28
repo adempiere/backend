@@ -209,6 +209,7 @@ public class EnrollmentServiceImplementation extends EnrollmentServiceImplBase {
 		newUser.setEMail(request.getEMail());
 		newUser.setValue(request.getUserName());
 		newUser.setIsLoginUser(true);
+		newUser.setIsInternalUser(false);
 		newUser.saveEx();
 		//	Request a Password
 		try {
