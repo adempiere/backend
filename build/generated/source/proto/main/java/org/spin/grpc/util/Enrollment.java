@@ -48,27 +48,29 @@ public final class Enrollment {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\020enrollment.proto\022\nenrollment\"T\n\021Enroll" +
+      "\n\020enrollment.proto\022\nenrollment\"k\n\021Enroll" +
       "UserRequest\022\020\n\010userName\030\001 \001(\t\022\014\n\004name\030\002 " +
-      "\001(\t\022\020\n\010lastName\030\003 \001(\t\022\r\n\005eMail\030\004 \001(\t\"7\n\024" +
-      "ResetPasswordRequest\022\020\n\010userName\030\001 \001(\t\022\r" +
-      "\n\005eMail\030\002 \001(\t\"<\n\031ResetPasswordTokenReque" +
-      "st\022\r\n\005token\030\001 \001(\t\022\020\n\010password\030\002 \001(\t\"V\n\004U" +
-      "ser\022\020\n\010userName\030\001 \001(\t\022\014\n\004name\030\002 \001(\t\022\020\n\010l" +
-      "astName\030\003 \001(\t\022\r\n\005eMail\030\004 \001(\t\022\r\n\005token\030\005 " +
-      "\001(\t\"\270\001\n\025ResetPasswordResponse\022D\n\014respons" +
-      "eType\030\001 \001(\0162..enrollment.ResetPasswordRe" +
-      "sponse.ResponseType\022\r\n\005token\030\002 \001(\t\"J\n\014Re" +
-      "sponseType\022\006\n\002OK\020\000\022\022\n\016USER_NOT_FOUND\020\001\022\023" +
-      "\n\017TOKEN_NOT_FOUND\020\002\022\t\n\005ERROR\020\0032\222\002\n\021Enrol" +
-      "lmentService\022?\n\nEnrollUser\022\035.enrollment." +
-      "EnrollUserRequest\032\020.enrollment.User\"\000\022V\n" +
-      "\rResetPassword\022 .enrollment.ResetPasswor" +
-      "dRequest\032!.enrollment.ResetPasswordRespo" +
-      "nse\"\000\022d\n\026ResetPasswordFromToken\022%.enroll" +
-      "ment.ResetPasswordTokenRequest\032!.enrollm" +
-      "ent.ResetPasswordResponse\"\000B(\n\022org.spin." +
-      "grpc.utilB\nEnrollmentP\001\242\002\003HLWb\006proto3"
+      "\001(\t\022\020\n\010lastName\030\003 \001(\t\022\r\n\005eMail\030\004 \001(\t\022\025\n\r" +
+      "clientVersion\030\005 \001(\t\"N\n\024ResetPasswordRequ" +
+      "est\022\020\n\010userName\030\001 \001(\t\022\r\n\005eMail\030\002 \001(\t\022\025\n\r" +
+      "clientVersion\030\003 \001(\t\"S\n\031ResetPasswordToke" +
+      "nRequest\022\r\n\005token\030\001 \001(\t\022\020\n\010password\030\002 \001(" +
+      "\t\022\025\n\rclientVersion\030\003 \001(\t\"V\n\004User\022\020\n\010user" +
+      "Name\030\001 \001(\t\022\014\n\004name\030\002 \001(\t\022\020\n\010lastName\030\003 \001" +
+      "(\t\022\r\n\005eMail\030\004 \001(\t\022\r\n\005token\030\005 \001(\t\"\270\001\n\025Res" +
+      "etPasswordResponse\022D\n\014responseType\030\001 \001(\016" +
+      "2..enrollment.ResetPasswordResponse.Resp" +
+      "onseType\022\r\n\005token\030\002 \001(\t\"J\n\014ResponseType\022" +
+      "\006\n\002OK\020\000\022\022\n\016USER_NOT_FOUND\020\001\022\023\n\017TOKEN_NOT" +
+      "_FOUND\020\002\022\t\n\005ERROR\020\0032\222\002\n\021EnrollmentServic" +
+      "e\022?\n\nEnrollUser\022\035.enrollment.EnrollUserR" +
+      "equest\032\020.enrollment.User\"\000\022V\n\rResetPassw" +
+      "ord\022 .enrollment.ResetPasswordRequest\032!." +
+      "enrollment.ResetPasswordResponse\"\000\022d\n\026Re" +
+      "setPasswordFromToken\022%.enrollment.ResetP" +
+      "asswordTokenRequest\032!.enrollment.ResetPa" +
+      "sswordResponse\"\000B(\n\022org.spin.grpc.utilB\n" +
+      "EnrollmentP\001\242\002\003HLWb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -87,19 +89,19 @@ public final class Enrollment {
     internal_static_enrollment_EnrollUserRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_enrollment_EnrollUserRequest_descriptor,
-        new java.lang.String[] { "UserName", "Name", "LastName", "EMail", });
+        new java.lang.String[] { "UserName", "Name", "LastName", "EMail", "ClientVersion", });
     internal_static_enrollment_ResetPasswordRequest_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_enrollment_ResetPasswordRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_enrollment_ResetPasswordRequest_descriptor,
-        new java.lang.String[] { "UserName", "EMail", });
+        new java.lang.String[] { "UserName", "EMail", "ClientVersion", });
     internal_static_enrollment_ResetPasswordTokenRequest_descriptor =
       getDescriptor().getMessageTypes().get(2);
     internal_static_enrollment_ResetPasswordTokenRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_enrollment_ResetPasswordTokenRequest_descriptor,
-        new java.lang.String[] { "Token", "Password", });
+        new java.lang.String[] { "Token", "Password", "ClientVersion", });
     internal_static_enrollment_User_descriptor =
       getDescriptor().getMessageTypes().get(3);
     internal_static_enrollment_User_fieldAccessorTable = new

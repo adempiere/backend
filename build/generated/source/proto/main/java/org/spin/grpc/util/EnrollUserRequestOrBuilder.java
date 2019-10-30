@@ -46,4 +46,14 @@ public interface EnrollUserRequestOrBuilder extends
    */
   com.google.protobuf.ByteString
       getEMailBytes();
+
+  /**
+   * <code>string clientVersion = 5;</code>
+   */
+  java.lang.String getClientVersion();
+  /**
+   * <code>string clientVersion = 5;</code>
+   */
+  com.google.protobuf.ByteString
+      getClientVersionBytes();
 }

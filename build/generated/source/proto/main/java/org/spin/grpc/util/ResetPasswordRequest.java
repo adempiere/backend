@@ -22,6 +22,7 @@ private static final long serialVersionUID = 0L;
   private ResetPasswordRequest() {
     userName_ = "";
     eMail_ = "";
+    clientVersion_ = "";
   }
 
   @java.lang.Override
@@ -65,6 +66,12 @@ private static final long serialVersionUID = 0L;
             java.lang.String s = input.readStringRequireUtf8();
 
             eMail_ = s;
+            break;
+          }
+          case 26: {
+            java.lang.String s = input.readStringRequireUtf8();
+
+            clientVersion_ = s;
             break;
           }
         }
@@ -159,6 +166,40 @@ private static final long serialVersionUID = 0L;
     }
   }
 
+  public static final int CLIENTVERSION_FIELD_NUMBER = 3;
+  private volatile java.lang.Object clientVersion_;
+  /**
+   * <code>string clientVersion = 3;</code>
+   */
+  public java.lang.String getClientVersion() {
+    java.lang.Object ref = clientVersion_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      clientVersion_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string clientVersion = 3;</code>
+   */
+  public com.google.protobuf.ByteString
+      getClientVersionBytes() {
+    java.lang.Object ref = clientVersion_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      clientVersion_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
     byte isInitialized = memoizedIsInitialized;
@@ -177,6 +218,9 @@ private static final long serialVersionUID = 0L;
     if (!getEMailBytes().isEmpty()) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 2, eMail_);
     }
+    if (!getClientVersionBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 3, clientVersion_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -190,6 +234,9 @@ private static final long serialVersionUID = 0L;
     }
     if (!getEMailBytes().isEmpty()) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, eMail_);
+    }
+    if (!getClientVersionBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, clientVersion_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -211,6 +258,8 @@ private static final long serialVersionUID = 0L;
         .equals(other.getUserName());
     result = result && getEMail()
         .equals(other.getEMail());
+    result = result && getClientVersion()
+        .equals(other.getClientVersion());
     result = result && unknownFields.equals(other.unknownFields);
     return result;
   }
@@ -226,6 +275,8 @@ private static final long serialVersionUID = 0L;
     hash = (53 * hash) + getUserName().hashCode();
     hash = (37 * hash) + EMAIL_FIELD_NUMBER;
     hash = (53 * hash) + getEMail().hashCode();
+    hash = (37 * hash) + CLIENTVERSION_FIELD_NUMBER;
+    hash = (53 * hash) + getClientVersion().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -363,6 +414,8 @@ private static final long serialVersionUID = 0L;
 
       eMail_ = "";
 
+      clientVersion_ = "";
+
       return this;
     }
 
@@ -387,6 +440,7 @@ private static final long serialVersionUID = 0L;
       org.spin.grpc.util.ResetPasswordRequest result = new org.spin.grpc.util.ResetPasswordRequest(this);
       result.userName_ = userName_;
       result.eMail_ = eMail_;
+      result.clientVersion_ = clientVersion_;
       onBuilt();
       return result;
     }
@@ -434,6 +488,10 @@ private static final long serialVersionUID = 0L;
       }
       if (!other.getEMail().isEmpty()) {
         eMail_ = other.eMail_;
+        onChanged();
+      }
+      if (!other.getClientVersion().isEmpty()) {
+        clientVersion_ = other.clientVersion_;
         onChanged();
       }
       this.mergeUnknownFields(other.unknownFields);
@@ -597,6 +655,75 @@ private static final long serialVersionUID = 0L;
   checkByteStringIsUtf8(value);
       
       eMail_ = value;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object clientVersion_ = "";
+    /**
+     * <code>string clientVersion = 3;</code>
+     */
+    public java.lang.String getClientVersion() {
+      java.lang.Object ref = clientVersion_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        clientVersion_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string clientVersion = 3;</code>
+     */
+    public com.google.protobuf.ByteString
+        getClientVersionBytes() {
+      java.lang.Object ref = clientVersion_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        clientVersion_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string clientVersion = 3;</code>
+     */
+    public Builder setClientVersion(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
+      clientVersion_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string clientVersion = 3;</code>
+     */
+    public Builder clearClientVersion() {
+      
+      clientVersion_ = getDefaultInstance().getClientVersion();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string clientVersion = 3;</code>
+     */
+    public Builder setClientVersionBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      
+      clientVersion_ = value;
       onChanged();
       return this;
     }

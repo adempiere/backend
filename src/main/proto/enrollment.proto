@@ -37,18 +37,21 @@ message EnrollUserRequest {
 	string name = 2;
 	string lastName = 3;
 	string eMail = 4;
+	string clientVersion = 5;
 }
 
 // Request a Password Reset
 message ResetPasswordRequest {
 	string userName = 1;
 	string eMail = 2;
+	string clientVersion = 3;
 }
 
 // Request a Password Reset
 message ResetPasswordTokenRequest {
 	string token = 1;
 	string password = 2;
+	string clientVersion = 3;
 }
 
 // user enrolled
@@ -69,5 +72,5 @@ message ResetPasswordResponse {
 		ERROR = 3;
 	}
 	ResponseType responseType = 1;
-	string token= 2;
+	string token = 2;
 }

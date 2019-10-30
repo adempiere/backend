@@ -26,4 +26,14 @@ public interface ResetPasswordRequestOrBuilder extends
    */
   com.google.protobuf.ByteString
       getEMailBytes();
+
+  /**
+   * <code>string clientVersion = 3;</code>
+   */
+  java.lang.String getClientVersion();
+  /**
+   * <code>string clientVersion = 3;</code>
+   */
+  com.google.protobuf.ByteString
+      getClientVersionBytes();
 }
