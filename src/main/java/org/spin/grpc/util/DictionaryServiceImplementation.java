@@ -1108,6 +1108,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setValueMax(validateNull(processParameter.getValueMax()))
 				.setValueMin(validateNull(processParameter.getValueMin()))
 				.setVFormat(validateNull(processParameter.getVFormat()))
+				.setFieldLength(processParameter.getFieldLength())
 				.setIsActive(processParameter.isActive());
 		//	
 		int displayTypeId = processParameter.getAD_Reference_ID();
