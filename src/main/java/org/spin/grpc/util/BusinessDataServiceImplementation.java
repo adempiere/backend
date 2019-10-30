@@ -2089,7 +2089,6 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	 */
 	private org.spin.grpc.util.Callout.Builder runcallout(Properties context, RunCalloutRequest request) {
 		org.spin.grpc.util.Callout.Builder calloutBuilder = org.spin.grpc.util.Callout.newBuilder();
-		//	TODO: GridTab and GridField bust be instanced
 		MWindow window = windowRequested.get(request.getWindowUuid());
 		if(window == null) {
 			window = new Query(context, I_AD_Window.Table_Name, I_AD_Window.COLUMNNAME_UUID + " = ?", null)
