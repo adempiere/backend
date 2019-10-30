@@ -26,10 +26,13 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.UUID;
@@ -47,7 +50,11 @@ import org.adempiere.model.MViewDefinition;
 import org.adempiere.model.ZoomInfoFactory;
 import org.compiere.model.Callout;
 import org.compiere.model.GridField;
+import org.compiere.model.GridFieldVO;
 import org.compiere.model.GridTab;
+import org.compiere.model.GridTabVO;
+import org.compiere.model.GridWindow;
+import org.compiere.model.GridWindowVO;
 import org.compiere.model.I_AD_ChangeLog;
 import org.compiere.model.I_AD_Element;
 import org.compiere.model.I_AD_Form;
@@ -60,6 +67,7 @@ import org.compiere.model.I_AD_Window;
 import org.compiere.model.I_AD_Workflow;
 import org.compiere.model.MChangeLog;
 import org.compiere.model.MColumn;
+import org.compiere.model.MField;
 import org.compiere.model.MMenu;
 import org.compiere.model.MPInstance;
 import org.compiere.model.MPInstancePara;
@@ -110,6 +118,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	private static CCache<String, Properties> sessionsContext = new CCache<String, Properties>("DataServiceImplementation", 30, 0);	//	no time-out
 	/**	Browse Requested	*/
 	private static CCache<String, MBrowse> browserRequested = new CCache<String, MBrowse>(I_AD_Browse.Table_Name + "_UUID", 30, 0);	//	no time-out
+	/**	window Requested	*/
+	private static CCache<String, MWindow> windowRequested = new CCache<String, MWindow>(I_AD_Window.Table_Name + "_UUID", 30, 0);	//	no time-out
 	/**	Language */
 	private static CCache<String, String> languageCache = new CCache<String, String>("Language_ISO_Code", 30, 0);	//	no time-out
 	/**	Reference cache	*/
@@ -530,7 +540,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			for(KeyValueSelection selectionKey : request.getSelectionsList()) {
 				selectionKeys.add(selectionKey.getSelectionId());
 				if(selectionKey.getValuesCount() > 0) {
-					selection.put(selectionKey.getSelectionId(), convertValues(selectionKey.getValuesList()));
+					selection.put(selectionKey.getSelectionId(), (LinkedHashMap<String, Object>) convertValues(selectionKey.getValuesList()));
 				}
 			}
 			builder.withSelectedRecordsIds(request.getTableSelectedId(), selectionKeys, selection);
@@ -654,8 +664,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	 * @param values
 	 * @return
 	 */
-	private LinkedHashMap<String, Object> convertValues(List<KeyValue> values) {
-		LinkedHashMap<String, Object> convertedValues = new LinkedHashMap<>();
+	private Map<String, Object> convertValues(List<KeyValue> values) {
+		Map<String, Object> convertedValues = new HashMap<>();
 		for(KeyValue value : values) {
 			convertedValues.put(value.getKey(), getValueFromType(value.getValue()));
 		}
@@ -964,7 +974,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		if(entity == null) {
 			throw new AdempiereException("@Error@ PO is null");
 		}
-		LinkedHashMap<String, Object> attributes = convertValues(request.getAttributesList());
+		Map<String, Object> attributes = convertValues(request.getAttributesList());
 		for(Entry<String, Object> attribute : attributes.entrySet()) {
 			entity.set_ValueOfColumn(attribute.getKey(), attribute.getValue());
 		}
@@ -984,7 +994,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		PO entity = getEntity(context, request.getTableName(), request.getUuid(), request.getRecordId());
 		if(entity != null
 				&& entity.get_ID() >= 0) {
-			LinkedHashMap<String, Object> attributes = convertValues(request.getAttributesList());
+			Map<String, Object> attributes = convertValues(request.getAttributesList());
 			for(Entry<String, Object> attribute : attributes.entrySet()) {
 				entity.set_ValueOfColumn(attribute.getKey(), attribute.getValue());
 			}
@@ -2080,7 +2090,47 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	private org.spin.grpc.util.Callout.Builder runcallout(Properties context, RunCalloutRequest request) {
 		org.spin.grpc.util.Callout.Builder calloutBuilder = org.spin.grpc.util.Callout.newBuilder();
 		//	TODO: GridTab and GridField bust be instanced
-		String result = processCallout(context, null, null);
+		MWindow window = windowRequested.get(request.getWindowUuid());
+		if(window == null) {
+			window = new Query(context, I_AD_Window.Table_Name, I_AD_Window.COLUMNNAME_UUID + " = ?", null)
+					.setParameters(request.getWindowUuid())
+					.first();
+		}
+		MTab tab = null;
+		if(window != null) {
+			Optional<MTab> searchedValue = Arrays.asList(window.getTabs(false, null)).stream().filter(searchTab -> searchTab.getUUID().equals(request.getTabUuid())).findFirst();
+			if(searchedValue.isPresent()) {
+				tab = searchedValue.get();
+			}
+		}
+		MField field = null;
+		if(tab != null) {
+			Optional<MField> searchedValue = Arrays.asList(tab.getFields(false, null)).stream().filter(searchField -> searchField.getAD_Column().getColumnName().equals(request.getColumnName())).findFirst();
+			if(searchedValue.isPresent()) {
+				field = searchedValue.get();
+			}
+		}
+		int tabNo = (tab.getSeqNo() / 10) - 1;
+		if(tabNo < 0) {
+			tabNo = 0;
+		}
+		GridWindowVO gridWindowVo = GridWindowVO.create(context, 0, window.getAD_Window_ID());
+		GridWindow gridWindow = new GridWindow(gridWindowVo, true);
+		GridTabVO gridTabVo = GridTabVO.create(gridWindowVo, tabNo, tab, false, true);
+		GridFieldVO gridFieldVo = GridFieldVO.create(context, 0, tabNo, window.getAD_Window_ID(), tab.getAD_Tab_ID(), false, field);
+		GridField gridField = new GridField(gridFieldVo);
+		GridTab gridTab = new GridTab(gridTabVo, gridWindow, true);
+		//	load values
+		Map<String, Object> attributes = convertValues(request.getAttributesList());
+		for(Entry<String, Object> attribute : attributes.entrySet()) {
+			gridTab.setValue(attribute.getKey(), attribute.getValue());
+		}
+		//	Load value for field
+		gridField.setValue(getValueFromType(request.getValue()), false);
+		//	Run it
+		String result = processCallout(context, gridTab, gridField);
+		Arrays.asList(gridTab.getFields()).forEach(fieldValue -> calloutBuilder.putValues(fieldValue.getColumnName(), getKeyValueFromValue(gridTab.getValue(fieldValue)).build()));
+		
 		calloutBuilder.setResult(validateNull(result));
 		return calloutBuilder;
 	}
@@ -2223,12 +2273,44 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			} else {
 				continue;
 			}
-			//	TODO: Timestamp support
 			//	Add
 			builder.putValues(columnName, builderValue.build());
 		}
 		//	
 		return builder;
+	}
+	
+	/**
+	 * Get Value 
+	 * @param value
+	 * @return
+	 */
+	private Value.Builder getKeyValueFromValue(Object value) {
+		Value.Builder builderValue = Value.newBuilder();
+		if(value == null) {
+			return builderValue;
+		}
+		//	Validate value
+		if(value instanceof BigDecimal) {
+			BigDecimal bigdecimalValue = (BigDecimal) value;
+			builderValue.setValueType(ValueType.DOUBLE);
+			builderValue.setDoubleValue(bigdecimalValue.doubleValue());
+		} else if (value instanceof Integer) {
+			builderValue.setValueType(ValueType.INTEGER);
+			builderValue.setIntValue(Integer.parseInt((String)value));
+		} else if (value instanceof String) {
+			builderValue.setValueType(ValueType.STRING);
+			builderValue.setStringValue(validateNull((String)value));
+		} else if (value instanceof Boolean) {
+			builderValue.setValueType(ValueType.BOOLEAN);
+			builderValue.setBooleanValue((Boolean) value);
+		} else if(value instanceof Timestamp) {
+			builderValue.setValueType(ValueType.DATE);
+			Timestamp date = (Timestamp) value;
+			builderValue.setLongValue(date.getTime());
+		}
+		//	
+		return builderValue;
 	}
 	
 	/**

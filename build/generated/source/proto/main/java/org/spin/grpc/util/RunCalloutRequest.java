@@ -20,7 +20,12 @@ private static final long serialVersionUID = 0L;
     super(builder);
   }
   private RunCalloutRequest() {
+    tableName_ = "";
+    windowUuid_ = "";
+    tabUuid_ = "";
     callout_ = "";
+    columnName_ = "";
+    attributes_ = java.util.Collections.emptyList();
   }
 
   @java.lang.Override
@@ -70,20 +75,53 @@ private static final long serialVersionUID = 0L;
           case 18: {
             java.lang.String s = input.readStringRequireUtf8();
 
-            callout_ = s;
+            tableName_ = s;
             break;
           }
           case 26: {
-            org.spin.grpc.util.Entity.Builder subBuilder = null;
-            if (entity_ != null) {
-              subBuilder = entity_.toBuilder();
+            java.lang.String s = input.readStringRequireUtf8();
+
+            windowUuid_ = s;
+            break;
+          }
+          case 34: {
+            java.lang.String s = input.readStringRequireUtf8();
+
+            tabUuid_ = s;
+            break;
+          }
+          case 42: {
+            java.lang.String s = input.readStringRequireUtf8();
+
+            callout_ = s;
+            break;
+          }
+          case 50: {
+            java.lang.String s = input.readStringRequireUtf8();
+
+            columnName_ = s;
+            break;
+          }
+          case 58: {
+            org.spin.grpc.util.Value.Builder subBuilder = null;
+            if (value_ != null) {
+              subBuilder = value_.toBuilder();
             }
-            entity_ = input.readMessage(org.spin.grpc.util.Entity.parser(), extensionRegistry);
+            value_ = input.readMessage(org.spin.grpc.util.Value.parser(), extensionRegistry);
             if (subBuilder != null) {
-              subBuilder.mergeFrom(entity_);
-              entity_ = subBuilder.buildPartial();
+              subBuilder.mergeFrom(value_);
+              value_ = subBuilder.buildPartial();
             }
 
+            break;
+          }
+          case 66: {
+            if (!((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
+              attributes_ = new java.util.ArrayList<org.spin.grpc.util.KeyValue>();
+              mutable_bitField0_ |= 0x00000080;
+            }
+            attributes_.add(
+                input.readMessage(org.spin.grpc.util.KeyValue.parser(), extensionRegistry));
             break;
           }
         }
@@ -94,6 +132,9 @@ private static final long serialVersionUID = 0L;
       throw new com.google.protobuf.InvalidProtocolBufferException(
           e).setUnfinishedMessage(this);
     } finally {
+      if (((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
+        attributes_ = java.util.Collections.unmodifiableList(attributes_);
+      }
       this.unknownFields = unknownFields.build();
       makeExtensionsImmutable();
     }
@@ -110,6 +151,7 @@ private static final long serialVersionUID = 0L;
             org.spin.grpc.util.RunCalloutRequest.class, org.spin.grpc.util.RunCalloutRequest.Builder.class);
   }
 
+  private int bitField0_;
   public static final int CLIENTREQUEST_FIELD_NUMBER = 1;
   private org.spin.grpc.util.ClientRequest clientRequest_;
   /**
@@ -131,10 +173,112 @@ private static final long serialVersionUID = 0L;
     return getClientRequest();
   }
 
-  public static final int CALLOUT_FIELD_NUMBER = 2;
+  public static final int TABLENAME_FIELD_NUMBER = 2;
+  private volatile java.lang.Object tableName_;
+  /**
+   * <code>string tableName = 2;</code>
+   */
+  public java.lang.String getTableName() {
+    java.lang.Object ref = tableName_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      tableName_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string tableName = 2;</code>
+   */
+  public com.google.protobuf.ByteString
+      getTableNameBytes() {
+    java.lang.Object ref = tableName_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      tableName_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int WINDOWUUID_FIELD_NUMBER = 3;
+  private volatile java.lang.Object windowUuid_;
+  /**
+   * <code>string windowUuid = 3;</code>
+   */
+  public java.lang.String getWindowUuid() {
+    java.lang.Object ref = windowUuid_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      windowUuid_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string windowUuid = 3;</code>
+   */
+  public com.google.protobuf.ByteString
+      getWindowUuidBytes() {
+    java.lang.Object ref = windowUuid_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      windowUuid_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int TABUUID_FIELD_NUMBER = 4;
+  private volatile java.lang.Object tabUuid_;
+  /**
+   * <code>string tabUuid = 4;</code>
+   */
+  public java.lang.String getTabUuid() {
+    java.lang.Object ref = tabUuid_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      tabUuid_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string tabUuid = 4;</code>
+   */
+  public com.google.protobuf.ByteString
+      getTabUuidBytes() {
+    java.lang.Object ref = tabUuid_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      tabUuid_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int CALLOUT_FIELD_NUMBER = 5;
   private volatile java.lang.Object callout_;
   /**
-   * <code>string callout = 2;</code>
+   * <code>string callout = 5;</code>
    */
   public java.lang.String getCallout() {
     java.lang.Object ref = callout_;
@@ -149,7 +293,7 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <code>string callout = 2;</code>
+   * <code>string callout = 5;</code>
    */
   public com.google.protobuf.ByteString
       getCalloutBytes() {
@@ -165,25 +309,94 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int ENTITY_FIELD_NUMBER = 3;
-  private org.spin.grpc.util.Entity entity_;
+  public static final int COLUMNNAME_FIELD_NUMBER = 6;
+  private volatile java.lang.Object columnName_;
   /**
-   * <code>.data.Entity Entity = 3;</code>
+   * <code>string columnName = 6;</code>
    */
-  public boolean hasEntity() {
-    return entity_ != null;
+  public java.lang.String getColumnName() {
+    java.lang.Object ref = columnName_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      columnName_ = s;
+      return s;
+    }
   }
   /**
-   * <code>.data.Entity Entity = 3;</code>
+   * <code>string columnName = 6;</code>
    */
-  public org.spin.grpc.util.Entity getEntity() {
-    return entity_ == null ? org.spin.grpc.util.Entity.getDefaultInstance() : entity_;
+  public com.google.protobuf.ByteString
+      getColumnNameBytes() {
+    java.lang.Object ref = columnName_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      columnName_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int VALUE_FIELD_NUMBER = 7;
+  private org.spin.grpc.util.Value value_;
+  /**
+   * <code>.data.Value value = 7;</code>
+   */
+  public boolean hasValue() {
+    return value_ != null;
   }
   /**
-   * <code>.data.Entity Entity = 3;</code>
+   * <code>.data.Value value = 7;</code>
    */
-  public org.spin.grpc.util.EntityOrBuilder getEntityOrBuilder() {
-    return getEntity();
+  public org.spin.grpc.util.Value getValue() {
+    return value_ == null ? org.spin.grpc.util.Value.getDefaultInstance() : value_;
+  }
+  /**
+   * <code>.data.Value value = 7;</code>
+   */
+  public org.spin.grpc.util.ValueOrBuilder getValueOrBuilder() {
+    return getValue();
+  }
+
+  public static final int ATTRIBUTES_FIELD_NUMBER = 8;
+  private java.util.List<org.spin.grpc.util.KeyValue> attributes_;
+  /**
+   * <code>repeated .data.KeyValue attributes = 8;</code>
+   */
+  public java.util.List<org.spin.grpc.util.KeyValue> getAttributesList() {
+    return attributes_;
+  }
+  /**
+   * <code>repeated .data.KeyValue attributes = 8;</code>
+   */
+  public java.util.List<? extends org.spin.grpc.util.KeyValueOrBuilder> 
+      getAttributesOrBuilderList() {
+    return attributes_;
+  }
+  /**
+   * <code>repeated .data.KeyValue attributes = 8;</code>
+   */
+  public int getAttributesCount() {
+    return attributes_.size();
+  }
+  /**
+   * <code>repeated .data.KeyValue attributes = 8;</code>
+   */
+  public org.spin.grpc.util.KeyValue getAttributes(int index) {
+    return attributes_.get(index);
+  }
+  /**
+   * <code>repeated .data.KeyValue attributes = 8;</code>
+   */
+  public org.spin.grpc.util.KeyValueOrBuilder getAttributesOrBuilder(
+      int index) {
+    return attributes_.get(index);
   }
 
   private byte memoizedIsInitialized = -1;
@@ -201,11 +414,26 @@ private static final long serialVersionUID = 0L;
     if (clientRequest_ != null) {
       output.writeMessage(1, getClientRequest());
     }
-    if (!getCalloutBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, callout_);
+    if (!getTableNameBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, tableName_);
     }
-    if (entity_ != null) {
-      output.writeMessage(3, getEntity());
+    if (!getWindowUuidBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 3, windowUuid_);
+    }
+    if (!getTabUuidBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 4, tabUuid_);
+    }
+    if (!getCalloutBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 5, callout_);
+    }
+    if (!getColumnNameBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 6, columnName_);
+    }
+    if (value_ != null) {
+      output.writeMessage(7, getValue());
+    }
+    for (int i = 0; i < attributes_.size(); i++) {
+      output.writeMessage(8, attributes_.get(i));
     }
     unknownFields.writeTo(output);
   }
@@ -219,12 +447,28 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(1, getClientRequest());
     }
-    if (!getCalloutBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, callout_);
+    if (!getTableNameBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, tableName_);
     }
-    if (entity_ != null) {
+    if (!getWindowUuidBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, windowUuid_);
+    }
+    if (!getTabUuidBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, tabUuid_);
+    }
+    if (!getCalloutBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, callout_);
+    }
+    if (!getColumnNameBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, columnName_);
+    }
+    if (value_ != null) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(3, getEntity());
+        .computeMessageSize(7, getValue());
+    }
+    for (int i = 0; i < attributes_.size(); i++) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(8, attributes_.get(i));
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -247,13 +491,23 @@ private static final long serialVersionUID = 0L;
       result = result && getClientRequest()
           .equals(other.getClientRequest());
     }
+    result = result && getTableName()
+        .equals(other.getTableName());
+    result = result && getWindowUuid()
+        .equals(other.getWindowUuid());
+    result = result && getTabUuid()
+        .equals(other.getTabUuid());
     result = result && getCallout()
         .equals(other.getCallout());
-    result = result && (hasEntity() == other.hasEntity());
-    if (hasEntity()) {
-      result = result && getEntity()
-          .equals(other.getEntity());
+    result = result && getColumnName()
+        .equals(other.getColumnName());
+    result = result && (hasValue() == other.hasValue());
+    if (hasValue()) {
+      result = result && getValue()
+          .equals(other.getValue());
     }
+    result = result && getAttributesList()
+        .equals(other.getAttributesList());
     result = result && unknownFields.equals(other.unknownFields);
     return result;
   }
@@ -269,11 +523,23 @@ private static final long serialVersionUID = 0L;
       hash = (37 * hash) + CLIENTREQUEST_FIELD_NUMBER;
       hash = (53 * hash) + getClientRequest().hashCode();
     }
+    hash = (37 * hash) + TABLENAME_FIELD_NUMBER;
+    hash = (53 * hash) + getTableName().hashCode();
+    hash = (37 * hash) + WINDOWUUID_FIELD_NUMBER;
+    hash = (53 * hash) + getWindowUuid().hashCode();
+    hash = (37 * hash) + TABUUID_FIELD_NUMBER;
+    hash = (53 * hash) + getTabUuid().hashCode();
     hash = (37 * hash) + CALLOUT_FIELD_NUMBER;
     hash = (53 * hash) + getCallout().hashCode();
-    if (hasEntity()) {
-      hash = (37 * hash) + ENTITY_FIELD_NUMBER;
-      hash = (53 * hash) + getEntity().hashCode();
+    hash = (37 * hash) + COLUMNNAME_FIELD_NUMBER;
+    hash = (53 * hash) + getColumnName().hashCode();
+    if (hasValue()) {
+      hash = (37 * hash) + VALUE_FIELD_NUMBER;
+      hash = (53 * hash) + getValue().hashCode();
+    }
+    if (getAttributesCount() > 0) {
+      hash = (37 * hash) + ATTRIBUTES_FIELD_NUMBER;
+      hash = (53 * hash) + getAttributesList().hashCode();
     }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
@@ -404,6 +670,7 @@ private static final long serialVersionUID = 0L;
     private void maybeForceBuilderInitialization() {
       if (com.google.protobuf.GeneratedMessageV3
               .alwaysUseFieldBuilders) {
+        getAttributesFieldBuilder();
       }
     }
     public Builder clear() {
@@ -414,13 +681,27 @@ private static final long serialVersionUID = 0L;
         clientRequest_ = null;
         clientRequestBuilder_ = null;
       }
+      tableName_ = "";
+
+      windowUuid_ = "";
+
+      tabUuid_ = "";
+
       callout_ = "";
 
-      if (entityBuilder_ == null) {
-        entity_ = null;
+      columnName_ = "";
+
+      if (valueBuilder_ == null) {
+        value_ = null;
       } else {
-        entity_ = null;
-        entityBuilder_ = null;
+        value_ = null;
+        valueBuilder_ = null;
+      }
+      if (attributesBuilder_ == null) {
+        attributes_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000080);
+      } else {
+        attributesBuilder_.clear();
       }
       return this;
     }
@@ -444,17 +725,33 @@ private static final long serialVersionUID = 0L;
 
     public org.spin.grpc.util.RunCalloutRequest buildPartial() {
       org.spin.grpc.util.RunCalloutRequest result = new org.spin.grpc.util.RunCalloutRequest(this);
+      int from_bitField0_ = bitField0_;
+      int to_bitField0_ = 0;
       if (clientRequestBuilder_ == null) {
         result.clientRequest_ = clientRequest_;
       } else {
         result.clientRequest_ = clientRequestBuilder_.build();
       }
+      result.tableName_ = tableName_;
+      result.windowUuid_ = windowUuid_;
+      result.tabUuid_ = tabUuid_;
       result.callout_ = callout_;
-      if (entityBuilder_ == null) {
-        result.entity_ = entity_;
+      result.columnName_ = columnName_;
+      if (valueBuilder_ == null) {
+        result.value_ = value_;
       } else {
-        result.entity_ = entityBuilder_.build();
+        result.value_ = valueBuilder_.build();
       }
+      if (attributesBuilder_ == null) {
+        if (((bitField0_ & 0x00000080) == 0x00000080)) {
+          attributes_ = java.util.Collections.unmodifiableList(attributes_);
+          bitField0_ = (bitField0_ & ~0x00000080);
+        }
+        result.attributes_ = attributes_;
+      } else {
+        result.attributes_ = attributesBuilder_.build();
+      }
+      result.bitField0_ = to_bitField0_;
       onBuilt();
       return result;
     }
@@ -499,12 +796,54 @@ private static final long serialVersionUID = 0L;
       if (other.hasClientRequest()) {
         mergeClientRequest(other.getClientRequest());
       }
+      if (!other.getTableName().isEmpty()) {
+        tableName_ = other.tableName_;
+        onChanged();
+      }
+      if (!other.getWindowUuid().isEmpty()) {
+        windowUuid_ = other.windowUuid_;
+        onChanged();
+      }
+      if (!other.getTabUuid().isEmpty()) {
+        tabUuid_ = other.tabUuid_;
+        onChanged();
+      }
       if (!other.getCallout().isEmpty()) {
         callout_ = other.callout_;
         onChanged();
       }
-      if (other.hasEntity()) {
-        mergeEntity(other.getEntity());
+      if (!other.getColumnName().isEmpty()) {
+        columnName_ = other.columnName_;
+        onChanged();
+      }
+      if (other.hasValue()) {
+        mergeValue(other.getValue());
+      }
+      if (attributesBuilder_ == null) {
+        if (!other.attributes_.isEmpty()) {
+          if (attributes_.isEmpty()) {
+            attributes_ = other.attributes_;
+            bitField0_ = (bitField0_ & ~0x00000080);
+          } else {
+            ensureAttributesIsMutable();
+            attributes_.addAll(other.attributes_);
+          }
+          onChanged();
+        }
+      } else {
+        if (!other.attributes_.isEmpty()) {
+          if (attributesBuilder_.isEmpty()) {
+            attributesBuilder_.dispose();
+            attributesBuilder_ = null;
+            attributes_ = other.attributes_;
+            bitField0_ = (bitField0_ & ~0x00000080);
+            attributesBuilder_ = 
+              com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                 getAttributesFieldBuilder() : null;
+          } else {
+            attributesBuilder_.addAllMessages(other.attributes_);
+          }
+        }
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -532,6 +871,7 @@ private static final long serialVersionUID = 0L;
       }
       return this;
     }
+    private int bitField0_;
 
     private org.spin.grpc.util.ClientRequest clientRequest_ = null;
     private com.google.protobuf.SingleFieldBuilderV3<
@@ -650,9 +990,216 @@ private static final long serialVersionUID = 0L;
       return clientRequestBuilder_;
     }
 
+    private java.lang.Object tableName_ = "";
+    /**
+     * <code>string tableName = 2;</code>
+     */
+    public java.lang.String getTableName() {
+      java.lang.Object ref = tableName_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        tableName_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string tableName = 2;</code>
+     */
+    public com.google.protobuf.ByteString
+        getTableNameBytes() {
+      java.lang.Object ref = tableName_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        tableName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string tableName = 2;</code>
+     */
+    public Builder setTableName(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
+      tableName_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string tableName = 2;</code>
+     */
+    public Builder clearTableName() {
+      
+      tableName_ = getDefaultInstance().getTableName();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string tableName = 2;</code>
+     */
+    public Builder setTableNameBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      
+      tableName_ = value;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object windowUuid_ = "";
+    /**
+     * <code>string windowUuid = 3;</code>
+     */
+    public java.lang.String getWindowUuid() {
+      java.lang.Object ref = windowUuid_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        windowUuid_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string windowUuid = 3;</code>
+     */
+    public com.google.protobuf.ByteString
+        getWindowUuidBytes() {
+      java.lang.Object ref = windowUuid_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        windowUuid_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string windowUuid = 3;</code>
+     */
+    public Builder setWindowUuid(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
+      windowUuid_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string windowUuid = 3;</code>
+     */
+    public Builder clearWindowUuid() {
+      
+      windowUuid_ = getDefaultInstance().getWindowUuid();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string windowUuid = 3;</code>
+     */
+    public Builder setWindowUuidBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      
+      windowUuid_ = value;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object tabUuid_ = "";
+    /**
+     * <code>string tabUuid = 4;</code>
+     */
+    public java.lang.String getTabUuid() {
+      java.lang.Object ref = tabUuid_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        tabUuid_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string tabUuid = 4;</code>
+     */
+    public com.google.protobuf.ByteString
+        getTabUuidBytes() {
+      java.lang.Object ref = tabUuid_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        tabUuid_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string tabUuid = 4;</code>
+     */
+    public Builder setTabUuid(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
+      tabUuid_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string tabUuid = 4;</code>
+     */
+    public Builder clearTabUuid() {
+      
+      tabUuid_ = getDefaultInstance().getTabUuid();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string tabUuid = 4;</code>
+     */
+    public Builder setTabUuidBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      
+      tabUuid_ = value;
+      onChanged();
+      return this;
+    }
+
     private java.lang.Object callout_ = "";
     /**
-     * <code>string callout = 2;</code>
+     * <code>string callout = 5;</code>
      */
     public java.lang.String getCallout() {
       java.lang.Object ref = callout_;
@@ -667,7 +1214,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string callout = 2;</code>
+     * <code>string callout = 5;</code>
      */
     public com.google.protobuf.ByteString
         getCalloutBytes() {
@@ -683,7 +1230,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string callout = 2;</code>
+     * <code>string callout = 5;</code>
      */
     public Builder setCallout(
         java.lang.String value) {
@@ -696,7 +1243,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string callout = 2;</code>
+     * <code>string callout = 5;</code>
      */
     public Builder clearCallout() {
       
@@ -705,7 +1252,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string callout = 2;</code>
+     * <code>string callout = 5;</code>
      */
     public Builder setCalloutBytes(
         com.google.protobuf.ByteString value) {
@@ -719,121 +1266,430 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private org.spin.grpc.util.Entity entity_ = null;
-    private com.google.protobuf.SingleFieldBuilderV3<
-        org.spin.grpc.util.Entity, org.spin.grpc.util.Entity.Builder, org.spin.grpc.util.EntityOrBuilder> entityBuilder_;
+    private java.lang.Object columnName_ = "";
     /**
-     * <code>.data.Entity Entity = 3;</code>
+     * <code>string columnName = 6;</code>
      */
-    public boolean hasEntity() {
-      return entityBuilder_ != null || entity_ != null;
-    }
-    /**
-     * <code>.data.Entity Entity = 3;</code>
-     */
-    public org.spin.grpc.util.Entity getEntity() {
-      if (entityBuilder_ == null) {
-        return entity_ == null ? org.spin.grpc.util.Entity.getDefaultInstance() : entity_;
+    public java.lang.String getColumnName() {
+      java.lang.Object ref = columnName_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        columnName_ = s;
+        return s;
       } else {
-        return entityBuilder_.getMessage();
+        return (java.lang.String) ref;
       }
     }
     /**
-     * <code>.data.Entity Entity = 3;</code>
+     * <code>string columnName = 6;</code>
      */
-    public Builder setEntity(org.spin.grpc.util.Entity value) {
-      if (entityBuilder_ == null) {
+    public com.google.protobuf.ByteString
+        getColumnNameBytes() {
+      java.lang.Object ref = columnName_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        columnName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string columnName = 6;</code>
+     */
+    public Builder setColumnName(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
+      columnName_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string columnName = 6;</code>
+     */
+    public Builder clearColumnName() {
+      
+      columnName_ = getDefaultInstance().getColumnName();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string columnName = 6;</code>
+     */
+    public Builder setColumnNameBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      
+      columnName_ = value;
+      onChanged();
+      return this;
+    }
+
+    private org.spin.grpc.util.Value value_ = null;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        org.spin.grpc.util.Value, org.spin.grpc.util.Value.Builder, org.spin.grpc.util.ValueOrBuilder> valueBuilder_;
+    /**
+     * <code>.data.Value value = 7;</code>
+     */
+    public boolean hasValue() {
+      return valueBuilder_ != null || value_ != null;
+    }
+    /**
+     * <code>.data.Value value = 7;</code>
+     */
+    public org.spin.grpc.util.Value getValue() {
+      if (valueBuilder_ == null) {
+        return value_ == null ? org.spin.grpc.util.Value.getDefaultInstance() : value_;
+      } else {
+        return valueBuilder_.getMessage();
+      }
+    }
+    /**
+     * <code>.data.Value value = 7;</code>
+     */
+    public Builder setValue(org.spin.grpc.util.Value value) {
+      if (valueBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
         }
-        entity_ = value;
+        value_ = value;
         onChanged();
       } else {
-        entityBuilder_.setMessage(value);
+        valueBuilder_.setMessage(value);
       }
 
       return this;
     }
     /**
-     * <code>.data.Entity Entity = 3;</code>
+     * <code>.data.Value value = 7;</code>
      */
-    public Builder setEntity(
-        org.spin.grpc.util.Entity.Builder builderForValue) {
-      if (entityBuilder_ == null) {
-        entity_ = builderForValue.build();
+    public Builder setValue(
+        org.spin.grpc.util.Value.Builder builderForValue) {
+      if (valueBuilder_ == null) {
+        value_ = builderForValue.build();
         onChanged();
       } else {
-        entityBuilder_.setMessage(builderForValue.build());
+        valueBuilder_.setMessage(builderForValue.build());
       }
 
       return this;
     }
     /**
-     * <code>.data.Entity Entity = 3;</code>
+     * <code>.data.Value value = 7;</code>
      */
-    public Builder mergeEntity(org.spin.grpc.util.Entity value) {
-      if (entityBuilder_ == null) {
-        if (entity_ != null) {
-          entity_ =
-            org.spin.grpc.util.Entity.newBuilder(entity_).mergeFrom(value).buildPartial();
+    public Builder mergeValue(org.spin.grpc.util.Value value) {
+      if (valueBuilder_ == null) {
+        if (value_ != null) {
+          value_ =
+            org.spin.grpc.util.Value.newBuilder(value_).mergeFrom(value).buildPartial();
         } else {
-          entity_ = value;
+          value_ = value;
         }
         onChanged();
       } else {
-        entityBuilder_.mergeFrom(value);
+        valueBuilder_.mergeFrom(value);
       }
 
       return this;
     }
     /**
-     * <code>.data.Entity Entity = 3;</code>
+     * <code>.data.Value value = 7;</code>
      */
-    public Builder clearEntity() {
-      if (entityBuilder_ == null) {
-        entity_ = null;
+    public Builder clearValue() {
+      if (valueBuilder_ == null) {
+        value_ = null;
         onChanged();
       } else {
-        entity_ = null;
-        entityBuilder_ = null;
+        value_ = null;
+        valueBuilder_ = null;
       }
 
       return this;
     }
     /**
-     * <code>.data.Entity Entity = 3;</code>
+     * <code>.data.Value value = 7;</code>
      */
-    public org.spin.grpc.util.Entity.Builder getEntityBuilder() {
+    public org.spin.grpc.util.Value.Builder getValueBuilder() {
       
       onChanged();
-      return getEntityFieldBuilder().getBuilder();
+      return getValueFieldBuilder().getBuilder();
     }
     /**
-     * <code>.data.Entity Entity = 3;</code>
+     * <code>.data.Value value = 7;</code>
      */
-    public org.spin.grpc.util.EntityOrBuilder getEntityOrBuilder() {
-      if (entityBuilder_ != null) {
-        return entityBuilder_.getMessageOrBuilder();
+    public org.spin.grpc.util.ValueOrBuilder getValueOrBuilder() {
+      if (valueBuilder_ != null) {
+        return valueBuilder_.getMessageOrBuilder();
       } else {
-        return entity_ == null ?
-            org.spin.grpc.util.Entity.getDefaultInstance() : entity_;
+        return value_ == null ?
+            org.spin.grpc.util.Value.getDefaultInstance() : value_;
       }
     }
     /**
-     * <code>.data.Entity Entity = 3;</code>
+     * <code>.data.Value value = 7;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
-        org.spin.grpc.util.Entity, org.spin.grpc.util.Entity.Builder, org.spin.grpc.util.EntityOrBuilder> 
-        getEntityFieldBuilder() {
-      if (entityBuilder_ == null) {
-        entityBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-            org.spin.grpc.util.Entity, org.spin.grpc.util.Entity.Builder, org.spin.grpc.util.EntityOrBuilder>(
-                getEntity(),
+        org.spin.grpc.util.Value, org.spin.grpc.util.Value.Builder, org.spin.grpc.util.ValueOrBuilder> 
+        getValueFieldBuilder() {
+      if (valueBuilder_ == null) {
+        valueBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            org.spin.grpc.util.Value, org.spin.grpc.util.Value.Builder, org.spin.grpc.util.ValueOrBuilder>(
+                getValue(),
                 getParentForChildren(),
                 isClean());
-        entity_ = null;
+        value_ = null;
       }
-      return entityBuilder_;
+      return valueBuilder_;
+    }
+
+    private java.util.List<org.spin.grpc.util.KeyValue> attributes_ =
+      java.util.Collections.emptyList();
+    private void ensureAttributesIsMutable() {
+      if (!((bitField0_ & 0x00000080) == 0x00000080)) {
+        attributes_ = new java.util.ArrayList<org.spin.grpc.util.KeyValue>(attributes_);
+        bitField0_ |= 0x00000080;
+       }
+    }
+
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+        org.spin.grpc.util.KeyValue, org.spin.grpc.util.KeyValue.Builder, org.spin.grpc.util.KeyValueOrBuilder> attributesBuilder_;
+
+    /**
+     * <code>repeated .data.KeyValue attributes = 8;</code>
+     */
+    public java.util.List<org.spin.grpc.util.KeyValue> getAttributesList() {
+      if (attributesBuilder_ == null) {
+        return java.util.Collections.unmodifiableList(attributes_);
+      } else {
+        return attributesBuilder_.getMessageList();
+      }
+    }
+    /**
+     * <code>repeated .data.KeyValue attributes = 8;</code>
+     */
+    public int getAttributesCount() {
+      if (attributesBuilder_ == null) {
+        return attributes_.size();
+      } else {
+        return attributesBuilder_.getCount();
+      }
+    }
+    /**
+     * <code>repeated .data.KeyValue attributes = 8;</code>
+     */
+    public org.spin.grpc.util.KeyValue getAttributes(int index) {
+      if (attributesBuilder_ == null) {
+        return attributes_.get(index);
+      } else {
+        return attributesBuilder_.getMessage(index);
+      }
+    }
+    /**
+     * <code>repeated .data.KeyValue attributes = 8;</code>
+     */
+    public Builder setAttributes(
+        int index, org.spin.grpc.util.KeyValue value) {
+      if (attributesBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureAttributesIsMutable();
+        attributes_.set(index, value);
+        onChanged();
+      } else {
+        attributesBuilder_.setMessage(index, value);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.KeyValue attributes = 8;</code>
+     */
+    public Builder setAttributes(
+        int index, org.spin.grpc.util.KeyValue.Builder builderForValue) {
+      if (attributesBuilder_ == null) {
+        ensureAttributesIsMutable();
+        attributes_.set(index, builderForValue.build());
+        onChanged();
+      } else {
+        attributesBuilder_.setMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.KeyValue attributes = 8;</code>
+     */
+    public Builder addAttributes(org.spin.grpc.util.KeyValue value) {
+      if (attributesBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureAttributesIsMutable();
+        attributes_.add(value);
+        onChanged();
+      } else {
+        attributesBuilder_.addMessage(value);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.KeyValue attributes = 8;</code>
+     */
+    public Builder addAttributes(
+        int index, org.spin.grpc.util.KeyValue value) {
+      if (attributesBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureAttributesIsMutable();
+        attributes_.add(index, value);
+        onChanged();
+      } else {
+        attributesBuilder_.addMessage(index, value);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.KeyValue attributes = 8;</code>
+     */
+    public Builder addAttributes(
+        org.spin.grpc.util.KeyValue.Builder builderForValue) {
+      if (attributesBuilder_ == null) {
+        ensureAttributesIsMutable();
+        attributes_.add(builderForValue.build());
+        onChanged();
+      } else {
+        attributesBuilder_.addMessage(builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.KeyValue attributes = 8;</code>
+     */
+    public Builder addAttributes(
+        int index, org.spin.grpc.util.KeyValue.Builder builderForValue) {
+      if (attributesBuilder_ == null) {
+        ensureAttributesIsMutable();
+        attributes_.add(index, builderForValue.build());
+        onChanged();
+      } else {
+        attributesBuilder_.addMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.KeyValue attributes = 8;</code>
+     */
+    public Builder addAllAttributes(
+        java.lang.Iterable<? extends org.spin.grpc.util.KeyValue> values) {
+      if (attributesBuilder_ == null) {
+        ensureAttributesIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, attributes_);
+        onChanged();
+      } else {
+        attributesBuilder_.addAllMessages(values);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.KeyValue attributes = 8;</code>
+     */
+    public Builder clearAttributes() {
+      if (attributesBuilder_ == null) {
+        attributes_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000080);
+        onChanged();
+      } else {
+        attributesBuilder_.clear();
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.KeyValue attributes = 8;</code>
+     */
+    public Builder removeAttributes(int index) {
+      if (attributesBuilder_ == null) {
+        ensureAttributesIsMutable();
+        attributes_.remove(index);
+        onChanged();
+      } else {
+        attributesBuilder_.remove(index);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .data.KeyValue attributes = 8;</code>
+     */
+    public org.spin.grpc.util.KeyValue.Builder getAttributesBuilder(
+        int index) {
+      return getAttributesFieldBuilder().getBuilder(index);
+    }
+    /**
+     * <code>repeated .data.KeyValue attributes = 8;</code>
+     */
+    public org.spin.grpc.util.KeyValueOrBuilder getAttributesOrBuilder(
+        int index) {
+      if (attributesBuilder_ == null) {
+        return attributes_.get(index);  } else {
+        return attributesBuilder_.getMessageOrBuilder(index);
+      }
+    }
+    /**
+     * <code>repeated .data.KeyValue attributes = 8;</code>
+     */
+    public java.util.List<? extends org.spin.grpc.util.KeyValueOrBuilder> 
+         getAttributesOrBuilderList() {
+      if (attributesBuilder_ != null) {
+        return attributesBuilder_.getMessageOrBuilderList();
+      } else {
+        return java.util.Collections.unmodifiableList(attributes_);
+      }
+    }
+    /**
+     * <code>repeated .data.KeyValue attributes = 8;</code>
+     */
+    public org.spin.grpc.util.KeyValue.Builder addAttributesBuilder() {
+      return getAttributesFieldBuilder().addBuilder(
+          org.spin.grpc.util.KeyValue.getDefaultInstance());
+    }
+    /**
+     * <code>repeated .data.KeyValue attributes = 8;</code>
+     */
+    public org.spin.grpc.util.KeyValue.Builder addAttributesBuilder(
+        int index) {
+      return getAttributesFieldBuilder().addBuilder(
+          index, org.spin.grpc.util.KeyValue.getDefaultInstance());
+    }
+    /**
+     * <code>repeated .data.KeyValue attributes = 8;</code>
+     */
+    public java.util.List<org.spin.grpc.util.KeyValue.Builder> 
+         getAttributesBuilderList() {
+      return getAttributesFieldBuilder().getBuilderList();
+    }
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+        org.spin.grpc.util.KeyValue, org.spin.grpc.util.KeyValue.Builder, org.spin.grpc.util.KeyValueOrBuilder> 
+        getAttributesFieldBuilder() {
+      if (attributesBuilder_ == null) {
+        attributesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+            org.spin.grpc.util.KeyValue, org.spin.grpc.util.KeyValue.Builder, org.spin.grpc.util.KeyValueOrBuilder>(
+                attributes_,
+                ((bitField0_ & 0x00000080) == 0x00000080),
+                getParentForChildren(),
+                isClean());
+        attributes_ = null;
+      }
+      return attributesBuilder_;
     }
     public final Builder setUnknownFields(
         final com.google.protobuf.UnknownFieldSet unknownFields) {

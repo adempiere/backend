@@ -18,15 +18,36 @@ public interface CalloutOrBuilder extends
       getResultBytes();
 
   /**
-   * <code>.data.Entity values = 2;</code>
+   * <code>map&lt;string, .data.Value&gt; values = 2;</code>
    */
-  boolean hasValues();
+  int getValuesCount();
   /**
-   * <code>.data.Entity values = 2;</code>
+   * <code>map&lt;string, .data.Value&gt; values = 2;</code>
    */
-  org.spin.grpc.util.Entity getValues();
+  boolean containsValues(
+      java.lang.String key);
   /**
-   * <code>.data.Entity values = 2;</code>
+   * Use {@link #getValuesMap()} instead.
    */
-  org.spin.grpc.util.EntityOrBuilder getValuesOrBuilder();
+  @java.lang.Deprecated
+  java.util.Map<java.lang.String, org.spin.grpc.util.Value>
+  getValues();
+  /**
+   * <code>map&lt;string, .data.Value&gt; values = 2;</code>
+   */
+  java.util.Map<java.lang.String, org.spin.grpc.util.Value>
+  getValuesMap();
+  /**
+   * <code>map&lt;string, .data.Value&gt; values = 2;</code>
+   */
+
+  org.spin.grpc.util.Value getValuesOrDefault(
+      java.lang.String key,
+      org.spin.grpc.util.Value defaultValue);
+  /**
+   * <code>map&lt;string, .data.Value&gt; values = 2;</code>
+   */
+
+  org.spin.grpc.util.Value getValuesOrThrow(
+      java.lang.String key);
 }

@@ -21,25 +21,89 @@ public interface RunCalloutRequestOrBuilder extends
   org.spin.grpc.util.ClientRequestOrBuilder getClientRequestOrBuilder();
 
   /**
-   * <code>string callout = 2;</code>
+   * <code>string tableName = 2;</code>
+   */
+  java.lang.String getTableName();
+  /**
+   * <code>string tableName = 2;</code>
+   */
+  com.google.protobuf.ByteString
+      getTableNameBytes();
+
+  /**
+   * <code>string windowUuid = 3;</code>
+   */
+  java.lang.String getWindowUuid();
+  /**
+   * <code>string windowUuid = 3;</code>
+   */
+  com.google.protobuf.ByteString
+      getWindowUuidBytes();
+
+  /**
+   * <code>string tabUuid = 4;</code>
+   */
+  java.lang.String getTabUuid();
+  /**
+   * <code>string tabUuid = 4;</code>
+   */
+  com.google.protobuf.ByteString
+      getTabUuidBytes();
+
+  /**
+   * <code>string callout = 5;</code>
    */
   java.lang.String getCallout();
   /**
-   * <code>string callout = 2;</code>
+   * <code>string callout = 5;</code>
    */
   com.google.protobuf.ByteString
       getCalloutBytes();
 
   /**
-   * <code>.data.Entity Entity = 3;</code>
+   * <code>string columnName = 6;</code>
    */
-  boolean hasEntity();
+  java.lang.String getColumnName();
   /**
-   * <code>.data.Entity Entity = 3;</code>
+   * <code>string columnName = 6;</code>
    */
-  org.spin.grpc.util.Entity getEntity();
+  com.google.protobuf.ByteString
+      getColumnNameBytes();
+
   /**
-   * <code>.data.Entity Entity = 3;</code>
+   * <code>.data.Value value = 7;</code>
    */
-  org.spin.grpc.util.EntityOrBuilder getEntityOrBuilder();
+  boolean hasValue();
+  /**
+   * <code>.data.Value value = 7;</code>
+   */
+  org.spin.grpc.util.Value getValue();
+  /**
+   * <code>.data.Value value = 7;</code>
+   */
+  org.spin.grpc.util.ValueOrBuilder getValueOrBuilder();
+
+  /**
+   * <code>repeated .data.KeyValue attributes = 8;</code>
+   */
+  java.util.List<org.spin.grpc.util.KeyValue> 
+      getAttributesList();
+  /**
+   * <code>repeated .data.KeyValue attributes = 8;</code>
+   */
+  org.spin.grpc.util.KeyValue getAttributes(int index);
+  /**
+   * <code>repeated .data.KeyValue attributes = 8;</code>
+   */
+  int getAttributesCount();
+  /**
+   * <code>repeated .data.KeyValue attributes = 8;</code>
+   */
+  java.util.List<? extends org.spin.grpc.util.KeyValueOrBuilder> 
+      getAttributesOrBuilderList();
+  /**
+   * <code>repeated .data.KeyValue attributes = 8;</code>
+   */
+  org.spin.grpc.util.KeyValueOrBuilder getAttributesOrBuilder(
+      int index);
 }

@@ -18,6 +18,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.spin.grpc.util.Value.ValueType;
+
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
@@ -69,6 +71,32 @@ public class DataClient {
 	  }
 	  
 	  /**
+	   * Request a process
+	   */
+	  public void requestCallout() {
+		  ClientRequest clientRequest = ClientRequest.newBuilder()
+				  .setSessionUuid("543ca441-4963-4e01-8eaf-7c9dbbc851d3")
+				  .build();
+		  RunCalloutRequest request = RunCalloutRequest.newBuilder()
+				  .setClientRequest(clientRequest)
+				  .setCallout("org.compiere.model.CalloutOrder.docType")
+				  .setTableName("C_Order")
+				  .setColumnName("C_DocTypeTarget_ID")
+				  .setWindowUuid("a52203d2-fb40-11e8-a479-7a0060f0aa01")
+				  .setTabUuid("a49ff9be-fb40-11e8-a479-7a0060f0aa01")
+				  .setValue(Value.newBuilder().setIntValue(1000253).setValueType(ValueType.INTEGER))
+				  .build();
+		  Callout response;
+		  try {
+			  response = blockingStub.runCallout(request);
+			  logger.info("C_ORder: C_DocTypeTarget_ID: " + response);
+		  } catch (StatusRuntimeException e) {
+			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
+		      return;
+		  }
+	  }
+	  
+	  /**
 	   * Greet server. If provided, the first element of {@code args} is the name to use in the
 	   * greeting.
 	   */
@@ -76,7 +104,7 @@ public class DataClient {
 		DataClient client = new DataClient("localhost", 50052);
 	    try {
 	    	logger.info("####################### Process #####################");
-	    	client.requestProcess();
+	    	client.requestCallout();
 	      client.shutdown();
 	    } catch (Exception e) {
 			e.printStackTrace();
