@@ -2119,6 +2119,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		GridFieldVO gridFieldVo = GridFieldVO.create(context, 0, tabNo, window.getAD_Window_ID(), tab.getAD_Tab_ID(), false, field);
 		GridField gridField = new GridField(gridFieldVo);
 		GridTab gridTab = new GridTab(gridTabVo, gridWindow, true);
+		//	Init tab
+		gridTab.query(false);
 		//	load values
 		Map<String, Object> attributes = convertValues(request.getAttributesList());
 		for(Entry<String, Object> attribute : attributes.entrySet()) {
@@ -2128,8 +2130,14 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		gridField.setValue(getValueFromType(request.getValue()), false);
 		//	Run it
 		String result = processCallout(context, gridTab, gridField);
-		Arrays.asList(gridTab.getFields()).forEach(fieldValue -> calloutBuilder.putValues(fieldValue.getColumnName(), getKeyValueFromValue(gridTab.getValue(fieldValue)).build()));
-		
+		Arrays.asList(gridTab.getFields()).stream().filter(fieldValue -> !fieldValue.getColumnName().equals(I_AD_Element.COLUMNNAME_Created) 
+				&& !fieldValue.getColumnName().equals(I_AD_Element.COLUMNNAME_CreatedBy)
+				&& !fieldValue.getColumnName().equals(I_AD_Element.COLUMNNAME_Updated)
+				&& !fieldValue.getColumnName().equals(I_AD_Element.COLUMNNAME_UpdatedBy)
+				&& !fieldValue.getColumnName().equals(I_AD_Element.COLUMNNAME_UUID))
+		.forEach(fieldValue -> {
+			calloutBuilder.putValues(fieldValue.getColumnName(), getKeyValueFromValue(gridTab.getValue(fieldValue)).build());
+		});
 		calloutBuilder.setResult(validateNull(result));
 		return calloutBuilder;
 	}
@@ -2296,7 +2304,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			builderValue.setDoubleValue(bigdecimalValue.doubleValue());
 		} else if (value instanceof Integer) {
 			builderValue.setValueType(ValueType.INTEGER);
-			builderValue.setIntValue(Integer.parseInt((String)value));
+			builderValue.setIntValue((Integer)value);
 		} else if (value instanceof String) {
 			builderValue.setValueType(ValueType.STRING);
 			builderValue.setStringValue(validateNull((String)value));
