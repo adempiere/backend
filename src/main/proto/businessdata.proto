@@ -262,8 +262,10 @@ message RunCalloutRequest {
 	string tabUuid = 4;
 	string callout = 5;
 	string columnName = 6;
-	Value value = 7;
-	repeated KeyValue attributes = 8;
+	Value oldValue = 7;
+	Value value = 8;
+	int32 windowNo = 9;
+	repeated KeyValue attributes = 10;
 }
 
 // Callout response with data from server

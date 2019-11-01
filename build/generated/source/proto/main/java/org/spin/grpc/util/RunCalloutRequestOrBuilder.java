@@ -71,38 +71,56 @@ public interface RunCalloutRequestOrBuilder extends
       getColumnNameBytes();
 
   /**
-   * <code>.data.Value value = 7;</code>
+   * <code>.data.Value oldValue = 7;</code>
+   */
+  boolean hasOldValue();
+  /**
+   * <code>.data.Value oldValue = 7;</code>
+   */
+  org.spin.grpc.util.Value getOldValue();
+  /**
+   * <code>.data.Value oldValue = 7;</code>
+   */
+  org.spin.grpc.util.ValueOrBuilder getOldValueOrBuilder();
+
+  /**
+   * <code>.data.Value value = 8;</code>
    */
   boolean hasValue();
   /**
-   * <code>.data.Value value = 7;</code>
+   * <code>.data.Value value = 8;</code>
    */
   org.spin.grpc.util.Value getValue();
   /**
-   * <code>.data.Value value = 7;</code>
+   * <code>.data.Value value = 8;</code>
    */
   org.spin.grpc.util.ValueOrBuilder getValueOrBuilder();
 
   /**
-   * <code>repeated .data.KeyValue attributes = 8;</code>
+   * <code>int32 windowNo = 9;</code>
+   */
+  int getWindowNo();
+
+  /**
+   * <code>repeated .data.KeyValue attributes = 10;</code>
    */
   java.util.List<org.spin.grpc.util.KeyValue> 
       getAttributesList();
   /**
-   * <code>repeated .data.KeyValue attributes = 8;</code>
+   * <code>repeated .data.KeyValue attributes = 10;</code>
    */
   org.spin.grpc.util.KeyValue getAttributes(int index);
   /**
-   * <code>repeated .data.KeyValue attributes = 8;</code>
+   * <code>repeated .data.KeyValue attributes = 10;</code>
    */
   int getAttributesCount();
   /**
-   * <code>repeated .data.KeyValue attributes = 8;</code>
+   * <code>repeated .data.KeyValue attributes = 10;</code>
    */
   java.util.List<? extends org.spin.grpc.util.KeyValueOrBuilder> 
       getAttributesOrBuilderList();
   /**
-   * <code>repeated .data.KeyValue attributes = 8;</code>
+   * <code>repeated .data.KeyValue attributes = 10;</code>
    */
   org.spin.grpc.util.KeyValueOrBuilder getAttributesOrBuilder(
       int index);

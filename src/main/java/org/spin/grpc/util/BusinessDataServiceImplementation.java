@@ -125,6 +125,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	private static CCache<String, String> languageCache = new CCache<String, String>("Language_ISO_Code", 30, 0);	//	no time-out
 	/**	Reference cache	*/
 	private static CCache<String, String> referenceWhereClauseCache = new CCache<String, String>("Reference_WhereClause", 30, 0);	//	no time-out
+	/**	Window emulation	*/
+	private AtomicInteger windowNoEmulation = new AtomicInteger(1);
 	/**	Page Size	*/
 	private final int PAGE_SIZE = 100;
 	
@@ -2115,10 +2117,16 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		if(tabNo < 0) {
 			tabNo = 0;
 		}
-		GridWindowVO gridWindowVo = GridWindowVO.create(context, 0, tab.getAD_Window_ID());
+		//	window
+		int windowNo = request.getWindowNo();
+		if(windowNo <= 0) {
+			windowNo = windowNoEmulation.getAndIncrement();
+		}
+		//	Initial load for callout wrapper
+		GridWindowVO gridWindowVo = GridWindowVO.create(context, windowNo, tab.getAD_Window_ID());
 		GridWindow gridWindow = new GridWindow(gridWindowVo, true);
 		GridTabVO gridTabVo = GridTabVO.create(gridWindowVo, tabNo, tab, false, true);
-		GridFieldVO gridFieldVo = GridFieldVO.create(context, 0, tabNo, tab.getAD_Window_ID(), tab.getAD_Tab_ID(), false, field);
+		GridFieldVO gridFieldVo = GridFieldVO.create(context, windowNo, tabNo, tab.getAD_Window_ID(), tab.getAD_Tab_ID(), false, field);
 		GridField gridField = new GridField(gridFieldVo);
 		GridTab gridTab = new GridTab(gridTabVo, gridWindow, true);
 		//	Init tab
@@ -2129,9 +2137,10 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			gridTab.setValue(attribute.getKey(), attribute.getValue());
 		}
 		//	Load value for field
+		gridField.setValue(getValueFromType(request.getOldValue()), false);
 		gridField.setValue(getValueFromType(request.getValue()), false);
 		//	Run it
-		String result = processCallout(context, gridTab, gridField);
+		String result = processCallout(context, windowNo, gridTab, gridField);
 		Arrays.asList(gridTab.getFields()).stream().filter(fieldValue -> isValidChange(fieldValue))
 		.forEach(fieldValue -> calloutBuilder.putValues(fieldValue.getColumnName(), getKeyValueFromValue(fieldValue.getValue()).build()));
 		calloutBuilder.setResult(validateNull(result));
@@ -2181,12 +2190,11 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	 * @param field
 	 * @return
 	 */
-	private String processCallout (Properties context, GridTab gridTab, GridField field) {
+	private String processCallout (Properties context, int windowNo, GridTab gridTab, GridField field) {
 		String callout = field.getCallout();
 		if (callout.length() == 0)
 			return "";
 		//
-		int windowNo = 0;
 		Object value = field.getValue();
 		Object oldValue = field.getOldValue();
 		log.fine(field.getColumnName() + "=" + value

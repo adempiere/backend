@@ -25,6 +25,7 @@ private static final long serialVersionUID = 0L;
     tabUuid_ = "";
     callout_ = "";
     columnName_ = "";
+    windowNo_ = 0;
     attributes_ = java.util.Collections.emptyList();
   }
 
@@ -104,6 +105,19 @@ private static final long serialVersionUID = 0L;
           }
           case 58: {
             org.spin.grpc.util.Value.Builder subBuilder = null;
+            if (oldValue_ != null) {
+              subBuilder = oldValue_.toBuilder();
+            }
+            oldValue_ = input.readMessage(org.spin.grpc.util.Value.parser(), extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom(oldValue_);
+              oldValue_ = subBuilder.buildPartial();
+            }
+
+            break;
+          }
+          case 66: {
+            org.spin.grpc.util.Value.Builder subBuilder = null;
             if (value_ != null) {
               subBuilder = value_.toBuilder();
             }
@@ -115,10 +129,15 @@ private static final long serialVersionUID = 0L;
 
             break;
           }
-          case 66: {
-            if (!((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
+          case 72: {
+
+            windowNo_ = input.readInt32();
+            break;
+          }
+          case 82: {
+            if (!((mutable_bitField0_ & 0x00000200) == 0x00000200)) {
               attributes_ = new java.util.ArrayList<org.spin.grpc.util.KeyValue>();
-              mutable_bitField0_ |= 0x00000080;
+              mutable_bitField0_ |= 0x00000200;
             }
             attributes_.add(
                 input.readMessage(org.spin.grpc.util.KeyValue.parser(), extensionRegistry));
@@ -132,7 +151,7 @@ private static final long serialVersionUID = 0L;
       throw new com.google.protobuf.InvalidProtocolBufferException(
           e).setUnfinishedMessage(this);
     } finally {
-      if (((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
+      if (((mutable_bitField0_ & 0x00000200) == 0x00000200)) {
         attributes_ = java.util.Collections.unmodifiableList(attributes_);
       }
       this.unknownFields = unknownFields.build();
@@ -343,56 +362,86 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int VALUE_FIELD_NUMBER = 7;
+  public static final int OLDVALUE_FIELD_NUMBER = 7;
+  private org.spin.grpc.util.Value oldValue_;
+  /**
+   * <code>.data.Value oldValue = 7;</code>
+   */
+  public boolean hasOldValue() {
+    return oldValue_ != null;
+  }
+  /**
+   * <code>.data.Value oldValue = 7;</code>
+   */
+  public org.spin.grpc.util.Value getOldValue() {
+    return oldValue_ == null ? org.spin.grpc.util.Value.getDefaultInstance() : oldValue_;
+  }
+  /**
+   * <code>.data.Value oldValue = 7;</code>
+   */
+  public org.spin.grpc.util.ValueOrBuilder getOldValueOrBuilder() {
+    return getOldValue();
+  }
+
+  public static final int VALUE_FIELD_NUMBER = 8;
   private org.spin.grpc.util.Value value_;
   /**
-   * <code>.data.Value value = 7;</code>
+   * <code>.data.Value value = 8;</code>
    */
   public boolean hasValue() {
     return value_ != null;
   }
   /**
-   * <code>.data.Value value = 7;</code>
+   * <code>.data.Value value = 8;</code>
    */
   public org.spin.grpc.util.Value getValue() {
     return value_ == null ? org.spin.grpc.util.Value.getDefaultInstance() : value_;
   }
   /**
-   * <code>.data.Value value = 7;</code>
+   * <code>.data.Value value = 8;</code>
    */
   public org.spin.grpc.util.ValueOrBuilder getValueOrBuilder() {
     return getValue();
   }
 
-  public static final int ATTRIBUTES_FIELD_NUMBER = 8;
+  public static final int WINDOWNO_FIELD_NUMBER = 9;
+  private int windowNo_;
+  /**
+   * <code>int32 windowNo = 9;</code>
+   */
+  public int getWindowNo() {
+    return windowNo_;
+  }
+
+  public static final int ATTRIBUTES_FIELD_NUMBER = 10;
   private java.util.List<org.spin.grpc.util.KeyValue> attributes_;
   /**
-   * <code>repeated .data.KeyValue attributes = 8;</code>
+   * <code>repeated .data.KeyValue attributes = 10;</code>
    */
   public java.util.List<org.spin.grpc.util.KeyValue> getAttributesList() {
     return attributes_;
   }
   /**
-   * <code>repeated .data.KeyValue attributes = 8;</code>
+   * <code>repeated .data.KeyValue attributes = 10;</code>
    */
   public java.util.List<? extends org.spin.grpc.util.KeyValueOrBuilder> 
       getAttributesOrBuilderList() {
     return attributes_;
   }
   /**
-   * <code>repeated .data.KeyValue attributes = 8;</code>
+   * <code>repeated .data.KeyValue attributes = 10;</code>
    */
   public int getAttributesCount() {
     return attributes_.size();
   }
   /**
-   * <code>repeated .data.KeyValue attributes = 8;</code>
+   * <code>repeated .data.KeyValue attributes = 10;</code>
    */
   public org.spin.grpc.util.KeyValue getAttributes(int index) {
     return attributes_.get(index);
   }
   /**
-   * <code>repeated .data.KeyValue attributes = 8;</code>
+   * <code>repeated .data.KeyValue attributes = 10;</code>
    */
   public org.spin.grpc.util.KeyValueOrBuilder getAttributesOrBuilder(
       int index) {
@@ -429,11 +478,17 @@ private static final long serialVersionUID = 0L;
     if (!getColumnNameBytes().isEmpty()) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 6, columnName_);
     }
+    if (oldValue_ != null) {
+      output.writeMessage(7, getOldValue());
+    }
     if (value_ != null) {
-      output.writeMessage(7, getValue());
+      output.writeMessage(8, getValue());
+    }
+    if (windowNo_ != 0) {
+      output.writeInt32(9, windowNo_);
     }
     for (int i = 0; i < attributes_.size(); i++) {
-      output.writeMessage(8, attributes_.get(i));
+      output.writeMessage(10, attributes_.get(i));
     }
     unknownFields.writeTo(output);
   }
@@ -462,13 +517,21 @@ private static final long serialVersionUID = 0L;
     if (!getColumnNameBytes().isEmpty()) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, columnName_);
     }
+    if (oldValue_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(7, getOldValue());
+    }
     if (value_ != null) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(7, getValue());
+        .computeMessageSize(8, getValue());
+    }
+    if (windowNo_ != 0) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeInt32Size(9, windowNo_);
     }
     for (int i = 0; i < attributes_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(8, attributes_.get(i));
+        .computeMessageSize(10, attributes_.get(i));
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -501,11 +564,18 @@ private static final long serialVersionUID = 0L;
         .equals(other.getCallout());
     result = result && getColumnName()
         .equals(other.getColumnName());
+    result = result && (hasOldValue() == other.hasOldValue());
+    if (hasOldValue()) {
+      result = result && getOldValue()
+          .equals(other.getOldValue());
+    }
     result = result && (hasValue() == other.hasValue());
     if (hasValue()) {
       result = result && getValue()
           .equals(other.getValue());
     }
+    result = result && (getWindowNo()
+        == other.getWindowNo());
     result = result && getAttributesList()
         .equals(other.getAttributesList());
     result = result && unknownFields.equals(other.unknownFields);
@@ -533,10 +603,16 @@ private static final long serialVersionUID = 0L;
     hash = (53 * hash) + getCallout().hashCode();
     hash = (37 * hash) + COLUMNNAME_FIELD_NUMBER;
     hash = (53 * hash) + getColumnName().hashCode();
+    if (hasOldValue()) {
+      hash = (37 * hash) + OLDVALUE_FIELD_NUMBER;
+      hash = (53 * hash) + getOldValue().hashCode();
+    }
     if (hasValue()) {
       hash = (37 * hash) + VALUE_FIELD_NUMBER;
       hash = (53 * hash) + getValue().hashCode();
     }
+    hash = (37 * hash) + WINDOWNO_FIELD_NUMBER;
+    hash = (53 * hash) + getWindowNo();
     if (getAttributesCount() > 0) {
       hash = (37 * hash) + ATTRIBUTES_FIELD_NUMBER;
       hash = (53 * hash) + getAttributesList().hashCode();
@@ -691,15 +767,23 @@ private static final long serialVersionUID = 0L;
 
       columnName_ = "";
 
+      if (oldValueBuilder_ == null) {
+        oldValue_ = null;
+      } else {
+        oldValue_ = null;
+        oldValueBuilder_ = null;
+      }
       if (valueBuilder_ == null) {
         value_ = null;
       } else {
         value_ = null;
         valueBuilder_ = null;
       }
+      windowNo_ = 0;
+
       if (attributesBuilder_ == null) {
         attributes_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000080);
+        bitField0_ = (bitField0_ & ~0x00000200);
       } else {
         attributesBuilder_.clear();
       }
@@ -737,15 +821,21 @@ private static final long serialVersionUID = 0L;
       result.tabUuid_ = tabUuid_;
       result.callout_ = callout_;
       result.columnName_ = columnName_;
+      if (oldValueBuilder_ == null) {
+        result.oldValue_ = oldValue_;
+      } else {
+        result.oldValue_ = oldValueBuilder_.build();
+      }
       if (valueBuilder_ == null) {
         result.value_ = value_;
       } else {
         result.value_ = valueBuilder_.build();
       }
+      result.windowNo_ = windowNo_;
       if (attributesBuilder_ == null) {
-        if (((bitField0_ & 0x00000080) == 0x00000080)) {
+        if (((bitField0_ & 0x00000200) == 0x00000200)) {
           attributes_ = java.util.Collections.unmodifiableList(attributes_);
-          bitField0_ = (bitField0_ & ~0x00000080);
+          bitField0_ = (bitField0_ & ~0x00000200);
         }
         result.attributes_ = attributes_;
       } else {
@@ -816,14 +906,20 @@ private static final long serialVersionUID = 0L;
         columnName_ = other.columnName_;
         onChanged();
       }
+      if (other.hasOldValue()) {
+        mergeOldValue(other.getOldValue());
+      }
       if (other.hasValue()) {
         mergeValue(other.getValue());
+      }
+      if (other.getWindowNo() != 0) {
+        setWindowNo(other.getWindowNo());
       }
       if (attributesBuilder_ == null) {
         if (!other.attributes_.isEmpty()) {
           if (attributes_.isEmpty()) {
             attributes_ = other.attributes_;
-            bitField0_ = (bitField0_ & ~0x00000080);
+            bitField0_ = (bitField0_ & ~0x00000200);
           } else {
             ensureAttributesIsMutable();
             attributes_.addAll(other.attributes_);
@@ -836,7 +932,7 @@ private static final long serialVersionUID = 0L;
             attributesBuilder_.dispose();
             attributesBuilder_ = null;
             attributes_ = other.attributes_;
-            bitField0_ = (bitField0_ & ~0x00000080);
+            bitField0_ = (bitField0_ & ~0x00000200);
             attributesBuilder_ = 
               com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                  getAttributesFieldBuilder() : null;
@@ -1335,17 +1431,134 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
+    private org.spin.grpc.util.Value oldValue_ = null;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        org.spin.grpc.util.Value, org.spin.grpc.util.Value.Builder, org.spin.grpc.util.ValueOrBuilder> oldValueBuilder_;
+    /**
+     * <code>.data.Value oldValue = 7;</code>
+     */
+    public boolean hasOldValue() {
+      return oldValueBuilder_ != null || oldValue_ != null;
+    }
+    /**
+     * <code>.data.Value oldValue = 7;</code>
+     */
+    public org.spin.grpc.util.Value getOldValue() {
+      if (oldValueBuilder_ == null) {
+        return oldValue_ == null ? org.spin.grpc.util.Value.getDefaultInstance() : oldValue_;
+      } else {
+        return oldValueBuilder_.getMessage();
+      }
+    }
+    /**
+     * <code>.data.Value oldValue = 7;</code>
+     */
+    public Builder setOldValue(org.spin.grpc.util.Value value) {
+      if (oldValueBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        oldValue_ = value;
+        onChanged();
+      } else {
+        oldValueBuilder_.setMessage(value);
+      }
+
+      return this;
+    }
+    /**
+     * <code>.data.Value oldValue = 7;</code>
+     */
+    public Builder setOldValue(
+        org.spin.grpc.util.Value.Builder builderForValue) {
+      if (oldValueBuilder_ == null) {
+        oldValue_ = builderForValue.build();
+        onChanged();
+      } else {
+        oldValueBuilder_.setMessage(builderForValue.build());
+      }
+
+      return this;
+    }
+    /**
+     * <code>.data.Value oldValue = 7;</code>
+     */
+    public Builder mergeOldValue(org.spin.grpc.util.Value value) {
+      if (oldValueBuilder_ == null) {
+        if (oldValue_ != null) {
+          oldValue_ =
+            org.spin.grpc.util.Value.newBuilder(oldValue_).mergeFrom(value).buildPartial();
+        } else {
+          oldValue_ = value;
+        }
+        onChanged();
+      } else {
+        oldValueBuilder_.mergeFrom(value);
+      }
+
+      return this;
+    }
+    /**
+     * <code>.data.Value oldValue = 7;</code>
+     */
+    public Builder clearOldValue() {
+      if (oldValueBuilder_ == null) {
+        oldValue_ = null;
+        onChanged();
+      } else {
+        oldValue_ = null;
+        oldValueBuilder_ = null;
+      }
+
+      return this;
+    }
+    /**
+     * <code>.data.Value oldValue = 7;</code>
+     */
+    public org.spin.grpc.util.Value.Builder getOldValueBuilder() {
+      
+      onChanged();
+      return getOldValueFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.data.Value oldValue = 7;</code>
+     */
+    public org.spin.grpc.util.ValueOrBuilder getOldValueOrBuilder() {
+      if (oldValueBuilder_ != null) {
+        return oldValueBuilder_.getMessageOrBuilder();
+      } else {
+        return oldValue_ == null ?
+            org.spin.grpc.util.Value.getDefaultInstance() : oldValue_;
+      }
+    }
+    /**
+     * <code>.data.Value oldValue = 7;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        org.spin.grpc.util.Value, org.spin.grpc.util.Value.Builder, org.spin.grpc.util.ValueOrBuilder> 
+        getOldValueFieldBuilder() {
+      if (oldValueBuilder_ == null) {
+        oldValueBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            org.spin.grpc.util.Value, org.spin.grpc.util.Value.Builder, org.spin.grpc.util.ValueOrBuilder>(
+                getOldValue(),
+                getParentForChildren(),
+                isClean());
+        oldValue_ = null;
+      }
+      return oldValueBuilder_;
+    }
+
     private org.spin.grpc.util.Value value_ = null;
     private com.google.protobuf.SingleFieldBuilderV3<
         org.spin.grpc.util.Value, org.spin.grpc.util.Value.Builder, org.spin.grpc.util.ValueOrBuilder> valueBuilder_;
     /**
-     * <code>.data.Value value = 7;</code>
+     * <code>.data.Value value = 8;</code>
      */
     public boolean hasValue() {
       return valueBuilder_ != null || value_ != null;
     }
     /**
-     * <code>.data.Value value = 7;</code>
+     * <code>.data.Value value = 8;</code>
      */
     public org.spin.grpc.util.Value getValue() {
       if (valueBuilder_ == null) {
@@ -1355,7 +1568,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>.data.Value value = 7;</code>
+     * <code>.data.Value value = 8;</code>
      */
     public Builder setValue(org.spin.grpc.util.Value value) {
       if (valueBuilder_ == null) {
@@ -1371,7 +1584,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.data.Value value = 7;</code>
+     * <code>.data.Value value = 8;</code>
      */
     public Builder setValue(
         org.spin.grpc.util.Value.Builder builderForValue) {
@@ -1385,7 +1598,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.data.Value value = 7;</code>
+     * <code>.data.Value value = 8;</code>
      */
     public Builder mergeValue(org.spin.grpc.util.Value value) {
       if (valueBuilder_ == null) {
@@ -1403,7 +1616,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.data.Value value = 7;</code>
+     * <code>.data.Value value = 8;</code>
      */
     public Builder clearValue() {
       if (valueBuilder_ == null) {
@@ -1417,7 +1630,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.data.Value value = 7;</code>
+     * <code>.data.Value value = 8;</code>
      */
     public org.spin.grpc.util.Value.Builder getValueBuilder() {
       
@@ -1425,7 +1638,7 @@ private static final long serialVersionUID = 0L;
       return getValueFieldBuilder().getBuilder();
     }
     /**
-     * <code>.data.Value value = 7;</code>
+     * <code>.data.Value value = 8;</code>
      */
     public org.spin.grpc.util.ValueOrBuilder getValueOrBuilder() {
       if (valueBuilder_ != null) {
@@ -1436,7 +1649,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>.data.Value value = 7;</code>
+     * <code>.data.Value value = 8;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
         org.spin.grpc.util.Value, org.spin.grpc.util.Value.Builder, org.spin.grpc.util.ValueOrBuilder> 
@@ -1452,12 +1665,38 @@ private static final long serialVersionUID = 0L;
       return valueBuilder_;
     }
 
+    private int windowNo_ ;
+    /**
+     * <code>int32 windowNo = 9;</code>
+     */
+    public int getWindowNo() {
+      return windowNo_;
+    }
+    /**
+     * <code>int32 windowNo = 9;</code>
+     */
+    public Builder setWindowNo(int value) {
+      
+      windowNo_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>int32 windowNo = 9;</code>
+     */
+    public Builder clearWindowNo() {
+      
+      windowNo_ = 0;
+      onChanged();
+      return this;
+    }
+
     private java.util.List<org.spin.grpc.util.KeyValue> attributes_ =
       java.util.Collections.emptyList();
     private void ensureAttributesIsMutable() {
-      if (!((bitField0_ & 0x00000080) == 0x00000080)) {
+      if (!((bitField0_ & 0x00000200) == 0x00000200)) {
         attributes_ = new java.util.ArrayList<org.spin.grpc.util.KeyValue>(attributes_);
-        bitField0_ |= 0x00000080;
+        bitField0_ |= 0x00000200;
        }
     }
 
@@ -1465,7 +1704,7 @@ private static final long serialVersionUID = 0L;
         org.spin.grpc.util.KeyValue, org.spin.grpc.util.KeyValue.Builder, org.spin.grpc.util.KeyValueOrBuilder> attributesBuilder_;
 
     /**
-     * <code>repeated .data.KeyValue attributes = 8;</code>
+     * <code>repeated .data.KeyValue attributes = 10;</code>
      */
     public java.util.List<org.spin.grpc.util.KeyValue> getAttributesList() {
       if (attributesBuilder_ == null) {
@@ -1475,7 +1714,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.KeyValue attributes = 8;</code>
+     * <code>repeated .data.KeyValue attributes = 10;</code>
      */
     public int getAttributesCount() {
       if (attributesBuilder_ == null) {
@@ -1485,7 +1724,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.KeyValue attributes = 8;</code>
+     * <code>repeated .data.KeyValue attributes = 10;</code>
      */
     public org.spin.grpc.util.KeyValue getAttributes(int index) {
       if (attributesBuilder_ == null) {
@@ -1495,7 +1734,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.KeyValue attributes = 8;</code>
+     * <code>repeated .data.KeyValue attributes = 10;</code>
      */
     public Builder setAttributes(
         int index, org.spin.grpc.util.KeyValue value) {
@@ -1512,7 +1751,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.KeyValue attributes = 8;</code>
+     * <code>repeated .data.KeyValue attributes = 10;</code>
      */
     public Builder setAttributes(
         int index, org.spin.grpc.util.KeyValue.Builder builderForValue) {
@@ -1526,7 +1765,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.KeyValue attributes = 8;</code>
+     * <code>repeated .data.KeyValue attributes = 10;</code>
      */
     public Builder addAttributes(org.spin.grpc.util.KeyValue value) {
       if (attributesBuilder_ == null) {
@@ -1542,7 +1781,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.KeyValue attributes = 8;</code>
+     * <code>repeated .data.KeyValue attributes = 10;</code>
      */
     public Builder addAttributes(
         int index, org.spin.grpc.util.KeyValue value) {
@@ -1559,7 +1798,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.KeyValue attributes = 8;</code>
+     * <code>repeated .data.KeyValue attributes = 10;</code>
      */
     public Builder addAttributes(
         org.spin.grpc.util.KeyValue.Builder builderForValue) {
@@ -1573,7 +1812,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.KeyValue attributes = 8;</code>
+     * <code>repeated .data.KeyValue attributes = 10;</code>
      */
     public Builder addAttributes(
         int index, org.spin.grpc.util.KeyValue.Builder builderForValue) {
@@ -1587,7 +1826,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.KeyValue attributes = 8;</code>
+     * <code>repeated .data.KeyValue attributes = 10;</code>
      */
     public Builder addAllAttributes(
         java.lang.Iterable<? extends org.spin.grpc.util.KeyValue> values) {
@@ -1602,12 +1841,12 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.KeyValue attributes = 8;</code>
+     * <code>repeated .data.KeyValue attributes = 10;</code>
      */
     public Builder clearAttributes() {
       if (attributesBuilder_ == null) {
         attributes_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000080);
+        bitField0_ = (bitField0_ & ~0x00000200);
         onChanged();
       } else {
         attributesBuilder_.clear();
@@ -1615,7 +1854,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.KeyValue attributes = 8;</code>
+     * <code>repeated .data.KeyValue attributes = 10;</code>
      */
     public Builder removeAttributes(int index) {
       if (attributesBuilder_ == null) {
@@ -1628,14 +1867,14 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .data.KeyValue attributes = 8;</code>
+     * <code>repeated .data.KeyValue attributes = 10;</code>
      */
     public org.spin.grpc.util.KeyValue.Builder getAttributesBuilder(
         int index) {
       return getAttributesFieldBuilder().getBuilder(index);
     }
     /**
-     * <code>repeated .data.KeyValue attributes = 8;</code>
+     * <code>repeated .data.KeyValue attributes = 10;</code>
      */
     public org.spin.grpc.util.KeyValueOrBuilder getAttributesOrBuilder(
         int index) {
@@ -1645,7 +1884,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.KeyValue attributes = 8;</code>
+     * <code>repeated .data.KeyValue attributes = 10;</code>
      */
     public java.util.List<? extends org.spin.grpc.util.KeyValueOrBuilder> 
          getAttributesOrBuilderList() {
@@ -1656,14 +1895,14 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .data.KeyValue attributes = 8;</code>
+     * <code>repeated .data.KeyValue attributes = 10;</code>
      */
     public org.spin.grpc.util.KeyValue.Builder addAttributesBuilder() {
       return getAttributesFieldBuilder().addBuilder(
           org.spin.grpc.util.KeyValue.getDefaultInstance());
     }
     /**
-     * <code>repeated .data.KeyValue attributes = 8;</code>
+     * <code>repeated .data.KeyValue attributes = 10;</code>
      */
     public org.spin.grpc.util.KeyValue.Builder addAttributesBuilder(
         int index) {
@@ -1671,7 +1910,7 @@ private static final long serialVersionUID = 0L;
           index, org.spin.grpc.util.KeyValue.getDefaultInstance());
     }
     /**
-     * <code>repeated .data.KeyValue attributes = 8;</code>
+     * <code>repeated .data.KeyValue attributes = 10;</code>
      */
     public java.util.List<org.spin.grpc.util.KeyValue.Builder> 
          getAttributesBuilderList() {
@@ -1684,7 +1923,7 @@ private static final long serialVersionUID = 0L;
         attributesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
             org.spin.grpc.util.KeyValue, org.spin.grpc.util.KeyValue.Builder, org.spin.grpc.util.KeyValueOrBuilder>(
                 attributes_,
-                ((bitField0_ & 0x00000080) == 0x00000080),
+                ((bitField0_ & 0x00000200) == 0x00000200),
                 getParentForChildren(),
                 isClean());
         attributes_ = null;
