@@ -63,6 +63,7 @@ import org.compiere.model.I_AD_PInstance;
 import org.compiere.model.I_AD_PInstance_Log;
 import org.compiere.model.I_AD_Process;
 import org.compiere.model.I_AD_Session;
+import org.compiere.model.I_AD_Tab;
 import org.compiere.model.I_AD_Window;
 import org.compiere.model.I_AD_Workflow;
 import org.compiere.model.MChangeLog;
@@ -119,7 +120,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	/**	Browse Requested	*/
 	private static CCache<String, MBrowse> browserRequested = new CCache<String, MBrowse>(I_AD_Browse.Table_Name + "_UUID", 30, 0);	//	no time-out
 	/**	window Requested	*/
-	private static CCache<String, MWindow> windowRequested = new CCache<String, MWindow>(I_AD_Window.Table_Name + "_UUID", 30, 0);	//	no time-out
+	private static CCache<String, MTab> tabRequested = new CCache<String, MTab>(I_AD_Tab.Table_Name + "_UUID", 30, 0);	//	no time-out
 	/**	Language */
 	private static CCache<String, String> languageCache = new CCache<String, String>("Language_ISO_Code", 30, 0);	//	no time-out
 	/**	Reference cache	*/
@@ -1431,12 +1432,16 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 						if(isLookup(field.getAD_Reference_ID())
 								|| DisplayType.isID(field.getAD_Reference_ID())) {
 							isFilled = true;
-							if(metaData.getColumnType(index) != Types.DECIMAL) {
-								valueBuilder.setStringValue(rs.getString(index));
-								valueBuilder.setValueType(ValueType.STRING);
-							} else {
+							int type = metaData.getColumnType(index);
+							if(type == Types.DECIMAL
+									|| type == Types.NUMERIC
+									|| type == Types.FLOAT
+									|| type == Types.DOUBLE) {
 								valueBuilder.setIntValue(rs.getInt(index));
 								valueBuilder.setValueType(ValueType.INTEGER);
+							} else {
+								valueBuilder.setStringValue(rs.getString(index));
+								valueBuilder.setValueType(ValueType.STRING);
 							}
 						} else if(DisplayType.isNumeric(field.getAD_Reference_ID())) {
 							BigDecimal value = rs.getBigDecimal(index);
@@ -2089,19 +2094,16 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	 */
 	private org.spin.grpc.util.Callout.Builder runcallout(Properties context, RunCalloutRequest request) {
 		org.spin.grpc.util.Callout.Builder calloutBuilder = org.spin.grpc.util.Callout.newBuilder();
-		MWindow window = windowRequested.get(request.getWindowUuid());
-		if(window == null) {
-			window = new Query(context, I_AD_Window.Table_Name, I_AD_Window.COLUMNNAME_UUID + " = ?", null)
-					.setParameters(request.getWindowUuid())
+		MTab tab = tabRequested.get(request.getTabUuid());
+		if(tab == null) {
+			tab = new Query(context, I_AD_Tab.Table_Name, I_AD_Tab.COLUMNNAME_UUID + " = ?", null)
+					.setParameters(request.getTabUuid())
 					.first();
 		}
-		MTab tab = null;
-		if(window != null) {
-			Optional<MTab> searchedValue = Arrays.asList(window.getTabs(false, null)).stream().filter(searchTab -> searchTab.getUUID().equals(request.getTabUuid())).findFirst();
-			if(searchedValue.isPresent()) {
-				tab = searchedValue.get();
-			}
+		if(tab == null) {
+			return calloutBuilder;
 		}
+		//	
 		MField field = null;
 		if(tab != null) {
 			Optional<MField> searchedValue = Arrays.asList(tab.getFields(false, null)).stream().filter(searchField -> searchField.getAD_Column().getColumnName().equals(request.getColumnName())).findFirst();
@@ -2113,10 +2115,10 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		if(tabNo < 0) {
 			tabNo = 0;
 		}
-		GridWindowVO gridWindowVo = GridWindowVO.create(context, 0, window.getAD_Window_ID());
+		GridWindowVO gridWindowVo = GridWindowVO.create(context, 0, tab.getAD_Window_ID());
 		GridWindow gridWindow = new GridWindow(gridWindowVo, true);
 		GridTabVO gridTabVo = GridTabVO.create(gridWindowVo, tabNo, tab, false, true);
-		GridFieldVO gridFieldVo = GridFieldVO.create(context, 0, tabNo, window.getAD_Window_ID(), tab.getAD_Tab_ID(), false, field);
+		GridFieldVO gridFieldVo = GridFieldVO.create(context, 0, tabNo, tab.getAD_Window_ID(), tab.getAD_Tab_ID(), false, field);
 		GridField gridField = new GridField(gridFieldVo);
 		GridTab gridTab = new GridTab(gridTabVo, gridWindow, true);
 		//	Init tab
