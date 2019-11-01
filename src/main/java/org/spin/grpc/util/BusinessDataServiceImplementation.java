@@ -540,7 +540,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			for(KeyValueSelection selectionKey : request.getSelectionsList()) {
 				selectionKeys.add(selectionKey.getSelectionId());
 				if(selectionKey.getValuesCount() > 0) {
-					selection.put(selectionKey.getSelectionId(), (LinkedHashMap<String, Object>) convertValues(selectionKey.getValuesList()));
+					selection.put(selectionKey.getSelectionId(), new LinkedHashMap<>(convertValues(selectionKey.getValuesList())));
 				}
 			}
 			builder.withSelectedRecordsIds(request.getTableSelectedId(), selectionKeys, selection);
@@ -2130,16 +2130,47 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		gridField.setValue(getValueFromType(request.getValue()), false);
 		//	Run it
 		String result = processCallout(context, gridTab, gridField);
-		Arrays.asList(gridTab.getFields()).stream().filter(fieldValue -> !fieldValue.getColumnName().equals(I_AD_Element.COLUMNNAME_Created) 
-				&& !fieldValue.getColumnName().equals(I_AD_Element.COLUMNNAME_CreatedBy)
-				&& !fieldValue.getColumnName().equals(I_AD_Element.COLUMNNAME_Updated)
-				&& !fieldValue.getColumnName().equals(I_AD_Element.COLUMNNAME_UpdatedBy)
-				&& !fieldValue.getColumnName().equals(I_AD_Element.COLUMNNAME_UUID))
-		.forEach(fieldValue -> {
-			calloutBuilder.putValues(fieldValue.getColumnName(), getKeyValueFromValue(gridTab.getValue(fieldValue)).build());
-		});
+		Arrays.asList(gridTab.getFields()).stream().filter(fieldValue -> isValidChange(fieldValue))
+		.forEach(fieldValue -> calloutBuilder.putValues(fieldValue.getColumnName(), getKeyValueFromValue(fieldValue.getValue()).build()));
 		calloutBuilder.setResult(validateNull(result));
 		return calloutBuilder;
+	}
+	
+	/**
+	 * Verify if a value has been changed
+	 * @param gridField
+	 * @return
+	 */
+	private boolean isValidChange(GridField gridField) {
+		//	Standard columns
+		if(gridField.getColumnName().equals(I_AD_Element.COLUMNNAME_Created) 
+				|| gridField.getColumnName().equals(I_AD_Element.COLUMNNAME_CreatedBy) 
+				|| gridField.getColumnName().equals(I_AD_Element.COLUMNNAME_Updated) 
+				|| gridField.getColumnName().equals(I_AD_Element.COLUMNNAME_UpdatedBy) 
+				|| gridField.getColumnName().equals(I_AD_Element.COLUMNNAME_UUID)) {
+			return false;
+		}
+		//	Oly Displayed
+		if(!gridField.isDisplayed()) {
+			return false;
+		}
+		//	Key
+		if(gridField.isKey()) {
+			return false;
+		}
+		//	new value like null
+		if(gridField.getValue() == null
+				&& gridField.getOldValue() == null) {
+			return false;
+		}
+		//	validate with old value
+		if(gridField.getOldValue() != null
+				&& gridField.getValue() != null
+				&& gridField.getValue().equals(gridField.getOldValue())) {
+			return false;
+		}
+		//	Default
+		return true;
 	}
 	
 	/**
