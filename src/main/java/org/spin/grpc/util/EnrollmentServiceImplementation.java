@@ -220,7 +220,7 @@ public class EnrollmentServiceImplementation extends EnrollmentServiceImplBase {
 			//	Send mail
 			sendEMail(newUser, token);
 		} catch (Exception e) {
-			throw new AdempiereException(e.getMessage());
+			log.severe(e.getMessage());
 		}
 		builder.setUserName(newUser.getValue());
 		builder.setName(newUser.getName());
