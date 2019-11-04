@@ -211,6 +211,7 @@ public class EnrollmentServiceImplementation extends EnrollmentServiceImplBase {
 		newUser.setIsLoginUser(true);
 		newUser.setIsInternalUser(false);
 		newUser.set_ValueOfColumn("ClientVersion", request.getClientVersion());
+		newUser.set_ValueOfColumn("ApplicationTypeCode", request.getApplicationType());
 		newUser.saveEx();
 		//	Request a Password
 		try {
