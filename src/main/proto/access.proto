@@ -30,9 +30,9 @@ service AccessService {
   // Request login and role
   rpc RunLoginDefault(LoginRequest) returns (Session) {}
   // Request a Role from uuid
-  rpc RunLogout(LogoutRequest) returns (Session) {}  
+  rpc RunLogout(LogoutRequest) returns (Session) {}
   // Request user roles from Session
-  rpc GetUserInfoFromSession(UserInfoRequest) returns (UserInfoValue) {}  
+  rpc GetUserInfoFromSession(UserInfoRequest) returns (UserInfoValue) {}
   // Request Menu from Parent UUID
   rpc GetMenuAndChild(UserInfoRequest) returns (Menu) {}
   // Request change role
@@ -118,12 +118,13 @@ message ContextValue {
 	bool booleanValue = 4;
 	string stringValue = 5;
 	enum ValueType {
-		INTEGER = 0;
-		LONG = 1;
-		DOUBLE = 2;
-		BOOLEAN = 3;
-		STRING = 4;
-		DATE = 5;
+		NULL = 0;
+		INTEGER = 1;
+		LONG = 2;
+		DOUBLE = 3;
+		BOOLEAN = 4;
+		STRING = 5;
+		DATE = 6;
 	}
 	ValueType valueType = 6;
 }
