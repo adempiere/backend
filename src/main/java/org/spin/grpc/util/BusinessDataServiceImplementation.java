@@ -2131,6 +2131,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		GridTab gridTab = new GridTab(gridTabVo, gridWindow, true);
 		//	Init tab
 		gridTab.query(false);
+		gridTab.clearSelection();
+		gridTab.dataNew(false);
 		//	load values
 		Map<String, Object> attributes = convertValues(request.getAttributesList());
 		for(Entry<String, Object> attribute : attributes.entrySet()) {
