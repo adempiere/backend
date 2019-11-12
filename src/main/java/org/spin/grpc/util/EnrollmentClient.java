@@ -53,8 +53,7 @@ public class EnrollmentClient {
 	  public void enrollUser() {
 		  EnrollUserRequest userRequest = EnrollUserRequest.newBuilder()
 				  .setUserName("yamelsenih")
-				  .setName("Yamel")
-				  .setLastName("Senih")
+				  .setName("Yamel Senih")
 				  .setEMail("ysenih@erpya.com")
 				  .build();
 		  User response;

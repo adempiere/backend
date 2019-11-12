@@ -254,9 +254,6 @@ public class EnrollmentServiceImplementation extends EnrollmentServiceImplBase {
 		//	Create
 		MUser newUser = new MUser(Env.getCtx(), 0, null);
 		newUser.setName(request.getName());
-		if(!Util.isEmpty(request.getLastName())) {
-			newUser.setName(newUser.getName() + " " + request.getLastName());
-		}
 		//	Add Email
 		newUser.setEMail(request.getEMail());
 		newUser.setValue(request.getUserName());

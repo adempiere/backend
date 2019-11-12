@@ -37,7 +37,6 @@ service EnrollmentService {
 message EnrollUserRequest {
 	string userName = 1;
 	string name = 2;
-	string lastName = 3;
 	string eMail = 4;
 	string clientVersion = 5;
 	string applicationType = 6;
