@@ -82,8 +82,7 @@ public class EnrollmentServiceImplementation extends EnrollmentServiceImplBase {
 	}
 	
 	@Override
-	public void resetPasswordFromToken(ResetPasswordTokenRequest request,
-			StreamObserver<ResetPasswordResponse> responseObserver) {
+	public void resetPasswordFromToken(ResetPasswordTokenRequest request, StreamObserver<ResetPasswordResponse> responseObserver) {
 		try {
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
@@ -91,6 +90,26 @@ public class EnrollmentServiceImplementation extends EnrollmentServiceImplBase {
 			log.fine("Object Requested = " + request.getToken());
 			ResetPasswordResponse.Builder passwordResetReponse = resetPasswordFromToken(request);
 			responseObserver.onNext(passwordResetReponse.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void activateUser(ActivateUserRequest request, StreamObserver<ActivateUserResponse> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Object Requested = " + request.getToken());
+			ActivateUserResponse.Builder response = activateUser(request);
+			responseObserver.onNext(response.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
@@ -139,6 +158,40 @@ public class EnrollmentServiceImplementation extends EnrollmentServiceImplBase {
 	}
 	
 	/**
+	 * Activate User
+	 * @param request
+	 * @return
+	 */
+	private ActivateUserResponse.Builder activateUser(ActivateUserRequest request) {
+		ActivateUserResponse.Builder builder = ActivateUserResponse.newBuilder();
+		//	User Name
+		if(Util.isEmpty(request.getToken())) {
+			builder.setResponseType(ActivateUserResponse.ResponseType.TOKEN_NOT_FOUND);
+			throw new AdempiereException("@Token@ @IsMandatory@");
+		}
+		MADToken token = new Query(Env.getCtx(), I_AD_Token.Table_Name, I_AD_Token.COLUMNNAME_TokenValue + " = ?", null)
+			.setParameters(request.getToken())
+			.first();
+		if(token == null
+				|| token.getAD_Token_ID() == 0) {
+			throw new AdempiereException("@Token@ @NotFound@");
+		}
+		//	Generate reset
+		try {
+			if(!TokenGeneratorHandler.getInstance().validateToken(MADTokenDefinition.TOKENTYPE_URLTokenUsedAsURL, request.getToken(), token.getAD_User_ID())) {
+				throw new AdempiereException("@Token@ @NotFound@");
+			}
+			MUser user = MUser.get(Env.getCtx(), token.getAD_User_ID());
+			user.setIsActive(true);
+			user.saveEx();
+		} catch (Exception e) {
+			builder.setResponseType(ActivateUserResponse.ResponseType.ERROR);
+			throw new AdempiereException(e.getMessage());
+		}
+		return builder;
+	}
+	
+	/**
 	 * Reset password
 	 * @param request
 	 * @return
@@ -162,7 +215,6 @@ public class EnrollmentServiceImplementation extends EnrollmentServiceImplBase {
 		//	Generate reset
 		try {
 			MADToken token = generateToken(user);
-			builder.setToken(validateNull(token.getTokenValue()));
 			//	Send mail
 			sendEMail(user, token);
 		} catch (Exception e) {
@@ -213,10 +265,14 @@ public class EnrollmentServiceImplementation extends EnrollmentServiceImplBase {
 		newUser.set_ValueOfColumn("ClientVersion", request.getClientVersion());
 		newUser.set_ValueOfColumn("ApplicationTypeCode", request.getApplicationType());
 		newUser.saveEx();
+		if(!Util.isEmpty(request.getPassword())) {
+			newUser.setPassword(request.getPassword());
+			newUser.setIsActive(false);
+			newUser.saveEx();
+		}
 		//	Request a Password
 		try {
 			MADToken token = generateToken(newUser);
-			builder.setToken(validateNull(token.getTokenValue()));
 			//	Send mail
 			sendEMail(newUser, token);
 		} catch (Exception e) {
@@ -277,23 +333,10 @@ public class EnrollmentServiceImplementation extends EnrollmentServiceImplBase {
 		email.setMessageHTML(text.getMailHeader(), message);
 		//
 		msg = email.send();
-		MUserMail um = new MUserMail(text, user.getAD_User_ID(), email);
-		um.saveEx();
+		MUserMail userMail = new MUserMail(text, user.getAD_User_ID(), email);
+		userMail.saveEx();
 		if (!msg.equals(EMail.SENT_OK)) {
 			throw new AdempiereException(user.getName() + " @RequestActionEMailError@ " + msg);
 		}
-	}
-	
-	/**
-	 * Convert null on ""
-	 * @param value
-	 * @return
-	 */
-	private String validateNull(String value) {
-		if(value == null) {
-			value = "";
-		}
-		//	
-		return value;
 	}
 }
