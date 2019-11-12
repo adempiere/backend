@@ -51,6 +51,8 @@ service BusinessDataService {
 	rpc ListRecentItems(ListRecentItemsRequest) returns (ListRecentItemsResponse) {}
 	// List a References
 	rpc ListReferences(ListReferencesRequest) returns (ListReferencesResponse) {}
+	// Get Default Value
+	rpc GetDefaultValue(GetDefaultValueRequest) returns (Value) {}
 }
 
 // The client request contains client info for request.
@@ -161,6 +163,13 @@ message Value {
 message GetLookupItemRequest {
 	int32 id = 1;
 	string uuid = 2;
+	ClientRequest clientRequest = 3;
+	// Query
+	Criteria criteria = 4;
+}
+
+// Get Lookup Item
+message GetDefaultValueRequest {
 	ClientRequest clientRequest = 3;
 	// Query
 	Criteria criteria = 4;

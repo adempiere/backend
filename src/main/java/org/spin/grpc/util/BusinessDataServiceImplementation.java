@@ -424,6 +424,26 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		}
 	}
 	
+	@Override
+	public void getDefaultValue(GetDefaultValueRequest request, StreamObserver<Value> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			Properties context = getContext(request.getClientRequest());
+			Value.Builder defaultValue = convertDefaultValue(context, request);
+			responseObserver.onNext(defaultValue.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
 	/**
 	 * Convert references to gRPC
 	 * @param context
@@ -1087,6 +1107,39 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		}
 		//	Default return
 		return defaultLanguage;
+	}
+	
+	/**
+	 * Convert Default Value from query
+	 * @param request
+	 * @return
+	 */
+	private Value.Builder convertDefaultValue(Properties context, GetDefaultValueRequest request) {
+		Criteria criteria = request.getCriteria();
+		String sql = criteria.getQuery();
+		List<Value> values = criteria.getValuesList();
+		Value.Builder builder = Value.newBuilder();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			//	SELECT Key, Value, Name FROM ...
+			pstmt = DB.prepareStatement(sql, null);
+			AtomicInteger parameterIndex = new AtomicInteger(1);
+			for(Value value : values) {
+				setParameterFromValue(pstmt, value, parameterIndex.getAndIncrement());
+			}
+			//	Get from Query
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				builder = getKeyValueFromValue(rs.getObject(1));
+			}
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+		} finally {
+			DB.close(rs, pstmt);
+		}
+		//	Return values
+		return builder;
 	}
 	
 	/**
