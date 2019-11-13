@@ -135,7 +135,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	/**	Window emulation	*/
 	private AtomicInteger windowNoEmulation = new AtomicInteger(1);
 	/**	Page Size	*/
-	private final int PAGE_SIZE = 100;
+	private final int PAGE_SIZE = 50;
 	
 	@Override
 	public void getEntity(GetEntityRequest request, StreamObserver<Entity> responseObserver) {
