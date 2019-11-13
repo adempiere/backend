@@ -61,6 +61,7 @@ import org.compiere.model.I_AD_Form;
 import org.compiere.model.I_AD_Menu;
 import org.compiere.model.I_AD_PInstance;
 import org.compiere.model.I_AD_PInstance_Log;
+import org.compiere.model.I_AD_Private_Access;
 import org.compiere.model.I_AD_Process;
 import org.compiere.model.I_AD_Session;
 import org.compiere.model.I_AD_Tab;
@@ -70,8 +71,10 @@ import org.compiere.model.MChangeLog;
 import org.compiere.model.MColumn;
 import org.compiere.model.MField;
 import org.compiere.model.MMenu;
+import org.compiere.model.MMessage;
 import org.compiere.model.MPInstance;
 import org.compiere.model.MPInstancePara;
+import org.compiere.model.MPrivateAccess;
 import org.compiere.model.MProcess;
 import org.compiere.model.MQuery;
 import org.compiere.model.MRecentItem;
@@ -80,6 +83,7 @@ import org.compiere.model.MRule;
 import org.compiere.model.MSession;
 import org.compiere.model.MTab;
 import org.compiere.model.MTable;
+import org.compiere.model.MUser;
 import org.compiere.model.MWindow;
 import org.compiere.model.PO;
 import org.compiere.model.POInfo;
@@ -100,6 +104,9 @@ import org.spin.grpc.util.Condition.Operator;
 import org.spin.grpc.util.BusinessDataServiceGrpc.BusinessDataServiceImplBase;
 import org.spin.grpc.util.RollbackEntityRequest.EventType;
 import org.spin.grpc.util.Value.ValueType;
+import org.spin.model.I_AD_ContextInfo;
+import org.spin.model.MADContextInfo;
+
 import io.grpc.Status;
 
 import com.google.protobuf.ByteString;
@@ -442,6 +449,126 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					.withCause(e)
 					.asRuntimeException());
 		}
+	}
+	
+	@Override
+	public void lockPrivateAccess(LockPrivateAccessRequest request, StreamObserver<PrivateAccess> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			Properties context = getContext(request.getClientRequest());
+			PrivateAccess.Builder privateaccess = lockUnlockPrivateAccess(context, request.getTableName(), request.getRecordId(), request.getUserUuid(), true);
+			responseObserver.onNext(privateaccess.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void unlockPrivateAccess(UnlockPrivateAccessRequest request,
+			StreamObserver<PrivateAccess> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			Properties context = getContext(request.getClientRequest());
+			PrivateAccess.Builder privateaccess = lockUnlockPrivateAccess(context, request.getTableName(), request.getRecordId(), request.getUserUuid(), false);
+			responseObserver.onNext(privateaccess.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void getPrivateAccess(GetPrivateAccessRequest request, StreamObserver<PrivateAccess> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			Properties context = getContext(request.getClientRequest());
+			PrivateAccess.Builder privateaccess = convertPrivateAccess(context, getPrivateAccess(context, request.getTableName(), request.getRecordId(), request.getUserUuid()));
+			responseObserver.onNext(privateaccess.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void getContextInfoValue(GetContextInfoValueRequest request, StreamObserver<ContextInfoValue> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			Properties context = getContext(request.getClientRequest());
+			ContextInfoValue.Builder contextInfoValue = convertContextInfoValue(context, request);
+			responseObserver.onNext(contextInfoValue.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	/**
+	 * Get private access from table, record id and user id
+	 * @param context
+	 * @param tableName
+	 * @param recordId
+	 * @param userUuid
+	 * @return
+	 */
+	private MPrivateAccess getPrivateAccess(Properties context, String tableName, int recordId, String userUuid) {
+		return new Query(context, I_AD_Private_Access.Table_Name, "EXISTS(SELECT 1 FROM AD_Table t WHERE t.AD_Table_ID = AD_Private_Access.AD_Table_ID AND t.TableName = ?) "
+				+ "AND Record_ID = ? "
+				+ "AND EXISTS(SELECT 1 FROM AD_User u WHERE u.AD_User_ID = AD_Private_Access.AD_User_ID AND u.UUID = ?)", null)
+			.setParameters(tableName, recordId, userUuid)
+			.first();
+	}
+	
+	/**
+	 * Lock and unlock private access
+	 * @param context
+	 * @param request
+	 * @param lock
+	 * @return
+	 */
+	private PrivateAccess.Builder lockUnlockPrivateAccess(Properties context, String tableName, int recordId, String userUuid, boolean lock) {
+		MPrivateAccess privateAccess = getPrivateAccess(context, tableName, recordId, userUuid);
+		//	Create new
+		if(privateAccess == null
+				|| privateAccess.getAD_Table_ID() == 0) {
+			MTable table = MTable.get(context, privateAccess.getAD_Table_ID());
+			//	Set values
+			MUser user = MUser.get(context, privateAccess.getAD_User_ID());
+			privateAccess = new MPrivateAccess(context, user.getAD_User_ID(), table.getAD_Table_ID(), recordId);
+			privateAccess.setIsActive(lock);
+			privateAccess.saveEx();
+		}
+		//	Convert Private Access
+		return convertPrivateAccess(context, privateAccess);
 	}
 	
 	/**
@@ -1115,19 +1242,13 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	 * @return
 	 */
 	private Value.Builder convertDefaultValue(Properties context, GetDefaultValueRequest request) {
-		Criteria criteria = request.getCriteria();
-		String sql = criteria.getQuery();
-		List<Value> values = criteria.getValuesList();
+		String sql = request.getQuery();
 		Value.Builder builder = Value.newBuilder();
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
 			//	SELECT Key, Value, Name FROM ...
 			pstmt = DB.prepareStatement(sql, null);
-			AtomicInteger parameterIndex = new AtomicInteger(1);
-			for(Value value : values) {
-				setParameterFromValue(pstmt, value, parameterIndex.getAndIncrement());
-			}
 			//	Get from Query
 			rs = pstmt.executeQuery();
 			if (rs.next()) {
@@ -1138,6 +1259,62 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} finally {
 			DB.close(rs, pstmt);
 		}
+		//	Return values
+		return builder;
+	}
+	
+	/**
+	 * Convert Context Info Value from query
+	 * @param request
+	 * @return
+	 */
+	private ContextInfoValue.Builder convertContextInfoValue(Properties context, GetContextInfoValueRequest request) {
+		ContextInfoValue.Builder builder = ContextInfoValue.newBuilder();
+		MADContextInfo contextInfo = new Query(context, I_AD_ContextInfo.Table_Name, I_AD_ContextInfo.COLUMNNAME_UUID + " = ?", null)
+			.setParameters(request.getUuid())
+			.first();
+		if(contextInfo != null
+				&& contextInfo.getAD_ContextInfo_ID() > 0) {
+			try {
+				//	Set value for parse no save
+				contextInfo.setSQLStatement(request.getQuery());
+				MMessage message = MMessage.get(Env.getCtx(), contextInfo.getAD_Message_ID());
+				if(message != null) {
+					//	Parse
+					Object[] arguments = contextInfo.getArguments(0);
+					if(arguments == null) {
+						return builder;
+					}
+					//	
+					String messageText = Msg.getMsg(Env.getAD_Language(Env.getCtx()), message.getValue(), arguments);
+					//	Set result message
+					builder.setMessageText(validateNull(messageText));
+				}
+			} catch (Exception e) {
+				log.log(Level.WARNING, e.getLocalizedMessage());
+			}
+		}
+		//	Return values
+		return builder;
+	}
+	
+	/**
+	 * Convert Context Info Value from query
+	 * @param request
+	 * @return
+	 */
+	private PrivateAccess.Builder convertPrivateAccess(Properties context, MPrivateAccess privateAccess) {
+		PrivateAccess.Builder builder = PrivateAccess.newBuilder();
+		if(privateAccess == null) {
+			return builder;
+		}
+		//	Table
+		MTable table = MTable.get(context, privateAccess.getAD_Table_ID());
+		//	Set values
+		builder.setTableName(table.getTableName());
+		MUser user = MUser.get(context, privateAccess.getAD_User_ID());
+		builder.setUserUuid(validateNull(user.getUUID()));
+		builder.setRecordId(privateAccess.getRecord_ID());
 		//	Return values
 		return builder;
 	}

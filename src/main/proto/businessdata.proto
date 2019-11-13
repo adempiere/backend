@@ -53,6 +53,14 @@ service BusinessDataService {
 	rpc ListReferences(ListReferencesRequest) returns (ListReferencesResponse) {}
 	// Get Default Value
 	rpc GetDefaultValue(GetDefaultValueRequest) returns (Value) {}
+	// Get context Info
+	rpc GetContextInfoValue(GetContextInfoValueRequest) returns (ContextInfoValue) {}
+	// Get Private Access
+	rpc GetPrivateAccess(GetPrivateAccessRequest) returns (PrivateAccess) {}
+	// Create Private Access
+	rpc LockPrivateAccess(LockPrivateAccessRequest) returns (PrivateAccess) {}
+	// Change Private Access
+	rpc UnlockPrivateAccess(UnlockPrivateAccessRequest) returns (PrivateAccess) {}
 }
 
 // The client request contains client info for request.
@@ -81,6 +89,37 @@ message CreateEntityRequest {
 //  Empty message
 message Empty {
 	
+}
+
+// Create Private Access Request
+message LockPrivateAccessRequest {
+	ClientRequest clientRequest = 1;
+	string tableName = 2;
+	int32 recordId = 3;
+	string userUuid = 4;
+}
+
+// Get Private Access Request
+message GetPrivateAccessRequest {
+	ClientRequest clientRequest = 1;
+	string tableName = 2;
+	int32 recordId = 3;
+	string userUuid = 4;
+}
+
+// Delete Private Access Request
+message UnlockPrivateAccessRequest {
+	ClientRequest clientRequest = 1;
+	string tableName = 2;
+	int32 recordId = 3;
+	string userUuid = 4;
+}
+
+// Private Access Object
+message PrivateAccess {
+	string tableName = 2;
+	int32 recordId = 3;
+	string userUuid = 4;
 }
 
 //  Empty message
@@ -128,6 +167,12 @@ message Entity {
 	map<string, Value> values = 4;
 }
 
+// Context Info Value
+message ContextInfoValue {
+	string messageText = 1;
+	string messageTip = 2;
+}
+
 //	BusinessProcess Selections
 message KeyValueSelection {
 	int32 selectionId = 1;
@@ -168,11 +213,19 @@ message GetLookupItemRequest {
 	Criteria criteria = 4;
 }
 
-// Get Lookup Item
+// Get Default Value Request
 message GetDefaultValueRequest {
-	ClientRequest clientRequest = 3;
+	ClientRequest clientRequest = 1;
 	// Query
-	Criteria criteria = 4;
+	string query = 2;
+}
+
+// Get Lookup Item
+message GetContextInfoValueRequest {
+	ClientRequest clientRequest = 1;
+	string uuid = 2;
+	// Query
+	string query = 3;
 }
 
 // Lookup Item Response
