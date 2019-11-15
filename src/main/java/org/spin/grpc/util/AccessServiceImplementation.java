@@ -816,6 +816,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 	 */
 	private UserInfo.Builder convertUserInfo(MUser user) {
 		UserInfo.Builder userInfo = UserInfo.newBuilder();
+		userInfo.setUuid(validateNull(user.getUUID()));
 		userInfo.setName(validateNull(user.getName()));
 		userInfo.setDescription(validateNull(user.getDescription()));
 		userInfo.setComments(validateNull(user.getComments()));

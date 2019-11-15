@@ -93,9 +93,11 @@ message UserInfoValue {
 
 // User information
 message UserInfo {
-	string name = 1;
-	string description = 2;
-	string comments = 3;
+	int32 id = 1;
+	string uuid = 2;
+	string name = 3;
+	string description = 4;
+	string comments = 5;
 }
 
 

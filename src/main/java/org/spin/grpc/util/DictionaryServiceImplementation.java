@@ -774,7 +774,8 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 					.setUuid(validateNull(contextInfoValue.getUUID()))
 					.setName(validateNull(contextInfoValue.getName()))
 					.setDescription(validateNull(contextInfoValue.getDescription()))
-					.setMessageText(messageText);
+					.setMessageText(messageText)
+					.setSqlStatement(validateNull(contextInfoValue.getSQLStatement()));
 		}
 		return builder;
 	}
