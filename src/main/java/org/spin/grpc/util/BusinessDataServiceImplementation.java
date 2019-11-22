@@ -88,13 +88,13 @@ import org.compiere.model.MRule;
 import org.compiere.model.MSession;
 import org.compiere.model.MTab;
 import org.compiere.model.MTable;
-import org.compiere.model.MTree_NodeMM;
 import org.compiere.model.MUser;
 import org.compiere.model.MWindow;
 import org.compiere.model.PO;
 import org.compiere.model.POInfo;
 import org.compiere.model.Query;
 import org.compiere.model.X_AD_PInstance_Log;
+import org.compiere.model.X_AD_TreeNodeMM;
 import org.compiere.process.ProcessInfo;
 import org.compiere.util.CCache;
 import org.compiere.util.CLogger;
@@ -751,7 +751,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				+ "AND tb.AD_User_ID = ?)", null)
 			.setParameters(userId)
 			.setClient_ID()
-			.<MTree_NodeMM>list().forEach(treeNodeMenu -> {
+			.<X_AD_TreeNodeMM>list().forEach(treeNodeMenu -> {
 				Favorite.Builder favorite = Favorite.newBuilder();
 				String menuName = "";
 				String menuDescription = "";
