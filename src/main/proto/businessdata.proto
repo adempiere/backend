@@ -61,6 +61,10 @@ service BusinessDataService {
 	rpc LockPrivateAccess(LockPrivateAccessRequest) returns (PrivateAccess) {}
 	// Change Private Access
 	rpc UnlockPrivateAccess(UnlockPrivateAccessRequest) returns (PrivateAccess) {}
+	//	Request Favorites
+	rpc ListFavorites(ListFavoritesRequest) returns (ListFavoritesResponse) {}
+	//	Request Document Statuses
+	rpc ListPendingDocuments(ListPendingDocumentsRequest) returns (ListPendingDocumentsResponse) {}
 }
 
 // The client request contains client info for request.
@@ -361,9 +365,11 @@ message ListActivitiesRequest {
 // Recent Items Request
 message ListRecentItemsRequest {
 	ClientRequest clientRequest = 1;
-	bool currentSession = 2;
-	int32 page_size = 3;
-	string page_token = 4;
+	string userUuid = 2;
+	string roleUuid = 3;
+	bool currentSession = 4;
+	int32 page_size = 5;
+	string page_token = 6;
 }
 
 // Recent Item
@@ -378,13 +384,66 @@ message RecentItem {
 	string displayName = 8;
 	string recordUuid = 9;
 	int64 updated = 10;
-	string action = 11;
+	string referenceUuid = 11;
+	string action = 12;
 }
 
 //	Recent Items List
 message ListRecentItemsResponse {
 	int64 recordCount = 1;
 	repeated RecentItem recentItems = 2;
+	string next_page_token = 3;
+}
+
+// Favorites Items Request
+message ListFavoritesRequest {
+	ClientRequest clientRequest = 1;
+	string userUuid = 2;
+	int32 page_size = 3;
+	string page_token = 4;
+}
+
+// Recent Item
+message Favorite {
+	string menuUuid = 1;
+	string menuName = 2;
+	string menuDescription = 3;
+	string referenceUuid = 4;
+	string action = 5;
+}
+
+//	Recent Items List
+message ListFavoritesResponse {
+	int64 recordCount = 1;
+	repeated Favorite favorites = 2;
+	string next_page_token = 3;
+}
+
+// Document Statuses Request
+message ListPendingDocumentsRequest {
+	ClientRequest clientRequest = 1;
+	string userUuid = 2;
+	string roleUuid = 3;
+	int32 page_size = 4;
+	string page_token = 5;
+}
+
+// Recent Item
+message PendingDocument {
+	string windowUuid = 1;
+	string formUuid = 2;
+	string documentName = 3;
+	string documentDescription = 4;
+	int32 sequence = 5;
+	int64 recordCount = 6;
+	// Query
+	Criteria criteria = 7;
+}
+
+//	Recent Items List
+message ListPendingDocumentsResponse {
+	int64 recordCount = 1;
+	repeated PendingDocument pendingDocuments = 2;
 	string next_page_token = 3;
 }
 

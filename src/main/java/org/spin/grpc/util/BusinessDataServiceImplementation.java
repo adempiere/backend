@@ -45,6 +45,7 @@ import org.adempiere.exceptions.AdempiereException;
 import org.adempiere.model.I_AD_Browse;
 import org.adempiere.model.MBrowse;
 import org.adempiere.model.MBrowseField;
+import org.adempiere.model.MDocumentStatus;
 import org.adempiere.model.MView;
 import org.adempiere.model.MViewDefinition;
 import org.adempiere.model.ZoomInfoFactory;
@@ -63,13 +64,17 @@ import org.compiere.model.I_AD_PInstance;
 import org.compiere.model.I_AD_PInstance_Log;
 import org.compiere.model.I_AD_Private_Access;
 import org.compiere.model.I_AD_Process;
+import org.compiere.model.I_AD_Role;
 import org.compiere.model.I_AD_Session;
 import org.compiere.model.I_AD_Tab;
+import org.compiere.model.I_AD_TreeNodeMM;
+import org.compiere.model.I_AD_User;
 import org.compiere.model.I_AD_Window;
 import org.compiere.model.I_AD_Workflow;
 import org.compiere.model.MChangeLog;
 import org.compiere.model.MColumn;
 import org.compiere.model.MField;
+import org.compiere.model.MForm;
 import org.compiere.model.MMenu;
 import org.compiere.model.MMessage;
 import org.compiere.model.MPInstance;
@@ -83,6 +88,7 @@ import org.compiere.model.MRule;
 import org.compiere.model.MSession;
 import org.compiere.model.MTab;
 import org.compiere.model.MTable;
+import org.compiere.model.MTree_NodeMM;
 import org.compiere.model.MUser;
 import org.compiere.model.MWindow;
 import org.compiere.model.PO;
@@ -100,17 +106,16 @@ import org.compiere.util.MimeType;
 import org.compiere.util.Msg;
 import org.compiere.util.Util;
 import org.eevolution.service.dsl.ProcessBuilder;
-import org.spin.grpc.util.Condition.Operator;
 import org.spin.grpc.util.BusinessDataServiceGrpc.BusinessDataServiceImplBase;
+import org.spin.grpc.util.Condition.Operator;
 import org.spin.grpc.util.RollbackEntityRequest.EventType;
 import org.spin.grpc.util.Value.ValueType;
 import org.spin.model.I_AD_ContextInfo;
 import org.spin.model.MADContextInfo;
 
-import io.grpc.Status;
-
 import com.google.protobuf.ByteString;
 
+import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 
 public class BusinessDataServiceImplementation extends BusinessDataServiceImplBase {
@@ -532,6 +537,46 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		}
 	}
 	
+	@Override
+	public void listPendingDocuments(ListPendingDocumentsRequest request, StreamObserver<ListPendingDocumentsResponse> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			Properties context = getContext(request.getClientRequest());
+			ListPendingDocumentsResponse.Builder pendingDocumentsList = convertPendingDocumentList(context, request);
+			responseObserver.onNext(pendingDocumentsList.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void listFavorites(ListFavoritesRequest request, StreamObserver<ListFavoritesResponse> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			Properties context = getContext(request.getClientRequest());
+			ListFavoritesResponse.Builder favoritesList = convertFavoritesList(context, request);
+			responseObserver.onNext(favoritesList.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
 	/**
 	 * Get private access from table, record id and user id
 	 * @param context
@@ -631,6 +676,129 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				}
 			}
 		}
+		//	Return
+		return builder;
+	}
+	
+	/**
+	 * Convert pending documents to gRPC
+	 * @param context
+	 * @param request
+	 * @return
+	 */
+	private ListPendingDocumentsResponse.Builder convertPendingDocumentList(Properties context, ListPendingDocumentsRequest request) {
+		ListPendingDocumentsResponse.Builder builder = ListPendingDocumentsResponse.newBuilder();
+		//	Get entity
+		if(Util.isEmpty(request.getUserUuid())
+				|| Util.isEmpty(request.getRoleUuid())) {
+			throw new AdempiereException("@AD_User_ID@ / @AD_Role_ID@ @NotFound@");
+		}
+		//	Get user
+		int userId = new Query(context, I_AD_User.Table_Name, I_AD_User.COLUMNNAME_UUID + " = ?", null)
+				.setParameters(request.getUserUuid())
+				.firstId();
+		//	Get role
+		int roleId = new Query(context, I_AD_Role.Table_Name, I_AD_Role.COLUMNNAME_UUID + " = ?", null)
+				.setParameters(request.getRoleUuid())
+				.firstId();
+		//	Get from document status
+		Arrays.asList(MDocumentStatus.getDocumentStatusIndicators(context, userId, roleId)).forEach(documentStatus -> {
+			PendingDocument.Builder pendingDocument = PendingDocument.newBuilder();
+			pendingDocument.setDocumentName(validateNull(documentStatus.getName()));
+			// for Reference
+			if(documentStatus.getAD_Window_ID() != 0) {
+				MWindow window = MWindow.get(context, documentStatus.getAD_Window_ID());
+				pendingDocument.setWindowUuid(validateNull(window.getUUID()));
+			} else if(documentStatus.getAD_Form_ID() != 0) {
+				MForm form = new MForm(context, documentStatus.getAD_Form_ID(), null);
+				pendingDocument.setFormUuid(validateNull(form.getUUID()));
+			}
+			//	Criteria
+			MTable table = MTable.get(context, documentStatus.getAD_Table_ID());
+			pendingDocument.setCriteria(Criteria.newBuilder()
+					.setTableName(validateNull(table.getTableName()))
+					.setWhereClause(validateNull(documentStatus.getWhereClause())));
+			//	Set quantity
+			pendingDocument.setRecordCount(MDocumentStatus.evaluate(documentStatus));
+			//	TODO: Add description for interface
+			builder.addPendingDocuments(pendingDocument);
+		});
+		//	Return
+		return builder;
+	}
+	
+	/**
+	 * Convert favorites to gRPC
+	 * @param context
+	 * @param request
+	 * @return
+	 */
+	private ListFavoritesResponse.Builder convertFavoritesList(Properties context, ListFavoritesRequest request) {
+		ListFavoritesResponse.Builder builder = ListFavoritesResponse.newBuilder();
+		//	Get entity
+		if(Util.isEmpty(request.getUserUuid())) {
+			throw new AdempiereException("@AD_User_ID@ @NotFound@");
+		}
+		//	Get user
+		int userId = new Query(context, I_AD_User.Table_Name, I_AD_User.COLUMNNAME_UUID + " = ?", null)
+				.setParameters(request.getUserUuid())
+				.firstId();
+		//	TODO: add tree criteria
+		new Query(context, I_AD_TreeNodeMM.Table_Name, "EXISTS(SELECT 1 "
+				+ "FROM AD_TreeBar tb "
+				+ "WHERE tb.AD_Tree_ID = AD_TreeNodeMM.AD_Tree_ID "
+				+ "AND tb.Node_ID = AD_TreeNodeMM.Node_ID "
+				+ "AND tb.AD_User_ID = ?)", null)
+			.setParameters(userId)
+			.setClient_ID()
+			.<MTree_NodeMM>list().forEach(treeNodeMenu -> {
+				Favorite.Builder favorite = Favorite.newBuilder();
+				String menuName = "";
+				String menuDescription = "";
+				MMenu menu = MMenu.getFromId(context, treeNodeMenu.getNode_ID());
+				favorite.setMenuUuid(validateNull(menu.getUUID()));
+				if(!menu.isCentrallyMaintained()) {
+					menuName = menu.getName();
+					menuDescription = menu.getDescription();
+					if(!Env.isBaseLanguage(context, "")) {
+						menuName = menu.get_Translation("Name");
+						menuDescription = menu.get_Translation("Description");
+					}
+				}
+				//	Set name and description
+				favorite.setMenuName(validateNull(menuName));
+				favorite.setMenuDescription(validateNull(menuDescription));
+				//	Set reference
+				favorite.setAction(validateNull(MMenu.ACTION_Window));
+				//	Supported actions
+				if(!Util.isEmpty(menu.getAction())) {
+					String referenceUuid = null;
+					if(menu.getAction().equals(MMenu.ACTION_Form)) {
+						if(menu.getAD_Form_ID() > 0) {
+							MForm form = new MForm(context, menu.getAD_Form_ID(), null);
+							referenceUuid = form.getUUID();
+						}
+					} else if(menu.getAction().equals(MMenu.ACTION_Window)) {
+						if(menu.getAD_Window_ID() > 0) {
+							MWindow window = new MWindow(context, menu.getAD_Window_ID(), null);
+							referenceUuid = window.getUUID();
+						}
+					} else if(menu.getAction().equals(MMenu.ACTION_Process)
+						|| menu.getAction().equals(MMenu.ACTION_Report)) {
+						if(menu.getAD_Process_ID() > 0) {
+							MProcess process = MProcess.get(context, menu.getAD_Process_ID());
+							referenceUuid = process.getUUID();
+						}
+					} else if(menu.getAction().equals(MMenu.ACTION_SmartBrowse)) {
+						if(menu.getAD_Browse_ID() > 0) {
+							MBrowse smartBrowser = MBrowse.get(context, menu.getAD_Browse_ID());
+							referenceUuid = smartBrowser.getUUID();
+						}
+					}
+					favorite.setReferenceUuid(validateNull(referenceUuid));
+				}
+				builder.addFavorites(favorite);
+			});
 		//	Return
 		return builder;
 	}
@@ -2125,6 +2293,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 							.setDisplayName(validateNull(recentItem.getLabel()));
 					String menuName = "";
 					String menuDescription = "";
+					String referenceUuid = null;
 					if(recentItem.getAD_Tab_ID() > 0) {
 						MTab tab = MTab.get(context, recentItem.getAD_Tab_ID());
 						recentItemBuilder.setTabUuid(validateNull(tab.getUUID()));
@@ -2142,6 +2311,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 						recentItemBuilder.setWindowUuid(validateNull(window.getUUID()));
 						menuName = window.getName();
 						menuDescription = window.getDescription();
+						referenceUuid = window.getUUID();
 						if(!Env.isBaseLanguage(context, "")) {
 							menuName = window.get_Translation("Name");
 							menuDescription = window.get_Translation("Description");
@@ -2162,11 +2332,37 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 						}
 						//	Add Action
 						recentItemBuilder.setAction(validateNull(menu.getAction()));
+						//	Supported actions
+						if(!Util.isEmpty(menu.getAction())) {
+							if(menu.getAction().equals(MMenu.ACTION_Form)) {
+								if(menu.getAD_Form_ID() > 0) {
+									MForm form = new MForm(context, menu.getAD_Form_ID(), null);
+									referenceUuid = form.getUUID();
+								}
+							} else if(menu.getAction().equals(MMenu.ACTION_Window)) {
+								if(menu.getAD_Window_ID() > 0) {
+									MWindow window = new MWindow(context, menu.getAD_Window_ID(), null);
+									referenceUuid = window.getUUID();
+								}
+							} else if(menu.getAction().equals(MMenu.ACTION_Process)
+								|| menu.getAction().equals(MMenu.ACTION_Report)) {
+								if(menu.getAD_Process_ID() > 0) {
+									MProcess process = MProcess.get(context, menu.getAD_Process_ID());
+									referenceUuid = process.getUUID();
+								}
+							} else if(menu.getAction().equals(MMenu.ACTION_SmartBrowse)) {
+								if(menu.getAD_Browse_ID() > 0) {
+									MBrowse smartBrowser = MBrowse.get(context, menu.getAD_Browse_ID());
+									referenceUuid = smartBrowser.getUUID();
+								}
+							}
+						}
 					}
 					//	Add time
 					recentItemBuilder.setMenuName(validateNull(menuName));
 					recentItemBuilder.setMenuDescription(validateNull(menuDescription));
 					recentItemBuilder.setUpdated(recentItem.getUpdated().getTime());
+					recentItemBuilder.setReferenceUuid(validateNull(referenceUuid));
 					//	For uuid
 					if(recentItem.getAD_Table_ID() != 0
 							&& recentItem.getRecord_ID() != 0) {
