@@ -691,6 +691,18 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			MColumn column = MColumn.get(context, tab.getAD_Column_ID());
 			builder.setLinkColumnName(column.getColumnName());
 		}
+		if(tab.isSortTab()) {
+			//	Sort Column
+			if(tab.getAD_ColumnSortOrder_ID() > 0) {
+				MColumn column = MColumn.get(context, tab.getAD_ColumnSortOrder_ID());
+				builder.setSortOrderColumnName(column.getColumnName());
+			}
+			//	Sort Yes / No
+			if(tab.getAD_ColumnSortYesNo_ID() > 0) {
+				MColumn column = MColumn.get(context, tab.getAD_ColumnSortYesNo_ID());
+				builder.setSortYesNoColumnName(column.getColumnName());
+			}
+		}
 		//	Process
 		List<MProcess> processList = getProcessActionFromTab(context, tab);
 		if(processList != null

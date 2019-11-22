@@ -95,18 +95,20 @@ message Tab {
 	bool isChangeLog = 21;
 	int32 accessLevel = 22;
 	string linkColumnName = 23;
-	string parentColumnName = 24;
-	string displayLogic = 25;
-	string commitWarning = 26;
-	string query = 27;
-	string whereClause = 28;
-	string orderByClause = 29;
-	string parentTabUuid = 30;
+	string sortOrderColumnName = 24;
+	string sortYesNoColumnName = 25;
+	string parentColumnName = 26;
+	string displayLogic = 27;
+	string commitWarning = 28;
+	string query = 29;
+	string whereClause = 30;
+	string orderByClause = 31;
+	string parentTabUuid = 32;
 	// External Info
-	ContextInfo contextInfo = 31;
-	repeated Process processes = 32;
-	repeated Field fields = 33;
-	FieldGroup fieldGroup = 34;
+	ContextInfo contextInfo = 33;
+	repeated Process processes = 34;
+	repeated Field fields = 35;
+	FieldGroup fieldGroup = 36;
 }
 
 // Field
