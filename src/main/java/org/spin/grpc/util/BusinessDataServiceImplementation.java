@@ -62,8 +62,10 @@ import org.compiere.model.I_AD_Form;
 import org.compiere.model.I_AD_Menu;
 import org.compiere.model.I_AD_PInstance;
 import org.compiere.model.I_AD_PInstance_Log;
+import org.compiere.model.I_AD_PrintFormat;
 import org.compiere.model.I_AD_Private_Access;
 import org.compiere.model.I_AD_Process;
+import org.compiere.model.I_AD_ReportView;
 import org.compiere.model.I_AD_Role;
 import org.compiere.model.I_AD_Session;
 import org.compiere.model.I_AD_Tab;
@@ -83,6 +85,7 @@ import org.compiere.model.MPrivateAccess;
 import org.compiere.model.MProcess;
 import org.compiere.model.MQuery;
 import org.compiere.model.MRecentItem;
+import org.compiere.model.MReportView;
 import org.compiere.model.MRole;
 import org.compiere.model.MRule;
 import org.compiere.model.MSession;
@@ -95,6 +98,7 @@ import org.compiere.model.POInfo;
 import org.compiere.model.Query;
 import org.compiere.model.X_AD_PInstance_Log;
 import org.compiere.model.X_AD_TreeNodeMM;
+import org.compiere.print.MPrintFormat;
 import org.compiere.process.ProcessInfo;
 import org.compiere.util.CCache;
 import org.compiere.util.CLogger;
@@ -577,6 +581,26 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		}
 	}
 	
+	@Override
+	public void listPrintFormats(ListPrintFormatsRequest request, StreamObserver<ListPrintFormatsResponse> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			Properties context = getContext(request.getClientRequest());
+			ListPrintFormatsResponse.Builder printFormatsList = convertPrintFormatsList(context, request);
+			responseObserver.onNext(printFormatsList.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
 	/**
 	 * Get private access from table, record id and user id
 	 * @param context
@@ -723,6 +747,59 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			//	TODO: Add description for interface
 			builder.addPendingDocuments(pendingDocument);
 		});
+		//	Return
+		return builder;
+	}
+	
+	/**
+	 * Convert favorites to gRPC
+	 * @param context
+	 * @param request
+	 * @return
+	 */
+	private ListPrintFormatsResponse.Builder convertPrintFormatsList(Properties context, ListPrintFormatsRequest request) {
+		ListPrintFormatsResponse.Builder builder = ListPrintFormatsResponse.newBuilder();
+		//	Get entity
+		if(Util.isEmpty(request.getTableName())
+				&& Util.isEmpty(request.getProcessUuid())
+				&& Util.isEmpty(request.getReportViewUuid())) {
+			throw new AdempiereException("@TableName@ / @AD_Process_ID@ / @AD_ReportView_ID@ @NotFound@");
+		}
+		String whereClause = null;
+		List<Object> parameters = new ArrayList<>();
+		//	For Table Name
+		if(!Util.isEmpty(request.getTableName())) {
+			MTable table = MTable.get(context, request.getTableName());
+			whereClause = "AD_Table_ID = ?";
+			parameters.add(table);
+		} else if(!Util.isEmpty(request.getProcessUuid())) {
+			whereClause = "EXISTS(SELECT 1 FROM AD_Process p WHERE p.UUID = ? AND (p.AD_PrintFormat_ID = AD_PrintFormat.AD_PrintFormat_ID OR p.AD_ReportView_ID = AD_PrintFormat.AD_ReportView_ID))";
+			parameters.add(request.getProcessUuid());
+		} else if(!Util.isEmpty(request.getReportViewUuid())) {
+			MReportView reportView = new Query(context, I_AD_ReportView.Table_Name, I_AD_ReportView.COLUMNNAME_UUID + " = ?", null)
+				.setParameters(request.getReportViewUuid())
+				.first();
+			whereClause = "AD_ReportView_ID = ?";
+			parameters.add(reportView.getUUID());
+		}
+		//	Get List
+		new Query(context, I_AD_PrintFormat.Table_Name, whereClause, null)
+			.setParameters(parameters)
+			.<MPrintFormat>list().forEach(printFormatReference -> {
+				PrintFormat.Builder printFormatBuilder = PrintFormat.newBuilder();
+				printFormatBuilder.setUuid(validateNull(printFormatReference.getUUID()));
+				printFormatBuilder.setName(validateNull(printFormatReference.getName()));
+				printFormatBuilder.setDescription(validateNull(printFormatReference.getDescription()));
+				printFormatBuilder.setIsDefault(printFormatReference.isDefault());
+				MTable table = MTable.get(context, printFormatReference.getAD_Table_ID());
+				printFormatBuilder.setTableName(validateNull(table.getTableName()));
+				if(printFormatReference.getAD_ReportView_ID() != 0) {
+					MReportView reportView = MReportView.get(context, printFormatReference.getAD_ReportView_ID());
+					printFormatBuilder.setReportViewUuid(validateNull(reportView.getUUID()));
+				}
+				//	add
+				builder.addPrintFormats(printFormatBuilder);
+			});
 		//	Return
 		return builder;
 	}

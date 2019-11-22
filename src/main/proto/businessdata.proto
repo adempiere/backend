@@ -65,6 +65,8 @@ service BusinessDataService {
 	rpc ListFavorites(ListFavoritesRequest) returns (ListFavoritesResponse) {}
 	//	Request Document Statuses
 	rpc ListPendingDocuments(ListPendingDocumentsRequest) returns (ListPendingDocumentsResponse) {}
+	//	Request Print Format List
+	rpc ListPrintFormats(ListPrintFormatsRequest) returns (ListPrintFormatsResponse) {}
 }
 
 // The client request contains client info for request.
@@ -444,6 +446,33 @@ message PendingDocument {
 message ListPendingDocumentsResponse {
 	int64 recordCount = 1;
 	repeated PendingDocument pendingDocuments = 2;
+	string next_page_token = 3;
+}
+
+// Print Formats Request
+message ListPrintFormatsRequest {
+	ClientRequest clientRequest = 1;
+	string tableName = 2;
+	string reportViewUuid = 3;
+	string processUuid = 4;
+	int32 page_size = 5;
+	string page_token = 6;
+}
+
+// Print Format
+message PrintFormat {
+	string uuid = 1;
+	string name = 2;
+	string description = 3;
+	string tableName = 4;
+	bool isDefault = 5;
+	string reportViewUuid = 6;
+}
+
+//	Print Format List
+message ListPrintFormatsResponse {
+	int64 recordCount = 1;
+	repeated PrintFormat printFormats = 2;
 	string next_page_token = 3;
 }
 
