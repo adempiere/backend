@@ -93,6 +93,7 @@ import org.compiere.model.MTab;
 import org.compiere.model.MTable;
 import org.compiere.model.MUser;
 import org.compiere.model.MWindow;
+import org.compiere.model.M_Element;
 import org.compiere.model.PO;
 import org.compiere.model.POInfo;
 import org.compiere.model.Query;
@@ -601,6 +602,46 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		}
 	}
 	
+	@Override
+	public void listReportViews(ListReportViewsRequest request, StreamObserver<ListReportViewsResponse> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			Properties context = getContext(request.getClientRequest());
+			ListReportViewsResponse.Builder reportViewsList = convertReportViewsList(context, request);
+			responseObserver.onNext(reportViewsList.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void listDrillTables(ListDrillTablesRequest request, StreamObserver<ListDrillTablesResponse> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			Properties context = getContext(request.getClientRequest());
+			ListDrillTablesResponse.Builder drillTablesList = convertDrillTablesList(context, request);
+			responseObserver.onNext(drillTablesList.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
 	/**
 	 * Get private access from table, record id and user id
 	 * @param context
@@ -752,7 +793,125 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	}
 	
 	/**
-	 * Convert favorites to gRPC
+	 * Convert Report View to gRPC
+	 * @param context
+	 * @param request
+	 * @return
+	 */
+	private ListReportViewsResponse.Builder convertReportViewsList(Properties context, ListReportViewsRequest request) {
+		ListReportViewsResponse.Builder builder = ListReportViewsResponse.newBuilder();
+		//	Get entity
+		if(Util.isEmpty(request.getTableName())
+				&& Util.isEmpty(request.getProcessUuid())) {
+			throw new AdempiereException("@TableName@ / @AD_Process_ID@ @NotFound@");
+		}
+		String whereClause = null;
+		List<Object> parameters = new ArrayList<>();
+		//	For Table Name
+		if(!Util.isEmpty(request.getTableName())) {
+			MTable table = MTable.get(context, request.getTableName());
+			whereClause = "AD_Table_ID = ?";
+			parameters.add(table);
+		} else if(!Util.isEmpty(request.getProcessUuid())) {
+			whereClause = "EXISTS(SELECT 1 FROM AD_Process p WHERE p.UUID = ? AND p.AD_ReportView_ID = AD_ReportView.AD_ReportView_ID)";
+			parameters.add(request.getProcessUuid());
+		}
+		//	Get List
+		new Query(context, I_AD_ReportView.Table_Name, whereClause, null)
+			.setParameters(parameters)
+			.<MReportView>list().forEach(reportViewReference -> {
+				ReportView.Builder reportViewBuilder = ReportView.newBuilder();
+				String name = reportViewReference.getName();
+				String description = reportViewReference.getDescription();
+				if(!Env.isBaseLanguage(context, "")) {
+					String translation = reportViewReference.get_Translation("Name");
+					if(!Util.isEmpty(translation)) {
+						name = translation;
+					}
+					translation = reportViewReference.get_Translation("Description");
+					if(!Util.isEmpty(translation)) {
+						description = translation;
+					}
+				}
+				reportViewBuilder.setUuid(validateNull(reportViewReference.getUUID()));
+				reportViewBuilder.setName(validateNull(name));
+				reportViewBuilder.setDescription(validateNull(description));
+				MTable table = MTable.get(context, reportViewReference.getAD_Table_ID());
+				reportViewBuilder.setTableName(validateNull(table.getTableName()));
+				//	add
+				builder.addReportViews(reportViewBuilder);
+			});
+		//	Return
+		return builder;
+	}
+	
+	/**
+	 * Convert Report View to gRPC
+	 * @param context
+	 * @param request
+	 * @return
+	 */
+	private ListDrillTablesResponse.Builder convertDrillTablesList(Properties context, ListDrillTablesRequest request) {
+		ListDrillTablesResponse.Builder builder = ListDrillTablesResponse.newBuilder();
+		//	Get entity
+		if(Util.isEmpty(request.getTableName())) {
+			throw new AdempiereException("@TableName@ @NotFound@");
+		}
+		MTable table = MTable.get(context, request.getTableName());
+		String sql = "SELECT t.TableName, e.ColumnName, NULLIF(e.PO_PrintName,e.PrintName) "
+				+ "FROM AD_Column c "
+				+ " INNER JOIN AD_Column used ON (c.ColumnName=used.ColumnName)"
+				+ " INNER JOIN AD_Table t ON (used.AD_Table_ID=t.AD_Table_ID AND t.IsView='N' AND t.AD_Table_ID <> c.AD_Table_ID)"
+				+ " INNER JOIN AD_Column cKey ON (t.AD_Table_ID=cKey.AD_Table_ID AND cKey.IsKey='Y')"
+				+ " INNER JOIN AD_Element e ON (cKey.ColumnName=e.ColumnName) "
+				+ "WHERE c.AD_Table_ID=? AND c.IsKey='Y' "
+				+ "ORDER BY 3";
+			PreparedStatement pstmt = null;
+			ResultSet resultSet = null;
+			try {
+				pstmt = DB.prepareStatement(sql, null);
+				pstmt.setInt(1, table.getAD_Table_ID());
+				resultSet = pstmt.executeQuery();
+				while (resultSet.next()) {
+					String drillTableName = resultSet.getString("TableName");
+					String columnName = resultSet.getString("ColumnName");
+					M_Element element = M_Element.get(context, columnName);
+					//	Add here
+					DrillTable.Builder drillTable = DrillTable.newBuilder();
+					drillTable.setTableName(validateNull(drillTableName));
+					String name = element.getPrintName();
+					String poName = element.getPO_PrintName();
+					if(!Env.isBaseLanguage(context, "")) {
+						String translation = element.get_Translation("PrintName");
+						if(!Util.isEmpty(translation)) {
+							name = translation;
+						}
+						translation = element.get_Translation("PO_PrintName");
+						if(!Util.isEmpty(translation)) {
+							poName = translation;
+						}
+					}
+					if(!Util.isEmpty(poName)) {
+						name = name + "/" + poName;
+					}
+					//	Print Name
+					drillTable.setPrintName(validateNull(name));
+					//	Add to list
+					builder.addDrillTables(drillTable);
+				}
+				resultSet.close();
+				pstmt.close();
+			} catch (SQLException e) {
+				log.log(Level.SEVERE, sql, e);
+			} finally {
+				DB.close(resultSet, pstmt);
+			}
+		//	Return
+		return builder;
+	}
+	
+	/**
+	 * Convert print formats to gRPC
 	 * @param context
 	 * @param request
 	 * @return
@@ -838,8 +997,14 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					menuName = menu.getName();
 					menuDescription = menu.getDescription();
 					if(!Env.isBaseLanguage(context, "")) {
-						menuName = menu.get_Translation("Name");
-						menuDescription = menu.get_Translation("Description");
+						String translation = menu.get_Translation("Name");
+						if(!Util.isEmpty(translation)) {
+							menuName = translation;
+						}
+						translation = menu.get_Translation("Description");
+						if(!Util.isEmpty(translation)) {
+							menuDescription = translation;
+						}
 					}
 				}
 				//	Set name and description

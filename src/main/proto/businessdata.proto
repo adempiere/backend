@@ -67,6 +67,10 @@ service BusinessDataService {
 	rpc ListPendingDocuments(ListPendingDocumentsRequest) returns (ListPendingDocumentsResponse) {}
 	//	Request Print Format List
 	rpc ListPrintFormats(ListPrintFormatsRequest) returns (ListPrintFormatsResponse) {}
+	//	Request Report View List
+	rpc ListReportViews(ListReportViewsRequest) returns (ListReportViewsResponse) {}
+	//	Request Drill Tables List
+	rpc ListDrillTables(ListDrillTablesRequest) returns (ListDrillTablesResponse) {}
 }
 
 // The client request contains client info for request.
@@ -473,6 +477,51 @@ message PrintFormat {
 message ListPrintFormatsResponse {
 	int64 recordCount = 1;
 	repeated PrintFormat printFormats = 2;
+	string next_page_token = 3;
+}
+
+// Report Views Request
+message ListReportViewsRequest {
+	ClientRequest clientRequest = 1;
+	string tableName = 2;
+	string processUuid = 3;
+	int32 page_size = 4;
+	string page_token = 5;
+}
+
+// Report View
+message ReportView {
+	string uuid = 1;
+	string name = 2;
+	string description = 3;
+	string tableName = 4;
+}
+
+//	Report View List
+message ListReportViewsResponse {
+	int64 recordCount = 1;
+	repeated ReportView reportViews = 2;
+	string next_page_token = 3;
+}
+
+// Drill table Request
+message ListDrillTablesRequest {
+	ClientRequest clientRequest = 1;
+	string tableName = 2;
+	int32 page_size = 3;
+	string page_token = 4;
+}
+
+// Drill Table
+message DrillTable {
+	string tableName = 1;
+	string printName = 2;
+}
+
+//	Drill Tables List
+message ListDrillTablesResponse {
+	int64 recordCount = 1;
+	repeated DrillTable drillTables = 2;
 	string next_page_token = 3;
 }
 
