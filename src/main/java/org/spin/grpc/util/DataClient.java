@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.spin.grpc.util.Condition.Operator;
 import org.spin.grpc.util.Value.ValueType;
 
 import io.grpc.ManagedChannel;
@@ -73,6 +74,36 @@ public class DataClient {
 	  /**
 	   * Request a process
 	   */
+	  public void getReportOutput() {
+		  ClientRequest clientRequest = ClientRequest.newBuilder()
+				  .setSessionUuid("6a97ad03-6f70-43b3-9ed2-b744e00b6686")
+				  .build();
+		  Criteria.Builder criteria = Criteria.newBuilder();
+		  criteria.setTableName("C_BPartner")
+		  	.addConditions(Condition.newBuilder()
+		  			.setColumnName("C_BPartner_ID")
+		  			.setValue(Value.newBuilder().setIntValue(1001219).setValueType(ValueType.INTEGER))
+		  			.setOperator(Operator.EQUAL));
+		  GetReportOutputRequest request = GetReportOutputRequest.newBuilder()
+				  .setClientRequest(clientRequest)
+				  .setCriteria(criteria)
+				  .setPrintFormatUuid("5788e4a4-b253-11e9-aedf-0242ac110003")
+				  .setReportName("Test")
+				  .setReportType("html")
+				  .build();
+		  ReportOutput response;
+		  try {
+			  response = blockingStub.getReportOutput(request);
+			  logger.info("Cache Reset: " + response);
+		  } catch (StatusRuntimeException e) {
+			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
+		      return;
+		  }
+	  }
+	  
+	  /**
+	   * Request a process
+	   */
 	  public void requestCallout() {
 		  ClientRequest clientRequest = ClientRequest.newBuilder()
 				  .setSessionUuid("543ca441-4963-4e01-8eaf-7c9dbbc851d3")
@@ -103,8 +134,8 @@ public class DataClient {
 	  public static void main(String[] args) throws Exception {
 		DataClient client = new DataClient("localhost", 50052);
 	    try {
-	    	logger.info("####################### Process #####################");
-	    	client.requestCallout();
+	    	logger.info("####################### Report Output #####################");
+	    	client.getReportOutput();
 	      client.shutdown();
 	    } catch (Exception e) {
 			e.printStackTrace();

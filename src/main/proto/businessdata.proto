@@ -71,6 +71,8 @@ service BusinessDataService {
 	rpc ListReportViews(ListReportViewsRequest) returns (ListReportViewsResponse) {}
 	//	Request Drill Tables List
 	rpc ListDrillTables(ListDrillTablesRequest) returns (ListDrillTablesResponse) {}
+	//	Request Report Output
+	rpc GetReportOutput(GetReportOutputRequest) returns (ReportOutput) {}
 }
 
 // The client request contains client info for request.
@@ -89,6 +91,17 @@ message GetEntityRequest {
 	Criteria criteria = 5;
 }
 
+// Get Entity Request
+message GetReportOutputRequest {
+	string printFormatUuid = 1;
+	string reportViewUuid = 2;
+	bool isSummary = 3;
+	string reportName = 5;
+	string reportType = 6;
+	ClientRequest clientRequest = 7;
+	// Query
+	Criteria criteria = 8;
+}
 // Create Entity Request
 message CreateEntityRequest {
 	ClientRequest clientRequest = 1;
@@ -543,7 +556,7 @@ message BusinessProcess {
 	int64 lastRun = 7;
 	repeated ProcessInfoLog logs = 8;
 	map<string, Value> parameters = 9;
-	ProcessOutput output = 10;
+	ReportOutput output = 10;
 }
 
 //	BusinessProcess Log result
@@ -553,16 +566,20 @@ message ProcessInfoLog {
 }
 
 //	Used for get output from report / BusinessProcess like PDF, HTML another result for show to end user
-message ProcessOutput {
+message ReportOutput {
 	string uuid = 1;
 	string name = 2;
 	string description = 3;
 	string fileName = 4;
 	string output = 5;
 	string mimeType = 6;
-	bytes outputStream = 7;
+	int64 dataCols = 7;
+	int64 dataRows = 8;
+	string headerName = 9;
+	string footerName = 10;
+	bytes outputStream = 11;
 	//	Output Type
-	string reportType = 8;
+	string reportType = 12;
 }
 
 // Browser request

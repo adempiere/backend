@@ -96,10 +96,12 @@ import org.compiere.model.MWindow;
 import org.compiere.model.M_Element;
 import org.compiere.model.PO;
 import org.compiere.model.POInfo;
+import org.compiere.model.PrintInfo;
 import org.compiere.model.Query;
 import org.compiere.model.X_AD_PInstance_Log;
 import org.compiere.model.X_AD_TreeNodeMM;
 import org.compiere.print.MPrintFormat;
+import org.compiere.print.ReportEngine;
 import org.compiere.process.ProcessInfo;
 import org.compiere.util.CCache;
 import org.compiere.util.CLogger;
@@ -117,6 +119,8 @@ import org.spin.grpc.util.RollbackEntityRequest.EventType;
 import org.spin.grpc.util.Value.ValueType;
 import org.spin.model.I_AD_ContextInfo;
 import org.spin.model.MADContextInfo;
+import org.spin.util.AbstractExportFormat;
+import org.spin.util.ReportExportHandler;
 
 import com.google.protobuf.ByteString;
 
@@ -642,6 +646,164 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		}
 	}
 	
+	@Override
+	public void getReportOutput(GetReportOutputRequest request, StreamObserver<ReportOutput> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			Properties context = getContext(request.getClientRequest());
+			ReportOutput.Builder reportOutput = getReportOutput(context, request);
+			responseObserver.onNext(reportOutput.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	/**
+	 * Ger Report Query from Criteria
+	 * @param context
+	 * @param criteria
+	 * @return
+	 */
+	private MQuery getReportQueryFromCriteria(Properties context, Criteria criteria) {
+		MTable table = MTable.get(context, criteria.getTableName());
+		MQuery query = new MQuery(table.getTableName());
+		criteria.getConditionsList().stream()
+		.filter(condition -> !Util.isEmpty(condition.getColumnName()))
+		.forEach(condition -> {
+			String columnName = condition.getColumnName();
+			String operator = convertOperator(condition.getOperatorValue());
+			if(condition.getOperatorValue() == Operator.LIKE_VALUE
+					|| condition.getOperatorValue() == Operator.NOT_LIKE_VALUE) {
+				columnName = "UPPER(" + columnName + ")";
+				query.addRestriction(columnName, operator, getValueFromType(condition.getValue(), true));
+			}
+			//	For in or not in
+			if(condition.getOperatorValue() == Operator.IN_VALUE
+					|| condition.getOperatorValue() == Operator.NOT_IN_VALUE) {
+				StringBuffer whereClause = new StringBuffer();
+				whereClause.append(columnName).append(convertOperator(condition.getOperatorValue()));
+				StringBuffer parameter = new StringBuffer();
+				condition.getValuesList().forEach(value -> {
+					if(parameter.length() > 0) {
+						parameter.append(", ");
+					}
+					Object convertedValue = getValueFromType(value);
+					if(convertedValue instanceof String) {
+						convertedValue = "'" + convertedValue + "'";
+					}
+					parameter.append(convertedValue);
+				});
+				whereClause.append("(").append(parameter).append(")");
+				query.addRestriction(whereClause.toString());
+			} else if(condition.getOperatorValue() == Operator.BETWEEN_VALUE) {
+				query.addRangeRestriction(columnName, getValueFromType(condition.getValue()), getValueFromType(condition.getValueTo()));
+			} else {
+				query.addRestriction(columnName, operator, getValueFromType(condition.getValue()));
+			}
+		});
+		return query;
+	}
+	
+	/**
+	 * Convert Object to list
+	 * @param request
+	 * @return
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
+	 */
+	private ReportOutput.Builder getReportOutput(Properties context, GetReportOutputRequest request) throws FileNotFoundException, IOException {
+		Criteria criteria = request.getCriteria();
+		if(Util.isEmpty(criteria.getTableName())) {
+			throw new AdempiereException("@TableName@ @NotFound@");
+		}
+		//	Validate print format
+		if(Util.isEmpty(request.getPrintFormatUuid())) {
+			throw new AdempiereException("@AD_PrintFormat_ID@ @NotFound@");
+		}
+		MTable table = MTable.get(context, criteria.getTableName());
+		//	
+		if(!MRole.getDefault().isCanReport(table.getAD_Table_ID())) {
+			throw new AdempiereException("@AccessCannotReport@");
+		}
+		//	
+		ReportOutput.Builder builder = ReportOutput.newBuilder();
+		MQuery query = getReportQueryFromCriteria(context, criteria);
+		if(!Util.isEmpty(criteria.getWhereClause())) {
+			query.addRestriction(criteria.getWhereClause());
+		}
+		//	
+		PrintInfo printInformation = new PrintInfo(request.getReportName(), table.getAD_Table_ID(), 102, 0);
+		MPrintFormat printFormat = MPrintFormat.get(Env.getCtx(), 102, false);
+		ReportEngine reportEngine = new ReportEngine(Env.getCtx(), printFormat, query, printInformation);
+		if(!Util.isEmpty(request.getReportViewUuid())) {
+			MReportView reportView = new Query(context, I_AD_ReportView.Table_Name, I_AD_ReportView.COLUMNNAME_UUID + " = ?", null)
+					.setParameters(request.getReportViewUuid())
+					.first();
+			if(reportView != null) {
+				reportEngine.setAD_ReportView_ID(reportView.getAD_ReportView_ID());
+			}
+		}
+		//	Set Summary
+		reportEngine.setSummary(request.getIsSummary());
+		//	
+		File reportFile = createOutput(reportEngine, request.getReportType());
+		if(reportFile != null
+				&& reportFile.exists()) {
+			String validFileName = getValidName(reportFile.getName());
+			builder.setFileName(validateNull(validFileName));
+			builder.setName(validateNull(reportEngine.getName()));
+			builder.setMimeType(validateNull(MimeType.getMimeType(validFileName)));
+			String headerName = Msg.getMsg(context, "Report") + ": " + reportEngine.getName() + "  " + Env.getHeader(context, 0);
+			builder.setHeaderName(validateNull(headerName));
+			StringBuffer footerName = new StringBuffer ();
+			footerName.append(Msg.getMsg(context, "DataCols")).append("=")
+				.append(reportEngine.getColumnCount())
+				.append(", ").append(Msg.getMsg(context, "DataRows")).append("=")
+				.append(reportEngine.getRowCount());
+			builder.setFooterName(validateNull(footerName.toString()));
+			//	Type
+			builder.setReportType(request.getReportType());
+			ByteString resultFile = ByteString.readFrom(new FileInputStream(reportFile));
+			if(request.getReportType().endsWith("html")
+					|| request.getReportType().endsWith("txt")) {
+				builder.setOutputBytes(resultFile);
+			}
+			builder.setOutputStream(resultFile);
+		}
+		//	Return
+		return builder;
+	}
+	
+	/**
+	 * Create output
+	 * @param reportEngine
+	 * @param reportType
+	 */
+	private File createOutput(ReportEngine reportEngine, String reportType) {
+		//	Export
+		File file = null;
+		try {
+			ReportExportHandler exportHandler = new ReportExportHandler(Env.getCtx(), reportEngine);
+			AbstractExportFormat exporter = exportHandler.getExporterFromExtension(reportType);
+			if(exporter != null) {
+				//	Get File
+				file = File.createTempFile(reportEngine.getName() + "_" + System.currentTimeMillis(), "." + exporter.getExtension());
+				exporter.exportTo(file);
+			}	
+		} catch (IOException e) {
+			return null;
+		}
+		return file;
+	}
+	
 	/**
 	 * Get private access from table, record id and user id
 	 * @param context
@@ -819,6 +981,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		//	Get List
 		new Query(context, I_AD_ReportView.Table_Name, whereClause, null)
 			.setParameters(parameters)
+			.setOrderBy(I_AD_ReportView.COLUMNNAME_PrintName + ", " + I_AD_ReportView.COLUMNNAME_Name)
 			.<MReportView>list().forEach(reportViewReference -> {
 				ReportView.Builder reportViewBuilder = ReportView.newBuilder();
 				String name = reportViewReference.getName();
@@ -944,6 +1107,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		//	Get List
 		new Query(context, I_AD_PrintFormat.Table_Name, whereClause, null)
 			.setParameters(parameters)
+			.setOrderBy(I_AD_PrintFormat.COLUMNNAME_Name)
+			.setClient_ID()
 			.<MPrintFormat>list().forEach(printFormatReference -> {
 				PrintFormat.Builder printFormatBuilder = PrintFormat.newBuilder();
 				printFormatBuilder.setUuid(validateNull(printFormatReference.getUUID()));
@@ -1148,7 +1313,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			if(reportFile != null
 					&& reportFile.exists()) {
 				String validFileName = getValidName(reportFile.getName());
-				ProcessOutput.Builder output = ProcessOutput.newBuilder();
+				ReportOutput.Builder output = ReportOutput.newBuilder();
 				output.setFileName(validateNull(validFileName));
 				output.setName(result.getTitle());
 				output.setMimeType(validateNull(MimeType.getMimeType(validFileName)));
@@ -2644,7 +2809,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		MProcess process = MProcess.get(Env.getCtx(), instance.getAD_Process_ID());
 		builder.setUuid(validateNull(process.getUUID()));
 		if(process.isReport()) {
-			ProcessOutput.Builder outputBuilder = ProcessOutput.newBuilder();
+			ReportOutput.Builder outputBuilder = ReportOutput.newBuilder();
 			outputBuilder.setReportType(validateNull(instance.getReportType()));
 			outputBuilder.setName(validateNull(instance.getName()));
 			builder.setOutput(outputBuilder.build());
