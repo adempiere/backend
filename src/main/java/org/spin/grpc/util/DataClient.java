@@ -89,7 +89,7 @@ public class DataClient {
 				  .setCriteria(criteria)
 				  .setPrintFormatUuid("5788e4a4-b253-11e9-aedf-0242ac110003")
 				  .setReportName("Test")
-				  .setReportType("html")
+				  .setReportType("pdf")
 				  .build();
 		  ReportOutput response;
 		  try {

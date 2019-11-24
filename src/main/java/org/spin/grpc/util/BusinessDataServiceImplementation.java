@@ -740,16 +740,38 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			query.addRestriction(criteria.getWhereClause());
 		}
 		//	
-		PrintInfo printInformation = new PrintInfo(request.getReportName(), table.getAD_Table_ID(), 102, 0);
-		MPrintFormat printFormat = MPrintFormat.get(Env.getCtx(), 102, false);
-		ReportEngine reportEngine = new ReportEngine(Env.getCtx(), printFormat, query, printInformation);
+		PrintInfo printInformation = new PrintInfo(request.getReportName(), table.getAD_Table_ID(), 0, 0);
+		//	Get Print Format
+		MPrintFormat printFormat = null;
+		MReportView reportView = null;
+		if(!Util.isEmpty(request.getPrintFormatUuid())) {
+			printFormat = new Query(context, I_AD_PrintFormat.Table_Name, I_AD_PrintFormat.COLUMNNAME_UUID + " = ?", null)
+					.setParameters(request.getPrintFormatUuid())
+					.first();
+		}
+		//	Get Report View
 		if(!Util.isEmpty(request.getReportViewUuid())) {
-			MReportView reportView = new Query(context, I_AD_ReportView.Table_Name, I_AD_ReportView.COLUMNNAME_UUID + " = ?", null)
+			reportView = new Query(context, I_AD_ReportView.Table_Name, I_AD_ReportView.COLUMNNAME_UUID + " = ?", null)
 					.setParameters(request.getReportViewUuid())
 					.first();
+		}
+		//	Get Default
+		if(printFormat == null) {
+			int reportViewId = 0;
 			if(reportView != null) {
-				reportEngine.setAD_ReportView_ID(reportView.getAD_ReportView_ID());
+				reportViewId = reportView.getAD_ReportView_ID();
 			}
+			printFormat = MPrintFormat.get(context, reportViewId, table.getAD_Table_ID());
+		}
+		//	Validate print format
+		if(printFormat == null) {
+			throw new AdempiereException("@AD_PrintGormat_ID@ @NotFound@");
+		}
+		//	Run report engine
+		ReportEngine reportEngine = new ReportEngine(Env.getCtx(), printFormat, query, printInformation);
+		//	Set report view
+		if(reportView != null) {
+			reportEngine.setAD_ReportView_ID(reportView.getAD_ReportView_ID());
 		}
 		//	Set Summary
 		reportEngine.setSummary(request.getIsSummary());
