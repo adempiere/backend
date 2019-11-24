@@ -925,7 +925,11 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 					.setName(validateNull(role.getName()))
 					.setDescription(validateNull(role.getDescription()))
 					.setClientName(validateNull(client.getName()))
-					.setClientId(role.getAD_Client_ID());
+					.setClientId(role.getAD_Client_ID())
+					.setIsCanExport(role.isCanExport())
+					.setIsCanReport(role.isCanReport())
+					.setIsPersonalAccess(role.isPersonalAccess())
+					.setIsPersonalLock(role.isPersonalLock());
 			//	With Access
 			if(withAccess) {
 				//	Org Access

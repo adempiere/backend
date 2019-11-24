@@ -139,19 +139,23 @@ message Role {
 	string description = 4;
 	int32 clientId = 5;
 	string clientName = 6;
+	bool isCanReport = 7;
+	bool isCanExport = 8;
+	bool isPersonalLock = 9;
+	bool isPersonalAccess = 10;
 	// Entity Access
-	repeated Access organizations = 7;
-	repeated Access windows = 8;
-	repeated Access process = 9;
-	repeated Access forms = 10;
-	repeated Access browsers = 11;
-	repeated Access workflows = 12;
-	repeated Access tasks = 13;
-	repeated Access dashboards = 14;
-	repeated Access documentActions = 15;
-	repeated TableAccess tables = 16;
-	repeated ColumnAccess columns = 17;
-	repeated RecordAccess records = 18;
+	repeated Access organizations = 11;
+	repeated Access windows = 12;
+	repeated Access process = 13;
+	repeated Access forms = 14;
+	repeated Access browsers = 15;
+	repeated Access workflows = 16;
+	repeated Access tasks = 17;
+	repeated Access dashboards = 18;
+	repeated Access documentActions = 19;
+	repeated TableAccess tables = 20;
+	repeated ColumnAccess columns = 21;
+	repeated RecordAccess records = 22;
 }
 
 // Access for distinct entity
