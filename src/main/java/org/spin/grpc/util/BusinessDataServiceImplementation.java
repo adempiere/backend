@@ -1335,7 +1335,6 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				if(printFormat.getAD_ReportView_ID() != 0) {
 					MReportView reportView = MReportView.get(context, printFormat.getAD_ReportView_ID());
 					reportViewUuid = reportView.getUUID();
-					isSummary = printFormat.isSummary();
 				}
 			}
 		}
