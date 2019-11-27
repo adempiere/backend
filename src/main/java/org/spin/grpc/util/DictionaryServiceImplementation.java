@@ -1302,7 +1302,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setDisplayLogic(validateNull(field.getDisplayLogic()))
 				.setDisplayType(displayTypeId)
 				.setFormatPattern(validateNull(column.getFormatPattern()))
-				.setIdentifierSequence(field.getSeqNoGrid())
+				.setIdentifierSequence(column.getSeqNo())
 				.setIsAllowCopy(field.isAllowCopy())
 				.setIsAllowLogging(column.isAllowLogging())
 				.setIsDisplayed(field.isDisplayed())
