@@ -859,9 +859,13 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		//	Create new
 		if(privateAccess == null
 				|| privateAccess.getAD_Table_ID() == 0) {
-			MTable table = MTable.get(context, privateAccess.getAD_Table_ID());
+			MTable table = MTable.get(context, tableName);
 			//	Set values
-			MUser user = MUser.get(context, privateAccess.getAD_User_ID());
+			MUser user = new Query(context, I_AD_User.Table_Name, I_AD_User.COLUMNNAME_UUID + " = ? ", null).setParameters(userUuid).first();
+			if(user == null
+					|| user.getAD_User_ID() == 0) {
+				throw new AdempiereException("@AD_User_ID@ @NotFound@");
+			}
 			privateAccess = new MPrivateAccess(context, user.getAD_User_ID(), table.getAD_Table_ID(), recordId);
 			privateAccess.setIsActive(lock);
 			privateAccess.saveEx();
@@ -1316,7 +1320,6 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		String reportViewUuid = null;
 		String printFormatUuid = null;
 		String tableName = null;
-		boolean isSummary;
 		//	Get process instance from identifier
 		if(result.getAD_PInstance_ID() != 0) {
 			MPInstance instance = new Query(context, I_AD_PInstance.Table_Name, I_AD_PInstance.COLUMNNAME_AD_PInstance_ID + " = ?", null)
