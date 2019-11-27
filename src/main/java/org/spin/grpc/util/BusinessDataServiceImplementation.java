@@ -772,6 +772,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		//	Set report view
 		if(reportView != null) {
 			reportEngine.setAD_ReportView_ID(reportView.getAD_ReportView_ID());
+		} else {
+			reportView = MReportView.get(context, reportEngine.getAD_ReportView_ID());
 		}
 		//	Set Summary
 		reportEngine.setSummary(request.getIsSummary());
@@ -798,6 +800,9 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					|| request.getReportType().endsWith("txt")) {
 				builder.setOutputBytes(resultFile);
 			}
+			builder.setReportViewUuid(validateNull(reportView.getUUID()));
+			builder.setPrintFormatUuid(validateNull(printFormat.getUUID()));
+			builder.setTableName(validateNull(printFormat.getAD_Table().getTableName()));
 			builder.setOutputStream(resultFile);
 		}
 		//	Return
@@ -1308,6 +1313,10 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} catch (Exception e) {
 			result = builder.getProcessInfo();
 		}
+		String reportViewUuid = null;
+		String printFormatUuid = null;
+		String tableName = null;
+		boolean isSummary;
 		//	Get process instance from identifier
 		if(result.getAD_PInstance_ID() != 0) {
 			MPInstance instance = new Query(context, I_AD_PInstance.Table_Name, I_AD_PInstance.COLUMNNAME_AD_PInstance_ID + " = ?", null)
@@ -1315,6 +1324,25 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					.first();
 			response.setInstanceUuid(validateNull(instance.getUUID()));
 			response.setLastRun(instance.getUpdated().getTime());
+			if(process.isReport()
+					&& instance.getAD_PrintFormat_ID() != 0) {
+				MPrintFormat printFormat = MPrintFormat.get(context, instance.getAD_PrintFormat_ID(), false);
+				printFormatUuid = printFormat.getUUID();
+				tableName = printFormat.getAD_Table().getTableName();
+				if(printFormat.getAD_ReportView_ID() != 0) {
+					MReportView reportView = MReportView.get(context, printFormat.getAD_ReportView_ID());
+					reportViewUuid = reportView.getUUID();
+					isSummary = printFormat.isSummary();
+				}
+			}
+		}
+		//	Validate print format
+		if(Util.isEmpty(printFormatUuid)) {
+			printFormatUuid = request.getPrintFormatUuid();
+		}
+		//	Validate report view
+		if(Util.isEmpty(reportViewUuid)) {
+			reportViewUuid = request.getReportViewUuid();
 		}
 		//	
 		response.setIsError(result.isError());
@@ -1348,6 +1376,9 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					output.setOutputBytes(resultFile);
 				}
 				output.setOutputStream(resultFile);
+				output.setReportViewUuid(validateNull(reportViewUuid));
+				output.setPrintFormatUuid(validateNull(printFormatUuid));
+				output.setTableName(validateNull(tableName));
 				response.setOutput(output.build());
 			}
 		}

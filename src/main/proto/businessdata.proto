@@ -368,8 +368,11 @@ message RunBusinessProcessRequest {
 	int32 recordId = 4;
 	int32 tableSelectedId = 5;
 	string reportType = 6;
-	repeated KeyValue parameters = 7;
-	repeated KeyValueSelection selections = 8;
+	string printFormatUuid = 7;
+	string reportViewUuid = 8;
+	bool isSummary = 9;
+	repeated KeyValue parameters = 10;
+	repeated KeyValueSelection selections = 11;
 }
 
 // BusinessProcess Activity Request
@@ -577,9 +580,12 @@ message ReportOutput {
 	int64 dataRows = 8;
 	string headerName = 9;
 	string footerName = 10;
-	bytes outputStream = 11;
+	string printFormatUuid = 11;
+	string reportViewUuid = 12;
+	string tableName = 13;
+	bytes outputStream = 14;
 	//	Output Type
-	string reportType = 12;
+	string reportType = 15;
 }
 
 // Browser request
