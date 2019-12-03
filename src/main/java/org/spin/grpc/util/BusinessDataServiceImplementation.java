@@ -1328,14 +1328,34 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					.first();
 			response.setInstanceUuid(validateNull(instance.getUUID()));
 			response.setLastRun(instance.getUpdated().getTime());
-			if(process.isReport()
-					&& instance.getAD_PrintFormat_ID() != 0) {
-				MPrintFormat printFormat = MPrintFormat.get(context, instance.getAD_PrintFormat_ID(), false);
-				printFormatUuid = printFormat.getUUID();
-				tableName = printFormat.getAD_Table().getTableName();
-				if(printFormat.getAD_ReportView_ID() != 0) {
-					MReportView reportView = MReportView.get(context, printFormat.getAD_ReportView_ID());
+			if(process.isReport()) {
+				int printFormatId = 0;
+				int reportViewId = 0;
+				if(instance.getAD_PrintFormat_ID() != 0) {
+					printFormatId = instance.getAD_PrintFormat_ID();
+				} else if(process.getAD_PrintFormat_ID() != 0) {
+					printFormatId = process.getAD_PrintFormat_ID();
+				} else if(process.getAD_ReportView_ID() != 0) {
+					reportViewId = process.getAD_ReportView_ID();
+				}
+				//	Get from report view or print format
+				MPrintFormat printFormat = null;
+				if(printFormatId != 0) {
+					printFormat = MPrintFormat.get(context, printFormatId, false);
+					printFormatUuid = printFormat.getUUID();
+					tableName = printFormat.getAD_Table().getTableName();
+					if(printFormat.getAD_ReportView_ID() != 0) {
+						MReportView reportView = MReportView.get(context, printFormat.getAD_ReportView_ID());
+						reportViewUuid = reportView.getUUID();
+					}
+				} else if(reportViewId != 0) {
+					MReportView reportView = MReportView.get(context, reportViewId);
 					reportViewUuid = reportView.getUUID();
+					tableName = reportView.getAD_Table().getTableName();
+					printFormat = MPrintFormat.get(context, reportViewId, 0);
+					if(printFormat != null) {
+						printFormatUuid = printFormat.getUUID();
+					}
 				}
 			}
 		}
