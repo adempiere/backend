@@ -867,9 +867,10 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				throw new AdempiereException("@AD_User_ID@ @NotFound@");
 			}
 			privateAccess = new MPrivateAccess(context, user.getAD_User_ID(), table.getAD_Table_ID(), recordId);
-			privateAccess.setIsActive(lock);
-			privateAccess.saveEx();
 		}
+		//	Set active
+		privateAccess.setIsActive(lock);
+		privateAccess.saveEx();
 		//	Convert Private Access
 		return convertPrivateAccess(context, privateAccess);
 	}
