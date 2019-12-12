@@ -150,7 +150,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	private AtomicInteger windowNoEmulation = new AtomicInteger(1);
 	/**	Page Size	*/
 	private final int PAGE_SIZE = 50;
-	
+
 	@Override
 	public void getEntity(GetEntityRequest request, StreamObserver<Entity> responseObserver) {
 		try {
@@ -171,7 +171,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					.asRuntimeException());
 		}
 	}
-	
+
 	@Override
 	public void createEntity(CreateEntityRequest request, StreamObserver<Entity> responseObserver) {
 		try {
@@ -191,7 +191,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					.asRuntimeException());
 		}
 	}
-	
+
 	@Override
 	public void updateEntity(UpdateEntityRequest request, StreamObserver<Entity> responseObserver) {
 		try {
@@ -211,7 +211,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					.asRuntimeException());
 		}
 	}
-	
+
 	@Override
 	public void deleteEntity(DeleteEntityRequest request, StreamObserver<Empty> responseObserver) {
 		try {
@@ -232,7 +232,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					.asRuntimeException());
 		}
 	}
-	
+
 	@Override
 	public void rollbackEntity(RollbackEntityRequest request, StreamObserver<Entity> responseObserver) {
 		try {
@@ -253,7 +253,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					.asRuntimeException());
 		}
 	}
-	
+
 	@Override
 	public void runCallout(RunCalloutRequest request, StreamObserver<org.spin.grpc.util.Callout> responseObserver) {
 		try {
@@ -275,7 +275,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					.asRuntimeException());
 		}
 	}
-	
+
 	@Override
 	public void listEntities(ListEntitiesRequest request, StreamObserver<ListEntitiesResponse> responseObserver) {
 		try {
@@ -295,7 +295,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					.asRuntimeException());
 		}
 	}
-	
+
 	@Override
 	public void getLookupItem(GetLookupItemRequest request, StreamObserver<LookupItem> responseObserver) {
 		try {
@@ -316,7 +316,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					.asRuntimeException());
 		}
 	}
-	
+
 	@Override
 	public void listLookupItems(ListLookupItemsRequest request, StreamObserver<ListLookupItemsResponse> responseObserver) {
 		try {
@@ -336,7 +336,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					.asRuntimeException());
 		}
 	}
-	
+
 	@Override
 	public void runBusinessProcess(RunBusinessProcessRequest request, StreamObserver<BusinessProcess> responseObserver) {
 		try {
@@ -359,7 +359,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					.asRuntimeException());
 		}
 	}
-	
+
 	@Override
 	public void listBrowserItems(ListBrowserItemsRequest request, StreamObserver<ListBrowserItemsResponse> responseObserver) {
 		try {
@@ -381,7 +381,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					.asRuntimeException());
 		}
 	}
-	
+
 	@Override
 	public void listActivities(ListActivitiesRequest request, StreamObserver<ListActivitiesResponse> responseObserver) {
 		try {
@@ -402,7 +402,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					.asRuntimeException());
 		}
 	}
-	
+
 	@Override
 	public void listRecentItems(ListRecentItemsRequest request, StreamObserver<ListRecentItemsResponse> responseObserver) {
 		try {
@@ -423,7 +423,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					.asRuntimeException());
 		}
 	}
-	
+
 	@Override
 	public void listReferences(ListReferencesRequest request, StreamObserver<ListReferencesResponse> responseObserver) {
 		try {
@@ -444,7 +444,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					.asRuntimeException());
 		}
 	}
-	
+
 	@Override
 	public void getDefaultValue(GetDefaultValueRequest request, StreamObserver<Value> responseObserver) {
 		try {
@@ -464,7 +464,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					.asRuntimeException());
 		}
 	}
-	
+
 	@Override
 	public void lockPrivateAccess(LockPrivateAccessRequest request, StreamObserver<PrivateAccess> responseObserver) {
 		try {
@@ -484,7 +484,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					.asRuntimeException());
 		}
 	}
-	
+
 	@Override
 	public void unlockPrivateAccess(UnlockPrivateAccessRequest request,
 			StreamObserver<PrivateAccess> responseObserver) {
@@ -505,7 +505,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					.asRuntimeException());
 		}
 	}
-	
+
 	@Override
 	public void getPrivateAccess(GetPrivateAccessRequest request, StreamObserver<PrivateAccess> responseObserver) {
 		try {
@@ -525,7 +525,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					.asRuntimeException());
 		}
 	}
-	
+
 	@Override
 	public void getContextInfoValue(GetContextInfoValueRequest request, StreamObserver<ContextInfoValue> responseObserver) {
 		try {
@@ -545,7 +545,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					.asRuntimeException());
 		}
 	}
-	
+
 	@Override
 	public void listPendingDocuments(ListPendingDocumentsRequest request, StreamObserver<ListPendingDocumentsResponse> responseObserver) {
 		try {
@@ -565,7 +565,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					.asRuntimeException());
 		}
 	}
-	
+
 	@Override
 	public void listFavorites(ListFavoritesRequest request, StreamObserver<ListFavoritesResponse> responseObserver) {
 		try {
@@ -585,7 +585,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					.asRuntimeException());
 		}
 	}
-	
+
 	@Override
 	public void listPrintFormats(ListPrintFormatsRequest request, StreamObserver<ListPrintFormatsResponse> responseObserver) {
 		try {
@@ -605,7 +605,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					.asRuntimeException());
 		}
 	}
-	
+
 	@Override
 	public void listReportViews(ListReportViewsRequest request, StreamObserver<ListReportViewsResponse> responseObserver) {
 		try {
@@ -625,7 +625,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					.asRuntimeException());
 		}
 	}
-	
+
 	@Override
 	public void listDrillTables(ListDrillTablesRequest request, StreamObserver<ListDrillTablesResponse> responseObserver) {
 		try {
@@ -645,7 +645,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					.asRuntimeException());
 		}
 	}
-	
+
 	@Override
 	public void getReportOutput(GetReportOutputRequest request, StreamObserver<ReportOutput> responseObserver) {
 		try {
@@ -665,7 +665,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					.asRuntimeException());
 		}
 	}
-	
+
 	/**
 	 * Ger Report Query from Criteria
 	 * @param context
@@ -711,13 +711,13 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		});
 		return query;
 	}
-	
+
 	/**
 	 * Convert Object to list
 	 * @param request
 	 * @return
-	 * @throws IOException 
-	 * @throws FileNotFoundException 
+	 * @throws IOException
+	 * @throws FileNotFoundException
 	 */
 	private ReportOutput.Builder getReportOutput(Properties context, GetReportOutputRequest request) throws FileNotFoundException, IOException {
 		Criteria criteria = request.getCriteria();
@@ -729,17 +729,17 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			throw new AdempiereException("@AD_PrintFormat_ID@ @NotFound@");
 		}
 		MTable table = MTable.get(context, criteria.getTableName());
-		//	
+		//
 		if(!MRole.getDefault().isCanReport(table.getAD_Table_ID())) {
 			throw new AdempiereException("@AccessCannotReport@");
 		}
-		//	
+		//
 		ReportOutput.Builder builder = ReportOutput.newBuilder();
 		MQuery query = getReportQueryFromCriteria(context, criteria);
 		if(!Util.isEmpty(criteria.getWhereClause())) {
 			query.addRestriction(criteria.getWhereClause());
 		}
-		//	
+		//
 		PrintInfo printInformation = new PrintInfo(request.getReportName(), table.getAD_Table_ID(), 0, 0);
 		//	Get Print Format
 		MPrintFormat printFormat = null;
@@ -777,7 +777,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		}
 		//	Set Summary
 		reportEngine.setSummary(request.getIsSummary());
-		//	
+		//
 		File reportFile = createOutput(reportEngine, request.getReportType());
 		if(reportFile != null
 				&& reportFile.exists()) {
@@ -808,7 +808,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		//	Return
 		return builder;
 	}
-	
+
 	/**
 	 * Create output
 	 * @param reportEngine
@@ -824,13 +824,13 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				//	Get File
 				file = File.createTempFile(reportEngine.getName() + "_" + System.currentTimeMillis(), "." + exporter.getExtension());
 				exporter.exportTo(file);
-			}	
+			}
 		} catch (IOException e) {
 			return null;
 		}
 		return file;
 	}
-	
+
 	/**
 	 * Get private access from table, record id and user id
 	 * @param context
@@ -846,7 +846,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			.setParameters(tableName, recordId, userUuid)
 			.first();
 	}
-	
+
 	/**
 	 * Lock and unlock private access
 	 * @param context
@@ -874,7 +874,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		//	Convert Private Access
 		return convertPrivateAccess(context, privateAccess);
 	}
-	
+
 	/**
 	 * Convert references to gRPC
 	 * @param context
@@ -888,7 +888,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				&& Util.isEmpty(request.getUuid())) {
 			throw new AdempiereException("@Record_ID@ @NotFound@");
 		}
-		
+
 		if(Util.isEmpty(request.getTableName())) {
 			throw new AdempiereException("@AD_Table_ID@ @NotFound@");
 		}
@@ -920,7 +920,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 						continue;
 					}
 					MWindow referenceWindow = MWindow.get(context, zoomInfo.windowId);
-					//	
+					//
 					String uuid = UUID.randomUUID().toString();
 					RecordReferenceInfo.Builder recordReferenceBuilder = RecordReferenceInfo.newBuilder();
 					recordReferenceBuilder.setDisplayName(zoomInfo.destinationDisplay + " (#" + zoomInfo.query.getRecordCount() + ")");
@@ -938,7 +938,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		//	Return
 		return builder;
 	}
-	
+
 	/**
 	 * Convert pending documents to gRPC
 	 * @param context
@@ -985,7 +985,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		//	Return
 		return builder;
 	}
-	
+
 	/**
 	 * Convert Report View to gRPC
 	 * @param context
@@ -1039,7 +1039,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		//	Return
 		return builder;
 	}
-	
+
 	/**
 	 * Convert Report View to gRPC
 	 * @param context
@@ -1104,7 +1104,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		//	Return
 		return builder;
 	}
-	
+
 	/**
 	 * Convert print formats to gRPC
 	 * @param context
@@ -1159,7 +1159,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		//	Return
 		return builder;
 	}
-	
+
 	/**
 	 * Convert favorites to gRPC
 	 * @param context
@@ -1216,40 +1216,59 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 						if(menu.getAD_Form_ID() > 0) {
 							MForm form = new MForm(context, menu.getAD_Form_ID(), null);
 							referenceUuid = form.getUUID();
+							if(form.isCentrallyMaintained()) {
+								menuName = form.getName();
+								menuDescription = form.getDescription();
+							}
 						}
 					} else if(menu.getAction().equals(MMenu.ACTION_Window)) {
 						if(menu.getAD_Window_ID() > 0) {
 							MWindow window = new MWindow(context, menu.getAD_Window_ID(), null);
 							referenceUuid = window.getUUID();
+							if(window.isCentrallyMaintained()) {
+								menuName = window.getName();
+								menuDescription = window.getDescription();
+							}
 						}
 					} else if(menu.getAction().equals(MMenu.ACTION_Process)
 						|| menu.getAction().equals(MMenu.ACTION_Report)) {
 						if(menu.getAD_Process_ID() > 0) {
 							MProcess process = MProcess.get(context, menu.getAD_Process_ID());
 							referenceUuid = process.getUUID();
+							if(process.isCentrallyMaintained()) {
+								menuName = process.getName();
+								menuDescription = process.getDescription();
+							}
 						}
 					} else if(menu.getAction().equals(MMenu.ACTION_SmartBrowse)) {
 						if(menu.getAD_Browse_ID() > 0) {
 							MBrowse smartBrowser = MBrowse.get(context, menu.getAD_Browse_ID());
 							referenceUuid = smartBrowser.getUUID();
+							if(smartBrowser.isCentrallyMaintained()) {
+								menuName = smartBrowser.getName();
+								menuDescription = smartBrowser.getDescription();
+							}
 						}
 					}
 					favorite.setReferenceUuid(validateNull(referenceUuid));
 				}
+				//	Set name and description
+				favorite.setMenuName(validateNull(menuName));
+				favorite.setMenuDescription(validateNull(menuDescription));
 				builder.addFavorites(favorite);
 			});
 		//	Return
 		return builder;
 	}
-	
+
 	/**
 	 * Run a process from request
 	 * @param context
 	 * @param request
 	 * @param language
 	 * @return
-	 * @throws IOException 
-	 * @throws FileNotFoundException 
+	 * @throws IOException
+	 * @throws FileNotFoundException
 	 */
 	private BusinessProcess.Builder runProcess(Properties context, RunBusinessProcessRequest request, String language) throws FileNotFoundException, IOException {
 		BusinessProcess.Builder response = BusinessProcess.newBuilder();
@@ -1367,12 +1386,12 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		if(Util.isEmpty(reportViewUuid)) {
 			reportViewUuid = request.getReportViewUuid();
 		}
-		//	
+		//
 		response.setIsError(result.isError());
 		if(!Util.isEmpty(result.getSummary())) {
 			response.setSummary(Msg.parseTranslation(context, result.getSummary()));
 		}
-		//	
+		//
 		response.setResultTableName(validateNull(result.getResultTableName()));
 		//	Convert Log
 		if(result.getLogList() != null) {
@@ -1407,7 +1426,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		}
 		return response;
 	}
-	
+
 	/**
 	 * Add element to recent item
 	 * @param action
@@ -1435,7 +1454,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			.firstId();
 		MRecentItem.addMenuOption(Env.getCtx(), menuId, 0);
 	}
-	
+
 	/**
 	 * Convert Name
 	 * @param name
@@ -1447,7 +1466,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		}
 		return name.replaceAll("[+^:&áàäéèëíìïóòöúùñÁÀÄÉÈËÍÌÏÓÒÖÚÙÜÑçÇ$()*#/><]", "").replaceAll(" ", "-");
 	}
-	
+
 	/**
 	 * Convert Log to gRPC
 	 * @param log
@@ -1459,7 +1478,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		processLog.setLog(validateNull(Msg.parseTranslation(Env.getCtx(), log.getP_Msg())));
 		return processLog;
 	}
-	
+
 	/**
 	 * Convert Selection values from gRPC to ADempiere values
 	 * @param values
@@ -1470,10 +1489,10 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		for(KeyValue value : values) {
 			convertedValues.put(value.getKey(), getValueFromType(value.getValue()));
 		}
-		//	
+		//
 		return convertedValues;
 	}
-	
+
 	/**
 	 * Default get value from type
 	 * @param valueToConvert
@@ -1482,7 +1501,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	private Object getValueFromType(Value valueToConvert) {
 		return getValueFromType(valueToConvert, false);
 	}
-	
+
 	/**
 	 * Get value from parameter type
 	 * @param valueToConvert
@@ -1514,7 +1533,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		}
 		return value;
 	}
-	
+
 	/**
 	 * Convert operator from gRPC to SQL
 	 * @param gRpcOperator
@@ -1567,7 +1586,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			}
 		return operator;
 	}
-	
+
 	/**
 	 * Get Process from UUID
 	 * @param uuid
@@ -1580,7 +1599,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				.setOnlyActiveRecords(true)
 				.first();
 	}
-	
+
 	/**
 	 * Convert a PO from query
 	 * @param request
@@ -1597,7 +1616,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		//	Return
 		return convertEntity(context, entity);
 	}
-	
+
 	/**
 	 * Delete a entity
 	 * @param context
@@ -1613,7 +1632,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		//	Return
 		return Empty.newBuilder();
 	}
-	
+
 	/**
 	 * Rollback entity
 	 * @param context
@@ -1683,7 +1702,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		//	Set value
 		entity.set_ValueOfColumn(changeLog.getAD_Column_ID(), value);
 	}
-	
+
 	/**
 	 * Convert string representation to appropriate object type
 	 * for column
@@ -1694,10 +1713,10 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	private Object stringToObject(MColumn column, String value) {
 		if ( value == null )
 			return null;
-		
-		if ( DisplayType.isText(column.getAD_Reference_ID()) 
-				|| column.getAD_Reference_ID() == DisplayType.List  
-				|| column.getColumnName().equals("EntityType") 
+
+		if ( DisplayType.isText(column.getAD_Reference_ID())
+				|| column.getAD_Reference_ID() == DisplayType.List
+				|| column.getColumnName().equals("EntityType")
 				|| column.getColumnName().equals("AD_Language")) {
 			return value;
 		}
@@ -1706,7 +1725,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		}
 		else if (DisplayType.isID(column.getAD_Reference_ID()) ) {
 			return Integer.valueOf(value);
-		}	
+		}
 		else if (DisplayType.YesNo == column.getAD_Reference_ID() ) {
 			return "true".equalsIgnoreCase(value);
 		}
@@ -1720,10 +1739,10 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			return Timestamp.valueOf(value);
 		}
 	//Binary,  Radio, RowID, Image not supported
-		else 
+		else
 			return null;
 	}
-	
+
 	/**
 	 * get Entity from Table and (UUID / Record ID)
 	 * @param context
@@ -1738,7 +1757,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				&& Util.isEmpty(uuid)) {
 			throw new AdempiereException("@Record_ID@ @NotFound@");
 		}
-		
+
 		if(Util.isEmpty(tableName)) {
 			throw new AdempiereException("@AD_Table_ID@ @NotFound@");
 		}
@@ -1758,7 +1777,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				.setParameters(params)
 				.first();
 	}
-	
+
 	/**
 	 * Create Entity
 	 * @param context
@@ -1784,7 +1803,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		//	Return
 		return convertEntity(context, entity);
 	}
-	
+
 	/**
 	 * Update Entity
 	 * @param context
@@ -1805,7 +1824,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		//	Return
 		return convertEntity(context, entity);
 	}
-	
+
 	/**
 	 * Get Last change Log
 	 * @param sessionId
@@ -1824,7 +1843,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				+ "AND ROWNUM <= 1 "
 				+ "ORDER BY Updated DESC", sessionId, tableId, recordId, eventType);
 	}
-	
+
 	/**
 	 * Get context from session
 	 * @param request
@@ -1856,7 +1875,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		sessionsContext.put(request.getSessionUuid(), context);
 		return context;
 	}
-	
+
 	/**
 	 * Get Default from language
 	 * @param language
@@ -1886,7 +1905,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		//	Default return
 		return defaultLanguage;
 	}
-	
+
 	/**
 	 * Convert Default Value from query
 	 * @param request
@@ -1913,7 +1932,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		//	Return values
 		return builder;
 	}
-	
+
 	/**
 	 * Convert Context Info Value from query
 	 * @param request
@@ -1936,7 +1955,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					if(arguments == null) {
 						return builder;
 					}
-					//	
+					//
 					String messageText = Msg.getMsg(Env.getAD_Language(Env.getCtx()), message.getValue(), arguments);
 					//	Set result message
 					builder.setMessageText(validateNull(messageText));
@@ -1948,7 +1967,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		//	Return values
 		return builder;
 	}
-	
+
 	/**
 	 * Convert Context Info Value from query
 	 * @param request
@@ -1969,7 +1988,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		//	Return values
 		return builder;
 	}
-	
+
 	/**
 	 * Convert Lookup from query
 	 * @param request
@@ -2006,7 +2025,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				} else {
 					keyValue = rs.getInt(1);
 				}
-				//	
+				//
 				builder = convertObjectFromResult(keyValue, null, rs.getString(2), rs.getString(3));
 			}
 		} catch (Exception e) {
@@ -2017,7 +2036,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		//	Return values
 		return builder;
 	}
-	
+
 	/**
 	 * Convert Object to list
 	 * @param request
@@ -2058,7 +2077,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				} else {
 					keyValue = rs.getInt(1);
 				}
-				//	
+				//
 				LookupItem.Builder valueObject = convertObjectFromResult(keyValue, null, rs.getString(2), rs.getString(3));
 				builder.addRecords(valueObject.build());
 				recordCount++;
@@ -2073,7 +2092,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		//	Return
 		return builder;
 	}
-	
+
 	/**
 	 * Set Parameter for Statement from value
 	 * @param pstmt
@@ -2094,7 +2113,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			pstmt.setTimestamp(index, new Timestamp(value.getLongValue()));
 		}
 	}
-	
+
 	/**
 	 * Set Parameter for Statement from object
 	 * @param pstmt
@@ -2119,7 +2138,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			pstmt.setString(index, ((Boolean) value)? "Y": "N");
 		}
 	}
-	
+
 	/**
 	 * Get Where Clause from criteria and dynamic condition
 	 * @param criteria
@@ -2134,7 +2153,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				if(whereClause.length() > 0) {
 					whereClause.append(" AND ");
 				}
-				String colummName = criteria.getTableName() + "." + condition.getColumnName(); 
+				String colummName = criteria.getTableName() + "." + condition.getColumnName();
 				//	Open
 				whereClause.append("(");
 				if(condition.getOperatorValue() == Operator.LIKE_VALUE
@@ -2173,7 +2192,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		//	Return where clause
 		return whereClause.toString();
 	}
-	
+
 	/**
 	 * Convert Object to list
 	 * @param request
@@ -2217,7 +2236,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				.setParameters(params);
 		int count = query.count();
 		ListEntitiesResponse.Builder builder = ListEntitiesResponse.newBuilder();
-		//	
+		//
 		if(Util.isEmpty(criteria.getQuery())) {
 			if(!Util.isEmpty(criteria.getOrderByClause())) {
 				query.setOrderBy(criteria.getOrderByClause());
@@ -2225,7 +2244,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			List<PO> entityList = query
 					.setLimit(limit, offset)
 					.<PO>list();
-			//	
+			//
 			for(PO entity : entityList) {
 				Entity.Builder valueObject = convertEntity(context, entity);
 				builder.addRecords(valueObject.build());
@@ -2235,7 +2254,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			if (whereClause.length() > 0) {
 				sql.append(" WHERE ").append(whereClause); // includes first AND
 			}
-			//	
+			//
 			String parsedSQL = MRole.getDefault().addAccessSQL(sql.toString(),
 					criteria.getTableName(), MRole.SQL_FULLYQUALIFIED,
 					MRole.SQL_RO);
@@ -2253,7 +2272,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			parsedSQL = parsedSQL + orderByClause;
 			builder = convertListEntitiesResult(MTable.get(context, criteria.getTableName()), parsedSQL, params);
 		}
-		//	
+		//
 		builder.setRecordCount(count);
 		//	Set page token
 		if(count > limit) {
@@ -2264,7 +2283,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		//	Return
 		return builder;
 	}
-	
+
 	/**
 	 * Convert Entities List
 	 * @param table
@@ -2287,7 +2306,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			AtomicInteger parameterIndex = new AtomicInteger(1);
 			for(Object value : params) {
 				setParameterFromObject(pstmt, value, parameterIndex.getAndIncrement());
-			} 
+			}
 			//	Get from Query
 			rs = pstmt.executeQuery();
 			while(rs.next()) {
@@ -2360,7 +2379,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 						log.severe(e.getLocalizedMessage());
 					}
 				}
-				//	
+				//
 				builder.addRecords(valueObjectBuilder.build());
 				recordCount++;
 			}
@@ -2374,7 +2393,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		//	Return
 		return builder;
 	}
-	
+
 	/**
 	 * Get Where clause for Smart Browse
 	 * @param browser
@@ -2390,7 +2409,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		for(MBrowseField field: fields) {
 			fieldsMap.put(field.getAD_View_Column().getColumnName(), field);
 		}
-		//	
+		//
 		boolean onRange = false;
 		if(parameterMap.size() > 0) {
 			for(Entry<String, Object> parameter : parameterMap.entrySet()) {
@@ -2420,7 +2439,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 
 								}
 								outStr.append("'" + inStr + "')");
-								//	
+								//
 								browserWhereClause.append(columnName).append(" IN ")
 								.append(outStr);
 							}
@@ -2470,9 +2489,9 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				}
 			}
 		}
-		//	
+		//
 		String whereClause = null;
-		//	
+		//
 		if(!Util.isEmpty(parsedWhereClause)) {
 			whereClause = parsedWhereClause.toString();
 		}
@@ -2485,7 +2504,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		}
 		return whereClause;
 	}
-	
+
 	/**
 	 * Convert Object to list
 	 * @param request
@@ -2515,7 +2534,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		MViewDefinition parentDefinition = view.getParentViewDefinition();
 		String tableNameAlias = parentDefinition.getTableAlias();
 		String tableName = parentDefinition.getAD_Table().getTableName();
-		//	
+		//
 		String parsedSQL = MRole.getDefault().addAccessSQL(sql.toString(),
 				tableNameAlias, MRole.SQL_FULLYQUALIFIED,
 				MRole.SQL_RO);
@@ -2536,7 +2555,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		if(!Util.isEmpty(whereClause)) {
 			parsedSQL = parsedSQL + " AND ROWNUM >= " + page + " AND ROWNUM <= " + PAGE_SIZE;
 		} else {
-			parsedSQL = parsedSQL + " WHERE ROWNUM >= " + page + " AND ROWNUM <= " + PAGE_SIZE;	
+			parsedSQL = parsedSQL + " WHERE ROWNUM >= " + page + " AND ROWNUM <= " + PAGE_SIZE;
 		}
 		//	Add Order By
 		parsedSQL = parsedSQL + orderByClause;
@@ -2547,7 +2566,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		//	Return
 		return builder;
 	}
-	
+
 	/**
 	 * Count records
 	 * @param context
@@ -2561,7 +2580,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		String queryCount = "SELECT COUNT(*) " + sql.substring(positionFrom, sql.length());
 		return DB.getSQLValueEx(null, queryCount, parameters);
 	}
-	
+
 	/**
 	 * Get Page Number
 	 * @param sessionUuid
@@ -2580,10 +2599,10 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				}
 			}
 		}
-		//	
+		//
 		return page;
 	}
-	
+
 	/**
 	 * Get Page Prefix
 	 * @param sessionUuid
@@ -2592,7 +2611,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	private String getPagePrefix(String sessionUuid) {
 		return sessionUuid + "-";
 	}
-	
+
 	/**
 	 * Convert SQL to list values
 	 * @param pagePrefix
@@ -2617,7 +2636,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			AtomicInteger parameterIndex = new AtomicInteger(1);
 			for(Object value : values) {
 				setParameterFromObject(pstmt, value, parameterIndex.getAndIncrement());
-			} 
+			}
 			//	Get from Query
 			rs = pstmt.executeQuery();
 			while(rs.next()) {
@@ -2686,7 +2705,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 						log.severe(e.getLocalizedMessage());
 					}
 				}
-				//	
+				//
 				builder.addRecords(valueObjectBuilder.build());
 				recordCount++;
 			}
@@ -2700,7 +2719,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		//	Return
 		return builder;
 	}
-	
+
 	/**
 	 * get browser
 	 * @param context
@@ -2719,10 +2738,10 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		if(browser != null) {
 			browserRequested.put(uuid, browser);
 		}
-		//	
+		//
 		return browser;
 	}
-	
+
 	/**
 	 * Convert request for process activity to builder
 	 * @param context
@@ -2742,12 +2761,12 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			uuid = request.getClientRequest().getSessionUuid();
 			sql = "EXISTS(SELECT 1 FROM AD_Session WHERE UUID = ? AND AD_Session_ID = AD_PInstance.AD_Session_ID)";
 		}
-		List<MPInstance> processInstanceList = new Query(context, I_AD_PInstance.Table_Name, 
+		List<MPInstance> processInstanceList = new Query(context, I_AD_PInstance.Table_Name,
 				sql, null)
 				.setParameters(uuid)
 				.setOrderBy(I_AD_PInstance.COLUMNNAME_Created + " DESC")
 				.<MPInstance>list();
-		//	
+		//
 		ListActivitiesResponse.Builder builder = ListActivitiesResponse.newBuilder();
 		//	Convert Process Instance
 		for(MPInstance processInstance : processInstanceList) {
@@ -2757,7 +2776,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		//	Return
 		return builder;
 	}
-	
+
 	/**
 	 * Convert Recent Items
 	 * @param context
@@ -2855,8 +2874,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 							recentItemBuilder.setRecordUuid(validateNull(table.getPO(recentItem.getRecord_ID(), null).get_UUID()));
 						}
 					}
-					//	
-					builder.addRecentItems(recentItemBuilder.build());	
+					//
+					builder.addRecentItems(recentItemBuilder.build());
 				} catch (Exception e) {
 					log.severe(e.getLocalizedMessage());
 				}
@@ -2865,7 +2884,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		//	Return
 		return builder;
 	}
-	
+
 	/**
 	 * Convert Process Instance
 	 * @param instance
@@ -2891,7 +2910,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			builder.setOutput(outputBuilder.build());
 		}
 		builder.setSummary(validateNull(summary));
-		List<X_AD_PInstance_Log> logList = new Query(Env.getCtx(), I_AD_PInstance_Log.Table_Name, 
+		List<X_AD_PInstance_Log> logList = new Query(Env.getCtx(), I_AD_PInstance_Log.Table_Name,
 				I_AD_PInstance.COLUMNNAME_AD_PInstance_ID + " = ?", null)
 				.setParameters(instance.getAD_PInstance_ID())
 				.<X_AD_PInstance_Log>list();
@@ -2906,7 +2925,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			logBuilder.setLog(validateNull((message)));
 			builder.addLogs(logBuilder.build());
 		}
-		//	
+		//
 		for(MPInstancePara parameter : instance.getParameters()) {
 			Value.Builder parameterBuilder = Value.newBuilder();
 			Value.Builder parameterToBuilder = Value.newBuilder();
@@ -2922,7 +2941,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				BigDecimal number = parameter.getP_Number();
 				BigDecimal numberTo = parameter.getP_Number_To();
 				//	Validate
-				if(number != null 
+				if(number != null
 						&& !number.equals(Env.ZERO)) {
 					hasFromParameter = true;
 					parameterBuilder.setIntValue(number.intValue());
@@ -2938,7 +2957,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				BigDecimal number = parameter.getP_Number();
 				BigDecimal numberTo = parameter.getP_Number_To();
 				//	Validate
-				if(number != null 
+				if(number != null
 						&& !number.equals(Env.ZERO)) {
 					hasFromParameter = true;
 					parameterBuilder.setDoubleValue(number.doubleValue());
@@ -2997,7 +3016,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		}
 		return builder;
 	}
-	
+
 	/**
 	 * Run callout with data from server
 	 * @param request
@@ -3014,7 +3033,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		if(tab == null) {
 			return calloutBuilder;
 		}
-		//	
+		//
 		MField field = null;
 		if(tab != null) {
 			Optional<MField> searchedValue = Arrays.asList(tab.getFields(false, null)).stream().filter(searchField -> searchField.getAD_Column().getColumnName().equals(request.getColumnName())).findFirst();
@@ -3057,7 +3076,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		calloutBuilder.setResult(validateNull(result));
 		return calloutBuilder;
 	}
-	
+
 	/**
 	 * Verify if a value has been changed
 	 * @param gridField
@@ -3065,10 +3084,10 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	 */
 	private boolean isValidChange(GridField gridField) {
 		//	Standard columns
-		if(gridField.getColumnName().equals(I_AD_Element.COLUMNNAME_Created) 
-				|| gridField.getColumnName().equals(I_AD_Element.COLUMNNAME_CreatedBy) 
-				|| gridField.getColumnName().equals(I_AD_Element.COLUMNNAME_Updated) 
-				|| gridField.getColumnName().equals(I_AD_Element.COLUMNNAME_UpdatedBy) 
+		if(gridField.getColumnName().equals(I_AD_Element.COLUMNNAME_Created)
+				|| gridField.getColumnName().equals(I_AD_Element.COLUMNNAME_CreatedBy)
+				|| gridField.getColumnName().equals(I_AD_Element.COLUMNNAME_Updated)
+				|| gridField.getColumnName().equals(I_AD_Element.COLUMNNAME_UpdatedBy)
 				|| gridField.getColumnName().equals(I_AD_Element.COLUMNNAME_UUID)) {
 			return false;
 		}
@@ -3094,7 +3113,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		//	Default
 		return true;
 	}
-	
+
 	/**
 	 * Process Callout
 	 * @param gridTab
@@ -3119,17 +3138,17 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			// CarlosRuiz - globalqss - implement beanshell callout
 			// Victor Perez  - vpj-cd implement JSR 223 Scripting
 			if (cmd.toLowerCase().startsWith(MRule.SCRIPT_PREFIX)) {
-				
+
 				MRule rule = MRule.get(context, cmd.substring(MRule.SCRIPT_PREFIX.length()));
 				if (rule == null) {
-					retValue = "Callout " + cmd + " not found"; 
+					retValue = "Callout " + cmd + " not found";
 					log.log(Level.SEVERE, retValue);
 					return retValue;
 				}
-				if ( !  (rule.getEventType().equals(MRule.EVENTTYPE_Callout) 
+				if ( !  (rule.getEventType().equals(MRule.EVENTTYPE_Callout)
 					  && rule.getRuleType().equals(MRule.RULETYPE_JSR223ScriptingAPIs))) {
 					retValue = "Callout " + cmd
-						+ " must be of type JSR 223 and event Callout"; 
+						+ " must be of type JSR 223 and event Callout";
 					log.log(Level.SEVERE, retValue);
 					return retValue;
 				}
@@ -3139,7 +3158,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				// Window context are    W_
 				// Login context  are    G_
 				MRule.setContext(engine, context, windowNo);
-				// now add the callout parameters windowNo, tab, field, value, oldValue to the engine 
+				// now add the callout parameters windowNo, tab, field, value, oldValue to the engine
 				// Method arguments context are A_
 				engine.put(MRule.ARGUMENTS_PREFIX + "WindowNo", windowNo);
 				engine.put(MRule.ARGUMENTS_PREFIX + "Tab", this);
@@ -3180,8 +3199,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					retValue = 	"Callout Invalid: " + e.toString();
 					return retValue;
 				}
-				
-			}			
+
+			}
 			if (!Util.isEmpty(retValue)) {	//	interrupt on first error
 				log.severe (retValue);
 				return retValue;
@@ -3189,7 +3208,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		}   //  for each callout
 		return "";
 	}	//	processCallout
-	
+
 	/**
 	 * Convert PO to Value Object
 	 * @param entity
@@ -3235,12 +3254,12 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			//	Add
 			builder.putValues(columnName, builderValue.build());
 		}
-		//	
+		//
 		return builder;
 	}
-	
+
 	/**
-	 * Get Value 
+	 * Get Value
 	 * @param value
 	 * @return
 	 */
@@ -3268,10 +3287,10 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			Timestamp date = (Timestamp) value;
 			builderValue.setLongValue(date.getTime());
 		}
-		//	
+		//
 		return builderValue;
 	}
-	
+
 	/**
 	 * Is lookup include location
 	 * @param displayType
@@ -3284,7 +3303,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				|| DisplayType.Locator == displayType
 				|| DisplayType.PAttribute == displayType;
 	}
-	
+
 	/**
 	 * Convert Values from result
 	 * @param keyValue
@@ -3299,7 +3318,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			return builder;
 		}
 		builder.setUuid(validateNull(uuidValue));
-		
+
 		if(keyValue instanceof Integer) {
 			builder.setId((Integer) keyValue);
 			builder.putValues(KEY_COLUMN_KEY, Value.newBuilder().setValueType(ValueType.INTEGER).setIntValue((Integer) keyValue).build());
@@ -3314,10 +3333,10 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		if(!Util.isEmpty(displayValue)) {
 			builder.putValues(DISPLAY_COLUMN_KEY, Value.newBuilder().setValueType(ValueType.STRING).setStringValue(validateNull(displayValue)).build());
 		}
-		//	
+		//
 		return builder;
 	}
-	
+
 	/**
 	 * Convert null on ""
 	 * @param value
@@ -3327,7 +3346,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		if(value == null) {
 			value = "";
 		}
-		//	
+		//
 		return value;
 	}
 }
