@@ -1204,9 +1204,6 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 						}
 					}
 				}
-				//	Set name and description
-				favorite.setMenuName(validateNull(menuName));
-				favorite.setMenuDescription(validateNull(menuDescription));
 				//	Set reference
 				favorite.setAction(validateNull(MMenu.ACTION_Window));
 				//	Supported actions
@@ -1216,26 +1213,85 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 						if(menu.getAD_Form_ID() > 0) {
 							MForm form = new MForm(context, menu.getAD_Form_ID(), null);
 							referenceUuid = form.getUUID();
+							if(menu.isCentrallyMaintained()) {
+								menuName = form.getName();
+								menuDescription = form.getDescription();
+								if(!Env.isBaseLanguage(context, "")) {
+									String translation = form.get_Translation("Name");
+									if(!Util.isEmpty(translation)) {
+										menuName = translation;
+									}
+									translation = form.get_Translation("Description");
+									if(!Util.isEmpty(translation)) {
+										menuDescription = translation;
+									}
+								}
+							}
 						}
 					} else if(menu.getAction().equals(MMenu.ACTION_Window)) {
 						if(menu.getAD_Window_ID() > 0) {
 							MWindow window = new MWindow(context, menu.getAD_Window_ID(), null);
 							referenceUuid = window.getUUID();
+							if(menu.isCentrallyMaintained()) {
+								menuName = window.getName();
+								menuDescription = window.getDescription();
+								if(!Env.isBaseLanguage(context, "")) {
+									String translation = window.get_Translation("Name");
+									if(!Util.isEmpty(translation)) {
+										menuName = translation;
+									}
+									translation = window.get_Translation("Description");
+									if(!Util.isEmpty(translation)) {
+										menuDescription = translation;
+									}
+								}
+							}
 						}
 					} else if(menu.getAction().equals(MMenu.ACTION_Process)
 						|| menu.getAction().equals(MMenu.ACTION_Report)) {
 						if(menu.getAD_Process_ID() > 0) {
 							MProcess process = MProcess.get(context, menu.getAD_Process_ID());
 							referenceUuid = process.getUUID();
+							if(menu.isCentrallyMaintained()) {
+								menuName = process.getName();
+								menuDescription = process.getDescription();
+								if(!Env.isBaseLanguage(context, "")) {
+									String translation = process.get_Translation("Name");
+									if(!Util.isEmpty(translation)) {
+										menuName = translation;
+									}
+									translation = process.get_Translation("Description");
+									if(!Util.isEmpty(translation)) {
+										menuDescription = translation;
+									}
+								}
+							}
 						}
 					} else if(menu.getAction().equals(MMenu.ACTION_SmartBrowse)) {
 						if(menu.getAD_Browse_ID() > 0) {
 							MBrowse smartBrowser = MBrowse.get(context, menu.getAD_Browse_ID());
 							referenceUuid = smartBrowser.getUUID();
+							if(menu.isCentrallyMaintained()) {
+								menuName = smartBrowser.getName();
+								menuDescription = smartBrowser.getDescription();
+								if(!Env.isBaseLanguage(context, "")) {
+									String translation = smartBrowser.get_Translation("Name");
+									if(!Util.isEmpty(translation)) {
+										menuName = translation;
+									}
+									translation = smartBrowser.get_Translation("Description");
+									if(!Util.isEmpty(translation)) {
+										menuDescription = translation;
+									}
+								}
+							}
 						}
 					}
 					favorite.setReferenceUuid(validateNull(referenceUuid));
 				}
+				//	Set name and description
+				favorite.setMenuName(validateNull(menuName));
+				favorite.setMenuDescription(validateNull(menuDescription));
 				builder.addFavorites(favorite);
 			});
 		//	Return
