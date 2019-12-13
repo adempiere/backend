@@ -1108,6 +1108,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setDescription(validateNull(description))
 				.setHelp(validateNull(help))
 				.setColumnName(validateNull(processParameter.getColumnName()))
+				.setElementName(validateNull(processParameter.getColumnName()))
 				.setDefaultValue(validateNull(processParameter.getDefaultValue()))
 				.setDefaultValueTo(validateNull(processParameter.getDefaultValue2()))
 				.setDisplayLogic(validateNull(processParameter.getDisplayLogic()))
@@ -1203,6 +1204,16 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setFieldLength(browseField.getFieldLength())
 				.setDisplayType(browseField.getAD_Reference_ID());
 		builder.setColumnName(validateNull(browseField.getAD_View_Column().getColumnName()));
+		String elementName = null;
+		if(browseField.getAD_View_Column().getAD_Column_ID() != 0) {
+			MColumn column = MColumn.get(context, browseField.getAD_View_Column().getAD_Column_ID());
+			elementName = column.getColumnName();
+		}
+		//	Default element
+		if(Util.isEmpty(elementName)) {
+			elementName = browseField.getAD_Element().getColumnName();
+		}
+		builder.setElementName(validateNull(elementName));
 		//	
 		int displayTypeId = browseField.getAD_Reference_ID();
 		if(DisplayType.isLookup(displayTypeId)) {
@@ -1297,6 +1308,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setHelp(validateNull(help))
 				.setCallout(validateNull(column.getCallout()))
 				.setColumnName(validateNull(column.getColumnName()))
+				.setElementName(validateNull(column.getColumnName()))
 				.setColumnSQL(validateNull(column.getColumnSQL()))
 				.setDefaultValue(validateNull(defaultValue))
 				.setDisplayLogic(validateNull(field.getDisplayLogic()))

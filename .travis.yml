@@ -11,7 +11,7 @@ addons:
       gradle
 before_script:
   - mkdir dependences
-  - wget https://github.com/erpcya/adempiere/releases/download/3.9.2-rc-1.5/Adempiere_392LTS.tar.gz  -c -O Adempiere.tar.gz
+  - wget https://github.com/erpcya/adempiere/releases/download/3.9.3-rs-1.1/Adempiere_393LTS.tar.gz  -c -O Adempiere.tar.gz
   - tar -xzf Adempiere.tar.gz
   - mv Adempiere/lib/*.jar dependences/
   
