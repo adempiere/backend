@@ -478,7 +478,7 @@ message ListLanguagesResponse {
 message ListTranslationsRequest {
 	ClientRequest clientRequest = 1;
 	string tableName = 2;
-	string uuid = 3;
+	string recordUuid = 3;
 	int32 recordId = 4;
 	string language = 5;
 	int32 page_size = 6;

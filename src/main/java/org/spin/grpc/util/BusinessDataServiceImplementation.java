@@ -1092,7 +1092,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			throw new AdempiereException("@TableName@ @NotFound@");
 		}
 		MTable table = MTable.get(context, tableName);
-		PO entity = getEntity(context, tableName, request.getUuid(), request.getRecordId());
+		PO entity = getEntity(context, tableName, request.getRecordUuid(), request.getRecordId());
 		new Query(context, tableName + "_Trl", entity.get_KeyColumns()[0] + " = ?", null)
 			.setParameters(entity.get_ID())
 			.<PO>list()
