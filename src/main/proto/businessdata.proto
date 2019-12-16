@@ -75,6 +75,10 @@ service BusinessDataService {
 	rpc GetReportOutput(GetReportOutputRequest) returns (ReportOutput) {}
 	//	Request Dashboards Content Edit
 	rpc ListDashboards(ListDashboardsRequest) returns (ListDashboardsResponse) {}
+	//	Request Language List
+	rpc ListLanguages(ListLanguagesRequest) returns (ListLanguagesResponse) {}
+	//	Request Translations List
+	rpc ListTranslations(ListTranslationsRequest) returns (ListTranslationsResponse) {}
 }
 
 // The client request contains client info for request.
@@ -440,6 +444,57 @@ message Favorite {
 message ListFavoritesResponse {
 	int64 recordCount = 1;
 	repeated Favorite favorites = 2;
+	string next_page_token = 3;
+}
+
+// Languages Request
+message ListLanguagesRequest {
+	ClientRequest clientRequest = 1;
+	int32 page_size = 2;
+	string page_token = 3;
+}
+
+// Language Item
+message Language {
+	string language = 1;
+	string languageName = 2;
+	string languageISO = 3;
+	string countryCode = 4;
+	bool isBaseLanguage = 5;
+	bool isSystemLanguage = 6;
+	bool isDecimalPoint = 7;
+	string datePattern = 8;
+	string timePattern = 9;
+}
+
+//	Languages List
+message ListLanguagesResponse {
+	int64 recordCount = 1;
+	repeated Language languages = 2;
+	string next_page_token = 3;
+}
+
+// Translations Request
+message ListTranslationsRequest {
+	ClientRequest clientRequest = 1;
+	string tableName = 2;
+	string uuid = 3;
+	int32 recordId = 4;
+	string language = 5;
+	int32 page_size = 6;
+	string page_token = 7;
+}
+
+// Translations Item
+message Translation {
+	string language = 1;
+	map<string, Value> values = 4;
+}
+
+//	Translations List
+message ListTranslationsResponse {
+	int64 recordCount = 1;
+	repeated Translation translations = 2;
 	string next_page_token = 3;
 }
 

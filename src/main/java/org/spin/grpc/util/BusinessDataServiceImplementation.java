@@ -59,6 +59,7 @@ import org.compiere.model.GridWindowVO;
 import org.compiere.model.I_AD_ChangeLog;
 import org.compiere.model.I_AD_Element;
 import org.compiere.model.I_AD_Form;
+import org.compiere.model.I_AD_Language;
 import org.compiere.model.I_AD_Menu;
 import org.compiere.model.I_AD_PInstance;
 import org.compiere.model.I_AD_PInstance_Log;
@@ -79,6 +80,7 @@ import org.compiere.model.MColumn;
 import org.compiere.model.MDashboardContent;
 import org.compiere.model.MField;
 import org.compiere.model.MForm;
+import org.compiere.model.MLanguage;
 import org.compiere.model.MMenu;
 import org.compiere.model.MMessage;
 import org.compiere.model.MPInstance;
@@ -609,6 +611,46 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	}
 	
 	@Override
+	public void listLanguages(ListLanguagesRequest request, StreamObserver<ListLanguagesResponse> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			Properties context = getContext(request.getClientRequest());
+			ListLanguagesResponse.Builder languagesList = convertLanguagesList(context, request);
+			responseObserver.onNext(languagesList.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void listTranslations(ListTranslationsRequest request, StreamObserver<ListTranslationsResponse> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			Properties context = getContext(request.getClientRequest());
+			ListTranslationsResponse.Builder translationsList = convertTranslationsList(context, request);
+			responseObserver.onNext(translationsList.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
 	public void listPrintFormats(ListPrintFormatsRequest request, StreamObserver<ListPrintFormatsResponse> responseObserver) {
 		try {
 			if(request == null) {
@@ -1004,6 +1046,69 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			//	TODO: Add description for interface
 			builder.addPendingDocuments(pendingDocument);
 		});
+		//	Return
+		return builder;
+	}
+	
+	/**
+	 * Convert languages to gRPC
+	 * @param context
+	 * @param request
+	 * @return
+	 */
+	private ListLanguagesResponse.Builder convertLanguagesList(Properties context, ListLanguagesRequest request) {
+		ListLanguagesResponse.Builder builder = ListLanguagesResponse.newBuilder();
+		new Query(context, I_AD_Language.Table_Name, "(IsSystemLanguage=? OR IsBaseLanguage=?)", null)
+			.setParameters(true, true)
+			.setOnlyActiveRecords(true)
+			.<MLanguage>list()
+			.forEach(language -> {
+				org.spin.grpc.util.Language.Builder languageBuilder = org.spin.grpc.util.Language.newBuilder();
+				languageBuilder.setLanguage(validateNull(language.getAD_Language()));
+				languageBuilder.setCountryCode(validateNull(language.getCountryCode()));
+				languageBuilder.setLanguageISO(validateNull(language.getLanguageISO()));
+				languageBuilder.setLanguageName(validateNull(language.getName()));
+				languageBuilder.setDatePattern(validateNull(language.getDatePattern()));
+				languageBuilder.setTimePattern(validateNull(language.getTimePattern()));
+				languageBuilder.setIsBaseLanguage(language.isBaseLanguage());
+				languageBuilder.setIsSystemLanguage(language.isSystemLanguage());
+				languageBuilder.setIsDecimalPoint(language.isDecimalPoint());
+				builder.addLanguages(languageBuilder);
+			});
+		//	Return
+		return builder;
+	}
+	
+	/**
+	 * Convert languages to gRPC
+	 * @param context
+	 * @param request
+	 * @return
+	 */
+	private ListTranslationsResponse.Builder convertTranslationsList(Properties context, ListTranslationsRequest request) {
+		ListTranslationsResponse.Builder builder = ListTranslationsResponse.newBuilder();
+		String tableName = request.getTableName();
+		if(Util.isEmpty(tableName)) {
+			throw new AdempiereException("@TableName@ @NotFound@");
+		}
+		MTable table = MTable.get(context, tableName);
+		PO entity = getEntity(context, tableName, request.getUuid(), request.getRecordId());
+		new Query(context, tableName + "_Trl", entity.get_KeyColumns()[0] + " = ?", null)
+			.setParameters(entity.get_ID())
+			.<PO>list()
+			.forEach(translation -> {
+				Translation.Builder translationBuilder = Translation.newBuilder();
+				table.getColumnsAsList().stream().filter(column -> column.isTranslated()).forEach(column -> {
+					Object value = translation.get_Value(column.getColumnName());
+					if(value != null) {
+						Value.Builder builderValue = getKeyValueFromValue(value);
+						if(builderValue != null) {
+							translationBuilder.putValues(column.getColumnName(), builderValue.build());
+						}
+					}
+				});
+				builder.addTranslations(translationBuilder);
+			});
 		//	Return
 		return builder;
 	}
@@ -3352,26 +3457,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			if(value == null) {
 				continue;
 			}
-			Value.Builder builderValue = Value.newBuilder();
-			Class<?> clazz = poInfo.getColumnClass(index);
-			if (clazz == BigDecimal.class) {
-				BigDecimal bigdecimalValue = (BigDecimal) value;
-				builderValue.setValueType(ValueType.DOUBLE);
-				builderValue.setDoubleValue(bigdecimalValue.doubleValue());
-			} else if (clazz == Integer.class) {
-				builderValue.setValueType(ValueType.INTEGER);
-				builderValue.setIntValue(entity.get_ValueAsInt(index));
-			} else if (clazz == String.class) {
-				builderValue.setValueType(ValueType.STRING);
-				builderValue.setStringValue(validateNull(entity.get_ValueAsString(columnName)));
-			} else if (clazz == Boolean.class) {
-				builderValue.setValueType(ValueType.BOOLEAN);
-				builderValue.setBooleanValue(entity.get_ValueAsBoolean(columnName));
-			} else if(clazz == Timestamp.class) {
-				builderValue.setValueType(ValueType.DATE);
-				Timestamp date = (Timestamp) entity.get_Value(columnName);
-				builderValue.setLongValue(date.getTime());
-			} else {
+			Value.Builder builderValue = getKeyValueFromValue(value);
+			if(builderValue == null) {
 				continue;
 			}
 			//	Add
@@ -3409,6 +3496,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			builderValue.setValueType(ValueType.DATE);
 			Timestamp date = (Timestamp) value;
 			builderValue.setLongValue(date.getTime());
+		} else {
+			return null;
 		}
 		//	
 		return builderValue;
