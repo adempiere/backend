@@ -73,8 +73,10 @@ import org.compiere.model.I_AD_TreeNodeMM;
 import org.compiere.model.I_AD_User;
 import org.compiere.model.I_AD_Window;
 import org.compiere.model.I_AD_Workflow;
+import org.compiere.model.I_PA_DashboardContent;
 import org.compiere.model.MChangeLog;
 import org.compiere.model.MColumn;
+import org.compiere.model.MDashboardContent;
 import org.compiere.model.MField;
 import org.compiere.model.MForm;
 import org.compiere.model.MMenu;
@@ -587,6 +589,26 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	}
 	
 	@Override
+	public void listDashboards(ListDashboardsRequest request, StreamObserver<ListDashboardsResponse> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			Properties context = getContext(request.getClientRequest());
+			ListDashboardsResponse.Builder dashboardsList = convertDashboarsList(context, request);
+			responseObserver.onNext(dashboardsList.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
 	public void listPrintFormats(ListPrintFormatsRequest request, StreamObserver<ListPrintFormatsResponse> responseObserver) {
 		try {
 			if(request == null) {
@@ -982,6 +1004,70 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			//	TODO: Add description for interface
 			builder.addPendingDocuments(pendingDocument);
 		});
+		//	Return
+		return builder;
+	}
+	
+	/**
+	 * Convert dashboards to gRPC
+	 * @param context
+	 * @param request
+	 * @return
+	 */
+	private ListDashboardsResponse.Builder convertDashboarsList(Properties context, ListDashboardsRequest request) {
+		ListDashboardsResponse.Builder builder = ListDashboardsResponse.newBuilder();
+		//	Get entity
+		if(Util.isEmpty(request.getRoleUuid())) {
+			throw new AdempiereException("@AD_Role_ID@ @NotFound@");
+		}
+		//	Get role
+		int roleId = new Query(context, I_AD_Role.Table_Name, I_AD_Role.COLUMNNAME_UUID + " = ?", null)
+				.setParameters(request.getRoleUuid())
+				.firstId();
+		new Query(context, I_PA_DashboardContent.Table_Name, 
+				"EXISTS(SELECT 1 FROM AD_Dashboard_Access da WHERE da.PA_DashboardContent_ID = PA_DashboardContent.PA_DashboardContent_ID AND da.AD_Role_ID = ?)", null)
+			.setParameters(roleId)
+			.setOnlyActiveRecords(true)
+			.setOrderBy(I_PA_DashboardContent.COLUMNNAME_ColumnNo + "," + I_PA_DashboardContent.COLUMNNAME_AD_Client_ID + "," + I_PA_DashboardContent.COLUMNNAME_Line)
+			.<MDashboardContent>list()
+			.forEach(dashboard -> {
+				Dashboard.Builder dashboardBuilder = Dashboard.newBuilder();
+				dashboardBuilder.setDashboardName(validateNull(dashboard.getName()));
+				dashboardBuilder.setDashboardDescription(validateNull(dashboard.getDescription()));
+				dashboardBuilder.setDashboardHtml(validateNull(dashboard.getHTML()));
+				dashboardBuilder.setColumnNo(dashboard.getColumnNo());
+				dashboardBuilder.setLineNo(dashboard.getLine());
+				dashboardBuilder.setIsEventRequired(dashboard.isEventRequired());
+				dashboardBuilder.setIsCollapsible(dashboard.isCollapsible());
+				dashboardBuilder.setIsOpenByDefault(dashboard.isOpenByDefault());
+				//	For Window
+				if(dashboard.getAD_Window_ID() != 0) {
+					MWindow window = MWindow.get(context, dashboard.getAD_Window_ID());
+					dashboardBuilder.setWindowUuid(validateNull(window.getUUID()));
+				}
+				//	For Smart Browser
+				if(dashboard.getAD_Browse_ID() != 0) {
+					MBrowse browser = MBrowse.get(context, dashboard.getAD_Browse_ID());
+					dashboardBuilder.setWindowUuid(validateNull(browser.getUUID()));
+				}
+				//	File Name
+				String fileName = dashboard.getZulFilePath();
+				if(!Util.isEmpty(fileName)) {
+					int endIndex = fileName.lastIndexOf(".");
+					int beginIndex = fileName.lastIndexOf("/");
+					if(beginIndex == -1) {
+						beginIndex = 0;
+					} else {
+						beginIndex++;
+					}
+					if(endIndex == -1) {
+						endIndex = fileName.length();
+					}
+					//	Set
+					dashboardBuilder.setFileName(validateNull(fileName.substring(beginIndex, endIndex)));
+				}
+				builder.addDashboards(dashboardBuilder);
+			});
 		//	Return
 		return builder;
 	}

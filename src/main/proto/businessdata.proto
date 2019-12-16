@@ -73,6 +73,8 @@ service BusinessDataService {
 	rpc ListDrillTables(ListDrillTablesRequest) returns (ListDrillTablesResponse) {}
 	//	Request Report Output
 	rpc GetReportOutput(GetReportOutputRequest) returns (ReportOutput) {}
+	//	Request Dashboards Content Edit
+	rpc ListDashboards(ListDashboardsRequest) returns (ListDashboardsResponse) {}
 }
 
 // The client request contains client info for request.
@@ -466,6 +468,36 @@ message PendingDocument {
 message ListPendingDocumentsResponse {
 	int64 recordCount = 1;
 	repeated PendingDocument pendingDocuments = 2;
+	string next_page_token = 3;
+}
+
+// Dashboards Request
+message ListDashboardsRequest {
+	ClientRequest clientRequest = 1;
+	string roleUuid = 2;
+	int32 page_size = 3;
+	string page_token = 4;
+}
+
+// Dashboard
+message Dashboard {
+	string windowUuid = 1;
+	string browserUuid = 2;
+	string dashboardName = 3;
+	string dashboardDescription = 4;
+	string dashboardHtml = 5;
+	int32 columnNo = 6;
+	int32 lineNo = 7;
+	bool isCollapsible = 8;
+	bool isOpenByDefault = 9;
+	bool isEventRequired = 10;
+	string fileName = 11;
+}
+
+//	Dashboards List
+message ListDashboardsResponse {
+	int64 recordCount = 1;
+	repeated Dashboard dashboards = 2;
 	string next_page_token = 3;
 }
 
