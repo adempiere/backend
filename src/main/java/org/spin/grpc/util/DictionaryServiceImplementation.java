@@ -16,7 +16,6 @@ package org.spin.grpc.util;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -70,6 +69,7 @@ import org.spin.grpc.util.DictionaryServiceGrpc.DictionaryServiceImplBase;
 import org.spin.model.MADContextInfo;
 import org.spin.model.MADFieldCondition;
 import org.spin.model.MADFieldDefinition;
+import org.spin.util.ASPUtil;
 import org.spin.util.AbstractExportFormat;
 import org.spin.util.ReportExportHandler;
 
@@ -345,75 +345,71 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	 * @return
 	 */
 	private Window.Builder convertWindow(Properties context, MWindow window, String language, boolean withTabs) {
-		//	
+		window = ASPUtil.getInstance(context).getWindow(window.getAD_Window_ID());
 		Window.Builder builder = null;
-		//	Validate
-		if(window != null) {
-			//	
-			ContextInfo.Builder contextInfoBuilder = convertContextInfo(context, window.getAD_ContextInfo_ID(), language);
-			//	Translation
-			String name = null;
-			String description = null;
-			String help = null;
-			if(!Util.isEmpty(language)) {
-				name = window.get_Translation(I_AD_Window.COLUMNNAME_Name, language);
-				description = window.get_Translation(I_AD_Window.COLUMNNAME_Description, language);
-				help = window.get_Translation(I_AD_Window.COLUMNNAME_Help, language);
-			}
-			//	Validate for default
-			if(Util.isEmpty(name)) {
-				name = window.getName();
-			}
-			if(Util.isEmpty(description)) {
-				description = window.getDescription();
-			}
-			if(Util.isEmpty(help)) {
-				help = window.getHelp();
-			}
-			//	
-			builder = Window.newBuilder()
-					.setId(window.getAD_Window_ID())
-					.setUuid(validateNull(window.getUUID()))
-					.setName(name)
-					.setDescription(validateNull(description))
-					.setHelp(validateNull(help))
-					.setWindowType(validateNull(window.getWindowType()))
-					.setIsSOTrx(window.isSOTrx())
-					.setIsActive(window.isActive());
-			if(contextInfoBuilder != null) {
-				builder.setContextInfo(contextInfoBuilder.build());
-			}
-			//	With Tabs
-			if(withTabs) {
-				List<Tab.Builder> tabListForGroup = new ArrayList<>();
-				List<MTab> tabs = Arrays.asList(window.getTabs(false, null));
-				for(MTab tab : tabs) {
-					if(!tab.isActive()) {
-						continue;
-					}
-					Tab.Builder tabBuilder = convertTab(context, tab, tabs, language, false);
-					builder.addTabs(tabBuilder.build());
-					//	Get field group
-					int [] fieldGroupIdArray = getFieldGroupIdsFromTab(tab.getAD_Tab_ID());
-					if(fieldGroupIdArray != null) {
-						for(int fieldGroupId : fieldGroupIdArray) {
-							Tab.Builder tabFieldGroup = convertTab(context, tab, language, false);
-							FieldGroup.Builder fieldGroup = convertFieldGroup(context, fieldGroupId, language);
-							tabFieldGroup.setFieldGroup(fieldGroup);
-							tabFieldGroup.setName(fieldGroup.getName());
-							//	Add to list
-							tabListForGroup.add(tabFieldGroup);
-						}
-					}
-				}
-				//	Add Field Group Tabs
-				for(Tab.Builder tabFieldGroup : tabListForGroup) {
-					builder.addTabs(tabFieldGroup.build());
-				}
-			}
-			//	Add to recent Item
-			addToRecentItem(MMenu.ACTION_Window, window.getAD_Window_ID());
+		ContextInfo.Builder contextInfoBuilder = convertContextInfo(context, window.getAD_ContextInfo_ID(), language);
+		//	Translation
+		String name = null;
+		String description = null;
+		String help = null;
+		if(!Util.isEmpty(language)) {
+			name = window.get_Translation(I_AD_Window.COLUMNNAME_Name, language);
+			description = window.get_Translation(I_AD_Window.COLUMNNAME_Description, language);
+			help = window.get_Translation(I_AD_Window.COLUMNNAME_Help, language);
 		}
+		//	Validate for default
+		if(Util.isEmpty(name)) {
+			name = window.getName();
+		}
+		if(Util.isEmpty(description)) {
+			description = window.getDescription();
+		}
+		if(Util.isEmpty(help)) {
+			help = window.getHelp();
+		}
+		//	
+		builder = Window.newBuilder()
+				.setId(window.getAD_Window_ID())
+				.setUuid(validateNull(window.getUUID()))
+				.setName(name)
+				.setDescription(validateNull(description))
+				.setHelp(validateNull(help))
+				.setWindowType(validateNull(window.getWindowType()))
+				.setIsSOTrx(window.isSOTrx())
+				.setIsActive(window.isActive());
+		if(contextInfoBuilder != null) {
+			builder.setContextInfo(contextInfoBuilder.build());
+		}
+		//	With Tabs
+		if(withTabs) {
+			List<Tab.Builder> tabListForGroup = new ArrayList<>();
+			List<MTab> tabs = ASPUtil.getInstance(context).getWindowTabs(window.getAD_Window_ID());
+			for(MTab tab : tabs) {
+				if(!tab.isActive()) {
+					continue;
+				}
+				Tab.Builder tabBuilder = convertTab(context, tab, tabs, language, false);
+				builder.addTabs(tabBuilder.build());
+				//	Get field group
+				int [] fieldGroupIdArray = getFieldGroupIdsFromTab(tab.getAD_Tab_ID());
+				if(fieldGroupIdArray != null) {
+					for(int fieldGroupId : fieldGroupIdArray) {
+						Tab.Builder tabFieldGroup = convertTab(context, tab, language, false);
+						FieldGroup.Builder fieldGroup = convertFieldGroup(context, fieldGroupId, language);
+						tabFieldGroup.setFieldGroup(fieldGroup);
+						tabFieldGroup.setName(fieldGroup.getName());
+						//	Add to list
+						tabListForGroup.add(tabFieldGroup);
+					}
+				}
+			}
+			//	Add Field Group Tabs
+			for(Tab.Builder tabFieldGroup : tabListForGroup) {
+				builder.addTabs(tabFieldGroup.build());
+			}
+		}
+		//	Add to recent Item
+		addToRecentItem(MMenu.ACTION_Window, window.getAD_Window_ID());
 		//	return
 		return builder;
 	}
@@ -713,7 +709,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			}
 		}
 		if(withFields) {
-			for(MField field : tab.getFields(false, null)) {
+			for(MField field : ASPUtil.getInstance(context).getWindowFields(tab.getAD_Tab_ID())) {
 				Field.Builder fieldBuilder = convertField(context, field, language);
 				builder.addFields(fieldBuilder.build());
 			}
@@ -799,6 +795,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	 * @return
 	 */
 	private Process.Builder convertProcess(Properties context, MProcess process, String language, boolean withParams) {
+		process = ASPUtil.getInstance(context).getProcess(process.getAD_Process_ID());
 		String name = null;
 		String description = null;
 		String help = null;
@@ -845,7 +842,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		}
 		//	For parameters
 		if(withParams) {
-			for(MProcessPara parameter : process.getParameters()) {
+			for(MProcessPara parameter : ASPUtil.getInstance(context).getProcessParameters(process.getAD_Process_ID())) {
 				Field.Builder fieldBuilder = convertProcessParameter(context, parameter, language);
 				builder.addParameters(fieldBuilder.build());
 			}
@@ -861,6 +858,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	 * @return
 	 */
 	private Browser.Builder convertBrowser(Properties context, MBrowse browser, String language, boolean withFields) {
+		browser = ASPUtil.getInstance(context).getBrowse(browser.getAD_Browse_ID());
 		String name = null;
 		String description = null;
 		String help = null;
@@ -916,7 +914,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		}
 		//	For parameters
 		if(withFields) {
-			for(MBrowseField field : browser.getFields()) {
+			for(MBrowseField field : ASPUtil.getInstance(context).getBrowseFields(browser.getAD_Browse_ID())) {
 				Field.Builder fieldBuilder = convertBrowseField(context, field, language);
 				builder.addFields(fieldBuilder.build());
 			}
