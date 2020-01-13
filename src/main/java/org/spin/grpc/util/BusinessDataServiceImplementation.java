@@ -1566,7 +1566,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			result = builder.getProcessInfo();
 		}
 		String reportViewUuid = null;
-		String printFormatUuid = null;
+		String printFormatUuid = request.getPrintFormatUuid();
 		String tableName = null;
 		//	Get process instance from identifier
 		if(result.getAD_PInstance_ID() != 0) {
@@ -1587,7 +1587,16 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				}
 				//	Get from report view or print format
 				MPrintFormat printFormat = null;
-				if(printFormatId != 0) {
+				if(!Util.isEmpty(printFormatUuid)) {
+					printFormat = new Query(context, I_AD_PrintFormat.Table_Name, I_AD_PrintFormat.COLUMNNAME_UUID + " = ?", null)
+							.setParameters(printFormatUuid)
+							.first();
+					tableName = printFormat.getAD_Table().getTableName();
+					if(printFormat.getAD_ReportView_ID() != 0) {
+						MReportView reportView = MReportView.get(context, printFormat.getAD_ReportView_ID());
+						reportViewUuid = reportView.getUUID();
+					}
+				} else if(printFormatId != 0) {
 					printFormat = MPrintFormat.get(context, printFormatId, false);
 					printFormatUuid = printFormat.getUUID();
 					tableName = printFormat.getAD_Table().getTableName();
