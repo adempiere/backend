@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 
 import org.adempiere.exceptions.AdempiereException;
 import org.adempiere.model.I_AD_Browse;
-import org.adempiere.model.I_AD_Browse_Field;
 import org.adempiere.model.MBrowse;
 import org.adempiere.model.MBrowseField;
 import org.adempiere.model.MView;
@@ -36,7 +35,6 @@ import org.compiere.model.I_AD_Form;
 import org.compiere.model.I_AD_Menu;
 import org.compiere.model.I_AD_Message;
 import org.compiere.model.I_AD_Process;
-import org.compiere.model.I_AD_Process_Para;
 import org.compiere.model.I_AD_Session;
 import org.compiere.model.I_AD_Tab;
 import org.compiere.model.I_AD_Window;
@@ -348,32 +346,13 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		window = ASPUtil.getInstance(context).getWindow(window.getAD_Window_ID());
 		Window.Builder builder = null;
 		ContextInfo.Builder contextInfoBuilder = convertContextInfo(context, window.getAD_ContextInfo_ID(), language);
-		//	Translation
-		String name = null;
-		String description = null;
-		String help = null;
-		if(!Util.isEmpty(language)) {
-			name = window.get_Translation(I_AD_Window.COLUMNNAME_Name, language);
-			description = window.get_Translation(I_AD_Window.COLUMNNAME_Description, language);
-			help = window.get_Translation(I_AD_Window.COLUMNNAME_Help, language);
-		}
-		//	Validate for default
-		if(Util.isEmpty(name)) {
-			name = window.getName();
-		}
-		if(Util.isEmpty(description)) {
-			description = window.getDescription();
-		}
-		if(Util.isEmpty(help)) {
-			help = window.getHelp();
-		}
 		//	
 		builder = Window.newBuilder()
 				.setId(window.getAD_Window_ID())
 				.setUuid(validateNull(window.getUUID()))
-				.setName(name)
-				.setDescription(validateNull(description))
-				.setHelp(validateNull(help))
+				.setName(window.getName())
+				.setDescription(validateNull(window.getDescription()))
+				.setHelp(validateNull(window.getHelp()))
 				.setWindowType(validateNull(window.getWindowType()))
 				.setIsSOTrx(window.isSOTrx())
 				.setIsActive(window.isActive());
@@ -519,31 +498,12 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	 * @return
 	 */
 	private Tab.Builder convertTab(Properties context, MTab tab, List<MTab> tabs, String language, boolean withFields) {
-		//	Translation
-		String name = null;
-		String description = null;
-		String help = null;
-		String commitWarning = null;
 		String parentTabUuid = null;
-		if(!Util.isEmpty(language)) {
-			name = tab.get_Translation(I_AD_Tab.COLUMNNAME_Name, language);
-			description = tab.get_Translation(I_AD_Tab.COLUMNNAME_Description, language);
-			help = tab.get_Translation(I_AD_Tab.COLUMNNAME_Help, language);
-			commitWarning = tab.get_Translation(I_AD_Tab.COLUMNNAME_CommitWarning, language);
-		}
-		//	Validate for default
-		if(Util.isEmpty(name)) {
-			name = tab.getName();
-		}
-		if(Util.isEmpty(description)) {
-			description = tab.getDescription();
-		}
-		if(Util.isEmpty(help)) {
-			help = tab.getHelp();
-		}
-		if(Util.isEmpty(commitWarning)) {
-			commitWarning = tab.getCommitWarning();
-		}
+		int tabId = tab.getAD_Tab_ID();
+		int seqNo = tab.getSeqNo();
+		int tabLevel = tab.getTabLevel();
+		Optional<MTab> currentOptionalTab = ASPUtil.getInstance(context).getWindowTabs(tab.getAD_Window_ID()).stream().filter(filterTab -> filterTab.getAD_Tab_ID() == tabId).findFirst();
+		tab = currentOptionalTab.get();
 		//	Get table attributes
 		MTable table = MTable.get(context, tab.getAD_Table_ID());
 		boolean isReadOnly = tab.isReadOnly() || table.isView();
@@ -556,7 +516,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		if(tab.getTabLevel() > 0
 				&& tabs != null) {
 			Optional<MTab> optionalTab = tabs.stream()
-					.filter(parentTab -> parentTab.getAD_Tab_ID() != tab.getAD_Tab_ID())
+					.filter(parentTab -> parentTab.getAD_Tab_ID() != tabId)
 					.filter(parentTab -> parentTab.getTabLevel() == 0)
 					.findFirst();
 			String mainColumnName = null;
@@ -566,10 +526,10 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				mainColumnName = mainTable.getKeyColumns()[0];
 			}
 			List<MTab> tabList = tabs.stream()
-					.filter(parentTab -> parentTab.getAD_Tab_ID() != tab.getAD_Tab_ID())
+					.filter(parentTab -> parentTab.getAD_Tab_ID() != tabId)
 					.filter(parentTab -> parentTab.getAD_Tab_ID() != optionalTab.get().getAD_Tab_ID())
-					.filter(parentTab -> parentTab.getSeqNo() < tab.getSeqNo())
-					.filter(parentTab -> parentTab.getTabLevel() < tab.getTabLevel())
+					.filter(parentTab -> parentTab.getSeqNo() < seqNo)
+					.filter(parentTab -> parentTab.getTabLevel() < tabLevel)
 					.sorted(Comparator.comparing(MTab::getSeqNo).thenComparing(MTab::getTabLevel).reversed())
 					.collect(Collectors.toList());
 			//	Validate direct child
@@ -646,11 +606,11 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		Tab.Builder builder = Tab.newBuilder()
 				.setId(tab.getAD_Tab_ID())
 				.setUuid(validateNull(tab.getUUID()))
-				.setName(validateNull(name))
-				.setDescription(validateNull(description))
-				.setHelp(validateNull(help))
+				.setName(validateNull(tab.getName()))
+				.setDescription(validateNull(tab.getDescription()))
+				.setHelp(validateNull(tab.getHelp()))
 				.setAccessLevel(Integer.parseInt(table.getAccessLevel()))
-				.setCommitWarning(validateNull(commitWarning))
+				.setCommitWarning(validateNull(tab.getCommitWarning()))
 				.setSequence(tab.getSeqNo())
 				.setDisplayLogic(validateNull(tab.getDisplayLogic()))
 				.setIsAdvancedTab(tab.isAdvancedTab())
@@ -796,31 +756,13 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	 */
 	private Process.Builder convertProcess(Properties context, MProcess process, String language, boolean withParams) {
 		process = ASPUtil.getInstance(context).getProcess(process.getAD_Process_ID());
-		String name = null;
-		String description = null;
-		String help = null;
-		if(!Util.isEmpty(language)) {
-			name = process.get_Translation(I_AD_Process.COLUMNNAME_Name, language);
-			description = process.get_Translation(I_AD_Process.COLUMNNAME_Description, language);
-			help = process.get_Translation(I_AD_Process.COLUMNNAME_Help, language);
-		}
-		//	Validate for default
-		if(Util.isEmpty(name)) {
-			name = process.getName();
-		}
-		if(Util.isEmpty(description)) {
-			description = process.getDescription();
-		}
-		if(Util.isEmpty(help)) {
-			help = process.getHelp();
-		}
 		Process.Builder builder = Process.newBuilder()
 				.setId(process.getAD_Process_ID())
 				.setUuid(validateNull(process.getUUID()))
 				.setValue(validateNull(process.getValue()))
-				.setName(validateNull(name))
-				.setDescription(validateNull(description))
-				.setHelp(validateNull(help))
+				.setName(validateNull(process.getName()))
+				.setDescription(validateNull(process.getDescription()))
+				.setHelp(validateNull(process.getHelp()))
 				.setAccessLevel(Integer.parseInt(process.getAccessLevel()))
 				.setIsDirectPrint(process.isDirectPrint())
 				.setIsReport(process.isReport())
@@ -859,33 +801,15 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	 */
 	private Browser.Builder convertBrowser(Properties context, MBrowse browser, String language, boolean withFields) {
 		browser = ASPUtil.getInstance(context).getBrowse(browser.getAD_Browse_ID());
-		String name = null;
-		String description = null;
-		String help = null;
-		if(!Util.isEmpty(language)) {
-			name = browser.get_Translation(I_AD_Browse.COLUMNNAME_Name, language);
-			description = browser.get_Translation(I_AD_Browse.COLUMNNAME_Description, language);
-			help = browser.get_Translation(I_AD_Browse.COLUMNNAME_Help, language);
-		}
-		//	Validate for default
-		if(Util.isEmpty(name)) {
-			name = browser.getName();
-		}
-		if(Util.isEmpty(description)) {
-			description = browser.getDescription();
-		}
-		if(Util.isEmpty(help)) {
-			help = browser.getHelp();
-		}
 		String query = addQueryReferencesFromBrowser(browser, MView.getSQLFromView(browser.getAD_View_ID(), null));
 		String orderByClause = getSQLOrderBy(browser);
 		Browser.Builder builder = Browser.newBuilder()
 				.setId(browser.getAD_Process_ID())
 				.setUuid(validateNull(browser.getUUID()))
 				.setValue(validateNull(browser.getValue()))
-				.setName(name)
-				.setDescription(validateNull(description))
-				.setHelp(validateNull(help))
+				.setName(browser.getName())
+				.setDescription(validateNull(browser.getDescription()))
+				.setHelp(validateNull(browser.getHelp()))
 				.setAccessLevel(Integer.parseInt(browser.getAccessLevel()))
 				.setIsActive(browser.isActive())
 				.setIsCollapsibleByDefault(browser.isCollapsibleByDefault())
@@ -1080,31 +1004,13 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	 * @return
 	 */
 	private Field.Builder convertProcessParameter(Properties context, MProcessPara processParameter, String language) {
-		String name = null;
-		String description = null;
-		String help = null;
-		if(!Util.isEmpty(language)) {
-			name = processParameter.get_Translation(I_AD_Process_Para.COLUMNNAME_Name, language);
-			description = processParameter.get_Translation(I_AD_Process_Para.COLUMNNAME_Description, language);
-			help = processParameter.get_Translation(I_AD_Process_Para.COLUMNNAME_Help, language);
-		}
-		//	Validate for default
-		if(Util.isEmpty(name)) {
-			name = processParameter.getName();
-		}
-		if(Util.isEmpty(description)) {
-			description = processParameter.getDescription();
-		}
-		if(Util.isEmpty(help)) {
-			help = processParameter.getHelp();
-		}
 		//	Convert
 		Field.Builder builder = Field.newBuilder()
 				.setId(processParameter.getAD_Process_Para_ID())
 				.setUuid(validateNull(processParameter.getUUID()))
-				.setName(validateNull(name))
-				.setDescription(validateNull(description))
-				.setHelp(validateNull(help))
+				.setName(validateNull(processParameter.getName()))
+				.setDescription(validateNull(processParameter.getDescription()))
+				.setHelp(validateNull(processParameter.getHelp()))
 				.setColumnName(validateNull(processParameter.getColumnName()))
 				.setElementName(validateNull(processParameter.getColumnName()))
 				.setDefaultValue(validateNull(processParameter.getDefaultValue()))
@@ -1153,31 +1059,13 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	 * @return
 	 */
 	private Field.Builder convertBrowseField(Properties context, MBrowseField browseField, String language) {
-		String name = null;
-		String description = null;
-		String help = null;
-		if(!Util.isEmpty(language)) {
-			name = browseField.get_Translation(I_AD_Browse_Field.COLUMNNAME_Name, language);
-			description = browseField.get_Translation(I_AD_Browse_Field.COLUMNNAME_Description, language);
-			help = browseField.get_Translation(I_AD_Browse_Field.COLUMNNAME_Help, language);
-		}
-		//	Validate for default
-		if(Util.isEmpty(name)) {
-			name = browseField.getName();
-		}
-		if(Util.isEmpty(description)) {
-			description = browseField.getDescription();
-		}
-		if(Util.isEmpty(help)) {
-			help = browseField.getHelp();
-		}
 		//	Convert
 		Field.Builder builder = Field.newBuilder()
 				.setId(browseField.getAD_Browse_Field_ID())
 				.setUuid(validateNull(browseField.getUUID()))
-				.setName(validateNull(name))
-				.setDescription(validateNull(description))
-				.setHelp(validateNull(help))
+				.setName(validateNull(browseField.getName()))
+				.setDescription(validateNull(browseField.getDescription()))
+				.setHelp(validateNull(browseField.getHelp()))
 				.setDefaultValue(validateNull(browseField.getDefaultValue()))
 				.setDefaultValueTo(validateNull(browseField.getDefaultValue2()))
 				.setDisplayLogic(validateNull(browseField.getDisplayLogic()))
@@ -1263,24 +1151,6 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	 * @return
 	 */
 	private Field.Builder convertField(Properties context, MField field, String language) {
-		String name = null;
-		String description = null;
-		String help = null;
-		if(!Util.isEmpty(language)) {
-			name = field.get_Translation(I_AD_Field.COLUMNNAME_Name, language);
-			description = field.get_Translation(I_AD_Field.COLUMNNAME_Description, language);
-			help = field.get_Translation(I_AD_Field.COLUMNNAME_Help, language);
-		}
-		//	Validate for default
-		if(Util.isEmpty(name)) {
-			name = field.getName();
-		}
-		if(Util.isEmpty(description)) {
-			description = field.getDescription();
-		}
-		if(Util.isEmpty(help)) {
-			help = field.getHelp();
-		}
 		//`Column reference
 		MColumn column = MColumn.get(context, field.getAD_Column_ID());
 		String defaultValue = field.getDefaultValue();
@@ -1301,9 +1171,9 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		Field.Builder builder = Field.newBuilder()
 				.setId(field.getAD_Field_ID())
 				.setUuid(validateNull(field.getUUID()))
-				.setName(validateNull(name))
-				.setDescription(validateNull(description))
-				.setHelp(validateNull(help))
+				.setName(validateNull(field.getName()))
+				.setDescription(validateNull(field.getDescription()))
+				.setHelp(validateNull(field.getHelp()))
 				.setCallout(validateNull(column.getCallout()))
 				.setColumnName(validateNull(column.getColumnName()))
 				.setElementName(validateNull(column.getColumnName()))
