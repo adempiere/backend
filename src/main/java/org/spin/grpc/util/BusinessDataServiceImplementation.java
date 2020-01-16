@@ -1093,8 +1093,15 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		}
 		MTable table = MTable.get(context, tableName);
 		PO entity = getEntity(context, tableName, request.getRecordUuid(), request.getRecordId());
-		new Query(context, tableName + "_Trl", entity.get_KeyColumns()[0] + " = ?", null)
-			.setParameters(entity.get_ID())
+		List<Object> parameters = new ArrayList<>();
+		StringBuffer whereClause = new StringBuffer(entity.get_KeyColumns()[0] + " = ?");
+		parameters.add(entity.get_ID());
+		if(!Util.isEmpty(request.getLanguage())) {
+			whereClause.append(" AND AD_Language = ?");
+			parameters.add(request.getLanguage());
+		}
+		new Query(context, tableName + "_Trl", whereClause.toString(), null)
+			.setParameters(parameters)
 			.<PO>list()
 			.forEach(translation -> {
 				Translation.Builder translationBuilder = Translation.newBuilder();
