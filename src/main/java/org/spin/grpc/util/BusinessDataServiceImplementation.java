@@ -1111,6 +1111,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 						Value.Builder builderValue = getKeyValueFromValue(value);
 						if(builderValue != null) {
 							translationBuilder.putValues(column.getColumnName(), builderValue.build());
+							translationBuilder.setLanguage(validateNull(translation.get_ValueAsString("AD_Language")));
 						}
 					}
 				});
