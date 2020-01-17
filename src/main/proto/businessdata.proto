@@ -488,7 +488,8 @@ message ListTranslationsRequest {
 // Translations Item
 message Translation {
 	string language = 1;
-	map<string, Value> values = 4;
+	string translationUuid = 2;
+	map<string, Value> values = 3;
 }
 
 //	Translations List

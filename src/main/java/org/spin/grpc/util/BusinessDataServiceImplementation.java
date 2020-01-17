@@ -1111,6 +1111,13 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 						Value.Builder builderValue = getKeyValueFromValue(value);
 						if(builderValue != null) {
 							translationBuilder.putValues(column.getColumnName(), builderValue.build());
+						}
+						//	Set uuid
+						if(Util.isEmpty(translationBuilder.getTranslationUuid())) {
+							translationBuilder.setTranslationUuid(validateNull(translation.get_UUID()));
+						}
+						//	Set Language
+						if(Util.isEmpty(translationBuilder.getLanguage())) {
 							translationBuilder.setLanguage(validateNull(translation.get_ValueAsString("AD_Language")));
 						}
 					}
@@ -1324,7 +1331,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		if(!Util.isEmpty(request.getTableName())) {
 			MTable table = MTable.get(context, request.getTableName());
 			whereClause = "AD_Table_ID = ?";
-			parameters.add(table);
+			parameters.add(table.getAD_Table_ID());
 		} else if(!Util.isEmpty(request.getProcessUuid())) {
 			whereClause = "EXISTS(SELECT 1 FROM AD_Process p WHERE p.UUID = ? AND (p.AD_PrintFormat_ID = AD_PrintFormat.AD_PrintFormat_ID OR p.AD_ReportView_ID = AD_PrintFormat.AD_ReportView_ID))";
 			parameters.add(request.getProcessUuid());
