@@ -42,11 +42,9 @@ service BusinessDataService {
 	// Run a Callout
 	rpc RunCallout(RunCalloutRequest) returns (Callout) {}
 	//	Request a BusinessProcess / Report
-	rpc RunBusinessProcess(RunBusinessProcessRequest) returns (BusinessProcess) {}
+	rpc RunBusinessProcess(RunBusinessProcessRequest) returns (ProcessLog) {}
 	//	Request Browser Data
 	rpc ListBrowserItems(ListBrowserItemsRequest) returns (ListBrowserItemsResponse) {}
-	//	Request BusinessProcess Activity from current session
-	rpc ListActivities(ListActivitiesRequest) returns (ListActivitiesResponse) {}
 	//	Request Recent Items
 	rpc ListRecentItems(ListRecentItemsRequest) returns (ListRecentItemsResponse) {}
 	// List a References
@@ -79,6 +77,12 @@ service BusinessDataService {
 	rpc ListLanguages(ListLanguagesRequest) returns (ListLanguagesResponse) {}
 	//	Request Translations List
 	rpc ListTranslations(ListTranslationsRequest) returns (ListTranslationsResponse) {}
+	//	Request BusinessProcess Activity from current session
+	rpc ListProcessLogs(ListProcessLogsRequest) returns (ListProcessLogsResponse) {}
+	//	Request Record Log List
+	rpc ListRecordLogs(ListRecordLogsRequest) returns (ListRecordLogsResponse) {}
+	//	List workflow processes
+	rpc ListWorkflowLogs(ListWorkflowLogsRequest) returns (ListWorkflowLogsResponse) {}
 }
 
 // The client request contains client info for request.
@@ -382,12 +386,39 @@ message RunBusinessProcessRequest {
 }
 
 // BusinessProcess Activity Request
-message ListActivitiesRequest {
+message ListProcessLogsRequest {
 	ClientRequest clientRequest = 1;
 	string userUuid = 2;
 	string instanceUuid = 3;
 	int32 page_size = 4;
 	string page_token = 5;
+}
+
+// BusinessProcess Response List
+message ListProcessLogsResponse {
+	int64 recordCount = 1;
+	repeated ProcessLog processLogs = 2;
+	string next_page_token = 3;
+}
+
+//	Response with log and values from server
+message ProcessLog {
+	string uuid = 1;
+	string instanceUuid = 2;
+	bool isError = 3;
+	string summary = 4;
+	string resultTableName = 5;
+	bool isProcessing = 6;
+	int64 lastRun = 7;
+	repeated ProcessInfoLog logs = 8;
+	map<string, Value> parameters = 9;
+	ReportOutput output = 10;
+}
+
+//	BusinessProcess Log result
+message ProcessInfoLog {
+	int32 recordId = 1;
+	string log = 2;
 }
 
 // Recent Items Request
@@ -584,6 +615,135 @@ message ListPrintFormatsResponse {
 	string next_page_token = 3;
 }
 
+// Record Log Request
+message ListRecordLogsRequest {
+	ClientRequest clientRequest = 1;
+	string tableName = 2;
+	int32 recordId = 3;
+	int32 page_size = 4;
+	string page_token = 5;
+}
+
+// Record Log
+message RecordLog {
+	string logUuid = 1;
+	int32 recordId = 2;
+	string tableName = 3;
+	string columnName = 4;
+	string displayColumnName = 5;
+	string sessionUuid = 6;
+	string userUuid = 7;
+	string userName = 8;
+	string transactionName = 9;
+	Value oldValue = 10;
+	string oldDisplayValue = 11;
+	Value newValue = 12;
+	string newDisplayValue = 13;
+	string description = 14;
+	enum EventType {
+		INSERT = 0;
+		UPDATE = 1;
+		DELETE = 2;
+	}
+	EventType eventType = 15;
+	int64 logDate = 16;
+}
+
+//	Repord Log List
+message ListRecordLogsResponse {
+	int64 recordCount = 1;
+	repeated RecordLog recordLogs = 2;
+	string next_page_token = 3;
+}
+
+// Workflow Activities Request
+message ListWorkflowLogsRequest {
+	ClientRequest clientRequest = 1;
+	string tableName = 2;
+	int32 recordId = 3;
+	int32 page_size = 4;
+	string page_token = 5;
+}
+
+// Workflow Process
+message WorkflowProcess {
+	string processUuid = 1;
+	string workflowUuid = 2;
+	string workflowName = 3;
+	int32 recordId = 4;
+	string tableName = 5;
+	string userUuid = 6;
+	string userName = 7;
+	string responsibleUuid = 8;
+	string responsibleName = 9;
+	string message = 10;
+	string textMessage = 11;
+	bool processed = 12;
+	enum WorkflowState {
+		RUNNING = 0;
+		COMPLETED = 1;
+		ABORTED = 2;
+		TERMINATED = 3;
+		SUSPENDED = 4;
+		NOT_STARTED = 5;
+		
+	}
+	enum Priority {
+		URGENT = 0;
+		HIGH = 1;
+		MEDIUM = 2;
+		LOW = 3;
+		MINOR = 4;
+	}
+	WorkflowState workflowState = 13;
+	Priority priority = 14;
+	repeated WorkflowEvent workflowEvents = 15;
+	int64 logDate = 16;
+}
+
+// Workflow Event Audit
+message WorkflowEvent {
+	string workflowUuid = 2;
+	string workflowName = 3;
+	string nodeUuid = 4;
+	string nodeName = 5;
+	int32 recordId = 6;
+	string tableName = 7;
+	string userUuid = 8;
+	string userName = 9;
+	string responsibleUuid = 10;
+	string responsibleName = 11;
+	string textMessage = 12;
+	int64 timeElapsed = 13;
+	string attributeName = 14;
+	Value oldValue = 15;
+	Value newValue = 16;
+	enum WorkflowState {
+		RUNNING = 0;
+		COMPLETED = 1;
+		ABORTED = 2;
+		TERMINATED = 3;
+		SUSPENDED = 4;
+		NOT_STARTED = 5;
+		
+	}
+	enum EventType {
+		PROCESS_CREATED = 0;
+		PROCESS_COMPLETED = 1;
+		STATE_CHANGED = 2;
+	}
+	WorkflowState workflowState = 17;
+	EventType eventType = 18;
+	int64 logDate = 19;
+}
+
+//	Workflow Activities List
+message ListWorkflowLogsResponse {
+	int64 recordCount = 1;
+	repeated WorkflowProcess workflowLogs = 2;
+	string next_page_token = 3;
+}
+
 // Report Views Request
 message ListReportViewsRequest {
 	ClientRequest clientRequest = 1;
@@ -627,33 +787,6 @@ message ListDrillTablesResponse {
 	int64 recordCount = 1;
 	repeated DrillTable drillTables = 2;
 	string next_page_token = 3;
-}
-
-// BusinessProcess Response List
-message ListActivitiesResponse {
-	int64 recordCount = 1;
-	repeated BusinessProcess responses = 2;
-	string next_page_token = 3;
-}
-
-//	Response with log and values from server
-message BusinessProcess {
-	string uuid = 1;
-	string instanceUuid = 2;
-	bool isError = 3;
-	string summary = 4;
-	string resultTableName = 5;
-	bool isProcessing = 6;
-	int64 lastRun = 7;
-	repeated ProcessInfoLog logs = 8;
-	map<string, Value> parameters = 9;
-	ReportOutput output = 10;
-}
-
-//	BusinessProcess Log result
-message ProcessInfoLog {
-	int32 recordId = 1;
-	string log = 2;
 }
 
 //	Used for get output from report / BusinessProcess like PDF, HTML another result for show to end user

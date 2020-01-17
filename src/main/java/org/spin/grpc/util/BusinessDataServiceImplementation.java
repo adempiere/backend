@@ -342,7 +342,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	}
 	
 	@Override
-	public void runBusinessProcess(RunBusinessProcessRequest request, StreamObserver<BusinessProcess> responseObserver) {
+	public void runBusinessProcess(RunBusinessProcessRequest request, StreamObserver<ProcessLog> responseObserver) {
 		try {
 			if(request == null
 					|| Util.isEmpty(request.getUuid())) {
@@ -351,7 +351,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			log.fine("Lookup List Requested = " + request.getUuid());
 			Properties context = getContext(request.getClientRequest());
 			String language = getDefaultLanguage(request.getClientRequest().getLanguage());
-			BusinessProcess.Builder processReponse = runProcess(context, request, language);
+			ProcessLog.Builder processReponse = runProcess(context, request, language);
 			responseObserver.onNext(processReponse.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -387,14 +387,14 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	}
 	
 	@Override
-	public void listActivities(ListActivitiesRequest request, StreamObserver<ListActivitiesResponse> responseObserver) {
+	public void listProcessLogs(ListProcessLogsRequest request, StreamObserver<ListProcessLogsResponse> responseObserver) {
 		try {
 			if(request == null) {
 				throw new AdempiereException("Process Activity Requested is Null");
 			}
 			log.fine("Object List Requested = " + request);
 			Properties context = getContext(request.getClientRequest());
-			ListActivitiesResponse.Builder entityValueList = convertProcessActivity(context, request);
+			ListProcessLogsResponse.Builder entityValueList = convertProcessActivity(context, request);
 			responseObserver.onNext(entityValueList.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -1513,8 +1513,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	 * @throws IOException 
 	 * @throws FileNotFoundException 
 	 */
-	private BusinessProcess.Builder runProcess(Properties context, RunBusinessProcessRequest request, String language) throws FileNotFoundException, IOException {
-		BusinessProcess.Builder response = BusinessProcess.newBuilder();
+	private ProcessLog.Builder runProcess(Properties context, RunBusinessProcessRequest request, String language) throws FileNotFoundException, IOException {
+		ProcessLog.Builder response = ProcessLog.newBuilder();
 		//	Get Process definition
 		MProcess process = getProcess(context, request.getUuid(), language);
 		if(process == null
@@ -3000,7 +3000,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	 * @param request
 	 * @return
 	 */
-	private ListActivitiesResponse.Builder convertProcessActivity(Properties context, ListActivitiesRequest request) {
+	private ListProcessLogsResponse.Builder convertProcessActivity(Properties context, ListProcessLogsRequest request) {
 		String sql = null;
 		String uuid = null;
 		if(!Util.isEmpty(request.getUserUuid())) {
@@ -3019,11 +3019,11 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				.setOrderBy(I_AD_PInstance.COLUMNNAME_Created + " DESC")
 				.<MPInstance>list();
 		//	
-		ListActivitiesResponse.Builder builder = ListActivitiesResponse.newBuilder();
+		ListProcessLogsResponse.Builder builder = ListProcessLogsResponse.newBuilder();
 		//	Convert Process Instance
 		for(MPInstance processInstance : processInstanceList) {
-			BusinessProcess.Builder valueObject = convertProcessInstance(processInstance);
-			builder.addResponses(valueObject.build());
+			ProcessLog.Builder valueObject = convertProcessInstance(processInstance);
+			builder.addProcessLogs(valueObject.build());
 		}
 		//	Return
 		return builder;
@@ -3142,8 +3142,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	 * @param instance
 	 * @return
 	 */
-	private BusinessProcess.Builder convertProcessInstance(MPInstance instance) {
-		BusinessProcess.Builder builder = BusinessProcess.newBuilder();
+	private ProcessLog.Builder convertProcessInstance(MPInstance instance) {
+		ProcessLog.Builder builder = ProcessLog.newBuilder();
 		builder.setInstanceUuid(validateNull(instance.getUUID()));
 		builder.setIsError(!instance.isOK());
 		builder.setIsProcessing(instance.isProcessing());

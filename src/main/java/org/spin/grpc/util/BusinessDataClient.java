@@ -25,14 +25,14 @@ import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
 
-public class DataClient {
-	  private static final Logger logger = Logger.getLogger(DataClient.class.getName());
+public class BusinessDataClient {
+	  private static final Logger logger = Logger.getLogger(BusinessDataClient.class.getName());
 
 	  private final ManagedChannel channel;
 	  private final BusinessDataServiceGrpc.BusinessDataServiceBlockingStub blockingStub;
 
 	  /** Construct client connecting to HelloWorld server at {@code host:port}. */
-	  public DataClient(String host, int port) {
+	  public BusinessDataClient(String host, int port) {
 	    this(ManagedChannelBuilder.forAddress(host, port)
 	        // Channels are secure by default (via SSL/TLS). For the example we disable TLS to avoid
 	        // needing certificates.
@@ -41,7 +41,7 @@ public class DataClient {
 	  }
 
 	  /** Construct client for accessing HelloWorld server using the existing channel. */
-	  DataClient(ManagedChannel channel) {
+	  BusinessDataClient(ManagedChannel channel) {
 	    this.channel = channel;
 	    blockingStub = BusinessDataServiceGrpc.newBlockingStub(channel);
 	  }
@@ -61,7 +61,7 @@ public class DataClient {
 				  .setClientRequest(clientRequest)
 				  .setUuid("a42acf86-fb40-11e8-a479-7a0060f0aa01")
 				  .build();
-		  BusinessProcess response;
+		  ProcessLog response;
 		  try {
 			  response = blockingStub.runBusinessProcess(request);
 			  logger.info("Cache Reset: " + response);
@@ -132,7 +132,7 @@ public class DataClient {
 	   * greeting.
 	   */
 	  public static void main(String[] args) throws Exception {
-		DataClient client = new DataClient("localhost", 50052);
+		BusinessDataClient client = new BusinessDataClient("localhost", 50052);
 	    try {
 	    	logger.info("####################### Report Output #####################");
 	    	client.getReportOutput();
