@@ -3118,7 +3118,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	}
 	
 	/**
-	 * Convert request for process activity to builder
+	 * Convert request for process log to builder
 	 * @param context
 	 * @param request
 	 * @return
