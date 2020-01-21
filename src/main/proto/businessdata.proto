@@ -81,6 +81,10 @@ service BusinessDataService {
 	rpc ListProcessLogs(ListProcessLogsRequest) returns (ListProcessLogsResponse) {}
 	//	Request Record Log List
 	rpc ListRecordLogs(ListRecordLogsRequest) returns (ListRecordLogsResponse) {}
+	//	Request Record Chat List
+	rpc ListRecordChats(ListRecordChatsRequest) returns (ListRecordChatsResponse) {}
+	//	Request Chat Entries List
+	rpc ListChatEntries(ListChatEntriesRequest) returns (ListChatEntriesResponse) {}
 	//	List workflow processes
 	rpc ListWorkflowLogs(ListWorkflowLogsRequest) returns (ListWorkflowLogsResponse) {}
 }
@@ -635,9 +639,9 @@ message RecordLog {
 	string userUuid = 7;
 	string userName = 8;
 	string transactionName = 9;
-	Value oldValue = 10;
+	string oldValue = 10;
 	string oldDisplayValue = 11;
-	Value newValue = 12;
+	string newValue = 12;
 	string newDisplayValue = 13;
 	string description = 14;
 	enum EventType {
@@ -649,10 +653,92 @@ message RecordLog {
 	int64 logDate = 16;
 }
 
-//	Repord Log List
+//	Record Log List
 message ListRecordLogsResponse {
 	int64 recordCount = 1;
 	repeated RecordLog recordLogs = 2;
+	string next_page_token = 3;
+}
+
+// Record Chat Request
+message ListRecordChatsRequest {
+	ClientRequest clientRequest = 1;
+	string tableName = 2;
+	int32 recordId = 3;
+	int32 page_size = 4;
+	string page_token = 5;
+}
+
+// Record Chat
+message RecordChat {
+	string chatUuid = 1;
+	int32 recordId = 2;
+	string tableName = 3;
+	string chatTypeUuid = 4;
+	string description = 5;
+	enum ConfidentialType {
+		PUBLIC = 0;
+		PARTER = 1;
+		INTERNAL = 2;
+	}
+	enum ModerationType {
+		NOT_MODERATED = 0;
+		BEFORE_PUBLISHING = 1;
+		AFTER_PUBLISHING = 2;
+	}
+	ConfidentialType confidentialType = 6;
+	ModerationType moderationType = 7;
+	int64 logDate = 8;
+}
+
+//	Record Chats List
+message ListRecordChatsResponse {
+	int64 recordCount = 1;
+	repeated RecordChat recordChats = 2;
+	string next_page_token = 3;
+}
+
+// Record Chat Entry Request
+message ListChatEntriesRequest {
+	ClientRequest clientRequest = 1;
+	string chatUuid = 2;
+	int32 page_size = 3;
+	string page_token = 4;
+}
+
+// Record Chat
+message ChatEntry {
+	string chatEntryUuid = 1;
+	string subject = 2;
+	string characterData = 3;
+	string userUuid = 4;
+	string userName = 5;
+	enum ConfidentialType {
+		PUBLIC = 0;
+		PARTER = 1;
+		INTERNAL = 2;
+	}
+	enum ModeratorStatus {
+		NOT_DISPLAYED = 0;
+		PUBLISHED = 1;
+		SUSPICIUS = 2;
+		TO_BE_REVIEWED = 3;
+	}
+	enum ChatEntryType {
+		NOTE_FLAT = 0;
+		FORUM_THREADED = 1;
+		WIKI = 2;
+	}
+	ChatEntryType chatEntryType = 6;
+	ConfidentialType confidentialType = 7;
+	ModeratorStatus moderatorStatus = 8;
+	int64 logDate = 9;
+}
+
+//	Record Chats List
+message ListChatEntriesResponse {
+	int64 recordCount = 1;
+	repeated ChatEntry chatEntries = 2;
 	string next_page_token = 3;
 }
 
@@ -676,9 +762,8 @@ message WorkflowProcess {
 	string userName = 7;
 	string responsibleUuid = 8;
 	string responsibleName = 9;
-	string message = 10;
-	string textMessage = 11;
-	bool processed = 12;
+	string textMessage = 10;
+	bool processed = 11;
 	enum WorkflowState {
 		RUNNING = 0;
 		COMPLETED = 1;
@@ -695,29 +780,27 @@ message WorkflowProcess {
 		LOW = 3;
 		MINOR = 4;
 	}
-	WorkflowState workflowState = 13;
-	Priority priority = 14;
-	repeated WorkflowEvent workflowEvents = 15;
-	int64 logDate = 16;
+	WorkflowState workflowState = 12;
+	Priority priority = 13;
+	repeated WorkflowEvent workflowEvents = 14;
+	int64 logDate = 15;
 }
 
 // Workflow Event Audit
 message WorkflowEvent {
-	string workflowUuid = 2;
-	string workflowName = 3;
-	string nodeUuid = 4;
-	string nodeName = 5;
-	int32 recordId = 6;
-	string tableName = 7;
-	string userUuid = 8;
-	string userName = 9;
-	string responsibleUuid = 10;
-	string responsibleName = 11;
-	string textMessage = 12;
-	int64 timeElapsed = 13;
-	string attributeName = 14;
-	Value oldValue = 15;
-	Value newValue = 16;
+	string nodeUuid = 1;
+	string nodeName = 2;
+	int32 recordId = 3;
+	string tableName = 4;
+	string userUuid = 5;
+	string userName = 6;
+	string responsibleUuid = 7;
+	string responsibleName = 8;
+	string textMessage = 9;
+	int64 timeElapsed = 10;
+	string attributeName = 11;
+	string oldValue = 12;
+	string newValue = 13;
 	enum WorkflowState {
 		RUNNING = 0;
 		COMPLETED = 1;
@@ -732,9 +815,9 @@ message WorkflowEvent {
 		PROCESS_COMPLETED = 1;
 		STATE_CHANGED = 2;
 	}
-	WorkflowState workflowState = 17;
-	EventType eventType = 18;
-	int64 logDate = 19;
+	WorkflowState workflowState = 14;
+	EventType eventType = 15;
+	int64 logDate = 16;
 }
 
 //	Workflow Activities List

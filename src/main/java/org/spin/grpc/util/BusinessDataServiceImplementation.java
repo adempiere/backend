@@ -25,6 +25,8 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -72,15 +74,24 @@ import org.compiere.model.I_AD_Session;
 import org.compiere.model.I_AD_Tab;
 import org.compiere.model.I_AD_TreeNodeMM;
 import org.compiere.model.I_AD_User;
+import org.compiere.model.I_AD_WF_EventAudit;
+import org.compiere.model.I_AD_WF_Process;
 import org.compiere.model.I_AD_Window;
 import org.compiere.model.I_AD_Workflow;
+import org.compiere.model.I_CM_Chat;
+import org.compiere.model.I_CM_ChatEntry;
 import org.compiere.model.I_PA_DashboardContent;
 import org.compiere.model.MChangeLog;
+import org.compiere.model.MChat;
+import org.compiere.model.MChatEntry;
+import org.compiere.model.MChatType;
 import org.compiere.model.MColumn;
 import org.compiere.model.MDashboardContent;
 import org.compiere.model.MField;
 import org.compiere.model.MForm;
 import org.compiere.model.MLanguage;
+import org.compiere.model.MLookup;
+import org.compiere.model.MLookupFactory;
 import org.compiere.model.MMenu;
 import org.compiere.model.MMessage;
 import org.compiere.model.MPInstance;
@@ -115,12 +126,22 @@ import org.compiere.util.Env;
 import org.compiere.util.Language;
 import org.compiere.util.MimeType;
 import org.compiere.util.Msg;
+import org.compiere.util.NamePair;
 import org.compiere.util.Util;
+import org.compiere.wf.MWFEventAudit;
+import org.compiere.wf.MWFNode;
+import org.compiere.wf.MWFProcess;
+import org.compiere.wf.MWFResponsible;
+import org.compiere.wf.MWorkflow;
 import org.eevolution.service.dsl.ProcessBuilder;
 import org.spin.grpc.util.BusinessDataServiceGrpc.BusinessDataServiceImplBase;
+import org.spin.grpc.util.ChatEntry.ModeratorStatus;
 import org.spin.grpc.util.Condition.Operator;
+import org.spin.grpc.util.RecordChat.ConfidentialType;
+import org.spin.grpc.util.RecordChat.ModerationType;
 import org.spin.grpc.util.RollbackEntityRequest.EventType;
 import org.spin.grpc.util.Value.ValueType;
+import org.spin.grpc.util.WorkflowProcess.WorkflowState;
 import org.spin.model.I_AD_ContextInfo;
 import org.spin.model.MADContextInfo;
 import org.spin.util.AbstractExportFormat;
@@ -154,6 +175,21 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	private AtomicInteger windowNoEmulation = new AtomicInteger(1);
 	/**	Page Size	*/
 	private final int PAGE_SIZE = 50;
+	/** Date Time Format		*/
+	private SimpleDateFormat	dateTimeFormat = DisplayType.getDateFormat
+		(DisplayType.DateTime, Env.getLanguage(Env.getCtx()));
+	/** Date Format			*/
+	private SimpleDateFormat	dateFormat = DisplayType.getDateFormat
+		(DisplayType.DateTime, Env.getLanguage(Env.getCtx()));
+	/** Number Format		*/
+	private DecimalFormat		numberFormat = DisplayType.getNumberFormat
+		(DisplayType.Number, Env.getLanguage(Env.getCtx()));
+	/** Amount Format		*/
+	private DecimalFormat		amountFormat = DisplayType.getNumberFormat
+		(DisplayType.Amount, Env.getLanguage(Env.getCtx()));
+	/** Number Format		*/
+	private DecimalFormat		intFormat = DisplayType.getNumberFormat
+		(DisplayType.Integer, Env.getLanguage(Env.getCtx()));
 	
 	@Override
 	public void getEntity(GetEntityRequest request, StreamObserver<Entity> responseObserver) {
@@ -394,7 +430,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			}
 			log.fine("Object List Requested = " + request);
 			Properties context = getContext(request.getClientRequest());
-			ListProcessLogsResponse.Builder entityValueList = convertProcessActivity(context, request);
+			ListProcessLogsResponse.Builder entityValueList = convertProcessLogs(context, request);
 			responseObserver.onNext(entityValueList.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -730,8 +766,95 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		}
 	}
 	
+	@Override
+	public void listRecordLogs(ListRecordLogsRequest request, StreamObserver<ListRecordLogsResponse> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Record Logs Requested is Null");
+			}
+			log.fine("Object List Requested = " + request);
+			Properties context = getContext(request.getClientRequest());
+			ListRecordLogsResponse.Builder entityValueList = convertRecordLogs(context, request);
+			responseObserver.onNext(entityValueList.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void listWorkflowLogs(ListWorkflowLogsRequest request,
+			StreamObserver<ListWorkflowLogsResponse> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Workflow Logs Requested is Null");
+			}
+			log.fine("Object List Requested = " + request);
+			Properties context = getContext(request.getClientRequest());
+			ListWorkflowLogsResponse.Builder entityValueList = convertWorkflowLogs(context, request);
+			responseObserver.onNext(entityValueList.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void listRecordChats(ListRecordChatsRequest request,
+			StreamObserver<ListRecordChatsResponse> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Record Chats Requested is Null");
+			}
+			log.fine("Object List Requested = " + request);
+			Properties context = getContext(request.getClientRequest());
+			ListRecordChatsResponse.Builder entityValueList = convertRecordChats(context, request);
+			responseObserver.onNext(entityValueList.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void listChatEntries(ListChatEntriesRequest request,
+			StreamObserver<ListChatEntriesResponse> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Chat Entries Requested is Null");
+			}
+			log.fine("Object List Requested = " + request);
+			Properties context = getContext(request.getClientRequest());
+			ListChatEntriesResponse.Builder entityValueList = convertChatEntries(context, request);
+			responseObserver.onNext(entityValueList.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
 	/**
-	 * Ger Report Query from Criteria
+	 * Get Report Query from Criteria
 	 * @param context
 	 * @param criteria
 	 * @return
@@ -1108,7 +1231,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				table.getColumnsAsList().stream().filter(column -> column.isTranslated()).forEach(column -> {
 					Object value = translation.get_Value(column.getColumnName());
 					if(value != null) {
-						Value.Builder builderValue = getKeyValueFromValue(value);
+						Value.Builder builderValue = getValueFromObject(value);
 						if(builderValue != null) {
 							translationBuilder.putValues(column.getColumnName(), builderValue.build());
 						}
@@ -2174,7 +2297,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			//	Get from Query
 			rs = pstmt.executeQuery();
 			if (rs.next()) {
-				builder = getKeyValueFromValue(rs.getObject(1));
+				builder = getValueFromObject(rs.getObject(1));
 			}
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
@@ -3000,7 +3123,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	 * @param request
 	 * @return
 	 */
-	private ListProcessLogsResponse.Builder convertProcessActivity(Properties context, ListProcessLogsRequest request) {
+	private ListProcessLogsResponse.Builder convertProcessLogs(Properties context, ListProcessLogsRequest request) {
 		String sql = null;
 		String uuid = null;
 		if(!Util.isEmpty(request.getUserUuid())) {
@@ -3022,10 +3145,544 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		ListProcessLogsResponse.Builder builder = ListProcessLogsResponse.newBuilder();
 		//	Convert Process Instance
 		for(MPInstance processInstance : processInstanceList) {
-			ProcessLog.Builder valueObject = convertProcessInstance(processInstance);
+			ProcessLog.Builder valueObject = convertProcessLog(processInstance);
 			builder.addProcessLogs(valueObject.build());
 		}
 		//	Return
+		return builder;
+	}
+	
+	/**
+	 * Convert request for record chats to builder
+	 * @param context
+	 * @param request
+	 * @return
+	 */
+	private ListChatEntriesResponse.Builder convertChatEntries(Properties context, ListChatEntriesRequest request) {
+		if(Util.isEmpty(request.getChatUuid())) {
+			throw new AdempiereException("@CM_Chat_ID@ @NotFound@");
+		}
+		//	Get page and count
+		String nexPageToken = null;
+		int pageNumber = getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
+		int offset = (pageNumber > 0? pageNumber - 1: 0) * PAGE_SIZE;
+		int limit = (pageNumber == 0? 1: pageNumber) * PAGE_SIZE;
+		Query query = new Query(context, I_CM_ChatEntry.Table_Name, "EXISTS(SELECT 1 FROM CM_Chat c WHERE c.CM_Chat_ID = CM_ChatEntry.CM_Chat_ID AND c.UUID = ?)", null)
+				.setParameters(request.getChatUuid());
+		int count = query.count();
+		List<MChatEntry> chatEntryList = query
+				.setLimit(limit, offset)
+				.<MChatEntry>list();
+		//	
+		ListChatEntriesResponse.Builder builder = ListChatEntriesResponse.newBuilder();
+		//	Convert Record Log
+		for(MChatEntry chatEntry : chatEntryList) {
+			ChatEntry.Builder valueObject = convertChatEntry(chatEntry);
+			builder.addChatEntries(valueObject.build());
+		}
+		//	
+		builder.setRecordCount(count);
+		//	Set page token
+		if(count > limit) {
+			nexPageToken = getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
+		}
+		//	Set next page
+		builder.setNextPageToken(validateNull(nexPageToken));
+		//	Return
+		return builder;
+	}
+	
+	/**
+	 * Convert PO class from Chat Entry process to builder
+	 * @param chatEntry
+	 * @return
+	 */
+	private ChatEntry.Builder convertChatEntry(MChatEntry chatEntry) {
+		ChatEntry.Builder builder = ChatEntry.newBuilder();
+		builder.setChatEntryUuid(validateNull(chatEntry.getUUID()));
+		builder.setSubject(validateNull(chatEntry.getSubject()));
+		if(chatEntry.getAD_User_ID() != 0) {
+			MUser user = MUser.get(chatEntry.getCtx(), chatEntry.getAD_User_ID());
+			builder.setUserUuid(validateNull(user.getUUID()));
+			builder.setUserName(validateNull(user.getName()));
+		}
+		builder.setLogDate(chatEntry.getCreated().getTime());
+		//	Confidential Type
+		if(!Util.isEmpty(chatEntry.getConfidentialType())) {
+			if(chatEntry.getConfidentialType().equals(MChatEntry.CONFIDENTIALTYPE_PublicInformation)) {
+				builder.setConfidentialType(org.spin.grpc.util.ChatEntry.ConfidentialType.PUBLIC);
+			} else if(chatEntry.getConfidentialType().equals(MChatEntry.CONFIDENTIALTYPE_PartnerConfidential)) {
+				builder.setConfidentialType(org.spin.grpc.util.ChatEntry.ConfidentialType.PARTER);
+			} else if(chatEntry.getConfidentialType().equals(MChatEntry.CONFIDENTIALTYPE_Internal)) {
+				builder.setConfidentialType(org.spin.grpc.util.ChatEntry.ConfidentialType.INTERNAL);
+			}
+		}
+		//	Moderator Status
+		if(!Util.isEmpty(chatEntry.getModeratorStatus())) {
+			if(chatEntry.getModeratorStatus().equals(MChatEntry.MODERATORSTATUS_NotDisplayed)) {
+				builder.setModeratorStatus(ModeratorStatus.NOT_DISPLAYED);
+			} else if(chatEntry.getModeratorStatus().equals(MChatEntry.MODERATORSTATUS_Published)) {
+				builder.setModeratorStatus(ModeratorStatus.PUBLISHED);
+			} else if(chatEntry.getModeratorStatus().equals(MChatEntry.MODERATORSTATUS_Suspicious)) {
+				builder.setModeratorStatus(ModeratorStatus.SUSPICIUS);
+			} else if(chatEntry.getModeratorStatus().equals(MChatEntry.MODERATORSTATUS_ToBeReviewed)) {
+				builder.setModeratorStatus(ModeratorStatus.TO_BE_REVIEWED);
+			}
+		}
+		//	Chat entry type
+		if(!Util.isEmpty(chatEntry.getChatEntryType())) {
+			if(chatEntry.getChatEntryType().equals(MChatEntry.CHATENTRYTYPE_NoteFlat)) {
+				builder.setChatEntryType(org.spin.grpc.util.ChatEntry.ChatEntryType.NOTE_FLAT);
+			} else if(chatEntry.getChatEntryType().equals(MChatEntry.CHATENTRYTYPE_ForumThreaded)) {
+				builder.setChatEntryType(org.spin.grpc.util.ChatEntry.ChatEntryType.NOTE_FLAT);
+			} else if(chatEntry.getChatEntryType().equals(MChatEntry.CHATENTRYTYPE_Wiki)) {
+				builder.setChatEntryType(org.spin.grpc.util.ChatEntry.ChatEntryType.NOTE_FLAT);
+			}
+		}
+  		return builder;
+	}
+	
+	/**
+	 * Convert request for record chats to builder
+	 * @param context
+	 * @param request
+	 * @return
+	 */
+	private ListRecordChatsResponse.Builder convertRecordChats(Properties context, ListRecordChatsRequest request) {
+		StringBuffer whereClause = new StringBuffer();
+		List<Object> parameters = new ArrayList<>();
+		if(Util.isEmpty(request.getTableName())) {
+			throw new AdempiereException("@AD_Table_ID@ @NotFound@");
+		}
+		//	
+		MTable table = MTable.get(context, request.getTableName());
+		if(table == null
+				|| table.getAD_Table_ID() == 0) {
+			throw new AdempiereException("@AD_Table_ID@ @Invalid@");
+		}
+		whereClause
+			.append(I_CM_Chat.COLUMNNAME_AD_Table_ID).append(" = ?")
+			.append(" AND ")
+			.append(I_CM_Chat.COLUMNNAME_Record_ID).append(" = ?");
+		//	Set parameters
+		parameters.add(table.getAD_Table_ID());
+		parameters.add(request.getRecordId());
+		//	Get page and count
+		String nexPageToken = null;
+		int pageNumber = getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
+		int offset = (pageNumber > 0? pageNumber - 1: 0) * PAGE_SIZE;
+		int limit = (pageNumber == 0? 1: pageNumber) * PAGE_SIZE;
+		Query query = new Query(context, I_AD_WF_Process.Table_Name, whereClause.toString(), null)
+				.setParameters(parameters);
+		int count = query.count();
+		List<MChat> chatList = query
+				.setLimit(limit, offset)
+				.<MChat>list();
+		//	
+		ListRecordChatsResponse.Builder builder = ListRecordChatsResponse.newBuilder();
+		//	Convert Record Log
+		for(MChat chat : chatList) {
+			RecordChat.Builder valueObject = convertRecordChat(chat);
+			builder.addRecordChats(valueObject.build());
+		}
+		//	
+		builder.setRecordCount(count);
+		//	Set page token
+		if(count > limit) {
+			nexPageToken = getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
+		}
+		//	Set next page
+		builder.setNextPageToken(validateNull(nexPageToken));
+		//	Return
+		return builder;
+	}
+	
+	/**
+	 * Convert PO class from Record Chat process to builder
+	 * @param recordChat
+	 * @return
+	 */
+	private RecordChat.Builder convertRecordChat(MChat recordChat) {
+		MTable table = MTable.get(recordChat.getCtx(), recordChat.getAD_Table_ID());
+		RecordChat.Builder builder = RecordChat.newBuilder();
+		builder.setChatUuid(validateNull(recordChat.getUUID()));
+		builder.setTableName(validateNull(table.getTableName()));
+		if(recordChat.getCM_ChatType_ID() != 0) {
+			MChatType chatType = MChatType.get(recordChat.getCtx(), recordChat.getCM_Chat_ID());
+			builder.setChatTypeUuid(validateNull(chatType.getUUID()));
+		}
+		builder.setRecordId(recordChat.getRecord_ID());
+		builder.setDescription(validateNull(recordChat.getDescription()));
+		builder.setLogDate(recordChat.getCreated().getTime());
+		//	Confidential Type
+		if(!Util.isEmpty(recordChat.getConfidentialType())) {
+			if(recordChat.getConfidentialType().equals(MChat.CONFIDENTIALTYPE_PublicInformation)) {
+				builder.setConfidentialType(ConfidentialType.PUBLIC);
+			} else if(recordChat.getConfidentialType().equals(MChat.CONFIDENTIALTYPE_PartnerConfidential)) {
+				builder.setConfidentialType(ConfidentialType.PARTER);
+			} else if(recordChat.getConfidentialType().equals(MChat.CONFIDENTIALTYPE_Internal)) {
+				builder.setConfidentialType(ConfidentialType.INTERNAL);
+			}
+		}
+		//	Moderation Type
+		if(!Util.isEmpty(recordChat.getModerationType())) {
+			if(recordChat.getModerationType().equals(MChat.MODERATIONTYPE_NotModerated)) {
+				builder.setModerationType(ModerationType.NOT_MODERATED);
+			} else if(recordChat.getModerationType().equals(MChat.MODERATIONTYPE_BeforePublishing)) {
+				builder.setModerationType(ModerationType.BEFORE_PUBLISHING);
+			} else if(recordChat.getModerationType().equals(MChat.MODERATIONTYPE_AfterPublishing)) {
+				builder.setModerationType(ModerationType.AFTER_PUBLISHING);
+			}
+		}
+  		return builder;
+	}
+	
+	/**
+	 * Convert request for workflow log to builder
+	 * @param context
+	 * @param request
+	 * @return
+	 */
+	private ListWorkflowLogsResponse.Builder convertWorkflowLogs(Properties context, ListWorkflowLogsRequest request) {
+		StringBuffer whereClause = new StringBuffer();
+		List<Object> parameters = new ArrayList<>();
+		if(Util.isEmpty(request.getTableName())) {
+			throw new AdempiereException("@AD_Table_ID@ @NotFound@");
+		}
+		//	
+		MTable table = MTable.get(context, request.getTableName());
+		if(table == null
+				|| table.getAD_Table_ID() == 0) {
+			throw new AdempiereException("@AD_Table_ID@ @Invalid@");
+		}
+		whereClause
+			.append(I_AD_WF_Process.COLUMNNAME_AD_Table_ID).append(" = ?")
+			.append(" AND ")
+			.append(I_AD_WF_Process.COLUMNNAME_Record_ID).append(" = ?");
+		//	Set parameters
+		parameters.add(table.getAD_Table_ID());
+		parameters.add(request.getRecordId());
+		//	Get page and count
+		String nexPageToken = null;
+		int pageNumber = getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
+		int offset = (pageNumber > 0? pageNumber - 1: 0) * PAGE_SIZE;
+		int limit = (pageNumber == 0? 1: pageNumber) * PAGE_SIZE;
+		Query query = new Query(context, I_AD_WF_Process.Table_Name, whereClause.toString(), null)
+				.setParameters(parameters);
+		int count = query.count();
+		List<MWFProcess> workflowProcessLogList = query
+				.setLimit(limit, offset)
+				.<MWFProcess>list();
+		//	
+		ListWorkflowLogsResponse.Builder builder = ListWorkflowLogsResponse.newBuilder();
+		//	Convert Record Log
+		for(MWFProcess workflowProcessLog : workflowProcessLogList) {
+			WorkflowProcess.Builder valueObject = convertWorkflowLog(workflowProcessLog);
+			builder.addWorkflowLogs(valueObject.build());
+		}
+		//	
+		builder.setRecordCount(count);
+		//	Set page token
+		if(count > limit) {
+			nexPageToken = getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
+		}
+		//	Set next page
+		builder.setNextPageToken(validateNull(nexPageToken));
+		//	Return
+		return builder;
+	}
+	
+	/**
+	 * Convert PO class from Workflow process to builder
+	 * @param workflowProcess
+	 * @return
+	 */
+	private WorkflowProcess.Builder convertWorkflowLog(MWFProcess workflowProcess) {
+		MTable table = MTable.get(workflowProcess.getCtx(), workflowProcess.getAD_Table_ID());
+		WorkflowProcess.Builder builder = WorkflowProcess.newBuilder();
+		builder.setProcessUuid(validateNull(workflowProcess.getUUID()));
+		MWorkflow workflow = MWorkflow.get(workflowProcess.getCtx(), workflowProcess.getAD_Workflow_ID());
+		builder.setWorkflowUuid(validateNull(workflow.getUUID()));
+		String workflowName = workflow.getName();
+		if(!Env.isBaseLanguage(workflowProcess.getCtx(), "")) {
+			String translation = workflow.get_Translation(MWorkflow.COLUMNNAME_Name);
+			if(!Util.isEmpty(translation)) {
+				workflowName = translation;
+			}
+		}
+		if(workflowProcess.getAD_WF_Responsible_ID() != 0) {
+			MWFResponsible responsible = MWFResponsible.get(workflowProcess.getCtx(), workflowProcess.getAD_WF_Responsible_ID());
+			builder.setResponsibleUuid(validateNull(responsible.getUUID()));
+			builder.setResponsibleName(validateNull(responsible.getName()));
+		}
+		if(workflowProcess.getAD_User_ID() != 0) {
+			MUser user = MUser.get(workflowProcess.getCtx(), workflowProcess.getAD_User_ID());
+			builder.setUserUuid(validateNull(user.getUUID()));
+			builder.setUserName(validateNull(user.getName()));
+		}
+		builder.setWorkflowName(validateNull(workflowName));
+		builder.setRecordId(workflowProcess.getRecord_ID());
+		builder.setTableName(validateNull(table.getTableName()));
+		builder.setTextMessage(validateNull(Msg.parseTranslation(workflowProcess.getCtx(), workflowProcess.getTextMsg())));
+		builder.setProcessed(workflowProcess.isProcessed());
+		builder.setLogDate(workflowProcess.getCreated().getTime());
+		//	State
+		if(!Util.isEmpty(workflowProcess.getWFState())) {
+			if(workflowProcess.getWFState().equals(MWFProcess.WFSTATE_Running)) {
+				builder.setWorkflowState(WorkflowState.RUNNING);
+			} else if(workflowProcess.getWFState().equals(MWFProcess.WFSTATE_Completed)) {
+				builder.setWorkflowState(WorkflowState.COMPLETED);
+			} else if(workflowProcess.getWFState().equals(MWFProcess.WFSTATE_Aborted)) {
+				builder.setWorkflowState(WorkflowState.ABORTED);
+			} else if(workflowProcess.getWFState().equals(MWFProcess.WFSTATE_Terminated)) {
+				builder.setWorkflowState(WorkflowState.TERMINATED);
+			} else if(workflowProcess.getWFState().equals(MWFProcess.WFSTATE_Suspended)) {
+				builder.setWorkflowState(WorkflowState.SUSPENDED);
+			} else if(workflowProcess.getWFState().equals(MWFProcess.WFSTATE_NotStarted)) {
+				builder.setWorkflowState(WorkflowState.NOT_STARTED);
+			}
+		}
+		builder.setPriorityValue(workflowProcess.getPriority());
+		//	Get Events
+		List<MWFEventAudit> workflowEventsList = new Query(workflowProcess.getCtx(), I_AD_WF_EventAudit.Table_Name, I_AD_WF_EventAudit.COLUMNNAME_AD_WF_Process_ID + " = ?", null)
+			.setParameters(workflowProcess.getAD_WF_Process_ID())
+			.<MWFEventAudit>list();
+		//	populate
+		for(MWFEventAudit eventAudit : workflowEventsList) {
+			WorkflowEvent.Builder valueObject = convertWorkflowEventAudit(eventAudit);
+			builder.addWorkflowEvents(valueObject.build());
+		}
+  		return builder;
+	}
+	
+	/**
+	 * Convert PO class from Workflow event audit to builder
+	 * @param workflowEventAudit
+	 * @return
+	 */
+	private WorkflowEvent.Builder convertWorkflowEventAudit(MWFEventAudit workflowEventAudit) {
+		MTable table = MTable.get(workflowEventAudit.getCtx(), workflowEventAudit.getAD_Table_ID());
+		WorkflowEvent.Builder builder = WorkflowEvent.newBuilder();
+		MWFNode node = MWFNode.get(workflowEventAudit.getCtx(), workflowEventAudit.getAD_WF_Node_ID());
+		builder.setNodeUuid(validateNull(node.getUUID()));
+		String nodeName = node.getName();
+		if(!Env.isBaseLanguage(workflowEventAudit.getCtx(), "")) {
+			String translation = node.get_Translation(MWFNode.COLUMNNAME_Name);
+			if(!Util.isEmpty(translation)) {
+				nodeName = translation;
+			}
+		}
+		builder.setNodeName(validateNull(nodeName));
+		if(workflowEventAudit.getAD_WF_Responsible_ID() != 0) {
+			MWFResponsible responsible = MWFResponsible.get(workflowEventAudit.getCtx(), workflowEventAudit.getAD_WF_Responsible_ID());
+			builder.setResponsibleUuid(validateNull(responsible.getUUID()));
+			builder.setResponsibleName(validateNull(responsible.getName()));
+		}
+		if(workflowEventAudit.getAD_User_ID() != 0) {
+			MUser user = MUser.get(workflowEventAudit.getCtx(), workflowEventAudit.getAD_User_ID());
+			builder.setUserUuid(validateNull(user.getUUID()));
+			builder.setUserName(validateNull(user.getName()));
+		}
+		builder.setRecordId(workflowEventAudit.getRecord_ID());
+		builder.setTableName(validateNull(table.getTableName()));
+		builder.setTextMessage(validateNull(Msg.parseTranslation(workflowEventAudit.getCtx(), workflowEventAudit.getTextMsg())));
+		builder.setLogDate(workflowEventAudit.getCreated().getTime());
+		if(workflowEventAudit.getElapsedTimeMS() != null) {
+			builder.setTimeElapsed(workflowEventAudit.getElapsedTimeMS().longValue());
+		}
+		//	State
+		if(!Util.isEmpty(workflowEventAudit.getWFState())) {
+			if(workflowEventAudit.getWFState().equals(MWFProcess.WFSTATE_Running)) {
+				builder.setWorkflowState(org.spin.grpc.util.WorkflowEvent.WorkflowState.RUNNING);
+			} else if(workflowEventAudit.getWFState().equals(MWFProcess.WFSTATE_Completed)) {
+				builder.setWorkflowState(org.spin.grpc.util.WorkflowEvent.WorkflowState.COMPLETED);
+			} else if(workflowEventAudit.getWFState().equals(MWFProcess.WFSTATE_Aborted)) {
+				builder.setWorkflowState(org.spin.grpc.util.WorkflowEvent.WorkflowState.ABORTED);
+			} else if(workflowEventAudit.getWFState().equals(MWFProcess.WFSTATE_Terminated)) {
+				builder.setWorkflowState(org.spin.grpc.util.WorkflowEvent.WorkflowState.TERMINATED);
+			} else if(workflowEventAudit.getWFState().equals(MWFProcess.WFSTATE_Suspended)) {
+				builder.setWorkflowState(org.spin.grpc.util.WorkflowEvent.WorkflowState.SUSPENDED);
+			} else if(workflowEventAudit.getWFState().equals(MWFProcess.WFSTATE_NotStarted)) {
+				builder.setWorkflowState(org.spin.grpc.util.WorkflowEvent.WorkflowState.NOT_STARTED);
+			}
+		}
+		//	
+		builder.setAttributeName(validateNull(workflowEventAudit.getAttributeName()));
+		builder.setOldValue(validateNull(workflowEventAudit.getOldValue()));
+		builder.setNewValue(validateNull(workflowEventAudit.getNewValue()));
+  		return builder;
+	}
+	
+	/**
+	 * Convert request for record log to builder
+	 * @param context
+	 * @param request
+	 * @return
+	 */
+	private ListRecordLogsResponse.Builder convertRecordLogs(Properties context, ListRecordLogsRequest request) {
+		StringBuffer whereClause = new StringBuffer();
+		List<Object> parameters = new ArrayList<>();
+		if(!Util.isEmpty(request.getTableName())) {
+			MTable table = MTable.get(context, request.getTableName());
+			if(table == null
+					|| table.getAD_Table_ID() == 0) {
+				throw new AdempiereException("@AD_Table_ID@ @Invalid@");
+			}
+			whereClause
+				.append(I_AD_ChangeLog.COLUMNNAME_AD_Table_ID).append(" = ?")
+				.append(" AND ")
+				.append(I_AD_ChangeLog.COLUMNNAME_Record_ID).append(" = ?");
+			//	Set parameters
+			parameters.add(table.getAD_Table_ID());
+			parameters.add(request.getRecordId());
+		} else {
+			whereClause.append("EXISTS(SELECT 1 FROM AD_Session WHERE UUID = ? AND AD_Session_ID = AD_ChangeLog.AD_Session_ID)");
+			parameters.add(request.getClientRequest().getSessionUuid());
+		}
+		//	Get page and count
+		String nexPageToken = null;
+		int pageNumber = getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
+		int offset = (pageNumber > 0? pageNumber - 1: 0) * PAGE_SIZE;
+		int limit = (pageNumber == 0? 1: pageNumber) * PAGE_SIZE;
+		Query query = new Query(context, I_AD_ChangeLog.Table_Name, whereClause.toString(), null)
+				.setParameters(parameters);
+		int count = query.count();
+		List<MChangeLog> recordLogList = query
+				.setLimit(limit, offset)
+				.<MChangeLog>list();
+		//	
+		ListRecordLogsResponse.Builder builder = ListRecordLogsResponse.newBuilder();
+		//	Convert Record Log
+		for(MChangeLog recordLog : recordLogList) {
+			RecordLog.Builder valueObject = convertRecordLog(recordLog);
+			builder.addRecordLogs(valueObject.build());
+		}
+		//	
+		builder.setRecordCount(count);
+		//	Set page token
+		if(count > limit) {
+			nexPageToken = getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
+		}
+		//	Set next page
+		builder.setNextPageToken(validateNull(nexPageToken));
+		//	Return
+		return builder;
+	}
+	
+	/**
+	 * Convert PO class from change log to builder
+	 * @param recordLog
+	 * @return
+	 */
+	private RecordLog.Builder convertRecordLog(MChangeLog recordLog) {
+		MTable table = MTable.get(recordLog.getCtx(), recordLog.getAD_Table_ID());
+		MColumn column = MColumn.get(recordLog.getCtx(), recordLog.getAD_Column_ID());
+		MUser user = MUser.get(recordLog.getCtx(), recordLog.getCreatedBy());
+		RecordLog.Builder builder = RecordLog.newBuilder();
+		builder.setLogUuid(validateNull(recordLog.getUUID()));
+		builder.setRecordId(recordLog.getRecord_ID());
+		builder.setTableName(validateNull(table.getTableName()));
+		builder.setColumnName(validateNull(column.getColumnName()));
+		String displayColumnName = column.getName();
+		if(!Env.isBaseLanguage(recordLog.getCtx(), "")) {
+			String translation = column.get_Translation(MColumn.COLUMNNAME_Name);
+			if(!Util.isEmpty(translation)) {
+				displayColumnName = translation;
+			}
+		}
+		builder.setDisplayColumnName(validateNull(displayColumnName));
+		builder.setSessionUuid(validateNull(recordLog.getAD_Session().getUUID()));
+		builder.setUserUuid(validateNull(user.getUUID()));
+		builder.setUserName(validateNull(user.getName()));
+		builder.setTransactionName(validateNull(recordLog.getTrxName()));
+		builder.setDescription(validateNull(recordLog.getDescription()));
+		builder.setLogDate(recordLog.getCreated().getTime());
+		if(recordLog.getEventChangeLog().endsWith(MChangeLog.EVENTCHANGELOG_Insert)) {
+			builder.setEventType(org.spin.grpc.util.RecordLog.EventType.INSERT);
+		} else if(recordLog.getEventChangeLog().endsWith(MChangeLog.EVENTCHANGELOG_Update)) {
+			builder.setEventType(org.spin.grpc.util.RecordLog.EventType.UPDATE);
+		} else if(recordLog.getEventChangeLog().endsWith(MChangeLog.EVENTCHANGELOG_Delete)) {
+			builder.setEventType(org.spin.grpc.util.RecordLog.EventType.DELETE);
+		}
+		String oldValue = recordLog.getOldValue();
+		String newValue = recordLog.getNewValue();
+		//	Set Old Value
+		builder.setOldValue(validateNull(oldValue));
+		builder.setNewValue(validateNull(newValue));
+		//	Set Display Values
+		if (oldValue != null && oldValue.equals(MChangeLog.NULL))
+			oldValue = null;
+		String displayOldValue = oldValue;
+		if (newValue != null && newValue.equals(MChangeLog.NULL))
+			newValue = null;
+		String displayNewValue = newValue;
+		//
+		try {
+			if (DisplayType.isText (column.getAD_Reference_ID ())) {
+				;
+			} else if (column.getAD_Reference_ID() == DisplayType.YesNo) {
+				if (oldValue != null) {
+					boolean yes = oldValue.equals("true") || oldValue.equals("Y");
+					displayOldValue = Msg.getMsg(Env.getCtx(), yes ? "Y" : "N");
+				}
+				if (newValue != null) {
+					boolean yes = newValue.equals("true") || newValue.equals("Y");
+					displayNewValue = Msg.getMsg(Env.getCtx(), yes ? "Y" : "N");
+				}
+			} else if (column.getAD_Reference_ID() == DisplayType.Amount) {
+				if (oldValue != null)
+					displayOldValue = amountFormat
+						.format (new BigDecimal (oldValue));
+				if (newValue != null)
+					displayNewValue = amountFormat
+						.format (new BigDecimal (newValue));
+			} else if (column.getAD_Reference_ID() == DisplayType.Integer) {
+				if (oldValue != null)
+					displayOldValue = intFormat.format (new Integer (oldValue));
+				if (newValue != null)
+					displayNewValue = intFormat.format (new Integer (newValue));
+			} else if (DisplayType.isNumeric (column.getAD_Reference_ID ())) {
+				if (oldValue != null)
+					displayOldValue = numberFormat.format (new BigDecimal (oldValue));
+				if (newValue != null)
+					displayNewValue = numberFormat.format (new BigDecimal (newValue));
+			} else if (column.getAD_Reference_ID() == DisplayType.Date) {
+				if (oldValue != null)
+					displayOldValue = dateFormat.format (Timestamp.valueOf (oldValue));
+				if (newValue != null)
+					displayNewValue = dateFormat.format (Timestamp.valueOf (newValue));
+			} else if (column.getAD_Reference_ID() == DisplayType.DateTime) {
+				if (oldValue != null)
+					displayOldValue = dateTimeFormat.format (Timestamp.valueOf (oldValue));
+				if (newValue != null)
+					displayNewValue = dateTimeFormat.format (Timestamp.valueOf (newValue));
+			} else if (DisplayType.isLookup(column.getAD_Reference_ID ())) {
+				MLookup lookup = MLookupFactory.get (Env.getCtx(), 0,
+						column.getAD_Column_ID(), column.getAD_Reference_ID(),
+					Env.getLanguage(Env.getCtx()), column.getColumnName(),
+					column.getAD_Reference_Value_ID(),
+					column.isParent(), null);
+				if (oldValue != null) {
+					Object key = oldValue; 
+					NamePair pp = lookup.get(key);
+					if (pp != null)
+						displayOldValue = pp.getName();
+				}
+				if (newValue != null) {
+					Object key = newValue; 
+					NamePair pp = lookup.get(key);
+					if (pp != null)
+						displayNewValue = pp.getName();
+				}
+			} else if (DisplayType.isLOB (column.getAD_Reference_ID ())) {
+				;
+			}
+		} catch (Exception e) {
+			log.log(Level.WARNING, oldValue + "->" + newValue, e);
+		}
+		//	Set display values
+		builder.setOldDisplayValue(validateNull(displayOldValue));
+		builder.setNewDisplayValue(validateNull(displayNewValue));
 		return builder;
 	}
 	
@@ -3142,7 +3799,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	 * @param instance
 	 * @return
 	 */
-	private ProcessLog.Builder convertProcessInstance(MPInstance instance) {
+	private ProcessLog.Builder convertProcessLog(MPInstance instance) {
 		ProcessLog.Builder builder = ProcessLog.newBuilder();
 		builder.setInstanceUuid(validateNull(instance.getUUID()));
 		builder.setIsError(!instance.isOK());
@@ -3324,7 +3981,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		//	Run it
 		String result = processCallout(context, windowNo, gridTab, gridField);
 		Arrays.asList(gridTab.getFields()).stream().filter(fieldValue -> isValidChange(fieldValue))
-		.forEach(fieldValue -> calloutBuilder.putValues(fieldValue.getColumnName(), getKeyValueFromValue(fieldValue.getValue()).build()));
+		.forEach(fieldValue -> calloutBuilder.putValues(fieldValue.getColumnName(), getValueFromObject(fieldValue.getValue()).build()));
 		calloutBuilder.setResult(validateNull(result));
 		return calloutBuilder;
 	}
@@ -3481,7 +4138,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			if(value == null) {
 				continue;
 			}
-			Value.Builder builderValue = getKeyValueFromValue(value);
+			Value.Builder builderValue = getValueFromObject(value);
 			if(builderValue == null) {
 				continue;
 			}
@@ -3497,7 +4154,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	 * @param value
 	 * @return
 	 */
-	private Value.Builder getKeyValueFromValue(Object value) {
+	private Value.Builder getValueFromObject(Object value) {
 		Value.Builder builderValue = Value.newBuilder();
 		if(value == null) {
 			return builderValue;
