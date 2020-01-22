@@ -3125,20 +3125,29 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	 */
 	private ListProcessLogsResponse.Builder convertProcessLogs(Properties context, ListProcessLogsRequest request) {
 		String sql = null;
-		String uuid = null;
-		if(!Util.isEmpty(request.getUserUuid())) {
-			uuid = request.getUserUuid();
+		List<Object> parameters = new ArrayList<>();
+		if(!Util.isEmpty(request.getTableName())) {
+			MTable table = MTable.get(context, request.getTableName());
+			if(table == null
+					|| table.getAD_Table_ID() == 0) {
+				throw new AdempiereException("@AD_Table_ID@ @Invalid@");
+			}
+			parameters.add(request.getRecordId());
+			parameters.add(table.getAD_Table_ID());
+			sql = "Record_ID = ? AND EXISTS(SELECT 1 FROM AD_Process WHERE AD_Table_ID = ? AND AD_Process_ID = AD_PInstance.AD_Process_ID)";
+		} if(!Util.isEmpty(request.getUserUuid())) {
+			parameters.add(request.getUserUuid());
 			sql = "EXISTS(SELECT 1 FROM AD_User WHERE UUID = ? AND AD_User_ID = AD_PInstance.AD_User_ID)";
 		} else if(!Util.isEmpty(request.getInstanceUuid())) {
-			uuid = request.getInstanceUuid();
+			parameters.add(request.getInstanceUuid());
 			sql = "UUID = ?";
 		} else {
-			uuid = request.getClientRequest().getSessionUuid();
+			parameters.add(request.getClientRequest().getSessionUuid());
 			sql = "EXISTS(SELECT 1 FROM AD_Session WHERE UUID = ? AND AD_Session_ID = AD_PInstance.AD_Session_ID)";
 		}
 		List<MPInstance> processInstanceList = new Query(context, I_AD_PInstance.Table_Name, 
 				sql, null)
-				.setParameters(uuid)
+				.setParameters(parameters)
 				.setOrderBy(I_AD_PInstance.COLUMNNAME_Created + " DESC")
 				.<MPInstance>list();
 		//	

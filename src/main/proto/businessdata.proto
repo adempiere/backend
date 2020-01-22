@@ -394,8 +394,10 @@ message ListProcessLogsRequest {
 	ClientRequest clientRequest = 1;
 	string userUuid = 2;
 	string instanceUuid = 3;
-	int32 page_size = 4;
-	string page_token = 5;
+	string tableName = 4;
+	int32 recordId = 5;
+	int32 page_size = 6;
+	string page_token = 7;
 }
 
 // BusinessProcess Response List
