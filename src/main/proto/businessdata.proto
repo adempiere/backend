@@ -87,6 +87,8 @@ service BusinessDataService {
 	rpc ListChatEntries(ListChatEntriesRequest) returns (ListChatEntriesResponse) {}
 	//	List workflow processes
 	rpc ListWorkflowLogs(ListWorkflowLogsRequest) returns (ListWorkflowLogsResponse) {}
+	//	List Workflow
+	rpc ListWorkflows(ListWorkflowsRequest) returns (ListWorkflowsResponse) {}
 }
 
 // The client request contains client info for request.
@@ -632,7 +634,7 @@ message ListRecordLogsRequest {
 
 // Record Log
 message RecordLog {
-	string logUuid = 1;
+	int32 logId = 1;
 	int32 recordId = 2;
 	string tableName = 3;
 	string columnName = 4;
@@ -741,6 +743,124 @@ message ChatEntry {
 message ListChatEntriesResponse {
 	int64 recordCount = 1;
 	repeated ChatEntry chatEntries = 2;
+	string next_page_token = 3;
+}
+
+// Workflow Definition Request
+message ListWorkflowsRequest {
+	ClientRequest clientRequest = 1;
+	string tableName = 2;
+	int32 page_size = 4;
+	string page_token = 5;
+}
+
+// Workflow Definition
+message WorkflowDefinition {
+	string workflowUuid = 1;
+	string value = 2;
+	string name = 3;
+	string description = 4;
+	string help = 5;
+	string tableName = 6;
+	string responsibleUuid = 7;
+	string responsibleName = 8;
+	int32 priority = 9;
+	int64 validFrom = 10;
+	bool isDefault = 11;
+	bool isValid = 12;
+	enum DurationUnit {
+		DAY = 0;
+		HOUR = 1;
+		MINUTE = 2;
+		MONTH = 3;
+		SECOND = 4;
+		YEAR = 5;
+	}
+	enum PublishStatus {
+		RELEASED = 0;
+		TEST = 1;
+		UNDER_REVISION = 2;
+		VOID = 3;
+	}
+	PublishStatus publishStatus = 13;
+	DurationUnit durationUnit = 14;
+	WorkflowNode startNode = 15;
+	repeated WorkflowNode workflowNodes = 16;
+}
+
+// Workflow Node
+message WorkflowNode {
+	string nodeUuid = 1;
+	string value = 2;
+	string name = 3;
+	string description = 4;
+	string help = 5;
+	string responsibleUuid = 6;
+	string responsibleName = 7;
+	string documentActionValue = 8;
+	string documentActionName = 9;
+	int32 priority = 10;
+	
+	enum Action {
+		USER_CHOICE = 0;
+		DOCUMENT_ACTION = 1;
+		SUB_WORKFLOW = 2;
+		EMAIL = 3;
+		APPS_PROCESS = 4;
+		SMART_VIEW = 5;
+		APPS_REPORT = 6;
+		SMART_BROWSE = 7;
+		APPS_TASK = 8;
+		SET_VARIABLE = 9;
+		USER_WINDOW = 10;
+		USER_FORM = 11;
+		WAIT_SLEEP = 12;
+	}
+	Action action = 11;
+	repeated WorkflowTransition transitions = 12;
+}
+
+//	Condition for transition
+message WorkflowCondition {
+	int32 sequence = 1;
+	string columnName = 2;
+	string value = 3;
+	
+	enum ConditionType {
+		AND = 0;
+		OR = 1;
+	}
+	
+	enum Operation {
+		EQUAL = 0;
+		NOT_EQUAL = 1;
+		LIKE = 2;
+		GREATER = 4;
+		GREATER_EQUAL = 5;
+		LESS = 6;
+		LESS_EQUAL = 7;
+		BETWEEN = 8;
+		SQL = 9;
+	}
+	
+	ConditionType conditionType = 4;
+	Operation operation = 5;
+}
+
+//	Workflow Transition
+message WorkflowTransition {
+	string nodeNextUuid = 1;
+	string description = 2;
+	bool isStdUserWorkflow = 3;
+	int32 sequence = 4;
+	repeated WorkflowCondition workflowConditions = 5;
+}
+
+
+//	Workflow Definition List
+message ListWorkflowsResponse {
+	int64 recordCount = 1;
+	repeated WorkflowDefinition workflows = 2;
 	string next_page_token = 3;
 }
 
