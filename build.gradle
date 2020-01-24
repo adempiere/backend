@@ -81,7 +81,7 @@ startScripts.enabled = false
 task ADempiereAccess(type: CreateStartScripts) {
     mainClassName = 'org.spin.grpc.util.AccessServer'
     applicationName = 'adempiere-access-server'
-    defaultJvmOpts = Arrays.asList("-DPropertyFile=AdempiereAccess.properties", "-Dorg.adempiere.server.embedded=true")
+    defaultJvmOpts = Arrays.asList("-DPropertyFile=Adempiere.properties", "-Dorg.adempiere.server.embedded=true")
     outputDir = new File(project.buildDir, 'tmp')
     classpath = jar.outputs.files + project.configurations.runtime
 }
@@ -89,7 +89,7 @@ task ADempiereAccess(type: CreateStartScripts) {
 task ADempiereDictionary(type: CreateStartScripts) {
     mainClassName = 'org.spin.grpc.util.DictionaryServer'
     applicationName = 'adempiere-dictionary-server'
-    defaultJvmOpts = Arrays.asList("-DPropertyFile=AdempiereDictionary.properties", "-Dorg.adempiere.server.embedded=true")
+    defaultJvmOpts = Arrays.asList("-DPropertyFile=Adempiere.properties", "-Dorg.adempiere.server.embedded=true")
     outputDir = new File(project.buildDir, 'tmp')
     classpath = jar.outputs.files + project.configurations.runtime
 }
@@ -97,7 +97,7 @@ task ADempiereDictionary(type: CreateStartScripts) {
 task ADempiereBusinessData(type: CreateStartScripts) {
     mainClassName = 'org.spin.grpc.util.BusinessDataServer'
     applicationName = 'adempiere-businessdata-server'
-    defaultJvmOpts = Arrays.asList("-DPropertyFile=AdempiereBusiness.properties", "-Dorg.adempiere.server.embedded=true")
+    defaultJvmOpts = Arrays.asList("-DPropertyFile=Adempiere.properties", "-Dorg.adempiere.server.embedded=true")
     outputDir = new File(project.buildDir, 'tmp')
     classpath = jar.outputs.files + project.configurations.runtime
 }
@@ -105,7 +105,7 @@ task ADempiereBusinessData(type: CreateStartScripts) {
 task ADempiereManagementEnrollment(type: CreateStartScripts) {
     mainClassName = 'org.spin.grpc.util.EnrollmentServer'
     applicationName = 'adempiere-enrollment-server'
-    defaultJvmOpts = Arrays.asList("-DPropertyFile=AdempiereEnrollment.properties", "-Dorg.adempiere.server.embedded=true")
+    defaultJvmOpts = Arrays.asList("-DPropertyFile=Adempiere.properties", "-Dorg.adempiere.server.embedded=true")
     outputDir = new File(project.buildDir, 'tmp')
     classpath = jar.outputs.files + project.configurations.runtime
 }

@@ -3311,7 +3311,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		int pageNumber = getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
 		int offset = (pageNumber > 0? pageNumber - 1: 0) * PAGE_SIZE;
 		int limit = (pageNumber == 0? 1: pageNumber) * PAGE_SIZE;
-		Query query = new Query(context, I_AD_WF_Process.Table_Name, whereClause.toString(), null)
+		Query query = new Query(context, I_CM_Chat.Table_Name, whereClause.toString(), null)
 				.setParameters(parameters);
 		int count = query.count();
 		List<MChat> chatList = query
