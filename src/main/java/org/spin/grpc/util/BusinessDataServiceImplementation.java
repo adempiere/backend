@@ -3240,6 +3240,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		ChatEntry.Builder builder = ChatEntry.newBuilder();
 		builder.setChatEntryUuid(validateNull(chatEntry.getUUID()));
 		builder.setSubject(validateNull(chatEntry.getSubject()));
+		builder.setCharacterData(validateNull(chatEntry.getCharacterData()));
 		if(chatEntry.getAD_User_ID() != 0) {
 			MUser user = MUser.get(chatEntry.getCtx(), chatEntry.getAD_User_ID());
 			builder.setUserUuid(validateNull(user.getUUID()));
