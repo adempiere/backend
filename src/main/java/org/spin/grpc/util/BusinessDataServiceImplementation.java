@@ -130,6 +130,7 @@ import org.compiere.util.Language;
 import org.compiere.util.MimeType;
 import org.compiere.util.Msg;
 import org.compiere.util.NamePair;
+import org.compiere.util.TimeUtil;
 import org.compiere.util.Util;
 import org.compiere.wf.MWFEventAudit;
 import org.compiere.wf.MWFNextCondition;
@@ -3842,15 +3843,11 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				.setParameters(parameters);
 		int count = query.count();
 		List<MChangeLog> recordLogList = query
+				.setOrderBy(I_AD_ChangeLog.COLUMNNAME_AD_ChangeLog_ID)
 				.setLimit(limit, offset)
 				.<MChangeLog>list();
-		//	
-		ListRecordLogsResponse.Builder builder = ListRecordLogsResponse.newBuilder();
 		//	Convert Record Log
-		for(MChangeLog recordLog : recordLogList) {
-			RecordLog.Builder valueObject = convertRecordLog(recordLog);
-			builder.addRecordLogs(valueObject.build());
-		}
+		ListRecordLogsResponse.Builder builder = convertRecordLog(recordLogList);
 		//	
 		builder.setRecordCount(count);
 		//	Set page token
@@ -3864,18 +3861,63 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	}
 	
 	/**
-	 * Convert PO class from change log to builder
+	 * Convert a change log for a set of changes to builder
 	 * @param recordLog
 	 * @return
 	 */
-	private RecordLog.Builder convertRecordLog(MChangeLog recordLog) {
+	private RecordLog.Builder convertRecordLogHeader(MChangeLog recordLog) {
 		MTable table = MTable.get(recordLog.getCtx(), recordLog.getAD_Table_ID());
-		MColumn column = MColumn.get(recordLog.getCtx(), recordLog.getAD_Column_ID());
 		MUser user = MUser.get(recordLog.getCtx(), recordLog.getCreatedBy());
 		RecordLog.Builder builder = RecordLog.newBuilder();
 		builder.setLogId(recordLog.getAD_ChangeLog_ID());
 		builder.setRecordId(recordLog.getRecord_ID());
 		builder.setTableName(validateNull(table.getTableName()));
+		builder.setSessionUuid(validateNull(recordLog.getAD_Session().getUUID()));
+		builder.setUserUuid(validateNull(user.getUUID()));
+		builder.setUserName(validateNull(user.getName()));
+		builder.setTransactionName(validateNull(recordLog.getTrxName()));
+		builder.setLogDate(recordLog.getCreated().getTime());
+		if(recordLog.getEventChangeLog().endsWith(MChangeLog.EVENTCHANGELOG_Insert)) {
+			builder.setEventType(org.spin.grpc.util.RecordLog.EventType.INSERT);
+		} else if(recordLog.getEventChangeLog().endsWith(MChangeLog.EVENTCHANGELOG_Update)) {
+			builder.setEventType(org.spin.grpc.util.RecordLog.EventType.UPDATE);
+		} else if(recordLog.getEventChangeLog().endsWith(MChangeLog.EVENTCHANGELOG_Delete)) {
+			builder.setEventType(org.spin.grpc.util.RecordLog.EventType.DELETE);
+		}
+		//	Return
+		return builder;
+	}
+	
+	/**
+	 * Convert PO class from change log  list to builder
+	 * @param recordLog
+	 * @return
+	 */
+	private ListRecordLogsResponse.Builder convertRecordLog(List<MChangeLog> recordLogList) {
+		Map<Integer, RecordLog.Builder> indexMap = new HashMap<Integer, RecordLog.Builder>();
+		recordLogList.stream().filter(recordLog -> !indexMap.containsKey(recordLog.getAD_ChangeLog_ID())).forEach(recordLog -> {
+			indexMap.put(recordLog.getAD_ChangeLog_ID(), convertRecordLogHeader(recordLog));
+		});
+		//	convert changes
+		recordLogList.forEach(recordLog -> {
+			ChangeLog.Builder changeLog = convertChangeLog(recordLog);
+			RecordLog.Builder recordLogBuilder = indexMap.get(recordLog.getAD_ChangeLog_ID());
+			recordLogBuilder.addChangeLogs(changeLog);
+			indexMap.put(recordLog.getAD_ChangeLog_ID(), recordLogBuilder);
+		});
+		ListRecordLogsResponse.Builder builder = ListRecordLogsResponse.newBuilder();
+		indexMap.values().stream().forEach(recordLog -> builder.addRecordLogs(recordLog));
+		return builder;
+	}
+	
+	/**
+	 * Convert PO class from change log to builder
+	 * @param recordLog
+	 * @return
+	 */
+	private ChangeLog.Builder convertChangeLog(MChangeLog recordLog) {
+		ChangeLog.Builder builder = ChangeLog.newBuilder();
+		MColumn column = MColumn.get(recordLog.getCtx(), recordLog.getAD_Column_ID());
 		builder.setColumnName(validateNull(column.getColumnName()));
 		String displayColumnName = column.getName();
 		if(!Env.isBaseLanguage(recordLog.getCtx(), "")) {
@@ -3885,19 +3927,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			}
 		}
 		builder.setDisplayColumnName(validateNull(displayColumnName));
-		builder.setSessionUuid(validateNull(recordLog.getAD_Session().getUUID()));
-		builder.setUserUuid(validateNull(user.getUUID()));
-		builder.setUserName(validateNull(user.getName()));
-		builder.setTransactionName(validateNull(recordLog.getTrxName()));
 		builder.setDescription(validateNull(recordLog.getDescription()));
-		builder.setLogDate(recordLog.getCreated().getTime());
-		if(recordLog.getEventChangeLog().endsWith(MChangeLog.EVENTCHANGELOG_Insert)) {
-			builder.setEventType(org.spin.grpc.util.RecordLog.EventType.INSERT);
-		} else if(recordLog.getEventChangeLog().endsWith(MChangeLog.EVENTCHANGELOG_Update)) {
-			builder.setEventType(org.spin.grpc.util.RecordLog.EventType.UPDATE);
-		} else if(recordLog.getEventChangeLog().endsWith(MChangeLog.EVENTCHANGELOG_Delete)) {
-			builder.setEventType(org.spin.grpc.util.RecordLog.EventType.DELETE);
-		}
 		String oldValue = recordLog.getOldValue();
 		String newValue = recordLog.getNewValue();
 		//	Set Old Value
@@ -3936,6 +3966,12 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				if (newValue != null)
 					displayNewValue = intFormat.format (new Integer (newValue));
 			} else if (DisplayType.isNumeric (column.getAD_Reference_ID ())) {
+				if(column.getColumnName().equals("ProcessedOn")) {
+					if (oldValue != null)
+						displayOldValue = TimeUtil.formatElapsed(new BigDecimal (oldValue).longValue());
+					if (newValue != null)
+						displayNewValue = TimeUtil.formatElapsed(new BigDecimal (newValue).longValue());
+				}
 				if (oldValue != null)
 					displayOldValue = numberFormat.format (new BigDecimal (oldValue));
 				if (newValue != null)

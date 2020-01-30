@@ -637,24 +637,29 @@ message RecordLog {
 	int32 logId = 1;
 	int32 recordId = 2;
 	string tableName = 3;
-	string columnName = 4;
-	string displayColumnName = 5;
-	string sessionUuid = 6;
-	string userUuid = 7;
-	string userName = 8;
-	string transactionName = 9;
-	string oldValue = 10;
-	string oldDisplayValue = 11;
-	string newValue = 12;
-	string newDisplayValue = 13;
-	string description = 14;
+	string sessionUuid = 4;
+	string userUuid = 5;
+	string userName = 6;
+	string transactionName = 7;
 	enum EventType {
 		INSERT = 0;
 		UPDATE = 1;
 		DELETE = 2;
 	}
-	EventType eventType = 15;
-	int64 logDate = 16;
+	EventType eventType = 8;
+	int64 logDate = 9;
+	repeated ChangeLog changeLogs = 10; 
+}
+
+// Record Log
+message ChangeLog {
+	string columnName = 4;
+	string displayColumnName = 5;
+	string oldValue = 10;
+	string oldDisplayValue = 11;
+	string newValue = 12;
+	string newDisplayValue = 13;
+	string description = 14;
 }
 
 //	Record Log List
