@@ -884,6 +884,26 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		}
 	}
 	
+	@Override
+	public void createChatEntry(CreateChatEntryRequest request, StreamObserver<ChatEntry> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			Properties context = getContext(request.getClientRequest());
+			ChatEntry.Builder chatEntryValue = addChatEntry(context, request);
+			responseObserver.onNext(chatEntryValue.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
 	/**
 	 * Get Report Query from Criteria
 	 * @param context
@@ -2214,6 +2234,50 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	}
 	
 	/**
+	 * Create Chat Entry
+	 * @param context
+	 * @param request
+	 * @return
+	 */
+	private ChatEntry.Builder addChatEntry(Properties context, CreateChatEntryRequest request) {
+		if(Util.isEmpty(request.getTableName())) {
+			throw new AdempiereException("@AD_Table_ID@ @NotFound@");
+		}
+		String tableName = request.getTableName();
+		MTable table = MTable.get(context, tableName);
+		PO entity = table.getPO(0, null);
+		if(entity == null) {
+			throw new AdempiereException("@Error@ PO is null");
+		}
+
+
+		StringBuffer whereClause = new StringBuffer();
+		List<Object> parameters = new ArrayList<>();
+		//	
+		whereClause
+			.append(I_CM_Chat.COLUMNNAME_AD_Table_ID).append(" = ?")
+			.append(" AND ")
+			.append(I_CM_Chat.COLUMNNAME_Record_ID).append(" = ?");
+		//	Set parameters
+		parameters.add(table.getAD_Table_ID());
+		parameters.add(request.getRecordId());
+		MChat chat = new Query(context, I_CM_Chat.Table_Name, whereClause.toString(), null)
+				.setParameters(parameters)
+				.setClient_ID()
+				.first();
+		//	Add or create chat
+		if (chat == null 
+				|| chat.getCM_Chat_ID() == 0) {
+			chat = new MChat (context, table.getAD_Table_ID(), entity.get_ID(), entity.getDisplayValue(), null);
+		}
+		//	Add entry PO
+		MChatEntry entry = new MChatEntry(chat, request.getComment());
+		entry.saveEx();
+		//	Return
+		return convertChatEntry(entry);
+	}
+	
+	/**
 	 * Update Entity
 	 * @param context
 	 * @param request
@@ -3243,6 +3307,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	private ChatEntry.Builder convertChatEntry(MChatEntry chatEntry) {
 		ChatEntry.Builder builder = ChatEntry.newBuilder();
 		builder.setChatEntryUuid(validateNull(chatEntry.getUUID()));
+		builder.setChatUuid(validateNull(chatEntry.getCM_Chat().getUUID()));
 		builder.setSubject(validateNull(chatEntry.getSubject()));
 		builder.setCharacterData(validateNull(chatEntry.getCharacterData()));
 		if(chatEntry.getAD_User_ID() != 0) {

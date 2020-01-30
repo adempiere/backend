@@ -89,6 +89,8 @@ service BusinessDataService {
 	rpc ListWorkflowLogs(ListWorkflowLogsRequest) returns (ListWorkflowLogsResponse) {}
 	//	List Workflow
 	rpc ListWorkflows(ListWorkflowsRequest) returns (ListWorkflowsResponse) {}
+	// Add Chat Entry
+	rpc CreateChatEntry(CreateChatEntryRequest) returns (ChatEntry) {}
 }
 
 // The client request contains client info for request.
@@ -717,11 +719,12 @@ message ListChatEntriesRequest {
 
 // Record Chat
 message ChatEntry {
-	string chatEntryUuid = 1;
-	string subject = 2;
-	string characterData = 3;
-	string userUuid = 4;
-	string userName = 5;
+	string chatUuid = 1;
+	string chatEntryUuid = 2;
+	string subject = 3;
+	string characterData = 4;
+	string userUuid = 5;
+	string userName = 6;
 	enum ConfidentialType {
 		PUBLIC = 0;
 		PARTER = 1;
@@ -738,10 +741,18 @@ message ChatEntry {
 		FORUM_THREADED = 1;
 		WIKI = 2;
 	}
-	ChatEntryType chatEntryType = 6;
-	ConfidentialType confidentialType = 7;
-	ModeratorStatus moderatorStatus = 8;
-	int64 logDate = 9;
+	ChatEntryType chatEntryType = 7;
+	ConfidentialType confidentialType = 8;
+	ModeratorStatus moderatorStatus = 9;
+	int64 logDate = 10;
+}
+
+// Create Chat Entry Request
+message CreateChatEntryRequest {
+	ClientRequest clientRequest = 1;
+	string tableName = 2;
+	int32 recordId = 3;
+	string comment = 4;
 }
 
 //	Record Chats List
