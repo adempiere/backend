@@ -923,6 +923,9 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				query.addRestriction(whereClause.toString());
 			} else if(condition.getOperatorValue() == Operator.BETWEEN_VALUE) {
 				query.addRangeRestriction(columnName, getValueFromType(condition.getValue()), getValueFromType(condition.getValueTo()));
+			} else if(condition.getOperatorValue() == Operator.NULL_VALUE
+					|| condition.getOperatorValue() == Operator.NOT_NULL_VALUE) {
+				query.addRestriction(columnName, operator, null);
 			} else {
 				query.addRestriction(columnName, operator, getValueFromType(condition.getValue()));
 			}
