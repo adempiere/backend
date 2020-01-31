@@ -2269,6 +2269,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		if (chat == null 
 				|| chat.getCM_Chat_ID() == 0) {
 			chat = new MChat (context, table.getAD_Table_ID(), entity.get_ID(), entity.getDisplayValue(), null);
+			chat.saveEx();
 		}
 		//	Add entry PO
 		MChatEntry entry = new MChatEntry(chat, request.getComment());
