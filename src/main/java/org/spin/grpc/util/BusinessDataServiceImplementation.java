@@ -905,55 +905,6 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	}
 	
 	/**
-	 * Get Report Query from Criteria
-	 * @param context
-	 * @param criteria
-	 * @return
-	 */
-	private MQuery getReportQueryFromCriteria(Properties context, Criteria criteria) {
-		MTable table = MTable.get(context, criteria.getTableName());
-		MQuery query = new MQuery(table.getTableName());
-		criteria.getConditionsList().stream()
-		.filter(condition -> !Util.isEmpty(condition.getColumnName()))
-		.forEach(condition -> {
-			String columnName = condition.getColumnName();
-			String operator = convertOperator(condition.getOperatorValue());
-			if(condition.getOperatorValue() == Operator.LIKE_VALUE
-					|| condition.getOperatorValue() == Operator.NOT_LIKE_VALUE) {
-				columnName = "UPPER(" + columnName + ")";
-				query.addRestriction(columnName, operator, getValueFromType(condition.getValue(), true));
-			}
-			//	For in or not in
-			if(condition.getOperatorValue() == Operator.IN_VALUE
-					|| condition.getOperatorValue() == Operator.NOT_IN_VALUE) {
-				StringBuffer whereClause = new StringBuffer();
-				whereClause.append(columnName).append(convertOperator(condition.getOperatorValue()));
-				StringBuffer parameter = new StringBuffer();
-				condition.getValuesList().forEach(value -> {
-					if(parameter.length() > 0) {
-						parameter.append(", ");
-					}
-					Object convertedValue = getValueFromType(value);
-					if(convertedValue instanceof String) {
-						convertedValue = "'" + convertedValue + "'";
-					}
-					parameter.append(convertedValue);
-				});
-				whereClause.append("(").append(parameter).append(")");
-				query.addRestriction(whereClause.toString());
-			} else if(condition.getOperatorValue() == Operator.BETWEEN_VALUE) {
-				query.addRangeRestriction(columnName, getValueFromType(condition.getValue()), getValueFromType(condition.getValueTo()));
-			} else if(condition.getOperatorValue() == Operator.NULL_VALUE
-					|| condition.getOperatorValue() == Operator.NOT_NULL_VALUE) {
-				query.addRestriction(columnName, operator, null);
-			} else {
-				query.addRestriction(columnName, operator, getValueFromType(condition.getValue()));
-			}
-		});
-		return query;
-	}
-	
-	/**
 	 * Convert Object to list
 	 * @param request
 	 * @return
@@ -2614,6 +2565,55 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	}
 	
 	/**
+	 * Get Report Query from Criteria
+	 * @param context
+	 * @param criteria
+	 * @return
+	 */
+	private MQuery getReportQueryFromCriteria(Properties context, Criteria criteria) {
+		MTable table = MTable.get(context, criteria.getTableName());
+		MQuery query = new MQuery(table.getTableName());
+		criteria.getConditionsList().stream()
+		.filter(condition -> !Util.isEmpty(condition.getColumnName()))
+		.forEach(condition -> {
+			String columnName = condition.getColumnName();
+			String operator = convertOperator(condition.getOperatorValue());
+			if(condition.getOperatorValue() == Operator.LIKE_VALUE
+					|| condition.getOperatorValue() == Operator.NOT_LIKE_VALUE) {
+				columnName = "UPPER(" + columnName + ")";
+				query.addRestriction(columnName, operator, getValueFromType(condition.getValue(), true));
+			}
+			//	For in or not in
+			if(condition.getOperatorValue() == Operator.IN_VALUE
+					|| condition.getOperatorValue() == Operator.NOT_IN_VALUE) {
+				StringBuffer whereClause = new StringBuffer();
+				whereClause.append(columnName).append(convertOperator(condition.getOperatorValue()));
+				StringBuffer parameter = new StringBuffer();
+				condition.getValuesList().forEach(value -> {
+					if(parameter.length() > 0) {
+						parameter.append(", ");
+					}
+					Object convertedValue = getValueFromType(value);
+					if(convertedValue instanceof String) {
+						convertedValue = "'" + convertedValue + "'";
+					}
+					parameter.append(convertedValue);
+				});
+				whereClause.append("(").append(parameter).append(")");
+				query.addRestriction(whereClause.toString());
+			} else if(condition.getOperatorValue() == Operator.BETWEEN_VALUE) {
+				query.addRangeRestriction(columnName, getValueFromType(condition.getValue()), getValueFromType(condition.getValueTo()));
+			} else if(condition.getOperatorValue() == Operator.NULL_VALUE
+					|| condition.getOperatorValue() == Operator.NOT_NULL_VALUE) {
+				query.addRestriction(columnName, operator, null);
+			} else {
+				query.addRestriction(columnName, operator, getValueFromType(condition.getValue()));
+			}
+		});
+		return query;
+	}
+	
+	/**
 	 * Get Where Clause from criteria and dynamic condition
 	 * @param criteria
 	 * @param params
@@ -2656,7 +2656,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 						|| condition.getOperatorValue() == Operator.NOT_LIKE_VALUE) {
 					whereClause.append("?");
 					params.add(getValueFromType(condition.getValue(), true));
-				} else {
+				} else if(condition.getOperatorValue() != Operator.NULL_VALUE
+						&& condition.getOperatorValue() != Operator.NOT_NULL_VALUE) {
 					whereClause.append("?");
 					params.add(getValueFromType(condition.getValue()));
 				}
@@ -3912,7 +3913,6 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				.setParameters(parameters);
 		int count = query.count();
 		List<MChangeLog> recordLogList = query
-				.setOrderBy(I_AD_ChangeLog.COLUMNNAME_AD_ChangeLog_ID)
 				.setLimit(limit, offset)
 				.<MChangeLog>list();
 		//	Convert Record Log
@@ -3989,10 +3989,21 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		MColumn column = MColumn.get(recordLog.getCtx(), recordLog.getAD_Column_ID());
 		builder.setColumnName(validateNull(column.getColumnName()));
 		String displayColumnName = column.getName();
-		if(!Env.isBaseLanguage(recordLog.getCtx(), "")) {
-			String translation = column.get_Translation(MColumn.COLUMNNAME_Name);
-			if(!Util.isEmpty(translation)) {
-				displayColumnName = translation;
+		if(column.getColumnName().equals("ProcessedOn")) {
+			M_Element element = M_Element.get(recordLog.getCtx(), "LastRun");
+			displayColumnName = element.getName();
+			if(!Env.isBaseLanguage(recordLog.getCtx(), "")) {
+				String translation = element.get_Translation(MColumn.COLUMNNAME_Name);
+				if(!Util.isEmpty(translation)) {
+					displayColumnName = translation;
+				}
+			}
+		} else {
+			if(!Env.isBaseLanguage(recordLog.getCtx(), "")) {
+				String translation = column.get_Translation(MColumn.COLUMNNAME_Name);
+				if(!Util.isEmpty(translation)) {
+					displayColumnName = translation;
+				}
 			}
 		}
 		builder.setDisplayColumnName(validateNull(displayColumnName));
@@ -4036,15 +4047,24 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					displayNewValue = intFormat.format (new Integer (newValue));
 			} else if (DisplayType.isNumeric (column.getAD_Reference_ID ())) {
 				if(column.getColumnName().equals("ProcessedOn")) {
+					if (oldValue != null) {
+						if(oldValue.indexOf(".") > 0) {
+							oldValue = oldValue.substring(0, oldValue.indexOf("."));
+						}
+						displayOldValue = TimeUtil.formatElapsed(System.currentTimeMillis() - new BigDecimal (oldValue).longValue());
+					}
+					if (newValue != null) {
+						if(newValue.indexOf(".") > 0) {
+							newValue = newValue.substring(0, newValue.indexOf("."));
+						}
+						displayNewValue = TimeUtil.formatElapsed(System.currentTimeMillis() - new BigDecimal (newValue).longValue());
+					}
+				} else {
 					if (oldValue != null)
-						displayOldValue = TimeUtil.formatElapsed(new BigDecimal (oldValue).longValue());
+						displayOldValue = numberFormat.format (new BigDecimal (oldValue));
 					if (newValue != null)
-						displayNewValue = TimeUtil.formatElapsed(new BigDecimal (newValue).longValue());
+						displayNewValue = numberFormat.format (new BigDecimal (newValue));
 				}
-				if (oldValue != null)
-					displayOldValue = numberFormat.format (new BigDecimal (oldValue));
-				if (newValue != null)
-					displayNewValue = numberFormat.format (new BigDecimal (newValue));
 			} else if (column.getAD_Reference_ID() == DisplayType.Date) {
 				if (oldValue != null)
 					displayOldValue = dateFormat.format (Timestamp.valueOf (oldValue));
