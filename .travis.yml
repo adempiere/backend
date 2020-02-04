@@ -1,6 +1,6 @@
 language: java
 jdk:
-- oraclejdk8
+- openjdk8
 install: gradle wrapper
 os:
 - linux
@@ -18,7 +18,7 @@ before_script:
 jobs:
   include:
     - stage: Compilation
-      script: gradlew build
+      script: ./gradlew build
 deploy:
   provider: releases
   api_key: $GITHUB_TOKEN_KEY
