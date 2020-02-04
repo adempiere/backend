@@ -51,7 +51,6 @@ import org.adempiere.model.MDocumentStatus;
 import org.adempiere.model.MView;
 import org.adempiere.model.MViewDefinition;
 import org.adempiere.model.ZoomInfoFactory;
-import org.compiere.apps.ADialog;
 import org.compiere.model.Callout;
 import org.compiere.model.GridField;
 import org.compiere.model.GridFieldVO;
@@ -3351,35 +3350,40 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		}
 
 		documentAction = docActionHolder[0];
-
+		//	
 		ListDocumentActionsResponse.Builder builder = ListDocumentActionsResponse.newBuilder();
-		//	Fill data
-		for (int i = 0; i < index; i++) {
-			//	Search for option and add it
-			boolean added = false;
-			for (int j = 0; j < valueList.size() && !added; j++) {
-				if (options[i].equals(valueList.get(j))) {
+		//	Get
+		Arrays.asList(options).stream().filter(option -> option != null).forEach(option -> {
+			for (int i = 0; i < valueList.size(); i++) {
+				if (option.equals(valueList.get(i))) {
 					DocumentAction.Builder documentActionBuilder = DocumentAction.newBuilder();
-					documentActionBuilder.setValue(validateNull(valueList.get(j)));
-					documentActionBuilder.setName(validateNull(nameList.get(j)));
-					documentActionBuilder.setDescription(validateNull(descriptionList.get(j)));
+					documentActionBuilder.setValue(validateNull(valueList.get(i)));
+					documentActionBuilder.setName(validateNull(nameList.get(i)));
+					documentActionBuilder.setDescription(validateNull(descriptionList.get(i)));
 					builder.addDocumentActions(documentActionBuilder);
-					added = true;
 				}
 			}
-		}
-
+		});
 		//	setDefault
 		if (documentAction.equals("--"))		//	If None, suggest closing
 			documentAction = DocumentEngine.ACTION_Close;
-		String defaultV = "";
-		for (int i = 0; i < valueList.size() && defaultV.equals(""); i++) {
+		String defaultValue = "";
+		String defaultName = "";
+		String defaultDescription = "";
+		for (int i = 0; i < valueList.size() && defaultName.equals(""); i++) {
 			if (documentAction.equals(valueList.get(i))) {
-				defaultV = nameList.get(i);
+				defaultValue = valueList.get(i);
+				defaultName = nameList.get(i);
+				defaultDescription = descriptionList.get(i);
 			}
 		}
-		if (!defaultV.equals("")) {
-			
+		//	Set default value
+		if (!defaultName.equals("")) {
+			DocumentAction.Builder documentActionBuilder = DocumentAction.newBuilder();
+			documentActionBuilder.setValue(validateNull(defaultValue));
+			documentActionBuilder.setName(validateNull(defaultName));
+			documentActionBuilder.setDescription(validateNull(defaultDescription));
+			builder.setDefaultDocumentAction(documentActionBuilder);
 		}
 		//	Return
 		return builder;

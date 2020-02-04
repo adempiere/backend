@@ -18,7 +18,7 @@ before_script:
 jobs:
   include:
     - stage: Compilation
-      script: ./gradlew build
+      script: gradlew build
 deploy:
   provider: releases
   api_key: $GITHUB_TOKEN_KEY

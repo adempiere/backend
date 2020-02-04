@@ -906,7 +906,8 @@ message DocumentAction {
 message ListDocumentActionsResponse {
 	int64 recordCount = 1;
 	repeated DocumentAction documentActions = 2;
-	string next_page_token = 3;
+	DocumentAction defaultDocumentAction = 3;
+	string next_page_token = 4;
 }
 
 // Workflow Activities Request
