@@ -3385,6 +3385,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			documentActionBuilder.setDescription(validateNull(defaultDescription));
 			builder.setDefaultDocumentAction(documentActionBuilder);
 		}
+		//	Add record count
+		builder.setRecordCount(builder.getDocumentActionsCount());
 		//	Return
 		return builder;
 	}
