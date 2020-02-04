@@ -51,6 +51,7 @@ import org.adempiere.model.MDocumentStatus;
 import org.adempiere.model.MView;
 import org.adempiere.model.MViewDefinition;
 import org.adempiere.model.ZoomInfoFactory;
+import org.compiere.apps.ADialog;
 import org.compiere.model.Callout;
 import org.compiere.model.GridField;
 import org.compiere.model.GridFieldVO;
@@ -83,6 +84,7 @@ import org.compiere.model.I_AD_Window;
 import org.compiere.model.I_AD_Workflow;
 import org.compiere.model.I_CM_Chat;
 import org.compiere.model.I_CM_ChatEntry;
+import org.compiere.model.I_C_Order;
 import org.compiere.model.I_PA_DashboardContent;
 import org.compiere.model.MChangeLog;
 import org.compiere.model.MChat;
@@ -120,6 +122,8 @@ import org.compiere.model.X_AD_PInstance_Log;
 import org.compiere.model.X_AD_TreeNodeMM;
 import org.compiere.print.MPrintFormat;
 import org.compiere.print.ReportEngine;
+import org.compiere.process.DocOptions;
+import org.compiere.process.DocumentEngine;
 import org.compiere.process.ProcessInfo;
 import org.compiere.util.CCache;
 import org.compiere.util.CLogger;
@@ -132,6 +136,7 @@ import org.compiere.util.Msg;
 import org.compiere.util.NamePair;
 import org.compiere.util.TimeUtil;
 import org.compiere.util.Util;
+import org.compiere.wf.MWFActivity;
 import org.compiere.wf.MWFEventAudit;
 import org.compiere.wf.MWFNextCondition;
 import org.compiere.wf.MWFNode;
@@ -893,6 +898,28 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			Properties context = getContext(request.getClientRequest());
 			ChatEntry.Builder chatEntryValue = addChatEntry(context, request);
 			responseObserver.onNext(chatEntryValue.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void listDocumentActions(ListDocumentActionsRequest request,
+			StreamObserver<ListDocumentActionsResponse> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Document Actions is Null");
+			}
+			log.fine("Object List Requested = " + request);
+			Properties context = getContext(request.getClientRequest());
+			ListDocumentActionsResponse.Builder entityValueList = convertDocumentActions(context, request);
+			responseObserver.onNext(entityValueList.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
@@ -3256,6 +3283,103 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		for(MPInstance processInstance : processInstanceList) {
 			ProcessLog.Builder valueObject = convertProcessLog(processInstance);
 			builder.addProcessLogs(valueObject.build());
+		}
+		//	Return
+		return builder;
+	}
+	
+	/**
+	 * Convert document actions
+	 * @param context
+	 * @param request
+	 * @return
+	 */
+	private ListDocumentActionsResponse.Builder convertDocumentActions(Properties context, ListDocumentActionsRequest request) {
+		PO entity = getEntity(context, request.getTableName(), request.getRecordUuid(), request.getRecordId());
+		//	
+		String documentStatus = entity.get_ValueAsString(I_C_Order.COLUMNNAME_DocStatus);
+		String documentAction = entity.get_ValueAsString(I_C_Order.COLUMNNAME_DocAction);
+		//
+		Object isProcessing = entity.get_ValueAsBoolean(I_C_Order.COLUMNNAME_Processing)? "Y": "N";
+		String orderType = "--";
+		int documentTypeId = entity.get_ValueAsInt(I_C_Order.COLUMNNAME_C_DocTypeTarget_ID);
+		if(documentTypeId == 0) {
+			documentTypeId = entity.get_ValueAsInt(I_C_Order.COLUMNNAME_C_DocType_ID);
+		}
+		String isSOTrx = entity.get_ValueAsBoolean(I_C_Order.COLUMNNAME_IsSOTrx)? "Y": "N";
+		//	
+		if (documentStatus == null) {
+			throw new AdempiereException("@DocStatus@ @NotFound@");
+		}
+		
+		//	Get All document Actions
+		ArrayList<String> valueList = new ArrayList<String>();
+		ArrayList<String> nameList = new ArrayList<String>();
+		ArrayList<String> descriptionList = new ArrayList<String>();
+		//	Load all reference
+		DocumentEngine.readReferenceList(valueList, nameList, descriptionList);
+
+		log.fine("DocStatus=" + documentStatus 
+			+ ", DocAction=" + documentAction + ", OrderType=" + orderType 
+			+ ", IsSOTrx=" + isSOTrx + ", Processing=" + isProcessing 
+			+ ", AD_Table_ID=" + entity.get_Table_ID() + ", Record_ID=" + entity.get_ID());
+		//
+		String[] options = new String[valueList.size()];
+		int index = 0;
+
+		/**
+		 * 	Check Existence of Workflow Activities
+		 */
+		String workflowStatus = MWFActivity.getActiveInfo(Env.getCtx(), entity.get_Table_ID(), entity.get_ID()); 
+		if (workflowStatus != null) {
+			throw new AdempiereException("@WFActiveForRecord@");
+		}
+		
+		/*******************
+		 *  General Actions
+		 */
+		String[] docActionHolder = new String[] {documentAction};
+		index = DocumentEngine.getValidActions(documentStatus, isProcessing, orderType, isSOTrx, entity.get_Table_ID(), docActionHolder, options);
+
+		if (entity instanceof DocOptions) {
+			index = ((DocOptions) entity).customizeValidActions(documentStatus, isProcessing, orderType, isSOTrx, entity.get_Table_ID(), docActionHolder, options, index);
+		}
+
+		log.fine("get doctype: " + documentTypeId);
+		if (documentTypeId != 0) {
+			index = DocumentEngine.checkActionAccess(Env.getAD_Client_ID(Env.getCtx()), Env.getAD_Role_ID(Env.getCtx()), documentTypeId, options, index);
+		}
+
+		documentAction = docActionHolder[0];
+
+		ListDocumentActionsResponse.Builder builder = ListDocumentActionsResponse.newBuilder();
+		//	Fill data
+		for (int i = 0; i < index; i++) {
+			//	Search for option and add it
+			boolean added = false;
+			for (int j = 0; j < valueList.size() && !added; j++) {
+				if (options[i].equals(valueList.get(j))) {
+					DocumentAction.Builder documentActionBuilder = DocumentAction.newBuilder();
+					documentActionBuilder.setValue(validateNull(valueList.get(j)));
+					documentActionBuilder.setName(validateNull(nameList.get(j)));
+					documentActionBuilder.setDescription(validateNull(descriptionList.get(j)));
+					builder.addDocumentActions(documentActionBuilder);
+					added = true;
+				}
+			}
+		}
+
+		//	setDefault
+		if (documentAction.equals("--"))		//	If None, suggest closing
+			documentAction = DocumentEngine.ACTION_Close;
+		String defaultV = "";
+		for (int i = 0; i < valueList.size() && defaultV.equals(""); i++) {
+			if (documentAction.equals(valueList.get(i))) {
+				defaultV = nameList.get(i);
+			}
+		}
+		if (!defaultV.equals("")) {
+			
 		}
 		//	Return
 		return builder;
