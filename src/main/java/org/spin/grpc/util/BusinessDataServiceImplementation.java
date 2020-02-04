@@ -91,6 +91,7 @@ import org.compiere.model.MChatEntry;
 import org.compiere.model.MChatType;
 import org.compiere.model.MColumn;
 import org.compiere.model.MDashboardContent;
+import org.compiere.model.MDocType;
 import org.compiere.model.MField;
 import org.compiere.model.MForm;
 import org.compiere.model.MLanguage;
@@ -3304,6 +3305,13 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		int documentTypeId = entity.get_ValueAsInt(I_C_Order.COLUMNNAME_C_DocTypeTarget_ID);
 		if(documentTypeId == 0) {
 			documentTypeId = entity.get_ValueAsInt(I_C_Order.COLUMNNAME_C_DocType_ID);
+		}
+		if(documentTypeId != 0) {
+			MDocType documentType = MDocType.get(context, documentTypeId);
+			if(documentType != null
+					&& !Util.isEmpty(documentType.getDocBaseType())) {
+				orderType = documentType.getDocBaseType();
+			}
 		}
 		String isSOTrx = entity.get_ValueAsBoolean(I_C_Order.COLUMNNAME_IsSOTrx)? "Y": "N";
 		//	
