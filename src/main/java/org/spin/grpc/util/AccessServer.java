@@ -18,15 +18,27 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinWorkerThread;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
 import org.compiere.Adempiere;
 import org.compiere.util.Util;
 
+import com.google.common.util.concurrent.UncaughtExceptionHandlers;
+
 import io.grpc.Server;
-import io.grpc.ServerBuilder;
 import io.grpc.netty.GrpcSslContexts;
+import io.grpc.netty.NettyChannelBuilder;
 import io.grpc.netty.NettyServerBuilder;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.ServerChannel;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.util.concurrent.DefaultThreadFactory;
 import io.netty.handler.ssl.ClientAuth;
 import io.netty.handler.ssl.SslContextBuilder;
 
@@ -39,6 +51,7 @@ public class AccessServer {
 	  private final String privateKeyFilePath;
 	  private final String trustCertCollectionFilePath;
 	  private final boolean isTlsEnabled;
+
 	  
 	  /**
 	   * Default values
@@ -80,30 +93,40 @@ public class AccessServer {
 	        return GrpcSslContexts.configure(sslClientContextBuilder);
 	  }
 	  
-	  private void start() throws IOException {
-		  if(isTlsEnabled) {
-			  server = NettyServerBuilder.forPort(port)
-		                .addService(new AccessServiceImplementation())
-		                .sslContext(getSslContextBuilder().build())
-		                .build()
-		                .start();
-		  } else {
-			  server = ServerBuilder.forPort(port)
+	  private static Server start() {
+		  ThreadFactory tf = new DefaultThreadFactory("server-elg-", true);
+		  final EventLoopGroup boss = new NioEventLoopGroup(1, tf);
+		  final EventLoopGroup worker = new NioEventLoopGroup(0, tf);
+	 	  final Class<? extends ServerChannel> channelType = NioServerSocketChannel.class;
+	 	  
+			  NettyServerBuilder  server = NettyServerBuilder.forPort(5050)
+						.bossEventLoopGroup(boss)
+						.workerEventLoopGroup(worker)
+						.channelType(channelType)
 				        .addService(new AccessServiceImplementation())
-				        .build()
-				        .start();
-		  }
-		  logger.info("Server started, listening on " + port);
-		    Runtime.getRuntime().addShutdownHook(new Thread() {
-		      @Override
-		      public void run() {
-		        // Use stderr here since the logger may have been reset by its JVM shutdown hook.
-		    	  logger.info("*** shutting down gRPC server since JVM is shutting down");
-		        AccessServer.this.stop();
-		        logger.info("*** server shut down");
-		      }
-		    });
+				        .flowControlWindow(NettyChannelBuilder.DEFAULT_FLOW_CONTROL_WINDOW);
+
+			  server.executor(getAsyncExecutor());
+			  
+		  logger.info("Server started, listening on " + 5050);
+		  return server.build();
 	  }
+
+		private static Executor getAsyncExecutor() {
+			return new ForkJoinPool(Runtime.getRuntime().availableProcessors(),
+					new ForkJoinPool.ForkJoinWorkerThreadFactory() {
+						final AtomicInteger num = new AtomicInteger();
+
+						@Override
+						public ForkJoinWorkerThread newThread(ForkJoinPool pool) {
+							ForkJoinWorkerThread thread =
+									ForkJoinPool.defaultForkJoinWorkerThreadFactory.newThread(pool);
+							thread.setDaemon(true);
+							thread.setName("grpc-server-app-" + "-" + num.getAndIncrement());
+							return thread;
+						}
+					}, UncaughtExceptionHandlers.systemExit(), true);
+		}
 
 	  private void stop() {
 	    if (server != null) {
@@ -137,6 +160,10 @@ public class AccessServer {
 		    String certChainFilePath = (args.length > 1? args[1]: null);
 		    String privateKeyFilePath = (args.length > 2? args[2]: null);
 		    String trustCertCollectionFilePath = (args.length > 3? args[3]: null);
+		    
+			System.out.println("Netty Config Server started");
+			//shutdown(server);
+			
 		    final AccessServer server = new AccessServer(defaultPort, 
 		    		certChainFilePath,
 		    		privateKeyFilePath,
