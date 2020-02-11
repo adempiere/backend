@@ -25,51 +25,25 @@ import java.util.Properties;
 import java.util.logging.Level;
 
 import org.adempiere.exceptions.AdempiereException;
-import org.adempiere.model.I_AD_Browse_Access;
 import org.adempiere.model.MBrowse;
-import org.adempiere.model.X_AD_Browse_Access;
-import org.compiere.model.I_AD_Column_Access;
-import org.compiere.model.I_AD_Document_Action_Access;
-import org.compiere.model.I_AD_Form_Access;
 import org.compiere.model.I_AD_Menu;
-import org.compiere.model.I_AD_Process_Access;
-import org.compiere.model.I_AD_Record_Access;
 import org.compiere.model.I_AD_Role;
-import org.compiere.model.I_AD_Role_OrgAccess;
 import org.compiere.model.I_AD_Session;
-import org.compiere.model.I_AD_Table_Access;
-import org.compiere.model.I_AD_Task_Access;
-import org.compiere.model.I_AD_Window_Access;
-import org.compiere.model.I_AD_Workflow_Access;
 import org.compiere.model.MAcctSchema;
 import org.compiere.model.MClient;
 import org.compiere.model.MClientInfo;
-import org.compiere.model.MColumn;
-import org.compiere.model.MColumnAccess;
 import org.compiere.model.MCountry;
-import org.compiere.model.MDocType;
 import org.compiere.model.MForm;
-import org.compiere.model.MFormAccess;
 import org.compiere.model.MMenu;
-import org.compiere.model.MOrg;
 import org.compiere.model.MProcess;
-import org.compiere.model.MProcessAccess;
-import org.compiere.model.MRecordAccess;
 import org.compiere.model.MRole;
-import org.compiere.model.MRoleOrgAccess;
 import org.compiere.model.MSession;
-import org.compiere.model.MTable;
-import org.compiere.model.MTableAccess;
 import org.compiere.model.MTree;
 import org.compiere.model.MTreeNode;
 import org.compiere.model.MUser;
 import org.compiere.model.MWindow;
-import org.compiere.model.MWindowAccess;
 import org.compiere.model.ModelValidationEngine;
 import org.compiere.model.Query;
-import org.compiere.model.X_AD_Document_Action_Access;
-import org.compiere.model.X_AD_Table_Access;
-import org.compiere.model.X_AD_Task_Access;
 import org.compiere.util.CCache;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
@@ -79,11 +53,7 @@ import org.compiere.util.Language;
 import org.compiere.util.Login;
 import org.compiere.util.Msg;
 import org.compiere.util.Util;
-import org.compiere.wf.MWorkflowAccess;
 import org.spin.grpc.util.AccessServiceGrpc.AccessServiceImplBase;
-import org.spin.grpc.util.TableAccess.AccessTypeRule;
-import org.spin.model.I_AD_Dashboard_Access;
-import org.spin.model.X_AD_Dashboard_Access;
 
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
@@ -95,6 +65,9 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 	private static CCache<String, Properties> sessionsContext = new CCache<String, Properties>("AccessServiceImplementation", 30, 0);	//	no time-out
 	/**	Language */
 	private static CCache<String, String> languageCache = new CCache<String, String>("Language_ISO_Code", 30, 0);	//	no time-out
+	/**	Menu */
+	private static CCache<String, Menu.Builder> menuCache = new CCache<String, Menu.Builder>("Menu_for_User", 30, 0);
+	
 	
 	@Override
 	public void getUserInfo(LoginRequest request, StreamObserver<UserInfoValue> responseObserver) {
@@ -931,167 +904,168 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 					.setIsPersonalAccess(role.isPersonalAccess())
 					.setIsPersonalLock(role.isPersonalLock());
 			//	With Access
-			if(withAccess) {
-				//	Org Access
-				List<MRoleOrgAccess> orgAccessList = new Query(Env.getCtx(), I_AD_Role_OrgAccess.Table_Name, "AD_Role_ID = ?", null)
-					.setParameters(role.getAD_Role_ID())
-					.setOnlyActiveRecords(true)
-					.<MRoleOrgAccess>list();
-				for(MRoleOrgAccess access : orgAccessList) {
-					MOrg organization = MOrg.get(Env.getCtx(), access.getAD_Org_ID());
-					Access.Builder accessBuilder = Access.newBuilder()
-							.setUuid(validateNull(organization.getUUID()))
-							.setIsReadOnly(access.isReadOnly());
-					builder.addOrganizations(accessBuilder.build());
-				}
-				//	Process Access
-				List<MProcessAccess> processAccessList = new Query(Env.getCtx(), I_AD_Process_Access.Table_Name, "AD_Role_ID = ?", null)
-					.setParameters(role.getAD_Role_ID())
-					.setOnlyActiveRecords(true)
-					.<MProcessAccess>list();
-				for(MProcessAccess access : processAccessList) {
-					Access.Builder accessBuilder = Access.newBuilder()
-							.setUuid(validateNull(access.getAD_Process().getUUID()))
-							.setIsReadOnly(!access.isReadWrite());
-					builder.addProcess(accessBuilder.build());
-				}
-				//	Window Access
-				List<MWindowAccess> windowAccessList = new Query(Env.getCtx(), I_AD_Window_Access.Table_Name, "AD_Role_ID = ?", null)
-					.setParameters(role.getAD_Role_ID())
-					.setOnlyActiveRecords(true)
-					.<MWindowAccess>list();
-				for(MWindowAccess access : windowAccessList) {
-					Access.Builder accessBuilder = Access.newBuilder()
-							.setUuid(validateNull(access.getAD_Window().getUUID()))
-							.setIsReadOnly(!access.isReadWrite());
-					builder.addWindows(accessBuilder.build());
-				}
-				//	Form Access
-				List<MFormAccess> formAccessList = new Query(Env.getCtx(), I_AD_Form_Access.Table_Name, "AD_Role_ID = ?", null)
-					.setParameters(role.getAD_Role_ID())
-					.setOnlyActiveRecords(true)
-					.<MFormAccess>list();
-				for(MFormAccess access : formAccessList) {
-					Access.Builder accessBuilder = Access.newBuilder()
-							.setUuid(validateNull(access.getAD_Form().getUUID()))
-							.setIsReadOnly(!access.isReadWrite());
-					builder.addForms(accessBuilder.build());
-				}
-				//	Browse Access
-				List<X_AD_Browse_Access> browseAccessList = new Query(Env.getCtx(), I_AD_Browse_Access.Table_Name, "AD_Role_ID = ?", null)
-					.setParameters(role.getAD_Role_ID())
-					.setOnlyActiveRecords(true)
-					.<X_AD_Browse_Access>list();
-				for(X_AD_Browse_Access access : browseAccessList) {
-					Access.Builder accessBuilder = Access.newBuilder()
-							.setUuid(validateNull(access.getAD_Browse().getUUID()))
-							.setIsReadOnly(!access.isReadWrite());
-					builder.addBrowsers(accessBuilder.build());
-				}
-				//	Task Access
-				List<X_AD_Task_Access> taskAccessList = new Query(Env.getCtx(), I_AD_Task_Access.Table_Name, "AD_Role_ID = ?", null)
-					.setParameters(role.getAD_Role_ID())
-					.setOnlyActiveRecords(true)
-					.<X_AD_Task_Access>list();
-				for(X_AD_Task_Access access : taskAccessList) {
-					Access.Builder accessBuilder = Access.newBuilder()
-							.setUuid(validateNull(access.getAD_Task().getUUID()))
-							.setIsReadOnly(!access.isReadWrite());
-					builder.addTasks(accessBuilder.build());
-				}
-				//	Dashboard Access
-				List<X_AD_Dashboard_Access> dashboardAccessList = new Query(Env.getCtx(), I_AD_Dashboard_Access.Table_Name, "AD_Role_ID = ?", null)
-					.setParameters(role.getAD_Role_ID())
-					.setOnlyActiveRecords(true)
-					.<X_AD_Dashboard_Access>list();
-				for(X_AD_Dashboard_Access access : dashboardAccessList) {
-					Access.Builder accessBuilder = Access.newBuilder()
-							.setUuid(validateNull(access.getPA_DashboardContent().getUUID()));
-					builder.addDashboards(accessBuilder.build());
-				}
-				//	Workflow Access
-				List<MWorkflowAccess> workflowAccessList = new Query(Env.getCtx(), I_AD_Workflow_Access.Table_Name, "AD_Role_ID = ?", null)
-					.setParameters(role.getAD_Role_ID())
-					.setOnlyActiveRecords(true)
-					.<MWorkflowAccess>list();
-				for(MWorkflowAccess access : workflowAccessList) {
-					Access.Builder accessBuilder = Access.newBuilder()
-							.setUuid(validateNull(access.getAD_Workflow().getUUID()))
-							.setIsReadOnly(!access.isReadWrite());
-					builder.addWorkflows(accessBuilder.build());
-				}
-				//	Document Action Access
-				List<X_AD_Document_Action_Access> documentActionAccessList = new Query(Env.getCtx(), I_AD_Document_Action_Access.Table_Name, "AD_Role_ID = ?", null)
-					.setParameters(role.getAD_Role_ID())
-					.setOnlyActiveRecords(true)
-					.<X_AD_Document_Action_Access>list();
-				for(X_AD_Document_Action_Access access : documentActionAccessList) {
-					MDocType documentType = MDocType.get(Env.getCtx(), access.getC_DocType_ID());
-					Access.Builder accessBuilder = Access.newBuilder()
-							.setUuid(validateNull(documentType.getUUID()))
-							.setAction(access.getAD_Ref_List().getValue());
-					builder.addDocumentActions(accessBuilder.build());
-				}
-				//	Table Access
-				List<MTableAccess> tableAccessList = new Query(Env.getCtx(), I_AD_Table_Access.Table_Name, "AD_Role_ID = ?", null)
-					.setParameters(role.getAD_Role_ID())
-					.setOnlyActiveRecords(true)
-					.<MTableAccess>list();
-				for(MTableAccess access : tableAccessList) {
-					AccessTypeRule accessTypeRule = AccessTypeRule.ACCESSING;
-					if(access.getAccessTypeRule().equals(X_AD_Table_Access.ACCESSTYPERULE_Exporting)) {
-						accessTypeRule = AccessTypeRule.EXPORTING;
-					} else if(access.getAccessTypeRule().equals(X_AD_Table_Access.ACCESSTYPERULE_Reporting)) {
-						accessTypeRule = AccessTypeRule.REPORTING;
-					}
-					TableAccess.Builder accessBuilder = TableAccess.newBuilder()
-							.setTableName(validateNull(access.getAD_Table().getTableName()))
-							.setIsExclude(access.isExclude())
-							.setIsCanReport(access.isCanReport())
-							.setIsCanExport(access.isCanExport())
-							.setAccessTypeRules(accessTypeRule);
-					builder.addTables(accessBuilder.build());
-				}
-				//	Column Access
-				List<MColumnAccess> columnAccessList = new Query(Env.getCtx(), I_AD_Column_Access.Table_Name, "AD_Role_ID = ?", null)
-					.setParameters(role.getAD_Role_ID())
-					.setOnlyActiveRecords(true)
-					.<MColumnAccess>list();
-				for(MColumnAccess access : columnAccessList) {
-					ColumnAccess.Builder accessBuilder = ColumnAccess.newBuilder()
-							.setIsExclude(access.isExclude())
-							.setIsReadOnly(access.isReadOnly());
-					//	For Table
-					if(access.getAD_Table_ID() > 0) {
-						MTable table = MTable.get(Env.getCtx(), access.getAD_Table_ID());
-						accessBuilder.setTableName(table.getTableName());
-					}
-					//	For Column
-					if(access.getAD_Column_ID() > 0) {
-						MColumn column = MColumn.get(Env.getCtx(), access.getAD_Column_ID());
-						accessBuilder.setColumnName(column.getColumnName());
-					}
-					builder.addColumns(accessBuilder.build());
-				}
-				//	Record Access
-				List<MRecordAccess> recordAccessList = new Query(Env.getCtx(), I_AD_Record_Access.Table_Name, "AD_Role_ID = ?", null)
-					.setParameters(role.getAD_Role_ID())
-					.setOnlyActiveRecords(true)
-					.<MRecordAccess>list();
-				for(MRecordAccess access : recordAccessList) {
-					RecordAccess.Builder accessBuilder = RecordAccess.newBuilder()
-							.setIsReadOnly(access.isReadOnly())
-							.setIsExclude(access.isExclude())
-							.setIsDependentEntities(access.isDependentEntities())
-							.setRecordId(access.getRecord_ID());
-					//	For Table
-					if(access.getAD_Table_ID() > 0) {
-						MTable table = MTable.get(Env.getCtx(), access.getAD_Table_ID());
-						accessBuilder.setTableName(table.getTableName());
-					}
-					builder.addRecords(accessBuilder.build());
-				}
-			}
+			// TODO: load from other service
+//			if(withAccess) {
+//				//	Org Access
+//				List<MRoleOrgAccess> orgAccessList = new Query(Env.getCtx(), I_AD_Role_OrgAccess.Table_Name, "AD_Role_ID = ?", null)
+//					.setParameters(role.getAD_Role_ID())
+//					.setOnlyActiveRecords(true)
+//					.<MRoleOrgAccess>list();
+//				for(MRoleOrgAccess access : orgAccessList) {
+//					MOrg organization = MOrg.get(Env.getCtx(), access.getAD_Org_ID());
+//					Access.Builder accessBuilder = Access.newBuilder()
+//							.setUuid(validateNull(organization.getUUID()))
+//							.setIsReadOnly(access.isReadOnly());
+//					builder.addOrganizations(accessBuilder.build());
+//				}
+//				//	Process Access
+//				List<MProcessAccess> processAccessList = new Query(Env.getCtx(), I_AD_Process_Access.Table_Name, "AD_Role_ID = ?", null)
+//					.setParameters(role.getAD_Role_ID())
+//					.setOnlyActiveRecords(true)
+//					.<MProcessAccess>list();
+//				for(MProcessAccess access : processAccessList) {
+//					Access.Builder accessBuilder = Access.newBuilder()
+//							.setUuid(validateNull(access.getAD_Process().getUUID()))
+//							.setIsReadOnly(!access.isReadWrite());
+//					builder.addProcess(accessBuilder.build());
+//				}
+//				//	Window Access
+//				List<MWindowAccess> windowAccessList = new Query(Env.getCtx(), I_AD_Window_Access.Table_Name, "AD_Role_ID = ?", null)
+//					.setParameters(role.getAD_Role_ID())
+//					.setOnlyActiveRecords(true)
+//					.<MWindowAccess>list();
+//				for(MWindowAccess access : windowAccessList) {
+//					Access.Builder accessBuilder = Access.newBuilder()
+//							.setUuid(validateNull(access.getAD_Window().getUUID()))
+//							.setIsReadOnly(!access.isReadWrite());
+//					builder.addWindows(accessBuilder.build());
+//				}
+//				//	Form Access
+//				List<MFormAccess> formAccessList = new Query(Env.getCtx(), I_AD_Form_Access.Table_Name, "AD_Role_ID = ?", null)
+//					.setParameters(role.getAD_Role_ID())
+//					.setOnlyActiveRecords(true)
+//					.<MFormAccess>list();
+//				for(MFormAccess access : formAccessList) {
+//					Access.Builder accessBuilder = Access.newBuilder()
+//							.setUuid(validateNull(access.getAD_Form().getUUID()))
+//							.setIsReadOnly(!access.isReadWrite());
+//					builder.addForms(accessBuilder.build());
+//				}
+//				//	Browse Access
+//				List<X_AD_Browse_Access> browseAccessList = new Query(Env.getCtx(), I_AD_Browse_Access.Table_Name, "AD_Role_ID = ?", null)
+//					.setParameters(role.getAD_Role_ID())
+//					.setOnlyActiveRecords(true)
+//					.<X_AD_Browse_Access>list();
+//				for(X_AD_Browse_Access access : browseAccessList) {
+//					Access.Builder accessBuilder = Access.newBuilder()
+//							.setUuid(validateNull(access.getAD_Browse().getUUID()))
+//							.setIsReadOnly(!access.isReadWrite());
+//					builder.addBrowsers(accessBuilder.build());
+//				}
+//				//	Task Access
+//				List<X_AD_Task_Access> taskAccessList = new Query(Env.getCtx(), I_AD_Task_Access.Table_Name, "AD_Role_ID = ?", null)
+//					.setParameters(role.getAD_Role_ID())
+//					.setOnlyActiveRecords(true)
+//					.<X_AD_Task_Access>list();
+//				for(X_AD_Task_Access access : taskAccessList) {
+//					Access.Builder accessBuilder = Access.newBuilder()
+//							.setUuid(validateNull(access.getAD_Task().getUUID()))
+//							.setIsReadOnly(!access.isReadWrite());
+//					builder.addTasks(accessBuilder.build());
+//				}
+//				//	Dashboard Access
+//				List<X_AD_Dashboard_Access> dashboardAccessList = new Query(Env.getCtx(), I_AD_Dashboard_Access.Table_Name, "AD_Role_ID = ?", null)
+//					.setParameters(role.getAD_Role_ID())
+//					.setOnlyActiveRecords(true)
+//					.<X_AD_Dashboard_Access>list();
+//				for(X_AD_Dashboard_Access access : dashboardAccessList) {
+//					Access.Builder accessBuilder = Access.newBuilder()
+//							.setUuid(validateNull(access.getPA_DashboardContent().getUUID()));
+//					builder.addDashboards(accessBuilder.build());
+//				}
+//				//	Workflow Access
+//				List<MWorkflowAccess> workflowAccessList = new Query(Env.getCtx(), I_AD_Workflow_Access.Table_Name, "AD_Role_ID = ?", null)
+//					.setParameters(role.getAD_Role_ID())
+//					.setOnlyActiveRecords(true)
+//					.<MWorkflowAccess>list();
+//				for(MWorkflowAccess access : workflowAccessList) {
+//					Access.Builder accessBuilder = Access.newBuilder()
+//							.setUuid(validateNull(access.getAD_Workflow().getUUID()))
+//							.setIsReadOnly(!access.isReadWrite());
+//					builder.addWorkflows(accessBuilder.build());
+//				}
+//				//	Document Action Access
+//				List<X_AD_Document_Action_Access> documentActionAccessList = new Query(Env.getCtx(), I_AD_Document_Action_Access.Table_Name, "AD_Role_ID = ?", null)
+//					.setParameters(role.getAD_Role_ID())
+//					.setOnlyActiveRecords(true)
+//					.<X_AD_Document_Action_Access>list();
+//				for(X_AD_Document_Action_Access access : documentActionAccessList) {
+//					MDocType documentType = MDocType.get(Env.getCtx(), access.getC_DocType_ID());
+//					Access.Builder accessBuilder = Access.newBuilder()
+//							.setUuid(validateNull(documentType.getUUID()))
+//							.setAction(access.getAD_Ref_List().getValue());
+//					builder.addDocumentActions(accessBuilder.build());
+//				}
+//				//	Table Access
+//				List<MTableAccess> tableAccessList = new Query(Env.getCtx(), I_AD_Table_Access.Table_Name, "AD_Role_ID = ?", null)
+//					.setParameters(role.getAD_Role_ID())
+//					.setOnlyActiveRecords(true)
+//					.<MTableAccess>list();
+//				for(MTableAccess access : tableAccessList) {
+//					AccessTypeRule accessTypeRule = AccessTypeRule.ACCESSING;
+//					if(access.getAccessTypeRule().equals(X_AD_Table_Access.ACCESSTYPERULE_Exporting)) {
+//						accessTypeRule = AccessTypeRule.EXPORTING;
+//					} else if(access.getAccessTypeRule().equals(X_AD_Table_Access.ACCESSTYPERULE_Reporting)) {
+//						accessTypeRule = AccessTypeRule.REPORTING;
+//					}
+//					TableAccess.Builder accessBuilder = TableAccess.newBuilder()
+//							.setTableName(validateNull(access.getAD_Table().getTableName()))
+//							.setIsExclude(access.isExclude())
+//							.setIsCanReport(access.isCanReport())
+//							.setIsCanExport(access.isCanExport())
+//							.setAccessTypeRules(accessTypeRule);
+//					builder.addTables(accessBuilder.build());
+//				}
+//				//	Column Access
+//				List<MColumnAccess> columnAccessList = new Query(Env.getCtx(), I_AD_Column_Access.Table_Name, "AD_Role_ID = ?", null)
+//					.setParameters(role.getAD_Role_ID())
+//					.setOnlyActiveRecords(true)
+//					.<MColumnAccess>list();
+//				for(MColumnAccess access : columnAccessList) {
+//					ColumnAccess.Builder accessBuilder = ColumnAccess.newBuilder()
+//							.setIsExclude(access.isExclude())
+//							.setIsReadOnly(access.isReadOnly());
+//					//	For Table
+//					if(access.getAD_Table_ID() > 0) {
+//						MTable table = MTable.get(Env.getCtx(), access.getAD_Table_ID());
+//						accessBuilder.setTableName(table.getTableName());
+//					}
+//					//	For Column
+//					if(access.getAD_Column_ID() > 0) {
+//						MColumn column = MColumn.get(Env.getCtx(), access.getAD_Column_ID());
+//						accessBuilder.setColumnName(column.getColumnName());
+//					}
+//					builder.addColumns(accessBuilder.build());
+//				}
+//				//	Record Access
+//				List<MRecordAccess> recordAccessList = new Query(Env.getCtx(), I_AD_Record_Access.Table_Name, "AD_Role_ID = ?", null)
+//					.setParameters(role.getAD_Role_ID())
+//					.setOnlyActiveRecords(true)
+//					.<MRecordAccess>list();
+//				for(MRecordAccess access : recordAccessList) {
+//					RecordAccess.Builder accessBuilder = RecordAccess.newBuilder()
+//							.setIsReadOnly(access.isReadOnly())
+//							.setIsExclude(access.isExclude())
+//							.setIsDependentEntities(access.isDependentEntities())
+//							.setRecordId(access.getRecord_ID());
+//					//	For Table
+//					if(access.getAD_Table_ID() > 0) {
+//						MTable table = MTable.get(Env.getCtx(), access.getAD_Table_ID());
+//						accessBuilder.setTableName(table.getTableName());
+//					}
+//					builder.addRecords(accessBuilder.build());
+//				}
+//			}
 		}
 		//	return
 		return builder;
@@ -1104,11 +1078,17 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 	 * @return
 	 */
 	private Menu.Builder convertMenu(Properties context, String language) {
-		Menu.Builder builder = Menu.newBuilder();
+		int roleId = Env.getAD_Role_ID(context);
+		int userId = Env.getAD_User_ID(context);
+		String menuKey = roleId + "|" + userId;
+		Menu.Builder builder = menuCache.get(menuKey);
+		if(builder != null) {
+			return builder;
+		}
+		builder = Menu.newBuilder();
 		MMenu menu = new MMenu(context, 0, null);
 		menu.setName(Msg.getMsg(context, "Menu"));
 		//	Get Reference
-		int roleId = Env.getAD_Role_ID(Env.getCtx());
 		int treeId = DB.getSQLValue(null,
 			"SELECT COALESCE(r.AD_Tree_Menu_ID, ci.AD_Tree_Menu_ID)" 
 			+ "FROM AD_ClientInfo ci" 
@@ -1132,6 +1112,8 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 				builder.addChilds(childBuilder.build());
 			}
 		}
+		//	Set from DB
+		menuCache.put(menuKey, builder);
 		return builder;
 	}
 	
