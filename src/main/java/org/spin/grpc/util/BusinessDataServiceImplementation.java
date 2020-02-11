@@ -2223,12 +2223,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		}
 		String tableName = request.getTableName();
 		MTable table = MTable.get(context, tableName);
-		PO entity = table.getPO(0, null);
-		if(entity == null) {
-			throw new AdempiereException("@Error@ PO is null");
-		}
-
-
+		PO entity = getEntity(context, tableName, null, request.getRecordId());
+		//	
 		StringBuffer whereClause = new StringBuffer();
 		List<Object> parameters = new ArrayList<>();
 		//	
