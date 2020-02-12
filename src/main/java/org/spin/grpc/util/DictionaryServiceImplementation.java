@@ -530,6 +530,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 					.filter(parentTab -> parentTab.getAD_Tab_ID() != optionalTab.get().getAD_Tab_ID())
 					.filter(parentTab -> parentTab.getSeqNo() < seqNo)
 					.filter(parentTab -> parentTab.getTabLevel() < tabLevel)
+					.filter(parentTab -> !parentTab.isTranslationTab())
 					.sorted(Comparator.comparing(MTab::getSeqNo).thenComparing(MTab::getTabLevel).reversed())
 					.collect(Collectors.toList());
 			//	Validate direct child
