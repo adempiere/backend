@@ -93,6 +93,8 @@ service BusinessDataService {
 	rpc CreateChatEntry(CreateChatEntryRequest) returns (ChatEntry) {}
 	//	List Document Actions
 	rpc ListDocumentActions(ListDocumentActionsRequest) returns (ListDocumentActionsResponse) {}
+	//	List Document Statuses
+	rpc ListDocumentStatuses(ListDocumentStatusesRequest) returns (ListDocumentStatusesResponse) {}
 }
 
 // The client request contains client info for request.
@@ -908,6 +910,31 @@ message ListDocumentActionsResponse {
 	repeated DocumentAction documentActions = 2;
 	DocumentAction defaultDocumentAction = 3;
 	string next_page_token = 4;
+}
+
+// Valid Document Status Request
+message ListDocumentStatusesRequest {
+	ClientRequest clientRequest = 1;
+	string tableName = 2;
+	int32 recordId = 3;
+	string recordUuid = 4;
+	string documentStatus = 5;
+	int32 page_size = 6;
+	string page_token = 7;
+}
+
+// Document Item
+message DocumentStatus {
+	string value = 1;
+	string name = 2;
+	string description = 3;
+}
+
+//	Document Actions List
+message ListDocumentStatusesResponse {
+	int64 recordCount = 1;
+	repeated DocumentStatus documentStatuses = 2;
+	string next_page_token = 3;
 }
 
 // Workflow Activities Request

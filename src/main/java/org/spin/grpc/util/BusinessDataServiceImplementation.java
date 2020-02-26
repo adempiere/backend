@@ -99,6 +99,7 @@ import org.compiere.model.MLookup;
 import org.compiere.model.MLookupFactory;
 import org.compiere.model.MMenu;
 import org.compiere.model.MMessage;
+import org.compiere.model.MOrder;
 import org.compiere.model.MPInstance;
 import org.compiere.model.MPInstancePara;
 import org.compiere.model.MPrivateAccess;
@@ -122,6 +123,7 @@ import org.compiere.model.X_AD_PInstance_Log;
 import org.compiere.model.X_AD_TreeNodeMM;
 import org.compiere.print.MPrintFormat;
 import org.compiere.print.ReportEngine;
+import org.compiere.process.DocAction;
 import org.compiere.process.DocOptions;
 import org.compiere.process.DocumentEngine;
 import org.compiere.process.ProcessInfo;
@@ -167,6 +169,11 @@ import com.google.protobuf.ByteString;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 
+/**
+ * https://itnext.io/customizing-grpc-generated-code-5909a2551ca1
+ * @author yamel
+ *
+ */
 public class BusinessDataServiceImplementation extends BusinessDataServiceImplBase {
 	/**	Logger			*/
 	private CLogger log = CLogger.getCLogger(BusinessDataServiceImplementation.class);
@@ -919,6 +926,28 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			log.fine("Object List Requested = " + request);
 			Properties context = getContext(request.getClientRequest());
 			ListDocumentActionsResponse.Builder entityValueList = convertDocumentActions(context, request);
+			responseObserver.onNext(entityValueList.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void listDocumentStatuses(ListDocumentStatusesRequest request,
+			StreamObserver<ListDocumentStatusesResponse> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Document Statuses is Null");
+			}
+			log.fine("Object List Requested = " + request);
+			Properties context = getContext(request.getClientRequest());
+			ListDocumentStatusesResponse.Builder entityValueList = convertDocumentStatuses(context, request);
 			responseObserver.onNext(entityValueList.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -3352,7 +3381,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		if (documentTypeId != 0) {
 			index = DocumentEngine.checkActionAccess(Env.getAD_Client_ID(Env.getCtx()), Env.getAD_Role_ID(Env.getCtx()), documentTypeId, options, index);
 		}
-
+		//	
 		documentAction = docActionHolder[0];
 		//	
 		ListDocumentActionsResponse.Builder builder = ListDocumentActionsResponse.newBuilder();
@@ -3394,6 +3423,182 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		//	Return
 		return builder;
 	}
+	
+	/**
+	 * Convert document statuses
+	 * @param context
+	 * @param request
+	 * @return
+	 */
+	private ListDocumentStatusesResponse.Builder convertDocumentStatuses(Properties context, ListDocumentStatusesRequest request) {
+		/** Drafted = DR */
+		List<String> statusesList = new ArrayList<>();
+		statusesList.add(DocumentEngine.STATUS_Drafted);
+		//	Get entity
+		PO entity = getEntity(context, request.getTableName(), request.getRecordUuid(), request.getRecordId());
+		//	
+		String documentStatus = entity.get_ValueAsString(I_C_Order.COLUMNNAME_DocStatus);
+		String documentAction = entity.get_ValueAsString(I_C_Order.COLUMNNAME_DocAction);
+		//
+		Object isProcessing = entity.get_ValueAsBoolean(I_C_Order.COLUMNNAME_Processing)? "Y": "N";
+		String orderType = "--";
+		int documentTypeId = entity.get_ValueAsInt(I_C_Order.COLUMNNAME_C_DocTypeTarget_ID);
+		if(documentTypeId == 0) {
+			documentTypeId = entity.get_ValueAsInt(I_C_Order.COLUMNNAME_C_DocType_ID);
+		}
+		if(documentTypeId != 0) {
+			MDocType documentType = MDocType.get(context, documentTypeId);
+			if(documentType != null
+					&& !Util.isEmpty(documentType.getDocBaseType())) {
+				orderType = documentType.getDocBaseType();
+			}
+		}
+		String isSOTrx = entity.get_ValueAsBoolean(I_C_Order.COLUMNNAME_IsSOTrx)? "Y": "N";
+		//	
+		if (documentStatus == null) {
+			documentStatus = DocumentEngine.STATUS_Drafted;
+		}
+		//	Standard
+		if(documentStatus.equals(DocumentEngine.STATUS_Completed)
+				|| documentStatus.equals(DocumentEngine.STATUS_Voided)
+				|| documentStatus.equals(DocumentEngine.STATUS_Reversed)
+				|| documentStatus.equals(DocumentEngine.STATUS_Unknown)
+				|| documentStatus.equals(DocumentEngine.STATUS_Closed)) {
+			/** In Progress = IP */
+			statusesList.add(DocumentEngine.STATUS_InProgress);
+			/** Approved = AP */
+			statusesList.add(DocumentEngine.STATUS_Approved);
+			//	For Prepaid Order
+			if(orderType.equals(MOrder.DocSubTypeSO_Prepay)) {
+				/** Waiting Payment = WP */
+				statusesList.add(DocumentEngine.STATUS_WaitingPayment);
+				/** Waiting Confirmation = WC */
+				statusesList.add(DocumentEngine.STATUS_WaitingConfirmation);
+			}
+		}
+		//	Add status
+		statusesList.add(documentStatus);
+		//	Get All document Actions
+		ArrayList<String> valueList = new ArrayList<String>();
+		ArrayList<String> nameList = new ArrayList<String>();
+		ArrayList<String> descriptionList = new ArrayList<String>();
+		//	Load all reference
+		readDocumentStatusList(valueList, nameList, descriptionList);
+		//	
+		ListDocumentStatusesResponse.Builder builder = ListDocumentStatusesResponse.newBuilder();
+		statusesList.stream().filter(status -> status != null).forEach(status -> {
+			for (int i = 0; i < valueList.size(); i++) {
+				if (status.equals(valueList.get(i))) {
+					DocumentStatus.Builder documentStatusBuilder = DocumentStatus.newBuilder();
+					documentStatusBuilder.setValue(validateNull(valueList.get(i)));
+					documentStatusBuilder.setName(validateNull(nameList.get(i)));
+					documentStatusBuilder.setDescription(validateNull(descriptionList.get(i)));
+					builder.addDocumentStatuses(documentStatusBuilder);
+				}
+			}
+		});
+		//	Get Actions
+		
+		
+		log.fine("DocStatus=" + documentStatus 
+			+ ", DocAction=" + documentAction + ", OrderType=" + orderType 
+			+ ", IsSOTrx=" + isSOTrx + ", Processing=" + isProcessing 
+			+ ", AD_Table_ID=" + entity.get_Table_ID() + ", Record_ID=" + entity.get_ID());
+		//
+		String[] options = new String[valueList.size()];
+		int index = 0;
+		
+		/*******************
+		 *  General Actions
+		 */
+		String[] docActionHolder = new String[] {documentAction};
+		index = DocumentEngine.getValidActions(documentStatus, isProcessing, orderType, isSOTrx, entity.get_Table_ID(), docActionHolder, options);
+
+		if (entity instanceof DocOptions) {
+			index = ((DocOptions) entity).customizeValidActions(documentStatus, isProcessing, orderType, isSOTrx, entity.get_Table_ID(), docActionHolder, options, index);
+		}
+
+		log.fine("get doctype: " + documentTypeId);
+		if (documentTypeId != 0) {
+			index = DocumentEngine.checkActionAccess(Env.getAD_Client_ID(Env.getCtx()), Env.getAD_Role_ID(Env.getCtx()), documentTypeId, options, index);
+		}
+		//	
+		documentAction = docActionHolder[0];
+		//	
+		//	Get
+		Arrays.asList(options).stream().filter(option -> option != null).forEach(option -> {
+			for (int i = 0; i < valueList.size(); i++) {
+				if (option.equals(valueList.get(i))) {
+					DocumentStatus.Builder documentActionBuilder = DocumentStatus.newBuilder();
+					documentActionBuilder.setValue(validateNull(valueList.get(i)));
+					documentActionBuilder.setName(validateNull(nameList.get(i)));
+					documentActionBuilder.setDescription(validateNull(descriptionList.get(i)));
+					builder.addDocumentStatuses(documentActionBuilder);
+				}
+			}
+		});
+		//	Add record count
+		builder.setRecordCount(builder.getDocumentStatusesCount());
+		//	Return
+		return builder;
+	}
+	
+	/**
+	 * Fill Vector with DocAction Ref_List(135) values
+	 * @param v_value
+	 * @param v_name
+	 * @param v_description
+	 */
+	private void readDocumentStatusList(ArrayList<String> v_value, ArrayList<String> v_name, ArrayList<String> v_description) {
+		if (v_value == null) 
+			throw new IllegalArgumentException("v_value parameter is null");
+		if (v_name == null)
+			throw new IllegalArgumentException("v_name parameter is null");
+		if (v_description == null)
+			throw new IllegalArgumentException("v_description parameter is null");
+		
+		String sql;
+		if (Env.isBaseLanguage(Env.getCtx(), "AD_Ref_List"))
+			sql = "SELECT Value, Name, Description FROM AD_Ref_List "
+				+ "WHERE AD_Reference_ID=? ORDER BY Name";
+		else
+			sql = "SELECT l.Value, t.Name, t.Description "
+				+ "FROM AD_Ref_List l, AD_Ref_List_Trl t "
+				+ "WHERE l.AD_Ref_List_ID=t.AD_Ref_List_ID"
+				+ " AND t.AD_Language='" + Env.getAD_Language(Env.getCtx()) + "'"
+				+ " AND l.AD_Reference_ID=? ORDER BY t.Name";
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+		try
+		{
+			preparedStatement = DB.prepareStatement(sql, null);
+			preparedStatement.setInt(1, DocAction.DOCSTATUS_AD_REFERENCE_ID);
+			resultSet = preparedStatement.executeQuery();
+			while (resultSet.next())
+			{
+				String value = resultSet.getString(1);
+				String name = resultSet.getString(2);
+				String description = resultSet.getString(3);
+				if (description == null)
+					description = "";
+				//
+				v_value.add(value);
+				v_name.add(name);
+				v_description.add(description);
+			}
+		}
+		catch (SQLException e)
+		{
+			log.log(Level.SEVERE, sql, e);
+		}
+		finally {
+			DB.close(resultSet, preparedStatement);
+			resultSet = null;
+			preparedStatement = null;
+		}
+
+	}
+	
 	
 	/**
 	 * Convert request for record chats to builder
