@@ -1580,6 +1580,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				String menuDescription = "";
 				MMenu menu = MMenu.getFromId(context, treeNodeMenu.getNode_ID());
 				favorite.setMenuUuid(validateNull(menu.getUUID()));
+				String action = MMenu.ACTION_Window;
 				if(!menu.isCentrallyMaintained()) {
 					menuName = menu.getName();
 					menuDescription = menu.getDescription();
@@ -1594,10 +1595,9 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 						}
 					}
 				}
-				//	Set reference
-				favorite.setAction(validateNull(MMenu.ACTION_Window));
 				//	Supported actions
 				if(!Util.isEmpty(menu.getAction())) {
+					action = menu.getAction();
 					String referenceUuid = null;
 					if(menu.getAction().equals(MMenu.ACTION_Form)) {
 						if(menu.getAD_Form_ID() > 0) {
@@ -1678,6 +1678,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 						}
 					}
 					favorite.setReferenceUuid(validateNull(referenceUuid));
+					favorite.setAction(validateNull(action));
 				}
 				//	Set name and description
 				favorite.setMenuName(validateNull(menuName));
