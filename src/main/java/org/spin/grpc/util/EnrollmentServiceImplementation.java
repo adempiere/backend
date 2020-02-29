@@ -36,6 +36,11 @@ import org.spin.util.TokenGeneratorHandler;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 
+/**
+ * @author Yamel Senih, ysenih@erpya.com, ERPCyA http://www.erpya.com
+ * Enrollment service
+ * Used for enroll user
+ */
 public class EnrollmentServiceImplementation extends EnrollmentServiceImplBase {
 	/**	Logger			*/
 	private CLogger log = CLogger.getCLogger(EnrollmentServiceImplementation.class);

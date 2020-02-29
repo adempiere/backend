@@ -171,8 +171,8 @@ import io.grpc.stub.StreamObserver;
 
 /**
  * https://itnext.io/customizing-grpc-generated-code-5909a2551ca1
- * @author yamel
- *
+ * @author Yamel Senih, ysenih@erpya.com, ERPCyA http://www.erpya.com
+ * Business data service
  */
 public class BusinessDataServiceImplementation extends BusinessDataServiceImplBase {
 	/**	Logger			*/

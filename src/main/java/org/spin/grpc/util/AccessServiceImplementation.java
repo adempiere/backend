@@ -87,7 +87,10 @@ import org.spin.model.X_AD_Dashboard_Access;
 
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
-
+/**
+ * @author Yamel Senih, ysenih@erpya.com, ERPCyA http://www.erpya.com
+ * Access service
+ */
 public class AccessServiceImplementation extends AccessServiceImplBase {
 	/**	Logger			*/
 	private CLogger log = CLogger.getCLogger(AccessServiceImplementation.class);

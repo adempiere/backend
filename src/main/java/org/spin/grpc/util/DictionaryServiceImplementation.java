@@ -74,6 +74,11 @@ import org.spin.util.ReportExportHandler;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 
+/**
+ * @author Yamel Senih, ysenih@erpya.com, ERPCyA http://www.erpya.com
+ * Dictionary service
+ * Get all dictionary meta-data
+ */
 public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	/**	Logger			*/
 	private CLogger log = CLogger.getCLogger(DictionaryServiceImplementation.class);
