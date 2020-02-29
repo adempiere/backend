@@ -4,7 +4,6 @@ jdk:
 install: gradle wrapper
 os:
 - linux
-sudo: required
 addons:
   apt:
     packages:
@@ -21,10 +20,9 @@ jobs:
       script: ./gradlew build
 deploy:
   provider: releases
-  api_key: $GITHUB_TOKEN_KEY
+  token: $GITHUB_TOKEN_KEY
   file: 
     - "$TRAVIS_BUILD_DIR/build/distributions/adempiere-gRPC-Server.zip"
     - "$TRAVIS_BUILD_DIR/build/distributions/adempiere-gRPC-Server.tar"
-  skip_cleanup: true
   on:
     tags: true
