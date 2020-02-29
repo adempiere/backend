@@ -24,5 +24,6 @@ deploy:
   file: 
     - "$TRAVIS_BUILD_DIR/build/distributions/adempiere-gRPC-Server.zip"
     - "$TRAVIS_BUILD_DIR/build/distributions/adempiere-gRPC-Server.tar"
+  deploy.skip_cleanup: true
   on:
     tags: true
