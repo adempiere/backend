@@ -20,10 +20,10 @@ jobs:
       script: ./gradlew build
 deploy:
   provider: releases
-  token: $GITHUB_TOKEN_KEY
+  github_token: $GITHUB_TOKEN_KEY
+  skip_cleanup: true
   file: 
     - "$TRAVIS_BUILD_DIR/build/distributions/adempiere-gRPC-Server.zip"
     - "$TRAVIS_BUILD_DIR/build/distributions/adempiere-gRPC-Server.tar"
-  skip_cleanup: true
   on:
     tags: true
