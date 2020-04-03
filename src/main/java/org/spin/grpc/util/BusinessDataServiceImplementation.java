@@ -1765,8 +1765,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				Object value = getValueFromType(parameter.getValue());
 				if(value != null) {
 					builder.withParameter(parameter.getKey(), value);
-					if(parameter.getKey().equals(I_C_Order.COLUMNNAME_DocStatus)
-							|| parameter.getKey().equals(I_C_Order.COLUMNNAME_DocAction)) {
+					if(parameter.getKey().equals(I_C_Order.COLUMNNAME_DocAction)) {
 						documentAction = (String) value;
 					}
 				}
