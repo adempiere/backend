@@ -1015,6 +1015,9 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		if(printFormat == null) {
 			throw new AdempiereException("@AD_PrintGormat_ID@ @NotFound@");
 		}
+		if(table.getAD_Table_ID() != printFormat.getAD_Table_ID()) {
+			table = MTable.get(context, printFormat.getAD_Table_ID());
+		}
 		//	Run report engine
 		ReportEngine reportEngine = new ReportEngine(Env.getCtx(), printFormat, query, printInformation);
 		//	Set report view
@@ -1050,7 +1053,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			}
 			builder.setReportViewUuid(validateNull(reportView.getUUID()));
 			builder.setPrintFormatUuid(validateNull(printFormat.getUUID()));
-			builder.setTableName(validateNull(printFormat.getAD_Table().getTableName()));
+			builder.setTableName(validateNull(table.getTableName()));
 			builder.setOutputStream(resultFile);
 		}
 		//	Return
@@ -1715,10 +1718,15 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				tableId = table.getAD_Table_ID();
 			}
 		}
-		if(recordId == 0
-				&& !Util.isEmpty(request.getUuid())
+		PO entity = null;
+		if((recordId != 0
+				|| !Util.isEmpty(request.getUuid()))
 				&& !Util.isEmpty(request.getTableName())) {
-			PO entity = getEntity(context, request.getTableName(), request.getUuid(), request.getRecordId());
+			String uuid = request.getUuid();
+			if(recordId != 0) {
+				uuid = null;
+			}
+			entity = getEntity(context, request.getTableName(), uuid, recordId);
 			if(entity != null) {
 				recordId = entity.get_ID();
 			}
@@ -1729,8 +1737,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		ProcessBuilder builder = ProcessBuilder.create(context)
 				.process(process.getAD_Process_ID())
 				.withRecordId(tableId, recordId)
-				.withBatchMode()
 				.withoutPrintPreview()
+				.withoutBatchMode()
 				.withWindowNo(0)
 				.withTitle(process.getName());
 		//	Set Report Export Type
@@ -1749,14 +1757,29 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			}
 			builder.withSelectedRecordsIds(request.getTableSelectedId(), selectionKeys, selection);
 		}
+		//	get document action
+		String documentAction = null;
 		//	Parameters
 		if(request.getParametersCount() > 0) {
 			for(KeyValue parameter : request.getParametersList()) {
 				Object value = getValueFromType(parameter.getValue());
 				if(value != null) {
 					builder.withParameter(parameter.getKey(), value);
+					if(parameter.getKey().equals(I_C_Order.COLUMNNAME_DocStatus)
+							|| parameter.getKey().equals(I_C_Order.COLUMNNAME_DocAction)) {
+						documentAction = (String) value;
+					}
 				}
 			}
+		}
+		//	For Document
+		if(!Util.isEmpty(documentAction)
+				&& process.getAD_Workflow_ID() != 0
+				&& entity != null
+				&& DocAction.class.isAssignableFrom(entity.getClass())) {
+			entity.set_ValueOfColumn(I_C_Order.COLUMNNAME_DocAction, documentAction);
+			entity.saveEx();
+			builder.withoutTransactionClose();
 		}
 		//	Execute Process
 		ProcessInfo result = null;
@@ -3434,30 +3457,45 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	private ListDocumentStatusesResponse.Builder convertDocumentStatuses(Properties context, ListDocumentStatusesRequest request) {
 		/** Drafted = DR */
 		List<String> statusesList = new ArrayList<>();
+		String documentStatus = null;
+		String documentAction = null;
+		String orderType = "--";
+		String isSOTrx = "Y";
+		Object isProcessing = "N";
+		//	New
+		int documentTypeId = 0;
 		statusesList.add(DocumentEngine.STATUS_Drafted);
+		//	Get Table from Name
+		MTable table = MTable.get(context, request.getTableName());
+		int recordId = 0;
 		//	Get entity
 		PO entity = getEntity(context, request.getTableName(), request.getRecordUuid(), request.getRecordId());
-		//	
-		String documentStatus = entity.get_ValueAsString(I_C_Order.COLUMNNAME_DocStatus);
-		String documentAction = entity.get_ValueAsString(I_C_Order.COLUMNNAME_DocAction);
-		//
-		Object isProcessing = entity.get_ValueAsBoolean(I_C_Order.COLUMNNAME_Processing)? "Y": "N";
-		String orderType = "--";
-		int documentTypeId = entity.get_ValueAsInt(I_C_Order.COLUMNNAME_C_DocTypeTarget_ID);
-		if(documentTypeId == 0) {
-			documentTypeId = entity.get_ValueAsInt(I_C_Order.COLUMNNAME_C_DocType_ID);
-		}
-		if(documentTypeId != 0) {
-			MDocType documentType = MDocType.get(context, documentTypeId);
-			if(documentType != null
-					&& !Util.isEmpty(documentType.getDocBaseType())) {
-				orderType = documentType.getDocBaseType();
+		if(entity != null) {
+			//	
+			documentStatus = entity.get_ValueAsString(I_C_Order.COLUMNNAME_DocStatus);
+			documentAction = entity.get_ValueAsString(I_C_Order.COLUMNNAME_DocAction);
+			//
+			isProcessing = entity.get_ValueAsBoolean(I_C_Order.COLUMNNAME_Processing)? "Y": "N";
+			documentTypeId = entity.get_ValueAsInt(I_C_Order.COLUMNNAME_C_DocTypeTarget_ID);
+			if(documentTypeId == 0) {
+				documentTypeId = entity.get_ValueAsInt(I_C_Order.COLUMNNAME_C_DocType_ID);
 			}
+			if(documentTypeId != 0) {
+				MDocType documentType = MDocType.get(context, documentTypeId);
+				if(documentType != null
+						&& !Util.isEmpty(documentType.getDocBaseType())) {
+					orderType = documentType.getDocBaseType();
+				}
+			}
+			isSOTrx = entity.get_ValueAsBoolean(I_C_Order.COLUMNNAME_IsSOTrx)? "Y": "N";
+			recordId = entity.get_ID();
 		}
-		String isSOTrx = entity.get_ValueAsBoolean(I_C_Order.COLUMNNAME_IsSOTrx)? "Y": "N";
 		//	
 		if (documentStatus == null) {
 			documentStatus = DocumentEngine.STATUS_Drafted;
+		}
+		if (documentAction == null) {
+			documentAction = DocumentEngine.ACTION_Prepare;
 		}
 		//	Standard
 		if(documentStatus.equals(DocumentEngine.STATUS_Completed)
@@ -3504,7 +3542,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		log.fine("DocStatus=" + documentStatus 
 			+ ", DocAction=" + documentAction + ", OrderType=" + orderType 
 			+ ", IsSOTrx=" + isSOTrx + ", Processing=" + isProcessing 
-			+ ", AD_Table_ID=" + entity.get_Table_ID() + ", Record_ID=" + entity.get_ID());
+			+ ", AD_Table_ID=" + table.getAD_Table_ID() + ", Record_ID=" + recordId);
 		//
 		String[] options = new String[valueList.size()];
 		int index = 0;
@@ -3513,9 +3551,10 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		 *  General Actions
 		 */
 		String[] docActionHolder = new String[] {documentAction};
-		index = DocumentEngine.getValidActions(documentStatus, isProcessing, orderType, isSOTrx, entity.get_Table_ID(), docActionHolder, options);
+		index = DocumentEngine.getValidActions(documentStatus, isProcessing, orderType, isSOTrx, table.getAD_Table_ID(), docActionHolder, options);
 
-		if (entity instanceof DocOptions) {
+		if (entity != null
+				&& entity instanceof DocOptions) {
 			index = ((DocOptions) entity).customizeValidActions(documentStatus, isProcessing, orderType, isSOTrx, entity.get_Table_ID(), docActionHolder, options, index);
 		}
 
