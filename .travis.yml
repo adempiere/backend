@@ -25,9 +25,9 @@ deploy:
   token: $GITHUB_TOKEN_KEY
   skip_cleanup: true
   file: 
-    - "$TRAVIS_BUILD_DIR/build/distributions/adempiere-gRPC-Server.zip"
-    - "$TRAVIS_BUILD_DIR/build/distributions/adempiere-gRPC-Server.tar"
-    - "$TRAVIS_BUILD_DIR/build/distributions/adempiere-gRPC-Server.tar.MD5"
-    - "$TRAVIS_BUILD_DIR/build/distributions/adempiere-gRPC-Server.zip.MD5"
+    - "$TRAVIS_BUILD_DIR/build/release/adempiere-gRPC-Server.zip"
+    - "$TRAVIS_BUILD_DIR/build/release/adempiere-gRPC-Server.tar"
+    - "$TRAVIS_BUILD_DIR/build/release/adempiere-gRPC-Server.tar.MD5"
+    - "$TRAVIS_BUILD_DIR/build/release/adempiere-gRPC-Server.zip.MD5"
   on:
     tags: true
