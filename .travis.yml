@@ -18,6 +18,8 @@ jobs:
   include:
     - stage: Compilation
       script: ./gradlew build
+    - stage: Compilation
+      script: ./gradlew createRelease
 deploy:
   provider: releases
   token: $GITHUB_TOKEN_KEY
@@ -25,5 +27,7 @@ deploy:
   file: 
     - "$TRAVIS_BUILD_DIR/build/distributions/adempiere-gRPC-Server.zip"
     - "$TRAVIS_BUILD_DIR/build/distributions/adempiere-gRPC-Server.tar"
+    - "$TRAVIS_BUILD_DIR/build/distributions/adempiere-gRPC-Server.tar.MD5"
+    - "$TRAVIS_BUILD_DIR/build/distributions/adempiere-gRPC-Server.zip.MD5"
   on:
     tags: true

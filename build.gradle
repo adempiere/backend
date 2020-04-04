@@ -118,3 +118,18 @@ applicationDistribution.into('bin') {
     from(ADempiereManagementEnrollment)
     fileMode = 0755
 }
+
+//	Create release for project
+task createRelease(type: Copy) {
+   dependsOn build
+   from file("$buildDir/distributions/")
+   into file("$buildDir/release/")
+   //destinationDir(file('build/release/'))
+   doLast {
+        file('build/release/')
+        	.listFiles({file -> file.isFile()} as FileFilter).sort()
+        	.each { File file ->
+            ant.checksum file: file
+        }
+   	}
+}
