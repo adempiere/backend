@@ -21,7 +21,7 @@ jobs:
     - stage: Compilation
       script: gradle build
     - stage: Compilation
-      script: gradlew createRelease
+      script: gradle createRelease
 deploy:
   provider: releases
   token: $GITHUB_TOKEN_KEY
