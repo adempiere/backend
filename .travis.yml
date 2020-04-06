@@ -4,16 +4,17 @@ jdk:
 install: gradle wrapper
 os:
 - linux
-before_script:
-  - mkdir dependences
-  - wget https://github.com/erpcya/adempiere/releases/latest/download/Adempiere_393LTS.tar.gz  -c -O Adempiere.tar.gz
-  - tar -xzf Adempiere.tar.gz
-  - mv Adempiere/lib/*.jar dependences/
+before_install:
   - wget http://services.gradle.org/distributions/gradle-6.1.1-bin.zip
   - unzip -qq gradle-6.1.1-bin.zip
   - export GRADLE_HOME=$PWD/gradle-6.1.1
   - export PATH=$GRADLE_HOME/bin:$PATH
   - gradle -v
+before_script:
+  - mkdir dependences
+  - wget https://github.com/erpcya/adempiere/releases/latest/download/Adempiere_393LTS.tar.gz  -c -O Adempiere.tar.gz
+  - tar -xzf Adempiere.tar.gz
+  - mv Adempiere/lib/*.jar dependences/
   
 jobs:
   include:
