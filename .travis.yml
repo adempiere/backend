@@ -13,13 +13,18 @@ before_script:
   - wget https://github.com/erpcya/adempiere/releases/latest/download/Adempiere_393LTS.tar.gz  -c -O Adempiere.tar.gz
   - tar -xzf Adempiere.tar.gz
   - mv Adempiere/lib/*.jar dependences/
+  - wget http://services.gradle.org/distributions/gradle-6.1.1-bin.zip
+  - unzip -qq gradle-5.3-bin.zip
+  - export GRADLE_HOME=$PWD/gradle-5.3
+  - export PATH=$GRADLE_HOME/bin:$PATH
+  - gradle -v
   
 jobs:
   include:
     - stage: Compilation
-      script: ./gradlew build
+      script: gradle build
     - stage: Compilation
-      script: ./gradlew createRelease
+      script: gradlew createRelease
 deploy:
   provider: releases
   token: $GITHUB_TOKEN_KEY
