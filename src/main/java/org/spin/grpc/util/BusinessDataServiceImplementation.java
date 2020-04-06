@@ -1033,17 +1033,17 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		if(reportFile != null
 				&& reportFile.exists()) {
 			String validFileName = getValidName(reportFile.getName());
-			builder.setFileName(validateNull(validFileName));
-			builder.setName(validateNull(reportEngine.getName()));
-			builder.setMimeType(validateNull(MimeType.getMimeType(validFileName)));
+			builder.setFileName(ValueUtil.validateNull(validFileName));
+			builder.setName(ValueUtil.validateNull(reportEngine.getName()));
+			builder.setMimeType(ValueUtil.validateNull(MimeType.getMimeType(validFileName)));
 			String headerName = Msg.getMsg(context, "Report") + ": " + reportEngine.getName() + "  " + Env.getHeader(context, 0);
-			builder.setHeaderName(validateNull(headerName));
+			builder.setHeaderName(ValueUtil.validateNull(headerName));
 			StringBuffer footerName = new StringBuffer ();
 			footerName.append(Msg.getMsg(context, "DataCols")).append("=")
 				.append(reportEngine.getColumnCount())
 				.append(", ").append(Msg.getMsg(context, "DataRows")).append("=")
 				.append(reportEngine.getRowCount());
-			builder.setFooterName(validateNull(footerName.toString()));
+			builder.setFooterName(ValueUtil.validateNull(footerName.toString()));
 			//	Type
 			builder.setReportType(request.getReportType());
 			ByteString resultFile = ByteString.readFrom(new FileInputStream(reportFile));
@@ -1051,9 +1051,9 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					|| request.getReportType().endsWith("txt")) {
 				builder.setOutputBytes(resultFile);
 			}
-			builder.setReportViewUuid(validateNull(reportView.getUUID()));
-			builder.setPrintFormatUuid(validateNull(printFormat.getUUID()));
-			builder.setTableName(validateNull(table.getTableName()));
+			builder.setReportViewUuid(ValueUtil.validateNull(reportView.getUUID()));
+			builder.setPrintFormatUuid(ValueUtil.validateNull(printFormat.getUUID()));
+			builder.setTableName(ValueUtil.validateNull(table.getTableName()));
 			builder.setOutputStream(resultFile);
 		}
 		//	Return
@@ -1176,9 +1176,9 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					RecordReferenceInfo.Builder recordReferenceBuilder = RecordReferenceInfo.newBuilder();
 					recordReferenceBuilder.setDisplayName(zoomInfo.destinationDisplay + " (#" + zoomInfo.query.getRecordCount() + ")");
 					recordReferenceBuilder.setRecordCount(zoomInfo.query.getRecordCount());
-					recordReferenceBuilder.setWindowUuid(validateNull(referenceWindow.get_UUID()));
-					recordReferenceBuilder.setTableName(validateNull(zoomInfo.query.getZoomTableName()));
-					recordReferenceBuilder.setWhereClause(validateNull(zoomInfo.query.getWhereClause()));
+					recordReferenceBuilder.setWindowUuid(ValueUtil.validateNull(referenceWindow.get_UUID()));
+					recordReferenceBuilder.setTableName(ValueUtil.validateNull(zoomInfo.query.getZoomTableName()));
+					recordReferenceBuilder.setWhereClause(ValueUtil.validateNull(zoomInfo.query.getWhereClause()));
 					recordReferenceBuilder.setUuid(uuid);
 					referenceWhereClauseCache.put(uuid, zoomInfo.query.getWhereClause());
 					//	Add to list
@@ -1214,20 +1214,20 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		//	Get from document status
 		Arrays.asList(MDocumentStatus.getDocumentStatusIndicators(context, userId, roleId)).forEach(documentStatus -> {
 			PendingDocument.Builder pendingDocument = PendingDocument.newBuilder();
-			pendingDocument.setDocumentName(validateNull(documentStatus.getName()));
+			pendingDocument.setDocumentName(ValueUtil.validateNull(documentStatus.getName()));
 			// for Reference
 			if(documentStatus.getAD_Window_ID() != 0) {
 				MWindow window = MWindow.get(context, documentStatus.getAD_Window_ID());
-				pendingDocument.setWindowUuid(validateNull(window.getUUID()));
+				pendingDocument.setWindowUuid(ValueUtil.validateNull(window.getUUID()));
 			} else if(documentStatus.getAD_Form_ID() != 0) {
 				MForm form = new MForm(context, documentStatus.getAD_Form_ID(), null);
-				pendingDocument.setFormUuid(validateNull(form.getUUID()));
+				pendingDocument.setFormUuid(ValueUtil.validateNull(form.getUUID()));
 			}
 			//	Criteria
 			MTable table = MTable.get(context, documentStatus.getAD_Table_ID());
 			pendingDocument.setCriteria(Criteria.newBuilder()
-					.setTableName(validateNull(table.getTableName()))
-					.setWhereClause(validateNull(documentStatus.getWhereClause())));
+					.setTableName(ValueUtil.validateNull(table.getTableName()))
+					.setWhereClause(ValueUtil.validateNull(documentStatus.getWhereClause())));
 			//	Set quantity
 			pendingDocument.setRecordCount(MDocumentStatus.evaluate(documentStatus));
 			//	TODO: Add description for interface
@@ -1251,12 +1251,12 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			.<MLanguage>list()
 			.forEach(language -> {
 				org.spin.grpc.util.Language.Builder languageBuilder = org.spin.grpc.util.Language.newBuilder();
-				languageBuilder.setLanguage(validateNull(language.getAD_Language()));
-				languageBuilder.setCountryCode(validateNull(language.getCountryCode()));
-				languageBuilder.setLanguageISO(validateNull(language.getLanguageISO()));
-				languageBuilder.setLanguageName(validateNull(language.getName()));
-				languageBuilder.setDatePattern(validateNull(language.getDatePattern()));
-				languageBuilder.setTimePattern(validateNull(language.getTimePattern()));
+				languageBuilder.setLanguage(ValueUtil.validateNull(language.getAD_Language()));
+				languageBuilder.setCountryCode(ValueUtil.validateNull(language.getCountryCode()));
+				languageBuilder.setLanguageISO(ValueUtil.validateNull(language.getLanguageISO()));
+				languageBuilder.setLanguageName(ValueUtil.validateNull(language.getName()));
+				languageBuilder.setDatePattern(ValueUtil.validateNull(language.getDatePattern()));
+				languageBuilder.setTimePattern(ValueUtil.validateNull(language.getTimePattern()));
 				languageBuilder.setIsBaseLanguage(language.isBaseLanguage());
 				languageBuilder.setIsSystemLanguage(language.isSystemLanguage());
 				languageBuilder.setIsDecimalPoint(language.isDecimalPoint());
@@ -1295,17 +1295,17 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				table.getColumnsAsList().stream().filter(column -> column.isTranslated()).forEach(column -> {
 					Object value = translation.get_Value(column.getColumnName());
 					if(value != null) {
-						Value.Builder builderValue = getValueFromObject(value);
+						Value.Builder builderValue = ValueUtil.getValueFromObject(value);
 						if(builderValue != null) {
 							translationBuilder.putValues(column.getColumnName(), builderValue.build());
 						}
 						//	Set uuid
 						if(Util.isEmpty(translationBuilder.getTranslationUuid())) {
-							translationBuilder.setTranslationUuid(validateNull(translation.get_UUID()));
+							translationBuilder.setTranslationUuid(ValueUtil.validateNull(translation.get_UUID()));
 						}
 						//	Set Language
 						if(Util.isEmpty(translationBuilder.getLanguage())) {
-							translationBuilder.setLanguage(validateNull(translation.get_ValueAsString("AD_Language")));
+							translationBuilder.setLanguage(ValueUtil.validateNull(translation.get_ValueAsString("AD_Language")));
 						}
 					}
 				});
@@ -1339,9 +1339,9 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			.<MDashboardContent>list()
 			.forEach(dashboard -> {
 				Dashboard.Builder dashboardBuilder = Dashboard.newBuilder();
-				dashboardBuilder.setDashboardName(validateNull(dashboard.getName()));
-				dashboardBuilder.setDashboardDescription(validateNull(dashboard.getDescription()));
-				dashboardBuilder.setDashboardHtml(validateNull(dashboard.getHTML()));
+				dashboardBuilder.setDashboardName(ValueUtil.validateNull(dashboard.getName()));
+				dashboardBuilder.setDashboardDescription(ValueUtil.validateNull(dashboard.getDescription()));
+				dashboardBuilder.setDashboardHtml(ValueUtil.validateNull(dashboard.getHTML()));
 				dashboardBuilder.setColumnNo(dashboard.getColumnNo());
 				dashboardBuilder.setLineNo(dashboard.getLine());
 				dashboardBuilder.setIsEventRequired(dashboard.isEventRequired());
@@ -1350,12 +1350,12 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				//	For Window
 				if(dashboard.getAD_Window_ID() != 0) {
 					MWindow window = MWindow.get(context, dashboard.getAD_Window_ID());
-					dashboardBuilder.setWindowUuid(validateNull(window.getUUID()));
+					dashboardBuilder.setWindowUuid(ValueUtil.validateNull(window.getUUID()));
 				}
 				//	For Smart Browser
 				if(dashboard.getAD_Browse_ID() != 0) {
 					MBrowse browser = MBrowse.get(context, dashboard.getAD_Browse_ID());
-					dashboardBuilder.setWindowUuid(validateNull(browser.getUUID()));
+					dashboardBuilder.setWindowUuid(ValueUtil.validateNull(browser.getUUID()));
 				}
 				//	File Name
 				String fileName = dashboard.getZulFilePath();
@@ -1371,7 +1371,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 						endIndex = fileName.length();
 					}
 					//	Set
-					dashboardBuilder.setFileName(validateNull(fileName.substring(beginIndex, endIndex)));
+					dashboardBuilder.setFileName(ValueUtil.validateNull(fileName.substring(beginIndex, endIndex)));
 				}
 				builder.addDashboards(dashboardBuilder);
 			});
@@ -1421,11 +1421,11 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 						description = translation;
 					}
 				}
-				reportViewBuilder.setUuid(validateNull(reportViewReference.getUUID()));
-				reportViewBuilder.setName(validateNull(name));
-				reportViewBuilder.setDescription(validateNull(description));
+				reportViewBuilder.setUuid(ValueUtil.validateNull(reportViewReference.getUUID()));
+				reportViewBuilder.setName(ValueUtil.validateNull(name));
+				reportViewBuilder.setDescription(ValueUtil.validateNull(description));
 				MTable table = MTable.get(context, reportViewReference.getAD_Table_ID());
-				reportViewBuilder.setTableName(validateNull(table.getTableName()));
+				reportViewBuilder.setTableName(ValueUtil.validateNull(table.getTableName()));
 				//	add
 				builder.addReportViews(reportViewBuilder);
 			});
@@ -1466,7 +1466,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					M_Element element = M_Element.get(context, columnName);
 					//	Add here
 					DrillTable.Builder drillTable = DrillTable.newBuilder();
-					drillTable.setTableName(validateNull(drillTableName));
+					drillTable.setTableName(ValueUtil.validateNull(drillTableName));
 					String name = element.getPrintName();
 					String poName = element.getPO_PrintName();
 					if(!Env.isBaseLanguage(context, "")) {
@@ -1483,7 +1483,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 						name = name + "/" + poName;
 					}
 					//	Print Name
-					drillTable.setPrintName(validateNull(name));
+					drillTable.setPrintName(ValueUtil.validateNull(name));
 					//	Add to list
 					builder.addDrillTables(drillTable);
 				}
@@ -1536,15 +1536,15 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			.setClient_ID()
 			.<MPrintFormat>list().forEach(printFormatReference -> {
 				PrintFormat.Builder printFormatBuilder = PrintFormat.newBuilder();
-				printFormatBuilder.setUuid(validateNull(printFormatReference.getUUID()));
-				printFormatBuilder.setName(validateNull(printFormatReference.getName()));
-				printFormatBuilder.setDescription(validateNull(printFormatReference.getDescription()));
+				printFormatBuilder.setUuid(ValueUtil.validateNull(printFormatReference.getUUID()));
+				printFormatBuilder.setName(ValueUtil.validateNull(printFormatReference.getName()));
+				printFormatBuilder.setDescription(ValueUtil.validateNull(printFormatReference.getDescription()));
 				printFormatBuilder.setIsDefault(printFormatReference.isDefault());
 				MTable table = MTable.get(context, printFormatReference.getAD_Table_ID());
-				printFormatBuilder.setTableName(validateNull(table.getTableName()));
+				printFormatBuilder.setTableName(ValueUtil.validateNull(table.getTableName()));
 				if(printFormatReference.getAD_ReportView_ID() != 0) {
 					MReportView reportView = MReportView.get(context, printFormatReference.getAD_ReportView_ID());
-					printFormatBuilder.setReportViewUuid(validateNull(reportView.getUUID()));
+					printFormatBuilder.setReportViewUuid(ValueUtil.validateNull(reportView.getUUID()));
 				}
 				//	add
 				builder.addPrintFormats(printFormatBuilder);
@@ -1582,7 +1582,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				String menuName = "";
 				String menuDescription = "";
 				MMenu menu = MMenu.getFromId(context, treeNodeMenu.getNode_ID());
-				favorite.setMenuUuid(validateNull(menu.getUUID()));
+				favorite.setMenuUuid(ValueUtil.validateNull(menu.getUUID()));
 				String action = MMenu.ACTION_Window;
 				if(!menu.isCentrallyMaintained()) {
 					menuName = menu.getName();
@@ -1680,12 +1680,12 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 							}
 						}
 					}
-					favorite.setReferenceUuid(validateNull(referenceUuid));
-					favorite.setAction(validateNull(action));
+					favorite.setReferenceUuid(ValueUtil.validateNull(referenceUuid));
+					favorite.setAction(ValueUtil.validateNull(action));
 				}
 				//	Set name and description
-				favorite.setMenuName(validateNull(menuName));
-				favorite.setMenuDescription(validateNull(menuDescription));
+				favorite.setMenuName(ValueUtil.validateNull(menuName));
+				favorite.setMenuDescription(ValueUtil.validateNull(menuDescription));
 				builder.addFavorites(favorite);
 			});
 		//	Return
@@ -1752,7 +1752,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			for(KeyValueSelection selectionKey : request.getSelectionsList()) {
 				selectionKeys.add(selectionKey.getSelectionId());
 				if(selectionKey.getValuesCount() > 0) {
-					selection.put(selectionKey.getSelectionId(), new LinkedHashMap<>(convertValues(selectionKey.getValuesList())));
+					selection.put(selectionKey.getSelectionId(), new LinkedHashMap<>(ValueUtil.convertValuesToObjects(selectionKey.getValuesList())));
 				}
 			}
 			builder.withSelectedRecordsIds(request.getTableSelectedId(), selectionKeys, selection);
@@ -1762,7 +1762,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		//	Parameters
 		if(request.getParametersCount() > 0) {
 			for(KeyValue parameter : request.getParametersList()) {
-				Object value = getValueFromType(parameter.getValue());
+				Object value = ValueUtil.getObjectFromValue(parameter.getValue());
 				if(value != null) {
 					builder.withParameter(parameter.getKey(), value);
 					if(parameter.getKey().equals(I_C_Order.COLUMNNAME_DocAction)) {
@@ -1795,7 +1795,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			MPInstance instance = new Query(context, I_AD_PInstance.Table_Name, I_AD_PInstance.COLUMNNAME_AD_PInstance_ID + " = ?", null)
 					.setParameters(result.getAD_PInstance_ID())
 					.first();
-			response.setInstanceUuid(validateNull(instance.getUUID()));
+			response.setInstanceUuid(ValueUtil.validateNull(instance.getUUID()));
 			response.setLastRun(instance.getUpdated().getTime());
 			if(process.isReport()) {
 				int printFormatId = 0;
@@ -1851,7 +1851,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			response.setSummary(Msg.parseTranslation(context, result.getSummary()));
 		}
 		//	
-		response.setResultTableName(validateNull(result.getResultTableName()));
+		response.setResultTableName(ValueUtil.validateNull(result.getResultTableName()));
 		//	Convert Log
 		if(result.getLogList() != null) {
 			for(org.compiere.process.ProcessInfoLog log : result.getLogList()) {
@@ -1865,10 +1865,10 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					&& reportFile.exists()) {
 				String validFileName = getValidName(reportFile.getName());
 				ReportOutput.Builder output = ReportOutput.newBuilder();
-				output.setFileName(validateNull(validFileName));
+				output.setFileName(ValueUtil.validateNull(validFileName));
 				output.setName(result.getTitle());
-				output.setMimeType(validateNull(MimeType.getMimeType(validFileName)));
-				output.setDescription(validateNull(process.getDescription()));
+				output.setMimeType(ValueUtil.validateNull(MimeType.getMimeType(validFileName)));
+				output.setDescription(ValueUtil.validateNull(process.getDescription()));
 				//	Type
 				output.setReportType(request.getReportType());
 				ByteString resultFile = ByteString.readFrom(new FileInputStream(reportFile));
@@ -1877,9 +1877,9 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					output.setOutputBytes(resultFile);
 				}
 				output.setOutputStream(resultFile);
-				output.setReportViewUuid(validateNull(reportViewUuid));
-				output.setPrintFormatUuid(validateNull(printFormatUuid));
-				output.setTableName(validateNull(tableName));
+				output.setReportViewUuid(ValueUtil.validateNull(reportViewUuid));
+				output.setPrintFormatUuid(ValueUtil.validateNull(printFormatUuid));
+				output.setTableName(ValueUtil.validateNull(tableName));
 				response.setOutput(output.build());
 			}
 		}
@@ -1934,63 +1934,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	private ProcessInfoLog.Builder convertProcessInfoLog(org.compiere.process.ProcessInfoLog log) {
 		ProcessInfoLog.Builder processLog = ProcessInfoLog.newBuilder();
 		processLog.setRecordId(log.getP_ID());
-		processLog.setLog(validateNull(Msg.parseTranslation(Env.getCtx(), log.getP_Msg())));
+		processLog.setLog(ValueUtil.validateNull(Msg.parseTranslation(Env.getCtx(), log.getP_Msg())));
 		return processLog;
-	}
-	
-	/**
-	 * Convert Selection values from gRPC to ADempiere values
-	 * @param values
-	 * @return
-	 */
-	private Map<String, Object> convertValues(List<KeyValue> values) {
-		Map<String, Object> convertedValues = new HashMap<>();
-		for(KeyValue value : values) {
-			convertedValues.put(value.getKey(), getValueFromType(value.getValue()));
-		}
-		//	
-		return convertedValues;
-	}
-	
-	/**
-	 * Default get value from type
-	 * @param valueToConvert
-	 * @return
-	 */
-	private Object getValueFromType(Value valueToConvert) {
-		return getValueFromType(valueToConvert, false);
-	}
-	
-	/**
-	 * Get value from parameter type
-	 * @param valueToConvert
-	 * @return
-	 */
-	private Object getValueFromType(Value valueToConvert, boolean uppercase) {
-		Object value = null;
-		if(valueToConvert.getValueType().equals(ValueType.BOOLEAN)) {
-			value = valueToConvert.getBooleanValue();
-		} else if(valueToConvert.getValueType().equals(ValueType.DOUBLE)
-				|| valueToConvert.getValueType().equals(ValueType.LONG)) {
-			value = new BigDecimal(valueToConvert.getDoubleValue());
-		} else if(valueToConvert.getValueType().equals(ValueType.INTEGER)) {
-			value = valueToConvert.getIntValue();
-		} else if(valueToConvert.getValueType().equals(ValueType.STRING)) {
-			String stringValue = valueToConvert.getStringValue();
-			if(Util.isEmpty(stringValue)) {
-				stringValue = null;
-			}
-			//	To Upper case
-			if(uppercase) {
-				stringValue = stringValue.toUpperCase();
-			}
-			value = stringValue;
-		} else if(valueToConvert.getValueType().equals(ValueType.DATE)) {
-			if(valueToConvert.getLongValue() > 0) {
-				value = new Timestamp(valueToConvert.getLongValue());
-			}
-		}
-		return value;
 	}
 	
 	/**
@@ -2253,10 +2198,14 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		if(entity == null) {
 			throw new AdempiereException("@Error@ PO is null");
 		}
-		Map<String, Object> attributes = convertValues(request.getAttributesList());
-		for(Entry<String, Object> attribute : attributes.entrySet()) {
-			entity.set_ValueOfColumn(attribute.getKey(), attribute.getValue());
-		}
+		request.getAttributesList().forEach(attribute -> {
+			int referenceId = getReferenceId(entity.get_Table_ID(), attribute.getKey());
+			if(referenceId > 0) {
+				entity.set_ValueOfColumn(attribute.getKey(), ValueUtil.getObjectFromReference(attribute.getValue(), referenceId));
+			} else {
+				entity.set_ValueOfColumn(attribute.getKey(), ValueUtil.getObjectFromValue(attribute.getValue()));
+			}
+		});
 		//	Save entity
 		entity.saveEx();
 		//	Return
@@ -2314,15 +2263,33 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		PO entity = getEntity(context, request.getTableName(), request.getUuid(), request.getRecordId());
 		if(entity != null
 				&& entity.get_ID() >= 0) {
-			Map<String, Object> attributes = convertValues(request.getAttributesList());
-			for(Entry<String, Object> attribute : attributes.entrySet()) {
-				entity.set_ValueOfColumn(attribute.getKey(), attribute.getValue());
-			}
+			request.getAttributesList().forEach(attribute -> {
+				int referenceId = getReferenceId(entity.get_Table_ID(), attribute.getKey());
+				if(referenceId > 0) {
+					entity.set_ValueOfColumn(attribute.getKey(), ValueUtil.getObjectFromReference(attribute.getValue(), referenceId));
+				} else {
+					entity.set_ValueOfColumn(attribute.getKey(), ValueUtil.getObjectFromValue(attribute.getValue()));
+				}
+			});
 			//	Save entity
 			entity.saveEx();
 		}
 		//	Return
 		return convertEntity(context, entity);
+	}
+	
+	/**
+	 * Get reference from column name and table
+	 * @param tableId
+	 * @param columnName
+	 * @return
+	 */
+	private int getReferenceId(int tableId, String columnName) {
+		MColumn column = MTable.get(Env.getCtx(), tableId).getColumn(columnName);
+		if(column == null) {
+			return -1;
+		}
+		return column.getAD_Reference_ID();
 	}
 	
 	/**
@@ -2422,7 +2389,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			//	Get from Query
 			rs = pstmt.executeQuery();
 			if (rs.next()) {
-				builder = getValueFromObject(rs.getObject(1));
+				builder = ValueUtil.getValueFromObject(rs.getObject(1));
 			}
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
@@ -2458,7 +2425,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					//	
 					String messageText = Msg.getMsg(Env.getAD_Language(Env.getCtx()), message.getValue(), arguments);
 					//	Set result message
-					builder.setMessageText(validateNull(messageText));
+					builder.setMessageText(ValueUtil.validateNull(messageText));
 				}
 			} catch (Exception e) {
 				log.log(Level.WARNING, e.getLocalizedMessage());
@@ -2483,7 +2450,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		//	Set values
 		builder.setTableName(table.getTableName());
 		MUser user = MUser.get(context, privateAccess.getAD_User_ID());
-		builder.setUserUuid(validateNull(user.getUUID()));
+		builder.setUserUuid(ValueUtil.validateNull(user.getUUID()));
 		builder.setRecordId(privateAccess.getRecord_ID());
 		//	Return values
 		return builder;
@@ -2602,15 +2569,13 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	 */
 	private void setParameterFromValue(PreparedStatement pstmt, Value value, int index) throws SQLException {
 		if(value.getValueType().equals(ValueType.INTEGER)) {
-			pstmt.setInt(index, value.getIntValue());
-		} else if(value.getValueType().equals(ValueType.DOUBLE)) {
-			pstmt.setDouble(index, value.getDoubleValue());
-		} else if(value.getValueType().equals(ValueType.LONG)) {
-			pstmt.setLong(index, value.getLongValue());
+			pstmt.setInt(index, ValueUtil.getIntegerFromValue(value));
+		} else if(value.getValueType().equals(ValueType.DECIMAL)) {
+			pstmt.setBigDecimal(index, ValueUtil.getDecimalFromValue(value));
 		} else if(value.getValueType().equals(ValueType.STRING)) {
-			pstmt.setString(index, value.getStringValue());
+			pstmt.setString(index, ValueUtil.getStringFromValue(value));
 		} else if(value.getValueType().equals(ValueType.DATE)) {
-			pstmt.setTimestamp(index, new Timestamp(value.getLongValue()));
+			pstmt.setTimestamp(index, ValueUtil.getDateFromValue(value));
 		}
 	}
 	
@@ -2656,7 +2621,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			if(condition.getOperatorValue() == Operator.LIKE_VALUE
 					|| condition.getOperatorValue() == Operator.NOT_LIKE_VALUE) {
 				columnName = "UPPER(" + columnName + ")";
-				query.addRestriction(columnName, operator, getValueFromType(condition.getValue(), true));
+				query.addRestriction(columnName, operator, ValueUtil.getObjectFromValue(condition.getValue(), true));
 			}
 			//	For in or not in
 			if(condition.getOperatorValue() == Operator.IN_VALUE
@@ -2668,7 +2633,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					if(parameter.length() > 0) {
 						parameter.append(", ");
 					}
-					Object convertedValue = getValueFromType(value);
+					Object convertedValue = ValueUtil.getObjectFromValue(value);
 					if(convertedValue instanceof String) {
 						convertedValue = "'" + convertedValue + "'";
 					}
@@ -2677,12 +2642,12 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				whereClause.append("(").append(parameter).append(")");
 				query.addRestriction(whereClause.toString());
 			} else if(condition.getOperatorValue() == Operator.BETWEEN_VALUE) {
-				query.addRangeRestriction(columnName, getValueFromType(condition.getValue()), getValueFromType(condition.getValueTo()));
+				query.addRangeRestriction(columnName, ValueUtil.getObjectFromValue(condition.getValue()), ValueUtil.getObjectFromValue(condition.getValueTo()));
 			} else if(condition.getOperatorValue() == Operator.NULL_VALUE
 					|| condition.getOperatorValue() == Operator.NOT_NULL_VALUE) {
 				query.addRestriction(columnName, operator, null);
 			} else {
-				query.addRestriction(columnName, operator, getValueFromType(condition.getValue()));
+				query.addRestriction(columnName, operator, ValueUtil.getObjectFromValue(condition.getValue()));
 			}
 		});
 		return query;
@@ -2720,21 +2685,21 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 							parameter.append(", ");
 						}
 						parameter.append("?");
-						params.add(getValueFromType(value));
+						params.add(ValueUtil.getObjectFromValue(value));
 					});
 					whereClause.append("(").append(parameter).append(")");
 				} else if(condition.getOperatorValue() == Operator.BETWEEN_VALUE) {
 					whereClause.append(" ? ").append(" AND ").append(" ?");
-					params.add(getValueFromType(condition.getValue()));
-					params.add(getValueFromType(condition.getValueTo()));
+					params.add(ValueUtil.getObjectFromValue(condition.getValue()));
+					params.add(ValueUtil.getObjectFromValue(condition.getValueTo()));
 				} else if(condition.getOperatorValue() == Operator.LIKE_VALUE
 						|| condition.getOperatorValue() == Operator.NOT_LIKE_VALUE) {
 					whereClause.append("?");
-					params.add(getValueFromType(condition.getValue(), true));
+					params.add(ValueUtil.getObjectFromValue(condition.getValue(), true));
 				} else if(condition.getOperatorValue() != Operator.NULL_VALUE
 						&& condition.getOperatorValue() != Operator.NOT_NULL_VALUE) {
 					whereClause.append("?");
-					params.add(getValueFromType(condition.getValue()));
+					params.add(ValueUtil.getObjectFromValue(condition.getValue()));
 				}
 				//	Close
 				whereClause.append(")");
@@ -2756,7 +2721,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			whereClause.append("(").append(criteria.getWhereClause()).append(")");
 		}
 		criteria.getValuesList().forEach(value -> {
-			params.add(getValueFromType(value));
+			params.add(ValueUtil.getObjectFromValue(value));
 		});
 		//	For dynamic condition
 		String dynamicWhere = getWhereClauseFromCriteria(criteria, params);
@@ -2829,7 +2794,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			nexPageToken = getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
 		}
 		//	Set netxt page
-		builder.setNextPageToken(validateNull(nexPageToken));
+		builder.setNextPageToken(ValueUtil.validateNull(nexPageToken));
 		//	Return
 		return builder;
 	}
@@ -2873,15 +2838,13 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 							String value = rs.getString(index);
 							if(!Util.isEmpty(value)) {
 								isFilled = true;
-								valueBuilder.setStringValue(value);
-								valueBuilder.setValueType(ValueType.STRING);
-								valueObjectBuilder.putValues(columnName, valueBuilder.build());
+								valueBuilder = ValueUtil.getValueFromString(value);
 							}
 							continue;
 						}
 						//	From field
 						String fieldColumnName = field.getColumnName();
-						if(isLookup(field.getAD_Reference_ID())
+						if(ValueUtil.isLookup(field.getAD_Reference_ID())
 								|| DisplayType.isID(field.getAD_Reference_ID())) {
 							isFilled = true;
 							int type = metaData.getColumnType(index);
@@ -2889,37 +2852,32 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 									|| type == Types.NUMERIC
 									|| type == Types.FLOAT
 									|| type == Types.DOUBLE) {
-								valueBuilder.setIntValue(rs.getInt(index));
-								valueBuilder.setValueType(ValueType.INTEGER);
+								valueBuilder = ValueUtil.getValueFromInteger(rs.getInt(index));
 							} else {
-								valueBuilder.setStringValue(rs.getString(index));
-								valueBuilder.setValueType(ValueType.STRING);
+								valueBuilder = ValueUtil.getValueFromString(rs.getString(index));
 							}
 						} else if(DisplayType.isNumeric(field.getAD_Reference_ID())) {
 							BigDecimal value = rs.getBigDecimal(index);
 							if(value != null) {
 								isFilled = true;
-								valueBuilder.setDoubleValue(value.doubleValue());
-								valueBuilder.setValueType(ValueType.DOUBLE);
+								valueBuilder = ValueUtil.getValueFromDecimal(value);
 							}
 						} else if(DisplayType.YesNo == field.getAD_Reference_ID()) {
 							isFilled = true;
 							String value = rs.getString(index);
-							valueBuilder.setBooleanValue(!Util.isEmpty(value) && value.equals("Y"));
-							valueBuilder.setValueType(ValueType.BOOLEAN);
+							valueBuilder = ValueUtil.getValueFromBoolean(!Util.isEmpty(value) && value.equals("Y"));
 						} else if(DisplayType.isDate(field.getAD_Reference_ID())) {
 							Timestamp value = rs.getTimestamp(index);
 							if(value != null) {
 								isFilled = true;
-								valueBuilder.setLongValue(value.getTime());
+								valueBuilder = ValueUtil.getValueFromDate(value);
 							}
 							valueBuilder.setValueType(ValueType.DATE);
 						} else if(DisplayType.isText(field.getAD_Reference_ID())) {
 							String value = rs.getString(index);
 							if(!Util.isEmpty(value)) {
 								isFilled = true;
-								valueBuilder.setStringValue(value);
-								valueBuilder.setValueType(ValueType.STRING);
+								valueBuilder = ValueUtil.getValueFromString(value);
 							}
 						}
 						if(isFilled) {
@@ -3070,7 +3028,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		HashMap<String, Object> parameterMap = new HashMap<>();
 		//	Populate map
 		for(KeyValue parameter : request.getParametersList()) {
-			parameterMap.put(parameter.getKey(), getValueFromType(parameter.getValue()));
+			parameterMap.put(parameter.getKey(), ValueUtil.getObjectFromValue(parameter.getValue()));
 		}
 		List<Object> values = new ArrayList<Object>();
 		String whereClause = getBrowserWhereClause(browser, criteria.getWhereClause(), parameterMap, values);
@@ -3112,7 +3070,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		//	Return
 		builder = convertBrowserResult(browser, parsedSQL, values);
 		//	Validate page token
-		builder.setNextPageToken(validateNull(nexPageToken));
+		builder.setNextPageToken(ValueUtil.validateNull(nexPageToken));
 		//	Return
 		return builder;
 	}
@@ -3196,56 +3154,49 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					try {
 						String columnName = metaData.getColumnName (index);
 						MBrowseField field = fieldsMap.get(columnName.toUpperCase());
-						Value.Builder valueBuilder = Value.newBuilder();
+						Value.Builder valueBuilder = null;
 						boolean isFilled = false;
 						//	Display Columns
 						if(field == null) {
 							String value = rs.getString(index);
 							if(!Util.isEmpty(value)) {
 								isFilled = true;
-								valueBuilder.setStringValue(value);
-								valueBuilder.setValueType(ValueType.STRING);
+								valueBuilder = ValueUtil.getValueFromObject(value);
 								valueObjectBuilder.putValues(columnName, valueBuilder.build());
 							}
 							continue;
 						}
 						//	From field
 						String fieldColumnName = field.getAD_View_Column().getColumnName();
-						if(isLookup(field.getAD_Reference_ID())
+						if(ValueUtil.isLookup(field.getAD_Reference_ID())
 								|| DisplayType.isID(field.getAD_Reference_ID())) {
 							isFilled = true;
 							if(metaData.getColumnType(index) != Types.DECIMAL) {
-								valueBuilder.setStringValue(rs.getString(index));
-								valueBuilder.setValueType(ValueType.STRING);
+								valueBuilder = ValueUtil.getValueFromObject(rs.getString(index));
 							} else {
-								valueBuilder.setIntValue(rs.getInt(index));
-								valueBuilder.setValueType(ValueType.INTEGER);
+								valueBuilder = ValueUtil.getValueFromObject(rs.getInt(index));
 							}
 						} else if(DisplayType.isNumeric(field.getAD_Reference_ID())) {
 							BigDecimal value = rs.getBigDecimal(index);
 							if(value != null) {
 								isFilled = true;
-								valueBuilder.setDoubleValue(value.doubleValue());
-								valueBuilder.setValueType(ValueType.DOUBLE);
+								valueBuilder = ValueUtil.getValueFromDecimal(value);
 							}
 						} else if(DisplayType.YesNo == field.getAD_Reference_ID()) {
 							isFilled = true;
 							String value = rs.getString(index);
-							valueBuilder.setBooleanValue(!Util.isEmpty(value) && value.equals("Y"));
-							valueBuilder.setValueType(ValueType.BOOLEAN);
+							valueBuilder = ValueUtil.getValueFromBoolean(!Util.isEmpty(value) && value.equals("Y"));
 						} else if(DisplayType.isDate(field.getAD_Reference_ID())) {
 							Timestamp value = rs.getTimestamp(index);
 							if(value != null) {
 								isFilled = true;
-								valueBuilder.setLongValue(value.getTime());
+								valueBuilder = ValueUtil.getValueFromDate(value);
 							}
-							valueBuilder.setValueType(ValueType.DATE);
 						} else if(DisplayType.isText(field.getAD_Reference_ID())) {
 							String value = rs.getString(index);
 							if(!Util.isEmpty(value)) {
 								isFilled = true;
-								valueBuilder.setStringValue(value);
-								valueBuilder.setValueType(ValueType.STRING);
+								valueBuilder = ValueUtil.getValueFromString(value);
 							}
 						}
 						if(isFilled) {
@@ -3413,9 +3364,9 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			for (int i = 0; i < valueList.size(); i++) {
 				if (option.equals(valueList.get(i))) {
 					DocumentAction.Builder documentActionBuilder = DocumentAction.newBuilder();
-					documentActionBuilder.setValue(validateNull(valueList.get(i)));
-					documentActionBuilder.setName(validateNull(nameList.get(i)));
-					documentActionBuilder.setDescription(validateNull(descriptionList.get(i)));
+					documentActionBuilder.setValue(ValueUtil.validateNull(valueList.get(i)));
+					documentActionBuilder.setName(ValueUtil.validateNull(nameList.get(i)));
+					documentActionBuilder.setDescription(ValueUtil.validateNull(descriptionList.get(i)));
 					builder.addDocumentActions(documentActionBuilder);
 				}
 			}
@@ -3436,9 +3387,9 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		//	Set default value
 		if (!defaultName.equals("")) {
 			DocumentAction.Builder documentActionBuilder = DocumentAction.newBuilder();
-			documentActionBuilder.setValue(validateNull(defaultValue));
-			documentActionBuilder.setName(validateNull(defaultName));
-			documentActionBuilder.setDescription(validateNull(defaultDescription));
+			documentActionBuilder.setValue(ValueUtil.validateNull(defaultValue));
+			documentActionBuilder.setName(ValueUtil.validateNull(defaultName));
+			documentActionBuilder.setDescription(ValueUtil.validateNull(defaultDescription));
 			builder.setDefaultDocumentAction(documentActionBuilder);
 		}
 		//	Add record count
@@ -3528,9 +3479,9 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			for (int i = 0; i < valueList.size(); i++) {
 				if (status.equals(valueList.get(i))) {
 					DocumentStatus.Builder documentStatusBuilder = DocumentStatus.newBuilder();
-					documentStatusBuilder.setValue(validateNull(valueList.get(i)));
-					documentStatusBuilder.setName(validateNull(nameList.get(i)));
-					documentStatusBuilder.setDescription(validateNull(descriptionList.get(i)));
+					documentStatusBuilder.setValue(ValueUtil.validateNull(valueList.get(i)));
+					documentStatusBuilder.setName(ValueUtil.validateNull(nameList.get(i)));
+					documentStatusBuilder.setDescription(ValueUtil.validateNull(descriptionList.get(i)));
 					builder.addDocumentStatuses(documentStatusBuilder);
 				}
 			}
@@ -3569,9 +3520,9 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			for (int i = 0; i < valueList.size(); i++) {
 				if (option.equals(valueList.get(i))) {
 					DocumentStatus.Builder documentActionBuilder = DocumentStatus.newBuilder();
-					documentActionBuilder.setValue(validateNull(valueList.get(i)));
-					documentActionBuilder.setName(validateNull(nameList.get(i)));
-					documentActionBuilder.setDescription(validateNull(descriptionList.get(i)));
+					documentActionBuilder.setValue(ValueUtil.validateNull(valueList.get(i)));
+					documentActionBuilder.setName(ValueUtil.validateNull(nameList.get(i)));
+					documentActionBuilder.setDescription(ValueUtil.validateNull(descriptionList.get(i)));
 					builder.addDocumentStatuses(documentActionBuilder);
 				}
 			}
@@ -3674,7 +3625,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			nexPageToken = getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
 		}
 		//	Set next page
-		builder.setNextPageToken(validateNull(nexPageToken));
+		builder.setNextPageToken(ValueUtil.validateNull(nexPageToken));
 		//	Return
 		return builder;
 	}
@@ -3686,14 +3637,14 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	 */
 	private ChatEntry.Builder convertChatEntry(MChatEntry chatEntry) {
 		ChatEntry.Builder builder = ChatEntry.newBuilder();
-		builder.setChatEntryUuid(validateNull(chatEntry.getUUID()));
-		builder.setChatUuid(validateNull(chatEntry.getCM_Chat().getUUID()));
-		builder.setSubject(validateNull(chatEntry.getSubject()));
-		builder.setCharacterData(validateNull(chatEntry.getCharacterData()));
+		builder.setChatEntryUuid(ValueUtil.validateNull(chatEntry.getUUID()));
+		builder.setChatUuid(ValueUtil.validateNull(chatEntry.getCM_Chat().getUUID()));
+		builder.setSubject(ValueUtil.validateNull(chatEntry.getSubject()));
+		builder.setCharacterData(ValueUtil.validateNull(chatEntry.getCharacterData()));
 		if(chatEntry.getAD_User_ID() != 0) {
 			MUser user = MUser.get(chatEntry.getCtx(), chatEntry.getAD_User_ID());
-			builder.setUserUuid(validateNull(user.getUUID()));
-			builder.setUserName(validateNull(user.getName()));
+			builder.setUserUuid(ValueUtil.validateNull(user.getUUID()));
+			builder.setUserName(ValueUtil.validateNull(user.getName()));
 		}
 		builder.setLogDate(chatEntry.getCreated().getTime());
 		//	Confidential Type
@@ -3781,7 +3732,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			nexPageToken = getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
 		}
 		//	Set next page
-		builder.setNextPageToken(validateNull(nexPageToken));
+		builder.setNextPageToken(ValueUtil.validateNull(nexPageToken));
 		//	Return
 		return builder;
 	}
@@ -3794,14 +3745,14 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	private RecordChat.Builder convertRecordChat(MChat recordChat) {
 		MTable table = MTable.get(recordChat.getCtx(), recordChat.getAD_Table_ID());
 		RecordChat.Builder builder = RecordChat.newBuilder();
-		builder.setChatUuid(validateNull(recordChat.getUUID()));
-		builder.setTableName(validateNull(table.getTableName()));
+		builder.setChatUuid(ValueUtil.validateNull(recordChat.getUUID()));
+		builder.setTableName(ValueUtil.validateNull(table.getTableName()));
 		if(recordChat.getCM_ChatType_ID() != 0) {
 			MChatType chatType = MChatType.get(recordChat.getCtx(), recordChat.getCM_Chat_ID());
-			builder.setChatTypeUuid(validateNull(chatType.getUUID()));
+			builder.setChatTypeUuid(ValueUtil.validateNull(chatType.getUUID()));
 		}
 		builder.setRecordId(recordChat.getRecord_ID());
-		builder.setDescription(validateNull(recordChat.getDescription()));
+		builder.setDescription(ValueUtil.validateNull(recordChat.getDescription()));
 		builder.setLogDate(recordChat.getCreated().getTime());
 		//	Confidential Type
 		if(!Util.isEmpty(recordChat.getConfidentialType())) {
@@ -3873,7 +3824,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			nexPageToken = getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
 		}
 		//	Set next page
-		builder.setNextPageToken(validateNull(nexPageToken));
+		builder.setNextPageToken(ValueUtil.validateNull(nexPageToken));
 		//	Return
 		return builder;
 	}
@@ -3928,7 +3879,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			nexPageToken = getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
 		}
 		//	Set next page
-		builder.setNextPageToken(validateNull(nexPageToken));
+		builder.setNextPageToken(ValueUtil.validateNull(nexPageToken));
 		//	Return
 		return builder;
 	}
@@ -3941,8 +3892,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	private WorkflowDefinition.Builder convertWorkflowDefinition(MWorkflow workflow) {
 		MTable table = MTable.get(workflow.getCtx(), workflow.getAD_Table_ID());
 		WorkflowDefinition.Builder builder = WorkflowDefinition.newBuilder();
-		builder.setWorkflowUuid(validateNull(workflow.getUUID()));
-		builder.setValue(validateNull(workflow.getValue()));
+		builder.setWorkflowUuid(ValueUtil.validateNull(workflow.getUUID()));
+		builder.setValue(ValueUtil.validateNull(workflow.getValue()));
 		String name = workflow.getName();
 		String description = workflow.getDescription();
 		String help = workflow.getHelp();
@@ -3960,17 +3911,17 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				help = translation;
 			}
 		}
-		builder.setName(validateNull(name));
-		builder.setDescription(validateNull(description));
-		builder.setHelp(validateNull(help));
+		builder.setName(ValueUtil.validateNull(name));
+		builder.setDescription(ValueUtil.validateNull(description));
+		builder.setHelp(ValueUtil.validateNull(help));
 		
 		if(workflow.getAD_WF_Responsible_ID() != 0) {
 			MWFResponsible responsible = MWFResponsible.get(workflow.getCtx(), workflow.getAD_WF_Responsible_ID());
-			builder.setResponsibleUuid(validateNull(responsible.getUUID()));
-			builder.setResponsibleName(validateNull(responsible.getName()));
+			builder.setResponsibleUuid(ValueUtil.validateNull(responsible.getUUID()));
+			builder.setResponsibleName(ValueUtil.validateNull(responsible.getName()));
 		}
 		builder.setPriority(workflow.getPriority());
-		builder.setTableName(validateNull(table.getTableName()));
+		builder.setTableName(ValueUtil.validateNull(table.getTableName()));
 		builder.setIsDefault(workflow.isDefault());
 		builder.setIsValid(workflow.isValid());
 		if(workflow.getValidFrom() != null) {
@@ -4026,8 +3977,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	 */
 	private WorkflowNode.Builder convertWorkflowNode(MWFNode node) {
 		WorkflowNode.Builder builder = WorkflowNode.newBuilder();
-		builder.setNodeUuid(validateNull(node.getUUID()));
-		builder.setValue(validateNull(node.getValue()));
+		builder.setNodeUuid(ValueUtil.validateNull(node.getUUID()));
+		builder.setValue(ValueUtil.validateNull(node.getValue()));
 		String name = node.getName();
 		String description = node.getDescription();
 		String help = node.getHelp();
@@ -4045,14 +3996,14 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				help = translation;
 			}
 		}
-		builder.setName(validateNull(name));
-		builder.setDescription(validateNull(description));
-		builder.setHelp(validateNull(help));
+		builder.setName(ValueUtil.validateNull(name));
+		builder.setDescription(ValueUtil.validateNull(description));
+		builder.setHelp(ValueUtil.validateNull(help));
 		
 		if(node.getAD_WF_Responsible_ID() != 0) {
 			MWFResponsible responsible = MWFResponsible.get(node.getCtx(), node.getAD_WF_Responsible_ID());
-			builder.setResponsibleUuid(validateNull(responsible.getUUID()));
-			builder.setResponsibleName(validateNull(responsible.getName()));
+			builder.setResponsibleUuid(ValueUtil.validateNull(responsible.getUUID()));
+			builder.setResponsibleName(ValueUtil.validateNull(responsible.getName()));
 		}
 		builder.setPriority(node.getPriority());
 		//	Get Events
@@ -4075,8 +4026,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	private WorkflowTransition.Builder convertTransition(MWFNodeNext transition) {
 		WorkflowTransition.Builder builder = WorkflowTransition.newBuilder();
 		MWFNode nodeNext = MWFNode.get(transition.getCtx(), transition.getAD_WF_NodeNext_ID());
-		builder.setNodeNextUuid(validateNull(nodeNext.getUUID()));
-		builder.setDescription(validateNull(transition.getDescription()));
+		builder.setNodeNextUuid(ValueUtil.validateNull(nodeNext.getUUID()));
+		builder.setDescription(ValueUtil.validateNull(transition.getDescription()));
 		builder.setSequence(transition.getSeqNo());
 		builder.setIsStdUserWorkflow(transition.isStdUserWorkflow());
 		//	Get Events
@@ -4100,8 +4051,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		WorkflowCondition.Builder builder = WorkflowCondition.newBuilder();
 		builder.setSequence(condition.getSeqNo());
 		MColumn column = MColumn.get(condition.getCtx(), condition.getAD_Column_ID());
-		builder.setColumnName(validateNull(column.getColumnName()));
-		builder.setValue(validateNull(condition.getValue()));
+		builder.setColumnName(ValueUtil.validateNull(column.getColumnName()));
+		builder.setValue(ValueUtil.validateNull(condition.getValue()));
 		//	Condition Type
 		if(!Util.isEmpty(condition.getAndOr())) {
 			if(condition.getAndOr().equals(MWFNextCondition.ANDOR_And)) {
@@ -4143,9 +4094,9 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	private WorkflowProcess.Builder convertWorkflowLog(MWFProcess workflowProcess) {
 		MTable table = MTable.get(workflowProcess.getCtx(), workflowProcess.getAD_Table_ID());
 		WorkflowProcess.Builder builder = WorkflowProcess.newBuilder();
-		builder.setProcessUuid(validateNull(workflowProcess.getUUID()));
+		builder.setProcessUuid(ValueUtil.validateNull(workflowProcess.getUUID()));
 		MWorkflow workflow = MWorkflow.get(workflowProcess.getCtx(), workflowProcess.getAD_Workflow_ID());
-		builder.setWorkflowUuid(validateNull(workflow.getUUID()));
+		builder.setWorkflowUuid(ValueUtil.validateNull(workflow.getUUID()));
 		String workflowName = workflow.getName();
 		if(!Env.isBaseLanguage(workflowProcess.getCtx(), "")) {
 			String translation = workflow.get_Translation(MWorkflow.COLUMNNAME_Name);
@@ -4155,18 +4106,18 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		}
 		if(workflowProcess.getAD_WF_Responsible_ID() != 0) {
 			MWFResponsible responsible = MWFResponsible.get(workflowProcess.getCtx(), workflowProcess.getAD_WF_Responsible_ID());
-			builder.setResponsibleUuid(validateNull(responsible.getUUID()));
-			builder.setResponsibleName(validateNull(responsible.getName()));
+			builder.setResponsibleUuid(ValueUtil.validateNull(responsible.getUUID()));
+			builder.setResponsibleName(ValueUtil.validateNull(responsible.getName()));
 		}
 		if(workflowProcess.getAD_User_ID() != 0) {
 			MUser user = MUser.get(workflowProcess.getCtx(), workflowProcess.getAD_User_ID());
-			builder.setUserUuid(validateNull(user.getUUID()));
-			builder.setUserName(validateNull(user.getName()));
+			builder.setUserUuid(ValueUtil.validateNull(user.getUUID()));
+			builder.setUserName(ValueUtil.validateNull(user.getName()));
 		}
-		builder.setWorkflowName(validateNull(workflowName));
+		builder.setWorkflowName(ValueUtil.validateNull(workflowName));
 		builder.setRecordId(workflowProcess.getRecord_ID());
-		builder.setTableName(validateNull(table.getTableName()));
-		builder.setTextMessage(validateNull(Msg.parseTranslation(workflowProcess.getCtx(), workflowProcess.getTextMsg())));
+		builder.setTableName(ValueUtil.validateNull(table.getTableName()));
+		builder.setTextMessage(ValueUtil.validateNull(Msg.parseTranslation(workflowProcess.getCtx(), workflowProcess.getTextMsg())));
 		builder.setProcessed(workflowProcess.isProcessed());
 		builder.setLogDate(workflowProcess.getCreated().getTime());
 		//	State
@@ -4207,7 +4158,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		MTable table = MTable.get(workflowEventAudit.getCtx(), workflowEventAudit.getAD_Table_ID());
 		WorkflowEvent.Builder builder = WorkflowEvent.newBuilder();
 		MWFNode node = MWFNode.get(workflowEventAudit.getCtx(), workflowEventAudit.getAD_WF_Node_ID());
-		builder.setNodeUuid(validateNull(node.getUUID()));
+		builder.setNodeUuid(ValueUtil.validateNull(node.getUUID()));
 		String nodeName = node.getName();
 		if(!Env.isBaseLanguage(workflowEventAudit.getCtx(), "")) {
 			String translation = node.get_Translation(MWFNode.COLUMNNAME_Name);
@@ -4215,20 +4166,20 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				nodeName = translation;
 			}
 		}
-		builder.setNodeName(validateNull(nodeName));
+		builder.setNodeName(ValueUtil.validateNull(nodeName));
 		if(workflowEventAudit.getAD_WF_Responsible_ID() != 0) {
 			MWFResponsible responsible = MWFResponsible.get(workflowEventAudit.getCtx(), workflowEventAudit.getAD_WF_Responsible_ID());
-			builder.setResponsibleUuid(validateNull(responsible.getUUID()));
-			builder.setResponsibleName(validateNull(responsible.getName()));
+			builder.setResponsibleUuid(ValueUtil.validateNull(responsible.getUUID()));
+			builder.setResponsibleName(ValueUtil.validateNull(responsible.getName()));
 		}
 		if(workflowEventAudit.getAD_User_ID() != 0) {
 			MUser user = MUser.get(workflowEventAudit.getCtx(), workflowEventAudit.getAD_User_ID());
-			builder.setUserUuid(validateNull(user.getUUID()));
-			builder.setUserName(validateNull(user.getName()));
+			builder.setUserUuid(ValueUtil.validateNull(user.getUUID()));
+			builder.setUserName(ValueUtil.validateNull(user.getName()));
 		}
 		builder.setRecordId(workflowEventAudit.getRecord_ID());
-		builder.setTableName(validateNull(table.getTableName()));
-		builder.setTextMessage(validateNull(Msg.parseTranslation(workflowEventAudit.getCtx(), workflowEventAudit.getTextMsg())));
+		builder.setTableName(ValueUtil.validateNull(table.getTableName()));
+		builder.setTextMessage(ValueUtil.validateNull(Msg.parseTranslation(workflowEventAudit.getCtx(), workflowEventAudit.getTextMsg())));
 		builder.setLogDate(workflowEventAudit.getCreated().getTime());
 		if(workflowEventAudit.getElapsedTimeMS() != null) {
 			builder.setTimeElapsed(workflowEventAudit.getElapsedTimeMS().longValue());
@@ -4250,9 +4201,9 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			}
 		}
 		//	
-		builder.setAttributeName(validateNull(workflowEventAudit.getAttributeName()));
-		builder.setOldValue(validateNull(workflowEventAudit.getOldValue()));
-		builder.setNewValue(validateNull(workflowEventAudit.getNewValue()));
+		builder.setAttributeName(ValueUtil.validateNull(workflowEventAudit.getAttributeName()));
+		builder.setOldValue(ValueUtil.validateNull(workflowEventAudit.getOldValue()));
+		builder.setNewValue(ValueUtil.validateNull(workflowEventAudit.getNewValue()));
   		return builder;
 	}
 	
@@ -4302,7 +4253,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			nexPageToken = getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
 		}
 		//	Set next page
-		builder.setNextPageToken(validateNull(nexPageToken));
+		builder.setNextPageToken(ValueUtil.validateNull(nexPageToken));
 		//	Return
 		return builder;
 	}
@@ -4318,11 +4269,11 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		RecordLog.Builder builder = RecordLog.newBuilder();
 		builder.setLogId(recordLog.getAD_ChangeLog_ID());
 		builder.setRecordId(recordLog.getRecord_ID());
-		builder.setTableName(validateNull(table.getTableName()));
-		builder.setSessionUuid(validateNull(recordLog.getAD_Session().getUUID()));
-		builder.setUserUuid(validateNull(user.getUUID()));
-		builder.setUserName(validateNull(user.getName()));
-		builder.setTransactionName(validateNull(recordLog.getTrxName()));
+		builder.setTableName(ValueUtil.validateNull(table.getTableName()));
+		builder.setSessionUuid(ValueUtil.validateNull(recordLog.getAD_Session().getUUID()));
+		builder.setUserUuid(ValueUtil.validateNull(user.getUUID()));
+		builder.setUserName(ValueUtil.validateNull(user.getName()));
+		builder.setTransactionName(ValueUtil.validateNull(recordLog.getTrxName()));
 		builder.setLogDate(recordLog.getCreated().getTime());
 		if(recordLog.getEventChangeLog().endsWith(MChangeLog.EVENTCHANGELOG_Insert)) {
 			builder.setEventType(org.spin.grpc.util.RecordLog.EventType.INSERT);
@@ -4365,7 +4316,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	private ChangeLog.Builder convertChangeLog(MChangeLog recordLog) {
 		ChangeLog.Builder builder = ChangeLog.newBuilder();
 		MColumn column = MColumn.get(recordLog.getCtx(), recordLog.getAD_Column_ID());
-		builder.setColumnName(validateNull(column.getColumnName()));
+		builder.setColumnName(ValueUtil.validateNull(column.getColumnName()));
 		String displayColumnName = column.getName();
 		if(column.getColumnName().equals("ProcessedOn")) {
 			M_Element element = M_Element.get(recordLog.getCtx(), "LastRun");
@@ -4384,13 +4335,13 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				}
 			}
 		}
-		builder.setDisplayColumnName(validateNull(displayColumnName));
-		builder.setDescription(validateNull(recordLog.getDescription()));
+		builder.setDisplayColumnName(ValueUtil.validateNull(displayColumnName));
+		builder.setDescription(ValueUtil.validateNull(recordLog.getDescription()));
 		String oldValue = recordLog.getOldValue();
 		String newValue = recordLog.getNewValue();
 		//	Set Old Value
-		builder.setOldValue(validateNull(oldValue));
-		builder.setNewValue(validateNull(newValue));
+		builder.setOldValue(ValueUtil.validateNull(oldValue));
+		builder.setNewValue(ValueUtil.validateNull(newValue));
 		//	Set Display Values
 		if (oldValue != null && oldValue.equals(MChangeLog.NULL))
 			oldValue = null;
@@ -4424,7 +4375,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				if (newValue != null)
 					displayNewValue = intFormat.format (new Integer (newValue));
 			} else if (DisplayType.isNumeric (column.getAD_Reference_ID ())) {
-				if(column.getColumnName().equals("ProcessedOn")) {
+				if(column.getColumnName().equals(I_C_Order.COLUMNNAME_ProcessedOn)) {
 					if (oldValue != null) {
 						if(oldValue.indexOf(".") > 0) {
 							oldValue = oldValue.substring(0, oldValue.indexOf("."));
@@ -4453,7 +4404,9 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					displayOldValue = dateTimeFormat.format (Timestamp.valueOf (oldValue));
 				if (newValue != null)
 					displayNewValue = dateTimeFormat.format (Timestamp.valueOf (newValue));
-			} else if (DisplayType.isLookup(column.getAD_Reference_ID ())) {
+			} else if (DisplayType.isLookup(column.getAD_Reference_ID())
+					|| (DisplayType.Button == column.getAD_Reference_ID()
+							&& column.getAD_Reference_Value_ID() != 0)) {
 				MLookup lookup = MLookupFactory.get (Env.getCtx(), 0,
 						column.getAD_Column_ID(), column.getAD_Reference_ID(),
 					Env.getLanguage(Env.getCtx()), column.getColumnName(),
@@ -4478,8 +4431,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			log.log(Level.WARNING, oldValue + "->" + newValue, e);
 		}
 		//	Set display values
-		builder.setOldDisplayValue(validateNull(displayOldValue));
-		builder.setNewDisplayValue(validateNull(displayNewValue));
+		builder.setOldDisplayValue(ValueUtil.validateNull(displayOldValue));
+		builder.setNewDisplayValue(ValueUtil.validateNull(displayNewValue));
 		return builder;
 	}
 	
@@ -4498,13 +4451,13 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 					RecentItem.Builder recentItemBuilder = RecentItem.newBuilder()
 							.setRecordId(recentItem.getRecord_ID())
 							.setTableId(recentItem.getAD_Table_ID())
-							.setDisplayName(validateNull(recentItem.getLabel()));
+							.setDisplayName(ValueUtil.validateNull(recentItem.getLabel()));
 					String menuName = "";
 					String menuDescription = "";
 					String referenceUuid = null;
 					if(recentItem.getAD_Tab_ID() > 0) {
 						MTab tab = MTab.get(context, recentItem.getAD_Tab_ID());
-						recentItemBuilder.setTabUuid(validateNull(tab.getUUID()));
+						recentItemBuilder.setTabUuid(ValueUtil.validateNull(tab.getUUID()));
 						menuName = tab.getName();
 						menuDescription = tab.getDescription();
 						if(!Env.isBaseLanguage(context, "")) {
@@ -4512,11 +4465,11 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 							menuDescription = tab.get_Translation("Description");
 						}
 						//	Add Action
-						recentItemBuilder.setAction(validateNull(MMenu.ACTION_Window));
+						recentItemBuilder.setAction(ValueUtil.validateNull(MMenu.ACTION_Window));
 					}
 					if(recentItem.getAD_Window_ID() > 0) {
 						MWindow window = MWindow.get(context, recentItem.getAD_Window_ID());
-						recentItemBuilder.setWindowUuid(validateNull(window.getUUID()));
+						recentItemBuilder.setWindowUuid(ValueUtil.validateNull(window.getUUID()));
 						menuName = window.getName();
 						menuDescription = window.getDescription();
 						referenceUuid = window.getUUID();
@@ -4525,11 +4478,11 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 							menuDescription = window.get_Translation("Description");
 						}
 						//	Add Action
-						recentItemBuilder.setAction(validateNull(MMenu.ACTION_Window));
+						recentItemBuilder.setAction(ValueUtil.validateNull(MMenu.ACTION_Window));
 					}
 					if(recentItem.getAD_Menu_ID() > 0) {
 						MMenu menu = MMenu.getFromId(context, recentItem.getAD_Menu_ID());
-						recentItemBuilder.setMenuUuid(validateNull(menu.getUUID()));
+						recentItemBuilder.setMenuUuid(ValueUtil.validateNull(menu.getUUID()));
 						if(!menu.isCentrallyMaintained()) {
 							menuName = menu.getName();
 							menuDescription = menu.getDescription();
@@ -4539,7 +4492,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 							}
 						}
 						//	Add Action
-						recentItemBuilder.setAction(validateNull(menu.getAction()));
+						recentItemBuilder.setAction(ValueUtil.validateNull(menu.getAction()));
 						//	Supported actions
 						if(!Util.isEmpty(menu.getAction())) {
 							if(menu.getAction().equals(MMenu.ACTION_Form)) {
@@ -4567,17 +4520,17 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 						}
 					}
 					//	Add time
-					recentItemBuilder.setMenuName(validateNull(menuName));
-					recentItemBuilder.setMenuDescription(validateNull(menuDescription));
+					recentItemBuilder.setMenuName(ValueUtil.validateNull(menuName));
+					recentItemBuilder.setMenuDescription(ValueUtil.validateNull(menuDescription));
 					recentItemBuilder.setUpdated(recentItem.getUpdated().getTime());
-					recentItemBuilder.setReferenceUuid(validateNull(referenceUuid));
+					recentItemBuilder.setReferenceUuid(ValueUtil.validateNull(referenceUuid));
 					//	For uuid
 					if(recentItem.getAD_Table_ID() != 0
 							&& recentItem.getRecord_ID() != 0) {
 						MTable table = MTable.get(context, recentItem.getAD_Table_ID());
 						if(table != null
 								&& table.getAD_Table_ID() != 0) {
-							recentItemBuilder.setRecordUuid(validateNull(table.getPO(recentItem.getRecord_ID(), null).get_UUID()));
+							recentItemBuilder.setRecordUuid(ValueUtil.validateNull(table.getPO(recentItem.getRecord_ID(), null).get_UUID()));
 						}
 					}
 					//	
@@ -4598,7 +4551,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	 */
 	private ProcessLog.Builder convertProcessLog(MPInstance instance) {
 		ProcessLog.Builder builder = ProcessLog.newBuilder();
-		builder.setInstanceUuid(validateNull(instance.getUUID()));
+		builder.setInstanceUuid(ValueUtil.validateNull(instance.getUUID()));
 		builder.setIsError(!instance.isOK());
 		builder.setIsProcessing(instance.isProcessing());
 		builder.setLastRun(instance.getUpdated().getTime());
@@ -4608,14 +4561,14 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		}
 		//	for report
 		MProcess process = MProcess.get(Env.getCtx(), instance.getAD_Process_ID());
-		builder.setUuid(validateNull(process.getUUID()));
+		builder.setUuid(ValueUtil.validateNull(process.getUUID()));
 		if(process.isReport()) {
 			ReportOutput.Builder outputBuilder = ReportOutput.newBuilder();
-			outputBuilder.setReportType(validateNull(instance.getReportType()));
-			outputBuilder.setName(validateNull(instance.getName()));
+			outputBuilder.setReportType(ValueUtil.validateNull(instance.getReportType()));
+			outputBuilder.setName(ValueUtil.validateNull(instance.getName()));
 			builder.setOutput(outputBuilder.build());
 		}
-		builder.setSummary(validateNull(summary));
+		builder.setSummary(ValueUtil.validateNull(summary));
 		List<X_AD_PInstance_Log> logList = new Query(Env.getCtx(), I_AD_PInstance_Log.Table_Name, 
 				I_AD_PInstance.COLUMNNAME_AD_PInstance_ID + " = ?", null)
 				.setParameters(instance.getAD_PInstance_ID())
@@ -4628,7 +4581,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			if(!Util.isEmpty(message)) {
 				message = Msg.parseTranslation(Env.getCtx(), message);
 			}
-			logBuilder.setLog(validateNull((message)));
+			logBuilder.setLog(ValueUtil.validateNull((message)));
 			builder.addLogs(logBuilder.build());
 		}
 		//	
@@ -4650,14 +4603,12 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				if(number != null 
 						&& !number.equals(Env.ZERO)) {
 					hasFromParameter = true;
-					parameterBuilder.setIntValue(number.intValue());
-					parameterBuilder.setValueType(ValueType.INTEGER);
+					parameterBuilder = ValueUtil.getValueFromInteger(number.intValue());
 				}
 				if(numberTo != null
 						&& !numberTo.equals(Env.ZERO)) {
 					hasToParameter = true;
-					parameterToBuilder.setIntValue(numberTo.intValue());
-					parameterToBuilder.setValueType(ValueType.INTEGER);
+					parameterBuilder = ValueUtil.getValueFromInteger(numberTo.intValue());
 				}
 			} else if(DisplayType.isNumeric(displayType)) {
 				BigDecimal number = parameter.getP_Number();
@@ -4666,14 +4617,12 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				if(number != null 
 						&& !number.equals(Env.ZERO)) {
 					hasFromParameter = true;
-					parameterBuilder.setDoubleValue(number.doubleValue());
-					parameterBuilder.setValueType(ValueType.DOUBLE);
+					parameterBuilder = ValueUtil.getValueFromDecimal(number);
 				}
 				if(numberTo != null
 						&& !numberTo.equals(Env.ZERO)) {
 					hasToParameter = true;
-					parameterToBuilder.setDoubleValue(numberTo.doubleValue());
-					parameterToBuilder.setValueType(ValueType.DOUBLE);
+					parameterBuilder = ValueUtil.getValueFromDecimal(numberTo);
 				}
 			} else if(DisplayType.isDate(displayType)) {
 				Timestamp date = parameter.getP_Date();
@@ -4681,20 +4630,17 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				//	Validate
 				if(date != null) {
 					hasFromParameter = true;
-					parameterBuilder.setLongValue(date.getTime());
-					parameterBuilder.setValueType(ValueType.DATE);
+					parameterBuilder = ValueUtil.getValueFromDate(date);
 				}
 				if(dateTo != null) {
 					hasToParameter = true;
-					parameterToBuilder.setLongValue(dateTo.getTime());
-					parameterToBuilder.setValueType(ValueType.DATE);
+					parameterBuilder = ValueUtil.getValueFromDate(dateTo);
 				}
 			} else if(DisplayType.YesNo == displayType) {
 				String value = parameter.getP_String();
 				if(!Util.isEmpty(value)) {
 					hasFromParameter = true;
-					parameterBuilder.setBooleanValue(!Util.isEmpty(value) && value.equals("Y"));
-					parameterBuilder.setValueType(ValueType.BOOLEAN);
+					parameterBuilder = ValueUtil.getValueFromBoolean(!Util.isEmpty(value) && value.equals("Y"));
 				}
 			} else {
 				String value = parameter.getP_String();
@@ -4702,13 +4648,11 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				//	Validate
 				if(!Util.isEmpty(value)) {
 					hasFromParameter = true;
-					parameterBuilder.setStringValue(validateNull(value));
-					parameterBuilder.setValueType(ValueType.STRING);
+					parameterBuilder = ValueUtil.getValueFromString(value);
 				}
 				if(!Util.isEmpty(valueTo)) {
 					hasToParameter = true;
-					parameterToBuilder.setStringValue(validateNull(valueTo));
-					parameterToBuilder.setValueType(ValueType.STRING);
+					parameterBuilder = ValueUtil.getValueFromString(valueTo);
 				}
 			}
 			//	For parameter
@@ -4768,18 +4712,18 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		gridTab.clearSelection();
 		gridTab.dataNew(false);
 		//	load values
-		Map<String, Object> attributes = convertValues(request.getAttributesList());
+		Map<String, Object> attributes = ValueUtil.convertValuesToObjects(request.getAttributesList());
 		for(Entry<String, Object> attribute : attributes.entrySet()) {
 			gridTab.setValue(attribute.getKey(), attribute.getValue());
 		}
 		//	Load value for field
-		gridField.setValue(getValueFromType(request.getOldValue()), false);
-		gridField.setValue(getValueFromType(request.getValue()), false);
+		gridField.setValue(ValueUtil.getObjectFromValue(request.getOldValue()), false);
+		gridField.setValue(ValueUtil.getObjectFromValue(request.getValue()), false);
 		//	Run it
 		String result = processCallout(context, windowNo, gridTab, gridField);
 		Arrays.asList(gridTab.getFields()).stream().filter(fieldValue -> isValidChange(fieldValue))
-		.forEach(fieldValue -> calloutBuilder.putValues(fieldValue.getColumnName(), getValueFromObject(fieldValue.getValue()).build()));
-		calloutBuilder.setResult(validateNull(result));
+		.forEach(fieldValue -> calloutBuilder.putValues(fieldValue.getColumnName(), ValueUtil.getValueFromObject(fieldValue.getValue()).build()));
+		calloutBuilder.setResult(ValueUtil.validateNull(result));
 		return calloutBuilder;
 	}
 	
@@ -4925,7 +4869,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		if(entity == null) {
 			return builder;
 		}
-		builder.setUuid(validateNull(entity.get_ValueAsString(I_AD_Element.COLUMNNAME_UUID)))
+		builder.setUuid(ValueUtil.validateNull(entity.get_ValueAsString(I_AD_Element.COLUMNNAME_UUID)))
 			.setId(entity.get_ID());
 		//	Convert attributes
 		POInfo poInfo = POInfo.getPOInfo(context, entity.get_Table_ID());
@@ -4935,7 +4879,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			if(value == null) {
 				continue;
 			}
-			Value.Builder builderValue = getValueFromObject(value);
+			Value.Builder builderValue = ValueUtil.getValueFromObject(value);
 			if(builderValue == null) {
 				continue;
 			}
@@ -4944,54 +4888,6 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		}
 		//	
 		return builder;
-	}
-	
-	/**
-	 * Get Value 
-	 * @param value
-	 * @return
-	 */
-	private Value.Builder getValueFromObject(Object value) {
-		Value.Builder builderValue = Value.newBuilder();
-		if(value == null) {
-			return builderValue;
-		}
-		//	Validate value
-		if(value instanceof BigDecimal) {
-			BigDecimal bigdecimalValue = (BigDecimal) value;
-			builderValue.setValueType(ValueType.DOUBLE);
-			builderValue.setDoubleValue(bigdecimalValue.doubleValue());
-		} else if (value instanceof Integer) {
-			builderValue.setValueType(ValueType.INTEGER);
-			builderValue.setIntValue((Integer)value);
-		} else if (value instanceof String) {
-			builderValue.setValueType(ValueType.STRING);
-			builderValue.setStringValue(validateNull((String)value));
-		} else if (value instanceof Boolean) {
-			builderValue.setValueType(ValueType.BOOLEAN);
-			builderValue.setBooleanValue((Boolean) value);
-		} else if(value instanceof Timestamp) {
-			builderValue.setValueType(ValueType.DATE);
-			Timestamp date = (Timestamp) value;
-			builderValue.setLongValue(date.getTime());
-		} else {
-			return null;
-		}
-		//	
-		return builderValue;
-	}
-	
-	/**
-	 * Is lookup include location
-	 * @param displayType
-	 * @return
-	 */
-	private boolean isLookup(int displayType) {
-		return DisplayType.isLookup(displayType)
-				|| DisplayType.Account == displayType
-				|| DisplayType.Location == displayType
-				|| DisplayType.Locator == displayType
-				|| DisplayType.PAttribute == displayType;
 	}
 	
 	/**
@@ -5007,36 +4903,23 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		if(keyValue == null) {
 			return builder;
 		}
-		builder.setUuid(validateNull(uuidValue));
+		builder.setUuid(ValueUtil.validateNull(uuidValue));
 		
 		if(keyValue instanceof Integer) {
 			builder.setId((Integer) keyValue);
-			builder.putValues(KEY_COLUMN_KEY, Value.newBuilder().setValueType(ValueType.INTEGER).setIntValue((Integer) keyValue).build());
+			builder.putValues(KEY_COLUMN_KEY, ValueUtil.getValueFromInteger((Integer) keyValue).build());
 		} else {
-			builder.putValues(KEY_COLUMN_KEY, Value.newBuilder().setValueType(ValueType.STRING).setStringValue(validateNull((String) keyValue)).build());
+			builder.putValues(KEY_COLUMN_KEY, ValueUtil.getValueFromString((String) keyValue).build());
 		}
 		//	Set Value
 		if(!Util.isEmpty(value)) {
-			builder.putValues(VALUE_COLUMN_KEY, Value.newBuilder().setValueType(ValueType.STRING).setStringValue(validateNull(value)).build());
+			builder.putValues(VALUE_COLUMN_KEY, ValueUtil.getValueFromString(value).build());
 		}
 		//	Display column
 		if(!Util.isEmpty(displayValue)) {
-			builder.putValues(DISPLAY_COLUMN_KEY, Value.newBuilder().setValueType(ValueType.STRING).setStringValue(validateNull(displayValue)).build());
+			builder.putValues(DISPLAY_COLUMN_KEY, ValueUtil.getValueFromString(displayValue).build());
 		}
 		//	
 		return builder;
-	}
-	
-	/**
-	 * Convert null on ""
-	 * @param value
-	 * @return
-	 */
-	private String validateNull(String value) {
-		if(value == null) {
-			value = "";
-		}
-		//	
-		return value;
 	}
 }

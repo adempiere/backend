@@ -234,19 +234,24 @@ message KeyValue {
 message Value {
 	int32 intValue = 1;
 	int64 longValue = 2;
-	double doubleValue = 3;
-	bool booleanValue = 4;
-	string stringValue = 5;
+	bool booleanValue = 3;
+	string stringValue = 4;
+	Decimal decimalValue = 5;
 	enum ValueType {
 		NULL = 0;
 		INTEGER = 1;
-		LONG = 2;
-		DOUBLE = 3;
-		BOOLEAN = 4;
-		STRING = 5;
-		DATE = 6;
+		DECIMAL = 2;
+		BOOLEAN = 3;
+		STRING = 4;
+		DATE = 5;
 	}
 	ValueType valueType = 6;
+}
+
+// Define numeric types
+message Decimal {
+	string decimalValue = 1;
+	int32 scale = 2;
 }
 
 // Get Lookup Item
