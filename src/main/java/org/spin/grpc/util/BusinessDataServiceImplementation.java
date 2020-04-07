@@ -2200,11 +2200,14 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		}
 		request.getAttributesList().forEach(attribute -> {
 			int referenceId = getReferenceId(entity.get_Table_ID(), attribute.getKey());
+			Object value = null;
 			if(referenceId > 0) {
-				entity.set_ValueOfColumn(attribute.getKey(), ValueUtil.getObjectFromReference(attribute.getValue(), referenceId));
-			} else {
-				entity.set_ValueOfColumn(attribute.getKey(), ValueUtil.getObjectFromValue(attribute.getValue()));
+				value = ValueUtil.getObjectFromReference(attribute.getValue(), referenceId);
+			} 
+			if(value == null) {
+				value = ValueUtil.getObjectFromValue(attribute.getValue());
 			}
+			entity.set_ValueOfColumn(attribute.getKey(), value);
 		});
 		//	Save entity
 		entity.saveEx();
@@ -2265,11 +2268,14 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				&& entity.get_ID() >= 0) {
 			request.getAttributesList().forEach(attribute -> {
 				int referenceId = getReferenceId(entity.get_Table_ID(), attribute.getKey());
+				Object value = null;
 				if(referenceId > 0) {
-					entity.set_ValueOfColumn(attribute.getKey(), ValueUtil.getObjectFromReference(attribute.getValue(), referenceId));
-				} else {
-					entity.set_ValueOfColumn(attribute.getKey(), ValueUtil.getObjectFromValue(attribute.getValue()));
+					value = ValueUtil.getObjectFromReference(attribute.getValue(), referenceId);
+				} 
+				if(value == null) {
+					value = ValueUtil.getObjectFromValue(attribute.getValue());
 				}
+				entity.set_ValueOfColumn(attribute.getKey(), value);
 			});
 			//	Save entity
 			entity.saveEx();
