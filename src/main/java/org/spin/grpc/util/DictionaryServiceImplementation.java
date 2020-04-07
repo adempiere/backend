@@ -160,7 +160,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			defaultLanguage = DB.getSQLValueString(null, "SELECT AD_Language "
 					+ "FROM AD_Language "
 					+ "WHERE LanguageISO = ? "
-					+ "AND IsSystemLanguage = 'Y'", language);
+					+ "AND (IsSystemLanguage = 'Y' OR IsBaseLanguage = 'Y')", language);
 		}
 		if(Util.isEmpty(defaultLanguage)) {
 			defaultLanguage = Language.AD_Language_en_US;
@@ -354,11 +354,11 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		//	
 		builder = Window.newBuilder()
 				.setId(window.getAD_Window_ID())
-				.setUuid(validateNull(window.getUUID()))
+				.setUuid(ValueUtil.validateNull(window.getUUID()))
 				.setName(window.getName())
-				.setDescription(validateNull(window.getDescription()))
-				.setHelp(validateNull(window.getHelp()))
-				.setWindowType(validateNull(window.getWindowType()))
+				.setDescription(ValueUtil.validateNull(window.getDescription()))
+				.setHelp(ValueUtil.validateNull(window.getHelp()))
+				.setWindowType(ValueUtil.validateNull(window.getWindowType()))
 				.setIsSOTrx(window.isSOTrx())
 				.setIsActive(window.isActive());
 		if(contextInfoBuilder != null) {
@@ -606,19 +606,19 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				whereClause.append(" AND ").append("(").append(tab.getWhereClause()).append(")");
 			}
 		} else {
-			whereClause.append(validateNull(tab.getWhereClause()));
+			whereClause.append(ValueUtil.validateNull(tab.getWhereClause()));
 		}
 		//	create build
 		Tab.Builder builder = Tab.newBuilder()
 				.setId(tab.getAD_Tab_ID())
-				.setUuid(validateNull(tab.getUUID()))
-				.setName(validateNull(tab.getName()))
-				.setDescription(validateNull(tab.getDescription()))
-				.setHelp(validateNull(tab.getHelp()))
+				.setUuid(ValueUtil.validateNull(tab.getUUID()))
+				.setName(ValueUtil.validateNull(tab.getName()))
+				.setDescription(ValueUtil.validateNull(tab.getDescription()))
+				.setHelp(ValueUtil.validateNull(tab.getHelp()))
 				.setAccessLevel(Integer.parseInt(table.getAccessLevel()))
-				.setCommitWarning(validateNull(tab.getCommitWarning()))
+				.setCommitWarning(ValueUtil.validateNull(tab.getCommitWarning()))
 				.setSequence(tab.getSeqNo())
-				.setDisplayLogic(validateNull(tab.getDisplayLogic()))
+				.setDisplayLogic(ValueUtil.validateNull(tab.getDisplayLogic()))
 				.setIsAdvancedTab(tab.isAdvancedTab())
 				.setIsDeleteable(table.isDeleteable())
 				.setIsDocument(table.isDocument())
@@ -631,11 +631,11 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setIsTranslationTab(tab.isTranslationTab())
 				.setIsView(table.isView())
 				.setTabLevel(tab.getTabLevel())
-				.setTableName(validateNull(table.getTableName()))
-				.setQuery(validateNull(getQueryWithReferencesFromTab(tab)))
+				.setTableName(ValueUtil.validateNull(table.getTableName()))
+				.setQuery(ValueUtil.validateNull(getQueryWithReferencesFromTab(tab)))
 				.setWhereClause(whereClause.toString())
-				.setOrderByClause(validateNull(tab.getOrderByClause()))
-				.setParentTabUuid(validateNull(parentTabUuid))
+				.setOrderByClause(ValueUtil.validateNull(tab.getOrderByClause()))
+				.setParentTabUuid(ValueUtil.validateNull(parentTabUuid))
 				.setIsChangeLog(table.isChangeLog())
 				.setIsActive(tab.isActive());
 		//	For link
@@ -738,18 +738,18 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			//	Add message text
 			MessageText messageText = MessageText.newBuilder()
 					.setId(message.getAD_Message_ID())
-					.setUuid(validateNull(message.getUUID()))
-					.setValue(validateNull(message.getValue()))
-					.setMsgText(validateNull(msgText))
-					.setMsgTip(validateNull(msgTip))
+					.setUuid(ValueUtil.validateNull(message.getUUID()))
+					.setValue(ValueUtil.validateNull(message.getValue()))
+					.setMsgText(ValueUtil.validateNull(msgText))
+					.setMsgTip(ValueUtil.validateNull(msgTip))
 					.build();
 			builder = ContextInfo.newBuilder()
 					.setId(contextInfoValue.getAD_ContextInfo_ID())
-					.setUuid(validateNull(contextInfoValue.getUUID()))
-					.setName(validateNull(contextInfoValue.getName()))
-					.setDescription(validateNull(contextInfoValue.getDescription()))
+					.setUuid(ValueUtil.validateNull(contextInfoValue.getUUID()))
+					.setName(ValueUtil.validateNull(contextInfoValue.getName()))
+					.setDescription(ValueUtil.validateNull(contextInfoValue.getDescription()))
 					.setMessageText(messageText)
-					.setSqlStatement(validateNull(contextInfoValue.getSQLStatement()));
+					.setSqlStatement(ValueUtil.validateNull(contextInfoValue.getSQLStatement()));
 		}
 		return builder;
 	}
@@ -764,11 +764,11 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		process = ASPUtil.getInstance(context).getProcess(process.getAD_Process_ID());
 		Process.Builder builder = Process.newBuilder()
 				.setId(process.getAD_Process_ID())
-				.setUuid(validateNull(process.getUUID()))
-				.setValue(validateNull(process.getValue()))
-				.setName(validateNull(process.getName()))
-				.setDescription(validateNull(process.getDescription()))
-				.setHelp(validateNull(process.getHelp()))
+				.setUuid(ValueUtil.validateNull(process.getUUID()))
+				.setValue(ValueUtil.validateNull(process.getValue()))
+				.setName(ValueUtil.validateNull(process.getName()))
+				.setDescription(ValueUtil.validateNull(process.getDescription()))
+				.setHelp(ValueUtil.validateNull(process.getHelp()))
 				.setAccessLevel(Integer.parseInt(process.getAccessLevel()))
 				.setIsDirectPrint(process.isDirectPrint())
 				.setIsReport(process.isReport())
@@ -782,9 +782,9 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			ReportExportHandler exportHandler = new ReportExportHandler(Env.getCtx(), reportView);
 			for(AbstractExportFormat reportType : exportHandler.getExportFormatList()) {
 				ReportExportType.Builder reportExportType = ReportExportType.newBuilder();
-				reportExportType.setName(validateNull(reportType.getName()));
-				reportExportType.setDescription(validateNull(reportType.getName()));
-				reportExportType.setType(validateNull(reportType.getExtension()));
+				reportExportType.setName(ValueUtil.validateNull(reportType.getName()));
+				reportExportType.setDescription(ValueUtil.validateNull(reportType.getName()));
+				reportExportType.setType(ValueUtil.validateNull(reportType.getExtension()));
 				builder.addReportExportTypes(reportExportType.build());
 			}
 		}
@@ -811,11 +811,11 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		String orderByClause = getSQLOrderBy(browser);
 		Browser.Builder builder = Browser.newBuilder()
 				.setId(browser.getAD_Process_ID())
-				.setUuid(validateNull(browser.getUUID()))
-				.setValue(validateNull(browser.getValue()))
+				.setUuid(ValueUtil.validateNull(browser.getUUID()))
+				.setValue(ValueUtil.validateNull(browser.getValue()))
 				.setName(browser.getName())
-				.setDescription(validateNull(browser.getDescription()))
-				.setHelp(validateNull(browser.getHelp()))
+				.setDescription(ValueUtil.validateNull(browser.getDescription()))
+				.setHelp(ValueUtil.validateNull(browser.getHelp()))
 				.setAccessLevel(Integer.parseInt(browser.getAccessLevel()))
 				.setIsActive(browser.isActive())
 				.setIsCollapsibleByDefault(browser.isCollapsibleByDefault())
@@ -824,12 +824,12 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setIsSelectedByDefault(browser.isSelectedByDefault())
 				.setIsShowTotal(browser.isShowTotal())
 				.setIsUpdateable(browser.isUpdateable())
-				.setQuery(validateNull(query))
-				.setWhereClause(validateNull(browser.getWhereClause()))
-				.setOrderByClause(validateNull(orderByClause));
+				.setQuery(ValueUtil.validateNull(query))
+				.setWhereClause(ValueUtil.validateNull(browser.getWhereClause()))
+				.setOrderByClause(ValueUtil.validateNull(orderByClause));
 		//	Set View UUID
 		if(browser.getAD_View_ID() > 0) {
-			builder.setViewUuid(validateNull(browser.getAD_View().getUUID()));
+			builder.setViewUuid(ValueUtil.validateNull(browser.getAD_View().getUUID()));
 		}
 		//	Window Reference
 		if(browser.getAD_Window_ID() > 0) {
@@ -1013,25 +1013,25 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		//	Convert
 		Field.Builder builder = Field.newBuilder()
 				.setId(processParameter.getAD_Process_Para_ID())
-				.setUuid(validateNull(processParameter.getUUID()))
-				.setName(validateNull(processParameter.getName()))
-				.setDescription(validateNull(processParameter.getDescription()))
-				.setHelp(validateNull(processParameter.getHelp()))
-				.setColumnName(validateNull(processParameter.getColumnName()))
-				.setElementName(validateNull(processParameter.getColumnName()))
-				.setDefaultValue(validateNull(processParameter.getDefaultValue()))
-				.setDefaultValueTo(validateNull(processParameter.getDefaultValue2()))
-				.setDisplayLogic(validateNull(processParameter.getDisplayLogic()))
+				.setUuid(ValueUtil.validateNull(processParameter.getUUID()))
+				.setName(ValueUtil.validateNull(processParameter.getName()))
+				.setDescription(ValueUtil.validateNull(processParameter.getDescription()))
+				.setHelp(ValueUtil.validateNull(processParameter.getHelp()))
+				.setColumnName(ValueUtil.validateNull(processParameter.getColumnName()))
+				.setElementName(ValueUtil.validateNull(processParameter.getColumnName()))
+				.setDefaultValue(ValueUtil.validateNull(processParameter.getDefaultValue()))
+				.setDefaultValueTo(ValueUtil.validateNull(processParameter.getDefaultValue2()))
+				.setDisplayLogic(ValueUtil.validateNull(processParameter.getDisplayLogic()))
 				.setDisplayType(processParameter.getAD_Reference_ID())
 				.setIsDisplayed(true)
 				.setIsInfoOnly(processParameter.isInfoOnly())
 				.setIsMandatory(processParameter.isMandatory())
 				.setIsRange(processParameter.isRange())
-				.setReadOnlyLogic(validateNull(processParameter.getReadOnlyLogic()))
+				.setReadOnlyLogic(ValueUtil.validateNull(processParameter.getReadOnlyLogic()))
 				.setSequence(processParameter.getSeqNo())
-				.setValueMax(validateNull(processParameter.getValueMax()))
-				.setValueMin(validateNull(processParameter.getValueMin()))
-				.setVFormat(validateNull(processParameter.getVFormat()))
+				.setValueMax(ValueUtil.validateNull(processParameter.getValueMax()))
+				.setValueMin(ValueUtil.validateNull(processParameter.getValueMin()))
+				.setVFormat(ValueUtil.validateNull(processParameter.getVFormat()))
 				.setFieldLength(processParameter.getFieldLength())
 				.setIsActive(processParameter.isActive());
 		//	
@@ -1068,13 +1068,13 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		//	Convert
 		Field.Builder builder = Field.newBuilder()
 				.setId(browseField.getAD_Browse_Field_ID())
-				.setUuid(validateNull(browseField.getUUID()))
-				.setName(validateNull(browseField.getName()))
-				.setDescription(validateNull(browseField.getDescription()))
-				.setHelp(validateNull(browseField.getHelp()))
-				.setDefaultValue(validateNull(browseField.getDefaultValue()))
-				.setDefaultValueTo(validateNull(browseField.getDefaultValue2()))
-				.setDisplayLogic(validateNull(browseField.getDisplayLogic()))
+				.setUuid(ValueUtil.validateNull(browseField.getUUID()))
+				.setName(ValueUtil.validateNull(browseField.getName()))
+				.setDescription(ValueUtil.validateNull(browseField.getDescription()))
+				.setHelp(ValueUtil.validateNull(browseField.getHelp()))
+				.setDefaultValue(ValueUtil.validateNull(browseField.getDefaultValue()))
+				.setDefaultValueTo(ValueUtil.validateNull(browseField.getDefaultValue2()))
+				.setDisplayLogic(ValueUtil.validateNull(browseField.getDisplayLogic()))
 				.setDisplayType(browseField.getAD_Reference_ID())
 				.setIsDisplayed(browseField.isDisplayed())
 				.setIsQueryCriteria(browseField.isQueryCriteria())
@@ -1083,19 +1083,19 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setIsMandatory(browseField.isMandatory())
 				.setIsRange(browseField.isRange())
 				.setIsReadOnly(browseField.isReadOnly())
-				.setReadOnlyLogic(validateNull(browseField.getReadOnlyLogic()))
+				.setReadOnlyLogic(ValueUtil.validateNull(browseField.getReadOnlyLogic()))
 				.setIsKey(browseField.isKey())
 				.setIsIdentifier(browseField.isIdentifier())
 				.setSeqNoGrid(browseField.getSeqNoGrid())
 				.setSequence(browseField.getSeqNo())
-				.setValueMax(validateNull(browseField.getValueMax()))
-				.setValueMin(validateNull(browseField.getValueMin()))
-				.setVFormat(validateNull(browseField.getVFormat()))
+				.setValueMax(ValueUtil.validateNull(browseField.getValueMax()))
+				.setValueMin(ValueUtil.validateNull(browseField.getValueMin()))
+				.setVFormat(ValueUtil.validateNull(browseField.getVFormat()))
 				.setIsActive(browseField.isActive())
-				.setCallout(validateNull(browseField.getCallout()))
+				.setCallout(ValueUtil.validateNull(browseField.getCallout()))
 				.setFieldLength(browseField.getFieldLength())
 				.setDisplayType(browseField.getAD_Reference_ID());
-		builder.setColumnName(validateNull(browseField.getAD_View_Column().getColumnName()));
+		builder.setColumnName(ValueUtil.validateNull(browseField.getAD_View_Column().getColumnName()));
 		String elementName = null;
 		if(browseField.getAD_View_Column().getAD_Column_ID() != 0) {
 			MColumn column = MColumn.get(context, browseField.getAD_View_Column().getAD_Column_ID());
@@ -1105,7 +1105,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		if(Util.isEmpty(elementName)) {
 			elementName = browseField.getAD_Element().getColumnName();
 		}
-		builder.setElementName(validateNull(elementName));
+		builder.setElementName(ValueUtil.validateNull(elementName));
 		//	
 		int displayTypeId = browseField.getAD_Reference_ID();
 		if(DisplayType.isLookup(displayTypeId)) {
@@ -1176,18 +1176,18 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		//	Convert
 		Field.Builder builder = Field.newBuilder()
 				.setId(field.getAD_Field_ID())
-				.setUuid(validateNull(field.getUUID()))
-				.setName(validateNull(field.getName()))
-				.setDescription(validateNull(field.getDescription()))
-				.setHelp(validateNull(field.getHelp()))
-				.setCallout(validateNull(column.getCallout()))
-				.setColumnName(validateNull(column.getColumnName()))
-				.setElementName(validateNull(column.getColumnName()))
-				.setColumnSQL(validateNull(column.getColumnSQL()))
-				.setDefaultValue(validateNull(defaultValue))
-				.setDisplayLogic(validateNull(field.getDisplayLogic()))
+				.setUuid(ValueUtil.validateNull(field.getUUID()))
+				.setName(ValueUtil.validateNull(field.getName()))
+				.setDescription(ValueUtil.validateNull(field.getDescription()))
+				.setHelp(ValueUtil.validateNull(field.getHelp()))
+				.setCallout(ValueUtil.validateNull(column.getCallout()))
+				.setColumnName(ValueUtil.validateNull(column.getColumnName()))
+				.setElementName(ValueUtil.validateNull(column.getColumnName()))
+				.setColumnSQL(ValueUtil.validateNull(column.getColumnSQL()))
+				.setDefaultValue(ValueUtil.validateNull(defaultValue))
+				.setDisplayLogic(ValueUtil.validateNull(field.getDisplayLogic()))
 				.setDisplayType(displayTypeId)
-				.setFormatPattern(validateNull(column.getFormatPattern()))
+				.setFormatPattern(ValueUtil.validateNull(column.getFormatPattern()))
 				.setIdentifierSequence(column.getSeqNo())
 				.setIsAllowCopy(field.isAllowCopy())
 				.setIsAllowLogging(column.isAllowLogging())
@@ -1208,11 +1208,11 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setIsSelectionColumn(column.isSelectionColumn())
 				.setIsTranslated(column.isTranslated())
 				.setIsUpdateable(column.isUpdateable())
-				.setMandatoryLogic(validateNull(column.getMandatoryLogic()))
-				.setReadOnlyLogic(validateNull(column.getReadOnlyLogic()))
+				.setMandatoryLogic(ValueUtil.validateNull(column.getMandatoryLogic()))
+				.setReadOnlyLogic(ValueUtil.validateNull(column.getReadOnlyLogic()))
 				.setSequence(field.getSeqNo())
-				.setValueMax(validateNull(column.getValueMax()))
-				.setValueMin(validateNull(column.getValueMin()))
+				.setValueMax(ValueUtil.validateNull(column.getValueMax()))
+				.setValueMin(ValueUtil.validateNull(column.getValueMin()))
 				.setFieldLength(column.getFieldLength())
 				.setIsActive(field.isActive());
 		//	Context Info
@@ -1279,9 +1279,9 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			//	Reference
 			builder = FieldDefinition.newBuilder()
 					.setId(fieldDefinition.getAD_FieldDefinition_ID())
-					.setUuid(validateNull(fieldDefinition.getUUID()))
-					.setValue(validateNull(fieldDefinition.getValue()))
-					.setName(validateNull(fieldDefinition.getName()));
+					.setUuid(ValueUtil.validateNull(fieldDefinition.getUUID()))
+					.setValue(ValueUtil.validateNull(fieldDefinition.getValue()))
+					.setName(ValueUtil.validateNull(fieldDefinition.getName()));
 			//	Get conditions
 			for(MADFieldCondition condition : fieldDefinition.getConditions()) {
 				if(!condition.isActive()) {
@@ -1289,9 +1289,9 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				}
 				FieldCondition.Builder fieldConditionBuilder = FieldCondition.newBuilder()
 						.setId(fieldDefinition.getAD_FieldDefinition_ID())
-						.setUuid(validateNull(condition.getUUID()))
-						.setCondition(validateNull(condition.getCondition()))
-						.setStylesheet(validateNull(condition.getStylesheet()))
+						.setUuid(ValueUtil.validateNull(condition.getUUID()))
+						.setCondition(ValueUtil.validateNull(condition.getCondition()))
+						.setStylesheet(ValueUtil.validateNull(condition.getStylesheet()))
 						.setIsActive(fieldDefinition.isActive());
 				//	Add to parent
 				builder.addConditions(fieldConditionBuilder);
@@ -1322,8 +1322,8 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			//	Field Group
 			builder = FieldGroup.newBuilder()
 					.setId(fieldGroup.getAD_FieldGroup_ID())
-					.setUuid(validateNull(fieldGroup.getUUID()))
-					.setName(validateNull(name))
+					.setUuid(ValueUtil.validateNull(fieldGroup.getUUID()))
+					.setName(ValueUtil.validateNull(name))
 					.setFieldGroupType(fieldGroup.getFieldGroupType())
 					.setIsActive(fieldGroup.isActive());
 		}
@@ -1338,11 +1338,11 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	 */
 	private Reference.Builder convertReference(Properties context, MLookupInfo info, String language) {
 		Reference.Builder builder = Reference.newBuilder()
-				.setTableName(validateNull(info.TableName))
-				.setKeyColumnName(validateNull(info.KeyColumn))
-				.setDisplayColumnName(validateNull(info.DisplayColumn))
-				.setDirectQuery(validateNull(info.QueryDirect))
-				.setValidationCode(validateNull(info.ValidationCode));
+				.setTableName(ValueUtil.validateNull(info.TableName))
+				.setKeyColumnName(ValueUtil.validateNull(info.KeyColumn))
+				.setDisplayColumnName(ValueUtil.validateNull(info.DisplayColumn))
+				.setDirectQuery(ValueUtil.validateNull(info.QueryDirect))
+				.setValidationCode(ValueUtil.validateNull(info.ValidationCode));
 		//	For validation
 		String queryForLookup = info.Query;
 		if(!Util.isEmpty(info.ValidationCode)) {
@@ -1360,7 +1360,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			}
 		}
 		//	For Query
-		builder.setQuery(validateNull(queryForLookup));
+		builder.setQuery(ValueUtil.validateNull(queryForLookup));
 		//	Window Reference
 		if(info.ZoomWindow > 0) {
 			builder.addWindows(convertZoomWindow(context, info.ZoomWindow, language).build());
@@ -1397,22 +1397,9 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		//	Return
 		return ZoomWindow.newBuilder()
 				.setId(window.getAD_Window_ID())
-				.setUuid(validateNull(window.getUUID()))
-				.setName(validateNull(name))
-				.setDescription(validateNull(description))
+				.setUuid(ValueUtil.validateNull(window.getUUID()))
+				.setName(ValueUtil.validateNull(name))
+				.setDescription(ValueUtil.validateNull(description))
 				.setIsSOTrx(window.isSOTrx());
-	}
-	
-	/**
-	 * Convert null on ""
-	 * @param value
-	 * @return
-	 */
-	private String validateNull(String value) {
-		if(value == null) {
-			value = "";
-		}
-		//	
-		return value;
 	}
 }

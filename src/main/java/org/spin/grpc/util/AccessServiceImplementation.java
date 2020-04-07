@@ -317,7 +317,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 			defaultLanguage = DB.getSQLValueString(null, "SELECT AD_Language "
 					+ "FROM AD_Language "
 					+ "WHERE LanguageISO = ? "
-					+ "AND IsSystemLanguage = 'Y'", language);
+					+ "AND (IsSystemLanguage = 'Y' OR IsBaseLanguage = 'Y')", language);
 		}
 		if(Util.isEmpty(defaultLanguage)) {
 			defaultLanguage = Language.AD_Language_en_US;
@@ -418,8 +418,8 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 		loadPreferences(context);
 		//	Session values
 		builder.setId(session.getAD_Session_ID());
-		builder.setUuid(validateNull(session.getUUID()));
-		builder.setName(validateNull(session.getDescription()));
+		builder.setUuid(ValueUtil.validateNull(session.getUUID()));
+		builder.setName(ValueUtil.validateNull(session.getDescription()));
 		builder.setUserInfo(convertUserInfo(MUser.get(Env.getCtx(), userId)).build());
 		//	Set role
 		Role.Builder roleBuilder = convertRole(role, false);
@@ -656,7 +656,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 			builder.setLongValue((Long) value);
 		} else {
 			builder.setValueType(ContextValue.ValueType.STRING);
-			builder.setStringValue(validateNull((String) value));
+			builder.setStringValue(ValueUtil.validateNull((String) value));
 		}
 		//	
 		return builder;
@@ -724,8 +724,8 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 		loadPreferences(context);
 		//	Session values
 		builder.setId(session.getAD_Session_ID());
-		builder.setUuid(validateNull(session.getUUID()));
-		builder.setName(validateNull(session.getDescription()));
+		builder.setUuid(ValueUtil.validateNull(session.getUUID()));
+		builder.setName(ValueUtil.validateNull(session.getDescription()));
 		builder.setUserInfo(convertUserInfo(MUser.get(Env.getCtx(), userId)).build());
 		//	Set default context
 		context.entrySet().stream()
@@ -771,8 +771,8 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 		session.logout();
 		//	Session values
 		builder.setId(session.getAD_Session_ID());
-		builder.setUuid(validateNull(session.getUUID()));
-		builder.setName(validateNull(session.getDescription()));
+		builder.setUuid(ValueUtil.validateNull(session.getUUID()));
+		builder.setName(ValueUtil.validateNull(session.getDescription()));
 		builder.setUserInfo(convertUserInfo(MUser.get(context, session.getCreatedBy())).build());
 		//	Return session
 		return builder;
@@ -799,8 +799,8 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 		}
 		//	Session values
 		builder.setId(session.getAD_Session_ID());
-		builder.setUuid(validateNull(session.getUUID()));
-		builder.setName(validateNull(session.getDescription()));
+		builder.setUuid(ValueUtil.validateNull(session.getUUID()));
+		builder.setName(ValueUtil.validateNull(session.getDescription()));
 		builder.setUserInfo(convertUserInfo(MUser.get(context, session.getCreatedBy())).build());
 		//	Set role
 		Role.Builder roleBuilder = convertRole(MRole.get(context, session.getAD_Role_ID()), false);
@@ -823,10 +823,10 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 	private UserInfo.Builder convertUserInfo(MUser user) {
 		UserInfo.Builder userInfo = UserInfo.newBuilder();
 		userInfo.setId(user.getAD_User_ID());
-		userInfo.setUuid(validateNull(user.getUUID()));
-		userInfo.setName(validateNull(user.getName()));
-		userInfo.setDescription(validateNull(user.getDescription()));
-		userInfo.setComments(validateNull(user.getComments()));
+		userInfo.setUuid(ValueUtil.validateNull(user.getUUID()));
+		userInfo.setName(ValueUtil.validateNull(user.getName()));
+		userInfo.setDescription(ValueUtil.validateNull(user.getDescription()));
+		userInfo.setComments(ValueUtil.validateNull(user.getComments()));
 		return userInfo;
 	}
 	
@@ -927,10 +927,10 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 			MClient client = MClient.get(Env.getCtx(), role.getAD_Client_ID());
 			builder = Role.newBuilder()
 					.setId(role.getAD_Role_ID())
-					.setUuid(validateNull(role.getUUID()))
-					.setName(validateNull(role.getName()))
-					.setDescription(validateNull(role.getDescription()))
-					.setClientName(validateNull(client.getName()))
+					.setUuid(ValueUtil.validateNull(role.getUUID()))
+					.setName(ValueUtil.validateNull(role.getName()))
+					.setDescription(ValueUtil.validateNull(role.getDescription()))
+					.setClientName(ValueUtil.validateNull(client.getName()))
 					.setClientId(role.getAD_Client_ID())
 					.setIsCanExport(role.isCanExport())
 					.setIsCanReport(role.isCanReport())
@@ -947,7 +947,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 				for(MRoleOrgAccess access : orgAccessList) {
 					MOrg organization = MOrg.get(Env.getCtx(), access.getAD_Org_ID());
 					Access.Builder accessBuilder = Access.newBuilder()
-							.setUuid(validateNull(organization.getUUID()))
+							.setUuid(ValueUtil.validateNull(organization.getUUID()))
 							.setIsReadOnly(access.isReadOnly());
 					builder.addOrganizations(accessBuilder.build());
 				}
@@ -958,7 +958,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 					.<MProcessAccess>list();
 				for(MProcessAccess access : processAccessList) {
 					Access.Builder accessBuilder = Access.newBuilder()
-							.setUuid(validateNull(access.getAD_Process().getUUID()))
+							.setUuid(ValueUtil.validateNull(access.getAD_Process().getUUID()))
 							.setIsReadOnly(!access.isReadWrite());
 					builder.addProcess(accessBuilder.build());
 				}
@@ -969,7 +969,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 					.<MWindowAccess>list();
 				for(MWindowAccess access : windowAccessList) {
 					Access.Builder accessBuilder = Access.newBuilder()
-							.setUuid(validateNull(access.getAD_Window().getUUID()))
+							.setUuid(ValueUtil.validateNull(access.getAD_Window().getUUID()))
 							.setIsReadOnly(!access.isReadWrite());
 					builder.addWindows(accessBuilder.build());
 				}
@@ -980,7 +980,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 					.<MFormAccess>list();
 				for(MFormAccess access : formAccessList) {
 					Access.Builder accessBuilder = Access.newBuilder()
-							.setUuid(validateNull(access.getAD_Form().getUUID()))
+							.setUuid(ValueUtil.validateNull(access.getAD_Form().getUUID()))
 							.setIsReadOnly(!access.isReadWrite());
 					builder.addForms(accessBuilder.build());
 				}
@@ -991,7 +991,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 					.<X_AD_Browse_Access>list();
 				for(X_AD_Browse_Access access : browseAccessList) {
 					Access.Builder accessBuilder = Access.newBuilder()
-							.setUuid(validateNull(access.getAD_Browse().getUUID()))
+							.setUuid(ValueUtil.validateNull(access.getAD_Browse().getUUID()))
 							.setIsReadOnly(!access.isReadWrite());
 					builder.addBrowsers(accessBuilder.build());
 				}
@@ -1002,7 +1002,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 					.<X_AD_Task_Access>list();
 				for(X_AD_Task_Access access : taskAccessList) {
 					Access.Builder accessBuilder = Access.newBuilder()
-							.setUuid(validateNull(access.getAD_Task().getUUID()))
+							.setUuid(ValueUtil.validateNull(access.getAD_Task().getUUID()))
 							.setIsReadOnly(!access.isReadWrite());
 					builder.addTasks(accessBuilder.build());
 				}
@@ -1013,7 +1013,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 					.<X_AD_Dashboard_Access>list();
 				for(X_AD_Dashboard_Access access : dashboardAccessList) {
 					Access.Builder accessBuilder = Access.newBuilder()
-							.setUuid(validateNull(access.getPA_DashboardContent().getUUID()));
+							.setUuid(ValueUtil.validateNull(access.getPA_DashboardContent().getUUID()));
 					builder.addDashboards(accessBuilder.build());
 				}
 				//	Workflow Access
@@ -1023,7 +1023,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 					.<MWorkflowAccess>list();
 				for(MWorkflowAccess access : workflowAccessList) {
 					Access.Builder accessBuilder = Access.newBuilder()
-							.setUuid(validateNull(access.getAD_Workflow().getUUID()))
+							.setUuid(ValueUtil.validateNull(access.getAD_Workflow().getUUID()))
 							.setIsReadOnly(!access.isReadWrite());
 					builder.addWorkflows(accessBuilder.build());
 				}
@@ -1035,7 +1035,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 				for(X_AD_Document_Action_Access access : documentActionAccessList) {
 					MDocType documentType = MDocType.get(Env.getCtx(), access.getC_DocType_ID());
 					Access.Builder accessBuilder = Access.newBuilder()
-							.setUuid(validateNull(documentType.getUUID()))
+							.setUuid(ValueUtil.validateNull(documentType.getUUID()))
 							.setAction(access.getAD_Ref_List().getValue());
 					builder.addDocumentActions(accessBuilder.build());
 				}
@@ -1052,7 +1052,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 						accessTypeRule = AccessTypeRule.REPORTING;
 					}
 					TableAccess.Builder accessBuilder = TableAccess.newBuilder()
-							.setTableName(validateNull(access.getAD_Table().getTableName()))
+							.setTableName(ValueUtil.validateNull(access.getAD_Table().getTableName()))
 							.setIsExclude(access.isExclude())
 							.setIsCanReport(access.isCanReport())
 							.setIsCanExport(access.isCanExport())
@@ -1113,7 +1113,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 	private Menu.Builder convertMenu(Properties context, String language) {
 		int roleId = Env.getAD_Role_ID(context);
 		int userId = Env.getAD_User_ID(context);
-		String menuKey = roleId + "|" + userId;
+		String menuKey = roleId + "|" + userId + "|" + language;
 		Menu.Builder builder = menuCache.get(menuKey);
 		if(builder != null) {
 			return builder;
@@ -1179,15 +1179,15 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 		}
 		Menu.Builder builder = Menu.newBuilder()
 				.setId(menu.getAD_Menu_ID())
-				.setUuid(validateNull(menu.getUUID()))
-				.setName(validateNull(name))
-				.setDescription(validateNull(description))
-				.setAction(validateNull(menu.getAction()))
+				.setUuid(ValueUtil.validateNull(menu.getUUID()))
+				.setName(ValueUtil.validateNull(name))
+				.setDescription(ValueUtil.validateNull(description))
+				.setAction(ValueUtil.validateNull(menu.getAction()))
 				.setIsSOTrx(menu.isSOTrx())
 				.setIsSummary(menu.isSummary())
 				.setIsReadOnly(menu.isReadOnly())
 				.setIsActive(menu.isActive())
-				.setParentUuid(validateNull(parentUuid));
+				.setParentUuid(ValueUtil.validateNull(parentUuid));
 		//	Supported actions
 		if(!Util.isEmpty(menu.getAction())) {
 			String referenceUuid = null;
@@ -1213,7 +1213,7 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 					referenceUuid = smartBrowser.getUUID();
 				}
 			}
-			builder.setReferenceUuid(validateNull(referenceUuid));
+			builder.setReferenceUuid(ValueUtil.validateNull(referenceUuid));
 		}
 		return builder;
 	}
@@ -1233,18 +1233,5 @@ public class AccessServiceImplementation extends AccessServiceImplBase {
 			addChildren(context, childBuilder, child, language);
 			builder.addChilds(childBuilder.build());
 		}
-	}
-	
-	/**
-	 * Convert null on ""
-	 * @param value
-	 * @return
-	 */
-	private String validateNull(String value) {
-		if(value == null) {
-			value = "";
-		}
-		//	
-		return value;
 	}
 }

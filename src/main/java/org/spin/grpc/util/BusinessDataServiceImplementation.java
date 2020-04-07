@@ -161,6 +161,7 @@ import org.spin.grpc.util.WorkflowDefinition.PublishStatus;
 import org.spin.grpc.util.WorkflowProcess.WorkflowState;
 import org.spin.model.I_AD_ContextInfo;
 import org.spin.model.MADContextInfo;
+import org.spin.util.ASPUtil;
 import org.spin.util.AbstractExportFormat;
 import org.spin.util.ReportExportHandler;
 
@@ -2370,7 +2371,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			defaultLanguage = DB.getSQLValueString(null, "SELECT AD_Language "
 					+ "FROM AD_Language "
 					+ "WHERE LanguageISO = ? "
-					+ "AND IsSystemLanguage = 'Y'", language);
+					+ "AND (IsSystemLanguage = 'Y' OR IsBaseLanguage = 'Y')", language);
 		}
 		if(Util.isEmpty(defaultLanguage)) {
 			defaultLanguage = Language.AD_Language_en_US;
@@ -2879,7 +2880,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	 */
 	private String getBrowserWhereClause(MBrowse browser, String parsedWhereClause, HashMap<String, Object> parameterMap, List<Object> values) {
 		StringBuilder browserWhereClause = new StringBuilder();
-		List<MBrowseField> fields = browser.getFields();
+		List<MBrowseField> fields = ASPUtil.getInstance().getBrowseFields(browser.getAD_Browse_ID());
 		LinkedHashMap<String, MBrowseField> fieldsMap = new LinkedHashMap<>();
 		//	Add field to map
 		for(MBrowseField field: fields) {
@@ -3102,7 +3103,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		try {
 			LinkedHashMap<String, MBrowseField> fieldsMap = new LinkedHashMap<>();
 			//	Add field to map
-			for(MBrowseField field: browser.getFields()) {
+			for(MBrowseField field: ASPUtil.getInstance().getBrowseFields(browser.getAD_Browse_ID())) {
 				fieldsMap.put(field.getAD_View_Column().getColumnName().toUpperCase(), field);
 			}
 			//	SELECT Key, Value, Name FROM ...
@@ -3162,16 +3163,18 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	 * @return
 	 */
 	private MBrowse getBrowser(Properties context, String uuid) {
-		MBrowse browser = browserRequested.get(uuid);
+		String key = uuid + "|" + Env.getAD_Language(context);
+		MBrowse browser = browserRequested.get(key);
 		if(browser == null) {
 			browser = new Query(context, I_AD_Browse.Table_Name, I_AD_Process.COLUMNNAME_UUID + " = ?", null)
 					.setParameters(uuid)
 					.setOnlyActiveRecords(true)
 					.first();
+			browser = ASPUtil.getInstance(context).getBrowse(browser.getAD_Browse_ID());
 		}
 		//	Put on Cache
 		if(browser != null) {
-			browserRequested.put(uuid, browser);
+			browserRequested.put(key, browser);
 		}
 		//	
 		return browser;
