@@ -2726,9 +2726,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		if(!Util.isEmpty(criteria.getWhereClause())) {
 			whereClause.append("(").append(criteria.getWhereClause()).append(")");
 		}
-		criteria.getValuesList().forEach(value -> {
-			params.add(ValueUtil.getObjectFromValue(value));
-		});
+		criteria.getValuesList().forEach(value -> params.add(ValueUtil.getObjectFromValue(value)));
 		//	For dynamic condition
 		String dynamicWhere = getWhereClauseFromCriteria(criteria, params);
 		if(!Util.isEmpty(dynamicWhere)) {
@@ -2838,55 +2836,19 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 						String columnName = metaData.getColumnName (index);
 						MColumn field = columnsMap.get(columnName.toUpperCase());
 						Value.Builder valueBuilder = Value.newBuilder();
-						boolean isFilled = false;
 						//	Display Columns
 						if(field == null) {
 							String value = rs.getString(index);
 							if(!Util.isEmpty(value)) {
-								isFilled = true;
 								valueBuilder = ValueUtil.getValueFromString(value);
+								valueObjectBuilder.putValues(columnName, valueBuilder.build());
 							}
 							continue;
 						}
 						//	From field
 						String fieldColumnName = field.getColumnName();
-						if(ValueUtil.isLookup(field.getAD_Reference_ID())
-								|| DisplayType.isID(field.getAD_Reference_ID())) {
-							isFilled = true;
-							int type = metaData.getColumnType(index);
-							if(type == Types.DECIMAL
-									|| type == Types.NUMERIC
-									|| type == Types.FLOAT
-									|| type == Types.DOUBLE) {
-								valueBuilder = ValueUtil.getValueFromInteger(rs.getInt(index));
-							} else {
-								valueBuilder = ValueUtil.getValueFromString(rs.getString(index));
-							}
-						} else if(DisplayType.isNumeric(field.getAD_Reference_ID())) {
-							BigDecimal value = rs.getBigDecimal(index);
-							if(value != null) {
-								isFilled = true;
-								valueBuilder = ValueUtil.getValueFromDecimal(value);
-							}
-						} else if(DisplayType.YesNo == field.getAD_Reference_ID()) {
-							isFilled = true;
-							String value = rs.getString(index);
-							valueBuilder = ValueUtil.getValueFromBoolean(!Util.isEmpty(value) && value.equals("Y"));
-						} else if(DisplayType.isDate(field.getAD_Reference_ID())) {
-							Timestamp value = rs.getTimestamp(index);
-							if(value != null) {
-								isFilled = true;
-								valueBuilder = ValueUtil.getValueFromDate(value);
-							}
-							valueBuilder.setValueType(ValueType.DATE);
-						} else if(DisplayType.isText(field.getAD_Reference_ID())) {
-							String value = rs.getString(index);
-							if(!Util.isEmpty(value)) {
-								isFilled = true;
-								valueBuilder = ValueUtil.getValueFromString(value);
-							}
-						}
-						if(isFilled) {
+						valueBuilder = ValueUtil.getValueFromReference(rs.getObject(index), field.getAD_Reference_ID());
+						if(!valueBuilder.getValueType().equals(Value.ValueType.UNRECOGNIZED)) {
 							valueObjectBuilder.putValues(fieldColumnName, valueBuilder.build());
 						}
 					} catch (Exception e) {
@@ -3033,9 +2995,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		Criteria criteria = request.getCriteria();
 		HashMap<String, Object> parameterMap = new HashMap<>();
 		//	Populate map
-		for(KeyValue parameter : request.getParametersList()) {
-			parameterMap.put(parameter.getKey(), ValueUtil.getObjectFromValue(parameter.getValue()));
-		}
+		request.getParametersList().forEach(parameter -> parameterMap.put(parameter.getKey(), ValueUtil.getObjectFromValue(parameter.getValue())));
 		List<Object> values = new ArrayList<Object>();
 		String whereClause = getBrowserWhereClause(browser, criteria.getWhereClause(), parameterMap, values);
 		//	Page prefix
@@ -3161,51 +3121,19 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 						String columnName = metaData.getColumnName (index);
 						MBrowseField field = fieldsMap.get(columnName.toUpperCase());
 						Value.Builder valueBuilder = null;
-						boolean isFilled = false;
 						//	Display Columns
 						if(field == null) {
 							String value = rs.getString(index);
 							if(!Util.isEmpty(value)) {
-								isFilled = true;
-								valueBuilder = ValueUtil.getValueFromObject(value);
+								valueBuilder = ValueUtil.getValueFromString(value);
 								valueObjectBuilder.putValues(columnName, valueBuilder.build());
 							}
 							continue;
 						}
 						//	From field
 						String fieldColumnName = field.getAD_View_Column().getColumnName();
-						if(ValueUtil.isLookup(field.getAD_Reference_ID())
-								|| DisplayType.isID(field.getAD_Reference_ID())) {
-							isFilled = true;
-							if(metaData.getColumnType(index) != Types.DECIMAL) {
-								valueBuilder = ValueUtil.getValueFromObject(rs.getString(index));
-							} else {
-								valueBuilder = ValueUtil.getValueFromObject(rs.getInt(index));
-							}
-						} else if(DisplayType.isNumeric(field.getAD_Reference_ID())) {
-							BigDecimal value = rs.getBigDecimal(index);
-							if(value != null) {
-								isFilled = true;
-								valueBuilder = ValueUtil.getValueFromDecimal(value);
-							}
-						} else if(DisplayType.YesNo == field.getAD_Reference_ID()) {
-							isFilled = true;
-							String value = rs.getString(index);
-							valueBuilder = ValueUtil.getValueFromBoolean(!Util.isEmpty(value) && value.equals("Y"));
-						} else if(DisplayType.isDate(field.getAD_Reference_ID())) {
-							Timestamp value = rs.getTimestamp(index);
-							if(value != null) {
-								isFilled = true;
-								valueBuilder = ValueUtil.getValueFromDate(value);
-							}
-						} else if(DisplayType.isText(field.getAD_Reference_ID())) {
-							String value = rs.getString(index);
-							if(!Util.isEmpty(value)) {
-								isFilled = true;
-								valueBuilder = ValueUtil.getValueFromString(value);
-							}
-						}
-						if(isFilled) {
+						valueBuilder = ValueUtil.getValueFromReference(rs.getObject(index), field.getAD_Reference_ID());
+						if(!valueBuilder.getValueType().equals(Value.ValueType.UNRECOGNIZED)) {
 							valueObjectBuilder.putValues(fieldColumnName, valueBuilder.build());
 						}
 					} catch (Exception e) {
@@ -4881,11 +4809,12 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		POInfo poInfo = POInfo.getPOInfo(context, entity.get_Table_ID());
 		for(int index = 0; index < poInfo.getColumnCount(); index++) {
 			String columnName = poInfo.getColumnName(index);
+			int referenceId = poInfo.getColumnDisplayType(index);
 			Object value = entity.get_Value(index);
 			if(value == null) {
 				continue;
 			}
-			Value.Builder builderValue = ValueUtil.getValueFromObject(value);
+			Value.Builder builderValue = ValueUtil.getValueFromReference(value, referenceId);
 			if(builderValue == null) {
 				continue;
 			}

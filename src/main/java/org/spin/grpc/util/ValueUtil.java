@@ -62,8 +62,13 @@ public class ValueUtil {
 	 * @param value
 	 * @return
 	 */
-	public static Value.Builder getValueFromInteger(int value) {
-		return Value.newBuilder().setIntValue((Integer)value).setValueType(ValueType.INTEGER);
+	public static Value.Builder getValueFromInteger(Integer value) {
+		Value.Builder convertedValue = Value.newBuilder().setValueType(ValueType.INTEGER);
+		if(value != null) {
+			convertedValue.setIntValue((Integer)value);
+		}
+		//	default
+		return convertedValue;
 	}
 	
 	/**
@@ -187,10 +192,20 @@ public class ValueUtil {
 				|| DisplayType.isID(referenceId)) {
 			return getValueFromObject(value);
 		} else if(DisplayType.Integer == referenceId) {
-			return getValueFromInteger((Integer) value);
+			if(value instanceof Integer) {
+				return getValueFromInteger((Integer) value);
+			} else if(value instanceof BigDecimal) {
+				return getValueFromInteger(((BigDecimal) value).intValue());
+			} else {
+				return getValueFromInteger(null);
+			}
 		} else if(DisplayType.isNumeric(referenceId)) {
 			return getValueFromDecimal((BigDecimal) value);
 		} else if(DisplayType.YesNo == referenceId) {
+			if(value instanceof String) {
+				String stringValue = (String) value;
+				value = !Util.isEmpty((String) stringValue) && stringValue.equals("Y");
+			}
 			return getValueFromBoolean((Boolean) value);
 		} else if(DisplayType.isDate(referenceId)) {
 			return getValueFromDate((Timestamp) value);
@@ -198,7 +213,7 @@ public class ValueUtil {
 			return getValueFromString((String) value);
 		}
 		//	
-		return null;
+		return builderValue;
 	}
 	
 	/**
