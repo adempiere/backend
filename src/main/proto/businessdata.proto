@@ -95,6 +95,8 @@ service BusinessDataService {
 	rpc ListDocumentActions(ListDocumentActionsRequest) returns (ListDocumentActionsResponse) {}
 	//	List Document Statuses
 	rpc ListDocumentStatuses(ListDocumentStatusesRequest) returns (ListDocumentStatusesResponse) {}
+	//	Get Country Information
+	rpc GetCountry(GetCountryRequest) returns (Country) {}
 }
 
 // The client request contains client info for request.
@@ -111,6 +113,47 @@ message GetEntityRequest {
 	ClientRequest clientRequest = 4;
 	// Query
 	Criteria criteria = 5;
+}
+
+// Get Country Request
+message GetCountryRequest {
+	string countryUuid = 1;
+	ClientRequest clientRequest = 2;
+}
+
+// Country
+message Country {
+	string uuid = 1;
+	string countryCode = 2;
+	string name = 3;
+	string description = 4;
+	bool hasRegion = 5;
+	string regionName = 6;
+	string displaySequence = 7;
+	bool isAddressLinesReverse = 8;
+	string captureSequence = 9;
+	string displaySequenceLocal = 10;
+	bool isAddressLinesLocalReverse = 11;
+	string expressionPostal = 12;
+	bool hasPostalAdd = 13;
+	string expressionPhone = 14;
+	string mediaSize = 15;
+	string expressionBankRoutingNo = 16;
+	string expressionBankAccountNo = 17;
+	string language = 18;
+	bool allowCitiesOutOfList = 19;
+	bool isPostcodeLookup = 20;
+	Currency currency = 21;
+}
+
+// Currency info
+message Currency {
+	string uuid = 1;
+	string iSOCode = 2;
+	string curSymbol = 3;
+	string description = 4;
+	int32 stdPrecision = 5;
+	int32 costingPrecision = 6;
 }
 
 // Get Entity Request
@@ -238,12 +281,11 @@ message Value {
 	string stringValue = 4;
 	Decimal decimalValue = 5;
 	enum ValueType {
-		NULL = 0;
-		INTEGER = 1;
-		DECIMAL = 2;
-		BOOLEAN = 3;
-		STRING = 4;
-		DATE = 5;
+		INTEGER = 0;
+		DECIMAL = 1;
+		BOOLEAN = 2;
+		STRING = 3;
+		DATE = 4;
 	}
 	ValueType valueType = 6;
 }

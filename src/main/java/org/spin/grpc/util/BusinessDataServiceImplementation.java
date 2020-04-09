@@ -83,6 +83,7 @@ import org.compiere.model.I_AD_Window;
 import org.compiere.model.I_AD_Workflow;
 import org.compiere.model.I_CM_Chat;
 import org.compiere.model.I_CM_ChatEntry;
+import org.compiere.model.I_C_Country;
 import org.compiere.model.I_C_Order;
 import org.compiere.model.I_PA_DashboardContent;
 import org.compiere.model.MChangeLog;
@@ -90,6 +91,8 @@ import org.compiere.model.MChat;
 import org.compiere.model.MChatEntry;
 import org.compiere.model.MChatType;
 import org.compiere.model.MColumn;
+import org.compiere.model.MCountry;
+import org.compiere.model.MCurrency;
 import org.compiere.model.MDashboardContent;
 import org.compiere.model.MDocType;
 import org.compiere.model.MField;
@@ -192,6 +195,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	private static CCache<String, MTab> tabRequested = new CCache<String, MTab>(I_AD_Tab.Table_Name + "_UUID", 30, 0);	//	no time-out
 	/**	Language */
 	private static CCache<String, String> languageCache = new CCache<String, String>("Language_ISO_Code", 30, 0);	//	no time-out
+	/**	Country */
+	private static CCache<String, MCountry> countryCache = new CCache<String, MCountry>(I_C_Country.Table_Name + "_UUID", 30, 0);	//	no time-out
 	/**	Reference cache	*/
 	private static CCache<String, String> referenceWhereClauseCache = new CCache<String, String>("Reference_WhereClause", 30, 0);	//	no time-out
 	/**	Window emulation	*/
@@ -950,6 +955,27 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			Properties context = getContext(request.getClientRequest());
 			ListDocumentStatusesResponse.Builder entityValueList = convertDocumentStatuses(context, request);
 			responseObserver.onNext(entityValueList.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void getCountry(GetCountryRequest request, StreamObserver<Country> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Country Request Null");
+			}
+			log.fine("Country Requested = " + request.getCountryUuid());
+			Properties context = getContext(request.getClientRequest());
+			Country.Builder country = getCountry(context, request);
+			responseObserver.onNext(country.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
@@ -2022,6 +2048,87 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		return convertEntity(context, entity);
 	}
 	
+	/**
+	 * Convert a Country
+	 * @param context
+	 * @param request
+	 * @return
+	 */
+	private Country.Builder getCountry(Properties context, GetCountryRequest request) {
+		MCountry country = countryCache.get(request.getCountryUuid());
+		if(country == null) {
+			country = new Query(context, I_C_Country.Table_Name, I_C_Country.COLUMNNAME_UUID + " = ?", null).first();
+		}
+		if(country != null) {
+			countryCache.put(request.getCountryUuid(), country);
+		}
+		//	Return
+		return convertCountry(context, country);
+	}
+	
+	/**
+	 * Convert Country
+	 * @param context
+	 * @param country
+	 * @return
+	 */
+	private Country.Builder convertCountry(Properties context, MCountry country) {
+		Country.Builder builder = Country.newBuilder();
+		if(country == null) {
+			return builder;
+		}
+		builder.setUuid(ValueUtil.validateNull(country.getUUID()))
+			.setCountryCode(ValueUtil.validateNull(country.getCountryCode()))
+			.setName(ValueUtil.validateNull(country.getName()))
+			.setDescription(ValueUtil.validateNull(country.getDescription()))
+			.setHasRegion(country.isHasRegion())
+			.setRegionName(ValueUtil.validateNull(country.getRegionName()))
+			.setDisplaySequence(ValueUtil.validateNull(country.getDisplaySequence()))
+			.setIsAddressLinesReverse(country.isAddressLinesReverse())
+			.setCaptureSequence(ValueUtil.validateNull(country.getCaptureSequence()))
+			.setDisplaySequenceLocal(ValueUtil.validateNull(country.getDisplaySequenceLocal()))
+			.setIsAddressLinesLocalReverse(country.isAddressLinesLocalReverse())
+			.setHasPostalAdd(country.isHasPostal_Add())
+			.setExpressionPhone(ValueUtil.validateNull(country.getExpressionPhone()))
+			.setMediaSize(ValueUtil.validateNull(country.getMediaSize()))
+			.setExpressionBankRoutingNo(ValueUtil.validateNull(country.getExpressionBankRoutingNo()))
+			.setExpressionBankAccountNo(ValueUtil.validateNull(country.getExpressionBankAccountNo()))
+			.setAllowCitiesOutOfList(country.isAllowCitiesOutOfList())
+			.setIsPostcodeLookup(country.isPostcodeLookup())
+			.setLanguage(ValueUtil.validateNull(country.getAD_Language()));
+		//	Set Currency
+		if(country.getC_Currency_ID() != 0) {
+			builder.setCurrency(convertCurrency(MCurrency.get(context, country.getC_Currency_ID())));
+		}
+		//	
+		return builder;
+	}
+	
+	/**
+	 * Convert Currency
+	 * @param currency
+	 * @return
+	 */
+	private Currency.Builder convertCurrency(MCurrency currency) {
+		Currency.Builder builder = Currency.newBuilder();
+		if(currency == null) {
+			return builder;
+		}
+		//	Set values
+		return builder.setUuid(ValueUtil.validateNull(currency.getUUID()))
+			.setISOCode(ValueUtil.validateNull(currency.getISO_Code()))
+			.setCurSymbol(ValueUtil.validateNull(currency.getCurSymbol()))
+			.setDescription(ValueUtil.validateNull(currency.getDescription()))
+			.setStdPrecision(currency.getStdPrecision())
+			.setCostingPrecision(currency.getCostingPrecision());
+	}
+	
+//	string uuid = 1;
+//	string iSOCode = 2;
+//	string curSymbol = 3;
+//	string description = 4;
+//	int32 stdPrecision = 5;
+//	int32 costingPrecision = 6;
 	/**
 	 * Delete a entity
 	 * @param context
