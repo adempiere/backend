@@ -118,42 +118,45 @@ message GetEntityRequest {
 // Get Country Request
 message GetCountryRequest {
 	string countryUuid = 1;
-	ClientRequest clientRequest = 2;
+	int32 countryId = 2;
+	ClientRequest clientRequest = 3;
 }
 
 // Country
 message Country {
 	string uuid = 1;
-	string countryCode = 2;
-	string name = 3;
-	string description = 4;
-	bool hasRegion = 5;
-	string regionName = 6;
-	string displaySequence = 7;
-	bool isAddressLinesReverse = 8;
-	string captureSequence = 9;
-	string displaySequenceLocal = 10;
-	bool isAddressLinesLocalReverse = 11;
-	string expressionPostal = 12;
-	bool hasPostalAdd = 13;
-	string expressionPhone = 14;
-	string mediaSize = 15;
-	string expressionBankRoutingNo = 16;
-	string expressionBankAccountNo = 17;
-	string language = 18;
-	bool allowCitiesOutOfList = 19;
-	bool isPostcodeLookup = 20;
-	Currency currency = 21;
+	int32 id = 2;
+	string countryCode = 3;
+	string name = 4;
+	string description = 5;
+	bool hasRegion = 6;
+	string regionName = 7;
+	string displaySequence = 8;
+	bool isAddressLinesReverse = 9;
+	string captureSequence = 10;
+	string displaySequenceLocal = 11;
+	bool isAddressLinesLocalReverse = 12;
+	string expressionPostal = 13;
+	bool hasPostalAdd = 14;
+	string expressionPhone = 15;
+	string mediaSize = 16;
+	string expressionBankRoutingNo = 17;
+	string expressionBankAccountNo = 18;
+	string language = 19;
+	bool allowCitiesOutOfList = 20;
+	bool isPostcodeLookup = 21;
+	Currency currency = 22;
 }
 
 // Currency info
 message Currency {
 	string uuid = 1;
-	string iSOCode = 2;
-	string curSymbol = 3;
-	string description = 4;
-	int32 stdPrecision = 5;
-	int32 costingPrecision = 6;
+	int32 id = 2;
+	string iSOCode = 3;
+	string curSymbol = 4;
+	string description = 5;
+	int32 stdPrecision = 6;
+	int32 costingPrecision = 7;
 }
 
 // Get Entity Request

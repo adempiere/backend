@@ -2055,12 +2055,27 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	 * @return
 	 */
 	private Country.Builder getCountry(Properties context, GetCountryRequest request) {
-		MCountry country = countryCache.get(request.getCountryUuid());
-		if(country == null) {
+		String key = null;
+		MCountry country = null;
+		if(Util.isEmpty(request.getCountryUuid()) && request.getCountryId() == 0) {
+			key = "Default";
+			country = countryCache.get(key);
+			if(country == null) {
+				country = MCountry.getDefault(context);
+			}
+		}
+		//	By UUID
+		if(!Util.isEmpty(request.getCountryUuid())
+				&& country == null) {
+			key = request.getCountryUuid();
 			country = new Query(context, I_C_Country.Table_Name, I_C_Country.COLUMNNAME_UUID + " = ?", null).first();
 		}
+		if(request.getCountryId() != 0
+				&& country == null) {
+			key = "ID:|" + request.getCountryId();
+		}
 		if(country != null) {
-			countryCache.put(request.getCountryUuid(), country);
+			countryCache.put(key, country);
 		}
 		//	Return
 		return convertCountry(context, country);
@@ -2078,6 +2093,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			return builder;
 		}
 		builder.setUuid(ValueUtil.validateNull(country.getUUID()))
+			.setId(country.getC_Country_ID())
 			.setCountryCode(ValueUtil.validateNull(country.getCountryCode()))
 			.setName(ValueUtil.validateNull(country.getName()))
 			.setDescription(ValueUtil.validateNull(country.getDescription()))
@@ -2116,6 +2132,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		}
 		//	Set values
 		return builder.setUuid(ValueUtil.validateNull(currency.getUUID()))
+			.setId(currency.getC_Currency_ID())
 			.setISOCode(ValueUtil.validateNull(currency.getISO_Code()))
 			.setCurSymbol(ValueUtil.validateNull(currency.getCurSymbol()))
 			.setDescription(ValueUtil.validateNull(currency.getDescription()))
