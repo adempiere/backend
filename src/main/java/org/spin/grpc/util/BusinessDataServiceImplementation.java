@@ -2068,11 +2068,18 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		if(!Util.isEmpty(request.getCountryUuid())
 				&& country == null) {
 			key = request.getCountryUuid();
-			country = new Query(context, I_C_Country.Table_Name, I_C_Country.COLUMNNAME_UUID + " = ?", null).first();
+			country = countryCache.put(key, country);
+			if(country == null) {
+				country = new Query(context, I_C_Country.Table_Name, I_C_Country.COLUMNNAME_UUID + " = ?", null).first();
+			}
 		}
 		if(request.getCountryId() != 0
 				&& country == null) {
 			key = "ID:|" + request.getCountryId();
+			country = countryCache.put(key, country);
+			if(country == null) {
+				country = MCountry.get(context, request.getCountryId());
+			}
 		}
 		if(country != null) {
 			countryCache.put(key, country);
