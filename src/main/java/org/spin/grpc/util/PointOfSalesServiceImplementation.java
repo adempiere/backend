@@ -14,23 +14,28 @@
  ************************************************************************************/
 package org.spin.grpc.util;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.adempiere.exceptions.AdempiereException;
 import org.compiere.model.I_C_BPartner;
 import org.compiere.model.I_M_PriceList;
 import org.compiere.model.I_M_Product;
+import org.compiere.model.I_M_Warehouse;
 import org.compiere.model.MBPartner;
 import org.compiere.model.MCurrency;
 import org.compiere.model.MPriceList;
 import org.compiere.model.MProduct;
 import org.compiere.model.MProductCategory;
 import org.compiere.model.MProductPricing;
+import org.compiere.model.MStorage;
 import org.compiere.model.MTax;
 import org.compiere.model.MUOM;
+import org.compiere.model.MWarehouse;
 import org.compiere.model.Query;
 import org.compiere.util.CCache;
 import org.compiere.util.CLogger;
@@ -51,6 +56,8 @@ public class PointOfSalesServiceImplementation extends PointOfSalesServiceImplBa
 	private CLogger log = CLogger.getCLogger(PointOfSalesServiceImplementation.class);
 	/**	Product Cache	*/
 	private static CCache<String, MProduct> productCache = new CCache<String, MProduct>(I_M_Product.Table_Name + "-gRPC-Service", 30, 0);	//	no time-out
+	/**	Warehouse Cache	*/
+	private static CCache<String, MWarehouse> warehouseCache = new CCache<String, MWarehouse>(I_M_Warehouse.Table_Name + "-gRPC-Service", 30, 0);	//	no time-out
 	/**	Price List Cache	*/
 	private static CCache<String, MPriceList> priceListCache = new CCache<String, MPriceList>(I_M_PriceList.Table_Name + "-gRPC-Service", 30, 0);	//	no time-out
 	@Override
@@ -194,6 +201,41 @@ public class PointOfSalesServiceImplementation extends PointOfSalesServiceImplBa
 		builder.setPriceList(ValueUtil.getDecimalFromBigDecimal(productPricing.getPriceList()));
 		builder.setPriceStd(ValueUtil.getDecimalFromBigDecimal(productPricing.getPriceStd()));
 		builder.setPriceLimit(ValueUtil.getDecimalFromBigDecimal(productPricing.getPriceLimit()));
+		//	Get Storage
+		
+		if(!Util.isEmpty(request.getWarehouseUuid())) {
+			MWarehouse warehouse = warehouseCache.get(request.getWarehouseUuid());
+			if(warehouse == null) {
+				warehouse = new Query(context, I_M_Warehouse.Table_Name, I_M_Warehouse.COLUMNNAME_UUID + " = ?", null)
+						.setParameters(request.getWarehouseUuid())
+						.setClient_ID()
+						.setOnlyActiveRecords(true)
+						.first();
+				warehouseCache.put(request.getWarehouseUuid(), warehouse);
+			}
+			if(warehouse != null) {
+				int warehouseId = warehouse.getM_Warehouse_ID();
+				AtomicReference<BigDecimal> quantityOnHand = new AtomicReference<BigDecimal>(Env.ZERO);
+				AtomicReference<BigDecimal> quantityReserved = new AtomicReference<BigDecimal>(Env.ZERO);
+				AtomicReference<BigDecimal> quantityOrdered = new AtomicReference<BigDecimal>(Env.ZERO);
+				AtomicReference<BigDecimal> quantityAvailable = new AtomicReference<BigDecimal>(Env.ZERO);
+				//	
+				Arrays.asList(MStorage.getOfProduct(context, product.getM_Product_ID(), null))
+					.stream()
+					.filter(storage -> storage.getM_Warehouse_ID() == warehouseId)
+					.forEach(storage -> {
+						quantityOnHand.updateAndGet(quantity -> quantity.add(storage.getQtyOnHand()));
+						quantityReserved.updateAndGet(quantity -> quantity.add(storage.getQtyReserved()));
+						quantityOrdered.updateAndGet(quantity -> quantity.add(storage.getQtyOrdered()));
+						quantityAvailable.updateAndGet(quantity -> quantity.add(storage.getQtyOnHand().subtract(storage.getQtyReserved())));
+					});
+				builder.setQuantityOnHand(ValueUtil.getDecimalFromBigDecimal(quantityOnHand.get()));
+				builder.setQuantityReserved(ValueUtil.getDecimalFromBigDecimal(quantityReserved.get()));
+				builder.setQuantityOrdered(ValueUtil.getDecimalFromBigDecimal(quantityOrdered.get()));
+				builder.setQuantityAvailable(ValueUtil.getDecimalFromBigDecimal(quantityAvailable.get()));
+			}
+		}
+		
 		return builder;
 	}
 	

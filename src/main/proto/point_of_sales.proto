@@ -96,4 +96,8 @@ message ProductPrice {
 	Currency currency = 8;
 	TaxRate taxRate = 9;
 	int32 pricePrecision = 10;
+	Decimal quantityOnHand = 11;
+	Decimal quantityReserved = 12;
+	Decimal quantityOrdered = 13;
+	Decimal quantityAvailable = 14;
 }
