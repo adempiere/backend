@@ -90,6 +90,8 @@ public class BusinessDataServer {
 		  } else {
 			  server = ServerBuilder.forPort(port)
 				        .addService(new BusinessDataServiceImplementation())
+				        //	POS
+				        .addService(new PointOfSalesServiceImplementation())
 				        .build()
 				        .start();
 		  }

@@ -108,6 +108,18 @@ public class ValueUtil {
 	}
 	
 	/**
+	 * Get decimal from big decimal
+	 * @param value
+	 * @return
+	 */
+	public static Decimal.Builder getDecimalFromBigDecimal(BigDecimal value) {
+		if(value == null) {
+			return Decimal.newBuilder();
+		}
+		return Decimal.newBuilder().setDecimalValue(value.toPlainString()).setScale(value.scale());
+	}
+	
+	/**
 	 * Get Decimal from Value
 	 * @param value
 	 * @return

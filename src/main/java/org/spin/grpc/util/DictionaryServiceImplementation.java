@@ -14,7 +14,6 @@
  ************************************************************************************/
 package org.spin.grpc.util;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -35,7 +34,6 @@ import org.compiere.model.I_AD_Form;
 import org.compiere.model.I_AD_Menu;
 import org.compiere.model.I_AD_Message;
 import org.compiere.model.I_AD_Process;
-import org.compiere.model.I_AD_Session;
 import org.compiere.model.I_AD_Tab;
 import org.compiere.model.I_AD_Window;
 import org.compiere.model.I_AD_Workflow;
@@ -49,14 +47,12 @@ import org.compiere.model.MProcess;
 import org.compiere.model.MProcessPara;
 import org.compiere.model.MRecentItem;
 import org.compiere.model.MReportView;
-import org.compiere.model.MSession;
 import org.compiere.model.MTab;
 import org.compiere.model.MTable;
 import org.compiere.model.MValRule;
 import org.compiere.model.MWindow;
 import org.compiere.model.Query;
 import org.compiere.model.X_AD_FieldGroup;
-import org.compiere.util.CCache;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.DisplayType;
@@ -82,10 +78,6 @@ import io.grpc.stub.StreamObserver;
 public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	/**	Logger			*/
 	private CLogger log = CLogger.getCLogger(DictionaryServiceImplementation.class);
-	/**	Session Context	*/
-	private static CCache<String, Properties> sessionsContext = new CCache<String, Properties>("DictionaryServiceImplementation", 30, 0);	//	no time-out	
-	/**	Language */
-	private static CCache<String, String> languageCache = new CCache<String, String>("Language_ISO_Code", 30, 0);	//	no time-out
 	
 	@Override
 	public void getWindow(EntityRequest request, StreamObserver<Window> responseObserver) {
@@ -107,68 +99,6 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		requestTab(request, responseObserver, true);
 	}
 	
-	/**
-	 * Get context from session for System
-	 * @param request
-	 * @return
-	 */
-	private Properties getContext(ApplicationRequest request) {
-		Properties context = sessionsContext.get(request.getSessionUuid());
-		if(context != null) {
-			Env.setContext(context, Env.LANGUAGE, getDefaultLanguage(request.getLanguage()));
-			return context;
-		}
-		context = Env.getCtx();
-		DB.validateSupportedUUIDFromDB();
-		MSession session = new Query(context, I_AD_Session.Table_Name, I_AD_Session.COLUMNNAME_UUID + " = ?", null)
-				.setParameters(request.getSessionUuid())
-				.first();
-		if(session == null
-				|| session.getAD_Session_ID() <= 0) {
-			throw new AdempiereException("@AD_Session_ID@ @NotFound@");
-		}
-		Env.setContext (context, "#AD_Session_ID", session.getAD_Session_ID());
-		Env.setContext(context, "#AD_User_ID", session.getCreatedBy());
-		Env.setContext(context, "#AD_Role_ID", session.getAD_Role_ID());
-		Env.setContext(context, "#AD_Client_ID", session.getAD_Client_ID());
-		Env.setContext(context, "#AD_Org_ID", session.getAD_Org_ID());
-		Env.setContext(context, "#Date", new Timestamp(System.currentTimeMillis()));
-		Env.setContext(context, Env.LANGUAGE, getDefaultLanguage(request.getLanguage()));
-		//	Save to Cache
-		sessionsContext.put(request.getSessionUuid(), context);
-		return context;
-	}
-	
-	/**
-	 * Get Default from language
-	 * @param language
-	 * @return
-	 */
-	//	TODO: Change it for a class and reuse
-	private String getDefaultLanguage(String language) {
-		String defaultLanguage = language;
-		if(Util.isEmpty(language)) {
-			language = Language.AD_Language_en_US;
-		}
-		//	Using es / en instead es_VE / en_US
-		//	get default
-		if(language.length() == 2) {
-			defaultLanguage = languageCache.get(language);
-			if(!Util.isEmpty(defaultLanguage)) {
-				return defaultLanguage;
-			}
-			defaultLanguage = DB.getSQLValueString(null, "SELECT AD_Language "
-					+ "FROM AD_Language "
-					+ "WHERE LanguageISO = ? "
-					+ "AND (IsSystemLanguage = 'Y' OR IsBaseLanguage = 'Y')", language);
-		}
-		if(Util.isEmpty(defaultLanguage)) {
-			defaultLanguage = Language.AD_Language_en_US;
-		}
-		//	Default return
-		return defaultLanguage;
-	}
-	
 	@Override
 	public void getField(EntityRequest request, StreamObserver<Field> responseObserver) {
 		try {
@@ -183,9 +113,9 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			}
 			String language = null;
 			if(applicationInfo != null) {
-				language = getDefaultLanguage(applicationInfo.getLanguage());
+				language = ContextManager.getDefaultLanguage(applicationInfo.getLanguage());
 			}
-			Properties context = getContext(request.getApplicationRequest());
+			Properties context = ContextManager.getContext(request.getApplicationRequest().getSessionUuid(), request.getApplicationRequest().getLanguage());
 			Field.Builder fieldBuilder = convertField(context, request.getUuid(), language);
 			responseObserver.onNext(fieldBuilder.build());
 			responseObserver.onCompleted();
@@ -213,9 +143,9 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			}
 			String language = null;
 			if(applicationInfo != null) {
-				language = getDefaultLanguage(applicationInfo.getLanguage());
+				language = ContextManager.getDefaultLanguage(applicationInfo.getLanguage());
 			}
-			Properties context = getContext(request.getApplicationRequest());
+			Properties context = ContextManager.getContext(request.getApplicationRequest().getSessionUuid(), request.getApplicationRequest().getLanguage());
 			Process.Builder processBuilder = convertProcess(context, request.getUuid(), language, true);
 			responseObserver.onNext(processBuilder.build());
 			responseObserver.onCompleted();
@@ -243,9 +173,9 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			}
 			String language = null;
 			if(applicationInfo != null) {
-				language = getDefaultLanguage(applicationInfo.getLanguage());
+				language = ContextManager.getDefaultLanguage(applicationInfo.getLanguage());
 			}
-			Properties context = getContext(request.getApplicationRequest());
+			Properties context = ContextManager.getContext(request.getApplicationRequest().getSessionUuid(), request.getApplicationRequest().getLanguage());
 			Browser.Builder browserBuilder = convertBrowser(context, request.getUuid(), language, true);
 			responseObserver.onNext(browserBuilder.build());
 			responseObserver.onCompleted();
@@ -275,9 +205,9 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			}
 			String language = null;
 			if(applicationInfo != null) {
-				language = getDefaultLanguage(applicationInfo.getLanguage());
+				language = ContextManager.getDefaultLanguage(applicationInfo.getLanguage());
 			}
-			Properties context = getContext(request.getApplicationRequest());
+			Properties context = ContextManager.getContext(request.getApplicationRequest().getSessionUuid(), request.getApplicationRequest().getLanguage());
 			Window.Builder windowBuilder = convertWindow(context, request.getUuid(), language, withTabs);
 			responseObserver.onNext(windowBuilder.build());
 			responseObserver.onCompleted();
@@ -310,9 +240,9 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			}
 			String language = null;
 			if(applicationInfo != null) {
-				language = getDefaultLanguage(applicationInfo.getLanguage());
+				language = ContextManager.getDefaultLanguage(applicationInfo.getLanguage());
 			}
-			Properties context = getContext(request.getApplicationRequest());
+			Properties context = ContextManager.getContext(request.getApplicationRequest().getSessionUuid(), request.getApplicationRequest().getLanguage());
 			Tab.Builder tabBuilder = convertTab(context, request.getUuid(), language, withFields);
 			responseObserver.onNext(tabBuilder.build());
 			responseObserver.onCompleted();

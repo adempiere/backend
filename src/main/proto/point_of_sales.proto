@@ -1,0 +1,99 @@
+/************************************************************************************
+ * Copyright (C) 2012-2018 E.R.P. Consultores y Asociados, C.A.                     *
+ * Contributor(s): Yamel Senih ysenih@erpya.com                                     *
+ * This program is free software: you can redistribute it and/or modify             *
+ * it under the terms of the GNU General Public License as published by             *
+ * the Free Software Foundation, either version 2 of the License, or                *
+ * (at your option) any later version.                                              *
+ * This program is distributed in the hope that it will be useful,                  *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of                   *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the                     *
+ * GNU General Public License for more details.                                     *
+ * You should have received a copy of the GNU General Public License                *
+ * along with this program.	If not, see <https://www.gnu.org/licenses/>.            *
+ ************************************************************************************/
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "org.spin.grpc.util";
+option java_outer_classname = "ADempierePOS";
+option objc_class_prefix = "HLW";
+
+import "businessdata.proto";
+
+package data;
+
+//	POS Service used for ADempiere integration 
+service PointOfSalesService {
+	rpc GetProductPrice(GetProductPriceRequest) returns (ProductPrice) {}
+}
+
+// Request Product Price
+message GetProductPriceRequest {
+	ClientRequest clientRequest = 1;
+	string searchValue = 2;
+	string upc = 3;
+	string value = 4;
+	string name = 5;
+	string priceListUuid = 6;
+	string businessPartnerUuid = 7;
+	string warehouseUuid = 8;
+	int64 validFrom = 9;
+}
+
+// Product Definition
+message Product {
+	string uuid = 1;
+	int32 id = 2;
+	string value = 3;
+	string name = 4;
+	string help = 5;
+	string documentNote = 6;
+	string uomName = 7;
+	string productType = 8;
+	bool isStocked = 9;
+	bool isDropShip = 10;
+	bool isPurchased = 11;
+	bool isSold = 12;
+	string imageURL = 13;
+	string productCategoryName = 14;
+	string productGroupName = 15;
+	string productClassName = 16;
+	string productClassificationName = 17;
+	Decimal weight = 18;
+	Decimal volume = 19;
+	string upc = 20;
+	string sku = 21;
+	int32 shelfWidth = 22;
+	Decimal shelfHeight = 23;
+	int32 shelfDepth = 24;
+	int32 unitsPerPack = 25;
+	Decimal unitsPerPallet = 26;
+	int32 guaranteeDays = 27;
+	string descriptionURL = 28;
+	string versionNo = 29;
+	string taxCategory = 30;
+	string description = 31;
+}
+
+// Tax Rate
+message TaxRate {
+	string name = 1;
+	string description = 2;
+	string taxIndicator = 3;
+	Decimal rate = 4;
+}
+
+// Product Price
+message ProductPrice {
+	Product product = 1;
+	Decimal priceList = 2;
+	Decimal priceStd = 3;
+	Decimal priceLimit = 4;
+	string priceListName = 5;
+	bool isTaxIncluded = 6;
+	int64 validFrom = 7;
+	Currency currency = 8;
+	TaxRate taxRate = 9;
+	int32 pricePrecision = 10;
+}
