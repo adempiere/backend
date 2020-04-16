@@ -76,7 +76,7 @@ public class ContextManager {
 	 * @return
 	 */
 	//	TODO: Change it for a class and reuse
-	public static String getDefaultLanguage(String language) {
+	private static String getDefaultLanguage(String language) {
 		String defaultLanguage = language;
 		if(Util.isEmpty(language)) {
 			language = Language.AD_Language_en_US;

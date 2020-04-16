@@ -407,8 +407,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			}
 			log.fine("Lookup List Requested = " + request.getUuid());
 			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
-			String language = ContextManager.getDefaultLanguage(request.getClientRequest().getLanguage());
-			ProcessLog.Builder processReponse = runProcess(context, request, language);
+			ProcessLog.Builder processReponse = runProcess(context, request);
 			responseObserver.onNext(processReponse.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -1716,15 +1715,13 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	 * Run a process from request
 	 * @param context
 	 * @param request
-	 * @param language
-	 * @return
 	 * @throws IOException 
 	 * @throws FileNotFoundException 
 	 */
-	private ProcessLog.Builder runProcess(Properties context, RunBusinessProcessRequest request, String language) throws FileNotFoundException, IOException {
+	private ProcessLog.Builder runProcess(Properties context, RunBusinessProcessRequest request) throws FileNotFoundException, IOException {
 		ProcessLog.Builder response = ProcessLog.newBuilder();
 		//	Get Process definition
-		MProcess process = getProcess(context, request.getUuid(), language);
+		MProcess process = getProcess(context, request.getUuid());
 		if(process == null
 				|| process.getAD_Process_ID() <= 0) {
 			throw new AdempiereException("@AD_Process_ID@ @NotFound@");
@@ -2017,7 +2014,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 	 * @param language
 	 * @return
 	 */
-	private MProcess getProcess(Properties context, String uuid, String language) {
+	private MProcess getProcess(Properties context, String uuid) {
 		return new Query(context, I_AD_Process.Table_Name, I_AD_Process.COLUMNNAME_UUID + " = ?", null)
 				.setParameters(uuid)
 				.setOnlyActiveRecords(true)

@@ -28,13 +28,17 @@ import org.adempiere.model.I_AD_Browse;
 import org.adempiere.model.MBrowse;
 import org.adempiere.model.MBrowseField;
 import org.adempiere.model.MView;
+import org.compiere.model.I_AD_Column;
+import org.compiere.model.I_AD_Element;
 import org.compiere.model.I_AD_Field;
 import org.compiere.model.I_AD_FieldGroup;
 import org.compiere.model.I_AD_Form;
 import org.compiere.model.I_AD_Menu;
 import org.compiere.model.I_AD_Message;
 import org.compiere.model.I_AD_Process;
+import org.compiere.model.I_AD_Reference;
 import org.compiere.model.I_AD_Tab;
+import org.compiere.model.I_AD_Val_Rule;
 import org.compiere.model.I_AD_Window;
 import org.compiere.model.I_AD_Workflow;
 import org.compiere.model.MColumn;
@@ -51,8 +55,10 @@ import org.compiere.model.MTab;
 import org.compiere.model.MTable;
 import org.compiere.model.MValRule;
 import org.compiere.model.MWindow;
+import org.compiere.model.M_Element;
 import org.compiere.model.Query;
 import org.compiere.model.X_AD_FieldGroup;
+import org.compiere.model.X_AD_Reference;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.DisplayType;
@@ -100,23 +106,71 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	}
 	
 	@Override
-	public void getField(EntityRequest request, StreamObserver<Field> responseObserver) {
+	public void getField(FieldRequest request, StreamObserver<Field> responseObserver) {
 		try {
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			log.fine("Menu Requested = " + request.getUuid());
+			log.fine("Menu Requested = " + request.getFieldUuid());
 			ApplicationRequest applicationInfo = request.getApplicationRequest();
 			if(applicationInfo == null
 					|| Util.isEmpty(applicationInfo.getSessionUuid())) {
 				throw new AdempiereException("Object Request Null");
 			}
-			String language = null;
-			if(applicationInfo != null) {
-				language = ContextManager.getDefaultLanguage(applicationInfo.getLanguage());
+			Properties context = ContextManager.getContext(request.getApplicationRequest().getSessionUuid(), request.getApplicationRequest().getLanguage());
+			Field.Builder fieldBuilder = convertField(context, request);
+			responseObserver.onNext(fieldBuilder.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void getReference(ReferenceRequest request, StreamObserver<Reference> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Menu Requested = " + request.getReferenceUuid());
+			ApplicationRequest applicationInfo = request.getApplicationRequest();
+			if(applicationInfo == null
+					|| Util.isEmpty(applicationInfo.getSessionUuid())) {
+				throw new AdempiereException("Object Request Null");
 			}
 			Properties context = ContextManager.getContext(request.getApplicationRequest().getSessionUuid(), request.getApplicationRequest().getLanguage());
-			Field.Builder fieldBuilder = convertField(context, request.getUuid(), language);
+			Reference.Builder fieldBuilder = convertReference(context, request);
+			responseObserver.onNext(fieldBuilder.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void getValidationRule(ValidationRuleRequest request, StreamObserver<ValidationRule> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Menu Requested = " + request.getValidationRuleUuid());
+			ApplicationRequest applicationInfo = request.getApplicationRequest();
+			if(applicationInfo == null
+					|| Util.isEmpty(applicationInfo.getSessionUuid())) {
+				throw new AdempiereException("Object Request Null");
+			}
+			Properties context = ContextManager.getContext(request.getApplicationRequest().getSessionUuid(), request.getApplicationRequest().getLanguage());
+			ValidationRule.Builder fieldBuilder = convertValidationRule(context, request);
 			responseObserver.onNext(fieldBuilder.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -141,12 +195,8 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 					|| Util.isEmpty(applicationInfo.getSessionUuid())) {
 				throw new AdempiereException("Object Request Null");
 			}
-			String language = null;
-			if(applicationInfo != null) {
-				language = ContextManager.getDefaultLanguage(applicationInfo.getLanguage());
-			}
 			Properties context = ContextManager.getContext(request.getApplicationRequest().getSessionUuid(), request.getApplicationRequest().getLanguage());
-			Process.Builder processBuilder = convertProcess(context, request.getUuid(), language, true);
+			Process.Builder processBuilder = convertProcess(context, request.getUuid(), true);
 			responseObserver.onNext(processBuilder.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -171,12 +221,8 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 					|| Util.isEmpty(applicationInfo.getSessionUuid())) {
 				throw new AdempiereException("Object Request Null");
 			}
-			String language = null;
-			if(applicationInfo != null) {
-				language = ContextManager.getDefaultLanguage(applicationInfo.getLanguage());
-			}
 			Properties context = ContextManager.getContext(request.getApplicationRequest().getSessionUuid(), request.getApplicationRequest().getLanguage());
-			Browser.Builder browserBuilder = convertBrowser(context, request.getUuid(), language, true);
+			Browser.Builder browserBuilder = convertBrowser(context, request.getUuid(), true);
 			responseObserver.onNext(browserBuilder.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -203,12 +249,8 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 					|| Util.isEmpty(applicationInfo.getSessionUuid())) {
 				throw new AdempiereException("Object Request Null");
 			}
-			String language = null;
-			if(applicationInfo != null) {
-				language = ContextManager.getDefaultLanguage(applicationInfo.getLanguage());
-			}
 			Properties context = ContextManager.getContext(request.getApplicationRequest().getSessionUuid(), request.getApplicationRequest().getLanguage());
-			Window.Builder windowBuilder = convertWindow(context, request.getUuid(), language, withTabs);
+			Window.Builder windowBuilder = convertWindow(context, request.getUuid(), withTabs);
 			responseObserver.onNext(windowBuilder.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -238,12 +280,8 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 					|| Util.isEmpty(applicationInfo.getSessionUuid())) {
 				throw new AdempiereException("Object Request Null");
 			}
-			String language = null;
-			if(applicationInfo != null) {
-				language = ContextManager.getDefaultLanguage(applicationInfo.getLanguage());
-			}
 			Properties context = ContextManager.getContext(request.getApplicationRequest().getSessionUuid(), request.getApplicationRequest().getLanguage());
-			Tab.Builder tabBuilder = convertTab(context, request.getUuid(), language, withFields);
+			Tab.Builder tabBuilder = convertTab(context, request.getUuid(), withFields);
 			responseObserver.onNext(tabBuilder.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -262,12 +300,12 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	 * @param responseObserver
 	 * @param withTabs
 	 */
-	private Window.Builder convertWindow(Properties context, String uuid, String language, boolean withTabs) {
+	private Window.Builder convertWindow(Properties context, String uuid, boolean withTabs) {
 		MWindow window = new Query(context, I_AD_Window.Table_Name, I_AD_Window.COLUMNNAME_UUID + " = ?", null)
 				.setParameters(uuid)
 				.setOnlyActiveRecords(true)
 				.first();
-		return convertWindow(context, window, language, withTabs);
+		return convertWindow(context, window, withTabs);
 	}
 	
 	/**
@@ -277,10 +315,10 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	 * @param withTabs
 	 * @return
 	 */
-	private Window.Builder convertWindow(Properties context, MWindow window, String language, boolean withTabs) {
+	private Window.Builder convertWindow(Properties context, MWindow window, boolean withTabs) {
 		window = ASPUtil.getInstance(context).getWindow(window.getAD_Window_ID());
 		Window.Builder builder = null;
-		ContextInfo.Builder contextInfoBuilder = convertContextInfo(context, window.getAD_ContextInfo_ID(), language);
+		ContextInfo.Builder contextInfoBuilder = convertContextInfo(context, window.getAD_ContextInfo_ID());
 		//	
 		builder = Window.newBuilder()
 				.setId(window.getAD_Window_ID())
@@ -302,14 +340,14 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				if(!tab.isActive()) {
 					continue;
 				}
-				Tab.Builder tabBuilder = convertTab(context, tab, tabs, language, false);
+				Tab.Builder tabBuilder = convertTab(context, tab, tabs, false);
 				builder.addTabs(tabBuilder.build());
 				//	Get field group
 				int [] fieldGroupIdArray = getFieldGroupIdsFromTab(tab.getAD_Tab_ID());
 				if(fieldGroupIdArray != null) {
 					for(int fieldGroupId : fieldGroupIdArray) {
-						Tab.Builder tabFieldGroup = convertTab(context, tab, language, false);
-						FieldGroup.Builder fieldGroup = convertFieldGroup(context, fieldGroupId, language);
+						Tab.Builder tabFieldGroup = convertTab(context, tab, false);
+						FieldGroup.Builder fieldGroup = convertFieldGroup(context, fieldGroupId);
 						tabFieldGroup.setFieldGroup(fieldGroup);
 						tabFieldGroup.setName(fieldGroup.getName());
 						//	Add to list
@@ -373,49 +411,46 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	/**
 	 * Convert Tabs from UUID
 	 * @param uuid
-	 * @param language
 	 * @param withFields
 	 * @return
 	 */
-	private Tab.Builder convertTab(Properties context, String uuid, String language, boolean withFields) {
+	private Tab.Builder convertTab(Properties context, String uuid, boolean withFields) {
 		MTab tab = new Query(context, I_AD_Tab.Table_Name, I_AD_Tab.COLUMNNAME_UUID + " = ?", null)
 				.setParameters(uuid)
 				.setOnlyActiveRecords(true)
 				.first();
 		//	Convert
-		return convertTab(context, tab, language, withFields);
+		return convertTab(context, tab, withFields);
 	}
 	
 	/**
 	 * Convert Process from UUID
 	 * @param uuid
-	 * @param language
 	 * @param withParameters
 	 * @return
 	 */
-	private Process.Builder convertProcess(Properties context, String uuid, String language, boolean withParameters) {
+	private Process.Builder convertProcess(Properties context, String uuid, boolean withParameters) {
 		MProcess process = new Query(context, I_AD_Process.Table_Name, I_AD_Process.COLUMNNAME_UUID + " = ?", null)
 				.setParameters(uuid)
 				.setOnlyActiveRecords(true)
 				.first();
 		//	Convert
-		return convertProcess(context, process, language, withParameters);
+		return convertProcess(context, process, withParameters);
 	}
 	
 	/**
 	 * Convert Browser from UUID
 	 * @param uuid
-	 * @param language
 	 * @param withFields
 	 * @return
 	 */
-	private Browser.Builder convertBrowser(Properties context, String uuid, String language, boolean withFields) {
+	private Browser.Builder convertBrowser(Properties context, String uuid, boolean withFields) {
 		MBrowse browser = new Query(context, I_AD_Browse.Table_Name, I_AD_Process.COLUMNNAME_UUID + " = ?", null)
 				.setParameters(uuid)
 				.setOnlyActiveRecords(true)
 				.first();
 		//	Convert
-		return convertBrowser(context, browser, language, withFields);
+		return convertBrowser(context, browser, withFields);
 	}
 	
 	/**
@@ -423,8 +458,8 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	 * @param tab
 	 * @return
 	 */
-	private Tab.Builder convertTab(Properties context, MTab tab, String language, boolean withFields) {
-		return convertTab(context, tab, null, language, withFields);
+	private Tab.Builder convertTab(Properties context, MTab tab, boolean withFields) {
+		return convertTab(context, tab, null, withFields);
 	}
 	
 	/**
@@ -432,7 +467,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	 * @param tab
 	 * @return
 	 */
-	private Tab.Builder convertTab(Properties context, MTab tab, List<MTab> tabs, String language, boolean withFields) {
+	private Tab.Builder convertTab(Properties context, MTab tab, List<MTab> tabs, boolean withFields) {
 		String parentTabUuid = null;
 		int tabId = tab.getAD_Tab_ID();
 		int seqNo = tab.getSeqNo();
@@ -570,7 +605,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setIsActive(tab.isActive());
 		//	For link
 		if(contextInfoId > 0) {
-			ContextInfo.Builder contextInfoBuilder = convertContextInfo(context, contextInfoId, language);
+			ContextInfo.Builder contextInfoBuilder = convertContextInfo(context, contextInfoId);
 			builder.setContextInfo(contextInfoBuilder.build());
 		}
 		//	Parent Link Column Name
@@ -600,13 +635,13 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		if(processList != null
 				&& processList.size() > 0) {
 			for(MProcess process : processList) {
-				Process.Builder processBuilder = convertProcess(context, process, language, false);
+				Process.Builder processBuilder = convertProcess(context, process, false);
 				builder.addProcesses(processBuilder.build());
 			}
 		}
 		if(withFields) {
 			for(MField field : ASPUtil.getInstance(context).getWindowFields(tab.getAD_Tab_ID())) {
-				Field.Builder fieldBuilder = convertField(context, field, language);
+				Field.Builder fieldBuilder = convertField(context, field);
 				builder.addFields(fieldBuilder.build());
 			}
 		}
@@ -643,10 +678,9 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	/**
 	 * Convert Context Info to builder
 	 * @param contextInfoId
-	 * @param language
 	 * @return
 	 */
-	private ContextInfo.Builder convertContextInfo(Properties context, int contextInfoId, String language) {
+	private ContextInfo.Builder convertContextInfo(Properties context, int contextInfoId) {
 		ContextInfo.Builder builder = null;
 		if(contextInfoId > 0) {
 			MADContextInfo contextInfoValue = MADContextInfo.getById(context, contextInfoId);
@@ -654,6 +688,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			//	Get translation
 			String msgText = null;
 			String msgTip = null;
+			String language = Env.getAD_Language(context);
 			if(!Util.isEmpty(language)) {
 				msgText = message.get_Translation(I_AD_Message.COLUMNNAME_MsgText, language);
 				msgTip = message.get_Translation(I_AD_Message.COLUMNNAME_MsgTip, language);
@@ -687,10 +722,9 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	/**
 	 * Convert process to builder
 	 * @param process
-	 * @param language
 	 * @return
 	 */
-	private Process.Builder convertProcess(Properties context, MProcess process, String language, boolean withParams) {
+	private Process.Builder convertProcess(Properties context, MProcess process, boolean withParams) {
 		process = ASPUtil.getInstance(context).getProcess(process.getAD_Process_ID());
 		Process.Builder builder = Process.newBuilder()
 				.setId(process.getAD_Process_ID())
@@ -721,7 +755,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		//	For parameters
 		if(withParams) {
 			for(MProcessPara parameter : ASPUtil.getInstance(context).getProcessParameters(process.getAD_Process_ID())) {
-				Field.Builder fieldBuilder = convertProcessParameter(context, parameter, language);
+				Field.Builder fieldBuilder = convertProcessParameter(context, parameter);
 				builder.addParameters(fieldBuilder.build());
 			}
 		}
@@ -731,11 +765,10 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	/**
 	 * Convert process to builder
 	 * @param browser
-	 * @param language
 	 * @param withFields
 	 * @return
 	 */
-	private Browser.Builder convertBrowser(Properties context, MBrowse browser, String language, boolean withFields) {
+	private Browser.Builder convertBrowser(Properties context, MBrowse browser, boolean withFields) {
 		browser = ASPUtil.getInstance(context).getBrowse(browser.getAD_Browse_ID());
 		String query = addQueryReferencesFromBrowser(browser, MView.getSQLFromView(browser.getAD_View_ID(), null));
 		String orderByClause = getSQLOrderBy(browser);
@@ -764,18 +797,18 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		//	Window Reference
 		if(browser.getAD_Window_ID() > 0) {
 			MWindow window = new MWindow(context, browser.getAD_Window_ID(), null);
-			Window.Builder windowBuilder = convertWindow(context, window, language, false);
+			Window.Builder windowBuilder = convertWindow(context, window, false);
 			builder.setWindow(windowBuilder.build());
 		}
 		//	Process Reference
 		if(browser.getAD_Process_ID() > 0) {
-			Process.Builder processBuilder = convertProcess(context, MProcess.get(context, browser.getAD_Process_ID()), language, false);
+			Process.Builder processBuilder = convertProcess(context, MProcess.get(context, browser.getAD_Process_ID()), false);
 			builder.setProcess(processBuilder.build());
 		}
 		//	For parameters
 		if(withFields) {
 			for(MBrowseField field : ASPUtil.getInstance(context).getBrowseFields(browser.getAD_Browse_ID())) {
-				Field.Builder fieldBuilder = convertBrowseField(context, field, language);
+				Field.Builder fieldBuilder = convertBrowseField(context, field);
 				builder.addFields(fieldBuilder.build());
 			}
 		}
@@ -793,7 +826,6 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		int fromIndex = originalQuery.toUpperCase().indexOf(" FROM ");
 		StringBuffer queryToAdd = new StringBuffer(originalQuery.substring(0, fromIndex));
 		StringBuffer joinsToAdd = new StringBuffer(originalQuery.substring(fromIndex, originalQuery.length() - 1));
-		Language language = Language.getLanguage(Env.getAD_Language(Env.getCtx()));
 		for (MBrowseField browseField : browser.getDisplayFields()) {
 			int displayTypeId = browseField.getAD_Reference_ID();
 			if(DisplayType.isLookup(displayTypeId)) {
@@ -806,7 +838,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 					columnName = browseField.getAD_View_Column().getAD_Column().getColumnName();
 				}
 				queryToAdd.append(", ");
-				ReferenceInfo referenceInfo = ReferenceUtil.getInstance(Env.getCtx()).getReferenceInfo(displayTypeId, referenceValueId, columnName, language.getAD_Language(), tableName);
+				ReferenceInfo referenceInfo = ReferenceUtil.getInstance(Env.getCtx()).getReferenceInfo(displayTypeId, referenceValueId, columnName, Env.getAD_Language(Env.getCtx()), tableName);
 				if(referenceInfo != null) {
 					queryToAdd.append(referenceInfo.getDisplayValue(browseField.getAD_View_Column().getColumnName()));
 					joinsToAdd.append(referenceInfo.getJoinValue(columnName, tableName));
@@ -936,10 +968,9 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	/**
 	 * Convert Process Parameter
 	 * @param processParameter
-	 * @param language
 	 * @return
 	 */
-	private Field.Builder convertProcessParameter(Properties context, MProcessPara processParameter, String language) {
+	private Field.Builder convertProcessParameter(Properties context, MProcessPara processParameter) {
 		//	Convert
 		Field.Builder builder = Field.newBuilder()
 				.setId(processParameter.getAD_Process_Para_ID())
@@ -981,8 +1012,8 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 			if(processParameter.getAD_Element_ID() > 0) {
 				columnName = processParameter.getAD_Element().getColumnName();
 			}
-			MLookupInfo info = MLookupFactory.getLookupInfo(context, 0, 0, displayTypeId, Language.getLanguage(language), columnName, referenceValueId, false, validationCode, false);
-			Reference.Builder referenceBuilder = convertReference(context, info, language);
+			MLookupInfo info = MLookupFactory.getLookupInfo(context, 0, 0, displayTypeId, Language.getLanguage(Env.getAD_Language(context)), columnName, referenceValueId, false, validationCode, false);
+			Reference.Builder referenceBuilder = convertReference(context, info);
 			builder.setReference(referenceBuilder.build());
 		}
 		return builder;
@@ -991,10 +1022,9 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	/**
 	 * Convert Browse Field
 	 * @param browseField
-	 * @param language
 	 * @return
 	 */
-	private Field.Builder convertBrowseField(Properties context, MBrowseField browseField, String language) {
+	private Field.Builder convertBrowseField(Properties context, MBrowseField browseField) {
 		//	Convert
 		Field.Builder builder = Field.newBuilder()
 				.setId(browseField.getAD_Browse_Field_ID())
@@ -1054,9 +1084,9 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				columnName = browseField.getAD_View_Column().getAD_Column().getColumnName();
 			}
 			
-			MLookupInfo info = MLookupFactory.getLookupInfo(context, 0, 0, displayTypeId, Language.getLanguage(language), columnName, referenceValueId, false, validationCode, false);
+			MLookupInfo info = MLookupFactory.getLookupInfo(context, 0, 0, displayTypeId, Language.getLanguage(Env.getAD_Language(context)), columnName, referenceValueId, false, validationCode, false);
 			if(info != null) {
-				Reference.Builder referenceBuilder = convertReference(context, info, language);
+				Reference.Builder referenceBuilder = convertReference(context, info);
 				builder.setReference(referenceBuilder.build());
 			} else {
 				builder.setDisplayType(DisplayType.String);
@@ -1066,27 +1096,191 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	}
 	
 	/**
-	 * Convert Field from UUID
-	 * @param uuid
-	 * @param language
+	 * Convert field from request
+	 * @param context
+	 * @param request
 	 * @return
 	 */
-	private Field.Builder convertField(Properties context, String uuid, String language) {
+	private Field.Builder convertField(Properties context, FieldRequest request) {
+		Field.Builder builder = Field.newBuilder();
+		//	For UUID
+		if(!Util.isEmpty(request.getFieldUuid())) {
+			builder = convertField(context, request.getFieldUuid());
+		} else if(!Util.isEmpty(request.getColumnUuid())) {
+			MColumn column = new Query(context, I_AD_Column.Table_Name, I_AD_Column.COLUMNNAME_UUID + " = ?", null)
+					.setParameters(request.getColumnUuid())
+					.setOnlyActiveRecords(true)
+					.first();
+			builder = convertField(context, column);
+		} else if(!Util.isEmpty(request.getElementUuid())) {
+			M_Element element = new Query(context, I_AD_Element.Table_Name, I_AD_Element.COLUMNNAME_UUID + " = ?", null)
+					.setParameters(request.getElementUuid())
+					.setOnlyActiveRecords(true)
+					.first();
+			builder = convertField(context, element);
+		} else if(!Util.isEmpty(request.getElementColumnName())) {
+			M_Element element = new Query(context, I_AD_Element.Table_Name, I_AD_Element.COLUMNNAME_ColumnName+ " = ?", null)
+					.setParameters(request.getElementColumnName())
+					.setOnlyActiveRecords(true)
+					.first();
+			builder = convertField(context, element);
+		} else if(!Util.isEmpty(request.getTableName()) 
+				&& !Util.isEmpty(request.getColumnUuid())) {
+			MTable table = MTable.get(context, request.getTableName());
+			if(table != null) {
+				MColumn column = table.getColumn(request.getColumnName());
+				builder = convertField(context, column);
+			}
+		}
+		return builder;
+	}
+	
+	/**
+	 * Convert Field from UUID
+	 * @param uuid
+	 * @return
+	 */
+	private Field.Builder convertField(Properties context, String uuid) {
 		MField field = new Query(context, I_AD_Field.Table_Name, I_AD_Field.COLUMNNAME_UUID + " = ?", null)
 				.setParameters(uuid)
 				.setOnlyActiveRecords(true)
 				.first();
 		//	Convert
-		return convertField(context, field, language);
+		return convertField(context, field);
+	}
+	
+	/**
+	 * Convert field to builder
+	 * @param column
+	 * @param language
+	 * @return
+	 */
+	private Field.Builder convertField(Properties context, MColumn column) {
+		String defaultValue = column.getDefaultValue();
+		if(Util.isEmpty(defaultValue)) {
+			defaultValue = column.getDefaultValue();
+		}
+		//	Display Type
+		int displayTypeId = column.getAD_Reference_ID();
+		if(column.getAD_Reference_ID() > 0) {
+			displayTypeId = column.getAD_Reference_ID();
+		}
+		//	Convert
+		Field.Builder builder = Field.newBuilder()
+				.setId(column.getAD_Column_ID())
+				.setUuid(ValueUtil.validateNull(column.getUUID()))
+				.setName(ValueUtil.validateNull(column.getName()))
+				.setDescription(ValueUtil.validateNull(column.getDescription()))
+				.setHelp(ValueUtil.validateNull(column.getHelp()))
+				.setCallout(ValueUtil.validateNull(column.getCallout()))
+				.setColumnName(ValueUtil.validateNull(column.getColumnName()))
+				.setElementName(ValueUtil.validateNull(column.getColumnName()))
+				.setColumnSQL(ValueUtil.validateNull(column.getColumnSQL()))
+				.setDefaultValue(ValueUtil.validateNull(defaultValue))
+				.setDisplayType(displayTypeId)
+				.setFormatPattern(ValueUtil.validateNull(column.getFormatPattern()))
+				.setIdentifierSequence(column.getSeqNo())
+				.setIsAllowCopy(column.isAllowCopy())
+				.setIsAllowLogging(column.isAllowLogging())
+				.setIsAlwaysUpdateable(column.isAlwaysUpdateable())
+				.setIsEncrypted(column.isEncrypted())
+				.setIsIdentifier(column.isIdentifier())
+				.setIsKey(column.isKey())
+				.setIsMandatory(column.isMandatory())
+				.setIsParent(column.isParent())
+				.setIsRange(column.isRange())
+				.setIsSelectionColumn(column.isSelectionColumn())
+				.setIsTranslated(column.isTranslated())
+				.setIsUpdateable(column.isUpdateable())
+				.setMandatoryLogic(ValueUtil.validateNull(column.getMandatoryLogic()))
+				.setReadOnlyLogic(ValueUtil.validateNull(column.getReadOnlyLogic()))
+				.setSequence(column.getSeqNo())
+				.setValueMax(ValueUtil.validateNull(column.getValueMax()))
+				.setValueMin(ValueUtil.validateNull(column.getValueMin()))
+				.setFieldLength(column.getFieldLength())
+				.setIsActive(column.isActive());
+		//	Process
+		if(column.getAD_Process_ID() > 0) {
+			MProcess process = MProcess.get(context, column.getAD_Process_ID());
+			Process.Builder processBuilder = convertProcess(context, process, false);
+			builder.setProcess(processBuilder.build());
+		}
+		//	
+		if(DisplayType.isLookup(displayTypeId)) {
+			//	Reference Value
+			int referenceValueId = column.getAD_Reference_Value_ID();
+			if(column.getAD_Reference_Value_ID() > 0) {
+				referenceValueId = column.getAD_Reference_Value_ID();
+			}
+			//	Validation Code
+			int validationRuleId = column.getAD_Val_Rule_ID();
+			if(column.getAD_Val_Rule_ID() > 0) {
+				validationRuleId = column.getAD_Val_Rule_ID();
+			}
+			//	Set Validation Code
+			String validationCode = null;
+			if(validationRuleId > 0) {
+				MValRule validationRule = MValRule.get(context, validationRuleId);
+				validationCode = validationRule.getCode();
+			}
+			MLookupInfo info = MLookupFactory.getLookupInfo(context, 0, column.getAD_Column_ID(), displayTypeId, Language.getLanguage(Env.getAD_Language(context)), column.getColumnName(), referenceValueId, false, validationCode, false);
+			if(info != null) {
+				Reference.Builder referenceBuilder = convertReference(context, info);
+				builder.setReference(referenceBuilder.build());
+			} else {
+				builder.setDisplayType(DisplayType.String);
+			}
+		}
+		return builder;
+	}
+	
+	/**
+	 * Convert field to builder
+	 * @param element
+	 * @return
+	 */
+	private Field.Builder convertField(Properties context, M_Element element) {
+		//	Display Type
+		int displayTypeId = element.getAD_Reference_ID();
+		if(element.getAD_Reference_ID() > 0) {
+			displayTypeId = element.getAD_Reference_ID();
+		}
+		//	Convert
+		Field.Builder builder = Field.newBuilder()
+				.setId(element.getAD_Element_ID())
+				.setUuid(ValueUtil.validateNull(element.getUUID()))
+				.setName(ValueUtil.validateNull(element.getName()))
+				.setDescription(ValueUtil.validateNull(element.getDescription()))
+				.setHelp(ValueUtil.validateNull(element.getHelp()))
+				.setColumnName(ValueUtil.validateNull(element.getColumnName()))
+				.setElementName(ValueUtil.validateNull(element.getColumnName()))
+				.setDisplayType(displayTypeId)
+				.setFieldLength(element.getFieldLength())
+				.setIsActive(element.isActive());
+		//	
+		if(DisplayType.isLookup(displayTypeId)) {
+			//	Reference Value
+			int referenceValueId = element.getAD_Reference_Value_ID();
+			if(element.getAD_Reference_Value_ID() > 0) {
+				referenceValueId = element.getAD_Reference_Value_ID();
+			}
+			MLookupInfo info = MLookupFactory.getLookupInfo(context, 0, element.getAD_Element_ID(), displayTypeId, Language.getLanguage(Env.getAD_Language(context)), element.getColumnName(), referenceValueId, false, null, false);
+			if(info != null) {
+				Reference.Builder referenceBuilder = convertReference(context, info);
+				builder.setReference(referenceBuilder.build());
+			} else {
+				builder.setDisplayType(DisplayType.String);
+			}
+		}
+		return builder;
 	}
 	
 	/**
 	 * Convert field to builder
 	 * @param field
-	 * @param language
 	 * @return
 	 */
-	private Field.Builder convertField(Properties context, MField field, String language) {
+	private Field.Builder convertField(Properties context, MField field) {
 		//`Column reference
 		MColumn column = MColumn.get(context, field.getAD_Column_ID());
 		String defaultValue = field.getDefaultValue();
@@ -1147,13 +1341,13 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setIsActive(field.isActive());
 		//	Context Info
 		if(field.getAD_ContextInfo_ID() > 0) {
-			ContextInfo.Builder contextInfoBuilder = convertContextInfo(context, field.getAD_ContextInfo_ID(), language);
+			ContextInfo.Builder contextInfoBuilder = convertContextInfo(context, field.getAD_ContextInfo_ID());
 			builder.setContextInfo(contextInfoBuilder.build());
 		}
 		//	Process
 		if(column.getAD_Process_ID() > 0) {
 			MProcess process = MProcess.get(context, column.getAD_Process_ID());
-			Process.Builder processBuilder = convertProcess(context, process, language, false);
+			Process.Builder processBuilder = convertProcess(context, process, false);
 			builder.setProcess(processBuilder.build());
 		}
 		//	
@@ -1174,9 +1368,9 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				MValRule validationRule = MValRule.get(context, validationRuleId);
 				validationCode = validationRule.getCode();
 			}
-			MLookupInfo info = MLookupFactory.getLookupInfo(context, 0, column.getAD_Column_ID(), displayTypeId, Language.getLanguage(language), column.getColumnName(), referenceValueId, false, validationCode, false);
+			MLookupInfo info = MLookupFactory.getLookupInfo(context, 0, column.getAD_Column_ID(), displayTypeId, Language.getLanguage(Env.getAD_Language(context)), column.getColumnName(), referenceValueId, false, validationCode, false);
 			if(info != null) {
-				Reference.Builder referenceBuilder = convertReference(context, info, language);
+				Reference.Builder referenceBuilder = convertReference(context, info);
 				builder.setReference(referenceBuilder.build());
 			} else {
 				builder.setDisplayType(DisplayType.String);
@@ -1185,12 +1379,12 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		
 		//	Field Definition
 		if(field.getAD_FieldDefinition_ID() > 0) {
-			FieldDefinition.Builder fieldDefinitionBuilder = convertFieldDefinition(context, field.getAD_FieldDefinition_ID(), language);
+			FieldDefinition.Builder fieldDefinitionBuilder = convertFieldDefinition(context, field.getAD_FieldDefinition_ID());
 			builder.setFieldDefinition(fieldDefinitionBuilder);
 		}
 		//	Field Group
 		if(field.getAD_FieldGroup_ID() > 0) {
-			FieldGroup.Builder fieldGroup = convertFieldGroup(context, field.getAD_FieldGroup_ID(), language);
+			FieldGroup.Builder fieldGroup = convertFieldGroup(context, field.getAD_FieldGroup_ID());
 			builder.setFieldGroup(fieldGroup.build());
 		}
 		return builder;
@@ -1199,10 +1393,9 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	/**
 	 * Convert Field Definition to builder
 	 * @param fieldDefinitionId
-	 * @param language
 	 * @return
 	 */
-	private FieldDefinition.Builder convertFieldDefinition(Properties context, int fieldDefinitionId, String language) {
+	private FieldDefinition.Builder convertFieldDefinition(Properties context, int fieldDefinitionId) {
 		FieldDefinition.Builder builder = null;
 		if(fieldDefinitionId > 0) {
 			MADFieldDefinition fieldDefinition  = new MADFieldDefinition(context, fieldDefinitionId, null);
@@ -1233,15 +1426,15 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	/**
 	 * Convert Field Group to builder
 	 * @param fieldGroupId
-	 * @param language
 	 * @return
 	 */
-	private FieldGroup.Builder convertFieldGroup(Properties context, int fieldGroupId, String language) {
+	private FieldGroup.Builder convertFieldGroup(Properties context, int fieldGroupId) {
 		FieldGroup.Builder builder = null;
 		if(fieldGroupId > 0) {
 			X_AD_FieldGroup fieldGroup  = new X_AD_FieldGroup(context, fieldGroupId, null);
 			//	Get translation
 			String name = null;
+			String language = Env.getAD_Language(context);
 			if(!Util.isEmpty(language)) {
 				name = fieldGroup.get_Translation(I_AD_FieldGroup.COLUMNNAME_Name, language);
 			}
@@ -1261,12 +1454,62 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	}
 	
 	/**
-	 * Convert Reference to builder
-	 * @param info
-	 * @param language
+	 * Convert reference from a request
+	 * @param context
+	 * @param request
 	 * @return
 	 */
-	private Reference.Builder convertReference(Properties context, MLookupInfo info, String language) {
+	private Reference.Builder convertReference(Properties context, ReferenceRequest request) {
+		Reference.Builder builder = Reference.newBuilder();
+		if(!Util.isEmpty(request.getReferenceUuid())) {
+			X_AD_Reference reference = new Query(context, I_AD_Reference.Table_Name, I_AD_Reference.COLUMNNAME_UUID + " = ?", null)
+					.setParameters(request.getReferenceUuid())
+					.first();
+			if(reference.getValidationType().equals(X_AD_Reference.VALIDATIONTYPE_TableValidation)) {
+				MLookupInfo info = MLookupFactory.getLookupInfo(context, 0, 0, DisplayType.Search, Language.getLanguage(Env.getAD_Language(context)), null, reference.getAD_Reference_ID(), false, null, false);
+				if(info != null) {
+					builder = convertReference(context, info);
+				}
+			} else if(reference.getValidationType().equals(X_AD_Reference.VALIDATIONTYPE_ListValidation)) {
+				MLookupInfo info = MLookupFactory.getLookup_List(Language.getLanguage(Env.getAD_Language(context)), reference.getAD_Reference_ID());
+				if(info != null) {
+					builder = convertReference(context, info);
+				}
+			}
+		} else if(!Util.isEmpty(request.getColumnName())) {
+			MLookupInfo info = MLookupFactory.getLookupInfo(context, 0, 0, DisplayType.TableDir, Language.getLanguage(Env.getAD_Language(context)), request.getColumnName(), 0, false, null, false);
+			if(info != null) {
+				builder = convertReference(context, info);
+			}
+		}
+		return builder;
+	}
+	
+	/**
+	 * Convert Validation rule
+	 * @param context
+	 * @param request
+	 * @return
+	 */
+	private ValidationRule.Builder convertValidationRule(Properties context, ValidationRuleRequest request) {
+		MValRule validationRule = new Query(context, I_AD_Val_Rule.Table_Name, I_AD_Val_Rule.COLUMNNAME_UUID + " = ?", null)
+				.setParameters(request.getValidationRuleUuid())
+				.first();
+		return ValidationRule.newBuilder()
+				.setValidationRuleUuid(ValueUtil.validateNull(validationRule.getUUID()))
+				.setName(ValueUtil.validateNull(validationRule.getName()))
+				.setDescription(ValueUtil.validateNull(validationRule.getDescription()))
+				.setValidationCode(ValueUtil.validateNull(validationRule.getCode()))
+				.setType(ValueUtil.validateNull(validationRule.getType()))
+				;
+	}
+	
+	/**
+	 * Convert Reference to builder
+	 * @param info
+	 * @return
+	 */
+	private Reference.Builder convertReference(Properties context, MLookupInfo info) {
 		Reference.Builder builder = Reference.newBuilder()
 				.setTableName(ValueUtil.validateNull(info.TableName))
 				.setKeyColumnName(ValueUtil.validateNull(info.KeyColumn))
@@ -1293,10 +1536,10 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		builder.setQuery(ValueUtil.validateNull(queryForLookup));
 		//	Window Reference
 		if(info.ZoomWindow > 0) {
-			builder.addWindows(convertZoomWindow(context, info.ZoomWindow, language).build());
+			builder.addWindows(convertZoomWindow(context, info.ZoomWindow).build());
 		}
 		if(info.ZoomWindowPO > 0) {
-			builder.addWindows(convertZoomWindow(context, info.ZoomWindowPO, language).build());
+			builder.addWindows(convertZoomWindow(context, info.ZoomWindowPO).build());
 		}
 		//	Return
 		return builder;
@@ -1305,14 +1548,14 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	/**
 	 * Convert Zoom Window from ID
 	 * @param windowId
-	 * @param language
 	 * @return
 	 */
-	private ZoomWindow.Builder convertZoomWindow(Properties context, int windowId, String language) {
+	private ZoomWindow.Builder convertZoomWindow(Properties context, int windowId) {
 		MWindow window = new MWindow(context, windowId, null);
 		//	Get translation
 		String name = null;
 		String description = null;
+		String language = Env.getAD_Language(context);
 		if(!Util.isEmpty(language)) {
 			name = window.get_Translation(I_AD_Window.COLUMNNAME_Name, language);
 			description = window.get_Translation(I_AD_Window.COLUMNNAME_Description, language);

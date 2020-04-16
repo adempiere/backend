@@ -32,7 +32,11 @@ service DictionaryService {
 	// Request a Tab and Fields
 	rpc GetTabAndFields(EntityRequest) returns (Tab) {}
 	// Request a Field
-	rpc GetField(EntityRequest) returns (Field) {}
+	rpc GetField(FieldRequest) returns (Field) {}
+	// Reference Request
+	rpc GetReference(ReferenceRequest) returns (Reference) {}
+	// Reference Request
+	rpc GetValidationRule(ValidationRuleRequest) returns (ValidationRule) {}
 	// Request Process
 	rpc GetProcess(EntityRequest) returns (Process) {}
 	// Request Browser
@@ -51,6 +55,41 @@ message EntityRequest {
 	int32 id = 1;
 	string uuid = 2;
 	ApplicationRequest applicationRequest = 3;
+}
+
+// Field request
+message FieldRequest {
+	ApplicationRequest applicationRequest = 1;
+	string fieldUuid = 2;
+	string columnUuid = 3;
+	string elementUuid = 4;
+	// TableName + ColumnName
+	string tableName = 5;
+	string columnName = 6;
+	string elementColumnName = 7;
+}
+
+// Reference request
+message ReferenceRequest {
+	ApplicationRequest applicationRequest = 1;
+	string referenceUuid = 2;
+	// TableName + ColumnName assumed that it is Table Direct
+	string columnName = 3;
+}
+
+// Validation Code request
+message ValidationRuleRequest {
+	ApplicationRequest applicationRequest = 1;
+	string validationRuleUuid = 2;
+}
+
+// Validation Code
+message ValidationRule {
+	string validationRuleUuid = 1;
+	string validationCode = 2;
+	string name = 3;
+	string description = 4;
+	string type = 5;
 }
 
 // Window
