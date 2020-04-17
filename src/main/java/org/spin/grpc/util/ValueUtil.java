@@ -21,7 +21,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.compiere.model.PO;
 import org.compiere.util.DisplayType;
+import org.compiere.util.Env;
+import org.compiere.util.Language;
 import org.compiere.util.Util;
 import org.spin.grpc.util.Value.ValueType;
 
@@ -324,5 +327,19 @@ public class ValueUtil {
 		}
 		//	
 		return value;
+	}
+	
+	/**
+	 * Get translation if is necessary
+	 * @param object
+	 * @param columnName
+	 * @return
+	 */
+	public static String getTranslation(PO object, String columnName) {
+		if(Language.isBaseLanguage(Env.getAD_Language(Env.getCtx()))) {
+			return object.get_ValueAsString(columnName);
+		}
+		//	
+		return object.get_Translation(columnName);
 	}
 }

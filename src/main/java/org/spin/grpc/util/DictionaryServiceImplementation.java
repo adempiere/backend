@@ -641,7 +641,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		}
 		if(withFields) {
 			for(MField field : ASPUtil.getInstance(context).getWindowFields(tab.getAD_Tab_ID())) {
-				Field.Builder fieldBuilder = convertField(context, field);
+				Field.Builder fieldBuilder = convertField(context, field, false);
 				builder.addFields(fieldBuilder.build());
 			}
 		}
@@ -1125,7 +1125,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 					.first();
 			builder = convertField(context, element);
 		} else if(!Util.isEmpty(request.getTableName()) 
-				&& !Util.isEmpty(request.getColumnUuid())) {
+				&& !Util.isEmpty(request.getColumnName())) {
 			MTable table = MTable.get(context, request.getTableName());
 			if(table != null) {
 				MColumn column = table.getColumn(request.getColumnName());
@@ -1146,7 +1146,7 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 				.setOnlyActiveRecords(true)
 				.first();
 		//	Convert
-		return convertField(context, field);
+		return convertField(context, field, true);
 	}
 	
 	/**
@@ -1278,9 +1278,10 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	/**
 	 * Convert field to builder
 	 * @param field
+	 * @param translate
 	 * @return
 	 */
-	private Field.Builder convertField(Properties context, MField field) {
+	private Field.Builder convertField(Properties context, MField field, boolean translate) {
 		//`Column reference
 		MColumn column = MColumn.get(context, field.getAD_Column_ID());
 		String defaultValue = field.getDefaultValue();
@@ -1301,9 +1302,9 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		Field.Builder builder = Field.newBuilder()
 				.setId(field.getAD_Field_ID())
 				.setUuid(ValueUtil.validateNull(field.getUUID()))
-				.setName(ValueUtil.validateNull(field.getName()))
-				.setDescription(ValueUtil.validateNull(field.getDescription()))
-				.setHelp(ValueUtil.validateNull(field.getHelp()))
+				.setName(ValueUtil.validateNull(ValueUtil.getTranslation(field, MField.COLUMNNAME_Name)))
+				.setDescription(ValueUtil.validateNull(ValueUtil.getTranslation(field, MField.COLUMNNAME_Description)))
+				.setHelp(ValueUtil.validateNull(ValueUtil.getTranslation(field, MField.COLUMNNAME_Help)))
 				.setCallout(ValueUtil.validateNull(column.getCallout()))
 				.setColumnName(ValueUtil.validateNull(column.getColumnName()))
 				.setElementName(ValueUtil.validateNull(column.getColumnName()))
