@@ -41,6 +41,8 @@ service DictionaryService {
 	rpc GetProcess(EntityRequest) returns (Process) {}
 	// Request Browser
 	rpc GetBrowser(EntityRequest) returns (Browser) {}
+	// Get Form
+	rpc GetForm(EntityRequest) returns (Form) {}
 }
 
 
@@ -286,7 +288,7 @@ message Form {
 	string description = 4;
 	string help = 5;
 	int32 accessLevel = 6;
-	string className = 7;
+	string fileName = 7;
 	bool isActive = 8;
 }
 

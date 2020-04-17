@@ -43,6 +43,7 @@ import org.compiere.model.I_AD_Window;
 import org.compiere.model.I_AD_Workflow;
 import org.compiere.model.MColumn;
 import org.compiere.model.MField;
+import org.compiere.model.MForm;
 import org.compiere.model.MLookupFactory;
 import org.compiere.model.MLookupInfo;
 import org.compiere.model.MMenu;
@@ -235,6 +236,34 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		}
 	}
 	
+	@Override
+	public void getForm(EntityRequest request, StreamObserver<Form> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Menu Requested = " + request.getUuid());
+			ApplicationRequest applicationInfo = request.getApplicationRequest();
+			if(applicationInfo == null
+					|| Util.isEmpty(applicationInfo.getSessionUuid())) {
+				throw new AdempiereException("Object Request Null");
+			}
+			Properties context = ContextManager.getContext(request.getApplicationRequest().getSessionUuid(), request.getApplicationRequest().getLanguage());
+			Form.Builder formBuilder = convertForm(context, request.getUuid());
+			responseObserver.onNext(formBuilder.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	
+	
 	/**
 	 * Request with parameters
 	 */
@@ -309,9 +338,62 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 	}
 	
 	/**
+	 * Request Form from uuid
+	 * @param request
+	 * @param responseObserver
+	 */
+	private Form.Builder convertForm(Properties context, String uuid) {
+		MForm form = new Query(context, I_AD_Form.Table_Name, I_AD_Window.COLUMNNAME_UUID + " = ?", null)
+				.setParameters(uuid)
+				.setOnlyActiveRecords(true)
+				.first();
+		return convertForm(context, form);
+	}
+	
+	/**
+	 * Convert Window from Window Model
+	 * @param form
+	 * @return
+	 */
+	private Form.Builder convertForm(Properties context, MForm form) {
+		Form.Builder builder = null;
+		//	
+		builder = Form.newBuilder()
+				.setId(form.getAD_Form_ID())
+				.setUuid(ValueUtil.validateNull(form.getUUID()))
+				.setName(form.getName())
+				.setDescription(ValueUtil.validateNull(form.getDescription()))
+				.setHelp(ValueUtil.validateNull(form.getHelp()))
+				.setIsActive(form.isActive());
+		//	File Name
+		String fileName = form.getClassname();
+		if(!Util.isEmpty(fileName)) {
+			int endIndex = fileName.lastIndexOf(".");
+			int beginIndex = fileName.lastIndexOf("/");
+			if(beginIndex == -1) {
+				beginIndex = fileName.lastIndexOf(".");
+				endIndex = -1;
+			}
+			if(beginIndex == -1) {
+				beginIndex = 0;
+			} else {
+				beginIndex++;
+			}
+			if(endIndex == -1) {
+				endIndex = fileName.length();
+			}
+			//	Set
+			builder.setFileName(ValueUtil.validateNull(fileName.substring(beginIndex, endIndex)));
+		}
+		//	Add to recent Item
+		addToRecentItem(MMenu.ACTION_Form, form.getAD_Form_ID());
+		//	return
+		return builder;
+	}
+	
+	/**
 	 * Convert Window from Window Model
 	 * @param window
-	 * @param language
 	 * @param withTabs
 	 * @return
 	 */
