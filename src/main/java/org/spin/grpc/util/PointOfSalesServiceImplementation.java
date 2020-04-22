@@ -89,10 +89,6 @@ public class PointOfSalesServiceImplementation extends PointOfSalesServiceImplBa
 	 */
 	private ProductPrice.Builder getProductPrice(Properties context, GetProductPriceRequest request) {
 		ProductPrice.Builder builder = ProductPrice.newBuilder();
-		//	Validate Price List
-		if(Util.isEmpty(request.getPriceListUuid())) {
-			throw new AdempiereException("@M_PriceList_ID@ @IsMandatory@");
-		}
 		//	Get Product
 		MProduct product = null;
 		String key = Env.getAD_Client_ID(context) + "|";
@@ -160,13 +156,26 @@ public class PointOfSalesServiceImplementation extends PointOfSalesServiceImplBa
 				businessPartnerId = businessPartner.getC_BPartner_ID();
 			}
 		}
-		MPriceList priceList = priceListCache.get(request.getPriceListUuid());
+		//	Validate Price List
+		MPriceList priceList = null;
+		if(Util.isEmpty(request.getPriceListUuid())) {
+			priceList = new Query(context, I_M_PriceList.Table_Name, "EXISTS(SELECT 1 FROM C_POS p WHERE p.M_PriceList_ID = M_PriceList.M_PriceList_ID AND p.AD_Org_ID IN(0, ?))", null)
+					.setParameters(Env.getAD_Org_ID(Env.getCtx()))
+					.setClient_ID()
+					.setOnlyActiveRecords(true)
+					.first();
+		} else {
+			priceList = priceListCache.get(request.getPriceListUuid());
+		}
 		if(priceList == null) {
 			priceList = new Query(context, I_M_PriceList.Table_Name, I_M_PriceList.COLUMNNAME_UUID + " = ?", null)
 					.setParameters(request.getPriceListUuid())
 					.setClient_ID()
 					.setOnlyActiveRecords(true)
 					.first();
+			if(priceList == null) {
+				throw new AdempiereException("@M_PriceList_ID@ @NotFound@");
+			}
 			priceListCache.put(request.getPriceListUuid(), priceList);
 		}
 		//	Get Valid From

@@ -63,6 +63,7 @@ import org.compiere.model.I_AD_Element;
 import org.compiere.model.I_AD_Form;
 import org.compiere.model.I_AD_Language;
 import org.compiere.model.I_AD_Menu;
+import org.compiere.model.I_AD_Org;
 import org.compiere.model.I_AD_PInstance;
 import org.compiere.model.I_AD_PInstance_Log;
 import org.compiere.model.I_AD_PrintFormat;
@@ -84,6 +85,7 @@ import org.compiere.model.I_CM_Chat;
 import org.compiere.model.I_CM_ChatEntry;
 import org.compiere.model.I_C_Country;
 import org.compiere.model.I_C_Order;
+import org.compiere.model.I_M_Warehouse;
 import org.compiere.model.I_PA_DashboardContent;
 import org.compiere.model.MChangeLog;
 import org.compiere.model.MChat;
@@ -102,6 +104,8 @@ import org.compiere.model.MLookupFactory;
 import org.compiere.model.MMenu;
 import org.compiere.model.MMessage;
 import org.compiere.model.MOrder;
+import org.compiere.model.MOrg;
+import org.compiere.model.MOrgInfo;
 import org.compiere.model.MPInstance;
 import org.compiere.model.MPInstancePara;
 import org.compiere.model.MPrivateAccess;
@@ -114,6 +118,7 @@ import org.compiere.model.MRule;
 import org.compiere.model.MTab;
 import org.compiere.model.MTable;
 import org.compiere.model.MUser;
+import org.compiere.model.MWarehouse;
 import org.compiere.model.MWindow;
 import org.compiere.model.M_Element;
 import org.compiere.model.PO;
@@ -326,6 +331,47 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
 			org.spin.grpc.util.Callout.Builder calloutResponse = runcallout(context, request);
 			responseObserver.onNext(calloutResponse.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void listOrganizations(ListOrganizationsRequest request,
+			StreamObserver<ListOrganizationsResponse> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			ListOrganizationsResponse.Builder organizationsList = convertOrganizationsList(context, request);
+			responseObserver.onNext(organizationsList.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void listWarehouses(ListWarehousesRequest request, StreamObserver<ListWarehousesResponse> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			ListWarehousesResponse.Builder organizationsList = convertWarehousesList(context, request);
+			responseObserver.onNext(organizationsList.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
@@ -2772,6 +2818,135 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		});
 		//	Return where clause
 		return whereClause.toString();
+	}
+	
+	/**
+	 * Convert Organization to list
+	 * @param request
+	 * @return
+	 */
+	private ListOrganizationsResponse.Builder convertOrganizationsList(Properties context, ListOrganizationsRequest request) {
+		ListOrganizationsResponse.Builder builder = ListOrganizationsResponse.newBuilder();
+		List<Object> parameters = new ArrayList<Object>();
+		String whereClause = "AD_Client_ID = " + Env.getAD_Client_ID(context);
+		MRole role = null;
+		if(request.getRoleId() != 0) {
+			role = MRole.get(context, request.getRoleId());
+		} else if(!Util.isEmpty(request.getRoleUuid())) {
+			role = new Query(context, I_AD_Role.Table_Name, I_AD_Role.COLUMNNAME_UUID + " = ?", null)
+					.setParameters(request.getRoleUuid())
+					.setOnlyActiveRecords(true)
+					.first();
+		}
+		//	get from role access
+		if(role != null) {
+			if(role.isUseUserOrgAccess()) {
+				whereClause = "EXISTS(SELECT 1 FROM AD_User_OrgAccess ua "
+						+ "WHERE ua.AD_Org_ID = AD_Org.AD_Org_ID "
+						+ "AND ua.AD_User_ID = ? "
+						+ "AND ua.IsActive = 'Y')";
+				parameters.add(Env.getAD_User_ID(context));
+			} else {
+				whereClause = "EXISTS(SELECT 1 FROM AD_Role_OrgAccess ra "
+						+ "WHERE ra.AD_Org_ID = AD_Org.AD_Org_ID "
+						+ "AND ra.AD_Role_ID = ? "
+						+ "AND ra.IsActive = 'Y')";
+				parameters.add(role.getAD_Role_ID());
+			}
+		}
+		//	Get page and count
+		String nexPageToken = null;
+		int pageNumber = getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
+		int offset = (pageNumber > 0? pageNumber - 1: 0) * PAGE_SIZE;
+		int limit = (pageNumber == 0? 1: pageNumber) * PAGE_SIZE;
+		Query query = new Query(context, I_AD_Org.Table_Name, whereClause, null)
+				.setParameters(parameters)
+				.setOnlyActiveRecords(true)
+				.setLimit(limit, offset);
+		//	Count
+		int count = query.count();
+		//	Get List
+		query.<MOrg>list()
+			.forEach(organization -> {
+				builder.addOrganizations(convertOrganization(organization));
+			});
+		//	
+		builder.setRecordCount(count);
+		//	Set page token
+		if(count > limit) {
+			nexPageToken = getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
+		}
+		//	Set netxt page
+		builder.setNextPageToken(ValueUtil.validateNull(nexPageToken));
+		return builder;
+	}
+	
+	/**
+	 * Convert organization
+	 * @param organization
+	 * @return
+	 */
+	private Organization.Builder convertOrganization(MOrg organization) {
+		MOrgInfo organizationInfo = MOrgInfo.get(Env.getCtx(), organization.getAD_Org_ID(), null);
+		return Organization.newBuilder()
+				.setUuid(ValueUtil.validateNull(organization.getUUID()))
+				.setId(organization.getAD_Org_ID())
+				.setName(ValueUtil.validateNull(organization.getName()))
+				.setDescription(ValueUtil.validateNull(organization.getDescription()))
+				.setDuns(ValueUtil.validateNull(organizationInfo.getDUNS()))
+				.setTaxId(ValueUtil.validateNull(organizationInfo.getTaxID()))
+				.setPhone(ValueUtil.validateNull(organizationInfo.getPhone()))
+				.setPhone2(ValueUtil.validateNull(organizationInfo.getPhone2()))
+				.setFax(ValueUtil.validateNull(organizationInfo.getFax()))
+				.setIsReadOnly(false);
+	}
+	
+	/**
+	 * Convert warehouses list
+	 * @param context
+	 * @param request
+	 * @return
+	 */
+	private ListWarehousesResponse.Builder convertWarehousesList(Properties context, ListWarehousesRequest request) {
+		ListWarehousesResponse.Builder builder = ListWarehousesResponse.newBuilder();
+		//	Get page and count
+		String nexPageToken = null;
+		int pageNumber = getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
+		int offset = (pageNumber > 0? pageNumber - 1: 0) * PAGE_SIZE;
+		int limit = (pageNumber == 0? 1: pageNumber) * PAGE_SIZE;
+		Query query = new Query(context, I_M_Warehouse.Table_Name, "EXISTS(SELECT 1 FROM AD_Org o WHERE o.AD_Org_ID = M_Warehouse.AD_Org_ID AND o.UUID = ?)", null)
+				.setOnlyActiveRecords(true)
+				.setParameters(request.getOrganizationUuid())
+				.setLimit(limit, offset);
+		//	Count
+		int count = query.count();
+		//	Get List
+		query.<MWarehouse>list()
+			.forEach(warehouse -> {
+				builder.addWarehouses(convertWarehouse(warehouse));
+			});
+		//	
+		builder.setRecordCount(count);
+		//	Set page token
+		if(count > limit) {
+			nexPageToken = getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
+		}
+		//	Set netxt page
+		builder.setNextPageToken(ValueUtil.validateNull(nexPageToken));
+		return builder;
+	}
+	
+	/**
+	 * Convert warehouse
+	 * @param warehouse
+	 * @return
+	 */
+	private Warehouse.Builder convertWarehouse(MWarehouse warehouse) {
+		return Warehouse.newBuilder()
+				.setUuid(ValueUtil.validateNull(warehouse.getUUID()))
+				.setId(warehouse.getM_Warehouse_ID())
+				.setName(ValueUtil.validateNull(warehouse.getName()))
+				.setDescription(ValueUtil.validateNull(warehouse.getDescription()));
 	}
 	
 	/**

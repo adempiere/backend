@@ -361,9 +361,9 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		builder = Form.newBuilder()
 				.setId(form.getAD_Form_ID())
 				.setUuid(ValueUtil.validateNull(form.getUUID()))
-				.setName(form.getName())
-				.setDescription(ValueUtil.validateNull(form.getDescription()))
-				.setHelp(ValueUtil.validateNull(form.getHelp()))
+				.setName(ValueUtil.validateNull(ValueUtil.getTranslation(form, MForm.COLUMNNAME_Name)))
+				.setDescription(ValueUtil.validateNull(ValueUtil.getTranslation(form, MForm.COLUMNNAME_Description)))
+				.setHelp(ValueUtil.validateNull(ValueUtil.getTranslation(form, MForm.COLUMNNAME_Help)))
 				.setIsActive(form.isActive());
 		//	File Name
 		String fileName = form.getClassname();

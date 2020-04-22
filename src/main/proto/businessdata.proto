@@ -97,12 +97,18 @@ service BusinessDataService {
 	rpc ListDocumentStatuses(ListDocumentStatusesRequest) returns (ListDocumentStatusesResponse) {}
 	//	Get Country Information
 	rpc GetCountry(GetCountryRequest) returns (Country) {}
+	//	List Organizations
+	rpc ListOrganizations(ListOrganizationsRequest) returns (ListOrganizationsResponse) {}
+	//	Warehouses
+	rpc ListWarehouses(ListWarehousesRequest) returns (ListWarehousesResponse) {}
 }
 
 // The client request contains client info for request.
 message ClientRequest {
 	string sessionUuid = 1;
 	string language = 2;
+	string organizationUuid = 3;
+	string warehouseUuid = 4;
 }
 
 // Get Entity Request
@@ -157,6 +163,60 @@ message Currency {
 	string description = 5;
 	int32 stdPrecision = 6;
 	int32 costingPrecision = 7;
+}
+
+// Organization
+message Organization {
+	int32 id = 1;
+	string uuid = 2;
+	string name = 3;
+	string description = 4;
+	bool isReadOnly = 5;
+	string duns = 6;
+	string taxId = 7;
+	string phone = 8;
+	string phone2 = 9;
+	string fax = 10;
+}
+
+//	List Organizations Response
+message ListOrganizationsResponse {
+	int64 recordCount = 1;
+	repeated Organization organizations = 2;
+	string next_page_token = 4;
+}
+
+// Organization from Role
+message ListOrganizationsRequest {
+	ClientRequest clientRequest = 1;
+	int32 roleId = 2;
+	string roleUuid = 3;
+	int32 page_size = 4;
+	string page_token = 5;
+}
+
+// Warehouse
+message Warehouse {
+	int32 id = 1;
+	string uuid = 2;
+	string name = 3;
+	string description = 4;
+}
+
+//	Lost Warehouses Response
+message ListWarehousesResponse {
+	int64 recordCount = 1;
+	repeated Warehouse warehouses = 2;
+	string next_page_token = 4;
+}
+
+// Warehouses Request
+message ListWarehousesRequest {
+	ClientRequest clientRequest = 1;
+	int32 organizationId = 2;
+	string organizationUuid = 3;
+	int32 page_size = 4;
+	string page_token = 5;
 }
 
 // Get Entity Request
