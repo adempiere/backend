@@ -224,7 +224,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				throw new AdempiereException("Object Request Null");
 			}
 			log.fine("Object Requested = " + request.getUuid());
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			Entity.Builder entityValue = getEntity(context, request);
 			responseObserver.onNext(entityValue.build());
 			responseObserver.onCompleted();
@@ -244,7 +244,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			Entity.Builder entityValue = createEntity(context, request);
 			responseObserver.onNext(entityValue.build());
 			responseObserver.onCompleted();
@@ -264,7 +264,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			Entity.Builder entityValue = updateEntity(context, request);
 			responseObserver.onNext(entityValue.build());
 			responseObserver.onCompleted();
@@ -285,7 +285,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				throw new AdempiereException("Object Request Null");
 			}
 			log.fine("Object Requested = " + request.getUuid());
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			Empty.Builder entityValue = deleteEntity(context, request);
 			responseObserver.onNext(entityValue.build());
 			responseObserver.onCompleted();
@@ -306,7 +306,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				throw new AdempiereException("Object Request Null");
 			}
 			log.fine("Rollback Requested = " + request.getRecordId());
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			Entity.Builder entityValue = rollbackLastEntityAction(context, request);
 			responseObserver.onNext(entityValue.build());
 			responseObserver.onCompleted();
@@ -328,7 +328,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				throw new AdempiereException("Object Request Null");
 			}
 			log.fine("Callout Requested = " + request.getCallout());
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			org.spin.grpc.util.Callout.Builder calloutResponse = runcallout(context, request);
 			responseObserver.onNext(calloutResponse.build());
 			responseObserver.onCompleted();
@@ -349,7 +349,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			ListOrganizationsResponse.Builder organizationsList = convertOrganizationsList(context, request);
 			responseObserver.onNext(organizationsList.build());
 			responseObserver.onCompleted();
@@ -369,7 +369,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			ListWarehousesResponse.Builder organizationsList = convertWarehousesList(context, request);
 			responseObserver.onNext(organizationsList.build());
 			responseObserver.onCompleted();
@@ -389,7 +389,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			ListEntitiesResponse.Builder entityValueList = convertEntitiesList(context, request);
 			responseObserver.onNext(entityValueList.build());
 			responseObserver.onCompleted();
@@ -410,7 +410,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				throw new AdempiereException("Object Request Null");
 			}
 			log.fine("Lookup Requested = " + request.getUuid());
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			LookupItem.Builder lookupValue = convertLookupItem(context, request);
 			responseObserver.onNext(lookupValue.build());
 			responseObserver.onCompleted();
@@ -430,7 +430,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			if(request == null) {
 				throw new AdempiereException("Lookup Request Null");
 			}
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			ListLookupItemsResponse.Builder entityValueList = convertLookupItemsList(context, request);
 			responseObserver.onNext(entityValueList.build());
 			responseObserver.onCompleted();
@@ -452,7 +452,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				throw new AdempiereException("Object Request Null");
 			}
 			log.fine("Lookup List Requested = " + request.getUuid());
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			ProcessLog.Builder processReponse = runProcess(context, request);
 			responseObserver.onNext(processReponse.build());
 			responseObserver.onCompleted();
@@ -474,7 +474,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				throw new AdempiereException("Browser Requested is Null");
 			}
 			log.fine("Object List Requested = " + request);
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			ListBrowserItemsResponse.Builder entityValueList = convertBrowserList(context, request);
 			responseObserver.onNext(entityValueList.build());
 			responseObserver.onCompleted();
@@ -495,7 +495,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				throw new AdempiereException("Process Activity Requested is Null");
 			}
 			log.fine("Object List Requested = " + request);
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			ListProcessLogsResponse.Builder entityValueList = convertProcessLogs(context, request);
 			responseObserver.onNext(entityValueList.build());
 			responseObserver.onCompleted();
@@ -516,7 +516,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				throw new AdempiereException("Process Activity Requested is Null");
 			}
 			log.fine("Recent Items Requested = " + request);
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			ListRecentItemsResponse.Builder entityValueList = convertRecentItems(context, request);
 			responseObserver.onNext(entityValueList.build());
 			responseObserver.onCompleted();
@@ -537,7 +537,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				throw new AdempiereException("Process Activity Requested is Null");
 			}
 			log.fine("References Info Requested = " + request);
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			ListReferencesResponse.Builder entityValueList = convertRecordReferences(context, request);
 			responseObserver.onNext(entityValueList.build());
 			responseObserver.onCompleted();
@@ -557,7 +557,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			Value.Builder defaultValue = convertDefaultValue(context, request);
 			responseObserver.onNext(defaultValue.build());
 			responseObserver.onCompleted();
@@ -577,7 +577,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			PrivateAccess.Builder privateaccess = lockUnlockPrivateAccess(context, request.getTableName(), request.getRecordId(), request.getUserUuid(), true);
 			responseObserver.onNext(privateaccess.build());
 			responseObserver.onCompleted();
@@ -598,7 +598,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			PrivateAccess.Builder privateaccess = lockUnlockPrivateAccess(context, request.getTableName(), request.getRecordId(), request.getUserUuid(), false);
 			responseObserver.onNext(privateaccess.build());
 			responseObserver.onCompleted();
@@ -618,7 +618,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			PrivateAccess.Builder privateaccess = convertPrivateAccess(context, getPrivateAccess(context, request.getTableName(), request.getRecordId(), request.getUserUuid()));
 			responseObserver.onNext(privateaccess.build());
 			responseObserver.onCompleted();
@@ -638,7 +638,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			ContextInfoValue.Builder contextInfoValue = convertContextInfoValue(context, request);
 			responseObserver.onNext(contextInfoValue.build());
 			responseObserver.onCompleted();
@@ -658,7 +658,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			ListPendingDocumentsResponse.Builder pendingDocumentsList = convertPendingDocumentList(context, request);
 			responseObserver.onNext(pendingDocumentsList.build());
 			responseObserver.onCompleted();
@@ -678,7 +678,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			ListFavoritesResponse.Builder favoritesList = convertFavoritesList(context, request);
 			responseObserver.onNext(favoritesList.build());
 			responseObserver.onCompleted();
@@ -698,7 +698,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			ListDashboardsResponse.Builder dashboardsList = convertDashboarsList(context, request);
 			responseObserver.onNext(dashboardsList.build());
 			responseObserver.onCompleted();
@@ -718,7 +718,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			ListLanguagesResponse.Builder languagesList = convertLanguagesList(context, request);
 			responseObserver.onNext(languagesList.build());
 			responseObserver.onCompleted();
@@ -738,7 +738,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			ListTranslationsResponse.Builder translationsList = convertTranslationsList(context, request);
 			responseObserver.onNext(translationsList.build());
 			responseObserver.onCompleted();
@@ -758,7 +758,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			ListPrintFormatsResponse.Builder printFormatsList = convertPrintFormatsList(context, request);
 			responseObserver.onNext(printFormatsList.build());
 			responseObserver.onCompleted();
@@ -778,7 +778,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			ListReportViewsResponse.Builder reportViewsList = convertReportViewsList(context, request);
 			responseObserver.onNext(reportViewsList.build());
 			responseObserver.onCompleted();
@@ -798,7 +798,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			ListDrillTablesResponse.Builder drillTablesList = convertDrillTablesList(context, request);
 			responseObserver.onNext(drillTablesList.build());
 			responseObserver.onCompleted();
@@ -818,7 +818,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			ReportOutput.Builder reportOutput = getReportOutput(context, request);
 			responseObserver.onNext(reportOutput.build());
 			responseObserver.onCompleted();
@@ -839,7 +839,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				throw new AdempiereException("Record Logs Requested is Null");
 			}
 			log.fine("Object List Requested = " + request);
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			ListRecordLogsResponse.Builder entityValueList = convertRecordLogs(context, request);
 			responseObserver.onNext(entityValueList.build());
 			responseObserver.onCompleted();
@@ -861,7 +861,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				throw new AdempiereException("Workflow Logs Requested is Null");
 			}
 			log.fine("Object List Requested = " + request);
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			ListWorkflowLogsResponse.Builder entityValueList = convertWorkflowLogs(context, request);
 			responseObserver.onNext(entityValueList.build());
 			responseObserver.onCompleted();
@@ -883,7 +883,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				throw new AdempiereException("Record Chats Requested is Null");
 			}
 			log.fine("Object List Requested = " + request);
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			ListRecordChatsResponse.Builder entityValueList = convertRecordChats(context, request);
 			responseObserver.onNext(entityValueList.build());
 			responseObserver.onCompleted();
@@ -905,7 +905,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				throw new AdempiereException("Chat Entries Requested is Null");
 			}
 			log.fine("Object List Requested = " + request);
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			ListChatEntriesResponse.Builder entityValueList = convertChatEntries(context, request);
 			responseObserver.onNext(entityValueList.build());
 			responseObserver.onCompleted();
@@ -926,7 +926,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				throw new AdempiereException("Workflow Logs Requested is Null");
 			}
 			log.fine("Object List Requested = " + request);
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			ListWorkflowsResponse.Builder entityValueList = convertWorkflows(context, request);
 			responseObserver.onNext(entityValueList.build());
 			responseObserver.onCompleted();
@@ -946,7 +946,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			ChatEntry.Builder chatEntryValue = addChatEntry(context, request);
 			responseObserver.onNext(chatEntryValue.build());
 			responseObserver.onCompleted();
@@ -968,7 +968,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				throw new AdempiereException("Document Actions is Null");
 			}
 			log.fine("Object List Requested = " + request);
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			ListDocumentActionsResponse.Builder entityValueList = convertDocumentActions(context, request);
 			responseObserver.onNext(entityValueList.build());
 			responseObserver.onCompleted();
@@ -990,7 +990,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				throw new AdempiereException("Document Statuses is Null");
 			}
 			log.fine("Object List Requested = " + request);
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			ListDocumentStatusesResponse.Builder entityValueList = convertDocumentStatuses(context, request);
 			responseObserver.onNext(entityValueList.build());
 			responseObserver.onCompleted();
@@ -1011,7 +1011,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				throw new AdempiereException("Country Request Null");
 			}
 			log.fine("Country Requested = " + request.getCountryUuid());
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			Country.Builder country = getCountry(context, request);
 			responseObserver.onNext(country.build());
 			responseObserver.onCompleted();

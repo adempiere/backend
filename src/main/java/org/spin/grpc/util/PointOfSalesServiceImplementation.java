@@ -67,7 +67,7 @@ public class PointOfSalesServiceImplementation extends PointOfSalesServiceImplBa
 				throw new AdempiereException("Object Request Null");
 			}
 			log.fine("Object Requested = " + request.getSearchValue());
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			ProductPrice.Builder productPrice = getProductPrice(context, request);
 			responseObserver.onNext(productPrice.build());
 			responseObserver.onCompleted();
@@ -191,7 +191,7 @@ public class PointOfSalesServiceImplementation extends PointOfSalesServiceImplBa
 		.stream()
 		.filter(tax -> tax.getC_TaxCategory_ID() == taxCategoryId 
 							&& (tax.isSalesTax() 
-									|| (Util.isEmpty(tax.getSOPOType()) 
+									|| (!Util.isEmpty(tax.getSOPOType()) 
 											&& (tax.getSOPOType().equals(MTax.SOPOTYPE_Both) 
 													|| tax.getSOPOType().equals(MTax.SOPOTYPE_SalesTax)))))
 		.findFirst();
