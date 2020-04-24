@@ -125,8 +125,8 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -151,8 +151,8 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -177,8 +177,8 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -203,8 +203,8 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -229,8 +229,8 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -255,8 +255,8 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -285,8 +285,8 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -316,8 +316,8 @@ public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}

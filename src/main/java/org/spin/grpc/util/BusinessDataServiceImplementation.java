@@ -231,8 +231,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -251,8 +251,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -271,8 +271,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -292,8 +292,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -313,8 +313,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -335,8 +335,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -356,8 +356,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -376,8 +376,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -396,8 +396,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -417,8 +417,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -437,8 +437,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -459,8 +459,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -481,8 +481,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -502,8 +502,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -523,8 +523,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -544,8 +544,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -564,8 +564,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -584,8 +584,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -605,8 +605,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -625,8 +625,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -645,8 +645,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -665,8 +665,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -685,8 +685,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -705,8 +705,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -725,8 +725,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -745,8 +745,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -765,8 +765,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -785,8 +785,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -805,8 +805,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -825,8 +825,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -846,8 +846,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -868,8 +868,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -890,8 +890,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -912,8 +912,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -933,8 +933,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -953,8 +953,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -975,8 +975,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -997,8 +997,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -1018,8 +1018,8 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -2269,7 +2269,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				value = stringToObject(column, changeLog.getOldValue());
 			}
 		} catch (Exception e) {
-			log.severe(e.getMessage());
+			log.severe(e.getLocalizedMessage());
 		}
 		//	Set value
 		entity.set_ValueOfColumn(changeLog.getAD_Column_ID(), value);
@@ -3304,7 +3304,7 @@ public class BusinessDataServiceImplementation extends BusinessDataServiceImplBa
 				try {
 					page = Integer.parseInt(pageToken.replace(pagePrefix, ""));
 				} catch (Exception e) {
-					log.severe(e.getMessage());
+					log.severe(e.getLocalizedMessage());
 				}
 			}
 		}

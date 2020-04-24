@@ -74,8 +74,8 @@ public class PointOfSalesServiceImplementation extends PointOfSalesServiceImplBa
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getMessage())
-					.augmentDescription(e.getMessage())
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
 					.withCause(e)
 					.asRuntimeException());
 		}
@@ -98,10 +98,10 @@ public class PointOfSalesServiceImplementation extends PointOfSalesServiceImplBa
 			if(product == null) {
 				product = new Query(context, I_M_Product.Table_Name, 
 						"("
-						+ "UPPER(Value) LIKE UPPER('%' || ? || '%')"
-						+ "OR UPPER(Name) LIKE UPPER('%' || ? || '%')"
-						+ "OR UPPER(UPC) LIKE UPPER('%' || ? || '%')"
-						+ "OR UPPER(SKU) LIKE UPPER('%' || ? || '%')"
+						+ "UPPER(Value) = UPPER(?)"
+						+ "OR UPPER(Name) = UPPER(?)"
+						+ "OR UPPER(UPC) = UPPER(?)"
+						+ "OR UPPER(SKU) = UPPER(?)"
 						+ ")", null)
 						.setParameters(request.getSearchValue(), request.getSearchValue(), request.getSearchValue(), request.getSearchValue())
 						.setClient_ID()
@@ -121,7 +121,7 @@ public class PointOfSalesServiceImplementation extends PointOfSalesServiceImplBa
 			key = key + "Value|" + request.getValue();
 			product = productCache.get(key);
 			if(product == null) {
-				product = new Query(context, I_M_Product.Table_Name, "UPPER(Value) LIKE UPPER('%' || ? || '%')", null)
+				product = new Query(context, I_M_Product.Table_Name, "UPPER(Value) = UPPER(?)", null)
 						.setParameters(request.getValue())
 						.setClient_ID()
 						.setOnlyActiveRecords(true)
@@ -131,7 +131,7 @@ public class PointOfSalesServiceImplementation extends PointOfSalesServiceImplBa
 			key = key + "Name|" + request.getName();
 			product = productCache.get(key);
 			if(product == null) {
-				product = new Query(context, I_M_Product.Table_Name, "UPPER(Name) LIKE UPPER('%' || ? || '%')", null)
+				product = new Query(context, I_M_Product.Table_Name, "UPPER(Name) LIKE UPPER(?)", null)
 						.setParameters(request.getName())
 						.setClient_ID()
 						.setOnlyActiveRecords(true)
