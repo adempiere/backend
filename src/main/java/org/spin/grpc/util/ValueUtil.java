@@ -281,7 +281,8 @@ public class ValueUtil {
 	 * @return
 	 */
 	public static Object getObjectFromReference(Value value, int referenceId) {
-		if(value == null) {
+		if(value == null
+				|| value.getValueType().equals(ValueType.UNKNOWN)) {
 			return null;
 		}
 		//	Validate values

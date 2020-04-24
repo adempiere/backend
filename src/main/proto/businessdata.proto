@@ -344,11 +344,12 @@ message Value {
 	string stringValue = 4;
 	Decimal decimalValue = 5;
 	enum ValueType {
-		INTEGER = 0;
-		DECIMAL = 1;
-		BOOLEAN = 2;
-		STRING = 3;
-		DATE = 4;
+		UNKNOWN = 0;
+		INTEGER = 1;
+		DECIMAL = 2;
+		BOOLEAN = 3;
+		STRING = 4;
+		DATE = 5;
 	}
 	ValueType valueType = 6;
 }
