@@ -19,12 +19,14 @@ import java.util.List;
 import java.util.Properties;
 
 import org.adempiere.exceptions.AdempiereException;
+import org.compiere.model.I_AD_Language;
 import org.compiere.model.I_AD_Org;
 import org.compiere.model.I_AD_Role;
 import org.compiere.model.I_C_Country;
 import org.compiere.model.I_M_Warehouse;
 import org.compiere.model.MCountry;
 import org.compiere.model.MCurrency;
+import org.compiere.model.MLanguage;
 import org.compiere.model.MOrg;
 import org.compiere.model.MOrgInfo;
 import org.compiere.model.MRole;
@@ -112,6 +114,26 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 		}
 	}
 	
+	@Override
+	public void listLanguages(ListLanguagesRequest request, StreamObserver<ListLanguagesResponse> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
+			ListLanguagesResponse.Builder languagesList = convertLanguagesList(context, request);
+			responseObserver.onNext(languagesList.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getMessage())
+					.augmentDescription(e.getMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
 	/**
 	 * Convert a Country
 	 * @param context
@@ -150,6 +172,35 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 		}
 		//	Return
 		return convertCountry(context, country);
+	}
+	
+	/**
+	 * Convert languages to gRPC
+	 * @param context
+	 * @param request
+	 * @return
+	 */
+	private ListLanguagesResponse.Builder convertLanguagesList(Properties context, ListLanguagesRequest request) {
+		ListLanguagesResponse.Builder builder = ListLanguagesResponse.newBuilder();
+		new Query(context, I_AD_Language.Table_Name, "(IsSystemLanguage=? OR IsBaseLanguage=?)", null)
+			.setParameters(true, true)
+			.setOnlyActiveRecords(true)
+			.<MLanguage>list()
+			.forEach(language -> {
+				org.spin.grpc.util.Language.Builder languageBuilder = org.spin.grpc.util.Language.newBuilder();
+				languageBuilder.setLanguage(ValueUtil.validateNull(language.getAD_Language()));
+				languageBuilder.setCountryCode(ValueUtil.validateNull(language.getCountryCode()));
+				languageBuilder.setLanguageISO(ValueUtil.validateNull(language.getLanguageISO()));
+				languageBuilder.setLanguageName(ValueUtil.validateNull(language.getName()));
+				languageBuilder.setDatePattern(ValueUtil.validateNull(language.getDatePattern()));
+				languageBuilder.setTimePattern(ValueUtil.validateNull(language.getTimePattern()));
+				languageBuilder.setIsBaseLanguage(language.isBaseLanguage());
+				languageBuilder.setIsSystemLanguage(language.isSystemLanguage());
+				languageBuilder.setIsDecimalPoint(language.isDecimalPoint());
+				builder.addLanguages(languageBuilder);
+			});
+		//	Return
+		return builder;
 	}
 	
 	/**
