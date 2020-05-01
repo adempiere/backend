@@ -17,10 +17,6 @@ package org.spin.grpc.util;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.spin.grpc.util.Condition.Operator;
-import org.spin.grpc.util.Value.ValueType;
-
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
@@ -29,7 +25,7 @@ public class BusinessDataClient {
 	  private static final Logger logger = Logger.getLogger(BusinessDataClient.class.getName());
 
 	  private final ManagedChannel channel;
-	  private final BusinessDataServiceGrpc.BusinessDataServiceBlockingStub blockingStub;
+	  private final BusinessDataGrpc.BusinessDataBlockingStub blockingStub;
 
 	  /** Construct client connecting to HelloWorld server at {@code host:port}. */
 	  public BusinessDataClient(String host, int port) {
@@ -43,7 +39,7 @@ public class BusinessDataClient {
 	  /** Construct client for accessing HelloWorld server using the existing channel. */
 	  BusinessDataClient(ManagedChannel channel) {
 	    this.channel = channel;
-	    blockingStub = BusinessDataServiceGrpc.newBlockingStub(channel);
+	    blockingStub = BusinessDataGrpc.newBlockingStub(channel);
 	  }
 
 	  public void shutdown() throws InterruptedException {
@@ -72,62 +68,6 @@ public class BusinessDataClient {
 	  }
 	  
 	  /**
-	   * Request a process
-	   */
-	  public void getReportOutput() {
-		  ClientRequest clientRequest = ClientRequest.newBuilder()
-				  .setSessionUuid("6a97ad03-6f70-43b3-9ed2-b744e00b6686")
-				  .build();
-		  Criteria.Builder criteria = Criteria.newBuilder();
-		  criteria.setTableName("C_BPartner")
-		  	.addConditions(Condition.newBuilder()
-		  			.setColumnName("C_BPartner_ID")
-		  			.setValue(Value.newBuilder().setIntValue(1001219).setValueType(ValueType.INTEGER))
-		  			.setOperator(Operator.EQUAL));
-		  GetReportOutputRequest request = GetReportOutputRequest.newBuilder()
-				  .setClientRequest(clientRequest)
-				  .setCriteria(criteria)
-				  .setPrintFormatUuid("5788e4a4-b253-11e9-aedf-0242ac110003")
-				  .setReportName("Test")
-				  .setReportType("pdf")
-				  .build();
-		  ReportOutput response;
-		  try {
-			  response = blockingStub.getReportOutput(request);
-			  logger.info("Cache Reset: " + response);
-		  } catch (StatusRuntimeException e) {
-			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
-		      return;
-		  }
-	  }
-	  
-	  /**
-	   * Request a process
-	   */
-	  public void requestCallout() {
-		  ClientRequest clientRequest = ClientRequest.newBuilder()
-				  .setSessionUuid("543ca441-4963-4e01-8eaf-7c9dbbc851d3")
-				  .build();
-		  RunCalloutRequest request = RunCalloutRequest.newBuilder()
-				  .setClientRequest(clientRequest)
-				  .setCallout("org.compiere.model.CalloutOrder.docType")
-				  .setTableName("C_Order")
-				  .setColumnName("C_DocTypeTarget_ID")
-				  .setWindowUuid("a52203d2-fb40-11e8-a479-7a0060f0aa01")
-				  .setTabUuid("a49ff9be-fb40-11e8-a479-7a0060f0aa01")
-				  .setValue(Value.newBuilder().setIntValue(1000253).setValueType(ValueType.INTEGER))
-				  .build();
-		  Callout response;
-		  try {
-			  response = blockingStub.runCallout(request);
-			  logger.info("C_ORder: C_DocTypeTarget_ID: " + response);
-		  } catch (StatusRuntimeException e) {
-			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
-		      return;
-		  }
-	  }
-	  
-	  /**
 	   * Greet server. If provided, the first element of {@code args} is the name to use in the
 	   * greeting.
 	   */
@@ -135,7 +75,7 @@ public class BusinessDataClient {
 		BusinessDataClient client = new BusinessDataClient("localhost", 50052);
 	    try {
 	    	logger.info("####################### Report Output #####################");
-	    	client.getReportOutput();
+	    	client.requestProcess();
 	      client.shutdown();
 	    } catch (Exception e) {
 			e.printStackTrace();

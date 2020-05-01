@@ -22,7 +22,7 @@ option objc_class_prefix = "HLW";
 package dictionary;
 
 // The greeting service definition.
-service DictionaryService {
+service Dictionary {
 	// Request a Window
 	rpc GetWindow(EntityRequest) returns (Window) {}
 	// Request Window and tabs

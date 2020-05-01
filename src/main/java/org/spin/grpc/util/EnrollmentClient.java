@@ -26,7 +26,7 @@ public class EnrollmentClient {
 	  private static final Logger logger = Logger.getLogger(EnrollmentClient.class.getName());
 
 	  private final ManagedChannel channel;
-	  private final EnrollmentServiceGrpc.EnrollmentServiceBlockingStub blockingStub;
+	  private final RegisterGrpc.RegisterBlockingStub blockingStub;
 
 	  /** Construct client connecting to HelloWorld server at {@code host:port}. */
 	  public EnrollmentClient(String host, int port) {
@@ -40,7 +40,7 @@ public class EnrollmentClient {
 	  /** Construct client for accessing HelloWorld server using the existing channel. */
 	  EnrollmentClient(ManagedChannel channel) {
 	    this.channel = channel;
-	    blockingStub = EnrollmentServiceGrpc.newBlockingStub(channel);
+	    blockingStub = RegisterGrpc.newBlockingStub(channel);
 	  }
 
 	  public void shutdown() throws InterruptedException {

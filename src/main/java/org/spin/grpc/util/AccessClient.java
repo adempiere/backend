@@ -26,7 +26,7 @@ public class AccessClient {
 	  private static final Logger logger = Logger.getLogger(AccessClient.class.getName());
 
 	  private final ManagedChannel channel;
-	  private final AccessServiceGrpc.AccessServiceBlockingStub blockingStub;
+	  private final SecurityGrpc.SecurityBlockingStub blockingStub;
 
 	  /** Construct client connecting to HelloWorld server at {@code host:port}. */
 	  public AccessClient(String host, int port) {
@@ -40,7 +40,7 @@ public class AccessClient {
 	  /** Construct client for accessing HelloWorld server using the existing channel. */
 	  AccessClient(ManagedChannel channel) {
 	    this.channel = channel;
-	    blockingStub = AccessServiceGrpc.newBlockingStub(channel);
+	    blockingStub = SecurityGrpc.newBlockingStub(channel);
 	  }
 
 	  public void shutdown() throws InterruptedException {

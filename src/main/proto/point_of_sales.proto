@@ -19,13 +19,132 @@ option java_package = "org.spin.grpc.util";
 option java_outer_classname = "ADempierePOS";
 option objc_class_prefix = "HLW";
 
-import "businessdata.proto";
+import "core_functionality.proto";
+import "base_data_type.proto";
 
 package data;
 
 //	POS Service used for ADempiere integration 
-service PointOfSalesService {
+service Store {
+	//	Get POS Definition
+	rpc GetPointOfSales(PointOfSalesRequest) returns (PointOfSales) {}
+	//	List Point of Sales
+	rpc ListPointOfSales(ListPointOfSalesRequest) returns (ListPointOfSalesResponse) {}
+	//	Get Product Price from Code / UPC / Name
 	rpc GetProductPrice(GetProductPriceRequest) returns (ProductPrice) {}
+	//	Create Order
+	rpc CreateOrder(CreateOrderRequest) returns (Order) {}
+	//	Delete Order
+	rpc DeleteOrder(DeleteOrderRequest) returns (Empty) {}
+	//	Create Order Line
+	rpc CreateOrderLine(CreateOrderLineRequest) returns (OrderLine) {}
+	//	Delete Order Line
+	rpc DeleteOrderLine(DeleteOrderLineRequest) returns (OrderLine) {}
+	//	Update Order Line
+	rpc UpdateOrderLine(UpdateOrderLineRequest) returns (OrderLine) {}
+}
+
+//	List POS Response
+message ListPointOfSalesResponse {
+	int64 recordCount = 1;
+	repeated PointOfSales sellingPoints = 2;
+	string next_page_token = 3;
+}
+
+// POS from user uuid
+message ListPointOfSalesRequest {
+	ClientRequest clientRequest = 1;
+	string userUuid = 2;
+	int32 page_size = 3;
+	string page_token = 4;
+}
+
+// Point of Sales request
+message PointOfSalesRequest {
+	ClientRequest clientRequest = 1;
+	string pointOfSalesUuid = 2;
+}
+
+// Point of Sales definition
+message PointOfSales {
+	string uuid = 1;
+	string name = 2;
+	string description = 3;
+	string help = 4;
+	bool isModifyPrice = 5;
+	bool isPOSRequiredPIN = 6;
+	SalesRepresentative salesRepresentative = 7;
+	BusinessPartner templateBusinessPartner = 8;
+}
+
+// Request for create a order
+message CreateOrderRequest {
+	ClientRequest clientRequest = 1;
+	string posUuid = 2;
+	string customerUuid = 3;
+	string documentTypeUuid = 4;
+}
+
+// Request for delete a order
+message DeleteOrderRequest {
+	ClientRequest clientRequest = 1;
+	string orderUuid = 2;
+}
+
+// Request for delete a order
+message DeleteOrderLineRequest {
+	ClientRequest clientRequest = 1;
+	string orderLineUuid = 2;
+}
+
+// Request for create a order line
+message CreateOrderLineRequest {
+	ClientRequest clientRequest = 1;
+	string orderUuid = 2;
+	string productUuid = 3;
+	string chargeUuid = 4;
+	string description = 5;
+	Decimal quantity = 6;
+	Decimal price = 7;
+	Decimal discountRate = 8;
+	string warehouseUuid = 9;
+}
+
+// Request for update a order line
+message UpdateOrderLineRequest {
+	ClientRequest clientRequest = 1;
+	string orderUuid = 2;
+	string description = 5;
+	Decimal quantity = 6;
+	Decimal price = 7;
+	Decimal discountRate = 8;
+}
+
+// Sales Order
+message Order {
+	string uuid = 1;
+	string documentNo = 2;
+	DocumentType documentType = 3;
+	SalesRepresentative salesRepresentative = 4;
+	string documentStatus = 5;
+	Decimal totalLines = 6;
+	Decimal grandTotal = 7;
+}
+
+// Sales Order Line
+message OrderLine {
+	string uuid = 1;
+	string orderUuid = 2;
+	Product product = 3;
+	Charge charge = 4;
+	string lineDescription = 5;
+	string description = 6;
+	Warehouse warehouse = 7;
+	Decimal quantity = 8;
+	Decimal price = 9;
+	Decimal discountRate = 10;
+	TaxRate taxRate = 11;
+	Decimal lineNetAmount = 12;
 }
 
 // Request Product Price
@@ -39,65 +158,4 @@ message GetProductPriceRequest {
 	string businessPartnerUuid = 7;
 	string warehouseUuid = 8;
 	int64 validFrom = 9;
-}
-
-// Product Definition
-message Product {
-	string uuid = 1;
-	int32 id = 2;
-	string value = 3;
-	string name = 4;
-	string help = 5;
-	string documentNote = 6;
-	string uomName = 7;
-	string productType = 8;
-	bool isStocked = 9;
-	bool isDropShip = 10;
-	bool isPurchased = 11;
-	bool isSold = 12;
-	string imageURL = 13;
-	string productCategoryName = 14;
-	string productGroupName = 15;
-	string productClassName = 16;
-	string productClassificationName = 17;
-	Decimal weight = 18;
-	Decimal volume = 19;
-	string upc = 20;
-	string sku = 21;
-	int32 shelfWidth = 22;
-	Decimal shelfHeight = 23;
-	int32 shelfDepth = 24;
-	int32 unitsPerPack = 25;
-	Decimal unitsPerPallet = 26;
-	int32 guaranteeDays = 27;
-	string descriptionURL = 28;
-	string versionNo = 29;
-	string taxCategory = 30;
-	string description = 31;
-}
-
-// Tax Rate
-message TaxRate {
-	string name = 1;
-	string description = 2;
-	string taxIndicator = 3;
-	Decimal rate = 4;
-}
-
-// Product Price
-message ProductPrice {
-	Product product = 1;
-	Decimal priceList = 2;
-	Decimal priceStd = 3;
-	Decimal priceLimit = 4;
-	string priceListName = 5;
-	bool isTaxIncluded = 6;
-	int64 validFrom = 7;
-	Currency currency = 8;
-	TaxRate taxRate = 9;
-	int32 pricePrecision = 10;
-	Decimal quantityOnHand = 11;
-	Decimal quantityReserved = 12;
-	Decimal quantityOrdered = 13;
-	Decimal quantityAvailable = 14;
 }

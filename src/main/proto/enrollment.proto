@@ -22,7 +22,7 @@ option objc_class_prefix = "HLW";
 package enrollment;
 
 // The greeting service definition.
-service EnrollmentService {
+service Register {
   // Request enroll User
   rpc EnrollUser(EnrollUserRequest) returns (User) {}
   // 

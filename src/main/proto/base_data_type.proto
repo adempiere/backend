@@ -1,0 +1,260 @@
+/************************************************************************************
+ * Copyright (C) 2012-2018 E.R.P. Consultores y Asociados, C.A.                     *
+ * Contributor(s): Yamel Senih ysenih@erpya.com                                     *
+ * This program is free software: you can redistribute it and/or modify             *
+ * it under the terms of the GNU General Public License as published by             *
+ * the Free Software Foundation, either version 2 of the License, or                *
+ * (at your option) any later version.                                              *
+ * This program is distributed in the hope that it will be useful,                  *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of                   *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the                     *
+ * GNU General Public License for more details.                                     *
+ * You should have received a copy of the GNU General Public License                *
+ * along with this program.	If not, see <https://www.gnu.org/licenses/>.            *
+ ************************************************************************************/
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "org.spin.grpc.util";
+option java_outer_classname = "ADempiereBase";
+option objc_class_prefix = "HLW";
+
+package data;
+
+//  Empty message
+message Empty {
+	
+}
+
+//	BusinessProcess Selections
+message KeyValueSelection {
+	int32 selectionId = 1;
+	repeated KeyValue values = 2;
+}
+
+// Key and Value pairs
+message KeyValue {
+	string key = 1;
+	Value value = 2;
+}
+
+// Define value for object
+message Value {
+	int32 intValue = 1;
+	int64 longValue = 2;
+	bool booleanValue = 3;
+	string stringValue = 4;
+	Decimal decimalValue = 5;
+	enum ValueType {
+		UNKNOWN = 0;
+		INTEGER = 1;
+		DECIMAL = 2;
+		BOOLEAN = 3;
+		STRING = 4;
+		DATE = 5;
+	}
+	ValueType valueType = 6;
+}
+
+// Define numeric types
+message Decimal {
+	string decimalValue = 1;
+	int32 scale = 2;
+}
+
+// Query for Request Object
+message Criteria {
+	string tableName = 1;
+	string query = 2;
+	string whereClause = 3;
+	string orderByClause = 4;
+	string referenceUuid = 5;
+	repeated Condition conditions = 6;
+	repeated Value values = 7;
+	repeated OrderByProperty orderByColumn = 8;
+	int64 limit = 9;
+}
+
+// Order By Property
+message OrderByProperty {
+	string columnName = 1;
+	enum OrderType {
+		ASCENDING = 0;
+		DESCENDING = 1;
+	}
+	//	Operators
+	OrderType orderType = 2;
+}
+
+// Condition for query data
+message Condition {
+	string columnName = 1;
+	Value value = 2;
+	Value valueTo = 3;
+	repeated Value values = 4;
+	enum Operator {
+		EQUAL = 0;
+		NOT_EQUAL = 1;
+		LIKE = 2;
+		NOT_LIKE = 3;
+		GREATER = 4;
+		GREATER_EQUAL = 5;
+		LESS = 6;
+		LESS_EQUAL = 7;
+		BETWEEN = 8;
+		NOT_NULL = 9;
+		NULL = 10;
+		IN = 11;
+		NOT_IN = 12;
+	}
+	//	Operators
+	Operator operator = 5;
+}
+
+// Zoom Information
+message RecordReferenceInfo {
+	string uuid = 1;
+	string windowUuid = 2;
+	string displayName = 3;
+	string tableName = 4;
+	string whereClause = 5;
+	int64 recordCount = 6;
+}
+
+// Document Item
+message DocumentStatus {
+	string value = 1;
+	string name = 2;
+	string description = 3;
+}
+
+// Document Item
+message DocumentAction {
+	string value = 1;
+	string name = 2;
+	string description = 3;
+}
+
+// Value Object from ADempiere
+message Entity {
+	int32 id = 1;
+	string uuid = 2;
+	string tableName = 3;
+	map<string, Value> values = 4;
+}
+
+//	Response with log and values from server
+message ProcessLog {
+	string uuid = 1;
+	string instanceUuid = 2;
+	bool isError = 3;
+	string summary = 4;
+	string resultTableName = 5;
+	bool isProcessing = 6;
+	int64 lastRun = 7;
+	repeated ProcessInfoLog logs = 8;
+	map<string, Value> parameters = 9;
+	ReportOutput output = 10;
+}
+
+//	BusinessProcess Log result
+message ProcessInfoLog {
+	int32 recordId = 1;
+	string log = 2;
+}
+
+// Translations Item
+message Translation {
+	string language = 1;
+	string translationUuid = 2;
+	map<string, Value> values = 3;
+}
+
+// Dashboard
+message Dashboard {
+	string windowUuid = 1;
+	string browserUuid = 2;
+	string dashboardName = 3;
+	string dashboardDescription = 4;
+	string dashboardHtml = 5;
+	int32 columnNo = 6;
+	int32 lineNo = 7;
+	bool isCollapsible = 8;
+	bool isOpenByDefault = 9;
+	bool isEventRequired = 10;
+	string fileName = 11;
+}
+
+// Print Format
+message PrintFormat {
+	string uuid = 1;
+	string name = 2;
+	string description = 3;
+	string tableName = 4;
+	bool isDefault = 5;
+	string reportViewUuid = 6;
+}
+
+// Record Log
+message RecordLog {
+	int32 logId = 1;
+	int32 recordId = 2;
+	string tableName = 3;
+	string sessionUuid = 4;
+	string userUuid = 5;
+	string userName = 6;
+	string transactionName = 7;
+	enum EventType {
+		INSERT = 0;
+		UPDATE = 1;
+		DELETE = 2;
+	}
+	EventType eventType = 8;
+	int64 logDate = 9;
+	repeated ChangeLog changeLogs = 10; 
+}
+
+// Record Log
+message ChangeLog {
+	string columnName = 4;
+	string displayColumnName = 5;
+	string oldValue = 10;
+	string oldDisplayValue = 11;
+	string newValue = 12;
+	string newDisplayValue = 13;
+	string description = 14;
+}
+
+// Report View
+message ReportView {
+	string uuid = 1;
+	string name = 2;
+	string description = 3;
+	string tableName = 4;
+}
+
+// Drill Table
+message DrillTable {
+	string tableName = 1;
+	string printName = 2;
+}
+
+//	Used for get output from report / BusinessProcess like PDF, HTML another result for show to end user
+message ReportOutput {
+	string uuid = 1;
+	string name = 2;
+	string description = 3;
+	string fileName = 4;
+	string output = 5;
+	string mimeType = 6;
+	int64 dataCols = 7;
+	int64 dataRows = 8;
+	string headerName = 9;
+	string footerName = 10;
+	string printFormatUuid = 11;
+	string reportViewUuid = 12;
+	string tableName = 13;
+	bytes outputStream = 14;
+	//	Output Type
+	string reportType = 15;
+}

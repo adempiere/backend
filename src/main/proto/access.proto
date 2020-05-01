@@ -22,7 +22,7 @@ option objc_class_prefix = "HLW";
 package access;
 
 // The greeting service definition.
-service AccessService {
+service Security {
   // Request user roles
   rpc GetUserInfo(LoginRequest) returns (UserInfoValue) {}
   // Request login from user

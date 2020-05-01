@@ -1,0 +1,277 @@
+/************************************************************************************
+ * Copyright (C) 2012-2018 E.R.P. Consultores y Asociados, C.A.                     *
+ * Contributor(s): Yamel Senih ysenih@erpya.com                                     *
+ * This program is free software: you can redistribute it and/or modify             *
+ * it under the terms of the GNU General Public License as published by             *
+ * the Free Software Foundation, either version 2 of the License, or                *
+ * (at your option) any later version.                                              *
+ * This program is distributed in the hope that it will be useful,                  *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of                   *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the                     *
+ * GNU General Public License for more details.                                     *
+ * You should have received a copy of the GNU General Public License                *
+ * along with this program.	If not, see <https://www.gnu.org/licenses/>.            *
+ ************************************************************************************/
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "org.spin.grpc.util";
+option java_outer_classname = "ADempiereCoreFunctionality";
+option objc_class_prefix = "HLW";
+
+import "base_data_type.proto";
+
+package data;
+
+service CoreFunctionality {
+	//	Get Country Information
+	rpc GetCountry(GetCountryRequest) returns (Country) {}
+	//	List Organizations
+	rpc ListOrganizations(ListOrganizationsRequest) returns (ListOrganizationsResponse) {}
+	//	Warehouses
+	rpc ListWarehouses(ListWarehousesRequest) returns (ListWarehousesResponse) {}
+	//	Request Language List
+	rpc ListLanguages(ListLanguagesRequest) returns (ListLanguagesResponse) {}
+}
+
+// The client request contains client info for request.
+message ClientRequest {
+	string sessionUuid = 1;
+	string language = 2;
+	string organizationUuid = 3;
+	string warehouseUuid = 4;
+}
+
+// Get Country Request
+message GetCountryRequest {
+	string countryUuid = 1;
+	int32 countryId = 2;
+	ClientRequest clientRequest = 3;
+}
+
+// Languages Request
+message ListLanguagesRequest {
+	ClientRequest clientRequest = 1;
+	int32 page_size = 2;
+	string page_token = 3;
+}
+
+//	Languages List
+message ListLanguagesResponse {
+	int64 recordCount = 1;
+	repeated Language languages = 2;
+	string next_page_token = 3;
+}
+
+// Country
+message Country {
+	string uuid = 1;
+	int32 id = 2;
+	string countryCode = 3;
+	string name = 4;
+	string description = 5;
+	bool hasRegion = 6;
+	string regionName = 7;
+	string displaySequence = 8;
+	bool isAddressLinesReverse = 9;
+	string captureSequence = 10;
+	string displaySequenceLocal = 11;
+	bool isAddressLinesLocalReverse = 12;
+	string expressionPostal = 13;
+	bool hasPostalAdd = 14;
+	string expressionPhone = 15;
+	string mediaSize = 16;
+	string expressionBankRoutingNo = 17;
+	string expressionBankAccountNo = 18;
+	string language = 19;
+	bool allowCitiesOutOfList = 20;
+	bool isPostcodeLookup = 21;
+	Currency currency = 22;
+}
+
+// Currency info
+message Currency {
+	string uuid = 1;
+	int32 id = 2;
+	string iSOCode = 3;
+	string curSymbol = 4;
+	string description = 5;
+	int32 stdPrecision = 6;
+	int32 costingPrecision = 7;
+}
+
+// Organization
+message Organization {
+	string uuid = 1;
+	int32 id = 2;
+	string name = 3;
+	string description = 4;
+	bool isReadOnly = 5;
+	string duns = 6;
+	string taxId = 7;
+	string phone = 8;
+	string phone2 = 9;
+	string fax = 10;
+}
+
+//	List Organizations Response
+message ListOrganizationsResponse {
+	int64 recordCount = 1;
+	repeated Organization organizations = 2;
+	string next_page_token = 4;
+}
+
+// Organization from Role
+message ListOrganizationsRequest {
+	ClientRequest clientRequest = 1;
+	int32 roleId = 2;
+	string roleUuid = 3;
+	int32 page_size = 4;
+	string page_token = 5;
+}
+
+// Warehouse
+message Warehouse {
+	string uuid = 1;
+	int32 id = 2;
+	string name = 3;
+	string description = 4;
+}
+
+//	Lost Warehouses Response
+message ListWarehousesResponse {
+	int64 recordCount = 1;
+	repeated Warehouse warehouses = 2;
+	string next_page_token = 4;
+}
+
+// Warehouses Request
+message ListWarehousesRequest {
+	ClientRequest clientRequest = 1;
+	int32 organizationId = 2;
+	string organizationUuid = 3;
+	int32 page_size = 4;
+	string page_token = 5;
+}
+
+// Unit of Measure
+message UnitOfMeasure {
+	string uuid = 1;
+	int32 id = 2;
+	string code = 3;
+	string symbol = 4;
+	string name = 5;
+	string description = 6;
+	int32 stdPrecision = 7;
+	int32 costingPrecision = 8;
+}
+
+// Charge definition
+message Charge {
+	string uuid = 1;
+	int32 id = 2;
+	string name = 3;
+	string description = 4;
+}
+
+// Business Partner
+message BusinessPartner {
+	string uuid = 1;
+	int32 id = 2;
+	string name = 3;
+	string lastName = 4;
+	string description = 5;
+}
+
+// Document Type definition
+message DocumentType {
+	string uuid = 1;
+	int32 id = 2;
+	string name = 3;
+	string printerName = 4;
+	string description = 5;
+}
+
+// Sales Representative definition
+message SalesRepresentative {
+	string uuid = 1;
+	int32 id = 2;
+	string name = 3;
+	string description = 4;
+}
+
+// Product Definition
+message Product {
+	string uuid = 1;
+	int32 id = 2;
+	string value = 3;
+	string name = 4;
+	string help = 5;
+	string documentNote = 6;
+	string uomName = 7;
+	string productType = 8;
+	bool isStocked = 9;
+	bool isDropShip = 10;
+	bool isPurchased = 11;
+	bool isSold = 12;
+	string imageURL = 13;
+	string productCategoryName = 14;
+	string productGroupName = 15;
+	string productClassName = 16;
+	string productClassificationName = 17;
+	Decimal weight = 18;
+	Decimal volume = 19;
+	string upc = 20;
+	string sku = 21;
+	int32 shelfWidth = 22;
+	Decimal shelfHeight = 23;
+	int32 shelfDepth = 24;
+	int32 unitsPerPack = 25;
+	Decimal unitsPerPallet = 26;
+	int32 guaranteeDays = 27;
+	string descriptionURL = 28;
+	string versionNo = 29;
+	string taxCategory = 30;
+	string description = 31;
+}
+
+// Tax Rate
+message TaxRate {
+	string uuid = 1;
+	int32 id = 2;
+	string name = 3;
+	string description = 4;
+	string taxIndicator = 5;
+	Decimal rate = 6;
+}
+
+// Product Price
+message ProductPrice {
+	Product product = 1;
+	Decimal priceList = 2;
+	Decimal priceStd = 3;
+	Decimal priceLimit = 4;
+	string priceListName = 5;
+	bool isTaxIncluded = 6;
+	int64 validFrom = 7;
+	Currency currency = 8;
+	TaxRate taxRate = 9;
+	int32 pricePrecision = 10;
+	Decimal quantityOnHand = 11;
+	Decimal quantityReserved = 12;
+	Decimal quantityOrdered = 13;
+	Decimal quantityAvailable = 14;
+}
+
+// Language Item
+message Language {
+	string language = 1;
+	string languageName = 2;
+	string languageISO = 3;
+	string countryCode = 4;
+	bool isBaseLanguage = 5;
+	bool isSystemLanguage = 6;
+	bool isDecimalPoint = 7;
+	string datePattern = 8;
+	string timePattern = 9;
+}

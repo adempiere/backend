@@ -19,10 +19,13 @@ option java_package = "org.spin.grpc.util";
 option java_outer_classname = "ADempiereData";
 option objc_class_prefix = "HLW";
 
+import "core_functionality.proto";
+import "base_data_type.proto";
+
 package data;
 
 // The greeting service definition.
-service BusinessDataService {
+service BusinessData {
 	// Get a Entity
 	rpc GetEntity(GetEntityRequest) returns (Entity) {}
 	// Create Entity Request
@@ -31,26 +34,30 @@ service BusinessDataService {
 	rpc UpdateEntity(UpdateEntityRequest) returns (Entity) {}
 	// Delete Entity Request
 	rpc DeleteEntity(DeleteEntityRequest) returns (Empty) {}
-	// Rollback Entity Request
-	rpc RollbackEntity(RollbackEntityRequest) returns (Entity) {}
-	// List a Entities
+	//	List a Entities
 	rpc ListEntities(ListEntitiesRequest) returns (ListEntitiesResponse) {}
+	//	Request a BusinessProcess / Report
+	rpc RunBusinessProcess(RunBusinessProcessRequest) returns (ProcessLog) {}
+}
+
+//	User Interface
+service UserInterface {
+	//	Rollback Entity Request
+	rpc RollbackEntity(RollbackEntityRequest) returns (Entity) {}
+	// Run a Callout
+	rpc RunCallout(RunCalloutRequest) returns (Callout) {}
+	//	Request Translations List
+	rpc ListTranslations(ListTranslationsRequest) returns (ListTranslationsResponse) {}
+	// Get Default Value
+	rpc GetDefaultValue(GetDefaultValueRequest) returns (Value) {}
 	// Get Lookup Item
 	rpc GetLookupItem(GetLookupItemRequest) returns (LookupItem) {}
 	// List Lookup Item
 	rpc ListLookupItems(ListLookupItemsRequest) returns (ListLookupItemsResponse) {}
-	// Run a Callout
-	rpc RunCallout(RunCalloutRequest) returns (Callout) {}
-	//	Request a BusinessProcess / Report
-	rpc RunBusinessProcess(RunBusinessProcessRequest) returns (ProcessLog) {}
 	//	Request Browser Data
 	rpc ListBrowserItems(ListBrowserItemsRequest) returns (ListBrowserItemsResponse) {}
-	//	Request Recent Items
-	rpc ListRecentItems(ListRecentItemsRequest) returns (ListRecentItemsResponse) {}
 	// List a References
 	rpc ListReferences(ListReferencesRequest) returns (ListReferencesResponse) {}
-	// Get Default Value
-	rpc GetDefaultValue(GetDefaultValueRequest) returns (Value) {}
 	// Get context Info
 	rpc GetContextInfoValue(GetContextInfoValueRequest) returns (ContextInfoValue) {}
 	// Get Private Access
@@ -59,10 +66,6 @@ service BusinessDataService {
 	rpc LockPrivateAccess(LockPrivateAccessRequest) returns (PrivateAccess) {}
 	// Change Private Access
 	rpc UnlockPrivateAccess(UnlockPrivateAccessRequest) returns (PrivateAccess) {}
-	//	Request Favorites
-	rpc ListFavorites(ListFavoritesRequest) returns (ListFavoritesResponse) {}
-	//	Request Document Statuses
-	rpc ListPendingDocuments(ListPendingDocumentsRequest) returns (ListPendingDocumentsResponse) {}
 	//	Request Print Format List
 	rpc ListPrintFormats(ListPrintFormatsRequest) returns (ListPrintFormatsResponse) {}
 	//	Request Report View List
@@ -71,12 +74,32 @@ service BusinessDataService {
 	rpc ListDrillTables(ListDrillTablesRequest) returns (ListDrillTablesResponse) {}
 	//	Request Report Output
 	rpc GetReportOutput(GetReportOutputRequest) returns (ReportOutput) {}
+	// Add Chat Entry
+	rpc CreateChatEntry(CreateChatEntryRequest) returns (ChatEntry) {}
+}
+
+//	Workflow management service
+service Workflow {
+	//	List Workflow
+	rpc ListWorkflows(ListWorkflowsRequest) returns (ListWorkflowsResponse) {}
+	//	List Document Actions
+	rpc ListDocumentActions(ListDocumentActionsRequest) returns (ListDocumentActionsResponse) {}
+	//	List Document Statuses
+	rpc ListDocumentStatuses(ListDocumentStatusesRequest) returns (ListDocumentStatusesResponse) {}
+}
+
+//	All related to dashboarding
+service Dashboarding {
 	//	Request Dashboards Content Edit
 	rpc ListDashboards(ListDashboardsRequest) returns (ListDashboardsResponse) {}
-	//	Request Language List
-	rpc ListLanguages(ListLanguagesRequest) returns (ListLanguagesResponse) {}
-	//	Request Translations List
-	rpc ListTranslations(ListTranslationsRequest) returns (ListTranslationsResponse) {}
+	//	Request Favorites
+	rpc ListFavorites(ListFavoritesRequest) returns (ListFavoritesResponse) {}
+	//	Request Document Statuses
+	rpc ListPendingDocuments(ListPendingDocumentsRequest) returns (ListPendingDocumentsResponse) {}
+}
+
+//	Logger services
+service EntityLog {
 	//	Request BusinessProcess Activity from current session
 	rpc ListProcessLogs(ListProcessLogsRequest) returns (ListProcessLogsResponse) {}
 	//	Request Record Log List
@@ -87,136 +110,8 @@ service BusinessDataService {
 	rpc ListChatEntries(ListChatEntriesRequest) returns (ListChatEntriesResponse) {}
 	//	List workflow processes
 	rpc ListWorkflowLogs(ListWorkflowLogsRequest) returns (ListWorkflowLogsResponse) {}
-	//	List Workflow
-	rpc ListWorkflows(ListWorkflowsRequest) returns (ListWorkflowsResponse) {}
-	// Add Chat Entry
-	rpc CreateChatEntry(CreateChatEntryRequest) returns (ChatEntry) {}
-	//	List Document Actions
-	rpc ListDocumentActions(ListDocumentActionsRequest) returns (ListDocumentActionsResponse) {}
-	//	List Document Statuses
-	rpc ListDocumentStatuses(ListDocumentStatusesRequest) returns (ListDocumentStatusesResponse) {}
-	//	Get Country Information
-	rpc GetCountry(GetCountryRequest) returns (Country) {}
-	//	List Organizations
-	rpc ListOrganizations(ListOrganizationsRequest) returns (ListOrganizationsResponse) {}
-	//	Warehouses
-	rpc ListWarehouses(ListWarehousesRequest) returns (ListWarehousesResponse) {}
-}
-
-// The client request contains client info for request.
-message ClientRequest {
-	string sessionUuid = 1;
-	string language = 2;
-	string organizationUuid = 3;
-	string warehouseUuid = 4;
-}
-
-// Get Entity Request
-message GetEntityRequest {
-	string uuid = 1;
-	string tableName = 2;
-	int32 recordId = 3;
-	ClientRequest clientRequest = 4;
-	// Query
-	Criteria criteria = 5;
-}
-
-// Get Country Request
-message GetCountryRequest {
-	string countryUuid = 1;
-	int32 countryId = 2;
-	ClientRequest clientRequest = 3;
-}
-
-// Country
-message Country {
-	string uuid = 1;
-	int32 id = 2;
-	string countryCode = 3;
-	string name = 4;
-	string description = 5;
-	bool hasRegion = 6;
-	string regionName = 7;
-	string displaySequence = 8;
-	bool isAddressLinesReverse = 9;
-	string captureSequence = 10;
-	string displaySequenceLocal = 11;
-	bool isAddressLinesLocalReverse = 12;
-	string expressionPostal = 13;
-	bool hasPostalAdd = 14;
-	string expressionPhone = 15;
-	string mediaSize = 16;
-	string expressionBankRoutingNo = 17;
-	string expressionBankAccountNo = 18;
-	string language = 19;
-	bool allowCitiesOutOfList = 20;
-	bool isPostcodeLookup = 21;
-	Currency currency = 22;
-}
-
-// Currency info
-message Currency {
-	string uuid = 1;
-	int32 id = 2;
-	string iSOCode = 3;
-	string curSymbol = 4;
-	string description = 5;
-	int32 stdPrecision = 6;
-	int32 costingPrecision = 7;
-}
-
-// Organization
-message Organization {
-	int32 id = 1;
-	string uuid = 2;
-	string name = 3;
-	string description = 4;
-	bool isReadOnly = 5;
-	string duns = 6;
-	string taxId = 7;
-	string phone = 8;
-	string phone2 = 9;
-	string fax = 10;
-}
-
-//	List Organizations Response
-message ListOrganizationsResponse {
-	int64 recordCount = 1;
-	repeated Organization organizations = 2;
-	string next_page_token = 4;
-}
-
-// Organization from Role
-message ListOrganizationsRequest {
-	ClientRequest clientRequest = 1;
-	int32 roleId = 2;
-	string roleUuid = 3;
-	int32 page_size = 4;
-	string page_token = 5;
-}
-
-// Warehouse
-message Warehouse {
-	int32 id = 1;
-	string uuid = 2;
-	string name = 3;
-	string description = 4;
-}
-
-//	Lost Warehouses Response
-message ListWarehousesResponse {
-	int64 recordCount = 1;
-	repeated Warehouse warehouses = 2;
-	string next_page_token = 4;
-}
-
-// Warehouses Request
-message ListWarehousesRequest {
-	ClientRequest clientRequest = 1;
-	int32 organizationId = 2;
-	string organizationUuid = 3;
-	int32 page_size = 4;
-	string page_token = 5;
+	//	Request Recent Items
+	rpc ListRecentItems(ListRecentItemsRequest) returns (ListRecentItemsResponse) {}
 }
 
 // Get Entity Request
@@ -237,17 +132,22 @@ message CreateEntityRequest {
 	repeated KeyValue attributes = 3;
 }
 
-//  Empty message
-message Empty {
-	
-}
-
 // Create Private Access Request
 message LockPrivateAccessRequest {
 	ClientRequest clientRequest = 1;
 	string tableName = 2;
 	int32 recordId = 3;
 	string userUuid = 4;
+}
+
+// Get Entity Request
+message GetEntityRequest {
+	string uuid = 1;
+	string tableName = 2;
+	int32 recordId = 3;
+	ClientRequest clientRequest = 4;
+	// Query
+	Criteria criteria = 5;
 }
 
 // Get Private Access Request
@@ -310,54 +210,10 @@ message ListBrowserItemsResponse {
 	string next_page_token = 3;
 }
 
-// Value Object from ADempiere
-message Entity {
-	int32 id = 1;
-	string uuid = 2;
-	string tableName = 3;
-	map<string, Value> values = 4;
-}
-
 // Context Info Value
 message ContextInfoValue {
 	string messageText = 1;
 	string messageTip = 2;
-}
-
-//	BusinessProcess Selections
-message KeyValueSelection {
-	int32 selectionId = 1;
-	repeated KeyValue values = 2;
-}
-
-// Key and Value pairs
-message KeyValue {
-	string key = 1;
-	Value value = 2;
-}
-
-// Define value for object
-message Value {
-	int32 intValue = 1;
-	int64 longValue = 2;
-	bool booleanValue = 3;
-	string stringValue = 4;
-	Decimal decimalValue = 5;
-	enum ValueType {
-		UNKNOWN = 0;
-		INTEGER = 1;
-		DECIMAL = 2;
-		BOOLEAN = 3;
-		STRING = 4;
-		DATE = 5;
-	}
-	ValueType valueType = 6;
-}
-
-// Define numeric types
-message Decimal {
-	string decimalValue = 1;
-	int32 scale = 2;
 }
 
 // Get Lookup Item
@@ -424,55 +280,6 @@ message ListEntitiesResponse {
 	string next_page_token = 3;
 }
 
-// Query for Request Object
-message Criteria {
-	string tableName = 1;
-	string query = 2;
-	string whereClause = 3;
-	string orderByClause = 4;
-	string referenceUuid = 5;
-	repeated Condition conditions = 6;
-	repeated Value values = 7;
-	repeated OrderByProperty orderByColumn = 8;
-	int64 limit = 9;
-}
-
-// Order By Property
-message OrderByProperty {
-	string columnName = 1;
-	enum OrderType {
-		ASCENDING = 0;
-		DESCENDING = 1;
-	}
-	//	Operators
-	OrderType orderType = 2;
-}
-
-// Condition for query data
-message Condition {
-	string columnName = 1;
-	Value value = 2;
-	Value valueTo = 3;
-	repeated Value values = 4;
-	enum Operator {
-		EQUAL = 0;
-		NOT_EQUAL = 1;
-		LIKE = 2;
-		NOT_LIKE = 3;
-		GREATER = 4;
-		GREATER_EQUAL = 5;
-		LESS = 6;
-		LESS_EQUAL = 7;
-		BETWEEN = 8;
-		NOT_NULL = 9;
-		NULL = 10;
-		IN = 11;
-		NOT_IN = 12;
-	}
-	//	Operators
-	Operator operator = 5;
-}
-
 // Callout Request
 message RunCalloutRequest {
 	ClientRequest clientRequest = 1;
@@ -524,26 +331,6 @@ message ListProcessLogsResponse {
 	int64 recordCount = 1;
 	repeated ProcessLog processLogs = 2;
 	string next_page_token = 3;
-}
-
-//	Response with log and values from server
-message ProcessLog {
-	string uuid = 1;
-	string instanceUuid = 2;
-	bool isError = 3;
-	string summary = 4;
-	string resultTableName = 5;
-	bool isProcessing = 6;
-	int64 lastRun = 7;
-	repeated ProcessInfoLog logs = 8;
-	map<string, Value> parameters = 9;
-	ReportOutput output = 10;
-}
-
-//	BusinessProcess Log result
-message ProcessInfoLog {
-	int32 recordId = 1;
-	string log = 2;
 }
 
 // Recent Items Request
@@ -603,33 +390,6 @@ message ListFavoritesResponse {
 	string next_page_token = 3;
 }
 
-// Languages Request
-message ListLanguagesRequest {
-	ClientRequest clientRequest = 1;
-	int32 page_size = 2;
-	string page_token = 3;
-}
-
-// Language Item
-message Language {
-	string language = 1;
-	string languageName = 2;
-	string languageISO = 3;
-	string countryCode = 4;
-	bool isBaseLanguage = 5;
-	bool isSystemLanguage = 6;
-	bool isDecimalPoint = 7;
-	string datePattern = 8;
-	string timePattern = 9;
-}
-
-//	Languages List
-message ListLanguagesResponse {
-	int64 recordCount = 1;
-	repeated Language languages = 2;
-	string next_page_token = 3;
-}
-
 // Translations Request
 message ListTranslationsRequest {
 	ClientRequest clientRequest = 1;
@@ -639,13 +399,6 @@ message ListTranslationsRequest {
 	string language = 5;
 	int32 page_size = 6;
 	string page_token = 7;
-}
-
-// Translations Item
-message Translation {
-	string language = 1;
-	string translationUuid = 2;
-	map<string, Value> values = 3;
 }
 
 //	Translations List
@@ -691,21 +444,6 @@ message ListDashboardsRequest {
 	string page_token = 4;
 }
 
-// Dashboard
-message Dashboard {
-	string windowUuid = 1;
-	string browserUuid = 2;
-	string dashboardName = 3;
-	string dashboardDescription = 4;
-	string dashboardHtml = 5;
-	int32 columnNo = 6;
-	int32 lineNo = 7;
-	bool isCollapsible = 8;
-	bool isOpenByDefault = 9;
-	bool isEventRequired = 10;
-	string fileName = 11;
-}
-
 //	Dashboards List
 message ListDashboardsResponse {
 	int64 recordCount = 1;
@@ -723,16 +461,6 @@ message ListPrintFormatsRequest {
 	string page_token = 6;
 }
 
-// Print Format
-message PrintFormat {
-	string uuid = 1;
-	string name = 2;
-	string description = 3;
-	string tableName = 4;
-	bool isDefault = 5;
-	string reportViewUuid = 6;
-}
-
 //	Print Format List
 message ListPrintFormatsResponse {
 	int64 recordCount = 1;
@@ -747,36 +475,6 @@ message ListRecordLogsRequest {
 	int32 recordId = 3;
 	int32 page_size = 4;
 	string page_token = 5;
-}
-
-// Record Log
-message RecordLog {
-	int32 logId = 1;
-	int32 recordId = 2;
-	string tableName = 3;
-	string sessionUuid = 4;
-	string userUuid = 5;
-	string userName = 6;
-	string transactionName = 7;
-	enum EventType {
-		INSERT = 0;
-		UPDATE = 1;
-		DELETE = 2;
-	}
-	EventType eventType = 8;
-	int64 logDate = 9;
-	repeated ChangeLog changeLogs = 10; 
-}
-
-// Record Log
-message ChangeLog {
-	string columnName = 4;
-	string displayColumnName = 5;
-	string oldValue = 10;
-	string oldDisplayValue = 11;
-	string newValue = 12;
-	string newDisplayValue = 13;
-	string description = 14;
 }
 
 //	Record Log List
@@ -1008,13 +706,6 @@ message ListDocumentActionsRequest {
 	string page_token = 8;
 }
 
-// Document Item
-message DocumentAction {
-	string value = 1;
-	string name = 2;
-	string description = 3;
-}
-
 //	Document Actions List
 message ListDocumentActionsResponse {
 	int64 recordCount = 1;
@@ -1032,13 +723,6 @@ message ListDocumentStatusesRequest {
 	string documentStatus = 5;
 	int32 page_size = 6;
 	string page_token = 7;
-}
-
-// Document Item
-message DocumentStatus {
-	string value = 1;
-	string name = 2;
-	string description = 3;
 }
 
 //	Document Actions List
@@ -1142,14 +826,6 @@ message ListReportViewsRequest {
 	string page_token = 5;
 }
 
-// Report View
-message ReportView {
-	string uuid = 1;
-	string name = 2;
-	string description = 3;
-	string tableName = 4;
-}
-
 //	Report View List
 message ListReportViewsResponse {
 	int64 recordCount = 1;
@@ -1165,37 +841,11 @@ message ListDrillTablesRequest {
 	string page_token = 4;
 }
 
-// Drill Table
-message DrillTable {
-	string tableName = 1;
-	string printName = 2;
-}
-
 //	Drill Tables List
 message ListDrillTablesResponse {
 	int64 recordCount = 1;
 	repeated DrillTable drillTables = 2;
 	string next_page_token = 3;
-}
-
-//	Used for get output from report / BusinessProcess like PDF, HTML another result for show to end user
-message ReportOutput {
-	string uuid = 1;
-	string name = 2;
-	string description = 3;
-	string fileName = 4;
-	string output = 5;
-	string mimeType = 6;
-	int64 dataCols = 7;
-	int64 dataRows = 8;
-	string headerName = 9;
-	string footerName = 10;
-	string printFormatUuid = 11;
-	string reportViewUuid = 12;
-	string tableName = 13;
-	bytes outputStream = 14;
-	//	Output Type
-	string reportType = 15;
 }
 
 // Browser request
@@ -1224,14 +874,4 @@ message ListReferencesResponse {
 	int64 recordCount = 1;
 	repeated RecordReferenceInfo references = 2;
 	string next_page_token = 3;
-}
-
-// Zoom Information
-message RecordReferenceInfo {
-	string uuid = 1;
-	string windowUuid = 2;
-	string displayName = 3;
-	string tableName = 4;
-	string whereClause = 5;
-	int64 recordCount = 6;
 }

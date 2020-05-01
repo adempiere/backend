@@ -26,7 +26,7 @@ import org.compiere.util.CLogger;
 import org.compiere.util.EMail;
 import org.compiere.util.Env;
 import org.compiere.util.Util;
-import org.spin.grpc.util.EnrollmentServiceGrpc.EnrollmentServiceImplBase;
+import org.spin.grpc.util.RegisterGrpc.RegisterImplBase;
 import org.spin.grpc.util.ResetPasswordResponse.ResponseType;
 import org.spin.model.I_AD_Token;
 import org.spin.model.MADToken;
@@ -41,7 +41,7 @@ import io.grpc.stub.StreamObserver;
  * Enrollment service
  * Used for enroll user
  */
-public class EnrollmentServiceImplementation extends EnrollmentServiceImplBase {
+public class EnrollmentServiceImplementation extends RegisterImplBase {
 	/**	Logger			*/
 	private CLogger log = CLogger.getCLogger(EnrollmentServiceImplementation.class);
 	

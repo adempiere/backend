@@ -89,7 +89,18 @@ public class BusinessDataServer {
 		                .start();
 		  } else {
 			  server = ServerBuilder.forPort(port)
+					  	//	Base Service
 				        .addService(new BusinessDataServiceImplementation())
+				        //	Core Functionality
+				        .addService(new CoreFunctionalityImplementation())
+				        //	User Interface
+				        .addService(new UserInterfaceServiceImplementation())
+				        //	Dashboarding
+				        .addService(new DashboardingServiceImplementation())
+				        //	Workflow
+				        .addService(new WorkflowServiceImplementation())
+				        //	Entity Log
+				        .addService(new EntityLogServiceImplementation())
 				        //	POS
 				        .addService(new PointOfSalesServiceImplementation())
 				        .build()

@@ -66,7 +66,7 @@ import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
 import org.compiere.util.Language;
 import org.compiere.util.Util;
-import org.spin.grpc.util.DictionaryServiceGrpc.DictionaryServiceImplBase;
+import org.spin.grpc.util.DictionaryGrpc.DictionaryImplBase;
 import org.spin.model.MADContextInfo;
 import org.spin.model.MADFieldCondition;
 import org.spin.model.MADFieldDefinition;
@@ -82,7 +82,7 @@ import io.grpc.stub.StreamObserver;
  * Dictionary service
  * Get all dictionary meta-data
  */
-public class DictionaryServiceImplementation extends DictionaryServiceImplBase {
+public class DictionaryServiceImplementation extends DictionaryImplBase {
 	/**	Logger			*/
 	private CLogger log = CLogger.getCLogger(DictionaryServiceImplementation.class);
 	

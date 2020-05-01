@@ -42,7 +42,7 @@ import org.compiere.util.CLogger;
 import org.compiere.util.Env;
 import org.compiere.util.TimeUtil;
 import org.compiere.util.Util;
-import org.spin.grpc.util.PointOfSalesServiceGrpc.PointOfSalesServiceImplBase;
+import org.spin.grpc.util.StoreGrpc.StoreImplBase;
 
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
@@ -51,7 +51,7 @@ import io.grpc.stub.StreamObserver;
  * @author Yamel Senih, ysenih@erpya.com, ERPCyA http://www.erpya.com
  * Service for backend of POS
  */
-public class PointOfSalesServiceImplementation extends PointOfSalesServiceImplBase {
+public class PointOfSalesServiceImplementation extends StoreImplBase {
 	/**	Logger			*/
 	private CLogger log = CLogger.getCLogger(PointOfSalesServiceImplementation.class);
 	/**	Product Cache	*/

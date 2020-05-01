@@ -26,7 +26,7 @@ public class DictionaryClient {
 	  private static final Logger logger = Logger.getLogger(DictionaryClient.class.getName());
 
 	  private final ManagedChannel channel;
-	  private final DictionaryServiceGrpc.DictionaryServiceBlockingStub blockingStub;
+	  private final DictionaryGrpc.DictionaryBlockingStub blockingStub;
 
 	  /** Construct client connecting to HelloWorld server at {@code host:port}. */
 	  public DictionaryClient(String host, int port) {
@@ -40,7 +40,7 @@ public class DictionaryClient {
 	  /** Construct client for accessing HelloWorld server using the existing channel. */
 	  DictionaryClient(ManagedChannel channel) {
 	    this.channel = channel;
-	    blockingStub = DictionaryServiceGrpc.newBlockingStub(channel);
+	    blockingStub = DictionaryGrpc.newBlockingStub(channel);
 	  }
 
 	  public void shutdown() throws InterruptedException {

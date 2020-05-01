@@ -80,7 +80,7 @@ import org.compiere.util.Login;
 import org.compiere.util.Msg;
 import org.compiere.util.Util;
 import org.compiere.wf.MWorkflowAccess;
-import org.spin.grpc.util.AccessServiceGrpc.AccessServiceImplBase;
+import org.spin.grpc.util.SecurityGrpc.SecurityImplBase;
 import org.spin.grpc.util.TableAccess.AccessTypeRule;
 import org.spin.model.I_AD_Dashboard_Access;
 import org.spin.model.X_AD_Dashboard_Access;
@@ -91,7 +91,7 @@ import io.grpc.stub.StreamObserver;
  * @author Yamel Senih, ysenih@erpya.com, ERPCyA http://www.erpya.com
  * Access service
  */
-public class AccessServiceImplementation extends AccessServiceImplBase {
+public class AccessServiceImplementation extends SecurityImplBase {
 	/**	Logger			*/
 	private CLogger log = CLogger.getCLogger(AccessServiceImplementation.class);
 	/**	Session Context	*/
