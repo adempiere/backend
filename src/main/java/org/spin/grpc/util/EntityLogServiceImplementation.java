@@ -43,6 +43,7 @@ import org.compiere.model.MColumn;
 import org.compiere.model.MForm;
 import org.compiere.model.MLookup;
 import org.compiere.model.MLookupFactory;
+import org.compiere.model.MLookupInfo;
 import org.compiere.model.MMenu;
 import org.compiere.model.MPInstance;
 import org.compiere.model.MPInstancePara;
@@ -647,13 +648,30 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 				if (newValue != null)
 					displayNewValue = dateTimeFormat.format (Timestamp.valueOf (newValue));
 			} else if (DisplayType.isLookup(column.getAD_Reference_ID())
-					|| (DisplayType.Button == column.getAD_Reference_ID()
-							&& column.getAD_Reference_Value_ID() != 0)) {
+					&& column.getAD_Reference_ID() != DisplayType.Button
+					&& column.getAD_Reference_ID() != DisplayType.List) {
 				MLookup lookup = MLookupFactory.get (Env.getCtx(), 0,
 						column.getAD_Column_ID(), column.getAD_Reference_ID(),
 					Env.getLanguage(Env.getCtx()), column.getColumnName(),
 					column.getAD_Reference_Value_ID(),
 					column.isParent(), null);
+				if (oldValue != null) {
+					Object key = oldValue; 
+					NamePair pp = lookup.get(key);
+					if (pp != null)
+						displayOldValue = pp.getName();
+				}
+				if (newValue != null) {
+					Object key = newValue; 
+					NamePair pp = lookup.get(key);
+					if (pp != null)
+						displayNewValue = pp.getName();
+				}
+			} else if((DisplayType.Button == column.getAD_Reference_ID()
+					|| DisplayType.List == column.getAD_Reference_ID())
+					&& column.getAD_Reference_Value_ID() != 0) {
+				MLookupInfo lookupInfo = MLookupFactory.getLookup_List(Env.getLanguage(Env.getCtx()), column.getAD_Reference_Value_ID());
+				MLookup lookup = new MLookup(lookupInfo, 0);
 				if (oldValue != null) {
 					Object key = oldValue; 
 					NamePair pp = lookup.get(key);

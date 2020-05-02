@@ -17,24 +17,35 @@ package org.spin.grpc.util;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.adempiere.exceptions.AdempiereException;
 import org.compiere.model.I_C_BPartner;
+import org.compiere.model.I_C_DocType;
+import org.compiere.model.I_C_Order;
+import org.compiere.model.I_C_POS;
 import org.compiere.model.I_M_PriceList;
 import org.compiere.model.I_M_Product;
 import org.compiere.model.I_M_Warehouse;
 import org.compiere.model.MBPartner;
+import org.compiere.model.MBPartnerLocation;
 import org.compiere.model.MCurrency;
+import org.compiere.model.MDocType;
+import org.compiere.model.MOrder;
+import org.compiere.model.MPOS;
 import org.compiere.model.MPriceList;
+import org.compiere.model.MPriceListVersion;
 import org.compiere.model.MProduct;
 import org.compiere.model.MProductCategory;
+import org.compiere.model.MProductPrice;
 import org.compiere.model.MProductPricing;
 import org.compiere.model.MStorage;
 import org.compiere.model.MTax;
 import org.compiere.model.MUOM;
+import org.compiere.model.MUser;
 import org.compiere.model.MWarehouse;
 import org.compiere.model.Query;
 import org.compiere.util.CCache;
@@ -55,11 +66,18 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	/**	Logger			*/
 	private CLogger log = CLogger.getCLogger(PointOfSalesServiceImplementation.class);
 	/**	Product Cache	*/
-	private static CCache<String, MProduct> productCache = new CCache<String, MProduct>(I_M_Product.Table_Name + "-gRPC-Service", 30, 0);	//	no time-out
+	private static CCache<String, MProduct> productCache = new CCache<String, MProduct>(I_M_Product.Table_Name, 30, 0);	//	no time-out
 	/**	Warehouse Cache	*/
-	private static CCache<String, MWarehouse> warehouseCache = new CCache<String, MWarehouse>(I_M_Warehouse.Table_Name + "-gRPC-Service", 30, 0);	//	no time-out
+	private static CCache<String, MWarehouse> warehouseCache = new CCache<String, MWarehouse>(I_M_Warehouse.Table_Name, 30, 0);	//	no time-out
 	/**	Price List Cache	*/
-	private static CCache<String, MPriceList> priceListCache = new CCache<String, MPriceList>(I_M_PriceList.Table_Name + "-gRPC-Service", 30, 0);	//	no time-out
+	private static CCache<String, MPriceList> priceListCache = new CCache<String, MPriceList>(I_M_PriceList.Table_Name, 30, 0);	//	no time-out
+	/**	POS Cache	*/
+	private static CCache<String, MPOS> posCache = new CCache<String, MPOS>(I_C_POS.Table_Name, 30, 0);	//	no time-out
+	/**	Business Partner	*/
+	private static CCache<String, MBPartner> businessPartnerCache = new CCache<String, MBPartner>(I_C_BPartner.Table_Name, 30, 0);	//	no time-out
+	/**	Document Type	*/
+	private static CCache<String, MDocType> documentTypeCache = new CCache<String, MDocType>(I_C_DocType.Table_Name, 30, 0);	//	no time-out
+	
 	@Override
 	public void getProductPrice(GetProductPriceRequest request, StreamObserver<ProductPrice> responseObserver) {
 		try {
@@ -79,6 +97,367 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					.withCause(e)
 					.asRuntimeException());
 		}
+	}
+	
+	@Override
+	public void createOrder(CreateOrderRequest request, StreamObserver<Order> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Create Order = " + request.getPosUuid());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
+			Order.Builder order = createOrder(context, request);
+			responseObserver.onNext(order.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void getPointOfSales(PointOfSalesRequest request, StreamObserver<PointOfSales> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Get Point of Sales = " + request.getPointOfSalesUuid());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
+			PointOfSales.Builder pos = getPosBuilder(context, request);
+			responseObserver.onNext(pos.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	/**
+	 * Get POS builder
+	 * @param context
+	 * @param request
+	 * @return
+	 */
+	private PointOfSales.Builder getPosBuilder(Properties context, PointOfSalesRequest request) {
+		MPOS pos = getPos(request.getPointOfSalesUuid());
+		if(pos == null) {
+			throw new AdempiereException("@C_POS_ID@ @NotFound@");
+		}
+		//	
+		return convertPos(pos);
+	}
+	
+	/**
+	 * Convert POS
+	 * @param pos
+	 * @return
+	 */
+	private PointOfSales.Builder convertPos(MPOS pos) {
+		return PointOfSales.newBuilder()
+				.setUuid(ValueUtil.validateNull(pos.getUUID()))
+				.setId(pos.getC_POS_ID())
+				.setName(ValueUtil.validateNull(pos.getName()))
+				.setDescription(ValueUtil.validateNull(pos.getDescription()))
+				.setHelp(ValueUtil.validateNull(pos.getHelp()))
+				.setIsModifyPrice(pos.isModifyPrice())
+				.setIsPOSRequiredPIN(pos.isPOSRequiredPIN())
+				.setSalesRepresentative(convertSalesRepresentative(MUser.get(pos.getCtx(), pos.getSalesRep_ID())))
+				.setTemplateBusinessPartner(convertBusinessPartner(pos.getBPartner()));
+	}
+	
+	/**
+	 * Convert Sales Representative
+	 * @param salesRepresentative
+	 * @return
+	 */
+	private SalesRepresentative.Builder convertSalesRepresentative(MUser salesRepresentative) {
+		return SalesRepresentative.newBuilder()
+				.setUuid(ValueUtil.validateNull(salesRepresentative.getUUID()))
+				.setId(salesRepresentative.getAD_User_ID())
+				.setName(ValueUtil.validateNull(salesRepresentative.getName()))
+				.setDescription(ValueUtil.validateNull(salesRepresentative.getDescription()));
+	}
+	
+	/**
+	 * Convert business partner
+	 * @param businessPartner
+	 * @return
+	 */
+	private BusinessPartner.Builder convertBusinessPartner(MBPartner businessPartner) {
+		return BusinessPartner.newBuilder()
+				.setUuid(ValueUtil.validateNull(businessPartner.getUUID()))
+				.setId(businessPartner.getC_BPartner_ID())
+				.setValue(ValueUtil.validateNull(businessPartner.getValue()))
+				.setTaxId(ValueUtil.validateNull(businessPartner.getTaxID()))
+				.setDuns(ValueUtil.validateNull(businessPartner.getDUNS()))
+				.setNaics(ValueUtil.validateNull(businessPartner.getNAICS()))
+				.setName(ValueUtil.validateNull(businessPartner.getName()))
+				.setLastName(ValueUtil.validateNull(businessPartner.getName2()))
+				.setDescription(ValueUtil.validateNull(businessPartner.getDescription()));
+	}
+	
+	/**
+	 * Create Order from request
+	 * @param context
+	 * @param request
+	 * @return
+	 */
+	private Order.Builder createOrder(Properties context, CreateOrderRequest request) {
+		if(Util.isEmpty(request.getPosUuid())) {
+			throw new AdempiereException("@C_POS_ID@ @NotFound@");
+		}
+		MPOS pos = getPos(request.getPosUuid());
+		if(pos == null) {
+			throw new AdempiereException("@C_POS_ID@ @NotFound@");
+		}
+		//	
+		MOrder salesOrder = new Query(context, I_C_Order.Table_Name, 
+				"DocStatus NOT IN('CO', 'CL') "
+				+ "AND C_POS_ID = ? "
+				+ "AND NOT EXISTS(SELECT 1 "
+				+ "					FROM C_OrderLine ol "
+				+ "					WHERE ol.C_Order_ID = C_Order.C_Order_ID) ", null)
+				.setParameters(pos.getC_POS_ID())
+				.first();
+		//	Validate
+		if(salesOrder == null) {
+			salesOrder = new MOrder(context, 0, null);
+		} else {
+			salesOrder.setDateOrdered(getDate());
+			salesOrder.setDateAcct(getDate());
+			salesOrder.setDatePromised(getDate());
+		}
+		//	Default values
+		salesOrder.setIsSOTrx(true);
+		salesOrder.setAD_Org_ID(pos.getAD_Org_ID());
+		salesOrder.setC_POS_ID(pos.getC_POS_ID());
+		//	Warehouse
+		if(pos.getM_Warehouse_ID() != 0) {
+			salesOrder.setM_Warehouse_ID(pos.getM_Warehouse_ID());
+		}
+		//	Price List
+		if(pos.getM_PriceList_ID() != 0) {
+			salesOrder.setM_PriceList_ID(pos.getM_PriceList_ID());
+		}
+		//	Document Type
+		MDocType documentType = null;
+		if(!Util.isEmpty(request.getDocumentTypeUuid())) {
+			documentType = getDocumentType(request.getDocumentTypeUuid());
+		}
+		//	Validate
+		if(documentType == null
+				&& pos.getC_DocType_ID() != 0) {
+			documentType = MDocType.get(context, pos.getC_DocType_ID());
+		}
+		//	Validate
+		if(documentType != null) {
+			salesOrder.setC_DocTypeTarget_ID(documentType.getC_DocType_ID());
+		} else {
+			salesOrder.setC_DocTypeTarget_ID(MOrder.DocSubTypeSO_POS);
+		}
+		//	Delivery Rules
+		if (pos.getDeliveryRule() != null) {
+			salesOrder.setDeliveryRule(pos.getDeliveryRule());
+		}
+		//	Invoice Rule
+		if (pos.getInvoiceRule() != null) {
+			salesOrder.setInvoiceRule(pos.getInvoiceRule());
+		}
+		//	Set business partner
+		setBPartner(pos, salesOrder, request.getCustomerUuid());
+		//	Convert order
+		return convertOrder(salesOrder);
+	}
+	
+	/**
+	 * Set business partner from uuid
+	 * @param pos
+	 * @param salesOrder
+	 * @param businessPartnerUuid
+	 */
+	private void setBPartner(MPOS pos, MOrder salesOrder, String businessPartnerUuid) {
+		//	Valid if has a Order
+		if(Util.isEmpty(businessPartnerUuid)
+				|| DocumentUtil.isCompleted(salesOrder)
+				|| DocumentUtil.isVoided(salesOrder)) {
+			return;
+		}
+		MBPartner businessPartner = getBusinessPartner(businessPartnerUuid);
+		boolean isSamePOSPartner = false;
+		if(businessPartner == null) {
+			businessPartner = pos.getBPartner();
+			isSamePOSPartner = true;
+		}
+		//	Validate business partner
+		if(businessPartner == null) {
+			throw new AdempiereException("@C_BPartner_ID@ @NotFound@");
+		}
+		log.fine( "CPOS.setC_BPartner_ID=" + businessPartner.getC_BPartner_ID());
+		salesOrder.setBPartner(businessPartner);
+		//	
+		MBPartnerLocation [] partnerLocations = businessPartner.getLocations(true);
+		if(partnerLocations.length > 0) {
+			for(MBPartnerLocation partnerLocation : partnerLocations) {
+				if(partnerLocation.isBillTo())
+					salesOrder.setBill_Location_ID(partnerLocation.getC_BPartner_Location_ID());
+				if(partnerLocation.isShipTo())
+					salesOrder.setShip_Location_ID(partnerLocation.getC_BPartner_Location_ID());
+			}				
+		}
+		//	Validate Same BPartner
+		if(isSamePOSPartner) {
+			if(salesOrder.getPaymentRule()==null)
+				salesOrder.setPaymentRule(MOrder.PAYMENTRULE_Cash);
+		}
+		//	Set Sales Representative
+//		if(pos.isSharedPOS()) {
+//			salesOrder.setSalesRep_ID(Env.getAD_User_ID(salesOrder.getCtx()));
+//		} else 
+		if (salesOrder.getC_BPartner().getSalesRep_ID() != 0) {
+			salesOrder.setSalesRep_ID(salesOrder.getC_BPartner().getSalesRep_ID());
+		} else {
+			salesOrder.setSalesRep_ID(pos.getSalesRep_ID());
+		}
+		//	Save Header
+		salesOrder.saveEx();
+		//	Load Price List Version
+		MPriceList priceList = MPriceList.get(Env.getCtx(), salesOrder.getM_PriceList_ID(), null);
+		//
+		MPriceListVersion priceListVersion = priceList.getPriceListVersion (getDate());
+		List<MProductPrice> productPrices = Arrays.asList(priceListVersion.getProductPrice("AND EXISTS("
+				+ "SELECT 1 "
+				+ "FROM C_OrderLine ol "
+				+ "WHERE ol.C_Order_ID = " + salesOrder.getC_Order_ID() + " "
+				+ "AND ol.M_Product_ID = M_ProductPrice.M_Product_ID)"));
+		//	Business partner
+		int businessPartnerId = businessPartner.getC_BPartner_ID();
+		//	Update Lines
+		Arrays.asList(salesOrder.getLines())
+			.forEach(orderLine -> {
+				//	Verify if exist
+				if(productPrices
+					.stream()
+					.filter(productPrice -> productPrice.getM_Product_ID() == orderLine.getM_Product_ID())
+					.findFirst()
+					.isPresent()) {
+					orderLine.setC_BPartner_ID(businessPartnerId);
+					orderLine.setC_BPartner_Location_ID(salesOrder.getC_BPartner_Location_ID());
+					orderLine.setPrice();
+					orderLine.setTax();
+					orderLine.saveEx();
+				} else {
+					orderLine.deleteEx(true);
+				}
+			});
+	}
+	
+	/**
+	 * Get POS from uuid
+	 * @param posUuid
+	 * @return
+	 */
+	private MPOS getPos(String posUuid) {
+		MPOS pos = posCache.get(posUuid);
+		if(pos == null) {
+			pos = new Query(Env.getCtx(), I_C_POS.Table_Name, I_C_POS.COLUMNNAME_UUID + " = ?", null)
+					.setParameters(posUuid)
+					.first();
+			if(pos != null
+					&& pos.getC_POS_ID() != 0) {
+				posCache.put(posUuid, pos);
+			}
+		}
+		return pos;
+	}
+	
+	/**
+	 * Get Business Partner uuid
+	 * @param businessPartnerUuid
+	 * @return
+	 */
+	private MBPartner getBusinessPartner(String businessPartnerUuid) {
+		MBPartner businessPartner = businessPartnerCache.get(businessPartnerUuid);
+		if(businessPartner == null) {
+			businessPartner = new Query(Env.getCtx(), I_C_BPartner.Table_Name, I_C_BPartner.COLUMNNAME_UUID + " = ?", null)
+					.setParameters(businessPartnerUuid)
+					.first();
+			if(businessPartner != null
+					&& businessPartner.getC_BPartner_ID() != 0) {
+				businessPartnerCache.put(businessPartnerUuid, businessPartner);
+			}
+		}
+		return businessPartner;
+	}
+	
+	/**
+	 * Get Document Type from uuid
+	 * @param documentTypeUuid
+	 * @return
+	 */
+	private MDocType getDocumentType(String documentTypeUuid) {
+		MDocType documentType = documentTypeCache.get(documentTypeUuid);
+		if(documentType == null) {
+			documentType = new Query(Env.getCtx(), I_C_DocType.Table_Name, I_C_DocType.COLUMNNAME_UUID + " = ?", null)
+					.setParameters(documentTypeUuid)
+					.first();
+			if(documentType != null
+					&& documentType.getC_DocType_ID() != 0) {
+				documentTypeCache.put(documentTypeUuid, documentType);
+			}
+		}
+		return documentType;
+	}
+	
+	/**
+	 * Get Warehouse from uuid
+	 * @param warehouseUuid
+	 * @return
+	 */
+	private MWarehouse getWarehouse(String warehouseUuid) {
+		MWarehouse warehouse = warehouseCache.get(warehouseUuid);
+		if(warehouse == null) {
+			warehouse = new Query(Env.getCtx(), I_M_Warehouse.Table_Name, I_M_Warehouse.COLUMNNAME_UUID + " = ?", null)
+					.setParameters(warehouseUuid)
+					.first();
+			if(warehouse != null
+					&& warehouse.getM_Warehouse_ID() != 0) {
+				warehouseCache.put(warehouseUuid, warehouse);
+			}
+		}
+		return warehouse;
+	}
+	
+	/**
+	 * Get Date
+	 * @return
+	 */
+	private Timestamp getDate() {
+		return TimeUtil.getDay(System.currentTimeMillis());
+	}
+	
+	/**
+	 * Convert Order from entity
+	 * @param order
+	 * @return
+	 */
+	private Order.Builder convertOrder(MOrder order) {
+		Order.Builder builder = Order.newBuilder();
+		if(order == null) {
+			return builder;
+		}
+		//	Convert
+		
+		//	
+		return builder;
 	}
 	
 	/**
@@ -213,15 +592,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	Get Storage
 		
 		if(!Util.isEmpty(request.getWarehouseUuid())) {
-			MWarehouse warehouse = warehouseCache.get(request.getWarehouseUuid());
-			if(warehouse == null) {
-				warehouse = new Query(context, I_M_Warehouse.Table_Name, I_M_Warehouse.COLUMNNAME_UUID + " = ?", null)
-						.setParameters(request.getWarehouseUuid())
-						.setClient_ID()
-						.setOnlyActiveRecords(true)
-						.first();
-				warehouseCache.put(request.getWarehouseUuid(), warehouse);
-			}
+			MWarehouse warehouse = getWarehouse(request.getWarehouseUuid());
 			if(warehouse != null) {
 				int warehouseId = warehouse.getM_Warehouse_ID();
 				AtomicReference<BigDecimal> quantityOnHand = new AtomicReference<BigDecimal>(Env.ZERO);

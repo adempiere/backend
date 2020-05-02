@@ -68,13 +68,14 @@ message PointOfSalesRequest {
 // Point of Sales definition
 message PointOfSales {
 	string uuid = 1;
-	string name = 2;
-	string description = 3;
-	string help = 4;
-	bool isModifyPrice = 5;
-	bool isPOSRequiredPIN = 6;
-	SalesRepresentative salesRepresentative = 7;
-	BusinessPartner templateBusinessPartner = 8;
+	int32 id = 2;
+	string name = 3;
+	string description = 4;
+	string help = 5;
+	bool isModifyPrice = 6;
+	bool isPOSRequiredPIN = 7;
+	SalesRepresentative salesRepresentative = 8;
+	BusinessPartner templateBusinessPartner = 9;
 }
 
 // Request for create a order

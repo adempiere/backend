@@ -178,9 +178,14 @@ message Charge {
 message BusinessPartner {
 	string uuid = 1;
 	int32 id = 2;
-	string name = 3;
-	string lastName = 4;
-	string description = 5;
+	string value = 3;
+	string taxId = 4;
+	string duns = 5;
+	string naics = 6;
+	string name = 7;
+	string lastName = 8;
+	string description = 9;
+	
 }
 
 // Document Type definition
