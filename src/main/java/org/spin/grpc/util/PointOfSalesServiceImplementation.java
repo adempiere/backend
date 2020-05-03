@@ -23,7 +23,10 @@ import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.adempiere.exceptions.AdempiereException;
+import org.compiere.model.I_AD_Ref_List;
+import org.compiere.model.I_AD_User;
 import org.compiere.model.I_C_BPartner;
+import org.compiere.model.I_C_Charge;
 import org.compiere.model.I_C_DocType;
 import org.compiere.model.I_C_Order;
 import org.compiere.model.I_C_POS;
@@ -32,9 +35,11 @@ import org.compiere.model.I_M_Product;
 import org.compiere.model.I_M_Warehouse;
 import org.compiere.model.MBPartner;
 import org.compiere.model.MBPartnerLocation;
+import org.compiere.model.MCharge;
 import org.compiere.model.MCurrency;
 import org.compiere.model.MDocType;
 import org.compiere.model.MOrder;
+import org.compiere.model.MOrderLine;
 import org.compiere.model.MPOS;
 import org.compiere.model.MPriceList;
 import org.compiere.model.MPriceListVersion;
@@ -42,6 +47,7 @@ import org.compiere.model.MProduct;
 import org.compiere.model.MProductCategory;
 import org.compiere.model.MProductPrice;
 import org.compiere.model.MProductPricing;
+import org.compiere.model.MRefList;
 import org.compiere.model.MStorage;
 import org.compiere.model.MTax;
 import org.compiere.model.MUOM;
@@ -67,16 +73,6 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	private CLogger log = CLogger.getCLogger(PointOfSalesServiceImplementation.class);
 	/**	Product Cache	*/
 	private static CCache<String, MProduct> productCache = new CCache<String, MProduct>(I_M_Product.Table_Name, 30, 0);	//	no time-out
-	/**	Warehouse Cache	*/
-	private static CCache<String, MWarehouse> warehouseCache = new CCache<String, MWarehouse>(I_M_Warehouse.Table_Name, 30, 0);	//	no time-out
-	/**	Price List Cache	*/
-	private static CCache<String, MPriceList> priceListCache = new CCache<String, MPriceList>(I_M_PriceList.Table_Name, 30, 0);	//	no time-out
-	/**	POS Cache	*/
-	private static CCache<String, MPOS> posCache = new CCache<String, MPOS>(I_C_POS.Table_Name, 30, 0);	//	no time-out
-	/**	Business Partner	*/
-	private static CCache<String, MBPartner> businessPartnerCache = new CCache<String, MBPartner>(I_C_BPartner.Table_Name, 30, 0);	//	no time-out
-	/**	Document Type	*/
-	private static CCache<String, MDocType> documentTypeCache = new CCache<String, MDocType>(I_C_DocType.Table_Name, 30, 0);	//	no time-out
 	
 	@Override
 	public void getProductPrice(GetProductPriceRequest request, StreamObserver<ProductPrice> responseObserver) {
@@ -141,6 +137,267 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		}
 	}
 	
+	@Override
+	public void listPointOfSales(ListPointOfSalesRequest request, StreamObserver<ListPointOfSalesResponse> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Get Point of Sales List = " + request.getUserUuid());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
+			ListPointOfSalesResponse.Builder posList = convertPointOfSalesList(context, request);
+			responseObserver.onNext(posList.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void createOrderLine(CreateOrderLineRequest request, StreamObserver<OrderLine> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Add Line for Order = " + request.getOrderUuid());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
+			OrderLine.Builder orderLine = createAndConvertOrderLine(context, request);
+			responseObserver.onNext(orderLine.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	/**
+	 * Create order line and return this
+	 * @param context
+	 * @param request
+	 * @return
+	 */
+	private OrderLine.Builder createAndConvertOrderLine(Properties context, CreateOrderLineRequest request) {
+		//	Validate Order
+		if(Util.isEmpty(request.getOrderUuid())) {
+			throw new AdempiereException("@C_Order_ID@ @NotFound@");
+		}
+		//	Validate Product and charge
+		if(Util.isEmpty(request.getOrderUuid())) {
+			throw new AdempiereException("@M_Product_ID@ / @C_Charge_ID@ @NotFound@");
+		}
+		int orderId = RecordUtil.getIdFromUuid(I_C_Order.Table_Name, request.getOrderUuid());
+		if(orderId <= 0) {
+			return OrderLine.newBuilder();
+		}
+		//	Quantity
+		return convertOrderLine(
+				addOrderLine(orderId, 
+						RecordUtil.getIdFromUuid(I_M_Product.Table_Name, request.getProductUuid()), 
+						RecordUtil.getIdFromUuid(I_C_Charge.Table_Name, request.getChargeUuid()), 
+						RecordUtil.getIdFromUuid(I_M_Warehouse.Table_Name, request.getWarehouseUuid()), 
+						ValueUtil.getBigDecimalFromDecimal(request.getQuantity())));
+	}
+	
+	/**
+	 * Convert order line to stub
+	 * @param orderLine
+	 * @return
+	 */
+	private OrderLine.Builder convertOrderLine(MOrderLine orderLine) {
+		OrderLine.Builder builder = OrderLine.newBuilder();
+		if(orderLine == null) {
+			return builder;
+		}
+		//	Convert
+		return builder
+				.setUuid(ValueUtil.validateNull(orderLine.getUUID()))
+				.setOrderUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_Order.Table_Name, orderLine.getC_Order_ID())))
+				.setLine(orderLine.getLine())
+				.setDescription(ValueUtil.validateNull(orderLine.getDescription()))
+				.setLineDescription(ValueUtil.validateNull(orderLine.getName()))
+				.setProduct(convertProduct(orderLine.getM_Product_ID()))
+				.setCharge(convertCharge(orderLine.getC_Charge_ID()))
+				.setWarehouse(convertWarehouse(orderLine.getM_Warehouse_ID()))
+				.setQuantity(ValueUtil.getDecimalFromBigDecimal(orderLine.getQtyOrdered()))
+				.setPrice(ValueUtil.getDecimalFromBigDecimal(orderLine.getPriceActual()))
+				.setDiscountRate(ValueUtil.getDecimalFromBigDecimal(orderLine.getDiscount()))
+				.setTaxRate(convertTaxRate(MTax.get(Env.getCtx(), orderLine.getC_Tax_ID())))
+				.setLineNetAmount(ValueUtil.getDecimalFromBigDecimal(orderLine.getLineNetAmt()));
+	}
+	
+	/**
+	 * Convert product
+	 * @param productId
+	 * @return
+	 */
+	private Product.Builder convertProduct(int productId) {
+		Product.Builder builder = Product.newBuilder();
+		if(productId <= 0) {
+			return builder;
+		}
+		return convertProduct(MProduct.get(Env.getCtx(), productId));
+	}
+	
+	/**
+	 * Convert charge
+	 * @param chargeId
+	 * @return
+	 */
+	private Charge.Builder convertCharge(int chargeId) {
+		Charge.Builder builder = Charge.newBuilder();
+		if(chargeId <= 0) {
+			return builder;
+		}
+		return convertCharge(MCharge.get(Env.getCtx(), chargeId));
+	}
+	
+	/**
+	 * Convert charge from 
+	 * @param chargeId
+	 * @return
+	 */
+	private Charge.Builder convertCharge(MCharge charge) {
+		Charge.Builder builder = Charge.newBuilder();
+		if(charge == null) {
+			return builder;
+		}
+		//	convert charge
+		return builder
+			.setUuid(ValueUtil.validateNull(charge.getUUID()))
+			.setId(charge.getC_Charge_ID())
+			.setName(ValueUtil.validateNull(charge.getName()))
+			.setDescription(ValueUtil.validateNull(charge.getDescription()));
+	}
+	
+	/**
+	 * convert warehouse from id
+	 * @param warehouseId
+	 * @return
+	 */
+	private Warehouse.Builder convertWarehouse(int warehouseId) {
+		Warehouse.Builder builder = Warehouse.newBuilder();
+		if(warehouseId <= 0) {
+			return builder;
+		}
+		return convertWarehouse(MWarehouse.get(Env.getCtx(), warehouseId));
+	}
+	
+	/**
+	 * Convert warehouse
+	 * @param warehouse
+	 * @return
+	 */
+	private Warehouse.Builder convertWarehouse(MWarehouse warehouse) {
+		Warehouse.Builder builder = Warehouse.newBuilder();
+		if(warehouse == null) {
+			return builder;
+		}
+		//	convert charge
+		return builder
+			.setUuid(ValueUtil.validateNull(warehouse.getUUID()))
+			.setId(warehouse.getM_Warehouse_ID())
+			.setName(ValueUtil.validateNull(warehouse.getName()))
+			.setDescription(ValueUtil.validateNull(warehouse.getDescription()));
+	}
+	
+	/***
+	 * Add order line
+	 * @param orderId
+	 * @param productId
+	 * @param chargeId
+	 * @param warehouseId
+	 * @param quantity
+	 * @return
+	 */
+	private MOrderLine addOrderLine(int orderId, int productId, int chargeId, int warehouseId, BigDecimal quantity) {
+		if(orderId <= 0) {
+			return null;
+		}
+		MOrder order = new MOrder(Env.getCtx(), orderId, null);
+		//	Valid Complete
+		if (!DocumentUtil.isDrafted(order))
+			return null;
+		if(quantity == null) {
+			quantity = Env.ONE;
+		}
+		// catch Exceptions at order.getLines()
+		Optional<MOrderLine> maybeOrderLine = Arrays.asList(order.getLines(true, "Line"))
+				.stream()
+				.filter(orderLine -> (productId != 0 && productId == orderLine.getM_Product_ID()) 
+						|| (chargeId != 0 && chargeId == orderLine.getC_Charge_ID()))
+				.findFirst();
+		if(maybeOrderLine.isPresent()) {
+			MOrderLine orderLine = maybeOrderLine.get();
+			BigDecimal currentPrice = orderLine.getPriceEntered();
+			//	Set Quantity
+			orderLine.setQty(quantity);
+			orderLine.setPrice(currentPrice); //	sets List/limit
+			orderLine.saveEx();
+			return orderLine;
+		}
+        //create new line
+		MOrderLine orderLine = new MOrderLine(order);
+		if(chargeId != 0) {
+			orderLine.setC_Charge_ID(chargeId);
+		} else if(productId != 0) {
+			orderLine.setProduct(MProduct.get(order.getCtx(), productId));
+		}
+		orderLine.setQty(quantity);
+		orderLine.setPrice();
+		//	Save Line
+		orderLine.saveEx();
+		return orderLine;
+			
+	} //	addOrUpdateLine
+	
+	/**
+	 * Get list from user
+	 * @param context
+	 * @param request
+	 * @return
+	 */
+	private ListPointOfSalesResponse.Builder convertPointOfSalesList(Properties context, ListPointOfSalesRequest request) {
+		ListPointOfSalesResponse.Builder builder = ListPointOfSalesResponse.newBuilder();
+		if(Util.isEmpty(request.getUserUuid())) {
+			throw new AdempiereException("@SalesRep_ID@ @NotFound@");
+		}
+		int salesRepresentativeId = RecordUtil.getIdFromUuid(I_AD_User.Table_Name,request.getUserUuid());
+		//	Get page and count
+		String nexPageToken = null;
+		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
+		int offset = (pageNumber > 0? pageNumber - 1: 0) * RecordUtil.PAGE_SIZE;
+		int limit = (pageNumber == 0? 1: pageNumber) * RecordUtil.PAGE_SIZE;
+		//	Get POS List
+		Query query = new Query(context , I_C_POS.Table_Name , "(AD_Org_ID = ? OR SalesRep_ID = ?)", null)
+				.setClient_ID()
+				.setOnlyActiveRecords(true)
+				.setParameters(Env.getAD_Org_ID(context), salesRepresentativeId)
+				.setOrderBy(I_C_POS.COLUMNNAME_Name);
+		int count = query.count();
+		query
+			.setLimit(limit, offset)
+			.<MPOS>list()
+			.forEach(pos -> builder.addSellingPoints(convertPointOfSales(pos)));
+		//	
+		builder.setRecordCount(count);
+		//	Set page token
+		if(count > limit) {
+			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
+		}
+		//	Set next page
+		builder.setNextPageToken(ValueUtil.validateNull(nexPageToken));
+		return builder;
+	}
+	
 	/**
 	 * Get POS builder
 	 * @param context
@@ -148,12 +405,12 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 * @return
 	 */
 	private PointOfSales.Builder getPosBuilder(Properties context, PointOfSalesRequest request) {
-		MPOS pos = getPos(request.getPointOfSalesUuid());
-		if(pos == null) {
+		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPointOfSalesUuid());
+		if(posId <= 0) {
 			throw new AdempiereException("@C_POS_ID@ @NotFound@");
 		}
 		//	
-		return convertPos(pos);
+		return convertPointOfSales(MPOS.get(context, posId));
 	}
 	
 	/**
@@ -161,7 +418,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 * @param pos
 	 * @return
 	 */
-	private PointOfSales.Builder convertPos(MPOS pos) {
+	private PointOfSales.Builder convertPointOfSales(MPOS pos) {
 		return PointOfSales.newBuilder()
 				.setUuid(ValueUtil.validateNull(pos.getUUID()))
 				.setId(pos.getC_POS_ID())
@@ -215,10 +472,11 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		if(Util.isEmpty(request.getPosUuid())) {
 			throw new AdempiereException("@C_POS_ID@ @NotFound@");
 		}
-		MPOS pos = getPos(request.getPosUuid());
-		if(pos == null) {
+		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid());
+		if(posId <= 0) {
 			throw new AdempiereException("@C_POS_ID@ @NotFound@");
 		}
+		MPOS pos = MPOS.get(context, posId);
 		//	
 		MOrder salesOrder = new Query(context, I_C_Order.Table_Name, 
 				"DocStatus NOT IN('CO', 'CL') "
@@ -249,18 +507,18 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			salesOrder.setM_PriceList_ID(pos.getM_PriceList_ID());
 		}
 		//	Document Type
-		MDocType documentType = null;
+		int documentTypeId = 0;
 		if(!Util.isEmpty(request.getDocumentTypeUuid())) {
-			documentType = getDocumentType(request.getDocumentTypeUuid());
+			documentTypeId = RecordUtil.getIdFromUuid(I_C_DocType.Table_Name, request.getDocumentTypeUuid());
 		}
 		//	Validate
-		if(documentType == null
+		if(documentTypeId <= 0
 				&& pos.getC_DocType_ID() != 0) {
-			documentType = MDocType.get(context, pos.getC_DocType_ID());
+			documentTypeId = pos.getC_DocType_ID();
 		}
 		//	Validate
-		if(documentType != null) {
-			salesOrder.setC_DocTypeTarget_ID(documentType.getC_DocType_ID());
+		if(documentTypeId > 0) {
+			salesOrder.setC_DocTypeTarget_ID(documentTypeId);
 		} else {
 			salesOrder.setC_DocTypeTarget_ID(MOrder.DocSubTypeSO_POS);
 		}
@@ -291,7 +549,11 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				|| DocumentUtil.isVoided(salesOrder)) {
 			return;
 		}
-		MBPartner businessPartner = getBusinessPartner(businessPartnerUuid);
+		int businessPartnerId = RecordUtil.getIdFromUuid(I_C_BPartner.Table_Name, businessPartnerUuid);
+		if(businessPartnerId <= 0) {
+			return;
+		}
+		MBPartner businessPartner = MBPartner.get(Env.getCtx(), businessPartnerId);
 		boolean isSamePOSPartner = false;
 		if(businessPartner == null) {
 			businessPartner = pos.getBPartner();
@@ -338,8 +600,6 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				+ "FROM C_OrderLine ol "
 				+ "WHERE ol.C_Order_ID = " + salesOrder.getC_Order_ID() + " "
 				+ "AND ol.M_Product_ID = M_ProductPrice.M_Product_ID)"));
-		//	Business partner
-		int businessPartnerId = businessPartner.getC_BPartner_ID();
 		//	Update Lines
 		Arrays.asList(salesOrder.getLines())
 			.forEach(orderLine -> {
@@ -361,82 +621,6 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	}
 	
 	/**
-	 * Get POS from uuid
-	 * @param posUuid
-	 * @return
-	 */
-	private MPOS getPos(String posUuid) {
-		MPOS pos = posCache.get(posUuid);
-		if(pos == null) {
-			pos = new Query(Env.getCtx(), I_C_POS.Table_Name, I_C_POS.COLUMNNAME_UUID + " = ?", null)
-					.setParameters(posUuid)
-					.first();
-			if(pos != null
-					&& pos.getC_POS_ID() != 0) {
-				posCache.put(posUuid, pos);
-			}
-		}
-		return pos;
-	}
-	
-	/**
-	 * Get Business Partner uuid
-	 * @param businessPartnerUuid
-	 * @return
-	 */
-	private MBPartner getBusinessPartner(String businessPartnerUuid) {
-		MBPartner businessPartner = businessPartnerCache.get(businessPartnerUuid);
-		if(businessPartner == null) {
-			businessPartner = new Query(Env.getCtx(), I_C_BPartner.Table_Name, I_C_BPartner.COLUMNNAME_UUID + " = ?", null)
-					.setParameters(businessPartnerUuid)
-					.first();
-			if(businessPartner != null
-					&& businessPartner.getC_BPartner_ID() != 0) {
-				businessPartnerCache.put(businessPartnerUuid, businessPartner);
-			}
-		}
-		return businessPartner;
-	}
-	
-	/**
-	 * Get Document Type from uuid
-	 * @param documentTypeUuid
-	 * @return
-	 */
-	private MDocType getDocumentType(String documentTypeUuid) {
-		MDocType documentType = documentTypeCache.get(documentTypeUuid);
-		if(documentType == null) {
-			documentType = new Query(Env.getCtx(), I_C_DocType.Table_Name, I_C_DocType.COLUMNNAME_UUID + " = ?", null)
-					.setParameters(documentTypeUuid)
-					.first();
-			if(documentType != null
-					&& documentType.getC_DocType_ID() != 0) {
-				documentTypeCache.put(documentTypeUuid, documentType);
-			}
-		}
-		return documentType;
-	}
-	
-	/**
-	 * Get Warehouse from uuid
-	 * @param warehouseUuid
-	 * @return
-	 */
-	private MWarehouse getWarehouse(String warehouseUuid) {
-		MWarehouse warehouse = warehouseCache.get(warehouseUuid);
-		if(warehouse == null) {
-			warehouse = new Query(Env.getCtx(), I_M_Warehouse.Table_Name, I_M_Warehouse.COLUMNNAME_UUID + " = ?", null)
-					.setParameters(warehouseUuid)
-					.first();
-			if(warehouse != null
-					&& warehouse.getM_Warehouse_ID() != 0) {
-				warehouseCache.put(warehouseUuid, warehouse);
-			}
-		}
-		return warehouse;
-	}
-	
-	/**
 	 * Get Date
 	 * @return
 	 */
@@ -454,10 +638,20 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		if(order == null) {
 			return builder;
 		}
+		MRefList reference = MRefList.get(Env.getCtx(), MOrder.AD_REFERENCE_ID, order.getDocStatus(), null);
 		//	Convert
-		
-		//	
-		return builder;
+		return builder
+			.setUuid(ValueUtil.validateNull(order.getUUID()))
+			.setId(order.getC_Order_ID())
+			.setDocumentType(ConvertUtil.convertDocumentType(MDocType.get(Env.getCtx(), order.getC_DocType_ID())))
+			.setDocumentNo(ValueUtil.validateNull(order.getDocumentNo()))
+			.setSalesRepresentative(convertSalesRepresentative(MUser.get(Env.getCtx(), order.getSalesRep_ID())))
+			.setDocumentStatus(ConvertUtil.convertDocumentStatus(
+					ValueUtil.validateNull(order.getDocStatus()), 
+					ValueUtil.validateNull(ValueUtil.getTranslation(reference, I_AD_Ref_List.COLUMNNAME_Name)), 
+					ValueUtil.validateNull(ValueUtil.getTranslation(reference, I_AD_Ref_List.COLUMNNAME_Description))))
+			.setTotalLines(ValueUtil.getDecimalFromBigDecimal(order.getTotalLines()))
+			.setGrandTotal(ValueUtil.getDecimalFromBigDecimal(order.getGrandTotal()));
 	}
 	
 	/**
@@ -544,7 +738,10 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					.setOnlyActiveRecords(true)
 					.first();
 		} else {
-			priceList = priceListCache.get(request.getPriceListUuid());
+			int priceListId = RecordUtil.getIdFromUuid(I_M_PriceList.Table_Name, request.getPriceListUuid());
+			if(priceListId > 0) {
+				priceList = MPriceList.get(context, priceListId, null);
+			}
 		}
 		if(priceList == null) {
 			priceList = new Query(context, I_M_PriceList.Table_Name, I_M_PriceList.COLUMNNAME_UUID + " = ?", null)
@@ -555,7 +752,6 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			if(priceList == null) {
 				throw new AdempiereException("@M_PriceList_ID@ @NotFound@");
 			}
-			priceListCache.put(request.getPriceListUuid(), priceList);
 		}
 		//	Get Valid From
 		Timestamp validFrom = TimeUtil.getDay(request.getValidFrom() > 0? request.getValidFrom(): System.currentTimeMillis());
@@ -592,9 +788,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	Get Storage
 		
 		if(!Util.isEmpty(request.getWarehouseUuid())) {
-			MWarehouse warehouse = getWarehouse(request.getWarehouseUuid());
-			if(warehouse != null) {
-				int warehouseId = warehouse.getM_Warehouse_ID();
+			int warehouseId = RecordUtil.getIdFromUuid(I_M_Warehouse.Table_Name, request.getWarehouseUuid());
+			if(warehouseId > 0) {
 				AtomicReference<BigDecimal> quantityOnHand = new AtomicReference<BigDecimal>(Env.ZERO);
 				AtomicReference<BigDecimal> quantityReserved = new AtomicReference<BigDecimal>(Env.ZERO);
 				AtomicReference<BigDecimal> quantityOrdered = new AtomicReference<BigDecimal>(Env.ZERO);

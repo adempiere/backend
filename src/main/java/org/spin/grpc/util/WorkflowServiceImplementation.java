@@ -432,11 +432,10 @@ public class WorkflowServiceImplementation extends WorkflowImplBase {
 		Arrays.asList(options).stream().filter(option -> option != null).forEach(option -> {
 			for (int i = 0; i < valueList.size(); i++) {
 				if (option.equals(valueList.get(i))) {
-					DocumentAction.Builder documentActionBuilder = DocumentAction.newBuilder();
-					documentActionBuilder.setValue(ValueUtil.validateNull(valueList.get(i)));
-					documentActionBuilder.setName(ValueUtil.validateNull(nameList.get(i)));
-					documentActionBuilder.setDescription(ValueUtil.validateNull(descriptionList.get(i)));
-					builder.addDocumentActions(documentActionBuilder);
+					builder.addDocumentActions(ConvertUtil.convertDocumentAction(
+							valueList.get(i), 
+							nameList.get(i), 
+							descriptionList.get(i)));
 				}
 			}
 		});
@@ -455,11 +454,10 @@ public class WorkflowServiceImplementation extends WorkflowImplBase {
 		}
 		//	Set default value
 		if (!defaultName.equals("")) {
-			DocumentAction.Builder documentActionBuilder = DocumentAction.newBuilder();
-			documentActionBuilder.setValue(ValueUtil.validateNull(defaultValue));
-			documentActionBuilder.setName(ValueUtil.validateNull(defaultName));
-			documentActionBuilder.setDescription(ValueUtil.validateNull(defaultDescription));
-			builder.setDefaultDocumentAction(documentActionBuilder);
+			builder.setDefaultDocumentAction(ConvertUtil.convertDocumentAction(
+					defaultValue, 
+					defaultName, 
+					defaultDescription));
 		}
 		//	Add record count
 		builder.setRecordCount(builder.getDocumentActionsCount());

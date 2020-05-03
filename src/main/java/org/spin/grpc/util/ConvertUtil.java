@@ -15,53 +15,53 @@
  *************************************************************************************/
 package org.spin.grpc.util;
 
-import org.compiere.process.DocAction;
+import org.compiere.model.MDocType;
 
 /**
- * Class for handle records utils values
+ * Class for convert any document
  * @author Yamel Senih, ysenih@erpya.com , http://www.erpya.com
  */
-public class DocumentUtil {
+public class ConvertUtil {
 	
 	/**
-	 * Verify if a document is completed
-	 * @param document
+	 * Convert Document Action
+	 * @param value
+	 * @param name
+	 * @param description
 	 * @return
 	 */
-	public static boolean isCompleted(DocAction document) {
-		if(document == null) {
-			return false;
-		}
-		//	
-		return DocAction.STATUS_Completed.equals(document.getDocStatus());
+	public static DocumentAction.Builder convertDocumentAction(String value, String name, String description) {
+		return DocumentAction.newBuilder()
+				.setValue(ValueUtil.validateNull(value))
+				.setName(ValueUtil.validateNull(name))
+				.setDescription(ValueUtil.validateNull(description));
 	}
 	
 	/**
-	 * Verify is is voided / reversed
-	 * @param document
+	 * Convert Document Status
+	 * @param value
+	 * @param name
+	 * @param description
 	 * @return
 	 */
-	public static boolean isVoided(DocAction document) {
-		if(document == null) {
-			return false;
-		}
-		//	
-		return DocAction.STATUS_Voided.equals(document.getDocStatus())
-				|| DocAction.STATUS_Reversed.equals(document.getDocStatus());
+	public static DocumentStatus.Builder convertDocumentStatus(String value, String name, String description) {
+		return DocumentStatus.newBuilder()
+				.setValue(ValueUtil.validateNull(value))
+				.setName(ValueUtil.validateNull(name))
+				.setDescription(ValueUtil.validateNull(description));
 	}
 	
 	/**
-	 * Validate if is drafted
+	 * Convert Document Type
+	 * @param documentType
 	 * @return
-	 * @return boolean
 	 */
-	public static boolean isDrafted(DocAction document) {
-		if(document == null) {
-			return false;
-		}
-		//	
-		return !isCompleted(document) 
-				&& !isVoided(document) 
-				&& DocAction.STATUS_Drafted.equals(document.getDocStatus());
+	public static DocumentType.Builder convertDocumentType(MDocType documentType) {
+		return DocumentType.newBuilder()
+				.setUuid(ValueUtil.validateNull(documentType.getUUID()))
+				.setId(documentType.getC_DocType_ID())
+				.setName(ValueUtil.validateNull(documentType.getName()))
+				.setDescription(ValueUtil.validateNull(documentType.getDescription()))
+				.setPrinterName(ValueUtil.validateNull(documentType.getPrintName()));
 	}
 }

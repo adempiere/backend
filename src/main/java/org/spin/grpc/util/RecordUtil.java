@@ -20,9 +20,11 @@ import java.util.List;
 import java.util.Properties;
 
 import org.adempiere.exceptions.AdempiereException;
+import org.adempiere.pipo.IDFinder;
 import org.compiere.model.I_AD_Element;
 import org.compiere.model.PO;
 import org.compiere.model.Query;
+import org.compiere.util.Env;
 import org.compiere.util.Util;
 
 /**
@@ -30,7 +32,6 @@ import org.compiere.util.Util;
  * @author Yamel Senih, ysenih@erpya.com , http://www.erpya.com
  */
 public class RecordUtil {
-	
 	/**	Page Size	*/
 	public static final int PAGE_SIZE = 50;
 	
@@ -98,5 +99,33 @@ public class RecordUtil {
 		return new Query(context, tableName, whereClause.toString(), null)
 				.setParameters(params)
 				.first();
+	}
+	
+	/**
+	 * Get ID for record from table name and uuid
+	 * @param tableName
+	 * @param uuid
+	 * @return
+	 */
+	public static int getIdFromUuid(String tableName, String uuid) {
+		if(Util.isEmpty(tableName) || Util.isEmpty(uuid)) {
+			return -1;
+		}
+		//	Get
+		return IDFinder.getIdFromUUID(Env.getCtx(), tableName, uuid, Env.getAD_Client_ID(Env.getCtx()), null);
+	}
+	
+	/**
+	 * Get UUID from record id
+	 * @param tableName
+	 * @param id
+	 * @return
+	 */
+	public static String getUuidFromId(String tableName, int id) {
+		if(Util.isEmpty(tableName) || id <= 0) {
+			return null;
+		}
+		//	Get
+		return IDFinder.getUUIDFromId(tableName, id, Env.getAD_Client_ID(Env.getCtx()), null);
 	}
 }

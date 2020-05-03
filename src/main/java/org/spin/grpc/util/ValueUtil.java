@@ -135,6 +135,19 @@ public class ValueUtil {
 	}
 	
 	/**
+	 * Get BigDecimal object from decimal
+	 * @param decimalValue
+	 * @return
+	 */
+	public static BigDecimal getBigDecimalFromDecimal(Decimal decimalValue) {
+		if(decimalValue == null 
+				|| Util.isEmpty(decimalValue.getDecimalValue())) {
+			return null;
+		}
+		return new BigDecimal(decimalValue.getDecimalValue());
+	}
+	
+	/**
 	 * Get Date from a value
 	 * @param value
 	 * @return

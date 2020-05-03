@@ -32,6 +32,8 @@ service Store {
 	rpc ListPointOfSales(ListPointOfSalesRequest) returns (ListPointOfSalesResponse) {}
 	//	Get Product Price from Code / UPC / Name
 	rpc GetProductPrice(GetProductPriceRequest) returns (ProductPrice) {}
+	//	List Product Price
+	rpc ListProductPrice(ListProductPriceRequest) returns (ListProductPriceResponse) {}
 	//	Create Order
 	rpc CreateOrder(CreateOrderRequest) returns (Order) {}
 	//	Delete Order
@@ -49,6 +51,25 @@ message ListPointOfSalesResponse {
 	int64 recordCount = 1;
 	repeated PointOfSales sellingPoints = 2;
 	string next_page_token = 3;
+}
+
+//	List Product Price Response
+message ListProductPriceResponse {
+	int64 recordCount = 1;
+	repeated ProductPrice productPrices = 2;
+	string next_page_token = 3;
+}
+
+// List Product Price Request
+message ListProductPriceRequest {
+	ClientRequest clientRequest = 1;
+	string searchValue = 2;
+	string priceListUuid = 3;
+	string businessPartnerUuid = 4;
+	string warehouseUuid = 5;
+	int64 validFrom = 6;
+	int32 page_size = 7;
+	string page_token = 8;
 }
 
 // POS from user uuid
@@ -124,12 +145,13 @@ message UpdateOrderLineRequest {
 // Sales Order
 message Order {
 	string uuid = 1;
-	string documentNo = 2;
-	DocumentType documentType = 3;
-	SalesRepresentative salesRepresentative = 4;
-	string documentStatus = 5;
-	Decimal totalLines = 6;
-	Decimal grandTotal = 7;
+	int32 id = 2;
+	string documentNo = 3;
+	DocumentType documentType = 4;
+	SalesRepresentative salesRepresentative = 5;
+	DocumentStatus documentStatus = 6;
+	Decimal totalLines = 7;
+	Decimal grandTotal = 8;
 }
 
 // Sales Order Line
@@ -146,6 +168,7 @@ message OrderLine {
 	Decimal discountRate = 10;
 	TaxRate taxRate = 11;
 	Decimal lineNetAmount = 12;
+	int32 line = 13;
 }
 
 // Request Product Price
