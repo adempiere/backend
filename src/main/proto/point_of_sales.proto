@@ -41,7 +41,7 @@ service Store {
 	//	Create Order Line
 	rpc CreateOrderLine(CreateOrderLineRequest) returns (OrderLine) {}
 	//	Delete Order Line
-	rpc DeleteOrderLine(DeleteOrderLineRequest) returns (OrderLine) {}
+	rpc DeleteOrderLine(DeleteOrderLineRequest) returns (Empty) {}
 	//	Update Order Line
 	rpc UpdateOrderLine(UpdateOrderLineRequest) returns (OrderLine) {}
 }
@@ -135,7 +135,7 @@ message CreateOrderLineRequest {
 // Request for update a order line
 message UpdateOrderLineRequest {
 	ClientRequest clientRequest = 1;
-	string orderUuid = 2;
+	string orderLineUuid = 2;
 	string description = 5;
 	Decimal quantity = 6;
 	Decimal price = 7;

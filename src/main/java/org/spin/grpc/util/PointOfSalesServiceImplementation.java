@@ -29,6 +29,7 @@ import org.compiere.model.I_C_BPartner;
 import org.compiere.model.I_C_Charge;
 import org.compiere.model.I_C_DocType;
 import org.compiere.model.I_C_Order;
+import org.compiere.model.I_C_OrderLine;
 import org.compiere.model.I_C_POS;
 import org.compiere.model.I_M_PriceList;
 import org.compiere.model.I_M_Product;
@@ -179,6 +180,187 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		}
 	}
 	
+	@Override
+	public void deleteOrderLine(DeleteOrderLineRequest request, StreamObserver<Empty> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Add Line for Order = " + request.getOrderLineUuid());
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			Empty.Builder orderLine = deleteOrderLine(request);
+			responseObserver.onNext(orderLine.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void deleteOrder(DeleteOrderRequest request, StreamObserver<Empty> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Add Line for Order = " + request.getOrderUuid());
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			Empty.Builder order = deleteOrder(request);
+			responseObserver.onNext(order.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void updateOrderLine(UpdateOrderLineRequest request, StreamObserver<OrderLine> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Add Line for Order = " + request.getOrderLineUuid());
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
+			OrderLine.Builder orderLine = updateAndConvertOrderLine(context, request);
+			responseObserver.onNext(orderLine.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void listProductPrice(ListProductPriceRequest request, StreamObserver<ListProductPriceResponse> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Add Line for Order = " + request.getSearchValue());
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			ListProductPriceResponse.Builder productPriceList = getProductPriceList(request);
+			responseObserver.onNext(productPriceList.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	/**
+	 * Delete order line from uuid
+	 * @param request
+	 * @return
+	 */
+	private Empty.Builder deleteOrderLine(DeleteOrderLineRequest request) {
+		if(Util.isEmpty(request.getOrderLineUuid())) {
+			throw new AdempiereException("@C_OrderLine_ID@ @NotFound@");
+		}
+		MOrderLine orderLine = new Query(Env.getCtx(), I_C_OrderLine.Table_Name, " = ?", null)
+				.setParameters(request.getOrderLineUuid())
+				.setClient_ID()
+				.first();
+		if(orderLine == null
+				|| orderLine.getC_OrderLine_ID() == 0) {
+			return Empty.newBuilder();
+		}
+		//	Validate processed Order
+		if(orderLine.isProcessed()) {
+			throw new AdempiereException("@C_OrderLine_ID@ @Processed@");
+		}
+		if(orderLine != null
+				&& orderLine.getC_Order_ID() >= 0) {
+			orderLine.deleteEx(true);
+		}
+		//	Return
+		return Empty.newBuilder();
+	}
+	
+	
+	/**
+	 * Delete order from uuid
+	 * @param request
+	 * @return
+	 */
+	private Empty.Builder deleteOrder(DeleteOrderRequest request) {
+		if(Util.isEmpty(request.getOrderUuid())) {
+			throw new AdempiereException("@C_Order_ID@ @NotFound@");
+		}
+		MOrder order = new Query(Env.getCtx(), I_C_Order.Table_Name, " = ?", null)
+				.setParameters(request.getOrderUuid())
+				.setClient_ID()
+				.first();
+		if(order == null
+				|| order.getC_Order_ID() == 0) {
+			return Empty.newBuilder();
+		}
+		//	Validate drafted
+		if(!DocumentUtil.isDrafted(order)) {
+			throw new AdempiereException("@C_Order_ID@ @Processed@");
+		}
+		//	Validate processed Order
+		if(order.isProcessed()) {
+			throw new AdempiereException("@C_Order_ID@ @Processed@");
+		}
+		//	
+		if(order != null
+				&& order.getC_Order_ID() >= 0) {
+			order.deleteEx(true);
+		}
+		//	Return
+		return Empty.newBuilder();
+	}
+	
+	/**
+	 * Create order line and return this
+	 * @param context
+	 * @param request
+	 * @return
+	 */
+	private OrderLine.Builder updateAndConvertOrderLine(Properties context, UpdateOrderLineRequest request) {
+		//	Validate Order
+		if(Util.isEmpty(request.getOrderLineUuid())) {
+			throw new AdempiereException("@C_OrderLine_ID@ @NotFound@");
+		}
+		//	
+		int orderLineId = RecordUtil.getIdFromUuid(I_C_Order.Table_Name, request.getOrderLineUuid());
+		if(orderLineId <= 0) {
+			return OrderLine.newBuilder();
+		}
+		//	Quantity
+		return convertOrderLine(
+				updateOrderLine(orderLineId, 
+						ValueUtil.getBigDecimalFromDecimal(request.getQuantity()), 
+						ValueUtil.getBigDecimalFromDecimal(request.getPrice()), 
+						ValueUtil.getBigDecimalFromDecimal(request.getDiscountRate())));
+	}
+	
 	/**
 	 * Create order line and return this
 	 * @param context
@@ -191,7 +373,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			throw new AdempiereException("@C_Order_ID@ @NotFound@");
 		}
 		//	Validate Product and charge
-		if(Util.isEmpty(request.getOrderUuid())) {
+		if(Util.isEmpty(request.getProductUuid())
+				&& Util.isEmpty(request.getChargeUuid())) {
 			throw new AdempiereException("@M_Product_ID@ / @C_Charge_ID@ @NotFound@");
 		}
 		int orderId = RecordUtil.getIdFromUuid(I_C_Order.Table_Name, request.getOrderUuid());
@@ -358,6 +541,51 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		return orderLine;
 			
 	} //	addOrUpdateLine
+	
+	/***
+	 * Update order line
+	 * @param orderLineId
+	 * @param quantity
+	 * @param price
+	 * @param discountRate
+	 * @return
+	 */
+	private MOrderLine updateOrderLine(int orderLineId, BigDecimal quantity, BigDecimal price, BigDecimal discountRate) {
+		if(orderLineId <= 0) {
+			return null;
+		}
+		MOrderLine orderLine = new MOrderLine(Env.getCtx(), orderLineId, null);
+		MOrder order = orderLine.getParent();
+		//	Valid Complete
+		if (!DocumentUtil.isDrafted(order))
+			return null;
+		if((quantity == null || quantity.equals(Env.ZERO))
+				&& (price == null || price.equals(Env.ZERO))
+				&& (discountRate == null || discountRate.equals(Env.ZERO))) {
+			return null;
+		}
+		//	Get if is null
+		if(quantity == null
+				|| quantity.equals(Env.ZERO)) {
+			quantity = orderLine.getQtyEntered();
+		}
+		if(price == null
+				|| price.equals(Env.ZERO)) {
+			price = orderLine.getPriceEntered();
+		}
+		if(discountRate == null
+				|| discountRate.equals(Env.ZERO)) {
+			discountRate = orderLine.getDiscount();
+		}
+		//	Set values
+		orderLine.setQty(quantity);
+		orderLine.setPrice(price); //	sets List/limit
+		orderLine.setDiscount(discountRate);
+		orderLine.setPrice();
+		orderLine.saveEx();
+		return orderLine;
+			
+	} //	UpdateLine
 	
 	/**
 	 * Get list from user
@@ -655,13 +883,154 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	}
 	
 	/**
+	 * Get PriceList
+	 * @param priceListUuid
+	 * @return
+	 */
+	private MPriceList getPriceList(String priceListUuid) {
+		MPriceList priceList = null;
+		if(Util.isEmpty(priceListUuid)) {
+			priceList = new Query(Env.getCtx(), I_M_PriceList.Table_Name, "EXISTS(SELECT 1 FROM C_POS p WHERE p.M_PriceList_ID = M_PriceList.M_PriceList_ID AND p.AD_Org_ID IN(0, ?))", null)
+					.setParameters(Env.getAD_Org_ID(Env.getCtx()))
+					.setClient_ID()
+					.setOnlyActiveRecords(true)
+					.first();
+		} else {
+			int priceListId = RecordUtil.getIdFromUuid(I_M_PriceList.Table_Name, priceListUuid);
+			if(priceListId > 0) {
+				priceList = MPriceList.get(Env.getCtx(), priceListId, null);
+			}
+		}
+		if(priceList == null) {
+			throw new AdempiereException("@M_PriceList_ID@ @NotFound@");
+		}
+		return priceList;
+	}
+	
+	/**
+	 * Get Product Price Method
+	 * @param context
+	 * @param request
+	 * @return
+	 */
+	private ListProductPriceResponse.Builder getProductPriceList(ListProductPriceRequest request) {
+		ListProductPriceResponse.Builder builder = ListProductPriceResponse.newBuilder();
+		//	Validate Price List
+		MPriceList priceList = getPriceList(request.getPriceListUuid());
+		//	Get Valid From
+		Timestamp validFrom = TimeUtil.getDay(request.getValidFrom() > 0? request.getValidFrom(): System.currentTimeMillis());
+		String nexPageToken = null;
+		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
+		int offset = (pageNumber > 0? pageNumber - 1: 0) * RecordUtil.PAGE_SIZE;
+		int limit = (pageNumber == 0? 1: pageNumber) * RecordUtil.PAGE_SIZE;
+		//	Get Product list
+		Query query = new Query(Env.getCtx(), I_M_Product.Table_Name, 
+				"("
+				+ "UPPER(Value) = UPPER(?)"
+				+ "OR UPPER(Name) = UPPER(?)"
+				+ "OR UPPER(UPC) = UPPER(?)"
+				+ "OR UPPER(SKU) = UPPER(?)"
+				+ ")", null)
+				.setParameters(request.getSearchValue(), request.getSearchValue(), request.getSearchValue(), request.getSearchValue())
+				.setClient_ID()
+				.setOnlyActiveRecords(true);
+		int count = query.count();
+		query
+		.setLimit(limit, offset)
+		.<MProduct>list()
+		.forEach(product -> {
+			builder.addProductPrices(
+					convertProductPrice(
+							product, 
+							RecordUtil.getIdFromUuid(I_C_BPartner.Table_Name, request.getBusinessPartnerUuid()), 
+							priceList, 
+							RecordUtil.getIdFromUuid(I_M_Warehouse.Table_Name, request.getWarehouseUuid()), 
+							validFrom, 
+							null));
+		});
+		//	
+		builder.setRecordCount(count);
+		//	Set page token
+		if(count > limit) {
+			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
+		}
+		//	Set next page
+		builder.setNextPageToken(ValueUtil.validateNull(nexPageToken));
+		return builder;
+	}
+	
+	/**
+	 * Get 
+	 * @param product
+	 * @param businessPartnerId
+	 * @param priceList
+	 * @param warehouseId
+	 * @param validFrom
+	 * @param quantity
+	 * @return
+	 */
+	private ProductPrice.Builder convertProductPrice(MProduct product, int businessPartnerId, MPriceList priceList, int warehouseId, Timestamp validFrom, BigDecimal priceQuantity) {
+		ProductPrice.Builder builder = ProductPrice.newBuilder();
+		//	Get Price
+		MProductPricing productPricing = new MProductPricing(product.getM_Product_ID(), businessPartnerId, priceQuantity, true, null);
+		productPricing.setM_PriceList_ID(priceList.getM_PriceList_ID());
+		productPricing.setPriceDate(validFrom);
+		builder.setProduct(convertProduct(product));
+		int taxCategoryId = product.getC_TaxCategory_ID();
+		Optional<MTax> optionalTax = Arrays.asList(MTax.getAll(Env.getCtx()))
+		.stream()
+		.filter(tax -> tax.getC_TaxCategory_ID() == taxCategoryId 
+							&& (tax.isSalesTax() 
+									|| (!Util.isEmpty(tax.getSOPOType()) 
+											&& (tax.getSOPOType().equals(MTax.SOPOTYPE_Both) 
+													|| tax.getSOPOType().equals(MTax.SOPOTYPE_SalesTax)))))
+		.findFirst();
+		//	Validate
+		if(optionalTax.isPresent()) {
+			builder.setTaxRate(convertTaxRate(optionalTax.get()));
+		}
+		//	Set currency
+		builder.setCurrency(convertCurrency(MCurrency.get(Env.getCtx(), priceList.getC_Currency_ID())));
+		//	Price List Attributes
+		builder.setIsTaxIncluded(priceList.isTaxIncluded());
+		builder.setValidFrom(productPricing.getPriceDate().getTime());
+		builder.setPriceListName(ValueUtil.validateNull(priceList.getName()));
+		//	Pricing
+		builder.setPricePrecision(productPricing.getPrecision());
+		builder.setPriceList(ValueUtil.getDecimalFromBigDecimal(productPricing.getPriceList()));
+		builder.setPriceStd(ValueUtil.getDecimalFromBigDecimal(productPricing.getPriceStd()));
+		builder.setPriceLimit(ValueUtil.getDecimalFromBigDecimal(productPricing.getPriceLimit()));
+		//	Get Storage
+		if(warehouseId > 0) {
+			AtomicReference<BigDecimal> quantityOnHand = new AtomicReference<BigDecimal>(Env.ZERO);
+			AtomicReference<BigDecimal> quantityReserved = new AtomicReference<BigDecimal>(Env.ZERO);
+			AtomicReference<BigDecimal> quantityOrdered = new AtomicReference<BigDecimal>(Env.ZERO);
+			AtomicReference<BigDecimal> quantityAvailable = new AtomicReference<BigDecimal>(Env.ZERO);
+			//	
+			Arrays.asList(MStorage.getOfProduct(Env.getCtx(), product.getM_Product_ID(), null))
+				.stream()
+				.filter(storage -> storage.getM_Warehouse_ID() == warehouseId)
+				.forEach(storage -> {
+					quantityOnHand.updateAndGet(quantity -> quantity.add(storage.getQtyOnHand()));
+					quantityReserved.updateAndGet(quantity -> quantity.add(storage.getQtyReserved()));
+					quantityOrdered.updateAndGet(quantity -> quantity.add(storage.getQtyOrdered()));
+					quantityAvailable.updateAndGet(quantity -> quantity.add(storage.getQtyOnHand().subtract(storage.getQtyReserved())));
+				});
+			builder.setQuantityOnHand(ValueUtil.getDecimalFromBigDecimal(quantityOnHand.get()));
+			builder.setQuantityReserved(ValueUtil.getDecimalFromBigDecimal(quantityReserved.get()));
+			builder.setQuantityOrdered(ValueUtil.getDecimalFromBigDecimal(quantityOrdered.get()));
+			builder.setQuantityAvailable(ValueUtil.getDecimalFromBigDecimal(quantityAvailable.get()));
+		}
+		return builder;
+	}
+	
+	/**
 	 * Get Product Price Method
 	 * @param context
 	 * @param request
 	 * @return
 	 */
 	private ProductPrice.Builder getProductPrice(Properties context, GetProductPriceRequest request) {
-		ProductPrice.Builder builder = ProductPrice.newBuilder();
 		//	Get Product
 		MProduct product = null;
 		String key = Env.getAD_Client_ID(context) + "|";
@@ -717,18 +1086,6 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		} else {
 			productCache.put(key, product);
 		}
-		int businessPartnerId = 0;
-		if(!Util.isEmpty(request.getBusinessPartnerUuid())) {
-			MBPartner businessPartner = new Query(context, I_C_BPartner.Table_Name, I_C_BPartner.COLUMNNAME_UUID + " = ?", null)
-					.setParameters(request.getBusinessPartnerUuid())
-					.setClient_ID()
-					.setOnlyActiveRecords(true)
-					.first();
-			if(businessPartner != null
-					&& businessPartner.getC_BPartner_ID() > 0) {
-				businessPartnerId = businessPartner.getC_BPartner_ID();
-			}
-		}
 		//	Validate Price List
 		MPriceList priceList = null;
 		if(Util.isEmpty(request.getPriceListUuid())) {
@@ -755,63 +1112,12 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		}
 		//	Get Valid From
 		Timestamp validFrom = TimeUtil.getDay(request.getValidFrom() > 0? request.getValidFrom(): System.currentTimeMillis());
-		//	Get Price
-		MProductPricing productPricing = new MProductPricing(product.getM_Product_ID(), businessPartnerId, Env.ONE, true, null);
-		productPricing.setM_PriceList_ID(priceList.getM_PriceList_ID());
-		productPricing.setPriceDate(validFrom);
-		//	Populate
-		builder.setProduct(convertProduct(product));
-		int taxCategoryId = product.getC_TaxCategory_ID();
-		Optional<MTax> optionalTax = Arrays.asList(MTax.getAll(context))
-		.stream()
-		.filter(tax -> tax.getC_TaxCategory_ID() == taxCategoryId 
-							&& (tax.isSalesTax() 
-									|| (!Util.isEmpty(tax.getSOPOType()) 
-											&& (tax.getSOPOType().equals(MTax.SOPOTYPE_Both) 
-													|| tax.getSOPOType().equals(MTax.SOPOTYPE_SalesTax)))))
-		.findFirst();
-		//	Validate
-		if(optionalTax.isPresent()) {
-			builder.setTaxRate(convertTaxRate(optionalTax.get()));
-		}
-		//	Set currency
-		builder.setCurrency(convertCurrency(MCurrency.get(context, priceList.getC_Currency_ID())));
-		//	Price List Attributes
-		builder.setIsTaxIncluded(priceList.isTaxIncluded());
-		builder.setValidFrom(productPricing.getPriceDate().getTime());
-		builder.setPriceListName(ValueUtil.validateNull(priceList.getName()));
-		//	Pricing
-		builder.setPricePrecision(productPricing.getPrecision());
-		builder.setPriceList(ValueUtil.getDecimalFromBigDecimal(productPricing.getPriceList()));
-		builder.setPriceStd(ValueUtil.getDecimalFromBigDecimal(productPricing.getPriceStd()));
-		builder.setPriceLimit(ValueUtil.getDecimalFromBigDecimal(productPricing.getPriceLimit()));
-		//	Get Storage
-		
-		if(!Util.isEmpty(request.getWarehouseUuid())) {
-			int warehouseId = RecordUtil.getIdFromUuid(I_M_Warehouse.Table_Name, request.getWarehouseUuid());
-			if(warehouseId > 0) {
-				AtomicReference<BigDecimal> quantityOnHand = new AtomicReference<BigDecimal>(Env.ZERO);
-				AtomicReference<BigDecimal> quantityReserved = new AtomicReference<BigDecimal>(Env.ZERO);
-				AtomicReference<BigDecimal> quantityOrdered = new AtomicReference<BigDecimal>(Env.ZERO);
-				AtomicReference<BigDecimal> quantityAvailable = new AtomicReference<BigDecimal>(Env.ZERO);
-				//	
-				Arrays.asList(MStorage.getOfProduct(context, product.getM_Product_ID(), null))
-					.stream()
-					.filter(storage -> storage.getM_Warehouse_ID() == warehouseId)
-					.forEach(storage -> {
-						quantityOnHand.updateAndGet(quantity -> quantity.add(storage.getQtyOnHand()));
-						quantityReserved.updateAndGet(quantity -> quantity.add(storage.getQtyReserved()));
-						quantityOrdered.updateAndGet(quantity -> quantity.add(storage.getQtyOrdered()));
-						quantityAvailable.updateAndGet(quantity -> quantity.add(storage.getQtyOnHand().subtract(storage.getQtyReserved())));
-					});
-				builder.setQuantityOnHand(ValueUtil.getDecimalFromBigDecimal(quantityOnHand.get()));
-				builder.setQuantityReserved(ValueUtil.getDecimalFromBigDecimal(quantityReserved.get()));
-				builder.setQuantityOrdered(ValueUtil.getDecimalFromBigDecimal(quantityOrdered.get()));
-				builder.setQuantityAvailable(ValueUtil.getDecimalFromBigDecimal(quantityAvailable.get()));
-			}
-		}
-		
-		return builder;
+		return convertProductPrice(product,
+				RecordUtil.getIdFromUuid(I_C_BPartner.Table_Name, request.getBusinessPartnerUuid()), 
+				priceList, 
+				RecordUtil.getIdFromUuid(I_M_Warehouse.Table_Name, request.getWarehouseUuid()), 
+				validFrom,
+				Env.ONE);
 	}
 	
 	/**
