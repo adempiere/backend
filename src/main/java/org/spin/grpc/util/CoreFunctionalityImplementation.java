@@ -25,10 +25,8 @@ import org.compiere.model.I_AD_Role;
 import org.compiere.model.I_C_Country;
 import org.compiere.model.I_M_Warehouse;
 import org.compiere.model.MCountry;
-import org.compiere.model.MCurrency;
 import org.compiere.model.MLanguage;
 import org.compiere.model.MOrg;
-import org.compiere.model.MOrgInfo;
 import org.compiere.model.MRole;
 import org.compiere.model.MWarehouse;
 import org.compiere.model.Query;
@@ -171,7 +169,7 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 			countryCache.put(key, country);
 		}
 		//	Return
-		return convertCountry(context, country);
+		return ConvertUtil.convertCountry(context, country);
 	}
 	
 	/**
@@ -187,79 +185,10 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 			.setOnlyActiveRecords(true)
 			.<MLanguage>list()
 			.forEach(language -> {
-				org.spin.grpc.util.Language.Builder languageBuilder = org.spin.grpc.util.Language.newBuilder();
-				languageBuilder.setLanguage(ValueUtil.validateNull(language.getAD_Language()));
-				languageBuilder.setCountryCode(ValueUtil.validateNull(language.getCountryCode()));
-				languageBuilder.setLanguageISO(ValueUtil.validateNull(language.getLanguageISO()));
-				languageBuilder.setLanguageName(ValueUtil.validateNull(language.getName()));
-				languageBuilder.setDatePattern(ValueUtil.validateNull(language.getDatePattern()));
-				languageBuilder.setTimePattern(ValueUtil.validateNull(language.getTimePattern()));
-				languageBuilder.setIsBaseLanguage(language.isBaseLanguage());
-				languageBuilder.setIsSystemLanguage(language.isSystemLanguage());
-				languageBuilder.setIsDecimalPoint(language.isDecimalPoint());
-				builder.addLanguages(languageBuilder);
+				builder.addLanguages(ConvertUtil.convertLanguage(language));
 			});
 		//	Return
 		return builder;
-	}
-	
-	/**
-	 * Convert Country
-	 * @param context
-	 * @param country
-	 * @return
-	 */
-	private Country.Builder convertCountry(Properties context, MCountry country) {
-		Country.Builder builder = Country.newBuilder();
-		if(country == null) {
-			return builder;
-		}
-		builder.setUuid(ValueUtil.validateNull(country.getUUID()))
-			.setId(country.getC_Country_ID())
-			.setCountryCode(ValueUtil.validateNull(country.getCountryCode()))
-			.setName(ValueUtil.validateNull(country.getName()))
-			.setDescription(ValueUtil.validateNull(country.getDescription()))
-			.setHasRegion(country.isHasRegion())
-			.setRegionName(ValueUtil.validateNull(country.getRegionName()))
-			.setDisplaySequence(ValueUtil.validateNull(country.getDisplaySequence()))
-			.setIsAddressLinesReverse(country.isAddressLinesReverse())
-			.setCaptureSequence(ValueUtil.validateNull(country.getCaptureSequence()))
-			.setDisplaySequenceLocal(ValueUtil.validateNull(country.getDisplaySequenceLocal()))
-			.setIsAddressLinesLocalReverse(country.isAddressLinesLocalReverse())
-			.setHasPostalAdd(country.isHasPostal_Add())
-			.setExpressionPhone(ValueUtil.validateNull(country.getExpressionPhone()))
-			.setMediaSize(ValueUtil.validateNull(country.getMediaSize()))
-			.setExpressionBankRoutingNo(ValueUtil.validateNull(country.getExpressionBankRoutingNo()))
-			.setExpressionBankAccountNo(ValueUtil.validateNull(country.getExpressionBankAccountNo()))
-			.setAllowCitiesOutOfList(country.isAllowCitiesOutOfList())
-			.setIsPostcodeLookup(country.isPostcodeLookup())
-			.setLanguage(ValueUtil.validateNull(country.getAD_Language()));
-		//	Set Currency
-		if(country.getC_Currency_ID() != 0) {
-			builder.setCurrency(convertCurrency(MCurrency.get(context, country.getC_Currency_ID())));
-		}
-		//	
-		return builder;
-	}
-	
-	/**
-	 * Convert Currency
-	 * @param currency
-	 * @return
-	 */
-	private Currency.Builder convertCurrency(MCurrency currency) {
-		Currency.Builder builder = Currency.newBuilder();
-		if(currency == null) {
-			return builder;
-		}
-		//	Set values
-		return builder.setUuid(ValueUtil.validateNull(currency.getUUID()))
-			.setId(currency.getC_Currency_ID())
-			.setISOCode(ValueUtil.validateNull(currency.getISO_Code()))
-			.setCurSymbol(ValueUtil.validateNull(currency.getCurSymbol()))
-			.setDescription(ValueUtil.validateNull(currency.getDescription()))
-			.setStdPrecision(currency.getStdPrecision())
-			.setCostingPrecision(currency.getCostingPrecision());
 	}
 	
 	/**
@@ -310,7 +239,7 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 		//	Get List
 		query.<MOrg>list()
 			.forEach(organization -> {
-				builder.addOrganizations(convertOrganization(organization));
+				builder.addOrganizations(ConvertUtil.convertOrganization(organization));
 			});
 		//	
 		builder.setRecordCount(count);
@@ -321,26 +250,6 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 		//	Set netxt page
 		builder.setNextPageToken(ValueUtil.validateNull(nexPageToken));
 		return builder;
-	}
-	
-	/**
-	 * Convert organization
-	 * @param organization
-	 * @return
-	 */
-	private Organization.Builder convertOrganization(MOrg organization) {
-		MOrgInfo organizationInfo = MOrgInfo.get(Env.getCtx(), organization.getAD_Org_ID(), null);
-		return Organization.newBuilder()
-				.setUuid(ValueUtil.validateNull(organization.getUUID()))
-				.setId(organization.getAD_Org_ID())
-				.setName(ValueUtil.validateNull(organization.getName()))
-				.setDescription(ValueUtil.validateNull(organization.getDescription()))
-				.setDuns(ValueUtil.validateNull(organizationInfo.getDUNS()))
-				.setTaxId(ValueUtil.validateNull(organizationInfo.getTaxID()))
-				.setPhone(ValueUtil.validateNull(organizationInfo.getPhone()))
-				.setPhone2(ValueUtil.validateNull(organizationInfo.getPhone2()))
-				.setFax(ValueUtil.validateNull(organizationInfo.getFax()))
-				.setIsReadOnly(false);
 	}
 	
 	/**
@@ -365,7 +274,7 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 		//	Get List
 		query.<MWarehouse>list()
 			.forEach(warehouse -> {
-				builder.addWarehouses(convertWarehouse(warehouse));
+				builder.addWarehouses(ConvertUtil.convertWarehouse(warehouse));
 			});
 		//	
 		builder.setRecordCount(count);
@@ -376,18 +285,5 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 		//	Set netxt page
 		builder.setNextPageToken(ValueUtil.validateNull(nexPageToken));
 		return builder;
-	}
-	
-	/**
-	 * Convert warehouse
-	 * @param warehouse
-	 * @return
-	 */
-	private Warehouse.Builder convertWarehouse(MWarehouse warehouse) {
-		return Warehouse.newBuilder()
-				.setUuid(ValueUtil.validateNull(warehouse.getUUID()))
-				.setId(warehouse.getM_Warehouse_ID())
-				.setName(ValueUtil.validateNull(warehouse.getName()))
-				.setDescription(ValueUtil.validateNull(warehouse.getDescription()));
 	}
 }
