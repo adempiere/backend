@@ -297,6 +297,67 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		}
 	}
 	
+	@Override
+	public void listOrders(ListOrdersRequest request, StreamObserver<ListOrdersResponse> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Add Line for Order = " + request.getPosUuid());
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			ListOrdersResponse.Builder ordersList = listOrders(request);
+			responseObserver.onNext(ordersList.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	/**
+	 * List Orders from POS UUID
+	 * @param request
+	 * @return
+	 */
+	private ListOrdersResponse.Builder listOrders(ListOrdersRequest request) {
+		if(Util.isEmpty(request.getPosUuid())) {
+			throw new AdempiereException("@C_POS_ID@ @NotFound@");
+		}
+		ListOrdersResponse.Builder builder = ListOrdersResponse.newBuilder();
+		String nexPageToken = null;
+		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
+		int offset = (pageNumber > 0? pageNumber - 1: 0) * RecordUtil.PAGE_SIZE;
+		int limit = (pageNumber == 0? 1: pageNumber) * RecordUtil.PAGE_SIZE;
+		//	Get Product list
+		Query query = new Query(Env.getCtx(), I_C_Order.Table_Name, I_C_Order.COLUMNNAME_C_POS_ID + " = ?", null)
+				.setParameters(request.getPosUuid())
+				.setClient_ID()
+				.setOnlyActiveRecords(true);
+		int count = query.count();
+		query
+		.setLimit(limit, offset)
+		.<MOrder>list()
+		.forEach(order -> {
+			builder.addOrders(convertOrder(order));
+		});
+		//	
+		builder.setRecordCount(count);
+		//	Set page token
+		if(count > limit) {
+			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
+		}
+		//	Set next page
+		builder.setNextPageToken(ValueUtil.validateNull(nexPageToken));
+		return builder;
+	}
+	
 	/**
 	 * Get Order from UUID
 	 * @param uuid
@@ -684,7 +745,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 * @return
 	 */
 	private PointOfSales.Builder convertPointOfSales(MPOS pos) {
-		return PointOfSales.newBuilder()
+		PointOfSales.Builder build = PointOfSales.newBuilder()
 				.setUuid(ValueUtil.validateNull(pos.getUUID()))
 				.setId(pos.getC_POS_ID())
 				.setName(ValueUtil.validateNull(pos.getName()))
@@ -694,6 +755,14 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				.setIsPOSRequiredPIN(pos.isPOSRequiredPIN())
 				.setSalesRepresentative(convertSalesRepresentative(MUser.get(pos.getCtx(), pos.getSalesRep_ID())))
 				.setTemplateBusinessPartner(convertBusinessPartner(pos.getBPartner()));
+		//	Set Price List adn currency
+		if(pos.getM_PriceList_ID() != 0) {
+			MPriceList priceList = MPriceList.get(Env.getCtx(), pos.getM_PriceList_ID(), null);
+			MCurrency currency = MCurrency.get(Env.getCtx(), priceList.getC_Currency_ID());
+			build.setPriceListUuid(ValueUtil.validateNull(priceList.getUUID()))
+				.setCurrency(convertCurrency(currency));
+		}
+		return build;
 	}
 	
 	/**
@@ -918,7 +987,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					ValueUtil.validateNull(ValueUtil.getTranslation(reference, I_AD_Ref_List.COLUMNNAME_Name)), 
 					ValueUtil.validateNull(ValueUtil.getTranslation(reference, I_AD_Ref_List.COLUMNNAME_Description))))
 			.setTotalLines(ValueUtil.getDecimalFromBigDecimal(order.getTotalLines()))
-			.setGrandTotal(ValueUtil.getDecimalFromBigDecimal(order.getGrandTotal()));
+			.setGrandTotal(ValueUtil.getDecimalFromBigDecimal(order.getGrandTotal()))
+			.setDateOrder(order.getDateOrdered().getTime());
 	}
 	
 	/**

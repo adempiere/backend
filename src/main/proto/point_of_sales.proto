@@ -46,6 +46,8 @@ service Store {
 	rpc UpdateOrderLine(UpdateOrderLineRequest) returns (OrderLine) {}
 	//	Get a Order
 	rpc GetOrder(GetOrderRequest) returns (Order) {}
+	//	List Orders
+	rpc ListOrders(ListOrdersRequest) returns (ListOrdersResponse) {}
 }
 
 //	List POS Response
@@ -60,6 +62,21 @@ message ListProductPriceResponse {
 	int64 recordCount = 1;
 	repeated ProductPrice productPrices = 2;
 	string next_page_token = 3;
+}
+
+//	List Orders Response
+message ListOrdersResponse {
+	int64 recordCount = 1;
+	repeated Order orders = 2;
+	string next_page_token = 3;
+}
+
+// List Orders Request
+message ListOrdersRequest {
+	ClientRequest clientRequest = 1;
+	string posUuid = 2;
+	int32 page_size = 3;
+	string page_token = 4;
 }
 
 // List Product Price Request
@@ -99,6 +116,8 @@ message PointOfSales {
 	bool isPOSRequiredPIN = 7;
 	SalesRepresentative salesRepresentative = 8;
 	BusinessPartner templateBusinessPartner = 9;
+	string priceListUuid = 10;
+	Currency currency = 11;
 }
 
 // Request for create a order
@@ -160,6 +179,7 @@ message Order {
 	DocumentStatus documentStatus = 6;
 	Decimal totalLines = 7;
 	Decimal grandTotal = 8;
+	int64 dateOrder = 9;
 }
 
 // Sales Order Line

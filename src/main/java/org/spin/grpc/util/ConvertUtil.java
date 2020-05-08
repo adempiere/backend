@@ -62,6 +62,6 @@ public class ConvertUtil {
 				.setId(documentType.getC_DocType_ID())
 				.setName(ValueUtil.validateNull(documentType.getName()))
 				.setDescription(ValueUtil.validateNull(documentType.getDescription()))
-				.setPrinterName(ValueUtil.validateNull(documentType.getPrintName()));
+				.setPrintName(ValueUtil.validateNull(documentType.getPrintName()));
 	}
 }
