@@ -336,7 +336,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		int offset = (pageNumber > 0? pageNumber - 1: 0) * RecordUtil.PAGE_SIZE;
 		int limit = (pageNumber == 0? 1: pageNumber) * RecordUtil.PAGE_SIZE;
 		//	Get Product list
-		Query query = new Query(Env.getCtx(), I_C_Order.Table_Name, I_C_Order.COLUMNNAME_C_POS_ID + " = ?", null)
+		Query query = new Query(Env.getCtx(), I_C_Order.Table_Name, "EXISTS(SELECT 1 FROM C_POS p WHERE p.C_POS_ID = C_ORder.C_POS_ID AND p.UUID = ?)", null)
 				.setParameters(request.getPosUuid())
 				.setClient_ID()
 				.setOnlyActiveRecords(true);
@@ -988,7 +988,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					ValueUtil.validateNull(ValueUtil.getTranslation(reference, I_AD_Ref_List.COLUMNNAME_Description))))
 			.setTotalLines(ValueUtil.getDecimalFromBigDecimal(order.getTotalLines()))
 			.setGrandTotal(ValueUtil.getDecimalFromBigDecimal(order.getGrandTotal()))
-			.setDateOrder(order.getDateOrdered().getTime());
+			.setDateOrdered(order.getDateOrdered().getTime());
 	}
 	
 	/**

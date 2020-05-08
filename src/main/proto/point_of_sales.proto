@@ -179,7 +179,7 @@ message Order {
 	DocumentStatus documentStatus = 6;
 	Decimal totalLines = 7;
 	Decimal grandTotal = 8;
-	int64 dateOrder = 9;
+	int64 dateOrdered = 9;
 }
 
 // Sales Order Line
