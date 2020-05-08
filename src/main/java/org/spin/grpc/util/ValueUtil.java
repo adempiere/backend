@@ -350,6 +350,9 @@ public class ValueUtil {
 	 * @return
 	 */
 	public static String getTranslation(PO object, String columnName) {
+		if(object == null) {
+			return null;
+		}
 		if(Language.isBaseLanguage(Env.getAD_Language(Env.getCtx()))) {
 			return object.get_ValueAsString(columnName);
 		}

@@ -14,10 +14,14 @@
  ************************************************************************************/
 package org.spin.grpc.util;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Level;
 
 import org.adempiere.exceptions.AdempiereException;
 import org.compiere.model.I_AD_WF_NextCondition;
@@ -27,12 +31,15 @@ import org.compiere.model.I_AD_Workflow;
 import org.compiere.model.I_C_Order;
 import org.compiere.model.MColumn;
 import org.compiere.model.MDocType;
+import org.compiere.model.MOrder;
 import org.compiere.model.MTable;
 import org.compiere.model.PO;
 import org.compiere.model.Query;
+import org.compiere.process.DocAction;
 import org.compiere.process.DocOptions;
 import org.compiere.process.DocumentEngine;
 import org.compiere.util.CLogger;
+import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.compiere.util.Util;
 import org.compiere.wf.MWFActivity;
@@ -100,6 +107,219 @@ public class WorkflowServiceImplementation extends WorkflowImplBase {
 					.withCause(e)
 					.asRuntimeException());
 		}
+	}
+	
+	@Override
+	public void listDocumentStatuses(ListDocumentStatusesRequest request,
+			StreamObserver<ListDocumentStatusesResponse> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Document Statuses is Null");
+			}
+			log.fine("Object List Requested = " + request);
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
+			ListDocumentStatusesResponse.Builder entityValueList = convertDocumentStatuses(context, request);
+			responseObserver.onNext(entityValueList.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	/**
+	 * Convert document statuses
+	 * @param context
+	 * @param request
+	 * @return
+	 */
+	private ListDocumentStatusesResponse.Builder convertDocumentStatuses(Properties context, ListDocumentStatusesRequest request) {
+		/** Drafted = DR */
+		List<String> statusesList = new ArrayList<>();
+		String documentStatus = null;
+		String documentAction = null;
+		String orderType = "--";
+		String isSOTrx = "Y";
+		Object isProcessing = "N";
+		//	New
+		int documentTypeId = 0;
+		statusesList.add(DocumentEngine.STATUS_Drafted);
+		//	Get Table from Name
+		MTable table = MTable.get(context, request.getTableName());
+		int recordId = 0;
+		//	Get entity
+		PO entity = RecordUtil.getEntity(context, request.getTableName(), request.getRecordUuid(), request.getRecordId());
+		if(entity != null) {
+			//	
+			documentStatus = entity.get_ValueAsString(I_C_Order.COLUMNNAME_DocStatus);
+			documentAction = entity.get_ValueAsString(I_C_Order.COLUMNNAME_DocAction);
+			//
+			isProcessing = entity.get_ValueAsBoolean(I_C_Order.COLUMNNAME_Processing)? "Y": "N";
+			documentTypeId = entity.get_ValueAsInt(I_C_Order.COLUMNNAME_C_DocTypeTarget_ID);
+			if(documentTypeId == 0) {
+				documentTypeId = entity.get_ValueAsInt(I_C_Order.COLUMNNAME_C_DocType_ID);
+			}
+			if(documentTypeId != 0) {
+				MDocType documentType = MDocType.get(context, documentTypeId);
+				if(documentType != null
+						&& !Util.isEmpty(documentType.getDocBaseType())) {
+					orderType = documentType.getDocBaseType();
+				}
+			}
+			isSOTrx = entity.get_ValueAsBoolean(I_C_Order.COLUMNNAME_IsSOTrx)? "Y": "N";
+			recordId = entity.get_ID();
+		}
+		//	
+		if (documentStatus == null) {
+			documentStatus = DocumentEngine.STATUS_Drafted;
+		}
+		if (documentAction == null) {
+			documentAction = DocumentEngine.ACTION_Prepare;
+		}
+		//	Standard
+		if(documentStatus.equals(DocumentEngine.STATUS_Completed)
+				|| documentStatus.equals(DocumentEngine.STATUS_Voided)
+				|| documentStatus.equals(DocumentEngine.STATUS_Reversed)
+				|| documentStatus.equals(DocumentEngine.STATUS_Unknown)
+				|| documentStatus.equals(DocumentEngine.STATUS_Closed)) {
+			/** In Progress = IP */
+			statusesList.add(DocumentEngine.STATUS_InProgress);
+			/** Approved = AP */
+			statusesList.add(DocumentEngine.STATUS_Approved);
+			//	For Prepaid Order
+			if(orderType.equals(MOrder.DocSubTypeSO_Prepay)) {
+				/** Waiting Payment = WP */
+				statusesList.add(DocumentEngine.STATUS_WaitingPayment);
+				/** Waiting Confirmation = WC */
+				statusesList.add(DocumentEngine.STATUS_WaitingConfirmation);
+			}
+		}
+		//	Add status
+		statusesList.add(documentStatus);
+		//	Get All document Actions
+		ArrayList<String> valueList = new ArrayList<String>();
+		ArrayList<String> nameList = new ArrayList<String>();
+		ArrayList<String> descriptionList = new ArrayList<String>();
+		//	Load all reference
+		readDocumentStatusList(valueList, nameList, descriptionList);
+		//	
+		ListDocumentStatusesResponse.Builder builder = ListDocumentStatusesResponse.newBuilder();
+		statusesList.stream().filter(status -> status != null).forEach(status -> {
+			for (int i = 0; i < valueList.size(); i++) {
+				if (status.equals(valueList.get(i))) {
+					DocumentStatus.Builder documentStatusBuilder = DocumentStatus.newBuilder();
+					documentStatusBuilder.setValue(ValueUtil.validateNull(valueList.get(i)));
+					documentStatusBuilder.setName(ValueUtil.validateNull(nameList.get(i)));
+					documentStatusBuilder.setDescription(ValueUtil.validateNull(descriptionList.get(i)));
+					builder.addDocumentStatuses(documentStatusBuilder);
+				}
+			}
+		});
+		//	Get Actions
+		
+		
+		log.fine("DocStatus=" + documentStatus 
+			+ ", DocAction=" + documentAction + ", OrderType=" + orderType 
+			+ ", IsSOTrx=" + isSOTrx + ", Processing=" + isProcessing 
+			+ ", AD_Table_ID=" + table.getAD_Table_ID() + ", Record_ID=" + recordId);
+		//
+		String[] options = new String[valueList.size()];
+		int index = 0;
+		
+		/*******************
+		 *  General Actions
+		 */
+		String[] docActionHolder = new String[] {documentAction};
+		index = DocumentEngine.getValidActions(documentStatus, isProcessing, orderType, isSOTrx, table.getAD_Table_ID(), docActionHolder, options);
+
+		if (entity != null
+				&& entity instanceof DocOptions) {
+			index = ((DocOptions) entity).customizeValidActions(documentStatus, isProcessing, orderType, isSOTrx, entity.get_Table_ID(), docActionHolder, options, index);
+		}
+
+		log.fine("get doctype: " + documentTypeId);
+		if (documentTypeId != 0) {
+			index = DocumentEngine.checkActionAccess(Env.getAD_Client_ID(Env.getCtx()), Env.getAD_Role_ID(Env.getCtx()), documentTypeId, options, index);
+		}
+		//	
+		documentAction = docActionHolder[0];
+		//	
+		//	Get
+		Arrays.asList(options).stream().filter(option -> option != null).forEach(option -> {
+			for (int i = 0; i < valueList.size(); i++) {
+				if (option.equals(valueList.get(i))) {
+					DocumentStatus.Builder documentActionBuilder = DocumentStatus.newBuilder();
+					documentActionBuilder.setValue(ValueUtil.validateNull(valueList.get(i)));
+					documentActionBuilder.setName(ValueUtil.validateNull(nameList.get(i)));
+					documentActionBuilder.setDescription(ValueUtil.validateNull(descriptionList.get(i)));
+					builder.addDocumentStatuses(documentActionBuilder);
+				}
+			}
+		});
+		//	Add record count
+		builder.setRecordCount(builder.getDocumentStatusesCount());
+		//	Return
+		return builder;
+	}
+	
+	/**
+	 * Fill Vector with DocAction Ref_List(135) values
+	 * @param v_value
+	 * @param v_name
+	 * @param v_description
+	 */
+	private void readDocumentStatusList(ArrayList<String> v_value, ArrayList<String> v_name, ArrayList<String> v_description) {
+		if (v_value == null) 
+			throw new IllegalArgumentException("v_value parameter is null");
+		if (v_name == null)
+			throw new IllegalArgumentException("v_name parameter is null");
+		if (v_description == null)
+			throw new IllegalArgumentException("v_description parameter is null");
+		
+		String sql;
+		if (Env.isBaseLanguage(Env.getCtx(), "AD_Ref_List"))
+			sql = "SELECT Value, Name, Description FROM AD_Ref_List "
+				+ "WHERE AD_Reference_ID=? ORDER BY Name";
+		else
+			sql = "SELECT l.Value, t.Name, t.Description "
+				+ "FROM AD_Ref_List l, AD_Ref_List_Trl t "
+				+ "WHERE l.AD_Ref_List_ID=t.AD_Ref_List_ID"
+				+ " AND t.AD_Language='" + Env.getAD_Language(Env.getCtx()) + "'"
+				+ " AND l.AD_Reference_ID=? ORDER BY t.Name";
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+		try
+		{
+			preparedStatement = DB.prepareStatement(sql, null);
+			preparedStatement.setInt(1, DocAction.DOCSTATUS_AD_REFERENCE_ID);
+			resultSet = preparedStatement.executeQuery();
+			while (resultSet.next())
+			{
+				String value = resultSet.getString(1);
+				String name = resultSet.getString(2);
+				String description = resultSet.getString(3);
+				if (description == null)
+					description = "";
+				//
+				v_value.add(value);
+				v_name.add(name);
+				v_description.add(description);
+			}
+		}
+		catch (SQLException e)
+		{
+			log.log(Level.SEVERE, sql, e);
+		}
+		finally {
+			DB.close(resultSet, preparedStatement);
+			resultSet = null;
+			preparedStatement = null;
+		}
+
 	}
 	
 	/**
