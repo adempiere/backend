@@ -48,6 +48,8 @@ service Store {
 	rpc GetOrder(GetOrderRequest) returns (Order) {}
 	//	List Orders
 	rpc ListOrders(ListOrdersRequest) returns (ListOrdersResponse) {}
+	//	List Order Lines
+	rpc ListOrderLines(ListOrderLinesRequest) returns (ListOrderLinesResponse) {}
 }
 
 //	List POS Response
@@ -75,6 +77,21 @@ message ListOrdersResponse {
 message ListOrdersRequest {
 	ClientRequest clientRequest = 1;
 	string posUuid = 2;
+	int32 page_size = 3;
+	string page_token = 4;
+}
+
+//	List Order Lines Response
+message ListOrderLinesResponse {
+	int64 recordCount = 1;
+	repeated OrderLine orderLines = 2;
+	string next_page_token = 3;
+}
+
+// List Orders Request
+message ListOrderLinesRequest {
+	ClientRequest clientRequest = 1;
+	string orderUuid = 2;
 	int32 page_size = 3;
 	string page_token = 4;
 }

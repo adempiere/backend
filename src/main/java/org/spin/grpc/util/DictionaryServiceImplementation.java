@@ -717,7 +717,7 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 		if(processList != null
 				&& processList.size() > 0) {
 			for(MProcess process : processList) {
-				Process.Builder processBuilder = convertProcess(context, process, false);
+				Process.Builder processBuilder = convertProcess(context, process, true);
 				builder.addProcesses(processBuilder.build());
 			}
 		}

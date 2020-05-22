@@ -320,6 +320,29 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					.asRuntimeException());
 		}
 	}
+	@Override
+	public void listOrderLines(ListOrderLinesRequest request, StreamObserver<ListOrderLinesResponse> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("List Order Lines from order = " + request.getOrderUuid());
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			ListOrderLinesResponse.Builder orderLinesList = listOrderLines(request);
+			responseObserver.onNext(orderLinesList.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
 	
 	/**
 	 * List Orders from POS UUID
@@ -336,7 +359,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		int offset = (pageNumber > 0? pageNumber - 1: 0) * RecordUtil.PAGE_SIZE;
 		int limit = (pageNumber == 0? 1: pageNumber) * RecordUtil.PAGE_SIZE;
 		//	Get Product list
-		Query query = new Query(Env.getCtx(), I_C_Order.Table_Name, "EXISTS(SELECT 1 FROM C_POS p WHERE p.C_POS_ID = C_ORder.C_POS_ID AND p.UUID = ?)", null)
+		Query query = new Query(Env.getCtx(), I_C_Order.Table_Name, "EXISTS(SELECT 1 FROM C_POS p WHERE p.C_POS_ID = C_Order.C_POS_ID AND p.UUID = ?)", null)
 				.setParameters(request.getPosUuid())
 				.setClient_ID()
 				.setOnlyActiveRecords(true);
@@ -346,6 +369,43 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		.<MOrder>list()
 		.forEach(order -> {
 			builder.addOrders(convertOrder(order));
+		});
+		//	
+		builder.setRecordCount(count);
+		//	Set page token
+		if(count > limit) {
+			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
+		}
+		//	Set next page
+		builder.setNextPageToken(ValueUtil.validateNull(nexPageToken));
+		return builder;
+	}
+	
+	/**
+	 * List Orders Lines from Order UUID
+	 * @param request
+	 * @return
+	 */
+	private ListOrderLinesResponse.Builder listOrderLines(ListOrderLinesRequest request) {
+		if(Util.isEmpty(request.getOrderUuid())) {
+			throw new AdempiereException("@C_Order_ID@ @NotFound@");
+		}
+		ListOrderLinesResponse.Builder builder = ListOrderLinesResponse.newBuilder();
+		String nexPageToken = null;
+		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
+		int offset = (pageNumber > 0? pageNumber - 1: 0) * RecordUtil.PAGE_SIZE;
+		int limit = (pageNumber == 0? 1: pageNumber) * RecordUtil.PAGE_SIZE;
+		//	Get Product list
+		Query query = new Query(Env.getCtx(), I_C_OrderLine.Table_Name, "EXISTS(SELECT 1 FROM C_Order o WHERE o.C_Order_ID = C_OrderLine.C_Order_ID AND o.UUID = ?)", null)
+				.setParameters(request.getOrderUuid())
+				.setClient_ID()
+				.setOnlyActiveRecords(true);
+		int count = query.count();
+		query
+		.setLimit(limit, offset)
+		.<MOrderLine>list()
+		.forEach(order -> {
+			builder.addOrderLines(convertOrderLine(order));
 		});
 		//	
 		builder.setRecordCount(count);
