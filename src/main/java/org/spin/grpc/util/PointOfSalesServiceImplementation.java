@@ -436,7 +436,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		if(Util.isEmpty(request.getOrderLineUuid())) {
 			throw new AdempiereException("@C_OrderLine_ID@ @NotFound@");
 		}
-		MOrderLine orderLine = new Query(Env.getCtx(), I_C_OrderLine.Table_Name, " = ?", null)
+		MOrderLine orderLine = new Query(Env.getCtx(), I_C_OrderLine.Table_Name, I_C_OrderLine.COLUMNNAME_UUID + " = ?", null)
 				.setParameters(request.getOrderLineUuid())
 				.setClient_ID()
 				.first();
@@ -503,7 +503,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			throw new AdempiereException("@C_OrderLine_ID@ @NotFound@");
 		}
 		//	
-		int orderLineId = RecordUtil.getIdFromUuid(I_C_Order.Table_Name, request.getOrderLineUuid());
+		int orderLineId = RecordUtil.getIdFromUuid(I_C_OrderLine.Table_Name, request.getOrderLineUuid());
 		if(orderLineId <= 0) {
 			return OrderLine.newBuilder();
 		}
