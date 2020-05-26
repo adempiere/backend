@@ -714,6 +714,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		}
 		MOrderLine orderLine = new MOrderLine(Env.getCtx(), orderLineId, null);
 		MOrder order = orderLine.getParent();
+		orderLine.setHeaderInfo(order);
 		//	Valid Complete
 		if (!DocumentUtil.isDrafted(order))
 			return null;
@@ -734,12 +735,14 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		if(discountRate == null
 				|| discountRate.equals(Env.ZERO)) {
 			discountRate = orderLine.getDiscount();
+		} else {
+			BigDecimal discountAmount = orderLine.getPriceList().multiply(discountRate.divide(Env.ONEHUNDRED));
+			price = orderLine.getPriceList().subtract(discountAmount);
 		}
 		//	Set values
-		orderLine.setQty(quantity);
 		orderLine.setPrice(price); //	sets List/limit
-		orderLine.setDiscount(discountRate);
-		orderLine.setPrice();
+		orderLine.setQty(quantity);
+		orderLine.setTax();
 		orderLine.saveEx();
 		return orderLine;
 			
