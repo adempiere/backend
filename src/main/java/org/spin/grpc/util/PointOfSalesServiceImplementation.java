@@ -664,7 +664,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				.setColumns(keyLayout.getColumns());
 				//	TODO: Color
 		//	Add keys
-		Arrays.asList(keyLayout.getKeys(false)).forEach(key -> builder.addKeys(convertKey(key)));
+		Arrays.asList(keyLayout.getKeys(false)).stream().filter(key -> key.isActive()).forEach(key -> builder.addKeys(convertKey(key)));
 		return builder;
 	}
 	
@@ -683,7 +683,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				.setSpanX(key.getSpanX())
 				.setSpanY(key.getSpanY())
 				.setSubKeyLayoutUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_POSKeyLayout.Table_Name, key.getSubKeyLayout_ID())))
-				.setQuantity(ValueUtil.getDecimalFromBigDecimal(key.getQty()))
+				.setQuantity(ValueUtil.getDecimalFromBigDecimal(key.getQty() == null || key.getQty().equals(Env.ZERO)? Env.ONE: key.getQty()))
 				.setProductUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_M_Product.Table_Name, key.getM_Product_ID())));
 	}
 	
