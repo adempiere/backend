@@ -17,12 +17,17 @@ package org.spin.grpc.util;
 
 import java.util.Properties;
 
+import org.compiere.model.MBPartner;
+import org.compiere.model.MCharge;
 import org.compiere.model.MCountry;
 import org.compiere.model.MCurrency;
 import org.compiere.model.MDocType;
 import org.compiere.model.MLanguage;
 import org.compiere.model.MOrg;
 import org.compiere.model.MOrgInfo;
+import org.compiere.model.MProduct;
+import org.compiere.model.MProductCategory;
+import org.compiere.model.MUOM;
 import org.compiere.model.MWarehouse;
 import org.compiere.util.Env;
 import org.compiere.util.Util;
@@ -73,6 +78,92 @@ public class ConvertUtil {
 				.setName(ValueUtil.validateNull(documentType.getName()))
 				.setDescription(ValueUtil.validateNull(documentType.getDescription()))
 				.setPrintName(ValueUtil.validateNull(documentType.getPrintName()));
+	}
+	
+	/**
+	 * Convert business partner
+	 * @param businessPartner
+	 * @return
+	 */
+	public static BusinessPartner.Builder convertBusinessPartner(MBPartner businessPartner) {
+		return BusinessPartner.newBuilder()
+				.setUuid(ValueUtil.validateNull(businessPartner.getUUID()))
+				.setId(businessPartner.getC_BPartner_ID())
+				.setValue(ValueUtil.validateNull(businessPartner.getValue()))
+				.setTaxId(ValueUtil.validateNull(businessPartner.getTaxID()))
+				.setDuns(ValueUtil.validateNull(businessPartner.getDUNS()))
+				.setNaics(ValueUtil.validateNull(businessPartner.getNAICS()))
+				.setName(ValueUtil.validateNull(businessPartner.getName()))
+				.setLastName(ValueUtil.validateNull(businessPartner.getName2()))
+				.setDescription(ValueUtil.validateNull(businessPartner.getDescription()));
+	}
+	
+	/**
+	 * Convert charge from 
+	 * @param chargeId
+	 * @return
+	 */
+	public static Charge.Builder convertCharge(MCharge charge) {
+		Charge.Builder builder = Charge.newBuilder();
+		if(charge == null) {
+			return builder;
+		}
+		//	convert charge
+		return builder
+			.setUuid(ValueUtil.validateNull(charge.getUUID()))
+			.setId(charge.getC_Charge_ID())
+			.setName(ValueUtil.validateNull(charge.getName()))
+			.setDescription(ValueUtil.validateNull(charge.getDescription()));
+	}
+	
+	/**
+	 * Convert Product to 
+	 * @param product
+	 * @return
+	 */
+	public static Product.Builder convertProduct(MProduct product) {
+		Product.Builder builder = Product.newBuilder();
+		builder.setUuid(ValueUtil.validateNull(product.getUUID()))
+				.setId(product.getM_Product_ID())
+				.setValue(ValueUtil.validateNull(product.getValue()))
+				.setName(ValueUtil.validateNull(product.getName()))
+				.setDescription(ValueUtil.validateNull(product.getDescription()))
+				.setHelp(ValueUtil.validateNull(product.getHelp()))
+				.setDocumentNote(ValueUtil.validateNull(product.getDocumentNote()))
+				.setUomName(ValueUtil.validateNull(MUOM.get(product.getCtx(), product.getC_UOM_ID()).getName()))
+				.setDescriptionURL(ValueUtil.validateNull(product.getDescriptionURL()))
+				//	Product Type
+				.setIsStocked(product.isStocked())
+				.setIsDropShip(product.isDropShip())
+				.setIsPurchased(product.isPurchased())
+				.setIsSold(product.isSold())
+				.setImageURL(ValueUtil.validateNull(product.getImageURL()))
+				.setUpc(ValueUtil.validateNull(product.getUPC()))
+				.setSku(ValueUtil.validateNull(product.getSKU()))
+				.setVersionNo(ValueUtil.validateNull(product.getVersionNo()))
+				.setGuaranteeDays(product.getGuaranteeDays())
+				.setWeight(ValueUtil.getDecimalFromBigDecimal(product.getWeight()))
+				.setVolume(ValueUtil.getDecimalFromBigDecimal(product.getVolume()))
+				.setShelfDepth(product.getShelfDepth())
+				.setShelfHeight(ValueUtil.getDecimalFromBigDecimal(product.getShelfHeight()))
+				.setShelfWidth(product.getShelfWidth())
+				.setUnitsPerPallet(ValueUtil.getDecimalFromBigDecimal(product.getUnitsPerPallet()))
+				.setUnitsPerPack(product.getUnitsPerPack())
+				.setTaxCategory(ValueUtil.validateNull(product.getC_TaxCategory().getName()))
+				.setProductCategoryName(ValueUtil.validateNull(MProductCategory.get(product.getCtx(), product.getM_Product_Category_ID()).getName()));
+		//	Group
+		if(product.getM_Product_Group_ID() != 0) {
+			builder.setProductGroupName(ValueUtil.validateNull(product.getM_Product_Group().getName()));
+		}
+		//	Class
+		if(product.getM_Product_Class_ID() != 0) {
+			builder.setProductClassName(ValueUtil.validateNull(product.getM_Product_Class().getName()));
+		}
+		//	Classification
+		if(product.getM_Product_Classification_ID() != 0) {
+			builder.setProductClassificationName(ValueUtil.validateNull(product.getM_Product_Classification().getName()));
+		}
+		return builder;
 	}
 	
 	/**

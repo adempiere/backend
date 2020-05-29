@@ -50,6 +50,8 @@ service Store {
 	rpc ListOrders(ListOrdersRequest) returns (ListOrdersResponse) {}
 	//	List Order Lines
 	rpc ListOrderLines(ListOrderLinesRequest) returns (ListOrderLinesResponse) {}
+	//	Get a Key Layout
+	rpc GetKeyLayout(GetKeyLayoutRequest) returns (KeyLayout) {}
 }
 
 //	List POS Response
@@ -135,6 +137,7 @@ message PointOfSales {
 	BusinessPartner templateBusinessPartner = 9;
 	string priceListUuid = 10;
 	Currency currency = 11;
+	string keyLayoutUuid = 12;
 }
 
 // Request for create a order
@@ -186,6 +189,12 @@ message GetOrderRequest {
 	string orderUuid = 2;
 }
 
+// Request for get a key layout
+message GetKeyLayoutRequest {
+	ClientRequest clientRequest = 1;
+	string keyLayoutUuid = 2;
+}
+
 // Sales Order
 message Order {
 	string uuid = 1;
@@ -197,6 +206,7 @@ message Order {
 	Decimal totalLines = 7;
 	Decimal grandTotal = 8;
 	int64 dateOrdered = 9;
+	BusinessPartner businessPartner = 10;
 }
 
 // Sales Order Line
@@ -227,4 +237,32 @@ message GetProductPriceRequest {
 	string businessPartnerUuid = 7;
 	string warehouseUuid = 8;
 	int64 validFrom = 9;
+}
+
+// Layout for POS
+message KeyLayout {
+	string uuid = 1;
+	int32 id = 2;
+	string name = 3;
+	string description = 4;
+	string help = 5;
+	string layoutType = 6;
+	int32 columns = 7;
+	string color = 8;
+	repeated Key keys = 9;
+}
+
+// Key for layout
+message Key {
+	string uuid = 1;
+	int32 id = 2;
+	string name = 3;
+	string description = 4;
+	string subKeyLayoutUuid = 5;
+	string color = 6;
+	int32 sequence = 7;
+	int32 spanX = 8;
+	int32 spanY = 9;
+	string productUuid = 10;
+	Decimal quantity = 11;
 }

@@ -31,6 +31,7 @@ import org.compiere.model.I_C_DocType;
 import org.compiere.model.I_C_Order;
 import org.compiere.model.I_C_OrderLine;
 import org.compiere.model.I_C_POS;
+import org.compiere.model.I_C_POSKeyLayout;
 import org.compiere.model.I_M_PriceList;
 import org.compiere.model.I_M_Product;
 import org.compiere.model.I_M_Warehouse;
@@ -42,16 +43,16 @@ import org.compiere.model.MDocType;
 import org.compiere.model.MOrder;
 import org.compiere.model.MOrderLine;
 import org.compiere.model.MPOS;
+import org.compiere.model.MPOSKey;
+import org.compiere.model.MPOSKeyLayout;
 import org.compiere.model.MPriceList;
 import org.compiere.model.MPriceListVersion;
 import org.compiere.model.MProduct;
-import org.compiere.model.MProductCategory;
 import org.compiere.model.MProductPrice;
 import org.compiere.model.MProductPricing;
 import org.compiere.model.MRefList;
 import org.compiere.model.MStorage;
 import org.compiere.model.MTax;
-import org.compiere.model.MUOM;
 import org.compiere.model.MUser;
 import org.compiere.model.MWarehouse;
 import org.compiere.model.Query;
@@ -279,7 +280,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			log.fine("Create Order = " + request.getOrderUuid());
+			log.fine("Get Order = " + request.getOrderUuid());
 			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
 					request.getClientRequest().getLanguage(), 
 					request.getClientRequest().getOrganizationUuid(), 
@@ -333,6 +334,30 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					request.getClientRequest().getWarehouseUuid());
 			ListOrderLinesResponse.Builder orderLinesList = listOrderLines(request);
 			responseObserver.onNext(orderLinesList.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void getKeyLayout(GetKeyLayoutRequest request, StreamObserver<KeyLayout> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Get Key Layout = " + request.getKeyLayoutUuid());
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			KeyLayout.Builder keyLayout = convertKeyLayout(RecordUtil.getIdFromUuid(I_C_POSKeyLayout.Table_Name, request.getKeyLayoutUuid()));
+			responseObserver.onNext(keyLayout.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
@@ -581,7 +606,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		if(productId <= 0) {
 			return builder;
 		}
-		return convertProduct(MProduct.get(Env.getCtx(), productId));
+		return ConvertUtil.convertProduct(MProduct.get(Env.getCtx(), productId));
 	}
 	
 	/**
@@ -594,25 +619,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		if(chargeId <= 0) {
 			return builder;
 		}
-		return convertCharge(MCharge.get(Env.getCtx(), chargeId));
-	}
-	
-	/**
-	 * Convert charge from 
-	 * @param chargeId
-	 * @return
-	 */
-	private Charge.Builder convertCharge(MCharge charge) {
-		Charge.Builder builder = Charge.newBuilder();
-		if(charge == null) {
-			return builder;
-		}
-		//	convert charge
-		return builder
-			.setUuid(ValueUtil.validateNull(charge.getUUID()))
-			.setId(charge.getC_Charge_ID())
-			.setName(ValueUtil.validateNull(charge.getName()))
-			.setDescription(ValueUtil.validateNull(charge.getDescription()));
+		return ConvertUtil.convertCharge(MCharge.get(Env.getCtx(), chargeId));
 	}
 	
 	/**
@@ -625,25 +632,59 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		if(warehouseId <= 0) {
 			return builder;
 		}
-		return convertWarehouse(MWarehouse.get(Env.getCtx(), warehouseId));
+		return ConvertUtil.convertWarehouse(MWarehouse.get(Env.getCtx(), warehouseId));
 	}
 	
 	/**
-	 * Convert warehouse
-	 * @param warehouse
+	 * Convert key layout from id
+	 * @param keyLayoutId
 	 * @return
 	 */
-	private Warehouse.Builder convertWarehouse(MWarehouse warehouse) {
-		Warehouse.Builder builder = Warehouse.newBuilder();
-		if(warehouse == null) {
+	private KeyLayout.Builder convertKeyLayout(int keyLayoutId) {
+		KeyLayout.Builder builder = KeyLayout.newBuilder();
+		if(keyLayoutId <= 0) {
 			return builder;
 		}
-		//	convert charge
-		return builder
-			.setUuid(ValueUtil.validateNull(warehouse.getUUID()))
-			.setId(warehouse.getM_Warehouse_ID())
-			.setName(ValueUtil.validateNull(warehouse.getName()))
-			.setDescription(ValueUtil.validateNull(warehouse.getDescription()));
+		return convertKeyLayout(MPOSKeyLayout.get(Env.getCtx(), keyLayoutId));
+	}
+	
+	/**
+	 * Convert Key Layout from PO
+	 * @param keyLayout
+	 * @return
+	 */
+	private KeyLayout.Builder convertKeyLayout(MPOSKeyLayout keyLayout) {
+		KeyLayout.Builder builder = KeyLayout.newBuilder()
+				.setUuid(ValueUtil.validateNull(keyLayout.getUUID()))
+				.setId(keyLayout.getC_POSKeyLayout_ID())
+				.setName(ValueUtil.validateNull(keyLayout.getName()))
+				.setDescription(ValueUtil.validateNull(keyLayout.getDescription()))
+				.setHelp(ValueUtil.validateNull(keyLayout.getHelp()))
+				.setLayoutType(ValueUtil.validateNull(keyLayout.getPOSKeyLayoutType()))
+				.setColumns(keyLayout.getColumns());
+				//	TODO: Color
+		//	Add keys
+		Arrays.asList(keyLayout.getKeys(false)).forEach(key -> builder.addKeys(convertKey(key)));
+		return builder;
+	}
+	
+	/**
+	 * Convet key for layout
+	 * @param key
+	 * @return
+	 */
+	private Key.Builder convertKey(MPOSKey key) {
+		return Key.newBuilder()
+				.setUuid(ValueUtil.validateNull(key.getUUID()))
+				.setId(key.getC_POSKeyLayout_ID())
+				.setName(ValueUtil.validateNull(key.getName()))
+				//	TODO: Color
+				.setSequence(key.getSeqNo())
+				.setSpanX(key.getSpanX())
+				.setSpanY(key.getSpanY())
+				.setSubKeyLayoutUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_POSKeyLayout.Table_Name, key.getSubKeyLayout_ID())))
+				.setQuantity(ValueUtil.getDecimalFromBigDecimal(key.getQty()))
+				.setProductUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_M_Product.Table_Name, key.getM_Product_ID())));
 	}
 	
 	/***
@@ -817,13 +858,14 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				.setIsModifyPrice(pos.isModifyPrice())
 				.setIsPOSRequiredPIN(pos.isPOSRequiredPIN())
 				.setSalesRepresentative(convertSalesRepresentative(MUser.get(pos.getCtx(), pos.getSalesRep_ID())))
-				.setTemplateBusinessPartner(convertBusinessPartner(pos.getBPartner()));
+				.setTemplateBusinessPartner(ConvertUtil.convertBusinessPartner(pos.getBPartner()))
+				.setKeyLayoutUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_POSKeyLayout.Table_Name, pos.getC_POSKeyLayout_ID())));
 		//	Set Price List adn currency
 		if(pos.getM_PriceList_ID() != 0) {
 			MPriceList priceList = MPriceList.get(Env.getCtx(), pos.getM_PriceList_ID(), null);
 			MCurrency currency = MCurrency.get(Env.getCtx(), priceList.getC_Currency_ID());
 			build.setPriceListUuid(ValueUtil.validateNull(priceList.getUUID()))
-				.setCurrency(convertCurrency(currency));
+				.setCurrency(ConvertUtil.convertCurrency(currency));
 		}
 		return build;
 	}
@@ -839,24 +881,6 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				.setId(salesRepresentative.getAD_User_ID())
 				.setName(ValueUtil.validateNull(salesRepresentative.getName()))
 				.setDescription(ValueUtil.validateNull(salesRepresentative.getDescription()));
-	}
-	
-	/**
-	 * Convert business partner
-	 * @param businessPartner
-	 * @return
-	 */
-	private BusinessPartner.Builder convertBusinessPartner(MBPartner businessPartner) {
-		return BusinessPartner.newBuilder()
-				.setUuid(ValueUtil.validateNull(businessPartner.getUUID()))
-				.setId(businessPartner.getC_BPartner_ID())
-				.setValue(ValueUtil.validateNull(businessPartner.getValue()))
-				.setTaxId(ValueUtil.validateNull(businessPartner.getTaxID()))
-				.setDuns(ValueUtil.validateNull(businessPartner.getDUNS()))
-				.setNaics(ValueUtil.validateNull(businessPartner.getNAICS()))
-				.setName(ValueUtil.validateNull(businessPartner.getName()))
-				.setLastName(ValueUtil.validateNull(businessPartner.getName2()))
-				.setDescription(ValueUtil.validateNull(businessPartner.getDescription()));
 	}
 	
 	/**
@@ -1042,7 +1066,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		return builder
 			.setUuid(ValueUtil.validateNull(order.getUUID()))
 			.setId(order.getC_Order_ID())
-			.setDocumentType(ConvertUtil.convertDocumentType(MDocType.get(Env.getCtx(), order.getC_DocType_ID())))
+			.setDocumentType(ConvertUtil.convertDocumentType(MDocType.get(Env.getCtx(), order.getC_DocTypeTarget_ID())))
 			.setDocumentNo(ValueUtil.validateNull(order.getDocumentNo()))
 			.setSalesRepresentative(convertSalesRepresentative(MUser.get(Env.getCtx(), order.getSalesRep_ID())))
 			.setDocumentStatus(ConvertUtil.convertDocumentStatus(
@@ -1051,7 +1075,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					ValueUtil.validateNull(ValueUtil.getTranslation(reference, I_AD_Ref_List.COLUMNNAME_Description))))
 			.setTotalLines(ValueUtil.getDecimalFromBigDecimal(order.getTotalLines()))
 			.setGrandTotal(ValueUtil.getDecimalFromBigDecimal(order.getGrandTotal()))
-			.setDateOrdered(order.getDateOrdered().getTime());
+			.setDateOrdered(order.getDateOrdered().getTime())
+			.setBusinessPartner(ConvertUtil.convertBusinessPartner((MBPartner) order.getC_BPartner()));
 	}
 	
 	/**
@@ -1147,7 +1172,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		MProductPricing productPricing = new MProductPricing(product.getM_Product_ID(), businessPartnerId, priceQuantity, true, null);
 		productPricing.setM_PriceList_ID(priceList.getM_PriceList_ID());
 		productPricing.setPriceDate(validFrom);
-		builder.setProduct(convertProduct(product));
+		builder.setProduct(ConvertUtil.convertProduct(product));
 		int taxCategoryId = product.getC_TaxCategory_ID();
 		Optional<MTax> optionalTax = Arrays.asList(MTax.getAll(Env.getCtx()))
 		.stream()
@@ -1162,7 +1187,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			builder.setTaxRate(convertTaxRate(optionalTax.get()));
 		}
 		//	Set currency
-		builder.setCurrency(convertCurrency(MCurrency.get(Env.getCtx(), priceList.getC_Currency_ID())));
+		builder.setCurrency(ConvertUtil.convertCurrency(MCurrency.get(Env.getCtx(), priceList.getC_Currency_ID())));
 		//	Price List Attributes
 		builder.setIsTaxIncluded(priceList.isTaxIncluded());
 		builder.setValidFrom(productPricing.getPriceDate().getTime());
@@ -1302,75 +1327,5 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			.setDescription(ValueUtil.validateNull(tax.getDescription()))
 			.setTaxIndicator(ValueUtil.validateNull(tax.getTaxIndicator()))
 			.setRate(ValueUtil.getDecimalFromBigDecimal(tax.getRate()));
-	}
-	
-	/**
-	 * Convert Currency
-	 * @param currency
-	 * @return
-	 */
-	private Currency.Builder convertCurrency(MCurrency currency) {
-		Currency.Builder builder = Currency.newBuilder();
-		if(currency == null) {
-			return builder;
-		}
-		//	Set values
-		return builder.setUuid(ValueUtil.validateNull(currency.getUUID()))
-			.setId(currency.getC_Currency_ID())
-			.setISOCode(ValueUtil.validateNull(currency.getISO_Code()))
-			.setCurSymbol(ValueUtil.validateNull(currency.getCurSymbol()))
-			.setDescription(ValueUtil.validateNull(currency.getDescription()))
-			.setStdPrecision(currency.getStdPrecision())
-			.setCostingPrecision(currency.getCostingPrecision());
-	}
-	
-	/**
-	 * Convert Product to 
-	 * @param product
-	 * @return
-	 */
-	private Product.Builder convertProduct(MProduct product) {
-		Product.Builder builder = Product.newBuilder();
-		builder.setUuid(ValueUtil.validateNull(product.getUUID()))
-				.setId(product.getM_Product_ID())
-				.setValue(ValueUtil.validateNull(product.getValue()))
-				.setName(ValueUtil.validateNull(product.getName()))
-				.setDescription(ValueUtil.validateNull(product.getDescription()))
-				.setHelp(ValueUtil.validateNull(product.getHelp()))
-				.setDocumentNote(ValueUtil.validateNull(product.getDocumentNote()))
-				.setUomName(ValueUtil.validateNull(MUOM.get(product.getCtx(), product.getC_UOM_ID()).getName()))
-				.setDescriptionURL(ValueUtil.validateNull(product.getDescriptionURL()))
-				//	Product Type
-				.setIsStocked(product.isStocked())
-				.setIsDropShip(product.isDropShip())
-				.setIsPurchased(product.isPurchased())
-				.setIsSold(product.isSold())
-				.setImageURL(ValueUtil.validateNull(product.getImageURL()))
-				.setUpc(ValueUtil.validateNull(product.getUPC()))
-				.setSku(ValueUtil.validateNull(product.getSKU()))
-				.setVersionNo(ValueUtil.validateNull(product.getVersionNo()))
-				.setGuaranteeDays(product.getGuaranteeDays())
-				.setWeight(ValueUtil.getDecimalFromBigDecimal(product.getWeight()))
-				.setVolume(ValueUtil.getDecimalFromBigDecimal(product.getVolume()))
-				.setShelfDepth(product.getShelfDepth())
-				.setShelfHeight(ValueUtil.getDecimalFromBigDecimal(product.getShelfHeight()))
-				.setShelfWidth(product.getShelfWidth())
-				.setUnitsPerPallet(ValueUtil.getDecimalFromBigDecimal(product.getUnitsPerPallet()))
-				.setUnitsPerPack(product.getUnitsPerPack())
-				.setTaxCategory(ValueUtil.validateNull(product.getC_TaxCategory().getName()))
-				.setProductCategoryName(ValueUtil.validateNull(MProductCategory.get(product.getCtx(), product.getM_Product_Category_ID()).getName()));
-		//	Group
-		if(product.getM_Product_Group_ID() != 0) {
-			builder.setProductGroupName(ValueUtil.validateNull(product.getM_Product_Group().getName()));
-		}
-		//	Class
-		if(product.getM_Product_Class_ID() != 0) {
-			builder.setProductClassName(ValueUtil.validateNull(product.getM_Product_Class().getName()));
-		}
-		//	Classification
-		if(product.getM_Product_Classification_ID() != 0) {
-			builder.setProductClassificationName(ValueUtil.validateNull(product.getM_Product_Classification().getName()));
-		}
-		return builder;
 	}
 }
