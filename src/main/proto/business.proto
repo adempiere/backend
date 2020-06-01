@@ -38,6 +38,8 @@ service BusinessData {
 	rpc ListEntities(ListEntitiesRequest) returns (ListEntitiesResponse) {}
 	//	Request a BusinessProcess / Report
 	rpc RunBusinessProcess(RunBusinessProcessRequest) returns (ProcessLog) {}
+	//	Service for get a file from name
+	rpc DownloadResource(DownloadResourceRequest) returns (stream ResourceChunk) {}
 }
 
 //	User Interface
@@ -112,6 +114,17 @@ service EntityLog {
 	rpc ListWorkflowLogs(ListWorkflowLogsRequest) returns (ListWorkflowLogsResponse) {}
 	//	Request Recent Items
 	rpc ListRecentItems(ListRecentItemsRequest) returns (ListRecentItemsResponse) {}
+}
+
+// Resource Chunk
+message ResourceChunk {
+    bytes data = 1;
+}
+
+// Request for download resource
+message DownloadResourceRequest {
+	ClientRequest clientRequest = 1;
+	string fileName = 2;
 }
 
 // Get Entity Request

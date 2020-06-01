@@ -14,9 +14,11 @@
  ************************************************************************************/
 package org.spin.grpc.util;
 
+import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
@@ -68,6 +70,35 @@ public class BusinessDataClient {
 	  }
 	  
 	  /**
+	   * Request a process
+	   */
+	  public void resourceProcess() {
+		  ClientRequest clientRequest = ClientRequest.newBuilder()
+				  .setSessionUuid("0fb1b9c6-b1b1-418b-b784-d6923d268a47")
+				  .build();
+		  
+		  try {
+			  logger.info("Will try to downloadFile 202003070955.backup ...");
+			  DownloadResourceRequest request = DownloadResourceRequest.newBuilder().setClientRequest(clientRequest).setFileName("202003070955.backup").build();
+			  Iterator<ResourceChunk> response;
+		      try {
+		        response = blockingStub.downloadResource(request);
+		        while (response.hasNext()) {
+		        	logger.warning("Data readed: " + response.next().getData().toByteArray());
+		        }
+		      } catch (StatusRuntimeException e) {
+		        logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
+		        return;
+		      } finally {
+		    	  logger.warning("Complete");
+		      }
+		  } catch (StatusRuntimeException e) {
+			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
+		      return;
+		  }
+	  }
+	  
+	  /**
 	   * Greet server. If provided, the first element of {@code args} is the name to use in the
 	   * greeting.
 	   */
@@ -75,7 +106,7 @@ public class BusinessDataClient {
 		BusinessDataClient client = new BusinessDataClient("localhost", 50052);
 	    try {
 	    	logger.info("####################### Report Output #####################");
-	    	client.requestProcess();
+	    	client.resourceProcess();
 	      client.shutdown();
 	    } catch (Exception e) {
 			e.printStackTrace();

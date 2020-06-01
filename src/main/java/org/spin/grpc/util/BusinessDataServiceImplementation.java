@@ -14,10 +14,12 @@
  ************************************************************************************/
 package org.spin.grpc.util;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -66,6 +68,7 @@ import org.compiere.util.Util;
 import org.eevolution.service.dsl.ProcessBuilder;
 import org.spin.grpc.util.BusinessDataGrpc.BusinessDataImplBase;
 import org.spin.grpc.util.Condition.Operator;
+import org.spin.util.AttachmentUtil;
 
 import com.google.protobuf.ByteString;
 
@@ -204,6 +207,59 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 					.withCause(e)
 					.asRuntimeException());
 		}
+	}
+	
+	@Override
+	public void downloadResource(DownloadResourceRequest request, StreamObserver<ResourceChunk> responseObserver) {
+		try {
+			if(request == null
+					|| Util.isEmpty(request.getFileName())) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Download Requested = " + request.getFileName());
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			//	Get resource
+			getFile(request.getFileName(), responseObserver);
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	/**
+	 * Get File from fileName
+	 * @param fileName
+	 * @param responseObserver
+	 * @throws Exception 
+	 */
+	private void getFile(String fileName, StreamObserver<ResourceChunk> responseObserver) throws Exception {
+		byte[] data = AttachmentUtil.getInstance()
+			.withClientId(Env.getAD_Client_ID(Env.getCtx()))
+			.withFileName(fileName)
+			.getAttachment();
+		if(data == null) {
+			responseObserver.onCompleted();
+			return;
+		}
+		//	For all
+		int bufferSize = 256 * 1024;// 256k
+        byte[] buffer = new byte[bufferSize];
+        int length;
+        InputStream is = new ByteArrayInputStream(data);
+        while ((length = is.read(buffer, 0, bufferSize)) != -1) {
+          responseObserver.onNext(
+        		  ResourceChunk.newBuilder().setData(ByteString.copyFrom(buffer, 0, length)).build()
+          );
+        }
+        //	Completed
+        responseObserver.onCompleted();
 	}
 	
 	/**
