@@ -62,6 +62,29 @@ message Decimal {
 	int32 scale = 2;
 }
 
+// Resource Chunk
+message Resource {
+    bytes data = 1;
+}
+
+// Attachment
+message Attachment {
+	string attachmentUuid = 1;
+	string title = 2;
+	string textMsg = 3;
+	repeated Resource resources = 4;
+}
+
+//	Resource reference
+message ResourceReference {
+	string resourceUuid = 1;
+	string fileName = 2;
+	int64 fileSize = 3;
+	string description = 4;
+	string textMsg = 5;
+	string contentType = 6;
+}
+
 // Query for Request Object
 message Criteria {
 	string tableName = 1;

@@ -79,10 +79,10 @@ public class BusinessDataClient {
 		  
 		  try {
 			  logger.info("Will try to downloadFile 202003070955.backup ...");
-			  DownloadResourceRequest request = DownloadResourceRequest.newBuilder().setClientRequest(clientRequest).setFileName("202003070955.backup").build();
-			  Iterator<ResourceChunk> response;
+			  GetResourceRequest request = GetResourceRequest.newBuilder().setClientRequest(clientRequest).setResourceUuid("202003070955.backup").build();
+			  Iterator<Resource> response;
 		      try {
-		        response = blockingStub.downloadResource(request);
+		        response = blockingStub.getResource(request);
 		        while (response.hasNext()) {
 		        	logger.warning("Data readed: " + response.next().getData().toByteArray());
 		        }

@@ -68,6 +68,7 @@ import org.compiere.util.Util;
 import org.eevolution.service.dsl.ProcessBuilder;
 import org.spin.grpc.util.BusinessDataGrpc.BusinessDataImplBase;
 import org.spin.grpc.util.Condition.Operator;
+import org.spin.model.I_AD_AttachmentReference;
 import org.spin.util.AttachmentUtil;
 
 import com.google.protobuf.ByteString;
@@ -210,19 +211,19 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 	}
 	
 	@Override
-	public void downloadResource(DownloadResourceRequest request, StreamObserver<ResourceChunk> responseObserver) {
+	public void getResource(GetResourceRequest request, StreamObserver<Resource> responseObserver) {
 		try {
 			if(request == null
-					|| Util.isEmpty(request.getFileName())) {
+					|| Util.isEmpty(request.getResourceUuid())) {
 				throw new AdempiereException("Object Request Null");
 			}
-			log.fine("Download Requested = " + request.getFileName());
+			log.fine("Download Requested = " + request.getResourceUuid());
 			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
 					request.getClientRequest().getLanguage(), 
 					request.getClientRequest().getOrganizationUuid(), 
 					request.getClientRequest().getWarehouseUuid());
 			//	Get resource
-			getFile(request.getFileName(), responseObserver);
+			getResource(request.getResourceUuid(), responseObserver);
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
@@ -235,14 +236,14 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 	
 	/**
 	 * Get File from fileName
-	 * @param fileName
+	 * @param resourceUuid
 	 * @param responseObserver
 	 * @throws Exception 
 	 */
-	private void getFile(String fileName, StreamObserver<ResourceChunk> responseObserver) throws Exception {
+	private void getResource(String resourceUuid, StreamObserver<Resource> responseObserver) throws Exception {
 		byte[] data = AttachmentUtil.getInstance()
 			.withClientId(Env.getAD_Client_ID(Env.getCtx()))
-			.withFileName(fileName)
+			.withAttachmentReferenceId(RecordUtil.getIdFromUuid(I_AD_AttachmentReference.Table_Name, resourceUuid))
 			.getAttachment();
 		if(data == null) {
 			responseObserver.onCompleted();
@@ -255,7 +256,7 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
         InputStream is = new ByteArrayInputStream(data);
         while ((length = is.read(buffer, 0, bufferSize)) != -1) {
           responseObserver.onNext(
-        		  ResourceChunk.newBuilder().setData(ByteString.copyFrom(buffer, 0, length)).build()
+        		  Resource.newBuilder().setData(ByteString.copyFrom(buffer, 0, length)).build()
           );
         }
         //	Completed

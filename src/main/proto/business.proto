@@ -39,7 +39,7 @@ service BusinessData {
 	//	Request a BusinessProcess / Report
 	rpc RunBusinessProcess(RunBusinessProcessRequest) returns (ProcessLog) {}
 	//	Service for get a file from name
-	rpc DownloadResource(DownloadResourceRequest) returns (stream ResourceChunk) {}
+	rpc GetResource(GetResourceRequest) returns (stream Resource) {}
 }
 
 //	User Interface
@@ -78,6 +78,8 @@ service UserInterface {
 	rpc GetReportOutput(GetReportOutputRequest) returns (ReportOutput) {}
 	// Add Chat Entry
 	rpc CreateChatEntry(CreateChatEntryRequest) returns (ChatEntry) {}
+	//	Service for get a resource from resource uuid
+	rpc GetResource(GetResourceRequest) returns (stream Resource) {}
 }
 
 //	Workflow management service
@@ -116,15 +118,10 @@ service EntityLog {
 	rpc ListRecentItems(ListRecentItemsRequest) returns (ListRecentItemsResponse) {}
 }
 
-// Resource Chunk
-message ResourceChunk {
-    bytes data = 1;
-}
-
 // Request for download resource
-message DownloadResourceRequest {
+message GetResourceRequest {
 	ClientRequest clientRequest = 1;
-	string fileName = 2;
+	string resourceUuid = 2;
 }
 
 // Get Entity Request
