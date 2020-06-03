@@ -684,7 +684,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				.setSpanY(key.getSpanY())
 				.setSubKeyLayoutUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_POSKeyLayout.Table_Name, key.getSubKeyLayout_ID())))
 				.setQuantity(ValueUtil.getDecimalFromBigDecimal(key.getQty() == null || key.getQty().equals(Env.ZERO)? Env.ONE: key.getQty()))
-				.setProductUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_M_Product.Table_Name, key.getM_Product_ID())));
+				.setProductUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_M_Product.Table_Name, key.getM_Product_ID())))
+				.setResourceReference(ConvertUtil.convertResourceReference(RecordUtil.getResourceFromImageId(key.getAD_Image_ID())));
 	}
 	
 	/***

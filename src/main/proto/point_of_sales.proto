@@ -265,5 +265,5 @@ message Key {
 	int32 spanY = 9;
 	string productUuid = 10;
 	Decimal quantity = 11;
-	string resourceUuid = 12;
+	ResourceReference resourceReference = 12;
 }

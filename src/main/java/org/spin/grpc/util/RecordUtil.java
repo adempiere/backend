@@ -22,10 +22,13 @@ import java.util.Properties;
 import org.adempiere.exceptions.AdempiereException;
 import org.adempiere.pipo.IDFinder;
 import org.compiere.model.I_AD_Element;
+import org.compiere.model.MClientInfo;
 import org.compiere.model.PO;
 import org.compiere.model.Query;
 import org.compiere.util.Env;
 import org.compiere.util.Util;
+import org.spin.model.MADAttachmentReference;
+import org.spin.util.AttachmentUtil;
 
 /**
  * Class for handle records utils values
@@ -127,5 +130,32 @@ public class RecordUtil {
 		}
 		//	Get
 		return IDFinder.getUUIDFromId(tableName, id, Env.getAD_Client_ID(Env.getCtx()), null);
+	}
+	
+	/**
+	 * Get resource UUID from image id
+	 * @param imageId
+	 * @return
+	 */
+	public static String getResourceUuidFromImageId(int imageId) {
+		MADAttachmentReference reference = getResourceFromImageId(imageId);
+		if(reference == null) {
+			return null;
+		}
+		//	Return uuid
+		return reference.getUUID();
+	}
+	
+	/**
+	 * Get Attachment reference from image ID
+	 * @param imageId
+	 * @return
+	 */
+	public static MADAttachmentReference getResourceFromImageId(int imageId) {
+		if(!AttachmentUtil.getInstance().isValidForClient(Env.getAD_Client_ID(Env.getCtx()))) {
+			return null;
+		}
+		//	
+		return MADAttachmentReference.getByImageId(Env.getCtx(), MClientInfo.get(Env.getCtx(), Env.getAD_Client_ID(Env.getCtx())).getFileHandler_ID(), imageId, null);
 	}
 }

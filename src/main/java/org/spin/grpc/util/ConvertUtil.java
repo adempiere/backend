@@ -30,7 +30,9 @@ import org.compiere.model.MProductCategory;
 import org.compiere.model.MUOM;
 import org.compiere.model.MWarehouse;
 import org.compiere.util.Env;
+import org.compiere.util.MimeType;
 import org.compiere.util.Util;
+import org.spin.model.MADAttachmentReference;
 
 /**
  * Class for convert any document
@@ -292,5 +294,20 @@ public class ConvertUtil {
 				.setId(warehouse.getM_Warehouse_ID())
 				.setName(ValueUtil.validateNull(warehouse.getName()))
 				.setDescription(ValueUtil.validateNull(warehouse.getDescription()));
+	}
+	
+	/**
+	 * Convert resource
+	 * @param reference
+	 * @return
+	 */
+	public static ResourceReference.Builder convertResourceReference(MADAttachmentReference reference) {
+		return ResourceReference.newBuilder()
+				.setResourceUuid(ValueUtil.validateNull(reference.getUUID()))
+				.setFileName(ValueUtil.validateNull(reference.getFileName()))
+				.setDescription(ValueUtil.validateNull(reference.getDescription()))
+				.setTextMsg(ValueUtil.validateNull(reference.getTextMsg()))
+				.setContentType(ValueUtil.validateNull(MimeType.getMimeType(reference.getFileName())));
+		
 	}
 }
