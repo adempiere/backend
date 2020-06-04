@@ -38,8 +38,6 @@ service BusinessData {
 	rpc ListEntities(ListEntitiesRequest) returns (ListEntitiesResponse) {}
 	//	Request a BusinessProcess / Report
 	rpc RunBusinessProcess(RunBusinessProcessRequest) returns (ProcessLog) {}
-	//	Service for get a file from name
-	rpc GetResource(GetResourceRequest) returns (stream Resource) {}
 }
 
 //	User Interface
@@ -80,6 +78,10 @@ service UserInterface {
 	rpc CreateChatEntry(CreateChatEntryRequest) returns (ChatEntry) {}
 	//	Service for get a resource from resource uuid
 	rpc GetResource(GetResourceRequest) returns (stream Resource) {}
+	//	Service for get a resource reference from image, attachment or archive
+	rpc GetResourceReference(GetResourceReferenceRequest) returns (ResourceReference) {}
+	//	Service for get a attachment from table and record uuid
+	rpc GetAttachment(GetAttachmentRequest) returns (Attachment) {}	
 }
 
 //	Workflow management service
@@ -118,10 +120,23 @@ service EntityLog {
 	rpc ListRecentItems(ListRecentItemsRequest) returns (ListRecentItemsResponse) {}
 }
 
+// Request attachment from table and record uuid
+message GetAttachmentRequest {
+	ClientRequest clientRequest = 1;
+	string tableName = 2;
+	string recordUuid = 3;
+}
+
 // Request for download resource
 message GetResourceRequest {
 	ClientRequest clientRequest = 1;
 	string resourceUuid = 2;
+}
+
+// Request for download resource reference
+message GetResourceReferenceRequest {
+	ClientRequest clientRequest = 1;
+	int32 imageId = 2;
 }
 
 // Get Entity Request

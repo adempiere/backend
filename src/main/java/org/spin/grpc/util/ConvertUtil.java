@@ -17,8 +17,10 @@ package org.spin.grpc.util;
 
 import java.util.Properties;
 
+import org.compiere.model.MAttachment;
 import org.compiere.model.MBPartner;
 import org.compiere.model.MCharge;
+import org.compiere.model.MClientInfo;
 import org.compiere.model.MCountry;
 import org.compiere.model.MCurrency;
 import org.compiere.model.MDocType;
@@ -302,12 +304,37 @@ public class ConvertUtil {
 	 * @return
 	 */
 	public static ResourceReference.Builder convertResourceReference(MADAttachmentReference reference) {
+		if(reference == null) {
+			return ResourceReference.newBuilder();
+		}
 		return ResourceReference.newBuilder()
 				.setResourceUuid(ValueUtil.validateNull(reference.getUUID()))
 				.setFileName(ValueUtil.validateNull(reference.getFileName()))
 				.setDescription(ValueUtil.validateNull(reference.getDescription()))
 				.setTextMsg(ValueUtil.validateNull(reference.getTextMsg()))
-				.setContentType(ValueUtil.validateNull(MimeType.getMimeType(reference.getFileName())));
+				.setContentType(ValueUtil.validateNull(MimeType.getMimeType(reference.getFileName())))
+				.setFileSize(ValueUtil.getDecimalFromBigDecimal(reference.getFileSize()));
 		
+	}
+	
+	/**
+	 * Convert Attachment to gRPC
+	 * @param attachment
+	 * @return
+	 */
+	public static Attachment.Builder convertAttachment(MAttachment attachment) {
+		if(attachment == null) {
+			return Attachment.newBuilder();
+		}
+		Attachment.Builder builder = Attachment.newBuilder()
+				.setAttachmentUuid(ValueUtil.validateNull(attachment.getUUID()))
+				.setTitle(ValueUtil.validateNull(attachment.getTitle()))
+				.setTextMsg(ValueUtil.validateNull(attachment.getTextMsg()));
+		MClientInfo clientInfo = MClientInfo.get(attachment.getCtx());
+		if(clientInfo.getFileHandler_ID() != 0) {
+			MADAttachmentReference.getListByAttachmentId(attachment.getCtx(), clientInfo.getFileHandler_ID(), attachment.getAD_Attachment_ID(), attachment.get_TrxName())
+				.forEach(attachmentReference -> builder.addResourceReferences(convertResourceReference(attachmentReference)));
+		}
+		return builder;
 	}
 }

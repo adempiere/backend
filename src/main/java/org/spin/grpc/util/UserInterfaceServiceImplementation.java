@@ -14,10 +14,12 @@
  ************************************************************************************/
 package org.spin.grpc.util;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -65,6 +67,7 @@ import org.compiere.model.I_AD_Tab;
 import org.compiere.model.I_AD_User;
 import org.compiere.model.I_AD_Window;
 import org.compiere.model.I_CM_Chat;
+import org.compiere.model.MAttachment;
 import org.compiere.model.MChangeLog;
 import org.compiere.model.MChat;
 import org.compiere.model.MChatEntry;
@@ -99,10 +102,12 @@ import org.spin.grpc.util.Condition.Operator;
 import org.spin.grpc.util.RollbackEntityRequest.EventType;
 import org.spin.grpc.util.UserInterfaceGrpc.UserInterfaceImplBase;
 import org.spin.grpc.util.Value.ValueType;
+import org.spin.model.I_AD_AttachmentReference;
 import org.spin.model.I_AD_ContextInfo;
 import org.spin.model.MADContextInfo;
 import org.spin.util.ASPUtil;
 import org.spin.util.AbstractExportFormat;
+import org.spin.util.AttachmentUtil;
 import org.spin.util.ReportExportHandler;
 
 import com.google.protobuf.ByteString;
@@ -479,6 +484,136 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 					.withCause(e)
 					.asRuntimeException());
 		}
+	}
+	
+	@Override
+	public void getResource(GetResourceRequest request, StreamObserver<Resource> responseObserver) {
+		try {
+			if(request == null
+					|| Util.isEmpty(request.getResourceUuid())) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Download Requested = " + request.getResourceUuid());
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			//	Get resource
+			getResource(request.getResourceUuid(), responseObserver);
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	/**
+	 * Get File from fileName
+	 * @param resourceUuid
+	 * @param responseObserver
+	 * @throws Exception 
+	 */
+	private void getResource(String resourceUuid, StreamObserver<Resource> responseObserver) throws Exception {
+		byte[] data = AttachmentUtil.getInstance()
+			.withClientId(Env.getAD_Client_ID(Env.getCtx()))
+			.withAttachmentReferenceId(RecordUtil.getIdFromUuid(I_AD_AttachmentReference.Table_Name, resourceUuid))
+			.getAttachment();
+		if(data == null) {
+			responseObserver.onCompleted();
+			return;
+		}
+		//	For all
+		int bufferSize = 256 * 1024;// 256k
+        byte[] buffer = new byte[bufferSize];
+        int length;
+        InputStream is = new ByteArrayInputStream(data);
+        while ((length = is.read(buffer, 0, bufferSize)) != -1) {
+          responseObserver.onNext(
+        		  Resource.newBuilder().setData(ByteString.copyFrom(buffer, 0, length)).build()
+          );
+        }
+        //	Completed
+        responseObserver.onCompleted();
+	}
+	
+	@Override
+	public void getResourceReference(GetResourceReferenceRequest request, StreamObserver<ResourceReference> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			ResourceReference.Builder resourceReference = getResourceReferenceFromImageId(request.getImageId());
+			responseObserver.onNext(resourceReference.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void getAttachment(GetAttachmentRequest request, StreamObserver<Attachment> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			Attachment.Builder attachment = getAttachmentFromEntity(request);
+			responseObserver.onNext(attachment.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	/**
+	 * Get Attachment related to entity
+	 * @param request
+	 * @return
+	 */
+	private Attachment.Builder getAttachmentFromEntity(GetAttachmentRequest request) {
+		int tableId = 0;
+		if(!Util.isEmpty(request.getTableName())) {
+			MTable table = MTable.get(Env.getCtx(), request.getTableName());
+			if(table != null
+					&& table.getAD_Table_ID() != 0) {
+				tableId = table.getAD_Table_ID();
+			}
+		}
+		int recordId = RecordUtil.getIdFromUuid(request.getTableName(), request.getRecordUuid());
+		if(tableId != 0
+				&& recordId !=  0) {
+			return ConvertUtil.convertAttachment(MAttachment.get(Env.getCtx(), tableId, recordId));
+		}
+		return Attachment.newBuilder();
+	}
+	
+	/**
+	 * Get resource from Image Id
+	 * @param imageId
+	 * @return
+	 */
+	private ResourceReference.Builder getResourceReferenceFromImageId(int imageId) {
+		return ConvertUtil.convertResourceReference(RecordUtil.getResourceFromImageId(imageId));
 	}
 	
 	/**
