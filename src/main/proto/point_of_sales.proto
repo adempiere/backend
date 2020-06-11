@@ -181,6 +181,7 @@ message UpdateOrderLineRequest {
 	Decimal quantity = 6;
 	Decimal price = 7;
 	Decimal discountRate = 8;
+	bool isAddQuantity = 9;
 }
 
 // Request for get a order

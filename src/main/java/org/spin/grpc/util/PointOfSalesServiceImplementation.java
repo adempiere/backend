@@ -236,8 +236,11 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				throw new AdempiereException("Object Request Null");
 			}
 			log.fine("Add Line for Order = " + request.getOrderLineUuid());
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
-			OrderLine.Builder orderLine = updateAndConvertOrderLine(context, request);
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			OrderLine.Builder orderLine = updateAndConvertOrderLine(request);
 			responseObserver.onNext(orderLine.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -518,11 +521,10 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	
 	/**
 	 * Create order line and return this
-	 * @param context
 	 * @param request
 	 * @return
 	 */
-	private OrderLine.Builder updateAndConvertOrderLine(Properties context, UpdateOrderLineRequest request) {
+	private OrderLine.Builder updateAndConvertOrderLine(UpdateOrderLineRequest request) {
 		//	Validate Order
 		if(Util.isEmpty(request.getOrderLineUuid())) {
 			throw new AdempiereException("@C_OrderLine_ID@ @NotFound@");
@@ -537,7 +539,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				updateOrderLine(orderLineId, 
 						ValueUtil.getBigDecimalFromDecimal(request.getQuantity()), 
 						ValueUtil.getBigDecimalFromDecimal(request.getPrice()), 
-						ValueUtil.getBigDecimalFromDecimal(request.getDiscountRate())));
+						ValueUtil.getBigDecimalFromDecimal(request.getDiscountRate()),
+						request.getIsAddQuantity()));
 	}
 	
 	/**
@@ -748,9 +751,10 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 * @param quantity
 	 * @param price
 	 * @param discountRate
+	 * @param isAddQuantity
 	 * @return
 	 */
-	private MOrderLine updateOrderLine(int orderLineId, BigDecimal quantity, BigDecimal price, BigDecimal discountRate) {
+	private MOrderLine updateOrderLine(int orderLineId, BigDecimal quantity, BigDecimal price, BigDecimal discountRate, boolean isAddQuantity) {
 		if(orderLineId <= 0) {
 			return null;
 		}
@@ -769,6 +773,12 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		if(quantity == null
 				|| quantity.equals(Env.ZERO)) {
 			quantity = orderLine.getQtyEntered();
+		} else if(isAddQuantity) {
+			BigDecimal currentQuantity = orderLine.getQtyEntered();
+			if(currentQuantity == null) {
+				currentQuantity = Env.ZERO;
+			}
+			quantity = currentQuantity.add(quantity);
 		}
 		if(price == null
 				|| price.equals(Env.ZERO)) {

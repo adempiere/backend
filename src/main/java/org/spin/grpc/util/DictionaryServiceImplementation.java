@@ -497,10 +497,7 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 	 * @return
 	 */
 	private Tab.Builder convertTab(Properties context, String uuid, boolean withFields) {
-		MTab tab = new Query(context, I_AD_Tab.Table_Name, I_AD_Tab.COLUMNNAME_UUID + " = ?", null)
-				.setParameters(uuid)
-				.setOnlyActiveRecords(true)
-				.first();
+		MTab tab = MTab.get(context, RecordUtil.getIdFromUuid(I_AD_Tab.Table_Name, uuid));
 		//	Convert
 		return convertTab(context, tab, withFields);
 	}
@@ -512,10 +509,7 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 	 * @return
 	 */
 	private Process.Builder convertProcess(Properties context, String uuid, boolean withParameters) {
-		MProcess process = new Query(context, I_AD_Process.Table_Name, I_AD_Process.COLUMNNAME_UUID + " = ?", null)
-				.setParameters(uuid)
-				.setOnlyActiveRecords(true)
-				.first();
+		MProcess process = MProcess.get(context, RecordUtil.getIdFromUuid(I_AD_Process.Table_Name, uuid));
 		//	Convert
 		return convertProcess(context, process, withParameters);
 	}
@@ -527,10 +521,7 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 	 * @return
 	 */
 	private Browser.Builder convertBrowser(Properties context, String uuid, boolean withFields) {
-		MBrowse browser = new Query(context, I_AD_Browse.Table_Name, I_AD_Process.COLUMNNAME_UUID + " = ?", null)
-				.setParameters(uuid)
-				.setOnlyActiveRecords(true)
-				.first();
+		MBrowse browser = ASPUtil.getInstance(context).getBrowse(RecordUtil.getIdFromUuid(I_AD_Browse.Table_Name, uuid));
 		//	Convert
 		return convertBrowser(context, browser, withFields);
 	}
@@ -851,7 +842,6 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 	 * @return
 	 */
 	private Browser.Builder convertBrowser(Properties context, MBrowse browser, boolean withFields) {
-		browser = ASPUtil.getInstance(context).getBrowse(browser.getAD_Browse_ID());
 		String query = addQueryReferencesFromBrowser(browser, MView.getSQLFromView(browser.getAD_View_ID(), null));
 		String orderByClause = getSQLOrderBy(browser);
 		Browser.Builder builder = Browser.newBuilder()
