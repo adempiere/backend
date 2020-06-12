@@ -89,8 +89,11 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 				throw new AdempiereException("Object Request Null");
 			}
 			log.fine("Object Requested = " + request.getUuid());
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
-			Entity.Builder entityValue = getEntity(context, request);
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			Entity.Builder entityValue = getEntity(request);
 			responseObserver.onNext(entityValue.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -521,16 +524,23 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 	 * @param request
 	 * @return
 	 */
-	private Entity.Builder getEntity(Properties context, GetEntityRequest request) {
+	private Entity.Builder getEntity(GetEntityRequest request) {
 		String tableName = request.getTableName();
 		if(Util.isEmpty(request.getTableName())) {
 			if(request.getCriteria() != null) {
 				tableName = request.getCriteria().getTableName();
 			}
 		}
-		PO entity = RecordUtil.getEntity(context, tableName, request.getUuid(), request.getRecordId());
+		PO entity = null;
+		if(request.getCriteria() != null) {
+			List<Object> parameters = new ArrayList<Object>();
+			String whereClause = getWhereClauseFromCriteria(request.getCriteria(), parameters);
+			entity = RecordUtil.getEntity(Env.getCtx(), tableName, whereClause, parameters);
+		} else {
+			entity = RecordUtil.getEntity(Env.getCtx(), tableName, request.getUuid(), request.getRecordId());
+		}
 		//	Return
-		return convertEntity(context, entity);
+		return convertEntity(entity);
 	}
 	
 	/**
@@ -579,7 +589,7 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 		//	Save entity
 		entity.saveEx();
 		//	Return
-		return convertEntity(context, entity);
+		return convertEntity(entity);
 	}
 	
 	/**
@@ -607,7 +617,7 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 			entity.saveEx();
 		}
 		//	Return
-		return convertEntity(context, entity);
+		return convertEntity(entity);
 	}
 	
 	/**
@@ -659,6 +669,9 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 	 */
 	private String getWhereClauseFromCriteria(Criteria criteria, List<Object> params) {
 		StringBuffer whereClause = new StringBuffer();
+		if(!Util.isEmpty(criteria.getWhereClause())) {
+			whereClause.append("(").append(criteria.getWhereClause()).append(")");
+		}
 		criteria.getConditionsList().stream()
 			.filter(condition -> !Util.isEmpty(condition.getColumnName()))
 			.forEach(condition -> {
@@ -757,7 +770,7 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 					.<PO>list();
 			//	
 			for(PO entity : entityList) {
-				Entity.Builder valueObject = convertEntity(context, entity);
+				Entity.Builder valueObject = convertEntity(entity);
 				builder.addRecords(valueObject.build());
 			}
 		} else {
@@ -881,7 +894,7 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 	 * @param entity
 	 * @return
 	 */
-	private Entity.Builder convertEntity(Properties context, PO entity) {
+	private Entity.Builder convertEntity(PO entity) {
 		Entity.Builder builder = Entity.newBuilder();
 		if(entity == null) {
 			return builder;
@@ -889,7 +902,7 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 		builder.setUuid(ValueUtil.validateNull(entity.get_ValueAsString(I_AD_Element.COLUMNNAME_UUID)))
 			.setId(entity.get_ID());
 		//	Convert attributes
-		POInfo poInfo = POInfo.getPOInfo(context, entity.get_Table_ID());
+		POInfo poInfo = POInfo.getPOInfo(Env.getCtx(), entity.get_Table_ID());
 		for(int index = 0; index < poInfo.getColumnCount(); index++) {
 			String columnName = poInfo.getColumnName(index);
 			int referenceId = poInfo.getColumnDisplayType(index);

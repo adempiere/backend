@@ -105,6 +105,29 @@ public class RecordUtil {
 	}
 	
 	/**
+	 * get Entity from Table and where clause
+	 * @param context
+	 * @param tableName
+	 * @param whereClause
+	 * @param parameters
+	 * @return
+	 */
+	public static PO getEntity(Properties context, String tableName, String whereClause, List<Object> parameters) {
+		//	Validate ID
+		if(Util.isEmpty(whereClause)) {
+			throw new AdempiereException("@WhereClause@ @NotFound@");
+		}
+		
+		if(Util.isEmpty(tableName)) {
+			throw new AdempiereException("@AD_Table_ID@ @NotFound@");
+		}
+		//	Default
+		return new Query(context, tableName, whereClause, null)
+				.setParameters(parameters)
+				.first();
+	}
+	
+	/**
 	 * Get ID for record from table name and uuid
 	 * @param tableName
 	 * @param uuid
