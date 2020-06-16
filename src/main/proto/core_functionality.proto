@@ -32,6 +32,12 @@ service CoreFunctionality {
 	rpc ListWarehouses(ListWarehousesRequest) returns (ListWarehousesResponse) {}
 	//	Request Language List
 	rpc ListLanguages(ListLanguagesRequest) returns (ListLanguagesResponse) {}
+	//	Get Business Partner from search
+	rpc GetBusinessPartner(GetBusinessPartnerRequest) returns (BusinessPartner) {}
+	//	Create Business Partner
+	rpc CreateBusinessPartner(CreateBusinessPartnerRequest) returns (BusinessPartner) {}
+	//	List Business Partner
+	rpc ListBusinessPartner(ListBusinessPartnerRequest) returns (ListBusinessPartnerResponse) {}
 }
 
 // The client request contains client info for request.
@@ -47,6 +53,71 @@ message GetCountryRequest {
 	string countryUuid = 1;
 	int32 countryId = 2;
 	ClientRequest clientRequest = 3;
+}
+
+//	List Business Partner Response
+message ListBusinessPartnerResponse {
+	int64 recordCount = 1;
+	repeated BusinessPartner businessPartners = 2;
+	string next_page_token = 3;
+}
+
+// List Business Partner Request
+message ListBusinessPartnerRequest {
+	ClientRequest clientRequest = 1;
+	string searchValue = 2;
+	string value = 3;
+	string name = 4;
+	string contactName = 6;
+	string eMail = 7;
+	string postalCode = 8;
+	string phone = 9;
+	// Query
+	Criteria criteria = 10;
+	int32 page_size = 11;
+	string page_token = 12;
+}
+
+// Request Business Partner
+message GetBusinessPartnerRequest {
+	ClientRequest clientRequest = 1;
+	string searchValue = 2;
+	string value = 3;
+	string name = 4;
+	string contactName = 6;
+	string eMail = 7;
+	string postalCode = 8;
+	string phone = 9;
+	// Query
+	Criteria criteria = 10;
+}
+
+// Request Business Partner
+message CreateBusinessPartnerRequest {
+	ClientRequest clientRequest = 1;
+	string value = 2;
+	string taxId = 3;
+	string duns = 4;
+	string naics = 5;
+	string name = 6;
+	string lastName = 7;
+	string description = 8;
+	string contactName = 9;
+	string eMail = 10;
+	string phone = 11;
+	string businessPartnerGroupUuid = 12;
+	//	Location
+	string address1 = 13;
+	string address2 = 14;
+	string address3 = 15;
+	string address4 = 16;
+	string cityUuid = 17;
+	string cityName = 18;
+	string postalCode = 19;
+	string regionUuid = 20;
+	string regionName = 21;
+	string countryUuid = 22;
+	string posUuid = 23;
 }
 
 // Languages Request

@@ -26,16 +26,13 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.adempiere.exceptions.AdempiereException;
 import org.compiere.model.I_AD_Ref_List;
 import org.compiere.model.I_AD_User;
-import org.compiere.model.I_C_BP_Group;
 import org.compiere.model.I_C_BPartner;
 import org.compiere.model.I_C_Charge;
-import org.compiere.model.I_C_Country;
 import org.compiere.model.I_C_DocType;
 import org.compiere.model.I_C_Order;
 import org.compiere.model.I_C_OrderLine;
 import org.compiere.model.I_C_POS;
 import org.compiere.model.I_C_POSKeyLayout;
-import org.compiere.model.I_C_Region;
 import org.compiere.model.I_M_PriceList;
 import org.compiere.model.I_M_Product;
 import org.compiere.model.I_M_Warehouse;
@@ -44,7 +41,6 @@ import org.compiere.model.MBPartnerLocation;
 import org.compiere.model.MCharge;
 import org.compiere.model.MCurrency;
 import org.compiere.model.MDocType;
-import org.compiere.model.MLocation;
 import org.compiere.model.MOrder;
 import org.compiere.model.MOrderLine;
 import org.compiere.model.MPOS;
@@ -63,7 +59,6 @@ import org.compiere.model.MWarehouse;
 import org.compiere.model.Query;
 import org.compiere.util.CCache;
 import org.compiere.util.CLogger;
-import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.compiere.util.TimeUtil;
 import org.compiere.util.Util;
@@ -371,81 +366,6 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					request.getClientRequest().getWarehouseUuid());
 			KeyLayout.Builder keyLayout = convertKeyLayout(RecordUtil.getIdFromUuid(I_C_POSKeyLayout.Table_Name, request.getKeyLayoutUuid()));
 			responseObserver.onNext(keyLayout.build());
-			responseObserver.onCompleted();
-		} catch (Exception e) {
-			log.severe(e.getLocalizedMessage());
-			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getLocalizedMessage())
-					.augmentDescription(e.getLocalizedMessage())
-					.withCause(e)
-					.asRuntimeException());
-		}
-	}
-	
-	@Override
-	public void listBusinessPartner(ListBusinessPartnerRequest request,
-			StreamObserver<ListBusinessPartnerResponse> responseObserver) {
-		try {
-			if(request == null) {
-				throw new AdempiereException("Object Request Null");
-			}
-			log.fine("Add Line for Order = " + request.getSearchValue());
-			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
-					request.getClientRequest().getLanguage(), 
-					request.getClientRequest().getOrganizationUuid(), 
-					request.getClientRequest().getWarehouseUuid());
-			ListBusinessPartnerResponse.Builder businessPartnerList = getBusinessPartnerList(request);
-			responseObserver.onNext(businessPartnerList.build());
-			responseObserver.onCompleted();
-		} catch (Exception e) {
-			log.severe(e.getLocalizedMessage());
-			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getLocalizedMessage())
-					.augmentDescription(e.getLocalizedMessage())
-					.withCause(e)
-					.asRuntimeException());
-		}
-	}
-	
-	@Override
-	public void getBusinessPartner(GetBusinessPartnerRequest request,
-			StreamObserver<BusinessPartner> responseObserver) {
-		try {
-			if(request == null) {
-				throw new AdempiereException("Object Request Null");
-			}
-			log.fine("Object Requested = " + request.getSearchValue());
-			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
-					request.getClientRequest().getLanguage(), 
-					request.getClientRequest().getOrganizationUuid(), 
-					request.getClientRequest().getWarehouseUuid());
-			BusinessPartner.Builder businessPartner = getBusinessPartner(request);
-			responseObserver.onNext(businessPartner.build());
-			responseObserver.onCompleted();
-		} catch (Exception e) {
-			log.severe(e.getLocalizedMessage());
-			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getLocalizedMessage())
-					.augmentDescription(e.getLocalizedMessage())
-					.withCause(e)
-					.asRuntimeException());
-		}
-	}
-	
-	@Override
-	public void createBusinessPartner(CreateBusinessPartnerRequest request,
-			StreamObserver<BusinessPartner> responseObserver) {
-		try {
-			if(request == null) {
-				throw new AdempiereException("Object Request Null");
-			}
-			log.fine("Object Requested = " + request.getValue());
-			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
-					request.getClientRequest().getLanguage(), 
-					request.getClientRequest().getOrganizationUuid(), 
-					request.getClientRequest().getWarehouseUuid());
-			BusinessPartner.Builder businessPartner = createBusinessPartner(request);
-			responseObserver.onNext(businessPartner.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
@@ -1278,114 +1198,6 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	}
 	
 	/**
-	 * List business partner
-	 * @param context
-	 * @param request
-	 * @return
-	 */
-	private ListBusinessPartnerResponse.Builder getBusinessPartnerList(ListBusinessPartnerRequest request) {
-		ListBusinessPartnerResponse.Builder builder = ListBusinessPartnerResponse.newBuilder();
-		String nexPageToken = null;
-		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
-		int offset = (pageNumber > 0? pageNumber - 1: 0) * RecordUtil.PAGE_SIZE;
-		int limit = (pageNumber == 0? 1: pageNumber) * RecordUtil.PAGE_SIZE;
-		//	Get business partner list
-		//	Dynamic where clause
-		StringBuffer whereClause = new StringBuffer();
-		//	Parameters
-		List<Object> parameters = new ArrayList<Object>();
-		//	For search value
-		if(!Util.isEmpty(request.getSearchValue())) {
-			whereClause.append("("
-				+ "UPPER(Value) = UPPER(?)"
-				+ "OR UPPER(Name) = UPPER(?)"
-				+ ")");
-			//	Add parameters
-			parameters.add(request.getSearchValue());
-			parameters.add(request.getSearchValue());
-		}
-		//	For value
-		if(!Util.isEmpty(request.getValue())) {
-			whereClause.append("("
-				+ "UPPER(Value) = UPPER(?)"
-				+ ")");
-			//	Add parameters
-			parameters.add(request.getValue());
-		}
-		//	For name
-		if(!Util.isEmpty(request.getName())) {
-			whereClause.append("("
-				+ "UPPER(Name) = UPPER(?)"
-				+ ")");
-			//	Add parameters
-			parameters.add(request.getName());
-		}
-		//	for contact name
-		if(!Util.isEmpty(request.getContactName())) {
-			if(whereClause.length() > 0) {
-				whereClause.append(" AND ");
-				whereClause.append("(EXISTS(SELECT 1 FROM AD_User u WHERE u.C_BPartner_ID = C_BPartner.C_BPartner_ID AND UPPER(u.Name) = UPPER(?)))");
-				//	Add parameters
-				parameters.add(request.getContactName());
-			}
-		}
-		//	EMail
-		if(!Util.isEmpty(request.getEMail())) {
-			if(whereClause.length() > 0) {
-				whereClause.append(" AND ");
-				whereClause.append("(EXISTS(SELECT 1 FROM AD_User u WHERE u.C_BPartner_ID = C_BPartner.C_BPartner_ID AND UPPER(u.EMail) = UPPER(?)))");
-				//	Add parameters
-				parameters.add(request.getEMail());
-			}
-		}
-		//	Phone
-		if(!Util.isEmpty(request.getPhone())) {
-			if(whereClause.length() > 0) {
-				whereClause.append(" AND ");
-				whereClause.append("("
-						+ "EXISTS(SELECT 1 FROM AD_User u WHERE u.C_BPartner_ID = C_BPartner.C_BPartner_ID AND UPPER(u.Phone) = UPPER(?)) "
-						+ "OR EXISTS(SELECT 1 FROM C_BPartner_Location bpl WHERE bpl.C_BPartner_ID = C_BPartner.C_BPartner_ID AND UPPER(bpl.Phone) = UPPER(?))"
-						+ ")");
-				//	Add parameters
-				parameters.add(request.getPhone());
-				parameters.add(request.getPhone());
-			}
-		}
-		//	Postal Code
-		if(!Util.isEmpty(request.getPostalCode())) {
-			if(whereClause.length() > 0) {
-				whereClause.append(" AND ");
-				whereClause.append("(EXISTS(SELECT 1 FROM C_BPartner_Location bpl "
-						+ "INNER JOIN C_Location l ON(l.C_Location_ID = bpl.C_Location_ID) "
-						+ "WHERE bpl.C_BPartner_ID = C_BPartner.C_BPartner_ID "
-						+ "AND UPPER(l.Postal) = UPPER(?)))");
-				//	Add parameters
-				parameters.add(request.getPostalCode());
-			}
-		}
-		//	Get Product list
-		Query query = new Query(Env.getCtx(), I_C_BPartner.Table_Name, 
-				whereClause.toString(), null)
-				.setParameters(parameters)
-				.setClient_ID()
-				.setOnlyActiveRecords(true);
-		int count = query.count();
-		query
-		.setLimit(limit, offset)
-		.<MBPartner>list()
-		.forEach(businessPartner -> builder.addBusinessPartners(ConvertUtil.convertBusinessPartner(businessPartner)));
-		//	
-		builder.setRecordCount(count);
-		//	Set page token
-		if(count > limit) {
-			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
-		}
-		//	Set next page
-		builder.setNextPageToken(ValueUtil.validateNull(nexPageToken));
-		return builder;
-	}
-	
-	/**
 	 * Get 
 	 * @param product
 	 * @param businessPartnerId
@@ -1543,228 +1355,5 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				RecordUtil.getIdFromUuid(I_M_Warehouse.Table_Name, request.getWarehouseUuid()), 
 				validFrom,
 				Env.ONE);
-	}
-	
-	/**
-	 * Create business partner
-	 * @param request
-	 * @return
-	 */
-	private BusinessPartner.Builder createBusinessPartner(CreateBusinessPartnerRequest request) {
-		//	Validate name
-		if(Util.isEmpty(request.getName())) {
-			throw new AdempiereException("@Name@ @IsMandatory@");
-		}
-		//	POS Uuid
-		if(Util.isEmpty(request.getPosUuid())) {
-			throw new AdempiereException("@C_POS_ID@ @IsMandatory@");
-		}
-		//	Create it
-		MBPartner businessPartner = MBPartner.getTemplate(Env.getCtx(), Env.getAD_Client_ID(Env.getCtx()), RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid()));
-		businessPartner.setAD_Org_ID(0);
-		businessPartner.setIsCustomer (true);
-		businessPartner.setIsVendor (false);
-		//	Set Value
-		if(Util.isEmpty(request.getValue())) {
-			String value = DB.getDocumentNo (Env.getAD_Client_ID(Env.getCtx()), "C_BPartner", null, businessPartner);
-			businessPartner.setValue(value);
-		}
-		//	Tax Id
-		if(!Util.isEmpty(request.getTaxId())) {
-			businessPartner.setTaxID(request.getTaxId());
-		}
-		//	Duns
-		if(!Util.isEmpty(request.getDuns())) {
-			businessPartner.setDUNS(request.getDuns());
-		}
-		//	Naics
-		if(!Util.isEmpty(request.getNaics())) {
-			businessPartner.setNAICS(request.getNaics());
-		}
-		//	Name
-		businessPartner.setName(request.getName());
-		//	Last name
-		if(!Util.isEmpty(request.getLastName())) {
-			businessPartner.setName2(request.getLastName());
-		}
-		//	Description
-		if(!Util.isEmpty(request.getDescription())) {
-			businessPartner.setDescription(request.getDescription());
-		}
-		//	Business partner group
-		if(!Util.isEmpty(request.getBusinessPartnerGroupUuid())) {
-			int businessPartnerGroupId = RecordUtil.getIdFromUuid(I_C_BP_Group.Table_Name, request.getBusinessPartnerGroupUuid());
-			if(businessPartnerGroupId != 0) {
-				businessPartner.setC_BP_Group_ID(businessPartnerGroupId);
-			}
-		}
-		//	Save it
-		businessPartner.saveEx();
-		//	Contact
-		if(!Util.isEmpty(request.getContactName()) || !Util.isEmpty(request.getEMail()) || !Util.isEmpty(request.getPhone())) {
-			MUser contact = new MUser(businessPartner);
-			//	Name
-			if(!Util.isEmpty(request.getContactName())) {
-				contact.setName(request.getContactName());
-			}
-			//	EMail
-			if(!Util.isEmpty(request.getEMail())) {
-				contact.setEMail(request.getEMail());
-			}
-			//	Phone
-			if(!Util.isEmpty(request.getPhone())) {
-				contact.setPhone(request.getPhone());
-			}
-			//	Description
-			if(!Util.isEmpty(request.getDescription())) {
-				contact.setDescription(request.getDescription());
-			}
-			//	Save
-			contact.saveEx();
-			//	Location
-			int countryId = 0;
-			if(!Util.isEmpty(request.getCountryUuid())) {
-				countryId = RecordUtil.getIdFromUuid(I_C_Country.Table_Name, request.getCountryUuid());
-			}
-			if(countryId <= 0) {
-				countryId = Env.getContextAsInt(Env.getCtx(), "#C_Country_ID");
-			}
-			//	
-			int regionId = 0;
-			if(!Util.isEmpty(request.getRegionUuid())) {
-				regionId = RecordUtil.getIdFromUuid(I_C_Region.Table_Name, request.getRegionUuid());
-			}
-			String cityName = null;
-			int cityId = 0;
-			//	City Name
-			if(!Util.isEmpty(request.getCityName())) {
-				cityName = request.getCityName();
-			}
-			//	City Reference
-			if(!Util.isEmpty(request.getCityUuid())) {
-				cityId = RecordUtil.getIdFromUuid(I_C_Region.Table_Name, request.getRegionUuid());
-				if(cityId > 0) {
-					cityName = null;
-				}
-			}
-			//	Instance it
-			MLocation location = new MLocation(Env.getCtx(), countryId, regionId, cityName, null);
-			if(cityId > 0) {
-				location.setC_City_ID(cityId);
-			}
-			//	Postal Code
-			if(!Util.isEmpty(request.getPostalCode())) {
-				location.setPostal(request.getPostalCode());
-			}
-			location.saveEx();
-			//	Create BP location
-			MBPartnerLocation businessPartnerLocation = new MBPartnerLocation(businessPartner);
-			businessPartnerLocation.setC_Location_ID(location.getC_Location_ID());
-			//	Phone
-			if(!Util.isEmpty(request.getPhone())) {
-				businessPartnerLocation.setPhone(request.getPhone());
-			}
-			//	Contact
-			if(!Util.isEmpty(request.getContactName())) {
-				businessPartnerLocation.setContactPerson(request.getContactName());
-			}
-			//	Save
-			businessPartnerLocation.saveEx();
-			//	Set Location
-			contact.setC_BPartner_Location_ID(businessPartnerLocation.getC_BPartner_Location_ID());
-			contact.saveEx();
- 		}
-		//	Default return
-		return ConvertUtil.convertBusinessPartner(businessPartner);
-	}
-	
-	/**
-	 * Get business partner
-	 * @param request
-	 * @return
-	 */
-	private BusinessPartner.Builder getBusinessPartner(GetBusinessPartnerRequest request) {
-		//	Dynamic where clause
-		StringBuffer whereClause = new StringBuffer();
-		//	Parameters
-		List<Object> parameters = new ArrayList<Object>();
-		//	For search value
-		if(!Util.isEmpty(request.getSearchValue())) {
-			whereClause.append("("
-				+ "UPPER(Value) = UPPER(?)"
-				+ "OR UPPER(Name) = UPPER(?)"
-				+ ")");
-			//	Add parameters
-			parameters.add(request.getSearchValue());
-			parameters.add(request.getSearchValue());
-		}
-		//	For value
-		if(!Util.isEmpty(request.getValue())) {
-			whereClause.append("("
-				+ "UPPER(Value) = UPPER(?)"
-				+ ")");
-			//	Add parameters
-			parameters.add(request.getValue());
-		}
-		//	For name
-		if(!Util.isEmpty(request.getName())) {
-			whereClause.append("("
-				+ "UPPER(Name) = UPPER(?)"
-				+ ")");
-			//	Add parameters
-			parameters.add(request.getName());
-		}
-		//	for contact name
-		if(!Util.isEmpty(request.getContactName())) {
-			if(whereClause.length() > 0) {
-				whereClause.append(" AND ");
-				whereClause.append("(EXISTS(SELECT 1 FROM AD_User u WHERE u.C_BPartner_ID = C_BPartner.C_BPartner_ID AND UPPER(u.Name) = UPPER(?)))");
-				//	Add parameters
-				parameters.add(request.getContactName());
-			}
-		}
-		//	EMail
-		if(!Util.isEmpty(request.getEMail())) {
-			if(whereClause.length() > 0) {
-				whereClause.append(" AND ");
-				whereClause.append("(EXISTS(SELECT 1 FROM AD_User u WHERE u.C_BPartner_ID = C_BPartner.C_BPartner_ID AND UPPER(u.EMail) = UPPER(?)))");
-				//	Add parameters
-				parameters.add(request.getEMail());
-			}
-		}
-		//	Phone
-		if(!Util.isEmpty(request.getPhone())) {
-			if(whereClause.length() > 0) {
-				whereClause.append(" AND ");
-				whereClause.append("("
-						+ "EXISTS(SELECT 1 FROM AD_User u WHERE u.C_BPartner_ID = C_BPartner.C_BPartner_ID AND UPPER(u.Phone) = UPPER(?)) "
-						+ "OR EXISTS(SELECT 1 FROM C_BPartner_Location bpl WHERE bpl.C_BPartner_ID = C_BPartner.C_BPartner_ID AND UPPER(bpl.Phone) = UPPER(?))"
-						+ ")");
-				//	Add parameters
-				parameters.add(request.getPhone());
-				parameters.add(request.getPhone());
-			}
-		}
-		//	Postal Code
-		if(!Util.isEmpty(request.getPostalCode())) {
-			if(whereClause.length() > 0) {
-				whereClause.append(" AND ");
-				whereClause.append("(EXISTS(SELECT 1 FROM C_BPartner_Location bpl "
-						+ "INNER JOIN C_Location l ON(l.C_Location_ID = bpl.C_Location_ID) "
-						+ "WHERE bpl.C_BPartner_ID = C_BPartner.C_BPartner_ID "
-						+ "AND UPPER(l.Postal) = UPPER(?)))");
-				//	Add parameters
-				parameters.add(request.getPostalCode());
-			}
-		}
-		//	Get business partner
-		MBPartner businessPartner = new Query(Env.getCtx(), I_C_BPartner.Table_Name, 
-				whereClause.toString(), null)
-				.setParameters(parameters)
-				.setClient_ID()
-				.setOnlyActiveRecords(true)
-				.first();
-		//	Default return
-		return ConvertUtil.convertBusinessPartner(businessPartner);
 	}
 }
