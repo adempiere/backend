@@ -29,6 +29,7 @@ import org.compiere.model.MOrg;
 import org.compiere.model.MOrgInfo;
 import org.compiere.model.MProduct;
 import org.compiere.model.MProductCategory;
+import org.compiere.model.MTax;
 import org.compiere.model.MUOM;
 import org.compiere.model.MWarehouse;
 import org.compiere.util.Env;
@@ -336,5 +337,17 @@ public class ConvertUtil {
 				.forEach(attachmentReference -> builder.addResourceReferences(convertResourceReference(attachmentReference)));
 		}
 		return builder;
+	}
+	
+	/**
+	 * Convert tax to gRPC
+	 * @param tax
+	 * @return
+	 */
+	public static TaxRate.Builder convertTaxRate(MTax tax) {
+		return TaxRate.newBuilder().setName(ValueUtil.validateNull(tax.getName()))
+			.setDescription(ValueUtil.validateNull(tax.getDescription()))
+			.setTaxIndicator(ValueUtil.validateNull(tax.getTaxIndicator()))
+			.setRate(ValueUtil.getDecimalFromBigDecimal(tax.getRate()));
 	}
 }
