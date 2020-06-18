@@ -145,8 +145,11 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 				throw new AdempiereException("Object Request Null");
 			}
 			log.fine("Rollback Requested = " + request.getRecordId());
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
-			Entity.Builder entityValue = rollbackLastEntityAction(context, request);
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			Entity.Builder entityValue = rollbackLastEntityAction(request);
 			responseObserver.onNext(entityValue.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -167,8 +170,11 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 				throw new AdempiereException("Object Request Null");
 			}
 			log.fine("Callout Requested = " + request.getCallout());
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
-			org.spin.grpc.util.Callout.Builder calloutResponse = runcallout(context, request);
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			org.spin.grpc.util.Callout.Builder calloutResponse = runcallout(request);
 			responseObserver.onNext(calloutResponse.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -188,8 +194,11 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 				throw new AdempiereException("Object Request Null");
 			}
 			log.fine("Lookup Requested = " + request.getUuid());
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
-			LookupItem.Builder lookupValue = convertLookupItem(context, request);
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			LookupItem.Builder lookupValue = convertLookupItem(request);
 			responseObserver.onNext(lookupValue.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -208,8 +217,11 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 			if(request == null) {
 				throw new AdempiereException("Lookup Request Null");
 			}
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
-			ListLookupItemsResponse.Builder entityValueList = convertLookupItemsList(context, request);
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			ListLookupItemsResponse.Builder entityValueList = convertLookupItemsList(request);
 			responseObserver.onNext(entityValueList.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -230,8 +242,11 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 				throw new AdempiereException("Browser Requested is Null");
 			}
 			log.fine("Object List Requested = " + request);
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
-			ListBrowserItemsResponse.Builder entityValueList = convertBrowserList(context, request);
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			ListBrowserItemsResponse.Builder entityValueList = convertBrowserList(request);
 			responseObserver.onNext(entityValueList.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -432,8 +447,11 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
-			ListDrillTablesResponse.Builder drillTablesList = convertDrillTablesList(context, request);
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			ListDrillTablesResponse.Builder drillTablesList = convertDrillTablesList(request);
 			responseObserver.onNext(drillTablesList.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -452,8 +470,11 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
-			ReportOutput.Builder reportOutput = getReportOutput(context, request);
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			ReportOutput.Builder reportOutput = getReportOutput(request);
 			responseObserver.onNext(reportOutput.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -623,7 +644,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 	 * @throws IOException 
 	 * @throws FileNotFoundException 
 	 */
-	private ReportOutput.Builder getReportOutput(Properties context, GetReportOutputRequest request) throws FileNotFoundException, IOException {
+	private ReportOutput.Builder getReportOutput(GetReportOutputRequest request) throws FileNotFoundException, IOException {
 		Criteria criteria = request.getCriteria();
 		if(Util.isEmpty(criteria.getTableName())) {
 			throw new AdempiereException("@TableName@ @NotFound@");
@@ -632,14 +653,14 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 		if(Util.isEmpty(request.getPrintFormatUuid())) {
 			throw new AdempiereException("@AD_PrintFormat_ID@ @NotFound@");
 		}
-		MTable table = MTable.get(context, criteria.getTableName());
+		MTable table = MTable.get(Env.getCtx(), criteria.getTableName());
 		//	
 		if(!MRole.getDefault().isCanReport(table.getAD_Table_ID())) {
 			throw new AdempiereException("@AccessCannotReport@");
 		}
 		//	
 		ReportOutput.Builder builder = ReportOutput.newBuilder();
-		MQuery query = getReportQueryFromCriteria(context, criteria);
+		MQuery query = getReportQueryFromCriteria(criteria);
 		if(!Util.isEmpty(criteria.getWhereClause())) {
 			query.addRestriction(criteria.getWhereClause());
 		}
@@ -649,13 +670,13 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 		MPrintFormat printFormat = null;
 		MReportView reportView = null;
 		if(!Util.isEmpty(request.getPrintFormatUuid())) {
-			printFormat = new Query(context, I_AD_PrintFormat.Table_Name, I_AD_PrintFormat.COLUMNNAME_UUID + " = ?", null)
+			printFormat = new Query(Env.getCtx(), I_AD_PrintFormat.Table_Name, I_AD_PrintFormat.COLUMNNAME_UUID + " = ?", null)
 					.setParameters(request.getPrintFormatUuid())
 					.first();
 		}
 		//	Get Report View
 		if(!Util.isEmpty(request.getReportViewUuid())) {
-			reportView = new Query(context, I_AD_ReportView.Table_Name, I_AD_ReportView.COLUMNNAME_UUID + " = ?", null)
+			reportView = new Query(Env.getCtx(), I_AD_ReportView.Table_Name, I_AD_ReportView.COLUMNNAME_UUID + " = ?", null)
 					.setParameters(request.getReportViewUuid())
 					.first();
 		}
@@ -665,14 +686,14 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 			if(reportView != null) {
 				reportViewId = reportView.getAD_ReportView_ID();
 			}
-			printFormat = MPrintFormat.get(context, reportViewId, table.getAD_Table_ID());
+			printFormat = MPrintFormat.get(Env.getCtx(), reportViewId, table.getAD_Table_ID());
 		}
 		//	Validate print format
 		if(printFormat == null) {
 			throw new AdempiereException("@AD_PrintGormat_ID@ @NotFound@");
 		}
 		if(table.getAD_Table_ID() != printFormat.getAD_Table_ID()) {
-			table = MTable.get(context, printFormat.getAD_Table_ID());
+			table = MTable.get(Env.getCtx(), printFormat.getAD_Table_ID());
 		}
 		//	Run report engine
 		ReportEngine reportEngine = new ReportEngine(Env.getCtx(), printFormat, query, printInformation);
@@ -680,7 +701,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 		if(reportView != null) {
 			reportEngine.setAD_ReportView_ID(reportView.getAD_ReportView_ID());
 		} else {
-			reportView = MReportView.get(context, reportEngine.getAD_ReportView_ID());
+			reportView = MReportView.get(Env.getCtx(), reportEngine.getAD_ReportView_ID());
 		}
 		//	Set Summary
 		reportEngine.setSummary(request.getIsSummary());
@@ -692,12 +713,12 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 			builder.setFileName(ValueUtil.validateNull(validFileName));
 			builder.setName(ValueUtil.validateNull(reportEngine.getName()));
 			builder.setMimeType(ValueUtil.validateNull(MimeType.getMimeType(validFileName)));
-			String headerName = Msg.getMsg(context, "Report") + ": " + reportEngine.getName() + "  " + Env.getHeader(context, 0);
+			String headerName = Msg.getMsg(Env.getCtx(), "Report") + ": " + reportEngine.getName() + "  " + Env.getHeader(Env.getCtx(), 0);
 			builder.setHeaderName(ValueUtil.validateNull(headerName));
 			StringBuffer footerName = new StringBuffer ();
-			footerName.append(Msg.getMsg(context, "DataCols")).append("=")
+			footerName.append(Msg.getMsg(Env.getCtx(), "DataCols")).append("=")
 				.append(reportEngine.getColumnCount())
-				.append(", ").append(Msg.getMsg(context, "DataRows")).append("=")
+				.append(", ").append(Msg.getMsg(Env.getCtx(), "DataRows")).append("=")
 				.append(reportEngine.getRowCount());
 			builder.setFooterName(ValueUtil.validateNull(footerName.toString()));
 			//	Type
@@ -952,17 +973,16 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 	
 	/**
 	 * Convert Report View to gRPC
-	 * @param context
 	 * @param request
 	 * @return
 	 */
-	private ListDrillTablesResponse.Builder convertDrillTablesList(Properties context, ListDrillTablesRequest request) {
+	private ListDrillTablesResponse.Builder convertDrillTablesList(ListDrillTablesRequest request) {
 		ListDrillTablesResponse.Builder builder = ListDrillTablesResponse.newBuilder();
 		//	Get entity
 		if(Util.isEmpty(request.getTableName())) {
 			throw new AdempiereException("@TableName@ @NotFound@");
 		}
-		MTable table = MTable.get(context, request.getTableName());
+		MTable table = MTable.get(Env.getCtx(), request.getTableName());
 		String sql = "SELECT t.TableName, e.ColumnName, NULLIF(e.PO_PrintName,e.PrintName) "
 				+ "FROM AD_Column c "
 				+ " INNER JOIN AD_Column used ON (c.ColumnName=used.ColumnName)"
@@ -980,13 +1000,13 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 				while (resultSet.next()) {
 					String drillTableName = resultSet.getString("TableName");
 					String columnName = resultSet.getString("ColumnName");
-					M_Element element = M_Element.get(context, columnName);
+					M_Element element = M_Element.get(Env.getCtx(), columnName);
 					//	Add here
 					DrillTable.Builder drillTable = DrillTable.newBuilder();
 					drillTable.setTableName(ValueUtil.validateNull(drillTableName));
 					String name = element.getPrintName();
 					String poName = element.getPO_PrintName();
-					if(!Env.isBaseLanguage(context, "")) {
+					if(!Env.isBaseLanguage(Env.getCtx(), "")) {
 						String translation = element.get_Translation("PrintName");
 						if(!Util.isEmpty(translation)) {
 							name = translation;
@@ -1137,15 +1157,14 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 	
 	/**
 	 * Rollback entity
-	 * @param context
 	 * @param request
 	 * @return
 	 */
-	private Entity.Builder rollbackLastEntityAction(Properties context, RollbackEntityRequest request) {
+	private Entity.Builder rollbackLastEntityAction(RollbackEntityRequest request) {
 		if(Util.isEmpty(request.getTableName())) {
 			throw new AdempiereException("@AD_Table_ID@ @NotFound@");
 		}
-		MTable table = MTable.get(context, request.getTableName());
+		MTable table = MTable.get(Env.getCtx(), request.getTableName());
 		if(table == null
 				|| table.getAD_Table_ID() == 0) {
 			throw new AdempiereException("@AD_Table_ID@ @Invalid@");
@@ -1158,11 +1177,11 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 		}
 		Entity.Builder builder = Entity.newBuilder();
 		//	get Table from table name
-		int lastChangeLogId = getLastChangeLogId(Env.getContextAsInt(context, "#AD_Session_ID"), table.getAD_Table_ID(), request.getRecordId(), eventType);
+		int lastChangeLogId = getLastChangeLogId(Env.getContextAsInt(Env.getCtx(), "#AD_Session_ID"), table.getAD_Table_ID(), request.getRecordId(), eventType);
 		if(lastChangeLogId > 0) {
 			if(eventType.equals(MChangeLog.EVENTCHANGELOG_Insert)) {
-				MChangeLog changeLog = new MChangeLog(context, lastChangeLogId, null);
-				PO entity = getEntity(context, table.getTableName(), null, changeLog.getRecord_ID());
+				MChangeLog changeLog = new MChangeLog(Env.getCtx(), lastChangeLogId, null);
+				PO entity = getEntity(Env.getCtx(), table.getTableName(), null, changeLog.getRecord_ID());
 				if(entity != null
 						&& entity.get_ID() >= 0) {
 					entity.delete(true);
@@ -1173,7 +1192,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 				if(entity == null) {
 					throw new AdempiereException("@Error@ PO is null");
 				}
-				new Query(context, I_AD_ChangeLog.Table_Name, I_AD_ChangeLog.COLUMNNAME_AD_ChangeLog_ID + " = ?", null)
+				new Query(Env.getCtx(), I_AD_ChangeLog.Table_Name, I_AD_ChangeLog.COLUMNNAME_AD_ChangeLog_ID + " = ?", null)
 					.setParameters(lastChangeLogId)
 					.<MChangeLog>list().forEach(changeLog -> {
 						setValueFromChangeLog(entity, changeLog);
@@ -1428,7 +1447,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 	 * @param request
 	 * @return
 	 */
-	private LookupItem.Builder convertLookupItem(Properties context, GetLookupItemRequest request) {
+	private LookupItem.Builder convertLookupItem(GetLookupItemRequest request) {
 		Criteria criteria = request.getCriteria();
 		String sql = criteria.getQuery();
 		List<Value> values = criteria.getValuesList();
@@ -1476,10 +1495,10 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 	 * @param request
 	 * @return
 	 */
-	private ListLookupItemsResponse.Builder convertLookupItemsList(Properties context, ListLookupItemsRequest request) {
+	private ListLookupItemsResponse.Builder convertLookupItemsList(ListLookupItemsRequest request) {
 		Criteria criteria = request.getCriteria();
 		String sql = criteria.getQuery();
-		sql = MRole.getDefault(context, false).addAccessSQL(sql,
+		sql = MRole.getDefault(Env.getCtx(), false).addAccessSQL(sql,
 				criteria.getTableName(), MRole.SQL_FULLYQUALIFIED, MRole.SQL_RO);
 		List<Value> values = criteria.getValuesList();
 		ListLookupItemsResponse.Builder builder = ListLookupItemsResponse.newBuilder();
@@ -1573,12 +1592,11 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 	
 	/**
 	 * Get Report Query from Criteria
-	 * @param context
 	 * @param criteria
 	 * @return
 	 */
-	private MQuery getReportQueryFromCriteria(Properties context, Criteria criteria) {
-		MTable table = MTable.get(context, criteria.getTableName());
+	private MQuery getReportQueryFromCriteria(Criteria criteria) {
+		MTable table = MTable.get(Env.getCtx(), criteria.getTableName());
 		MQuery query = new MQuery(table.getTableName());
 		criteria.getConditionsList().stream()
 		.filter(condition -> !Util.isEmpty(condition.getColumnName()))
@@ -1736,9 +1754,9 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 	 * @param request
 	 * @return
 	 */
-	private ListBrowserItemsResponse.Builder convertBrowserList(Properties context, ListBrowserItemsRequest request) {
+	private ListBrowserItemsResponse.Builder convertBrowserList(ListBrowserItemsRequest request) {
 		ListBrowserItemsResponse.Builder builder = ListBrowserItemsResponse.newBuilder();
-		MBrowse browser = getBrowser(context, request.getUuid());
+		MBrowse browser = getBrowser(request.getUuid());
 		if(browser == null) {
 			return builder;
 		}
@@ -1769,7 +1787,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 			orderByClause = " ORDER BY " + orderByClause;
 		}
 		//	Count records
-		int count = countRecords(context, parsedSQL, tableName, values);
+		int count = countRecords(parsedSQL, tableName, values);
 		String nexPageToken = null;
 		int pageMultiplier = page == 0? 1: page;
 		if(count > (RecordUtil.PAGE_SIZE * pageMultiplier)) {
@@ -1793,13 +1811,12 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 	
 	/**
 	 * Count records
-	 * @param context
 	 * @param sql
 	 * @param tableName
 	 * @param parameters
 	 * @return
 	 */
-	private int countRecords(Properties context, String sql, String tableName, List<Object> parameters) {
+	private int countRecords(String sql, String tableName, List<Object> parameters) {
 		int positionFrom = sql.lastIndexOf(" FROM " + tableName);
 		String queryCount = "SELECT COUNT(*) " + sql.substring(positionFrom, sql.length());
 		return DB.getSQLValueEx(null, queryCount, parameters);
@@ -1880,15 +1897,15 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 	 * @param uuid
 	 * @return
 	 */
-	private MBrowse getBrowser(Properties context, String uuid) {
-		String key = uuid + "|" + Env.getAD_Language(context);
+	private MBrowse getBrowser(String uuid) {
+		String key = uuid + "|" + Env.getAD_Language(Env.getCtx());
 		MBrowse browser = browserRequested.get(key);
 		if(browser == null) {
-			browser = new Query(context, I_AD_Browse.Table_Name, I_AD_Process.COLUMNNAME_UUID + " = ?", null)
+			browser = new Query(Env.getCtx(), I_AD_Browse.Table_Name, I_AD_Process.COLUMNNAME_UUID + " = ?", null)
 					.setParameters(uuid)
 					.setOnlyActiveRecords(true)
 					.first();
-			browser = ASPUtil.getInstance(context).getBrowse(browser.getAD_Browse_ID());
+			browser = ASPUtil.getInstance(Env.getCtx()).getBrowse(browser.getAD_Browse_ID());
 		}
 		//	Put on Cache
 		if(browser != null) {
@@ -1955,11 +1972,11 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 	 * @param request
 	 * @return
 	 */
-	private org.spin.grpc.util.Callout.Builder runcallout(Properties context, RunCalloutRequest request) {
+	private org.spin.grpc.util.Callout.Builder runcallout(RunCalloutRequest request) {
 		org.spin.grpc.util.Callout.Builder calloutBuilder = org.spin.grpc.util.Callout.newBuilder();
 		MTab tab = tabRequested.get(request.getTabUuid());
 		if(tab == null) {
-			tab = new Query(context, I_AD_Tab.Table_Name, I_AD_Tab.COLUMNNAME_UUID + " = ?", null)
+			tab = new Query(Env.getCtx(), I_AD_Tab.Table_Name, I_AD_Tab.COLUMNNAME_UUID + " = ?", null)
 					.setParameters(request.getTabUuid())
 					.first();
 		}
@@ -1984,10 +2001,10 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 			windowNo = windowNoEmulation.getAndIncrement();
 		}
 		//	Initial load for callout wrapper
-		GridWindowVO gridWindowVo = GridWindowVO.create(context, windowNo, tab.getAD_Window_ID());
+		GridWindowVO gridWindowVo = GridWindowVO.create(Env.getCtx(), windowNo, tab.getAD_Window_ID());
 		GridWindow gridWindow = new GridWindow(gridWindowVo, true);
 		GridTabVO gridTabVo = GridTabVO.create(gridWindowVo, tabNo, tab, false, true);
-		GridFieldVO gridFieldVo = GridFieldVO.create(context, windowNo, tabNo, tab.getAD_Window_ID(), tab.getAD_Tab_ID(), false, field);
+		GridFieldVO gridFieldVo = GridFieldVO.create(Env.getCtx(), windowNo, tabNo, tab.getAD_Window_ID(), tab.getAD_Tab_ID(), false, field);
 		GridField gridField = new GridField(gridFieldVo);
 		GridTab gridTab = new GridTab(gridTabVo, gridWindow, true);
 		//	Init tab
@@ -2003,7 +2020,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 		gridField.setValue(ValueUtil.getObjectFromValue(request.getOldValue()), false);
 		gridField.setValue(ValueUtil.getObjectFromValue(request.getValue()), false);
 		//	Run it
-		String result = processCallout(context, windowNo, gridTab, gridField);
+		String result = processCallout(windowNo, gridTab, gridField);
 		Arrays.asList(gridTab.getFields()).stream().filter(fieldValue -> isValidChange(fieldValue))
 		.forEach(fieldValue -> calloutBuilder.putValues(fieldValue.getColumnName(), ValueUtil.getValueFromObject(fieldValue.getValue()).build()));
 		calloutBuilder.setResult(ValueUtil.validateNull(result));
@@ -2053,7 +2070,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 	 * @param field
 	 * @return
 	 */
-	private String processCallout (Properties context, int windowNo, GridTab gridTab, GridField field) {
+	private String processCallout (int windowNo, GridTab gridTab, GridField field) {
 		String callout = field.getCallout();
 		if (callout.length() == 0)
 			return "";
@@ -2072,7 +2089,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 			// Victor Perez  - vpj-cd implement JSR 223 Scripting
 			if (cmd.toLowerCase().startsWith(MRule.SCRIPT_PREFIX)) {
 				
-				MRule rule = MRule.get(context, cmd.substring(MRule.SCRIPT_PREFIX.length()));
+				MRule rule = MRule.get(Env.getCtx(), cmd.substring(MRule.SCRIPT_PREFIX.length()));
 				if (rule == null) {
 					retValue = "Callout " + cmd + " not found"; 
 					log.log(Level.SEVERE, retValue);
@@ -2090,7 +2107,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 
 				// Window context are    W_
 				// Login context  are    G_
-				MRule.setContext(engine, context, windowNo);
+				MRule.setContext(engine, Env.getCtx(), windowNo);
 				// now add the callout parameters windowNo, tab, field, value, oldValue to the engine 
 				// Method arguments context are A_
 				engine.put(MRule.ARGUMENTS_PREFIX + "WindowNo", windowNo);
@@ -2098,7 +2115,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 				engine.put(MRule.ARGUMENTS_PREFIX + "Field", field);
 				engine.put(MRule.ARGUMENTS_PREFIX + "Value", value);
 				engine.put(MRule.ARGUMENTS_PREFIX + "OldValue", oldValue);
-				engine.put(MRule.ARGUMENTS_PREFIX + "Ctx", context);
+				engine.put(MRule.ARGUMENTS_PREFIX + "Ctx", Env.getCtx());
 
 				try  {
 					retValue = engine.eval(rule.getScript()).toString();
@@ -2126,7 +2143,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 					return "Callout Invalid: " + method;
 
 				try {
-					retValue = call.start(context, method, windowNo, gridTab, field, value, oldValue);
+					retValue = call.start(Env.getCtx(), method, windowNo, gridTab, field, value, oldValue);
 				} catch (Exception e) {
 					log.log(Level.SEVERE, "start", e);
 					retValue = 	"Callout Invalid: " + e.toString();
