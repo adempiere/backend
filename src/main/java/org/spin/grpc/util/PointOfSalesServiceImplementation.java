@@ -24,6 +24,7 @@ import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.adempiere.exceptions.AdempiereException;
+import org.adempiere.pos.AdempierePOSException;
 import org.compiere.model.I_AD_Ref_List;
 import org.compiere.model.I_AD_User;
 import org.compiere.model.I_C_BPartner;
@@ -59,6 +60,7 @@ import org.compiere.model.MWarehouse;
 import org.compiere.model.Query;
 import org.compiere.util.CCache;
 import org.compiere.util.CLogger;
+import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.compiere.util.TimeUtil;
 import org.compiere.util.Util;
@@ -377,6 +379,30 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		}
 	}
 	
+	@Override
+	public void updateOrder(UpdateOrderRequest request, StreamObserver<Order> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Update Order = " + request.getOrderUuid());
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			Order.Builder order = convertOrder(updateOrder(request));
+			responseObserver.onNext(order.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
 	/**
 	 * List Orders from POS UUID
 	 * @param request
@@ -458,6 +484,153 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 */
 	private MOrder getOrder(String uuid) {
 		return (MOrder) RecordUtil.getEntity(Env.getCtx(), I_C_Order.Table_Name, uuid, 0);
+	}
+	
+	/**
+	 * Update Order from UUID
+	 * @param request
+	 * @return
+	 */
+	private MOrder updateOrder(UpdateOrderRequest request) {
+		MOrder order = null;
+		if(!Util.isEmpty(request.getOrderUuid())) {
+			order = getOrder(request.getOrderUuid());
+			if(order == null) {
+				throw new AdempiereException("@C_Order_ID@ @NotFound@");
+			}
+			if(!DocumentUtil.isDrafted(order)) {
+				throw new AdempiereException("@C_Order_ID@ @IsCompleted@");
+			}
+			//	Update if exists
+			//	POS
+			if(!Util.isEmpty(request.getPosUuid())) {
+				int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid());
+				if(posId > 0) {
+					order.setC_POS_ID(posId);
+				}
+			}
+			//	Document Type
+			if(!Util.isEmpty(request.getDocumentTypeUuid())) {
+				int documentTypeId = RecordUtil.getIdFromUuid(I_C_DocType.Table_Name, request.getDocumentTypeUuid());
+				if(documentTypeId > 0) {
+					order.setC_DocTypeTarget_ID(documentTypeId);
+					//	Set Sequenced No
+					String value = DB.getDocumentNo(documentTypeId, null, false, order);
+					if (value != null) {
+						order.setDocumentNo(value);
+					}
+				}
+			}
+			//	Business partner
+			if(!Util.isEmpty(request.getCustomerUuid())) {
+				int businessPartnerId = RecordUtil.getIdFromUuid(I_C_BPartner.Table_Name, request.getCustomerUuid());
+				if(businessPartnerId > 0
+						&& order.getC_POS_ID() > 0) {
+					
+				}
+			}
+			//	Description
+			if(!Util.isEmpty(request.getDescription())) {
+				order.setDescription(request.getDescription());
+			}
+			//	Save
+			order.saveEx();
+		}
+		//	Return order
+		return order;
+	}
+	
+	/**
+	 * 	Set BPartner, update price list and locations
+	 *  Configuration of Business Partner has priority over POS configuration
+	 *	@param p_C_BPartner_ID id
+	 */
+	
+	/**
+	 * set BPartner and save
+	 */
+	public void configureBPartner(MOrder order, int businessPartnerId) {
+		//	Valid if has a Order
+		if(DocumentUtil.isCompleted(order)
+				|| DocumentUtil.isVoided(order))
+			return;
+		log.fine( "CPOS.setC_BPartner_ID=" + businessPartnerId);
+		boolean isSamePOSPartner = false;
+		MPOS pos = MPOS.get(Env.getCtx(), order.getC_POS_ID());
+		//	Validate BPartner
+		if (businessPartnerId == 0) {
+			isSamePOSPartner = true;
+			businessPartnerId = pos.getC_BPartnerCashTrx_ID();
+		}
+		//	Get BPartner
+		MBPartner partner = MBPartner.get(Env.getCtx(), businessPartnerId);
+		if (partner == null || partner.get_ID() == 0) {
+			throw new AdempierePOSException("POS.NoBPartnerForOrder");
+		} else {
+			log.info("CPOS.SetC_BPartner_ID -" + partner);
+			order.setBPartner(partner);
+			//	
+			MBPartnerLocation [] partnerLocations = partner.getLocations(true);
+			if(partnerLocations.length > 0) {
+				for(MBPartnerLocation partnerLocation : partnerLocations) {
+					if(partnerLocation.isBillTo())
+						order.setBill_Location_ID(partnerLocation.getC_BPartner_Location_ID());
+					if(partnerLocation.isShipTo())
+						order.setShip_Location_ID(partnerLocation.getC_BPartner_Location_ID());
+				}				
+			}
+			//	Validate Same BPartner
+			if(isSamePOSPartner) {
+				if(order.getPaymentRule()==null)
+					order.setPaymentRule(MOrder.PAYMENTRULE_Cash);
+			}
+			//	Set Sales Representative
+			if (order.getC_BPartner().getSalesRep_ID()!=0)
+				order.setSalesRep_ID(order.getC_BPartner().getSalesRep_ID());
+			else
+				order.setSalesRep_ID(pos.getSalesRep_ID());
+			//	Save Header
+			order.saveEx();
+			//	Load Price List Version
+			MPriceListVersion priceListVersion = loadPriceListVersion(order.getM_PriceList_ID(), order.getDateOrdered());
+			if(priceListVersion != null) {
+				MProductPrice[] productPrices = priceListVersion.getProductPrice("AND EXISTS("
+						+ "SELECT 1 "
+						+ "FROM C_OrderLine ol "
+						+ "WHERE ol.C_Order_ID = " + order.getC_Order_ID() + " "
+						+ "AND ol.M_Product_ID = M_ProductPrice.M_Product_ID)");
+				//	Update Lines
+				Arrays.asList(order.getLines())
+					.forEach(orderLine -> {
+						//	Verify if exist
+						if(Arrays.asList(productPrices)
+								.stream()
+								.filter(productPrice -> productPrice.getM_Product_ID() == orderLine.getM_Product_ID())
+								.findFirst()
+								.isPresent()) {
+							orderLine.setC_BPartner_ID(partner.getC_BPartner_ID());
+							orderLine.setC_BPartner_Location_ID(order.getC_BPartner_Location_ID());
+							orderLine.setPrice();
+							orderLine.setTax();
+							orderLine.saveEx();
+						} else {
+							orderLine.deleteEx(true);
+						}
+					});
+			}
+		}
+	}
+	
+	/**
+	 * Load Price List Version from Price List
+	 * @param priceListId
+	 * @return
+	 * @return MPriceListVersion
+	 */
+	public MPriceListVersion loadPriceListVersion(int priceListId, Timestamp validFrom) {
+		MPriceList priceList = MPriceList.get(Env.getCtx(), priceListId, null);
+		//
+		return priceList.getPriceListVersion(validFrom);
 	}
 	
 	/**
@@ -1143,8 +1316,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	For search value
 		if(!Util.isEmpty(request.getSearchValue())) {
 			whereClause.append("("
-				+ "UPPER(Value) = UPPER(?)"
-				+ "OR UPPER(Name) = UPPER(?)"
+				+ "UPPER(Value) LIKE UPPER(?)"
+				+ "OR UPPER(Name) LIKE UPPER(?)"
 				+ "OR UPPER(UPC) = UPPER(?)"
 				+ "OR UPPER(SKU) = UPPER(?)"
 				+ ")");

@@ -236,8 +236,8 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 		//	For search value
 		if(!Util.isEmpty(request.getSearchValue())) {
 			whereClause.append("("
-				+ "UPPER(Value) = UPPER(?)"
-				+ "OR UPPER(Name) = UPPER(?)"
+				+ "UPPER(Value) LIKE UPPER(?)"
+				+ "OR UPPER(Name) LIKE UPPER(?)"
 				+ ")");
 			//	Add parameters
 			parameters.add(request.getSearchValue());
@@ -246,7 +246,7 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 		//	For value
 		if(!Util.isEmpty(request.getValue())) {
 			whereClause.append("("
-				+ "UPPER(Value) = UPPER(?)"
+				+ "UPPER(Value) LIKE UPPER(?)"
 				+ ")");
 			//	Add parameters
 			parameters.add(request.getValue());
@@ -254,7 +254,7 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 		//	For name
 		if(!Util.isEmpty(request.getName())) {
 			whereClause.append("("
-				+ "UPPER(Name) = UPPER(?)"
+				+ "UPPER(Name) LIKE UPPER(?)"
 				+ ")");
 			//	Add parameters
 			parameters.add(request.getName());
@@ -263,7 +263,7 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 		if(!Util.isEmpty(request.getContactName())) {
 			if(whereClause.length() > 0) {
 				whereClause.append(" AND ");
-				whereClause.append("(EXISTS(SELECT 1 FROM AD_User u WHERE u.C_BPartner_ID = C_BPartner.C_BPartner_ID AND UPPER(u.Name) = UPPER(?)))");
+				whereClause.append("(EXISTS(SELECT 1 FROM AD_User u WHERE u.C_BPartner_ID = C_BPartner.C_BPartner_ID AND UPPER(u.Name) LIKE UPPER(?)))");
 				//	Add parameters
 				parameters.add(request.getContactName());
 			}
@@ -272,7 +272,7 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 		if(!Util.isEmpty(request.getEMail())) {
 			if(whereClause.length() > 0) {
 				whereClause.append(" AND ");
-				whereClause.append("(EXISTS(SELECT 1 FROM AD_User u WHERE u.C_BPartner_ID = C_BPartner.C_BPartner_ID AND UPPER(u.EMail) = UPPER(?)))");
+				whereClause.append("(EXISTS(SELECT 1 FROM AD_User u WHERE u.C_BPartner_ID = C_BPartner.C_BPartner_ID AND UPPER(u.EMail) LIKE UPPER(?)))");
 				//	Add parameters
 				parameters.add(request.getEMail());
 			}
@@ -282,8 +282,8 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 			if(whereClause.length() > 0) {
 				whereClause.append(" AND ");
 				whereClause.append("("
-						+ "EXISTS(SELECT 1 FROM AD_User u WHERE u.C_BPartner_ID = C_BPartner.C_BPartner_ID AND UPPER(u.Phone) = UPPER(?)) "
-						+ "OR EXISTS(SELECT 1 FROM C_BPartner_Location bpl WHERE bpl.C_BPartner_ID = C_BPartner.C_BPartner_ID AND UPPER(bpl.Phone) = UPPER(?))"
+						+ "EXISTS(SELECT 1 FROM AD_User u WHERE u.C_BPartner_ID = C_BPartner.C_BPartner_ID AND UPPER(u.Phone) LIKE UPPER(?)) "
+						+ "OR EXISTS(SELECT 1 FROM C_BPartner_Location bpl WHERE bpl.C_BPartner_ID = C_BPartner.C_BPartner_ID AND UPPER(bpl.Phone) LIKE UPPER(?))"
 						+ ")");
 				//	Add parameters
 				parameters.add(request.getPhone());
@@ -297,7 +297,7 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 				whereClause.append("(EXISTS(SELECT 1 FROM C_BPartner_Location bpl "
 						+ "INNER JOIN C_Location l ON(l.C_Location_ID = bpl.C_Location_ID) "
 						+ "WHERE bpl.C_BPartner_ID = C_BPartner.C_BPartner_ID "
-						+ "AND UPPER(l.Postal) = UPPER(?)))");
+						+ "AND UPPER(l.Postal) LIKE UPPER(?)))");
 				//	Add parameters
 				parameters.add(request.getPostalCode());
 			}
