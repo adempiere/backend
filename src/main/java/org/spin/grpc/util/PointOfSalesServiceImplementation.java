@@ -24,7 +24,6 @@ import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.adempiere.exceptions.AdempiereException;
-import org.adempiere.pos.AdempierePOSException;
 import org.compiere.model.I_AD_Ref_List;
 import org.compiere.model.I_AD_User;
 import org.compiere.model.I_C_BPartner;
@@ -565,7 +564,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	Get BPartner
 		MBPartner partner = MBPartner.get(Env.getCtx(), businessPartnerId);
 		if (partner == null || partner.get_ID() == 0) {
-			throw new AdempierePOSException("POS.NoBPartnerForOrder");
+			throw new AdempiereException("POS.NoBPartnerForOrder");
 		} else {
 			log.info("CPOS.SetC_BPartner_ID -" + partner);
 			order.setBPartner(partner);
