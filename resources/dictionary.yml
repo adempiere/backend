@@ -6,3 +6,4 @@ database:
     name: adempiere
     user: adempiere
     password: adempiere
+    type: PostgreSQL

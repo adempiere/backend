@@ -57,6 +57,15 @@ public class SetupLoader {
 		if(setup == null) {
 			throw new Exception("Setup not found");
 		}
+		//	Type
+		if(setup.getDatabase().getType() == null) {
+			throw new Exception("Database Type Not Found");
+		}
+		//	Validate only valid type
+		if(!setup.getDatabase().getType().equals(org.compiere.db.Database.DB_POSTGRESQL)
+				&& !setup.getDatabase().getType().equals(org.compiere.db.Database.DB_ORACLE)) {
+			throw new Exception("Database Type Unsupported");
+		}
 		//	Host
 		if(setup.getDatabase().getHost() == null) {
 			throw new Exception("Database Host Not Found");
@@ -73,7 +82,7 @@ public class SetupLoader {
 		if(setup.getDatabase().getPassword() == null) {
 			throw new Exception("Database Password Not Found");
 		}
-		CConnection connection = CConnection.get(org.compiere.db.Database.DB_POSTGRESQL,
+		CConnection connection = CConnection.get(setup.getDatabase().getType(),
 				setup.getDatabase().getHost(), setup.getDatabase().getPort(), setup.getDatabase().getName(),
 				setup.getDatabase().getUser(), setup.getDatabase().getPassword());
 			connection.setAppsHost("MyAppsServer");

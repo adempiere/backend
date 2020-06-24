@@ -30,18 +30,25 @@ public class Database {
 	private String password;
 	/**	Database	*/
 	private String name;
+	/**	Database type	*/
+	private String type;
 	
 	/**
 	 * Default constructor
 	 * @param host
 	 * @param port
+	 * @param user
+	 * @param password
+	 * @param name
+	 * @param type
 	 */
-	public Database(String host, int port, String user, String password, String name) {
+	public Database(String host, int port, String user, String password, String name, String type) {
 		this.host = host;
 		this.port = port;
 		this.user = user;
 		this.password = password;
 		this.name = name;
+		this.type = type;
 	}
 	
 	/**
@@ -86,9 +93,16 @@ public class Database {
 		return name;
 	}
 
+	/**
+	 * @return the type
+	 */
+	public final String getType() {
+		return type;
+	}
+
 	@Override
 	public String toString() {
-		return "Server [host=" + host + ", port=" + port + ", user=" + user + ", password=******, database="
-				+ name + "]";
+		return "Database [host=" + host + ", port=" + port + ", user=" + user + ", password=******, name="
+				+ name + ", type=" + type + "]";
 	}
 }
