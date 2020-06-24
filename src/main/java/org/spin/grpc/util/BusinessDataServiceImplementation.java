@@ -532,12 +532,13 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 			}
 		}
 		PO entity = null;
-		if(request.getCriteria() != null) {
+		if(!Util.isEmpty(request.getUuid())
+				|| request.getRecordId() != 0) {
+			entity = RecordUtil.getEntity(Env.getCtx(), tableName, request.getUuid(), request.getRecordId());
+		} else if(request.getCriteria() != null) {
 			List<Object> parameters = new ArrayList<Object>();
 			String whereClause = getWhereClauseFromCriteria(request.getCriteria(), parameters);
 			entity = RecordUtil.getEntity(Env.getCtx(), tableName, whereClause, parameters);
-		} else {
-			entity = RecordUtil.getEntity(Env.getCtx(), tableName, request.getUuid(), request.getRecordId());
 		}
 		//	Return
 		return convertEntity(entity);
