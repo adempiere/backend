@@ -15,6 +15,7 @@ repositories {
     maven { // The google mirror is less flaky than mavenCentral()
         url "https://maven-central.storage-download.googleapis.com/repos/central/data/" }
     mavenLocal()
+    jcenter()
 }
 
 sourceCompatibility = 1.8
@@ -48,6 +49,8 @@ dependencies {
     testCompile "io.grpc:grpc-testing:${grpcVersion}"
     testCompile "junit:junit:4.12"
     testCompile "org.mockito:mockito-core:1.9.5"
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.0.1'
+	compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.11.0'
 }
 
 protobuf {

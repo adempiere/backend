@@ -1,0 +1,8 @@
+server:
+    port: 50047
+database:
+    host: localhost
+    port: 5432
+    name: adempiere
+    user: adempiere
+    password: adempiere
