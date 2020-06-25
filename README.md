@@ -29,7 +29,16 @@ gradle wrapper
 
 ## Runing Server
 The server can be running as java class. See it: **org.spin.grpc.util.DictionaryServer**
-Don't forgive set enviroment for ADempiere connection at server run.
+Don't forgive that for run server you need set yml file line is /resources folder. 
+
+- Use latest [release](https://github.com/erpcya/adempiere-gRPC-Server/releases) 
+- Unzip binary
+- go to bin folder
+- run it
+
+```Shell
+./adempiere-dictionary-server.sh "/tmp/dictionary_connection.yml"
+```
 
 ## Client Test
 The client for testing was writed for java and is located on **org.spin.grpc.util.DictionaryClient**
