@@ -19,8 +19,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.logging.Level;
 
@@ -50,6 +52,7 @@ import org.compiere.model.MCountry;
 import org.compiere.model.MDocType;
 import org.compiere.model.MForm;
 import org.compiere.model.MFormAccess;
+import org.compiere.model.MLanguage;
 import org.compiere.model.MMenu;
 import org.compiere.model.MOrg;
 import org.compiere.model.MProcess;
@@ -75,7 +78,6 @@ import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.compiere.util.Ini;
-import org.compiere.util.Language;
 import org.compiere.util.Login;
 import org.compiere.util.Msg;
 import org.compiere.util.Util;
@@ -94,10 +96,6 @@ import io.grpc.stub.StreamObserver;
 public class AccessServiceImplementation extends SecurityImplBase {
 	/**	Logger			*/
 	private CLogger log = CLogger.getCLogger(AccessServiceImplementation.class);
-	/**	Session Context	*/
-	private static CCache<String, Properties> sessionsContext = new CCache<String, Properties>("AccessServiceImplementation", 30, 0);	//	no time-out
-	/**	Language */
-	private static CCache<String, String> languageCache = new CCache<String, String>("Language_ISO_Code", 30, 0);	//	no time-out
 	/**	Menu */
 	private static CCache<String, Menu.Builder> menuCache = new CCache<String, Menu.Builder>("Menu_for_User", 30, 0);
 	
@@ -229,9 +227,11 @@ public class AccessServiceImplementation extends SecurityImplBase {
 				throw new AdempiereException("Object Request Null");
 			}
 			log.fine("Menu Requested = " + request.getClientVersion());
-			Properties context = getContext(request);
-			String language = getDefaultLanguage(request.getLanguage());
-			Menu.Builder menuBuilder = convertMenu(context, language);
+			ContextManager.getContext(request.getSessionUuid(), 
+					request.getLanguage(), 
+					request.getOrganizationUuid(), 
+					request.getWarehouseUuid());
+			Menu.Builder menuBuilder = convertMenu();
 			responseObserver.onNext(menuBuilder.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -251,6 +251,10 @@ public class AccessServiceImplementation extends SecurityImplBase {
 				throw new AdempiereException("Object Request Null");
 			}
 			log.fine("Change Role Requested = " + request.getRoleUuid());
+			ContextManager.getContext(request.getSessionUuid(), 
+					request.getLanguage(), 
+					request.getOrganizationUuid(), 
+					request.getWarehouseUuid());
 			Session.Builder sessionBuilder = changeRole(request);
 			responseObserver.onNext(sessionBuilder.build());
 			responseObserver.onCompleted();
@@ -262,68 +266,6 @@ public class AccessServiceImplementation extends SecurityImplBase {
 					.withCause(e)
 					.asRuntimeException());
 		}
-	}
-	
-	/**
-	 * Get context from session
-	 * @param request
-	 * @return
-	 */
-	private Properties getContext(UserInfoRequest request) {
-		Properties context = sessionsContext.get(request.getSessionUuid());
-		if(context != null) {
-			Env.setContext(context, Env.LANGUAGE, getDefaultLanguage(request.getLanguage()));
-			return context;
-		}
-		context = Env.getCtx();
-		DB.validateSupportedUUIDFromDB();
-		MSession session = new Query(context, I_AD_Session.Table_Name, I_AD_Session.COLUMNNAME_UUID + " = ?", null)
-				.setParameters(request.getSessionUuid())
-				.first();
-		if(session == null
-				|| session.getAD_Session_ID() <= 0) {
-			throw new AdempiereException("@AD_Session_ID@ @NotFound@");
-		}
-		Env.setContext (context, "#AD_Session_ID", session.getAD_Session_ID());
-		Env.setContext(context, "#AD_User_ID", session.getCreatedBy());
-		Env.setContext(context, "#AD_Role_ID", session.getAD_Role_ID());
-		Env.setContext(context, "#AD_Client_ID", session.getAD_Client_ID());
-		Env.setContext(context, "#AD_Org_ID", session.getAD_Org_ID());
-		Env.setContext(context, "#Date", new Timestamp(System.currentTimeMillis()));
-		Env.setContext(context, Env.LANGUAGE, getDefaultLanguage(request.getLanguage()));
-		//	Save to Cache
-		sessionsContext.put(request.getSessionUuid(), context);
-		return context;
-	}
-	
-	/**
-	 * Get Default from language
-	 * @param language
-	 * @return
-	 */
-	//	TODO: Change it for a class and reuse
-	private String getDefaultLanguage(String language) {
-		String defaultLanguage = language;
-		if(Util.isEmpty(language)) {
-			language = Language.AD_Language_en_US;
-		}
-		//	Using es / en instead es_VE / en_US
-		//	get default
-		if(language.length() == 2) {
-			defaultLanguage = languageCache.get(language);
-			if(!Util.isEmpty(defaultLanguage)) {
-				return defaultLanguage;
-			}
-			defaultLanguage = DB.getSQLValueString(null, "SELECT AD_Language "
-					+ "FROM AD_Language "
-					+ "WHERE LanguageISO = ? "
-					+ "AND (IsSystemLanguage = 'Y' OR IsBaseLanguage = 'Y')", language);
-		}
-		if(Util.isEmpty(defaultLanguage)) {
-			defaultLanguage = Language.AD_Language_en_US;
-		}
-		//	Default return
-		return defaultLanguage;
 	}
 	
 	/**
@@ -390,24 +332,17 @@ public class AccessServiceImplementation extends SecurityImplBase {
 			throw new AdempiereException("@AD_User_ID@ / @AD_Role_ID@ / @AD_Org_ID@ @NotFound@");
 		}
 		MRole role = MRole.get(context, roleId);
-		MUser user = MUser.get(context, userId);
 		//	Warehouse / Org
 		Env.setContext (context, "#M_Warehouse_ID", warehouseId);
 		Env.setContext (context, "#AD_Session_ID", 0);
 		//  Client Info
 		MClient client = MClient.get(context, role.getAD_Client_ID());
 		Env.setContext(context, "#AD_Client_ID", client.getAD_Client_ID());
-		Env.setContext(context, "#AD_Client_Name", client.getName());
 		Env.setContext(context, "#AD_Org_ID", organizationId);
-		Env.setContext(context, "#Date", new Timestamp(System.currentTimeMillis()));
-		Env.setContext(context, Env.LANGUAGE, request.getLanguage());
 		//	Role Info
 		Env.setContext(context, "#AD_Role_ID", roleId);
-		Env.setContext(context, "#AD_Role_Name", role.getName());
 		//	User Info
 		Env.setContext(context, "#AD_User_ID", userId);
-		Env.setContext(context, "#AD_User_Name", user.getName());
-		Env.setContext(context, "#AD_User_Description", user.getDescription());
 		//	
 		MSession session = MSession.get(context, true);
 		if(!Util.isEmpty(request.getClientVersion())) {
@@ -415,7 +350,7 @@ public class AccessServiceImplementation extends SecurityImplBase {
 		}
 		Env.setContext (context, "#AD_Session_ID", session.getAD_Session_ID());
 		//	Load preferences
-		loadPreferences(context);
+		loadDefaultSessionValues(context, request.getLanguage());
 		//	Session values
 		builder.setId(session.getAD_Session_ID());
 		builder.setUuid(ValueUtil.validateNull(session.getUUID()));
@@ -425,11 +360,7 @@ public class AccessServiceImplementation extends SecurityImplBase {
 		Role.Builder roleBuilder = convertRole(role, false);
 		builder.setRole(roleBuilder.build());
 		//	Set default context
-		context.entrySet().stream()
-			.filter(keyValue -> String.valueOf(keyValue.getKey()).startsWith("#") || String.valueOf(keyValue.getKey()).startsWith("$"))
-			.forEach(contextKeyValue -> {
-				builder.putDefaultContext(contextKeyValue.getKey().toString(), convertObjectFromContext(contextKeyValue.getValue()).build());
-			});
+		populateDefaultPreferences(builder);
 		//	Return session
 		return builder;
 	}
@@ -581,10 +512,29 @@ public class AccessServiceImplementation extends SecurityImplBase {
 			DB.close(rs, pstmt);
 		}
 		//	Country
-		Env.setContext(context, "#C_Country_ID", MCountry.getDefault(context).getC_Country_ID());
+		Env.setContext(context, "#C_Country_ID", getDefaultCountry().getC_Country_ID());
 		// Call ModelValidators afterLoadPreferences - teo_sarca FR [ 1670025 ]
 		ModelValidationEngine.get().afterLoadPreferences(context);
 	}	//	loadPreferences
+	
+	/**
+	 * Get Default Country
+	 * @return
+	 */
+	private MCountry getDefaultCountry() {
+		MClient client = MClient.get (Env.getCtx());
+		MLanguage language = MLanguage.get(Env.getCtx(), client.getAD_Language());
+		Optional<MCountry> maybeCountry = Arrays.asList(MCountry.getCountries(Env.getCtx()))
+			.stream()
+			.filter(country -> language.getCountryCode().equals(country.getCountryCode()))
+			.findFirst();
+		//	Verify
+		if(maybeCountry.isPresent()) {
+			return maybeCountry.get();
+		}
+		//	Default
+		return MCountry.getDefault(Env.getCtx());
+	}
 	
 	/**
 	 *	Load Default Value for Table into Context.
@@ -671,8 +621,7 @@ public class AccessServiceImplementation extends SecurityImplBase {
 		Session.Builder builder = Session.newBuilder();
 		DB.validateSupportedUUIDFromDB();
 		//	Get / Validate Session
-		Properties context = getContext(request);
-		MSession currentSession = MSession.get(context, false);
+		MSession currentSession = MSession.get(Env.getCtx(), false);
 		int userId = currentSession.getCreatedBy();
 		int roleId = -1;
 		int organizationId = -1;
@@ -690,49 +639,27 @@ public class AccessServiceImplementation extends SecurityImplBase {
 		if(roleId < 0) {
 			throw new AdempiereException("@AD_User_ID@ / @AD_Role_ID@ / @AD_Org_ID@ @NotFound@");
 		}
-		MRole role = MRole.get(context, roleId);
-		MUser user = MUser.get(context, userId);
-		Env.setContext (context, "#AD_Session_ID", 0);
-		Env.setContext(context, "#AD_User_ID", userId);
-		Env.setContext(context, "#AD_Role_ID", roleId);
-		Env.setContext(context, "#AD_Client_ID", role.getAD_Client_ID());
-		Env.setContext(context, "#AD_Org_ID", organizationId);
-		Env.setContext(context, "#Date", new Timestamp(System.currentTimeMillis()));
-		Env.setContext(context, Env.LANGUAGE, getDefaultLanguage(request.getLanguage()));
-		MSession session = MSession.get(context, true);
+		MRole role = MRole.get(Env.getCtx(), roleId);
+		Env.setContext (Env.getCtx(), "#AD_Session_ID", 0);
+		Env.setContext(Env.getCtx(), "#AD_User_ID", userId);
+		Env.setContext(Env.getCtx(), "#AD_Role_ID", roleId);
+		Env.setContext(Env.getCtx(), "#AD_Client_ID", role.getAD_Client_ID());
+		Env.setContext(Env.getCtx(), "#AD_Org_ID", organizationId);
+		MSession session = MSession.get(Env.getCtx(), true);
 		if(!Util.isEmpty(request.getClientVersion())) {
 			session.setWebSession(request.getClientVersion());
 		}
 		//	Warehouse / Org
-		Env.setContext (context, "#M_Warehouse_ID", warehouseId);
-		Env.setContext (context, "#AD_Session_ID", session.getAD_Session_ID());
-		//  Client Info
-		MClient client = MClient.get(context, role.getAD_Client_ID());
-		Env.setContext(context, "#AD_Client_ID", client.getAD_Client_ID());
-		Env.setContext(context, "#AD_Client_Name", client.getName());
-		Env.setContext(context, "#AD_Org_ID", organizationId);
-		Env.setContext(context, "#Date", new Timestamp(System.currentTimeMillis()));
-		Env.setContext(context, Env.LANGUAGE, request.getLanguage());
-		//	Role Info
-		Env.setContext(context, "#AD_Role_ID", roleId);
-		Env.setContext(context, "#AD_Role_Name", role.getName());
-		//	User Info
-		Env.setContext(context, "#AD_User_ID", userId);
-		Env.setContext(context, "#AD_User_Name", user.getName());
-		Env.setContext(context, "#AD_User_Description", user.getDescription());
-		//	Load preferences
-		loadPreferences(context);
+		Env.setContext (Env.getCtx(), "#M_Warehouse_ID", warehouseId);
+		Env.setContext (Env.getCtx(), "#AD_Session_ID", session.getAD_Session_ID());
+		//	Default preference values
+		loadDefaultSessionValues(Env.getCtx(), request.getLanguage());
 		//	Session values
 		builder.setId(session.getAD_Session_ID());
 		builder.setUuid(ValueUtil.validateNull(session.getUUID()));
 		builder.setName(ValueUtil.validateNull(session.getDescription()));
 		builder.setUserInfo(convertUserInfo(MUser.get(Env.getCtx(), userId)).build());
-		//	Set default context
-		context.entrySet().stream()
-			.filter(keyValue -> String.valueOf(keyValue.getKey()).startsWith("#") || String.valueOf(keyValue.getKey()).startsWith("$"))
-			.forEach(contextKeyValue -> {
-				builder.putDefaultContext(contextKeyValue.getKey().toString(), convertObjectFromContext(contextKeyValue.getValue()).build());
-			});
+		populateDefaultPreferences(builder);
 		//	Set role
 		Role.Builder roleBuilder = convertRole(role, false);
 		builder.setRole(roleBuilder.build());
@@ -745,6 +672,41 @@ public class AccessServiceImplementation extends SecurityImplBase {
 		logoutSession(logoutRequest);
 		//	Return session
 		return builder;
+	}
+	
+	/**
+	 * Populate default values and preferences for session
+	 * @param session
+	 */
+	private void populateDefaultPreferences(Session.Builder session) {
+		//	Set default context
+		Env.getCtx().entrySet().stream()
+			.filter(keyValue -> String.valueOf(keyValue.getKey()).startsWith("#") || String.valueOf(keyValue.getKey()).startsWith("$"))
+			.forEach(contextKeyValue -> {
+				session.putDefaultContext(contextKeyValue.getKey().toString(), convertObjectFromContext(contextKeyValue.getValue()).build());
+			});
+	}
+	
+	/**
+	 * Load default values for session
+	 * @param context
+	 * @param language
+	 */
+	private void loadDefaultSessionValues(Properties context, String language) {
+		//  Client Info
+		MClient client = MClient.get(context, Env.getContextAsInt(context, "#AD_Client_ID"));
+		Env.setContext(context, "#AD_Client_Name", client.getName());
+		Env.setContext(context, "#Date", new Timestamp(System.currentTimeMillis()));
+		Env.setContext(context, Env.LANGUAGE, ContextManager.getDefaultLanguage(language));
+		//	Role Info
+		MRole role = MRole.get(context, Env.getContextAsInt(context, "#AD_Role_ID"));
+		Env.setContext(context, "#AD_Role_Name", role.getName());
+		//	User Info
+		MUser user = MUser.get(context, Env.getContextAsInt(context, "#AD_User_ID"));
+		Env.setContext(context, "#AD_User_Name", user.getName());
+		Env.setContext(context, "#AD_User_Description", user.getDescription());
+		//	Load preferences
+		loadPreferences(context);
 	}
 	
 	
@@ -797,6 +759,8 @@ public class AccessServiceImplementation extends SecurityImplBase {
 				|| session.getAD_Session_ID() <= 0) {
 			throw new AdempiereException("@AD_Session_ID@ @NotFound@");
 		}
+		//	Load default preference values
+		loadDefaultSessionValues(context, null);
 		//	Session values
 		builder.setId(session.getAD_Session_ID());
 		builder.setUuid(ValueUtil.validateNull(session.getUUID()));
@@ -806,11 +770,7 @@ public class AccessServiceImplementation extends SecurityImplBase {
 		Role.Builder roleBuilder = convertRole(MRole.get(context, session.getAD_Role_ID()), false);
 		builder.setRole(roleBuilder.build());
 		//	Set default context
-		context.entrySet().stream()
-			.filter(keyValue -> String.valueOf(keyValue.getKey()).startsWith("#") || String.valueOf(keyValue.getKey()).startsWith("$"))
-			.forEach(contextKeyValue -> {
-				builder.putDefaultContext(contextKeyValue.getKey().toString(), convertObjectFromContext(contextKeyValue.getValue()).build());
-			});
+		populateDefaultPreferences(builder);
 		//	Return session
 		return builder;
 	}
@@ -1106,21 +1066,19 @@ public class AccessServiceImplementation extends SecurityImplBase {
 	
 	/**
 	 * Convert Menu
-	 * @param context
-	 * @param language
 	 * @return
 	 */
-	private Menu.Builder convertMenu(Properties context, String language) {
-		int roleId = Env.getAD_Role_ID(context);
-		int userId = Env.getAD_User_ID(context);
-		String menuKey = roleId + "|" + userId + "|" + language;
+	private Menu.Builder convertMenu() {
+		int roleId = Env.getAD_Role_ID(Env.getCtx());
+		int userId = Env.getAD_User_ID(Env.getCtx());
+		String menuKey = roleId + "|" + userId + "|" + Env.getAD_Language(Env.getCtx());
 		Menu.Builder builder = menuCache.get(menuKey);
 		if(builder != null) {
 			return builder;
 		}
 		builder = Menu.newBuilder();
-		MMenu menu = new MMenu(context, 0, null);
-		menu.setName(Msg.getMsg(context, "Menu"));
+		MMenu menu = new MMenu(Env.getCtx(), 0, null);
+		menu.setName(Msg.getMsg(Env.getCtx(), "Menu"));
 		//	Get Reference
 		int treeId = DB.getSQLValue(null,
 			"SELECT COALESCE(r.AD_Tree_Menu_ID, ci.AD_Tree_Menu_ID)" 
@@ -1133,15 +1091,15 @@ public class AccessServiceImplementation extends SecurityImplBase {
 		if(treeId != 0) {
 			MTree tree = new MTree(Env.getCtx(), treeId, false, false, null, null);
 			//	
-			builder = convertMenu(context, menu, 0, language);
+			builder = convertMenu(Env.getCtx(), menu, 0, Env.getAD_Language(Env.getCtx()));
 			//	Get main node
 			MTreeNode rootNode = tree.getRoot();
 			Enumeration<?> childrens = rootNode.children();
 			while (childrens.hasMoreElements()) {
 				MTreeNode child = (MTreeNode)childrens.nextElement();
-				Menu.Builder childBuilder = convertMenu(context, MMenu.getFromId(context, child.getNode_ID()), child.getParent_ID(), language);
+				Menu.Builder childBuilder = convertMenu(Env.getCtx(), MMenu.getFromId(Env.getCtx(), child.getNode_ID()), child.getParent_ID(), Env.getAD_Language(Env.getCtx()));
 				//	Explode child
-				addChildren(context, childBuilder, child, language);
+				addChildren(Env.getCtx(), childBuilder, child, Env.getAD_Language(Env.getCtx()));
 				builder.addChilds(childBuilder.build());
 			}
 		}

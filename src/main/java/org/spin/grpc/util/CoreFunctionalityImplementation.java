@@ -16,7 +16,6 @@ package org.spin.grpc.util;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import org.adempiere.exceptions.AdempiereException;
 import org.compiere.model.I_AD_Language;
@@ -66,8 +65,11 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
-			ListOrganizationsResponse.Builder organizationsList = convertOrganizationsList(context, request);
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			ListOrganizationsResponse.Builder organizationsList = convertOrganizationsList(request);
 			responseObserver.onNext(organizationsList.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -86,8 +88,11 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
-			ListWarehousesResponse.Builder organizationsList = convertWarehousesList(context, request);
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			ListWarehousesResponse.Builder organizationsList = convertWarehousesList(request);
 			responseObserver.onNext(organizationsList.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -107,8 +112,11 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 				throw new AdempiereException("Country Request Null");
 			}
 			log.fine("Country Requested = " + request.getCountryUuid());
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
-			Country.Builder country = getCountry(context, request);
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			Country.Builder country = getCountry(request);
 			responseObserver.onNext(country.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -127,8 +135,11 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
-			ListLanguagesResponse.Builder languagesList = convertLanguagesList(context, request);
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			ListLanguagesResponse.Builder languagesList = convertLanguagesList(request);
 			responseObserver.onNext(languagesList.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -553,14 +564,14 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 	 * @param request
 	 * @return
 	 */
-	private Country.Builder getCountry(Properties context, GetCountryRequest request) {
+	private Country.Builder getCountry(GetCountryRequest request) {
 		String key = null;
 		MCountry country = null;
 		if(Util.isEmpty(request.getCountryUuid()) && request.getCountryId() == 0) {
 			key = "Default";
 			country = countryCache.get(key);
 			if(country == null) {
-				country = MCountry.getDefault(context);
+				country = MCountry.getDefault(Env.getCtx());
 			}
 		}
 		//	By UUID
@@ -569,7 +580,7 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 			key = request.getCountryUuid();
 			country = countryCache.put(key, country);
 			if(country == null) {
-				country = new Query(context, I_C_Country.Table_Name, I_C_Country.COLUMNNAME_UUID + " = ?", null).first();
+				country = new Query(Env.getCtx(), I_C_Country.Table_Name, I_C_Country.COLUMNNAME_UUID + " = ?", null).first();
 			}
 		}
 		if(request.getCountryId() != 0
@@ -577,25 +588,24 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 			key = "ID:|" + request.getCountryId();
 			country = countryCache.put(key, country);
 			if(country == null) {
-				country = MCountry.get(context, request.getCountryId());
+				country = MCountry.get(Env.getCtx(), request.getCountryId());
 			}
 		}
 		if(country != null) {
 			countryCache.put(key, country);
 		}
 		//	Return
-		return ConvertUtil.convertCountry(context, country);
+		return ConvertUtil.convertCountry(Env.getCtx(), country);
 	}
 	
 	/**
 	 * Convert languages to gRPC
-	 * @param context
 	 * @param request
 	 * @return
 	 */
-	private ListLanguagesResponse.Builder convertLanguagesList(Properties context, ListLanguagesRequest request) {
+	private ListLanguagesResponse.Builder convertLanguagesList(ListLanguagesRequest request) {
 		ListLanguagesResponse.Builder builder = ListLanguagesResponse.newBuilder();
-		new Query(context, I_AD_Language.Table_Name, "(IsSystemLanguage=? OR IsBaseLanguage=?)", null)
+		new Query(Env.getCtx(), I_AD_Language.Table_Name, "(IsSystemLanguage=? OR IsBaseLanguage=?)", null)
 			.setParameters(true, true)
 			.setOnlyActiveRecords(true)
 			.<MLanguage>list()
@@ -611,15 +621,15 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 	 * @param request
 	 * @return
 	 */
-	private ListOrganizationsResponse.Builder convertOrganizationsList(Properties context, ListOrganizationsRequest request) {
+	private ListOrganizationsResponse.Builder convertOrganizationsList(ListOrganizationsRequest request) {
 		ListOrganizationsResponse.Builder builder = ListOrganizationsResponse.newBuilder();
 		List<Object> parameters = new ArrayList<Object>();
-		String whereClause = "AD_Client_ID = " + Env.getAD_Client_ID(context);
+		String whereClause = "AD_Client_ID = " + Env.getAD_Client_ID(Env.getCtx());
 		MRole role = null;
 		if(request.getRoleId() != 0) {
-			role = MRole.get(context, request.getRoleId());
+			role = MRole.get(Env.getCtx(), request.getRoleId());
 		} else if(!Util.isEmpty(request.getRoleUuid())) {
-			role = new Query(context, I_AD_Role.Table_Name, I_AD_Role.COLUMNNAME_UUID + " = ?", null)
+			role = new Query(Env.getCtx(), I_AD_Role.Table_Name, I_AD_Role.COLUMNNAME_UUID + " = ?", null)
 					.setParameters(request.getRoleUuid())
 					.setOnlyActiveRecords(true)
 					.first();
@@ -631,7 +641,7 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 						+ "WHERE ua.AD_Org_ID = AD_Org.AD_Org_ID "
 						+ "AND ua.AD_User_ID = ? "
 						+ "AND ua.IsActive = 'Y')";
-				parameters.add(Env.getAD_User_ID(context));
+				parameters.add(Env.getAD_User_ID(Env.getCtx()));
 			} else {
 				whereClause = "EXISTS(SELECT 1 FROM AD_Role_OrgAccess ra "
 						+ "WHERE ra.AD_Org_ID = AD_Org.AD_Org_ID "
@@ -645,7 +655,7 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
 		int offset = (pageNumber > 0? pageNumber - 1: 0) * RecordUtil.PAGE_SIZE;
 		int limit = (pageNumber == 0? 1: pageNumber) * RecordUtil.PAGE_SIZE;
-		Query query = new Query(context, I_AD_Org.Table_Name, whereClause, null)
+		Query query = new Query(Env.getCtx(), I_AD_Org.Table_Name, whereClause, null)
 				.setParameters(parameters)
 				.setOnlyActiveRecords(true)
 				.setLimit(limit, offset);
@@ -669,18 +679,17 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 	
 	/**
 	 * Convert warehouses list
-	 * @param context
 	 * @param request
 	 * @return
 	 */
-	private ListWarehousesResponse.Builder convertWarehousesList(Properties context, ListWarehousesRequest request) {
+	private ListWarehousesResponse.Builder convertWarehousesList(ListWarehousesRequest request) {
 		ListWarehousesResponse.Builder builder = ListWarehousesResponse.newBuilder();
 		//	Get page and count
 		String nexPageToken = null;
 		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
 		int offset = (pageNumber > 0? pageNumber - 1: 0) * RecordUtil.PAGE_SIZE;
 		int limit = (pageNumber == 0? 1: pageNumber) * RecordUtil.PAGE_SIZE;
-		Query query = new Query(context, I_M_Warehouse.Table_Name, "EXISTS(SELECT 1 FROM AD_Org o WHERE o.AD_Org_ID = M_Warehouse.AD_Org_ID AND o.UUID = ?)", null)
+		Query query = new Query(Env.getCtx(), I_M_Warehouse.Table_Name, "EXISTS(SELECT 1 FROM AD_Org o WHERE o.AD_Org_ID = M_Warehouse.AD_Org_ID AND o.UUID = ?)", null)
 				.setOnlyActiveRecords(true)
 				.setParameters(request.getOrganizationUuid())
 				.setLimit(limit, offset);

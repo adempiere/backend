@@ -22,6 +22,7 @@ import org.adempiere.exceptions.AdempiereException;
 import org.compiere.model.I_AD_Org;
 import org.compiere.model.I_AD_Session;
 import org.compiere.model.I_M_Warehouse;
+import org.compiere.model.MClient;
 import org.compiere.model.MOrg;
 import org.compiere.model.MSession;
 import org.compiere.model.MWarehouse;
@@ -136,8 +137,13 @@ public class ContextManager {
 	 * @param language
 	 * @return
 	 */
-	//	TODO: Change it for a class and reuse
-	private static String getDefaultLanguage(String language) {
+	public static String getDefaultLanguage(String language) {
+		MClient client = MClient.get(Env.getCtx());
+		String clientLanguage = client.getAD_Language();
+		if(!Util.isEmpty(clientLanguage)
+				&& (Util.isEmpty(language) || language.length() < 4)) {
+			return clientLanguage;
+		}
 		String defaultLanguage = language;
 		if(Util.isEmpty(language)) {
 			language = Language.AD_Language_en_US;
@@ -153,6 +159,8 @@ public class ContextManager {
 					+ "FROM AD_Language "
 					+ "WHERE LanguageISO = ? "
 					+ "AND (IsSystemLanguage = 'Y' OR IsBaseLanguage = 'Y')", language);
+			//	Set language
+			languageCache.put(language, defaultLanguage);
 		}
 		if(Util.isEmpty(defaultLanguage)) {
 			defaultLanguage = Language.AD_Language_en_US;
