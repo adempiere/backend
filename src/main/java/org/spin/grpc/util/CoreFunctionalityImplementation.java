@@ -571,7 +571,7 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 			key = "Default";
 			country = countryCache.get(key);
 			if(country == null) {
-				country = MCountry.getDefault(Env.getCtx());
+				country = ContextManager.getDefaultCountry();
 			}
 		}
 		//	By UUID

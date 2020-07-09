@@ -19,10 +19,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.logging.Level;
 
@@ -48,11 +46,9 @@ import org.compiere.model.MClient;
 import org.compiere.model.MClientInfo;
 import org.compiere.model.MColumn;
 import org.compiere.model.MColumnAccess;
-import org.compiere.model.MCountry;
 import org.compiere.model.MDocType;
 import org.compiere.model.MForm;
 import org.compiere.model.MFormAccess;
-import org.compiere.model.MLanguage;
 import org.compiere.model.MMenu;
 import org.compiere.model.MOrg;
 import org.compiere.model.MProcess;
@@ -512,29 +508,10 @@ public class AccessServiceImplementation extends SecurityImplBase {
 			DB.close(rs, pstmt);
 		}
 		//	Country
-		Env.setContext(context, "#C_Country_ID", getDefaultCountry().getC_Country_ID());
+		Env.setContext(context, "#C_Country_ID", ContextManager.getDefaultCountry().getC_Country_ID());
 		// Call ModelValidators afterLoadPreferences - teo_sarca FR [ 1670025 ]
 		ModelValidationEngine.get().afterLoadPreferences(context);
 	}	//	loadPreferences
-	
-	/**
-	 * Get Default Country
-	 * @return
-	 */
-	private MCountry getDefaultCountry() {
-		MClient client = MClient.get (Env.getCtx());
-		MLanguage language = MLanguage.get(Env.getCtx(), client.getAD_Language());
-		Optional<MCountry> maybeCountry = Arrays.asList(MCountry.getCountries(Env.getCtx()))
-			.stream()
-			.filter(country -> language.getCountryCode().equals(country.getCountryCode()))
-			.findFirst();
-		//	Verify
-		if(maybeCountry.isPresent()) {
-			return maybeCountry.get();
-		}
-		//	Default
-		return MCountry.getDefault(Env.getCtx());
-	}
 	
 	/**
 	 *	Load Default Value for Table into Context.
