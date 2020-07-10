@@ -568,11 +568,7 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 		String key = null;
 		MCountry country = null;
 		if(Util.isEmpty(request.getCountryUuid()) && request.getCountryId() == 0) {
-			key = "Default";
-			country = countryCache.get(key);
-			if(country == null) {
-				country = ContextManager.getDefaultCountry();
-			}
+			country = ContextManager.getDefaultCountry();
 		}
 		//	By UUID
 		if(!Util.isEmpty(request.getCountryUuid())
@@ -591,7 +587,8 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 				country = MCountry.get(Env.getCtx(), request.getCountryId());
 			}
 		}
-		if(country != null) {
+		if(!Util.isEmpty(key)
+				&& country != null) {
 			countryCache.put(key, country);
 		}
 		//	Return
