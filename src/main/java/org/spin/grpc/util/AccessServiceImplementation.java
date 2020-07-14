@@ -698,13 +698,7 @@ public class AccessServiceImplementation extends SecurityImplBase {
 			throw new AdempiereException("@AD_Session_ID@ @NotFound@");
 		}
 		Properties context = Env.getCtx();
-		MSession session = new Query(context, I_AD_Session.Table_Name, I_AD_Session.COLUMNNAME_UUID + " = ?", null)
-				.setParameters(request.getSessionUuid())
-				.first();
-		if(session == null
-				|| session.getAD_Session_ID() <= 0) {
-			throw new AdempiereException("@AD_Session_ID@ @NotFound@");
-		}
+		MSession session = getSessionFromUUid(request.getSessionUuid());
 		//	Logout
 		session.logout();
 		//	Session values
@@ -728,13 +722,7 @@ public class AccessServiceImplementation extends SecurityImplBase {
 			throw new AdempiereException("@AD_Session_ID@ @NotFound@");
 		}
 		Properties context = Env.getCtx();
-		MSession session = new Query(context, I_AD_Session.Table_Name, I_AD_Session.COLUMNNAME_UUID + " = ?", null)
-				.setParameters(request.getSessionUuid())
-				.first();
-		if(session == null
-				|| session.getAD_Session_ID() <= 0) {
-			throw new AdempiereException("@AD_Session_ID@ @NotFound@");
-		}
+		MSession session = getSessionFromUUid(request.getSessionUuid());
 		//	Load default preference values
 		loadDefaultSessionValues(context, null);
 		//	Session values
@@ -803,6 +791,26 @@ public class AccessServiceImplementation extends SecurityImplBase {
 		return builder;
 	}
 	
+	/**
+	 * Get session from uuid, throw a exception if it is missing or was expired
+	 * @param sessionUuid
+	 * @return
+	 */
+	private MSession getSessionFromUUid(String sessionUuid) {
+		MSession session = new Query(Env.getCtx(), I_AD_Session.Table_Name, I_AD_Session.COLUMNNAME_UUID + " = ?", null)
+				.setParameters(sessionUuid)
+				.first();
+		if(session == null
+			|| session.getAD_Session_ID() <= 0) {
+			throw new AdempiereException("@AD_Session_ID@ @NotFound@");
+		}
+		//	Validate if expired
+		if(session.isProcessed()) {
+			throw new AdempiereException("@AD_Session_ID@ @Expired@");
+		}
+		//	Return session if is ok
+		return session;
+	}
 	
 	/**
 	 * Convert User Roles
@@ -813,13 +821,7 @@ public class AccessServiceImplementation extends SecurityImplBase {
 		if(Util.isEmpty(request.getSessionUuid())) {
 			throw new AdempiereException("@AD_Session_ID@ @NotFound@");
 		}
-		MSession session = new Query(Env.getCtx(), I_AD_Session.Table_Name, I_AD_Session.COLUMNNAME_UUID + " = ?", null)
-				.setParameters(request.getSessionUuid())
-				.first();
-		if(session == null
-				|| session.getAD_Session_ID() <= 0) {
-			throw new AdempiereException("@AD_Session_ID@ @NotFound@");
-		}
+		MSession session = getSessionFromUUid(request.getSessionUuid());
 		List<MRole> roleList = new Query(Env.getCtx(), I_AD_Role.Table_Name, 
 				"EXISTS(SELECT 1 FROM AD_User_Roles ur "
 				+ "WHERE ur.AD_Role_ID = AD_Role.AD_Role_ID "
