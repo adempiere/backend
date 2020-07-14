@@ -32,6 +32,7 @@ import org.compiere.model.I_AD_Column_Access;
 import org.compiere.model.I_AD_Document_Action_Access;
 import org.compiere.model.I_AD_Form_Access;
 import org.compiere.model.I_AD_Menu;
+import org.compiere.model.I_AD_Org;
 import org.compiere.model.I_AD_Process_Access;
 import org.compiere.model.I_AD_Record_Access;
 import org.compiere.model.I_AD_Role;
@@ -41,6 +42,7 @@ import org.compiere.model.I_AD_Table_Access;
 import org.compiere.model.I_AD_Task_Access;
 import org.compiere.model.I_AD_Window_Access;
 import org.compiere.model.I_AD_Workflow_Access;
+import org.compiere.model.I_M_Warehouse;
 import org.compiere.model.MAcctSchema;
 import org.compiere.model.MClient;
 import org.compiere.model.MClientInfo;
@@ -313,9 +315,9 @@ public class AccessServiceImplementation extends SecurityImplBase {
 			organizationId = DB.getSQLValue(null, organizationSQL, roleId, userId);
 			warehouseId = DB.getSQLValue(null, "SELECT M_Warehouse_ID FROM M_Warehouse WHERE IsActive = 'Y' AND AD_Org_ID = ?", organizationId);
 		} else {
-			roleId = DB.getSQLValue(null, "SELECT AD_Role_ID FROM AD_Role WHERE UUID = ?", request.getRoleUuid());
-			organizationId = DB.getSQLValue(null, "SELECT AD_Org_ID FROM AD_Org WHERE UUID = ?", request.getOrganizationUuid());
-			warehouseId = DB.getSQLValue(null, "SELECT M_Warehouse_ID FROM M_Warehouse WHERE UUID = ?", request.getWarehouseUuid());
+			roleId = RecordUtil.getIdFromUuid(I_AD_Role.Table_Name, request.getRoleUuid());
+			organizationId = RecordUtil.getIdFromUuid(I_AD_Org.Table_Name, request.getOrganizationUuid());
+			warehouseId = RecordUtil.getIdFromUuid(I_M_Warehouse.Table_Name, request.getWarehouseUuid());
 		}
 		if(organizationId < 0) {
 			organizationId = 0;
@@ -600,12 +602,9 @@ public class AccessServiceImplementation extends SecurityImplBase {
 		//	Get / Validate Session
 		MSession currentSession = MSession.get(Env.getCtx(), false);
 		int userId = currentSession.getCreatedBy();
-		int roleId = -1;
-		int organizationId = -1;
-		int warehouseId = -1;
-		roleId = DB.getSQLValue(null, "SELECT AD_Role_ID FROM AD_Role WHERE UUID = ?", request.getRoleUuid());
-		organizationId = DB.getSQLValue(null, "SELECT AD_Org_ID FROM AD_Org WHERE UUID = ?", request.getOrganizationUuid());
-		warehouseId = DB.getSQLValue(null, "SELECT M_Warehouse_ID FROM M_Warehouse WHERE UUID = ?", request.getWarehouseUuid());
+		int roleId = RecordUtil.getIdFromUuid(I_AD_Role.Table_Name, request.getRoleUuid());
+		int organizationId = RecordUtil.getIdFromUuid(I_AD_Org.Table_Name, request.getOrganizationUuid());
+		int warehouseId = RecordUtil.getIdFromUuid(I_M_Warehouse.Table_Name, request.getWarehouseUuid());
 		if(organizationId < 0) {
 			organizationId = 0;
 		}
