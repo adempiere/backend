@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.adempiere.exceptions.AdempiereException;
@@ -109,8 +108,11 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				throw new AdempiereException("Object Request Null");
 			}
 			log.fine("Create Order = " + request.getPosUuid());
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
-			Order.Builder order = createOrder(context, request);
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			Order.Builder order = createOrder(request);
 			responseObserver.onNext(order.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -130,8 +132,11 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				throw new AdempiereException("Object Request Null");
 			}
 			log.fine("Get Point of Sales = " + request.getPointOfSalesUuid());
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
-			PointOfSales.Builder pos = getPosBuilder(context, request);
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			PointOfSales.Builder pos = getPosBuilder(request);
 			responseObserver.onNext(pos.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -151,8 +156,11 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				throw new AdempiereException("Object Request Null");
 			}
 			log.fine("Get Point of Sales List = " + request.getUserUuid());
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
-			ListPointOfSalesResponse.Builder posList = convertPointOfSalesList(context, request);
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			ListPointOfSalesResponse.Builder posList = convertPointOfSalesList(request);
 			responseObserver.onNext(posList.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -172,8 +180,11 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				throw new AdempiereException("Object Request Null");
 			}
 			log.fine("Add Line for Order = " + request.getOrderUuid());
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
-			OrderLine.Builder orderLine = createAndConvertOrderLine(context, request);
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			OrderLine.Builder orderLine = createAndConvertOrderLine(request);
 			responseObserver.onNext(orderLine.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -722,11 +733,10 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	
 	/**
 	 * Create order line and return this
-	 * @param context
 	 * @param request
 	 * @return
 	 */
-	private OrderLine.Builder createAndConvertOrderLine(Properties context, CreateOrderLineRequest request) {
+	private OrderLine.Builder createAndConvertOrderLine(CreateOrderLineRequest request) {
 		//	Validate Order
 		if(Util.isEmpty(request.getOrderUuid())) {
 			throw new AdempiereException("@C_Order_ID@ @NotFound@");
@@ -979,11 +989,10 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	
 	/**
 	 * Get list from user
-	 * @param context
 	 * @param request
 	 * @return
 	 */
-	private ListPointOfSalesResponse.Builder convertPointOfSalesList(Properties context, ListPointOfSalesRequest request) {
+	private ListPointOfSalesResponse.Builder convertPointOfSalesList(ListPointOfSalesRequest request) {
 		ListPointOfSalesResponse.Builder builder = ListPointOfSalesResponse.newBuilder();
 		if(Util.isEmpty(request.getUserUuid())) {
 			throw new AdempiereException("@SalesRep_ID@ @NotFound@");
@@ -995,10 +1004,10 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		int offset = (pageNumber > 0? pageNumber - 1: 0) * RecordUtil.PAGE_SIZE;
 		int limit = (pageNumber == 0? 1: pageNumber) * RecordUtil.PAGE_SIZE;
 		//	Get POS List
-		Query query = new Query(context , I_C_POS.Table_Name , "(AD_Org_ID = ? OR SalesRep_ID = ?)", null)
+		Query query = new Query(Env.getCtx() , I_C_POS.Table_Name , "(AD_Org_ID = ? OR SalesRep_ID = ?)", null)
 				.setClient_ID()
 				.setOnlyActiveRecords(true)
-				.setParameters(Env.getAD_Org_ID(context), salesRepresentativeId)
+				.setParameters(Env.getAD_Org_ID(Env.getCtx()), salesRepresentativeId)
 				.setOrderBy(I_C_POS.COLUMNNAME_Name);
 		int count = query.count();
 		query
@@ -1022,13 +1031,13 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 * @param request
 	 * @return
 	 */
-	private PointOfSales.Builder getPosBuilder(Properties context, PointOfSalesRequest request) {
+	private PointOfSales.Builder getPosBuilder(PointOfSalesRequest request) {
 		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPointOfSalesUuid());
 		if(posId <= 0) {
 			throw new AdempiereException("@C_POS_ID@ @NotFound@");
 		}
 		//	
-		return convertPointOfSales(MPOS.get(context, posId));
+		return convertPointOfSales(MPOS.get(Env.getCtx(), posId));
 	}
 	
 	/**
@@ -1077,7 +1086,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 * @param request
 	 * @return
 	 */
-	private Order.Builder createOrder(Properties context, CreateOrderRequest request) {
+	private Order.Builder createOrder(CreateOrderRequest request) {
 		if(Util.isEmpty(request.getPosUuid())) {
 			throw new AdempiereException("@C_POS_ID@ @NotFound@");
 		}
@@ -1085,9 +1094,9 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		if(posId <= 0) {
 			throw new AdempiereException("@C_POS_ID@ @NotFound@");
 		}
-		MPOS pos = MPOS.get(context, posId);
+		MPOS pos = MPOS.get(Env.getCtx(), posId);
 		//	
-		MOrder salesOrder = new Query(context, I_C_Order.Table_Name, 
+		MOrder salesOrder = new Query(Env.getCtx(), I_C_Order.Table_Name, 
 				"DocStatus = 'DR' "
 				+ "AND C_POS_ID = ? "
 				+ "AND NOT EXISTS(SELECT 1 "
@@ -1097,7 +1106,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				.first();
 		//	Validate
 		if(salesOrder == null) {
-			salesOrder = new MOrder(context, 0, null);
+			salesOrder = new MOrder(Env.getCtx(), 0, null);
 		} else {
 			salesOrder.setDateOrdered(getDate());
 			salesOrder.setDateAcct(getDate());
@@ -1333,6 +1342,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				whereClause.append("(EXISTS(SELECT 1 FROM M_PriceList_Version plv "
 						+ "INNER JOIN M_ProductPrice pp ON(pp.M_PriceList_Version_ID = plv.M_PriceList_Version_ID) "
 						+ "WHERE plv.M_PriceList_ID = ? "
+						+ "AND pp.pricestd > 0 "
 						+ "AND pp.M_Product_ID = M_Product.M_Product_ID))");
 				//	Add parameters
 				parameters.add(RecordUtil.getIdFromUuid(I_M_PriceList.Table_Name, request.getPriceListUuid()));
