@@ -55,6 +55,7 @@ import org.compiere.model.MStorage;
 import org.compiere.model.MTax;
 import org.compiere.model.MUser;
 import org.compiere.model.MWarehouse;
+import org.compiere.model.M_Element;
 import org.compiere.model.Query;
 import org.compiere.util.CCache;
 import org.compiere.util.CLogger;
@@ -1004,10 +1005,19 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		int offset = (pageNumber > 0? pageNumber - 1: 0) * RecordUtil.PAGE_SIZE;
 		int limit = (pageNumber == 0? 1: pageNumber) * RecordUtil.PAGE_SIZE;
 		//	Get POS List
-		Query query = new Query(Env.getCtx() , I_C_POS.Table_Name , "(AD_Org_ID = ? OR SalesRep_ID = ?)", null)
+		boolean isListWithSharedPOS = M_Element.get(Env.getCtx(), "IsSharedPOS") != null;
+		String whereClause = "(AD_Org_ID = ? OR SalesRep_ID = ?)";
+		List<Object> parameters = new ArrayList<>();
+		parameters.add(Env.getAD_Org_ID(Env.getCtx()));
+		parameters.add(salesRepresentativeId);
+		if(isListWithSharedPOS) {
+			whereClause = "AD_Org_ID = ? AND (IsSharedPOS = 'Y' OR SalesRep_ID = ? OR EXISTS(SELECT 1 FROM AD_User u WHERE u.AD_User_ID = ? AND IsPOSManager = 'Y'))";
+			parameters.add(salesRepresentativeId);
+		}
+		Query query = new Query(Env.getCtx() , I_C_POS.Table_Name , whereClause, null)
 				.setClient_ID()
 				.setOnlyActiveRecords(true)
-				.setParameters(Env.getAD_Org_ID(Env.getCtx()), salesRepresentativeId)
+				.setParameters(parameters)
 				.setOrderBy(I_C_POS.COLUMNNAME_Name);
 		int count = query.count();
 		query
@@ -1324,8 +1334,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	For search value
 		if(!Util.isEmpty(request.getSearchValue())) {
 			whereClause.append("("
-				+ "UPPER(Value) LIKE UPPER(?)"
-				+ "OR UPPER(Name) LIKE UPPER(?)"
+				+ "UPPER(Value) LIKE UPPER(?) || '%'"
+				+ "OR UPPER(Name) LIKE '%' || UPPER(?) || '%'"
 				+ "OR UPPER(UPC) = UPPER(?)"
 				+ "OR UPPER(SKU) = UPPER(?)"
 				+ ")");
