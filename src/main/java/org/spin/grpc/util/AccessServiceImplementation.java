@@ -602,9 +602,9 @@ public class AccessServiceImplementation extends SecurityImplBase {
 		//	Get / Validate Session
 		MSession currentSession = MSession.get(Env.getCtx(), false);
 		int userId = currentSession.getCreatedBy();
-		int roleId = RecordUtil.getIdFromUuid(I_AD_Role.Table_Name, request.getRoleUuid());
-		int organizationId = RecordUtil.getIdFromUuid(I_AD_Org.Table_Name, request.getOrganizationUuid());
-		int warehouseId = RecordUtil.getIdFromUuid(I_M_Warehouse.Table_Name, request.getWarehouseUuid());
+		int roleId = DB.getSQLValue(null, "SELECT AD_Role_ID FROM AD_Role WHERE UUID = ?", request.getRoleUuid());
+		int organizationId = DB.getSQLValue(null, "SELECT AD_Org_ID FROM AD_Org WHERE UUID = ?", request.getOrganizationUuid());
+		int warehouseId = DB.getSQLValue(null, "SELECT M_Warehouse_ID FROM M_Warehouse WHERE UUID = ?", request.getWarehouseUuid());
 		if(organizationId < 0) {
 			organizationId = 0;
 		}
