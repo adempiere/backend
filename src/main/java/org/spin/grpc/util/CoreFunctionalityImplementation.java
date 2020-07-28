@@ -255,6 +255,8 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 			//	Add parameters
 			parameters.add(request.getSearchValue());
 			parameters.add(request.getSearchValue());
+			parameters.add(request.getSearchValue());
+			parameters.add(request.getSearchValue());
 		}
 		//	For value
 		if(!Util.isEmpty(request.getValue())) {
