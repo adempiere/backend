@@ -247,8 +247,10 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 		//	For search value
 		if(!Util.isEmpty(request.getSearchValue())) {
 			whereClause.append("("
-				+ "UPPER(Value) LIKE UPPER(?)"
-				+ "OR UPPER(Name) LIKE UPPER(?)"
+				+ "UPPER(Value) LIKE '%' || UPPER(?) || '%'"
+				+ "OR UPPER(Name) LIKE '%' || UPPER(?) || '%'"
+				+ "OR UPPER(Name2) LIKE '%' || UPPER(?) || '%'"
+				+ "OR UPPER(Description) LIKE '%' || UPPER(?) || '%'"
 				+ ")");
 			//	Add parameters
 			parameters.add(request.getSearchValue());
