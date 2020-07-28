@@ -1352,12 +1352,14 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				whereClause.append("(EXISTS(SELECT 1 FROM M_PriceList_Version plv "
 						+ "INNER JOIN M_ProductPrice pp ON(pp.M_PriceList_Version_ID = plv.M_PriceList_Version_ID) "
 						+ "WHERE plv.M_PriceList_ID = ? "
+						+ "AND plv.ValidFrom <= ? "
 						+ "AND pp.PriceList IS NOT NULL AND pp.PriceList > 0 "
 						+ "AND pp.PriceStd IS NOT NULL AND pp.PriceStd > 0 "
 						+ "AND pp.PriceLimit IS NOT NULL AND pp.PriceLimit > 0 "
 						+ "AND pp.M_Product_ID = M_Product.M_Product_ID))");
 				//	Add parameters
 				parameters.add(RecordUtil.getIdFromUuid(I_M_PriceList.Table_Name, request.getPriceListUuid()));
+				parameters.add(validFrom);
 			}
 		}
 		//	Get Product list
