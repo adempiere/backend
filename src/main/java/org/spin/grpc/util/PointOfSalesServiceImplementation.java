@@ -1373,14 +1373,18 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		.setLimit(limit, offset)
 		.<MProduct>list()
 		.forEach(product -> {
-			builder.addProductPrices(
-					convertProductPrice(
-							product, 
-							RecordUtil.getIdFromUuid(I_C_BPartner.Table_Name, request.getBusinessPartnerUuid()), 
-							priceList, 
-							RecordUtil.getIdFromUuid(I_M_Warehouse.Table_Name, request.getWarehouseUuid()), 
-							validFrom, 
-							null));
+			ProductPrice.Builder productPrice = convertProductPrice(
+					product, 
+					RecordUtil.getIdFromUuid(I_C_BPartner.Table_Name, request.getBusinessPartnerUuid()), 
+					priceList, 
+					RecordUtil.getIdFromUuid(I_M_Warehouse.Table_Name, request.getWarehouseUuid()), 
+					validFrom, 
+					null);
+			if(productPrice.hasPriceList()
+					&& productPrice.hasPriceStd()
+					&& productPrice.hasPriceLimit()) {
+				builder.addProductPrices(productPrice);
+			}
 		});
 		//	
 		builder.setRecordCount(count);
@@ -1431,9 +1435,14 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		builder.setPriceListName(ValueUtil.validateNull(priceList.getName()));
 		//	Pricing
 		builder.setPricePrecision(productPricing.getPrecision());
-		builder.setPriceList(ValueUtil.getDecimalFromBigDecimal(productPricing.getPriceList()));
-		builder.setPriceStd(ValueUtil.getDecimalFromBigDecimal(productPricing.getPriceStd()));
-		builder.setPriceLimit(ValueUtil.getDecimalFromBigDecimal(productPricing.getPriceLimit()));
+		//	Prices
+		if(productPricing.getPriceList() != null && productPricing.getPriceList().compareTo(Env.ZERO) > 0
+				&& productPricing.getPriceStd() != null && productPricing.getPriceStd().compareTo(Env.ZERO) > 0
+				&& productPricing.getPriceLimit() != null && productPricing.getPriceLimit().compareTo(Env.ZERO) > 0) {
+			builder.setPriceList(ValueUtil.getDecimalFromBigDecimal(productPricing.getPriceList()));
+			builder.setPriceStd(ValueUtil.getDecimalFromBigDecimal(productPricing.getPriceStd()));
+			builder.setPriceLimit(ValueUtil.getDecimalFromBigDecimal(productPricing.getPriceLimit()));
+		}
 		//	Get Storage
 		if(warehouseId > 0) {
 			AtomicReference<BigDecimal> quantityOnHand = new AtomicReference<BigDecimal>(Env.ZERO);
