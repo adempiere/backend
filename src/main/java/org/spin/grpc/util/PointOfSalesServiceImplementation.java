@@ -27,6 +27,7 @@ import org.compiere.model.I_AD_Ref_List;
 import org.compiere.model.I_AD_User;
 import org.compiere.model.I_C_BPartner;
 import org.compiere.model.I_C_Charge;
+import org.compiere.model.I_C_ConversionType;
 import org.compiere.model.I_C_DocType;
 import org.compiere.model.I_C_Order;
 import org.compiere.model.I_C_OrderLine;
@@ -37,6 +38,7 @@ import org.compiere.model.I_M_Product;
 import org.compiere.model.I_M_Warehouse;
 import org.compiere.model.MBPartner;
 import org.compiere.model.MBPartnerLocation;
+import org.compiere.model.MBankAccount;
 import org.compiere.model.MCharge;
 import org.compiere.model.MCurrency;
 import org.compiere.model.MDocType;
@@ -428,9 +430,75 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
 		int offset = (pageNumber > 0? pageNumber - 1: 0) * RecordUtil.PAGE_SIZE;
 		int limit = (pageNumber == 0? 1: pageNumber) * RecordUtil.PAGE_SIZE;
+		//	Dynamic where clause
+		StringBuffer whereClause = new StringBuffer();
+		//	Parameters
+		List<Object> parameters = new ArrayList<Object>();
+		//	Aisle Seller
+		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid());
+		boolean isWithAisleSeller = M_Element.get(Env.getCtx(), "IsAisleSeller") != null;
+		if(isWithAisleSeller && request.getIsAisleSeller()) {
+			whereClause.append("C_Order.C_POS_ID <> ? AND EXISTS(SELECT 1 FROM C_POS p WHERE p.C_POS_ID = C_Order.C_POS_ID AND p.IsAisleSeller = 'Y')");
+			parameters.add(posId);
+		} else {
+			whereClause.append("C_Order.C_POS_ID = ?");
+			parameters.add(posId);
+		}
+		//	Document No
+		if(!Util.isEmpty(request.getDocumentNo())) {
+			whereClause.append(" AND UPPER(DocumentNo) LIKE '%' || UPPER(?) || '%'");
+			parameters.add(request.getDocumentNo());
+		}
+		//	Business Partner
+		if(!Util.isEmpty(request.getBusinessPartnerUuid())) {
+			int businessPartnerId = RecordUtil.getIdFromUuid(I_C_BPartner.Table_Name, request.getBusinessPartnerUuid());
+			whereClause.append(" AND C_BPartner_ID = ?");
+			parameters.add(businessPartnerId);
+		}
+		//	Grand Total
+		BigDecimal grandTotal = ValueUtil.getBigDecimalFromDecimal(request.getGrandTotal());
+		if(grandTotal != null
+				&& !grandTotal.equals(Env.ZERO)) {
+			whereClause.append(" AND GrandTotal = ?");
+			parameters.add(grandTotal);
+		}
+		//	Support Open Amount
+		BigDecimal openAmount = ValueUtil.getBigDecimalFromDecimal(request.getOpenAmount());
+		if(openAmount != null
+				&& !openAmount.equals(Env.ZERO)) {
+			whereClause.append(" (EXISTS(SELECT 1 FROM C_Invoice i WHERE i.C_Order_ID = C_Order.C_Order_ID GROUP BY i.C_Order_ID HAVING(SUM(invoiceopen(i.C_Invoice_ID, 0)) = ?))"
+					+ " OR EXISTS(SELECT 1 FROM C_Payment p WHERE C_Order_ID = C_Order.C_Order_ID GROUP BY p.C_Order_ID HAVING(SUM(p.PayAmt) = ?)"
+					+ ")");
+			parameters.add(openAmount);
+			parameters.add(openAmount);
+		}
+		whereClause.append(" AND Processed = ?");
+		parameters.add(request.getIsProcessed()? "Y": "N");
+		//	Is Invoiced
+		if(request.getIsInvoiced()
+				|| request.getIsPaid()) {
+			whereClause.append(" AND EXISTS(SELECT 1 FROM C_Invoice i WHERE i.C_Order_ID = C_Order.C_Order_ID AND i.DocStatus IN('CO', 'CL') AND i.IsPaid = ?)");
+			parameters.add(request.getIsPaid()? "Y": "N");
+		}
+		//	Date Order From
+		if(request.getDateOrderedFrom() > 0) {
+			whereClause.append(" AND DateOrdered >= ?");
+			parameters.add(new Timestamp(request.getDateOrderedFrom()));
+		}
+		//	Date Order To
+		if(request.getDateOrderedTo() > 0) {
+			whereClause.append(" AND DateOrdered <= ?");
+			parameters.add(new Timestamp(request.getDateOrderedTo()));
+		}
+		//	Sales Representative
+		if(!Util.isEmpty(request.getSalesRepresentativeUuid())) {
+			int salesRepresentativeId = RecordUtil.getIdFromUuid(I_AD_User.Table_Name, request.getSalesRepresentativeUuid());
+			whereClause.append(" AND SalesRep_ID = ?");
+			parameters.add(salesRepresentativeId);
+		}
 		//	Get Product list
-		Query query = new Query(Env.getCtx(), I_C_Order.Table_Name, "EXISTS(SELECT 1 FROM C_POS p WHERE p.C_POS_ID = C_Order.C_POS_ID AND p.UUID = ?)", null)
-				.setParameters(request.getPosUuid())
+		Query query = new Query(Env.getCtx(), I_C_Order.Table_Name, whereClause.toString(), null)
+				.setParameters(parameters)
 				.setClient_ID()
 				.setOnlyActiveRecords(true);
 		int count = query.count();
@@ -537,7 +605,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				int businessPartnerId = RecordUtil.getIdFromUuid(I_C_BPartner.Table_Name, request.getCustomerUuid());
 				if(businessPartnerId > 0
 						&& order.getC_POS_ID() > 0) {
-					
+					configureBPartner(order, businessPartnerId);
 				}
 			}
 			//	Description
@@ -1056,7 +1124,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 * @return
 	 */
 	private PointOfSales.Builder convertPointOfSales(MPOS pos) {
-		PointOfSales.Builder build = PointOfSales.newBuilder()
+		PointOfSales.Builder builder = PointOfSales.newBuilder()
 				.setUuid(ValueUtil.validateNull(pos.getUUID()))
 				.setId(pos.getC_POS_ID())
 				.setName(ValueUtil.validateNull(pos.getName()))
@@ -1066,15 +1134,24 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				.setIsPOSRequiredPIN(pos.isPOSRequiredPIN())
 				.setSalesRepresentative(convertSalesRepresentative(MUser.get(pos.getCtx(), pos.getSalesRep_ID())))
 				.setTemplateBusinessPartner(ConvertUtil.convertBusinessPartner(pos.getBPartner()))
-				.setKeyLayoutUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_POSKeyLayout.Table_Name, pos.getC_POSKeyLayout_ID())));
+				.setKeyLayoutUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_POSKeyLayout.Table_Name, pos.getC_POSKeyLayout_ID())))
+				.setIsAisleSeller(pos.get_ValueAsBoolean("IsAisleSeller"))
+				.setIsSharedPOS(pos.get_ValueAsBoolean("IsSharedPOS"))
+				.setConversionTypeUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_ConversionType.Table_Name, pos.get_ValueAsInt(I_C_ConversionType.COLUMNNAME_C_ConversionType_ID))));
 		//	Set Price List adn currency
 		if(pos.getM_PriceList_ID() != 0) {
 			MPriceList priceList = MPriceList.get(Env.getCtx(), pos.getM_PriceList_ID(), null);
-			MCurrency currency = MCurrency.get(Env.getCtx(), priceList.getC_Currency_ID());
-			build.setPriceListUuid(ValueUtil.validateNull(priceList.getUUID()))
-				.setCurrency(ConvertUtil.convertCurrency(currency));
+			builder.setPriceList(ConvertUtil.convertPriceList(priceList));
 		}
-		return build;
+		//	Bank Account
+		if(pos.getC_BankAccount_ID() != 0) {
+			builder.setCashBankAccount(ConvertUtil.convertBankAccount(MBankAccount.get(Env.getCtx(), pos.getC_BankAccount_ID())));
+		}
+		//	Bank Account to transfer
+		if(pos.getCashTransferBankAccount_ID() != 0) {
+			builder.setCashBankAccount(ConvertUtil.convertBankAccount(MBankAccount.get(Env.getCtx(), pos.getCashTransferBankAccount_ID())));
+		}
+		return builder;
 	}
 	
 	/**
@@ -1353,6 +1430,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 						+ "INNER JOIN M_ProductPrice pp ON(pp.M_PriceList_Version_ID = plv.M_PriceList_Version_ID) "
 						+ "WHERE plv.M_PriceList_ID = ? "
 						+ "AND plv.ValidFrom <= ? "
+						+ "AND plv.IsActive = 'Y' "
 						+ "AND pp.PriceList IS NOT NULL AND pp.PriceList > 0 "
 						+ "AND pp.PriceStd IS NOT NULL AND pp.PriceStd > 0 "
 						+ "AND pp.PriceLimit IS NOT NULL AND pp.PriceLimit > 0 "

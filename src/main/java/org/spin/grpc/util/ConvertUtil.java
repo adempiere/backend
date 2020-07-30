@@ -19,6 +19,7 @@ import java.util.Properties;
 
 import org.compiere.model.MAttachment;
 import org.compiere.model.MBPartner;
+import org.compiere.model.MBankAccount;
 import org.compiere.model.MCharge;
 import org.compiere.model.MClientInfo;
 import org.compiere.model.MCountry;
@@ -27,6 +28,7 @@ import org.compiere.model.MDocType;
 import org.compiere.model.MLanguage;
 import org.compiere.model.MOrg;
 import org.compiere.model.MOrgInfo;
+import org.compiere.model.MPriceList;
 import org.compiere.model.MProduct;
 import org.compiere.model.MProductCategory;
 import org.compiere.model.MTax;
@@ -264,6 +266,56 @@ public class ConvertUtil {
 			.setDescription(ValueUtil.validateNull(currency.getDescription()))
 			.setStdPrecision(currency.getStdPrecision())
 			.setCostingPrecision(currency.getCostingPrecision());
+	}
+	
+	/**
+	 * Convert Price List
+	 * @param priceList
+	 * @return
+	 */
+	public static PriceList.Builder convertPriceList(MPriceList priceList) {
+		PriceList.Builder builder = PriceList.newBuilder();
+		if(priceList == null) {
+			return builder;
+		}
+		//	
+		return builder.setUuid(ValueUtil.validateNull(priceList.getUUID()))
+			.setId(priceList.getAD_Org_ID())
+			.setName(ValueUtil.validateNull(priceList.getName()))
+			.setDescription(ValueUtil.validateNull(priceList.getDescription()))
+			.setCurrency(convertCurrency(MCurrency.get(priceList.getCtx(), priceList.getC_Currency_ID())))
+			.setIsDefault(priceList.isDefault())
+			.setIsTaxIncluded(priceList.isTaxIncluded())
+			.setIsEnforcePriceLimit(priceList.isEnforcePriceLimit())
+			.setIsNetPrice(priceList.isNetPrice())
+			.setPricePrecision(priceList.getPricePrecision());
+	}
+	
+	/**
+	 * Convert Bank Account to gRPC stub class
+	 * @param bankAccount
+	 * @return
+	 */
+	public static BankAccount.Builder convertBankAccount(MBankAccount bankAccount) {
+		BankAccount.Builder builder = BankAccount.newBuilder();
+		if(bankAccount == null) {
+			return builder;
+		}
+		//	
+		return builder.setUuid(ValueUtil.validateNull(bankAccount.getUUID()))
+			.setId(bankAccount.getAD_Org_ID())
+			.setAccountNo(ValueUtil.validateNull(bankAccount.getAccountNo()))
+			.setName(ValueUtil.validateNull(bankAccount.getName()))
+			.setDescription(ValueUtil.validateNull(bankAccount.getDescription()))
+			.setIsDefault(bankAccount.isDefault())
+			.setBban(ValueUtil.validateNull(bankAccount.getBBAN()))
+			.setIban(ValueUtil.validateNull(bankAccount.getIBAN()))
+			.setBankAccountType(bankAccount.getBankAccountType().equals(MBankAccount.BANKACCOUNTTYPE_Checking)? BankAccount.BankAccountType.CHECKING: BankAccount.BankAccountType.SAVINGS)
+			.setCreditLimit(ValueUtil.getDecimalFromBigDecimal(bankAccount.getCreditLimit()))
+			.setCurrentBalance(ValueUtil.getDecimalFromBigDecimal(bankAccount.getCurrentBalance()))
+			//	Foreign
+			.setCurrency(convertCurrency(MCurrency.get(bankAccount.getCtx(), bankAccount.getC_Currency_ID())))
+			.setBusinessPartner(ConvertUtil.convertBusinessPartner(MBPartner.get(Env.getCtx(), bankAccount.getC_BPartner_ID())));
 	}
 	
 	/**

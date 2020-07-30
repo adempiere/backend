@@ -351,3 +351,38 @@ message Language {
 	string datePattern = 8;
 	string timePattern = 9;
 }
+
+//	Price List
+message PriceList {
+	string uuid = 1;
+	int32 id = 2;
+	string name = 3;
+	string description = 4;
+	Currency currency = 5;
+	bool isDefault = 6;
+	bool isTaxIncluded = 7;
+	bool isEnforcePriceLimit = 8;
+	bool isNetPrice = 9;
+	int32 pricePrecision = 10;
+}
+
+//	Bank Account
+message BankAccount {
+	string uuid = 1;
+	int32 id = 2;
+	string name = 3;
+	string accountNo = 4;
+	string description = 5;
+	Currency currency = 6;
+	string bban = 7;
+	string iban = 8;
+	Decimal creditLimit = 9;
+	Decimal currentBalance = 10;
+	bool isDefault = 11;
+	BusinessPartner businessPartner = 12;
+	enum BankAccountType {
+		CHECKING = 0;
+		SAVINGS = 1;
+	}
+	BankAccountType bankAccountType = 13;
+}

@@ -81,10 +81,21 @@ message ListOrdersResponse {
 message ListOrdersRequest {
 	ClientRequest clientRequest = 1;
 	string posUuid = 2;
-	int32 page_size = 3;
-	string page_token = 4;
+	string documentNo = 3;
+	string businessPartnerUuid = 4;
+	Decimal grandTotal = 5;
+	Decimal openAmount = 6;
+	bool isPaid = 7;
+	bool isProcessed = 8;
+	bool isAisleSeller = 9;
+	bool isInvoiced = 10;
+	int64 dateOrderedFrom = 11;
+	int64 dateOrderedTo = 12;
+	string salesRepresentativeUuid = 13;
+	int32 page_size = 14;
+	string page_token = 15;
 	// Query
-	Criteria criteria = 5;
+	Criteria criteria = 16;
 }
 
 //	List Order Lines Response
@@ -139,11 +150,16 @@ message PointOfSales {
 	string help = 5;
 	bool isModifyPrice = 6;
 	bool isPOSRequiredPIN = 7;
-	SalesRepresentative salesRepresentative = 8;
-	BusinessPartner templateBusinessPartner = 9;
-	string priceListUuid = 10;
-	Currency currency = 11;
-	string keyLayoutUuid = 12;
+	bool isAisleSeller = 8;
+	bool isSharedPOS = 9;
+	DocumentType documentType = 10;
+	BankAccount cashBankAccount = 11;
+	BankAccount cashTransferBankAccount = 12;
+	SalesRepresentative salesRepresentative = 13;
+	BusinessPartner templateBusinessPartner = 14;
+	PriceList priceList = 15;
+	string conversionTypeUuid = 16;
+	string keyLayoutUuid = 17;
 }
 
 // Request for create a order
