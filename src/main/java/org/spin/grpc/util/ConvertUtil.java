@@ -93,6 +93,9 @@ public class ConvertUtil {
 	 * @return
 	 */
 	public static BusinessPartner.Builder convertBusinessPartner(MBPartner businessPartner) {
+		if(businessPartner == null) {
+			return BusinessPartner.newBuilder();
+		}
 		return BusinessPartner.newBuilder()
 				.setUuid(ValueUtil.validateNull(businessPartner.getUUID()))
 				.setId(businessPartner.getC_BPartner_ID())
