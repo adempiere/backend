@@ -1234,9 +1234,6 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 		}
 		//	Display Type
 		int displayTypeId = column.getAD_Reference_ID();
-		if(column.getAD_Reference_ID() > 0) {
-			displayTypeId = column.getAD_Reference_ID();
-		}
 		//	Convert
 		Field.Builder builder = Field.newBuilder()
 				.setId(column.getAD_Column_ID())
@@ -1286,9 +1283,6 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 			}
 			//	Validation Code
 			int validationRuleId = column.getAD_Val_Rule_ID();
-			if(column.getAD_Val_Rule_ID() > 0) {
-				validationRuleId = column.getAD_Val_Rule_ID();
-			}
 			//	Set Validation Code
 			String validationCode = null;
 			if(validationRuleId > 0) {
@@ -1605,6 +1599,10 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 				queryForLookup += (hasWhereClause ? " AND " : " WHERE ") + info.ValidationCode;
 			}
 		}
+		//	Add support to UUID
+		int positionFrom = queryForLookup.indexOf(" FROM ");
+		queryForLookup = queryForLookup.substring(0, positionFrom) + ", " + info.TableName + ".UUID"
+				+ queryForLookup.substring(positionFrom);
 		//	For Query
 		builder.setQuery(ValueUtil.validateNull(queryForLookup));
 		//	Window Reference

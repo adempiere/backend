@@ -1530,8 +1530,14 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 				} else {
 					keyValue = rs.getInt(1);
 				}
+				String uuid = null;
+				//	Validate if exist UUID
+				int uuidIndex = getColumnIndex(metaData, I_AD_Element.COLUMNNAME_UUID);
+				if(uuidIndex != -1) {
+					uuid = rs.getString(uuidIndex);
+				}
 				//	
-				LookupItem.Builder valueObject = convertObjectFromResult(keyValue, null, rs.getString(2), rs.getString(3));
+				LookupItem.Builder valueObject = convertObjectFromResult(keyValue, uuid, rs.getString(2), rs.getString(3));
 				builder.addRecords(valueObject.build());
 				recordCount++;
 			}
@@ -1544,6 +1550,22 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 		builder.setRecordCount(recordCount);
 		//	Return
 		return builder;
+	}
+	
+	/**
+	 * Verify if exist a column
+	 * @param metaData
+	 * @param columnName
+	 * @return
+	 * @throws SQLException 
+	 */
+	private int getColumnIndex(ResultSetMetaData metaData, String columnName) throws SQLException {
+		for(int columnIndex = 1; columnIndex <= metaData.getColumnCount(); columnIndex++) {
+			if(metaData.getColumnName(columnIndex).toLowerCase().equals(columnName.toLowerCase())) {
+				return columnIndex;
+			}
+		}
+		return -1;
 	}
 	
 	/**
