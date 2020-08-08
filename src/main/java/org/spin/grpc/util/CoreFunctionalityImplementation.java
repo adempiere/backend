@@ -14,6 +14,7 @@
  ************************************************************************************/
 package org.spin.grpc.util;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,12 +24,15 @@ import org.compiere.model.I_AD_Org;
 import org.compiere.model.I_AD_Role;
 import org.compiere.model.I_C_BP_Group;
 import org.compiere.model.I_C_BPartner;
+import org.compiere.model.I_C_ConversionType;
 import org.compiere.model.I_C_Country;
+import org.compiere.model.I_C_Currency;
 import org.compiere.model.I_C_POS;
 import org.compiere.model.I_C_Region;
 import org.compiere.model.I_M_Warehouse;
 import org.compiere.model.MBPartner;
 import org.compiere.model.MBPartnerLocation;
+import org.compiere.model.MConversionRate;
 import org.compiere.model.MCountry;
 import org.compiere.model.MLanguage;
 import org.compiere.model.MLocation;
@@ -226,6 +230,56 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 					.withCause(e)
 					.asRuntimeException());
 		}
+	}
+	
+	@Override
+	public void getConversionRate(GetConversionRateRequest request, StreamObserver<ConversionRate> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Object Requested = " + request.getConversionTypeUuid());
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			ConversionRate.Builder conversionRate = ConvertUtil.convertConversionRate(getConversionRate(request));
+			responseObserver.onNext(conversionRate.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+
+	/**
+	 * Get conversion Rate from ValidFrom, Currency From, Currency To and Conversion Type
+	 * @param request
+	 * @return
+	 */
+	private MConversionRate getConversionRate(GetConversionRateRequest request) {
+		if(Util.isEmpty(request.getConversionTypeUuid())
+				|| Util.isEmpty(request.getCurrencyFromUuid())
+				|| Util.isEmpty(request.getCurrencyToUuid())) {
+			return null;
+		}
+		//	Get values
+		Timestamp conversionDate = new Timestamp(request.getConversionDate() == 0? System.currentTimeMillis(): request.getConversionDate());
+		int conversionRateId = MConversionRate.getConversionRateId(RecordUtil.getIdFromUuid(I_C_Currency.Table_Name, request.getCurrencyFromUuid(), null), 
+				RecordUtil.getIdFromUuid(I_C_Currency.Table_Name, request.getCurrencyToUuid(), null), 
+				conversionDate, 
+				RecordUtil.getIdFromUuid(I_C_ConversionType.Table_Name, request.getConversionTypeUuid(), null), 
+				Env.getAD_Client_ID(Env.getCtx()), 
+				RecordUtil.getIdFromUuid(I_AD_Org.Table_Name, request.getClientRequest().getOrganizationUuid(), null));
+		if(conversionRateId > 0) {
+			return MConversionRate.get(Env.getCtx(), conversionRateId);
+		}
+		//	
+		return null;
 	}
 	
 	/**

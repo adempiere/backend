@@ -38,6 +38,8 @@ service CoreFunctionality {
 	rpc CreateBusinessPartner(CreateBusinessPartnerRequest) returns (BusinessPartner) {}
 	//	List Business Partner
 	rpc ListBusinessPartner(ListBusinessPartnerRequest) returns (ListBusinessPartnerResponse) {}
+	//	Get Currency Rate
+	rpc GetConversionRate(GetConversionRateRequest) returns (ConversionRate) {}
 }
 
 // The client request contains client info for request.
@@ -160,6 +162,15 @@ message Country {
 	Currency currency = 22;
 }
 
+// Request Currency Rate
+message GetConversionRateRequest {
+	ClientRequest clientRequest = 1;
+	string conversionTypeUuid = 2;
+	string currencyFromUuid = 3;
+	string currencyToUuid = 4;
+	int64 conversionDate = 5;
+}
+
 // Currency info
 message Currency {
 	string uuid = 1;
@@ -169,6 +180,19 @@ message Currency {
 	string description = 5;
 	int32 stdPrecision = 6;
 	int32 costingPrecision = 7;
+}
+
+// Conversion Rate
+message ConversionRate {
+	string uuid = 1;
+	int32 id = 2;
+	string conversionTypeUuid = 3;
+	int64 validFrom = 4;
+	int64 validTo = 5;
+	Currency currencyFrom = 6;
+	Currency currencyTo = 7;
+	Decimal multiplyRate = 8;
+	Decimal divideRate = 9;
 }
 
 // Organization

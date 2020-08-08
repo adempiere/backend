@@ -17,11 +17,13 @@ package org.spin.grpc.util;
 
 import java.util.Properties;
 
+import org.compiere.model.I_C_ConversionType;
 import org.compiere.model.MAttachment;
 import org.compiere.model.MBPartner;
 import org.compiere.model.MBankAccount;
 import org.compiere.model.MCharge;
 import org.compiere.model.MClientInfo;
+import org.compiere.model.MConversionRate;
 import org.compiere.model.MCountry;
 import org.compiere.model.MCurrency;
 import org.compiere.model.MDocType;
@@ -124,6 +126,33 @@ public class ConvertUtil {
 			.setId(charge.getC_Charge_ID())
 			.setName(ValueUtil.validateNull(charge.getName()))
 			.setDescription(ValueUtil.validateNull(charge.getDescription()));
+	}
+	
+	/**
+	 * Convert charge from 
+	 * @param chargeId
+	 * @return
+	 */
+	public static ConversionRate.Builder convertConversionRate(MConversionRate conversionRate) {
+		ConversionRate.Builder builder = ConversionRate.newBuilder();
+		if(conversionRate == null) {
+			return builder;
+		}
+		//	convert charge
+		builder
+			.setUuid(ValueUtil.validateNull(conversionRate.getUUID()))
+			.setId(conversionRate.getC_Conversion_Rate_ID())
+			.setValidFrom(conversionRate.getValidFrom().getTime())
+			.setConversionTypeUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_ConversionType.Table_Name, conversionRate.getC_ConversionType_ID())))
+			.setCurrencyFrom(convertCurrency(MCurrency.get(Env.getCtx(), conversionRate.getC_Currency_ID())))
+			.setCurrencyTo(convertCurrency(MCurrency.get(Env.getCtx(), conversionRate.getC_Currency_ID_To())))
+			.setMultiplyRate(ValueUtil.getDecimalFromBigDecimal(conversionRate.getMultiplyRate()))
+			.setDivideRate(ValueUtil.getDecimalFromBigDecimal(conversionRate.getDivideRate()));
+		if(conversionRate.getValidTo() != null) {
+			builder.setValidTo(conversionRate.getValidTo().getTime());
+		}
+		//	
+		return builder;
 	}
 	
 	/**
