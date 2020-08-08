@@ -77,7 +77,7 @@ public class RecordUtil {
 	 * @param recordId
 	 * @return
 	 */
-	public static PO getEntity(Properties context, String tableName, String uuid, int recordId) {
+	public static PO getEntity(Properties context, String tableName, String uuid, int recordId, String transactionName) {
 		//	Validate ID
 		if(recordId == 0
 				&& Util.isEmpty(uuid)) {
@@ -112,7 +112,7 @@ public class RecordUtil {
 	 * @param parameters
 	 * @return
 	 */
-	public static PO getEntity(Properties context, String tableName, String whereClause, List<Object> parameters) {
+	public static PO getEntity(Properties context, String tableName, String whereClause, List<Object> parameters, String transactionName) {
 		//	Validate ID
 		if(Util.isEmpty(whereClause)) {
 			throw new AdempiereException("@WhereClause@ @NotFound@");
@@ -133,12 +133,12 @@ public class RecordUtil {
 	 * @param uuid
 	 * @return
 	 */
-	public static int getIdFromUuid(String tableName, String uuid) {
+	public static int getIdFromUuid(String tableName, String uuid, String transactionName) {
 		if(Util.isEmpty(tableName) || Util.isEmpty(uuid)) {
 			return -1;
 		}
 		//	Get
-		return IDFinder.getIdFromUUID(Env.getCtx(), tableName, uuid, Env.getAD_Client_ID(Env.getCtx()), null);
+		return IDFinder.getIdFromUUID(Env.getCtx(), tableName, uuid, Env.getAD_Client_ID(Env.getCtx()), transactionName);
 	}
 	
 	/**

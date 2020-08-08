@@ -497,7 +497,7 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 	 * @return
 	 */
 	private Tab.Builder convertTab(Properties context, String uuid, boolean withFields) {
-		MTab tab = MTab.get(context, RecordUtil.getIdFromUuid(I_AD_Tab.Table_Name, uuid));
+		MTab tab = MTab.get(context, RecordUtil.getIdFromUuid(I_AD_Tab.Table_Name, uuid, null));
 		//	Convert
 		return convertTab(context, tab, withFields);
 	}
@@ -509,7 +509,7 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 	 * @return
 	 */
 	private Process.Builder convertProcess(Properties context, String uuid, boolean withParameters) {
-		MProcess process = MProcess.get(context, RecordUtil.getIdFromUuid(I_AD_Process.Table_Name, uuid));
+		MProcess process = MProcess.get(context, RecordUtil.getIdFromUuid(I_AD_Process.Table_Name, uuid, null));
 		//	Convert
 		return convertProcess(context, process, withParameters);
 	}
@@ -521,7 +521,7 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 	 * @return
 	 */
 	private Browser.Builder convertBrowser(Properties context, String uuid, boolean withFields) {
-		MBrowse browser = ASPUtil.getInstance(context).getBrowse(RecordUtil.getIdFromUuid(I_AD_Browse.Table_Name, uuid));
+		MBrowse browser = ASPUtil.getInstance(context).getBrowse(RecordUtil.getIdFromUuid(I_AD_Browse.Table_Name, uuid, null));
 		//	Convert
 		return convertBrowser(context, browser, withFields);
 	}

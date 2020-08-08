@@ -315,9 +315,9 @@ public class AccessServiceImplementation extends SecurityImplBase {
 			organizationId = DB.getSQLValue(null, organizationSQL, roleId, userId);
 			warehouseId = DB.getSQLValue(null, "SELECT M_Warehouse_ID FROM M_Warehouse WHERE IsActive = 'Y' AND AD_Org_ID = ?", organizationId);
 		} else {
-			roleId = RecordUtil.getIdFromUuid(I_AD_Role.Table_Name, request.getRoleUuid());
-			organizationId = RecordUtil.getIdFromUuid(I_AD_Org.Table_Name, request.getOrganizationUuid());
-			warehouseId = RecordUtil.getIdFromUuid(I_M_Warehouse.Table_Name, request.getWarehouseUuid());
+			roleId = RecordUtil.getIdFromUuid(I_AD_Role.Table_Name, request.getRoleUuid(), null);
+			organizationId = RecordUtil.getIdFromUuid(I_AD_Org.Table_Name, request.getOrganizationUuid(), null);
+			warehouseId = RecordUtil.getIdFromUuid(I_M_Warehouse.Table_Name, request.getWarehouseUuid(), null);
 		}
 		if(organizationId < 0) {
 			organizationId = 0;

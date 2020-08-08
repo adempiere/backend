@@ -62,6 +62,7 @@ import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.compiere.util.MimeType;
 import org.compiere.util.Msg;
+import org.compiere.util.Trx;
 import org.compiere.util.Util;
 import org.eevolution.service.dsl.ProcessBuilder;
 import org.spin.grpc.util.BusinessDataGrpc.BusinessDataImplBase;
@@ -241,7 +242,7 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 			if(recordId != 0) {
 				uuid = null;
 			}
-			entity = RecordUtil.getEntity(context, request.getTableName(), uuid, recordId);
+			entity = RecordUtil.getEntity(context, request.getTableName(), uuid, recordId, null);
 			if(entity != null) {
 				recordId = entity.get_ID();
 			}
@@ -534,11 +535,11 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 		PO entity = null;
 		if(!Util.isEmpty(request.getUuid())
 				|| request.getRecordId() != 0) {
-			entity = RecordUtil.getEntity(Env.getCtx(), tableName, request.getUuid(), request.getRecordId());
+			entity = RecordUtil.getEntity(Env.getCtx(), tableName, request.getUuid(), request.getRecordId(), null);
 		} else if(request.getCriteria() != null) {
 			List<Object> parameters = new ArrayList<Object>();
 			String whereClause = getWhereClauseFromCriteria(request.getCriteria(), parameters);
-			entity = RecordUtil.getEntity(Env.getCtx(), tableName, whereClause, parameters);
+			entity = RecordUtil.getEntity(Env.getCtx(), tableName, whereClause, parameters, null);
 		}
 		//	Return
 		return convertEntity(entity);
@@ -551,11 +552,13 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 	 * @return
 	 */
 	private Empty.Builder deleteEntity(Properties context, DeleteEntityRequest request) {
-		PO entity = RecordUtil.getEntity(context, request.getTableName(), request.getUuid(), request.getRecordId());
-		if(entity != null
-				&& entity.get_ID() >= 0) {
-			entity.deleteEx(true);
-		}
+		Trx.run(transactionName -> {
+			PO entity = RecordUtil.getEntity(context, request.getTableName(), request.getUuid(), request.getRecordId(), transactionName);
+			if(entity != null
+					&& entity.get_ID() >= 0) {
+				entity.deleteEx(true);
+			}
+		});
 		//	Return
 		return Empty.newBuilder();
 	}
@@ -600,7 +603,7 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 	 * @return
 	 */
 	private Entity.Builder updateEntity(Properties context, UpdateEntityRequest request) {
-		PO entity = RecordUtil.getEntity(context, request.getTableName(), request.getUuid(), request.getRecordId());
+		PO entity = RecordUtil.getEntity(context, request.getTableName(), request.getUuid(), request.getRecordId(), null);
 		if(entity != null
 				&& entity.get_ID() >= 0) {
 			request.getAttributesList().forEach(attribute -> {

@@ -64,6 +64,7 @@ import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.compiere.util.TimeUtil;
+import org.compiere.util.Trx;
 import org.compiere.util.Util;
 import org.spin.grpc.util.StoreGrpc.StoreImplBase;
 
@@ -307,7 +308,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					request.getClientRequest().getLanguage(), 
 					request.getClientRequest().getOrganizationUuid(), 
 					request.getClientRequest().getWarehouseUuid());
-			Order.Builder order = convertOrder(getOrder(request.getOrderUuid()));
+			Order.Builder order = convertOrder(getOrder(request.getOrderUuid(), null));
 			responseObserver.onNext(order.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -379,7 +380,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					request.getClientRequest().getLanguage(), 
 					request.getClientRequest().getOrganizationUuid(), 
 					request.getClientRequest().getWarehouseUuid());
-			KeyLayout.Builder keyLayout = convertKeyLayout(RecordUtil.getIdFromUuid(I_C_POSKeyLayout.Table_Name, request.getKeyLayoutUuid()));
+			KeyLayout.Builder keyLayout = convertKeyLayout(RecordUtil.getIdFromUuid(I_C_POSKeyLayout.Table_Name, request.getKeyLayoutUuid(), null));
 			responseObserver.onNext(keyLayout.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -435,7 +436,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	Parameters
 		List<Object> parameters = new ArrayList<Object>();
 		//	Aisle Seller
-		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid());
+		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), null);
 		boolean isWithAisleSeller = M_Element.get(Env.getCtx(), "IsAisleSeller") != null;
 		if(isWithAisleSeller && request.getIsAisleSeller()) {
 			whereClause.append("C_Order.C_POS_ID <> ? AND EXISTS(SELECT 1 FROM C_POS p WHERE p.C_POS_ID = C_Order.C_POS_ID AND p.IsAisleSeller = 'Y')");
@@ -451,7 +452,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		}
 		//	Business Partner
 		if(!Util.isEmpty(request.getBusinessPartnerUuid())) {
-			int businessPartnerId = RecordUtil.getIdFromUuid(I_C_BPartner.Table_Name, request.getBusinessPartnerUuid());
+			int businessPartnerId = RecordUtil.getIdFromUuid(I_C_BPartner.Table_Name, request.getBusinessPartnerUuid(), null);
 			whereClause.append(" AND C_BPartner_ID = ?");
 			parameters.add(businessPartnerId);
 		}
@@ -492,7 +493,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		}
 		//	Sales Representative
 		if(!Util.isEmpty(request.getSalesRepresentativeUuid())) {
-			int salesRepresentativeId = RecordUtil.getIdFromUuid(I_AD_User.Table_Name, request.getSalesRepresentativeUuid());
+			int salesRepresentativeId = RecordUtil.getIdFromUuid(I_AD_User.Table_Name, request.getSalesRepresentativeUuid(), null);
 			whereClause.append(" AND SalesRep_ID = ?");
 			parameters.add(salesRepresentativeId);
 		}
@@ -561,8 +562,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 * @param uuid
 	 * @return
 	 */
-	private MOrder getOrder(String uuid) {
-		return (MOrder) RecordUtil.getEntity(Env.getCtx(), I_C_Order.Table_Name, uuid, 0);
+	private MOrder getOrder(String uuid, String transactionName) {
+		return (MOrder) RecordUtil.getEntity(Env.getCtx(), I_C_Order.Table_Name, uuid, 0, transactionName);
 	}
 	
 	/**
@@ -571,52 +572,54 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 * @return
 	 */
 	private MOrder updateOrder(UpdateOrderRequest request) {
-		MOrder order = null;
 		if(!Util.isEmpty(request.getOrderUuid())) {
-			order = getOrder(request.getOrderUuid());
-			if(order == null) {
-				throw new AdempiereException("@C_Order_ID@ @NotFound@");
-			}
-			if(!DocumentUtil.isDrafted(order)) {
-				throw new AdempiereException("@C_Order_ID@ @IsCompleted@");
-			}
-			//	Update if exists
-			//	POS
-			if(!Util.isEmpty(request.getPosUuid())) {
-				int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid());
-				if(posId > 0) {
-					order.setC_POS_ID(posId);
+			Trx.run(transactionName -> {
+				MOrder order = getOrder(request.getOrderUuid(), transactionName);
+				if(order == null) {
+					throw new AdempiereException("@C_Order_ID@ @NotFound@");
 				}
-			}
-			//	Document Type
-			if(!Util.isEmpty(request.getDocumentTypeUuid())) {
-				int documentTypeId = RecordUtil.getIdFromUuid(I_C_DocType.Table_Name, request.getDocumentTypeUuid());
-				if(documentTypeId > 0) {
-					order.setC_DocTypeTarget_ID(documentTypeId);
-					//	Set Sequenced No
-					String value = DB.getDocumentNo(documentTypeId, null, false, order);
-					if (value != null) {
-						order.setDocumentNo(value);
+				if(!DocumentUtil.isDrafted(order)) {
+					throw new AdempiereException("@C_Order_ID@ @IsCompleted@");
+				}
+				order.set_TrxName(transactionName);
+				//	Update if exists
+				//	POS
+				if(!Util.isEmpty(request.getPosUuid())) {
+					int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), transactionName);
+					if(posId > 0) {
+						order.setC_POS_ID(posId);
 					}
 				}
-			}
-			//	Business partner
-			if(!Util.isEmpty(request.getCustomerUuid())) {
-				int businessPartnerId = RecordUtil.getIdFromUuid(I_C_BPartner.Table_Name, request.getCustomerUuid());
-				if(businessPartnerId > 0
-						&& order.getC_POS_ID() > 0) {
-					configureBPartner(order, businessPartnerId);
+				//	Document Type
+				if(!Util.isEmpty(request.getDocumentTypeUuid())) {
+					int documentTypeId = RecordUtil.getIdFromUuid(I_C_DocType.Table_Name, request.getDocumentTypeUuid(), transactionName);
+					if(documentTypeId > 0) {
+						order.setC_DocTypeTarget_ID(documentTypeId);
+						//	Set Sequenced No
+						String value = DB.getDocumentNo(documentTypeId, transactionName, false, order);
+						if (value != null) {
+							order.setDocumentNo(value);
+						}
+					}
 				}
-			}
-			//	Description
-			if(!Util.isEmpty(request.getDescription())) {
-				order.setDescription(request.getDescription());
-			}
-			//	Save
-			order.saveEx();
+				//	Business partner
+				if(!Util.isEmpty(request.getCustomerUuid())) {
+					int businessPartnerId = RecordUtil.getIdFromUuid(I_C_BPartner.Table_Name, request.getCustomerUuid(), transactionName);
+					if(businessPartnerId > 0
+							&& order.getC_POS_ID() > 0) {
+						configureBPartner(order, businessPartnerId, transactionName);
+					}
+				}
+				//	Description
+				if(!Util.isEmpty(request.getDescription())) {
+					order.setDescription(request.getDescription());
+				}
+				//	Save
+				order.saveEx();
+			});
 		}
 		//	Return order
-		return order;
+		return null;
 	}
 	
 	/**
@@ -628,7 +631,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	/**
 	 * set BPartner and save
 	 */
-	public void configureBPartner(MOrder order, int businessPartnerId) {
+	public void configureBPartner(MOrder order, int businessPartnerId, String transactionName) {
 		//	Valid if has a Order
 		if(DocumentUtil.isCompleted(order)
 				|| DocumentUtil.isVoided(order))
@@ -643,6 +646,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		}
 		//	Get BPartner
 		MBPartner partner = MBPartner.get(Env.getCtx(), businessPartnerId);
+		partner.set_TrxName(transactionName);
 		if (partner == null || partner.get_ID() == 0) {
 			throw new AdempiereException("POS.NoBPartnerForOrder");
 		} else {
@@ -721,22 +725,23 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		if(Util.isEmpty(request.getOrderLineUuid())) {
 			throw new AdempiereException("@C_OrderLine_ID@ @NotFound@");
 		}
-		MOrderLine orderLine = new Query(Env.getCtx(), I_C_OrderLine.Table_Name, I_C_OrderLine.COLUMNNAME_UUID + " = ?", null)
-				.setParameters(request.getOrderLineUuid())
-				.setClient_ID()
-				.first();
-		if(orderLine == null
-				|| orderLine.getC_OrderLine_ID() == 0) {
-			return Empty.newBuilder();
-		}
-		//	Validate processed Order
-		if(orderLine.isProcessed()) {
-			throw new AdempiereException("@C_OrderLine_ID@ @Processed@");
-		}
-		if(orderLine != null
-				&& orderLine.getC_Order_ID() >= 0) {
-			orderLine.deleteEx(true);
-		}
+		Trx.run(transactionName -> {
+			MOrderLine orderLine = new Query(Env.getCtx(), I_C_OrderLine.Table_Name, I_C_OrderLine.COLUMNNAME_UUID + " = ?", transactionName)
+					.setParameters(request.getOrderLineUuid())
+					.setClient_ID()
+					.first();
+			if(orderLine != null
+					&& orderLine.getC_OrderLine_ID() != 0) {
+				//	Validate processed Order
+				if(orderLine.isProcessed()) {
+					throw new AdempiereException("@C_OrderLine_ID@ @Processed@");
+				}
+				if(orderLine != null
+						&& orderLine.getC_Order_ID() >= 0) {
+					orderLine.deleteEx(true);
+				}
+			}
+		});
 		//	Return
 		return Empty.newBuilder();
 	}
@@ -787,7 +792,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			throw new AdempiereException("@C_OrderLine_ID@ @NotFound@");
 		}
 		//	
-		int orderLineId = RecordUtil.getIdFromUuid(I_C_OrderLine.Table_Name, request.getOrderLineUuid());
+		int orderLineId = RecordUtil.getIdFromUuid(I_C_OrderLine.Table_Name, request.getOrderLineUuid(), null);
 		if(orderLineId <= 0) {
 			return OrderLine.newBuilder();
 		}
@@ -815,16 +820,16 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				&& Util.isEmpty(request.getChargeUuid())) {
 			throw new AdempiereException("@M_Product_ID@ / @C_Charge_ID@ @NotFound@");
 		}
-		int orderId = RecordUtil.getIdFromUuid(I_C_Order.Table_Name, request.getOrderUuid());
+		int orderId = RecordUtil.getIdFromUuid(I_C_Order.Table_Name, request.getOrderUuid(), null);
 		if(orderId <= 0) {
 			return OrderLine.newBuilder();
 		}
 		//	Quantity
 		return convertOrderLine(
 				addOrderLine(orderId, 
-						RecordUtil.getIdFromUuid(I_M_Product.Table_Name, request.getProductUuid()), 
-						RecordUtil.getIdFromUuid(I_C_Charge.Table_Name, request.getChargeUuid()), 
-						RecordUtil.getIdFromUuid(I_M_Warehouse.Table_Name, request.getWarehouseUuid()), 
+						RecordUtil.getIdFromUuid(I_M_Product.Table_Name, request.getProductUuid(), null), 
+						RecordUtil.getIdFromUuid(I_C_Charge.Table_Name, request.getChargeUuid(), null), 
+						RecordUtil.getIdFromUuid(I_M_Warehouse.Table_Name, request.getWarehouseUuid(), null), 
 						ValueUtil.getBigDecimalFromDecimal(request.getQuantity())));
 	}
 	
@@ -960,44 +965,52 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		if(orderId <= 0) {
 			return null;
 		}
-		MOrder order = new MOrder(Env.getCtx(), orderId, null);
-		//	Valid Complete
-		if (!DocumentUtil.isDrafted(order))
-			return null;
-		// catch Exceptions at order.getLines()
-		Optional<MOrderLine> maybeOrderLine = Arrays.asList(order.getLines(true, "Line"))
-				.stream()
-				.filter(orderLine -> (productId != 0 && productId == orderLine.getM_Product_ID()) 
-						|| (chargeId != 0 && chargeId == orderLine.getC_Charge_ID()))
-				.findFirst();
-		if(maybeOrderLine.isPresent()) {
-			MOrderLine orderLine = maybeOrderLine.get();
-			BigDecimal currentPrice = orderLine.getPriceEntered();
-			//	Set Quantity
-			if(quantity == null) {
-				quantity = orderLine.getQtyOrdered();
-				quantity = quantity.add(Env.ONE);
+		//	
+		AtomicReference<MOrderLine> orderLineReference = new AtomicReference<MOrderLine>();
+		Trx.run(transactionName -> {
+			MOrder order = new MOrder(Env.getCtx(), orderId, transactionName);
+			//	Valid Complete
+			if (!DocumentUtil.isDrafted(order))
+				throw new AdempiereException("@C_Order_ID@ @IsDrafted@");
+			// catch Exceptions at order.getLines()
+			Optional<MOrderLine> maybeOrderLine = Arrays.asList(order.getLines(true, "Line"))
+					.stream()
+					.filter(orderLine -> (productId != 0 && productId == orderLine.getM_Product_ID()) 
+							|| (chargeId != 0 && chargeId == orderLine.getC_Charge_ID()))
+					.findFirst();
+			if(maybeOrderLine.isPresent()) {
+				MOrderLine orderLine = maybeOrderLine.get();
+				BigDecimal currentPrice = orderLine.getPriceEntered();
+				//	Set Quantity
+				BigDecimal quantityToOrder = quantity;
+				if(quantity == null) {
+					quantityToOrder = orderLine.getQtyOrdered();
+					quantityToOrder = quantityToOrder.add(Env.ONE);
+				}
+				orderLine.setQty(quantityToOrder);
+				orderLine.setPrice(currentPrice); //	sets List/limit
+				orderLine.saveEx();
+				orderLineReference.set(orderLine);
+			} else {
+				BigDecimal quantityToOrder = quantity;
+				if(quantity == null) {
+					quantityToOrder = Env.ONE;
+				}
+		        //create new line
+				MOrderLine orderLine = new MOrderLine(order);
+				if(chargeId > 0) {
+					orderLine.setC_Charge_ID(chargeId);
+				} else if(productId > 0) {
+					orderLine.setProduct(MProduct.get(order.getCtx(), productId));
+				}
+				orderLine.setQty(quantityToOrder);
+				orderLine.setPrice();
+				//	Save Line
+				orderLine.saveEx();
+				orderLineReference.set(orderLine);
 			}
-			orderLine.setQty(quantity);
-			orderLine.setPrice(currentPrice); //	sets List/limit
-			orderLine.saveEx();
-			return orderLine;
-		}
-		if(quantity == null) {
-			quantity = Env.ONE;
-		}
-        //create new line
-		MOrderLine orderLine = new MOrderLine(order);
-		if(chargeId > 0) {
-			orderLine.setC_Charge_ID(chargeId);
-		} else if(productId > 0) {
-			orderLine.setProduct(MProduct.get(order.getCtx(), productId));
-		}
-		orderLine.setQty(quantity);
-		orderLine.setPrice();
-		//	Save Line
-		orderLine.saveEx();
-		return orderLine;
+		});
+		return orderLineReference.get();
 			
 	} //	addOrUpdateLine
 	
@@ -1014,46 +1027,49 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		if(orderLineId <= 0) {
 			return null;
 		}
-		MOrderLine orderLine = new MOrderLine(Env.getCtx(), orderLineId, null);
-		MOrder order = orderLine.getParent();
-		orderLine.setHeaderInfo(order);
-		//	Valid Complete
-		if (!DocumentUtil.isDrafted(order))
-			return null;
-		if((quantity == null || quantity.equals(Env.ZERO))
-				&& (price == null || price.equals(Env.ZERO))
-				&& (discountRate == null || discountRate.equals(Env.ZERO))) {
-			return null;
-		}
-		//	Get if is null
-		if(quantity == null
-				|| quantity.equals(Env.ZERO)) {
-			quantity = orderLine.getQtyEntered();
-		} else if(isAddQuantity) {
-			BigDecimal currentQuantity = orderLine.getQtyEntered();
-			if(currentQuantity == null) {
-				currentQuantity = Env.ZERO;
+		AtomicReference<MOrderLine> maybeOrderLine = new AtomicReference<MOrderLine>();
+		Trx.run(transactionName -> {
+			MOrderLine orderLine = new MOrderLine(Env.getCtx(), orderLineId, transactionName);
+			MOrder order = orderLine.getParent();
+			orderLine.setHeaderInfo(order);
+			//	Valid Complete
+			if (!DocumentUtil.isDrafted(order))
+				throw new AdempiereException("@C_ORder_ID@ @IsDrafted@");
+			if((quantity == null || quantity.equals(Env.ZERO))
+					&& (price == null || price.equals(Env.ZERO))
+					&& (discountRate == null || discountRate.equals(Env.ZERO))) {
+				throw new AdempiereException("@C_ORder_ID@ @IsDrafted@");
 			}
-			quantity = currentQuantity.add(quantity);
-		}
-		if(price == null
-				|| price.equals(Env.ZERO)) {
-			price = orderLine.getPriceEntered();
-		}
-		if(discountRate == null
-				|| discountRate.equals(Env.ZERO)) {
-			discountRate = orderLine.getDiscount();
-		} else {
-			BigDecimal discountAmount = orderLine.getPriceList().multiply(discountRate.divide(Env.ONEHUNDRED));
-			price = orderLine.getPriceList().subtract(discountAmount);
-		}
-		//	Set values
-		orderLine.setPrice(price); //	sets List/limit
-		orderLine.setQty(quantity);
-		orderLine.setTax();
-		orderLine.saveEx();
-		return orderLine;
-			
+			//	Get if is null
+			BigDecimal quantityToOrder = quantity;
+			if(quantity == null
+					|| quantity.equals(Env.ZERO)) {
+				quantityToOrder = orderLine.getQtyEntered();
+			} else if(isAddQuantity) {
+				BigDecimal currentQuantity = orderLine.getQtyEntered();
+				if(currentQuantity == null) {
+					currentQuantity = Env.ZERO;
+				}
+				quantityToOrder = currentQuantity.add(quantity);
+			}
+			BigDecimal priceToOrder = price;
+			if(price == null
+					|| price.equals(Env.ZERO)) {
+				priceToOrder = orderLine.getPriceEntered();
+			}
+			if(discountRate != null
+					&& !discountRate.equals(Env.ZERO)) {
+				BigDecimal discountAmount = orderLine.getPriceList().multiply(discountRate.divide(Env.ONEHUNDRED));
+				priceToOrder = orderLine.getPriceList().subtract(discountAmount);
+			}
+			//	Set values
+			orderLine.setPrice(priceToOrder); //	sets List/limit
+			orderLine.setQty(quantityToOrder);
+			orderLine.setTax();
+			orderLine.saveEx();
+			maybeOrderLine.set(orderLine);
+		});
+		return maybeOrderLine.get();
 	} //	UpdateLine
 	
 	/**
@@ -1066,7 +1082,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		if(Util.isEmpty(request.getUserUuid())) {
 			throw new AdempiereException("@SalesRep_ID@ @NotFound@");
 		}
-		int salesRepresentativeId = RecordUtil.getIdFromUuid(I_AD_User.Table_Name,request.getUserUuid());
+		int salesRepresentativeId = RecordUtil.getIdFromUuid(I_AD_User.Table_Name,request.getUserUuid(), null);
 		//	Get page and count
 		String nexPageToken = null;
 		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
@@ -1110,7 +1126,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 * @return
 	 */
 	private PointOfSales.Builder getPosBuilder(PointOfSalesRequest request) {
-		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPointOfSalesUuid());
+		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPointOfSalesUuid(), null);
 		if(posId <= 0) {
 			throw new AdempiereException("@C_POS_ID@ @NotFound@");
 		}
@@ -1177,68 +1193,72 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		if(Util.isEmpty(request.getPosUuid())) {
 			throw new AdempiereException("@C_POS_ID@ @NotFound@");
 		}
-		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid());
-		if(posId <= 0) {
-			throw new AdempiereException("@C_POS_ID@ @NotFound@");
-		}
-		MPOS pos = MPOS.get(Env.getCtx(), posId);
-		//	
-		MOrder salesOrder = new Query(Env.getCtx(), I_C_Order.Table_Name, 
-				"DocStatus = 'DR' "
-				+ "AND C_POS_ID = ? "
-				+ "AND NOT EXISTS(SELECT 1 "
-				+ "					FROM C_OrderLine ol "
-				+ "					WHERE ol.C_Order_ID = C_Order.C_Order_ID) ", null)
-				.setParameters(pos.getC_POS_ID())
-				.first();
-		//	Validate
-		if(salesOrder == null) {
-			salesOrder = new MOrder(Env.getCtx(), 0, null);
-		} else {
-			salesOrder.setDateOrdered(getDate());
-			salesOrder.setDateAcct(getDate());
-			salesOrder.setDatePromised(getDate());
-		}
-		//	Default values
-		salesOrder.setIsSOTrx(true);
-		salesOrder.setAD_Org_ID(pos.getAD_Org_ID());
-		salesOrder.setC_POS_ID(pos.getC_POS_ID());
-		//	Warehouse
-		if(pos.getM_Warehouse_ID() != 0) {
-			salesOrder.setM_Warehouse_ID(pos.getM_Warehouse_ID());
-		}
-		//	Price List
-		if(pos.getM_PriceList_ID() != 0) {
-			salesOrder.setM_PriceList_ID(pos.getM_PriceList_ID());
-		}
-		//	Document Type
-		int documentTypeId = 0;
-		if(!Util.isEmpty(request.getDocumentTypeUuid())) {
-			documentTypeId = RecordUtil.getIdFromUuid(I_C_DocType.Table_Name, request.getDocumentTypeUuid());
-		}
-		//	Validate
-		if(documentTypeId <= 0
-				&& pos.getC_DocType_ID() != 0) {
-			documentTypeId = pos.getC_DocType_ID();
-		}
-		//	Validate
-		if(documentTypeId > 0) {
-			salesOrder.setC_DocTypeTarget_ID(documentTypeId);
-		} else {
-			salesOrder.setC_DocTypeTarget_ID(MOrder.DocSubTypeSO_POS);
-		}
-		//	Delivery Rules
-		if (pos.getDeliveryRule() != null) {
-			salesOrder.setDeliveryRule(pos.getDeliveryRule());
-		}
-		//	Invoice Rule
-		if (pos.getInvoiceRule() != null) {
-			salesOrder.setInvoiceRule(pos.getInvoiceRule());
-		}
-		//	Set business partner
-		setBPartner(pos, salesOrder, request.getCustomerUuid());
+		AtomicReference<MOrder> maybeOrder = new AtomicReference<MOrder>();
+		Trx.run(transactionName -> {
+			int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), transactionName);
+			if(posId <= 0) {
+				throw new AdempiereException("@C_POS_ID@ @NotFound@");
+			}
+			MPOS pos = MPOS.get(Env.getCtx(), posId);
+			//	
+			MOrder salesOrder = new Query(Env.getCtx(), I_C_Order.Table_Name, 
+					"DocStatus = 'DR' "
+					+ "AND C_POS_ID = ? "
+					+ "AND NOT EXISTS(SELECT 1 "
+					+ "					FROM C_OrderLine ol "
+					+ "					WHERE ol.C_Order_ID = C_Order.C_Order_ID) ", null)
+					.setParameters(pos.getC_POS_ID())
+					.first();
+			//	Validate
+			if(salesOrder == null) {
+				salesOrder = new MOrder(Env.getCtx(), 0, null);
+			} else {
+				salesOrder.setDateOrdered(getDate());
+				salesOrder.setDateAcct(getDate());
+				salesOrder.setDatePromised(getDate());
+			}
+			//	Default values
+			salesOrder.setIsSOTrx(true);
+			salesOrder.setAD_Org_ID(pos.getAD_Org_ID());
+			salesOrder.setC_POS_ID(pos.getC_POS_ID());
+			//	Warehouse
+			if(pos.getM_Warehouse_ID() != 0) {
+				salesOrder.setM_Warehouse_ID(pos.getM_Warehouse_ID());
+			}
+			//	Price List
+			if(pos.getM_PriceList_ID() != 0) {
+				salesOrder.setM_PriceList_ID(pos.getM_PriceList_ID());
+			}
+			//	Document Type
+			int documentTypeId = 0;
+			if(!Util.isEmpty(request.getDocumentTypeUuid())) {
+				documentTypeId = RecordUtil.getIdFromUuid(I_C_DocType.Table_Name, request.getDocumentTypeUuid(), transactionName);
+			}
+			//	Validate
+			if(documentTypeId <= 0
+					&& pos.getC_DocType_ID() != 0) {
+				documentTypeId = pos.getC_DocType_ID();
+			}
+			//	Validate
+			if(documentTypeId > 0) {
+				salesOrder.setC_DocTypeTarget_ID(documentTypeId);
+			} else {
+				salesOrder.setC_DocTypeTarget_ID(MOrder.DocSubTypeSO_POS);
+			}
+			//	Delivery Rules
+			if (pos.getDeliveryRule() != null) {
+				salesOrder.setDeliveryRule(pos.getDeliveryRule());
+			}
+			//	Invoice Rule
+			if (pos.getInvoiceRule() != null) {
+				salesOrder.setInvoiceRule(pos.getInvoiceRule());
+			}
+			//	Set business partner
+			setBPartner(pos, salesOrder, request.getCustomerUuid(), transactionName);
+			maybeOrder.set(salesOrder);
+		});
 		//	Convert order
-		return convertOrder(salesOrder);
+		return convertOrder(maybeOrder.get());
 	}
 	
 	/**
@@ -1247,7 +1267,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 * @param salesOrder
 	 * @param businessPartnerUuid
 	 */
-	private void setBPartner(MPOS pos, MOrder salesOrder, String businessPartnerUuid) {
+	private void setBPartner(MPOS pos, MOrder salesOrder, String businessPartnerUuid, String transactionName) {
 		//	Valid if has a Order
 		if(DocumentUtil.isCompleted(salesOrder)
 				|| DocumentUtil.isVoided(salesOrder)) {
@@ -1256,7 +1276,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	Get BP
 		MBPartner businessPartner = null;
 		if(!Util.isEmpty(businessPartnerUuid)) {
-			int businessPartnerId = RecordUtil.getIdFromUuid(I_C_BPartner.Table_Name, businessPartnerUuid);
+			int businessPartnerId = RecordUtil.getIdFromUuid(I_C_BPartner.Table_Name, businessPartnerUuid, transactionName);
 			if(businessPartnerId > 0) {
 				businessPartner = MBPartner.get(Env.getCtx(), businessPartnerId);
 			}
@@ -1272,6 +1292,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		}
 		int businessPartnerId = businessPartner.getC_BPartner_ID();
 		log.fine( "CPOS.setC_BPartner_ID=" + businessPartner.getC_BPartner_ID());
+		businessPartner.set_TrxName(transactionName);
 		salesOrder.setBPartner(businessPartner);
 		//	
 		MBPartnerLocation [] partnerLocations = businessPartner.getLocations(true);
@@ -1299,7 +1320,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	Save Header
 		salesOrder.saveEx();
 		//	Load Price List Version
-		MPriceList priceList = MPriceList.get(Env.getCtx(), salesOrder.getM_PriceList_ID(), null);
+		MPriceList priceList = MPriceList.get(Env.getCtx(), salesOrder.getM_PriceList_ID(), transactionName);
 		//
 		MPriceListVersion priceListVersion = priceList.getPriceListVersion (getDate());
 		List<MProductPrice> productPrices = Arrays.asList(priceListVersion.getProductPrice("AND EXISTS("
@@ -1377,7 +1398,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					.setOnlyActiveRecords(true)
 					.first();
 		} else {
-			int priceListId = RecordUtil.getIdFromUuid(I_M_PriceList.Table_Name, priceListUuid);
+			int priceListId = RecordUtil.getIdFromUuid(I_M_PriceList.Table_Name, priceListUuid, null);
 			if(priceListId > 0) {
 				priceList = MPriceList.get(Env.getCtx(), priceListId, null);
 			}
@@ -1436,7 +1457,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 						+ "AND pp.PriceLimit IS NOT NULL AND pp.PriceLimit > 0 "
 						+ "AND pp.M_Product_ID = M_Product.M_Product_ID))");
 				//	Add parameters
-				parameters.add(RecordUtil.getIdFromUuid(I_M_PriceList.Table_Name, request.getPriceListUuid()));
+				parameters.add(RecordUtil.getIdFromUuid(I_M_PriceList.Table_Name, request.getPriceListUuid(), null));
 				parameters.add(validFrom);
 			}
 		}
@@ -1453,9 +1474,9 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		.forEach(product -> {
 			ProductPrice.Builder productPrice = convertProductPrice(
 					product, 
-					RecordUtil.getIdFromUuid(I_C_BPartner.Table_Name, request.getBusinessPartnerUuid()), 
+					RecordUtil.getIdFromUuid(I_C_BPartner.Table_Name, request.getBusinessPartnerUuid(), null), 
 					priceList, 
-					RecordUtil.getIdFromUuid(I_M_Warehouse.Table_Name, request.getWarehouseUuid()), 
+					RecordUtil.getIdFromUuid(I_M_Warehouse.Table_Name, request.getWarehouseUuid(), null), 
 					validFrom, 
 					null);
 			if(productPrice.hasPriceList()
@@ -1615,7 +1636,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					.setOnlyActiveRecords(true)
 					.first();
 		} else {
-			int priceListId = RecordUtil.getIdFromUuid(I_M_PriceList.Table_Name, request.getPriceListUuid());
+			int priceListId = RecordUtil.getIdFromUuid(I_M_PriceList.Table_Name, request.getPriceListUuid(), null);
 			if(priceListId > 0) {
 				priceList = MPriceList.get(Env.getCtx(), priceListId, null);
 			}
@@ -1633,9 +1654,9 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	Get Valid From
 		Timestamp validFrom = TimeUtil.getDay(request.getValidFrom() > 0? request.getValidFrom(): System.currentTimeMillis());
 		return convertProductPrice(product,
-				RecordUtil.getIdFromUuid(I_C_BPartner.Table_Name, request.getBusinessPartnerUuid()), 
+				RecordUtil.getIdFromUuid(I_C_BPartner.Table_Name, request.getBusinessPartnerUuid(), null), 
 				priceList, 
-				RecordUtil.getIdFromUuid(I_M_Warehouse.Table_Name, request.getWarehouseUuid()), 
+				RecordUtil.getIdFromUuid(I_M_Warehouse.Table_Name, request.getWarehouseUuid(), null), 
 				validFrom,
 				Env.ONE);
 	}

@@ -540,7 +540,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 	private void getResource(String resourceUuid, StreamObserver<Resource> responseObserver) throws Exception {
 		byte[] data = AttachmentUtil.getInstance()
 			.withClientId(Env.getAD_Client_ID(Env.getCtx()))
-			.withAttachmentReferenceId(RecordUtil.getIdFromUuid(I_AD_AttachmentReference.Table_Name, resourceUuid))
+			.withAttachmentReferenceId(RecordUtil.getIdFromUuid(I_AD_AttachmentReference.Table_Name, resourceUuid, null))
 			.getAttachment();
 		if(data == null) {
 			responseObserver.onCompleted();
@@ -620,7 +620,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 				tableId = table.getAD_Table_ID();
 			}
 		}
-		int recordId = RecordUtil.getIdFromUuid(request.getTableName(), request.getRecordUuid());
+		int recordId = RecordUtil.getIdFromUuid(request.getTableName(), request.getRecordUuid(), null);
 		if(tableId != 0
 				&& recordId !=  0) {
 			return ConvertUtil.convertAttachment(MAttachment.get(Env.getCtx(), tableId, recordId));

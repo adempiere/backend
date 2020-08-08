@@ -41,6 +41,7 @@ import org.compiere.util.CCache;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
+import org.compiere.util.Trx;
 import org.compiere.util.Util;
 import org.spin.grpc.util.CoreFunctionalityGrpc.CoreFunctionalityImplBase;
 
@@ -353,121 +354,124 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 		if(Util.isEmpty(request.getPosUuid())) {
 			throw new AdempiereException("@C_POS_ID@ @IsMandatory@");
 		}
-		//	Create it
-		MBPartner businessPartner = MBPartner.getTemplate(Env.getCtx(), Env.getAD_Client_ID(Env.getCtx()), RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid()));
-		businessPartner.setAD_Org_ID(0);
-		businessPartner.setIsCustomer (true);
-		businessPartner.setIsVendor (false);
-		//	Set Value
-		if(Util.isEmpty(request.getValue())) {
-			String value = DB.getDocumentNo (Env.getAD_Client_ID(Env.getCtx()), "C_BPartner", null, businessPartner);
-			businessPartner.setValue(value);
-		}
-		//	Tax Id
-		if(!Util.isEmpty(request.getTaxId())) {
-			businessPartner.setTaxID(request.getTaxId());
-		}
-		//	Duns
-		if(!Util.isEmpty(request.getDuns())) {
-			businessPartner.setDUNS(request.getDuns());
-		}
-		//	Naics
-		if(!Util.isEmpty(request.getNaics())) {
-			businessPartner.setNAICS(request.getNaics());
-		}
-		//	Name
-		businessPartner.setName(request.getName());
-		//	Last name
-		if(!Util.isEmpty(request.getLastName())) {
-			businessPartner.setName2(request.getLastName());
-		}
-		//	Description
-		if(!Util.isEmpty(request.getDescription())) {
-			businessPartner.setDescription(request.getDescription());
-		}
-		//	Business partner group
-		if(!Util.isEmpty(request.getBusinessPartnerGroupUuid())) {
-			int businessPartnerGroupId = RecordUtil.getIdFromUuid(I_C_BP_Group.Table_Name, request.getBusinessPartnerGroupUuid());
-			if(businessPartnerGroupId != 0) {
-				businessPartner.setC_BP_Group_ID(businessPartnerGroupId);
+		MBPartner businessPartner = MBPartner.getTemplate(Env.getCtx(), Env.getAD_Client_ID(Env.getCtx()), RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), null));
+		Trx.run(transactionName -> {
+			//	Create it
+			businessPartner.setAD_Org_ID(0);
+			businessPartner.setIsCustomer (true);
+			businessPartner.setIsVendor (false);
+			businessPartner.set_TrxName(transactionName);
+			//	Set Value
+			if(Util.isEmpty(request.getValue())) {
+				String value = DB.getDocumentNo(Env.getAD_Client_ID(Env.getCtx()), "C_BPartner", transactionName, businessPartner);
+				businessPartner.setValue(value);
 			}
-		}
-		//	Save it
-		businessPartner.saveEx();
-		//	Contact
-		if(!Util.isEmpty(request.getContactName()) || !Util.isEmpty(request.getEMail()) || !Util.isEmpty(request.getPhone())) {
-			MUser contact = new MUser(businessPartner);
+			//	Tax Id
+			if(!Util.isEmpty(request.getTaxId())) {
+				businessPartner.setTaxID(request.getTaxId());
+			}
+			//	Duns
+			if(!Util.isEmpty(request.getDuns())) {
+				businessPartner.setDUNS(request.getDuns());
+			}
+			//	Naics
+			if(!Util.isEmpty(request.getNaics())) {
+				businessPartner.setNAICS(request.getNaics());
+			}
 			//	Name
-			if(!Util.isEmpty(request.getContactName())) {
-				contact.setName(request.getContactName());
-			}
-			//	EMail
-			if(!Util.isEmpty(request.getEMail())) {
-				contact.setEMail(request.getEMail());
-			}
-			//	Phone
-			if(!Util.isEmpty(request.getPhone())) {
-				contact.setPhone(request.getPhone());
+			businessPartner.setName(request.getName());
+			//	Last name
+			if(!Util.isEmpty(request.getLastName())) {
+				businessPartner.setName2(request.getLastName());
 			}
 			//	Description
 			if(!Util.isEmpty(request.getDescription())) {
-				contact.setDescription(request.getDescription());
+				businessPartner.setDescription(request.getDescription());
 			}
-			//	Save
-			contact.saveEx();
-			//	Location
-			int countryId = 0;
-			if(!Util.isEmpty(request.getCountryUuid())) {
-				countryId = RecordUtil.getIdFromUuid(I_C_Country.Table_Name, request.getCountryUuid());
-			}
-			if(countryId <= 0) {
-				countryId = Env.getContextAsInt(Env.getCtx(), "#C_Country_ID");
-			}
-			//	
-			int regionId = 0;
-			if(!Util.isEmpty(request.getRegionUuid())) {
-				regionId = RecordUtil.getIdFromUuid(I_C_Region.Table_Name, request.getRegionUuid());
-			}
-			String cityName = null;
-			int cityId = 0;
-			//	City Name
-			if(!Util.isEmpty(request.getCityName())) {
-				cityName = request.getCityName();
-			}
-			//	City Reference
-			if(!Util.isEmpty(request.getCityUuid())) {
-				cityId = RecordUtil.getIdFromUuid(I_C_Region.Table_Name, request.getRegionUuid());
-				if(cityId > 0) {
-					cityName = null;
+			//	Business partner group
+			if(!Util.isEmpty(request.getBusinessPartnerGroupUuid())) {
+				int businessPartnerGroupId = RecordUtil.getIdFromUuid(I_C_BP_Group.Table_Name, request.getBusinessPartnerGroupUuid(), transactionName);
+				if(businessPartnerGroupId != 0) {
+					businessPartner.setC_BP_Group_ID(businessPartnerGroupId);
 				}
 			}
-			//	Instance it
-			MLocation location = new MLocation(Env.getCtx(), countryId, regionId, cityName, null);
-			if(cityId > 0) {
-				location.setC_City_ID(cityId);
-			}
-			//	Postal Code
-			if(!Util.isEmpty(request.getPostalCode())) {
-				location.setPostal(request.getPostalCode());
-			}
-			location.saveEx();
-			//	Create BP location
-			MBPartnerLocation businessPartnerLocation = new MBPartnerLocation(businessPartner);
-			businessPartnerLocation.setC_Location_ID(location.getC_Location_ID());
-			//	Phone
-			if(!Util.isEmpty(request.getPhone())) {
-				businessPartnerLocation.setPhone(request.getPhone());
-			}
+			//	Save it
+			businessPartner.saveEx();
 			//	Contact
-			if(!Util.isEmpty(request.getContactName())) {
-				businessPartnerLocation.setContactPerson(request.getContactName());
-			}
-			//	Save
-			businessPartnerLocation.saveEx();
-			//	Set Location
-			contact.setC_BPartner_Location_ID(businessPartnerLocation.getC_BPartner_Location_ID());
-			contact.saveEx();
- 		}
+			if(!Util.isEmpty(request.getContactName()) || !Util.isEmpty(request.getEMail()) || !Util.isEmpty(request.getPhone())) {
+				MUser contact = new MUser(businessPartner);
+				//	Name
+				if(!Util.isEmpty(request.getContactName())) {
+					contact.setName(request.getContactName());
+				}
+				//	EMail
+				if(!Util.isEmpty(request.getEMail())) {
+					contact.setEMail(request.getEMail());
+				}
+				//	Phone
+				if(!Util.isEmpty(request.getPhone())) {
+					contact.setPhone(request.getPhone());
+				}
+				//	Description
+				if(!Util.isEmpty(request.getDescription())) {
+					contact.setDescription(request.getDescription());
+				}
+				//	Save
+				contact.saveEx();
+				//	Location
+				int countryId = 0;
+				if(!Util.isEmpty(request.getCountryUuid())) {
+					countryId = RecordUtil.getIdFromUuid(I_C_Country.Table_Name, request.getCountryUuid(), transactionName);
+				}
+				if(countryId <= 0) {
+					countryId = Env.getContextAsInt(Env.getCtx(), "#C_Country_ID");
+				}
+				//	
+				int regionId = 0;
+				if(!Util.isEmpty(request.getRegionUuid())) {
+					regionId = RecordUtil.getIdFromUuid(I_C_Region.Table_Name, request.getRegionUuid(), transactionName);
+				}
+				String cityName = null;
+				int cityId = 0;
+				//	City Name
+				if(!Util.isEmpty(request.getCityName())) {
+					cityName = request.getCityName();
+				}
+				//	City Reference
+				if(!Util.isEmpty(request.getCityUuid())) {
+					cityId = RecordUtil.getIdFromUuid(I_C_Region.Table_Name, request.getRegionUuid(), transactionName);
+					if(cityId > 0) {
+						cityName = null;
+					}
+				}
+				//	Instance it
+				MLocation location = new MLocation(Env.getCtx(), countryId, regionId, cityName, null);
+				if(cityId > 0) {
+					location.setC_City_ID(cityId);
+				}
+				//	Postal Code
+				if(!Util.isEmpty(request.getPostalCode())) {
+					location.setPostal(request.getPostalCode());
+				}
+				location.saveEx();
+				//	Create BP location
+				MBPartnerLocation businessPartnerLocation = new MBPartnerLocation(businessPartner);
+				businessPartnerLocation.setC_Location_ID(location.getC_Location_ID());
+				//	Phone
+				if(!Util.isEmpty(request.getPhone())) {
+					businessPartnerLocation.setPhone(request.getPhone());
+				}
+				//	Contact
+				if(!Util.isEmpty(request.getContactName())) {
+					businessPartnerLocation.setContactPerson(request.getContactName());
+				}
+				//	Save
+				businessPartnerLocation.saveEx();
+				//	Set Location
+				contact.setC_BPartner_Location_ID(businessPartnerLocation.getC_BPartner_Location_ID());
+				contact.saveEx();
+	 		}
+		});
 		//	Default return
 		return ConvertUtil.convertBusinessPartner(businessPartner);
 	}
