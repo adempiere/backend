@@ -17,6 +17,8 @@ package org.spin.grpc.util;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -359,4 +361,112 @@ public class ValueUtil {
 		//	
 		return object.get_Translation(columnName);
 	}
+	
+	/**
+	 * Validate if is numeric
+	 * @param value
+	 * @return
+	 */
+	public static boolean isNumeric(String value) {
+		if(Util.isEmpty(value)) {
+			return false;
+		}
+		//	
+		return value.matches("[+-]?\\d*(\\.\\d+)?");
+	}
+	
+	/**
+	 * Get Int value from String
+	 * @param value
+	 * @return
+	 */
+	public static int getIntegerFromString(String value) {
+		Integer integerValue = null;
+		try {
+			integerValue = Integer.parseInt(value);
+		} catch (Exception e) {
+			
+		}
+		if(integerValue == null) {
+			return 0;
+		}
+		return integerValue;
+	}
+	
+	
+	/**
+	 * Validate if is boolean
+	 * @param value
+	 * @return
+	 */
+	public static boolean isBoolean(String value) {
+		if(Util.isEmpty(value)) {
+			return false;
+		}
+		//	
+		return value.equals("Y") 
+				|| value.equals("N") 
+				|| value.equals("true") 
+				|| value.equals("false");
+	}
+	
+	/**
+	 * Validate Date
+	 * @param value
+	 * @return
+	 */
+	public static boolean isDate(String value) {
+		return getDateFromString(value) != null;
+	}
+	
+	/**
+	 * Is BigDecimal
+	 * @param value
+	 * @return
+	 */
+	public static boolean isBigDecimal(String value) {
+		return getBigDecimalFromString(value) != null;
+	}
+	
+	/**
+	 * 
+	 * @param value
+	 * @return
+	 */
+	public static BigDecimal getBigDecimalFromString(String value) {
+		BigDecimal numberValue = null;
+		if(Util.isEmpty(value)) {
+			return null;
+		}
+		//	
+		try {
+			numberValue = new BigDecimal(value);
+		} catch (Exception e) {
+			
+		}
+		return numberValue;
+	}
+	
+	/**
+	 * Get Date from String
+	 * @param value
+	 * @return
+	 */
+	public static Timestamp getDateFromString(String value) {
+		if(Util.isEmpty(value)) {
+			return null;
+		}
+		Date date = null;
+		try {
+			date = DisplayType.getTimestampFormat_Default().parse(value);
+		} catch (ParseException e) {
+			
+		}
+		//	Convert
+		if(date != null) {
+			return new Timestamp(date.getTime());
+		}
+		return null;
+	}
+
 }

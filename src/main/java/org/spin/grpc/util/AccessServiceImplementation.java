@@ -14,7 +14,6 @@
  ************************************************************************************/
 package org.spin.grpc.util;
 
-import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -562,30 +561,23 @@ public class AccessServiceImplementation extends SecurityImplBase {
 	 * @param value
 	 * @return
 	 */
-	private ContextValue.Builder convertObjectFromContext(Object value) {
+	private ContextValue.Builder convertObjectFromContext(String value) {
 		ContextValue.Builder builder = ContextValue.newBuilder();
-		if(value == null) {
+		if(Util.isEmpty(value)) {
 			return builder;
 		}
-		if(value instanceof Integer) {
+		if(ValueUtil.isNumeric(value)) {
 			builder.setValueType(ContextValue.ValueType.INTEGER);
-			builder.setIntValue((Integer) value);
-		} if(value instanceof Double
-				|| value instanceof Float) {
-			builder.setValueType(ContextValue.ValueType.DOUBLE);
-			builder.setDoubleValue((Double) value);
-		} if(value instanceof BigDecimal) {
-			builder.setValueType(ContextValue.ValueType.DOUBLE);
-			builder.setDoubleValue(((BigDecimal) value).doubleValue());
-		} if(value instanceof Timestamp) {
+			builder.setIntValue(ValueUtil.getIntegerFromString(value));
+		} else if(ValueUtil.isBoolean(value)) {
+			builder.setValueType(ContextValue.ValueType.BOOLEAN);
+			builder.setBooleanValue(value.trim().equals("Y") || value.trim().equals("true"));
+		} else if(ValueUtil.isDate(value)) {
 			builder.setValueType(ContextValue.ValueType.DATE);
-			builder.setLongValue(((Timestamp) value).getTime());
-		} if(value instanceof Long) {
-			builder.setValueType(ContextValue.ValueType.LONG);
-			builder.setLongValue((Long) value);
+			builder.setLongValue(ValueUtil.getDateFromString(value).getTime());
 		} else {
 			builder.setValueType(ContextValue.ValueType.STRING);
-			builder.setStringValue(ValueUtil.validateNull((String) value));
+			builder.setStringValue(ValueUtil.validateNull(value));
 		}
 		//	
 		return builder;
@@ -659,7 +651,7 @@ public class AccessServiceImplementation extends SecurityImplBase {
 		Env.getCtx().entrySet().stream()
 			.filter(keyValue -> String.valueOf(keyValue.getKey()).startsWith("#") || String.valueOf(keyValue.getKey()).startsWith("$"))
 			.forEach(contextKeyValue -> {
-				session.putDefaultContext(contextKeyValue.getKey().toString(), convertObjectFromContext(contextKeyValue.getValue()).build());
+				session.putDefaultContext(contextKeyValue.getKey().toString(), convertObjectFromContext((String)contextKeyValue.getValue()).build());
 			});
 	}
 	
