@@ -1581,7 +1581,7 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 				.setTableName(ValueUtil.validateNull(info.TableName))
 				.setKeyColumnName(ValueUtil.validateNull(info.KeyColumn))
 				.setDisplayColumnName(ValueUtil.validateNull(info.DisplayColumn))
-				.setDirectQuery(ValueUtil.validateNull(info.QueryDirect))
+				.setDirectQuery(ValueUtil.validateNull(getQueryWithUuid(info.TableName, info.QueryDirect)))
 				.setValidationCode(ValueUtil.validateNull(info.ValidationCode));
 		//	For validation
 		String queryForLookup = info.Query;
@@ -1600,9 +1600,7 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 			}
 		}
 		//	Add support to UUID
-		int positionFrom = queryForLookup.indexOf(" FROM ");
-		queryForLookup = queryForLookup.substring(0, positionFrom) + ", " + info.TableName + ".UUID"
-				+ queryForLookup.substring(positionFrom);
+		queryForLookup = getQueryWithUuid(info.TableName, queryForLookup);
 		//	For Query
 		builder.setQuery(ValueUtil.validateNull(queryForLookup));
 		//	Window Reference
@@ -1614,6 +1612,18 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 		}
 		//	Return
 		return builder;
+	}
+	
+	/**
+	 * Get Query with UUID
+	 * @param tableName
+	 * @param query
+	 * @return
+	 */
+	private String getQueryWithUuid(String tableName, String query) {
+		//	Add support to UUID
+		int positionFrom = query.indexOf(" FROM ");
+		return query.substring(0, positionFrom) + ", " + tableName + ".UUID" + query.substring(positionFrom);
 	}
 	
 	/**
