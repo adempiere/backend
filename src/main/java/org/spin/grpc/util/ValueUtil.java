@@ -16,6 +16,8 @@
 package org.spin.grpc.util;
 
 import java.math.BigDecimal;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.Date;
@@ -23,11 +25,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.compiere.model.MQuery;
 import org.compiere.model.PO;
 import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
 import org.compiere.util.Language;
 import org.compiere.util.Util;
+import org.spin.grpc.util.Condition.Operator;
 import org.spin.grpc.util.Value.ValueType;
 
 /**
@@ -467,6 +471,161 @@ public class ValueUtil {
 			return new Timestamp(date.getTime());
 		}
 		return null;
+	}
+	
+	/**
+	 * Convert operator from gRPC to SQL
+	 * @param gRpcOperator
+	 * @return
+	 */
+	public static String convertOperator(int gRpcOperator) {
+		String operator = MQuery.EQUAL;
+		switch (gRpcOperator) {
+			case Operator.BETWEEN_VALUE:
+				operator = MQuery.BETWEEN;
+				break;
+			case Operator.EQUAL_VALUE:
+				operator = MQuery.EQUAL;
+				break;
+			case Operator.GREATER_EQUAL_VALUE:
+				operator = MQuery.GREATER_EQUAL;
+				break;
+			case Operator.GREATER_VALUE:
+				operator = MQuery.GREATER;
+				break;
+			case Operator.IN_VALUE:
+				operator = " IN ";
+				break;
+			case Operator.LESS_EQUAL_VALUE:
+				operator = MQuery.LESS_EQUAL;
+				break;
+			case Operator.LESS_VALUE:
+				operator = MQuery.LESS;
+				break;
+			case Operator.LIKE_VALUE:
+				operator = MQuery.LIKE;
+				break;
+			case Operator.NOT_EQUAL_VALUE:
+				operator = MQuery.NOT_EQUAL;
+				break;
+			case Operator.NOT_IN_VALUE:
+				operator = " NOT IN ";
+				break;
+			case Operator.NOT_LIKE_VALUE:
+				operator = MQuery.NOT_LIKE;
+				break;
+			case Operator.NOT_NULL_VALUE:
+				operator = MQuery.NOT_NULL;
+				break;
+			case Operator.NULL_VALUE:
+				operator = MQuery.NULL;
+				break;
+			default:
+				break;
+			}
+		return operator;
+	}
+	
+	/**
+	 * Set Parameter for Statement from object
+	 * @param pstmt
+	 * @param value
+	 * @param index
+	 * @throws SQLException
+	 */
+	public static void setParameterFromObject(PreparedStatement pstmt, Object value, int index) throws SQLException {
+		if(value instanceof Integer) {
+			pstmt.setInt(index, (Integer) value);
+		} else if(value instanceof Double) {
+			pstmt.setDouble(index, (Double) value);
+		} else if(value instanceof Long) {
+			pstmt.setLong(index, (Long) value);
+		} else if(value instanceof BigDecimal) {
+			pstmt.setBigDecimal(index, (BigDecimal) value);
+		} else if(value instanceof String) {
+			pstmt.setString(index, (String) value);
+		} else if(value instanceof Timestamp) {
+			pstmt.setTimestamp(index, (Timestamp) value);
+		} else if(value instanceof Boolean) {
+			pstmt.setString(index, ((Boolean) value)? "Y": "N");
+		}
+	}
+	
+	/**
+	 * Set Parameter for Statement from value
+	 * @param pstmt
+	 * @param value
+	 * @param index
+	 * @throws SQLException
+	 */
+	public static void setParameterFromValue(PreparedStatement pstmt, Value value, int index) throws SQLException {
+		if(value.getValueType().equals(ValueType.INTEGER)) {
+			pstmt.setInt(index, ValueUtil.getIntegerFromValue(value));
+		} else if(value.getValueType().equals(ValueType.DECIMAL)) {
+			pstmt.setBigDecimal(index, ValueUtil.getDecimalFromValue(value));
+		} else if(value.getValueType().equals(ValueType.STRING)) {
+			pstmt.setString(index, ValueUtil.getStringFromValue(value));
+		} else if(value.getValueType().equals(ValueType.DATE)) {
+			pstmt.setTimestamp(index, ValueUtil.getDateFromValue(value));
+		}
+	}
+	
+	/**
+	 * Get Where Clause from criteria and dynamic condition
+	 * @param criteria
+	 * @param params
+	 * @return
+	 */
+	public static String getWhereClauseFromCriteria(Criteria criteria, List<Object> params) {
+		StringBuffer whereClause = new StringBuffer();
+		if(!Util.isEmpty(criteria.getWhereClause())) {
+			whereClause.append("(").append(criteria.getWhereClause()).append(")");
+		}
+		criteria.getConditionsList().stream()
+			.filter(condition -> !Util.isEmpty(condition.getColumnName()))
+			.forEach(condition -> {
+				if(whereClause.length() > 0) {
+					whereClause.append(" AND ");
+				}
+				String colummName = criteria.getTableName() + "." + condition.getColumnName(); 
+				//	Open
+				whereClause.append("(");
+				if(condition.getOperatorValue() == Operator.LIKE_VALUE
+						|| condition.getOperatorValue() == Operator.NOT_LIKE_VALUE) {
+					colummName = "UPPER(" + colummName + ")";
+				}
+				//	Add operator
+				whereClause.append(colummName).append(convertOperator(condition.getOperatorValue()));
+				//	For in or not in
+				if(condition.getOperatorValue() == Operator.IN_VALUE
+						|| condition.getOperatorValue() == Operator.NOT_IN_VALUE) {
+					StringBuffer parameter = new StringBuffer();
+					condition.getValuesList().forEach(value -> {
+						if(parameter.length() > 0) {
+							parameter.append(", ");
+						}
+						parameter.append("?");
+						params.add(ValueUtil.getObjectFromValue(value));
+					});
+					whereClause.append("(").append(parameter).append(")");
+				} else if(condition.getOperatorValue() == Operator.BETWEEN_VALUE) {
+					whereClause.append(" ? ").append(" AND ").append(" ?");
+					params.add(ValueUtil.getObjectFromValue(condition.getValue()));
+					params.add(ValueUtil.getObjectFromValue(condition.getValueTo()));
+				} else if(condition.getOperatorValue() == Operator.LIKE_VALUE
+						|| condition.getOperatorValue() == Operator.NOT_LIKE_VALUE) {
+					whereClause.append("?");
+					params.add(ValueUtil.getObjectFromValue(condition.getValue(), true));
+				} else if(condition.getOperatorValue() != Operator.NULL_VALUE
+						&& condition.getOperatorValue() != Operator.NOT_NULL_VALUE) {
+					whereClause.append("?");
+					params.add(ValueUtil.getObjectFromValue(condition.getValue()));
+				}
+				//	Close
+				whereClause.append(")");
+		});
+		//	Return where clause
+		return whereClause.toString();
 	}
 
 }

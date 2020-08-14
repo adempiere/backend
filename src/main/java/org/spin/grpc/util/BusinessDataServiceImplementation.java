@@ -18,12 +18,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -45,7 +42,6 @@ import org.compiere.model.MColumn;
 import org.compiere.model.MMenu;
 import org.compiere.model.MPInstance;
 import org.compiere.model.MProcess;
-import org.compiere.model.MQuery;
 import org.compiere.model.MRecentItem;
 import org.compiere.model.MReportView;
 import org.compiere.model.MRole;
@@ -66,7 +62,6 @@ import org.compiere.util.Trx;
 import org.compiere.util.Util;
 import org.eevolution.service.dsl.ProcessBuilder;
 import org.spin.grpc.util.BusinessDataGrpc.BusinessDataImplBase;
-import org.spin.grpc.util.Condition.Operator;
 
 import com.google.protobuf.ByteString;
 
@@ -455,59 +450,6 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 	}
 	
 	/**
-	 * Convert operator from gRPC to SQL
-	 * @param gRpcOperator
-	 * @return
-	 */
-	private String convertOperator(int gRpcOperator) {
-		String operator = MQuery.EQUAL;
-		switch (gRpcOperator) {
-			case Operator.BETWEEN_VALUE:
-				operator = MQuery.BETWEEN;
-				break;
-			case Operator.EQUAL_VALUE:
-				operator = MQuery.EQUAL;
-				break;
-			case Operator.GREATER_EQUAL_VALUE:
-				operator = MQuery.GREATER_EQUAL;
-				break;
-			case Operator.GREATER_VALUE:
-				operator = MQuery.GREATER;
-				break;
-			case Operator.IN_VALUE:
-				operator = " IN ";
-				break;
-			case Operator.LESS_EQUAL_VALUE:
-				operator = MQuery.LESS_EQUAL;
-				break;
-			case Operator.LESS_VALUE:
-				operator = MQuery.LESS;
-				break;
-			case Operator.LIKE_VALUE:
-				operator = MQuery.LIKE;
-				break;
-			case Operator.NOT_EQUAL_VALUE:
-				operator = MQuery.NOT_EQUAL;
-				break;
-			case Operator.NOT_IN_VALUE:
-				operator = " NOT IN ";
-				break;
-			case Operator.NOT_LIKE_VALUE:
-				operator = MQuery.NOT_LIKE;
-				break;
-			case Operator.NOT_NULL_VALUE:
-				operator = MQuery.NOT_NULL;
-				break;
-			case Operator.NULL_VALUE:
-				operator = MQuery.NULL;
-				break;
-			default:
-				break;
-			}
-		return operator;
-	}
-	
-	/**
 	 * Get Process from UUID
 	 * @param uuid
 	 * @param language
@@ -538,7 +480,7 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 			entity = RecordUtil.getEntity(Env.getCtx(), tableName, request.getUuid(), request.getRecordId(), null);
 		} else if(request.getCriteria() != null) {
 			List<Object> parameters = new ArrayList<Object>();
-			String whereClause = getWhereClauseFromCriteria(request.getCriteria(), parameters);
+			String whereClause = ValueUtil.getWhereClauseFromCriteria(request.getCriteria(), parameters);
 			entity = RecordUtil.getEntity(Env.getCtx(), tableName, whereClause, parameters, null);
 		}
 		//	Return
@@ -638,91 +580,6 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 		return column.getAD_Reference_ID();
 	}
 	
-	
-	
-	/**
-	 * Set Parameter for Statement from object
-	 * @param pstmt
-	 * @param value
-	 * @param index
-	 * @throws SQLException
-	 */
-	private void setParameterFromObject(PreparedStatement pstmt, Object value, int index) throws SQLException {
-		if(value instanceof Integer) {
-			pstmt.setInt(index, (Integer) value);
-		} else if(value instanceof Double) {
-			pstmt.setDouble(index, (Double) value);
-		} else if(value instanceof Long) {
-			pstmt.setLong(index, (Long) value);
-		} else if(value instanceof BigDecimal) {
-			pstmt.setBigDecimal(index, (BigDecimal) value);
-		} else if(value instanceof String) {
-			pstmt.setString(index, (String) value);
-		} else if(value instanceof Timestamp) {
-			pstmt.setTimestamp(index, (Timestamp) value);
-		} else if(value instanceof Boolean) {
-			pstmt.setString(index, ((Boolean) value)? "Y": "N");
-		}
-	}
-	
-	/**
-	 * Get Where Clause from criteria and dynamic condition
-	 * @param criteria
-	 * @param params
-	 * @return
-	 */
-	private String getWhereClauseFromCriteria(Criteria criteria, List<Object> params) {
-		StringBuffer whereClause = new StringBuffer();
-		if(!Util.isEmpty(criteria.getWhereClause())) {
-			whereClause.append("(").append(criteria.getWhereClause()).append(")");
-		}
-		criteria.getConditionsList().stream()
-			.filter(condition -> !Util.isEmpty(condition.getColumnName()))
-			.forEach(condition -> {
-				if(whereClause.length() > 0) {
-					whereClause.append(" AND ");
-				}
-				String colummName = criteria.getTableName() + "." + condition.getColumnName(); 
-				//	Open
-				whereClause.append("(");
-				if(condition.getOperatorValue() == Operator.LIKE_VALUE
-						|| condition.getOperatorValue() == Operator.NOT_LIKE_VALUE) {
-					colummName = "UPPER(" + colummName + ")";
-				}
-				//	Add operator
-				whereClause.append(colummName).append(convertOperator(condition.getOperatorValue()));
-				//	For in or not in
-				if(condition.getOperatorValue() == Operator.IN_VALUE
-						|| condition.getOperatorValue() == Operator.NOT_IN_VALUE) {
-					StringBuffer parameter = new StringBuffer();
-					condition.getValuesList().forEach(value -> {
-						if(parameter.length() > 0) {
-							parameter.append(", ");
-						}
-						parameter.append("?");
-						params.add(ValueUtil.getObjectFromValue(value));
-					});
-					whereClause.append("(").append(parameter).append(")");
-				} else if(condition.getOperatorValue() == Operator.BETWEEN_VALUE) {
-					whereClause.append(" ? ").append(" AND ").append(" ?");
-					params.add(ValueUtil.getObjectFromValue(condition.getValue()));
-					params.add(ValueUtil.getObjectFromValue(condition.getValueTo()));
-				} else if(condition.getOperatorValue() == Operator.LIKE_VALUE
-						|| condition.getOperatorValue() == Operator.NOT_LIKE_VALUE) {
-					whereClause.append("?");
-					params.add(ValueUtil.getObjectFromValue(condition.getValue(), true));
-				} else if(condition.getOperatorValue() != Operator.NULL_VALUE
-						&& condition.getOperatorValue() != Operator.NOT_NULL_VALUE) {
-					whereClause.append("?");
-					params.add(ValueUtil.getObjectFromValue(condition.getValue()));
-				}
-				//	Close
-				whereClause.append(")");
-		});
-		//	Return where clause
-		return whereClause.toString();
-	}
-	
 	/**
 	 * Convert Object to list
 	 * @param request
@@ -737,7 +594,7 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 		}
 		criteria.getValuesList().forEach(value -> params.add(ValueUtil.getObjectFromValue(value)));
 		//	For dynamic condition
-		String dynamicWhere = getWhereClauseFromCriteria(criteria, params);
+		String dynamicWhere = ValueUtil.getWhereClauseFromCriteria(criteria, params);
 		if(!Util.isEmpty(dynamicWhere)) {
 			if(whereClause.length() > 0) {
 				whereClause.append(" AND ");
@@ -833,7 +690,7 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 			pstmt = DB.prepareStatement(sql, null);
 			AtomicInteger parameterIndex = new AtomicInteger(1);
 			for(Object value : params) {
-				setParameterFromObject(pstmt, value, parameterIndex.getAndIncrement());
+				ValueUtil.setParameterFromObject(pstmt, value, parameterIndex.getAndIncrement());
 			} 
 			//	Get from Query
 			rs = pstmt.executeQuery();

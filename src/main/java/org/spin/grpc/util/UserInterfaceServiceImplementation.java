@@ -101,7 +101,6 @@ import org.spin.grpc.util.ChatEntry.ModeratorStatus;
 import org.spin.grpc.util.Condition.Operator;
 import org.spin.grpc.util.RollbackEntityRequest.EventType;
 import org.spin.grpc.util.UserInterfaceGrpc.UserInterfaceImplBase;
-import org.spin.grpc.util.Value.ValueType;
 import org.spin.model.I_AD_AttachmentReference;
 import org.spin.model.I_AD_ContextInfo;
 import org.spin.model.MADContextInfo;
@@ -1450,16 +1449,35 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 	private LookupItem.Builder convertLookupItem(GetLookupItemRequest request) {
 		Criteria criteria = request.getCriteria();
 		String sql = criteria.getQuery();
-		List<Value> values = criteria.getValuesList();
+		List<Object> params = new ArrayList<>();
+		criteria.getValuesList().forEach(value -> params.add(ValueUtil.getObjectFromValue(value)));
+		//	For dynamic condition
+		String dynamicWhere = ValueUtil.getWhereClauseFromCriteria(criteria, params);
+		if(!Util.isEmpty(dynamicWhere)) {
+			int positionFrom = sql.lastIndexOf(" FROM ");
+			boolean hasWhereClause = sql.indexOf(" WHERE ", positionFrom) != -1;
+			//
+			int positionOrder = sql.lastIndexOf(" ORDER BY ");
+			if (positionOrder != -1) {
+				sql = sql.substring(0, positionOrder) 
+						+ (hasWhereClause ? " AND " : " WHERE ") 
+						+ dynamicWhere
+						+ sql.substring(positionOrder);
+			} else {			
+				sql += (hasWhereClause ? " AND " : " WHERE ") + dynamicWhere;
+			}
+		}
+		sql = MRole.getDefault(Env.getCtx(), false).addAccessSQL(sql,
+				criteria.getTableName(), MRole.SQL_FULLYQUALIFIED, MRole.SQL_RO);
 		LookupItem.Builder builder = LookupItem.newBuilder();
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
 			//	SELECT Key, Value, Name FROM ...
-			pstmt = DB.prepareStatement(sql, null);
+			pstmt = DB.prepareStatement(sql.toString(), null);
 			AtomicInteger parameterIndex = new AtomicInteger(1);
-			for(Value value : values) {
-				setParameterFromValue(pstmt, value, parameterIndex.getAndIncrement());
+			for(Object value : params) {
+				ValueUtil.setParameterFromObject(pstmt, value, parameterIndex.getAndIncrement());
 			}
 			//	Get from Query
 			rs = pstmt.executeQuery();
@@ -1478,8 +1496,14 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 				} else {
 					keyValue = rs.getInt(1);
 				}
+				String uuid = null;
+				//	Validate if exist UUID
+				int uuidIndex = getColumnIndex(metaData, I_AD_Element.COLUMNNAME_UUID);
+				if(uuidIndex != -1) {
+					uuid = rs.getString(uuidIndex);
+				}
 				//	
-				builder = convertObjectFromResult(keyValue, null, rs.getString(2), rs.getString(3));
+				builder = convertObjectFromResult(keyValue, uuid, rs.getString(2), rs.getString(3));
 			}
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
@@ -1498,9 +1522,26 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 	private ListLookupItemsResponse.Builder convertLookupItemsList(ListLookupItemsRequest request) {
 		Criteria criteria = request.getCriteria();
 		String sql = criteria.getQuery();
+		List<Object> params = new ArrayList<>();
+		criteria.getValuesList().forEach(value -> params.add(ValueUtil.getObjectFromValue(value)));
+		//	For dynamic condition
+		String dynamicWhere = ValueUtil.getWhereClauseFromCriteria(criteria, params);
+		if(!Util.isEmpty(dynamicWhere)) {
+			int positionFrom = sql.lastIndexOf(" FROM ");
+			boolean hasWhereClause = sql.indexOf(" WHERE ", positionFrom) != -1;
+			//
+			int positionOrder = sql.lastIndexOf(" ORDER BY ");
+			if (positionOrder != -1) {
+				sql = sql.substring(0, positionOrder) 
+						+ (hasWhereClause ? " AND " : " WHERE ") 
+						+ dynamicWhere
+						+ sql.substring(positionOrder);
+			} else {			
+				sql += (hasWhereClause ? " AND " : " WHERE ") + dynamicWhere;
+			}
+		}
 		sql = MRole.getDefault(Env.getCtx(), false).addAccessSQL(sql,
 				criteria.getTableName(), MRole.SQL_FULLYQUALIFIED, MRole.SQL_RO);
-		List<Value> values = criteria.getValuesList();
 		ListLookupItemsResponse.Builder builder = ListLookupItemsResponse.newBuilder();
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -1509,8 +1550,8 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 			//	SELECT Key, Value, Name FROM ...
 			pstmt = DB.prepareStatement(sql, null);
 			AtomicInteger parameterIndex = new AtomicInteger(1);
-			for(Value value : values) {
-				setParameterFromValue(pstmt, value, parameterIndex.getAndIncrement());
+			for(Object value : params) {
+				ValueUtil.setParameterFromObject(pstmt, value, parameterIndex.getAndIncrement());
 			}
 			//	Get from Query
 			rs = pstmt.executeQuery();
@@ -1566,25 +1607,6 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 			}
 		}
 		return -1;
-	}
-	
-	/**
-	 * Set Parameter for Statement from value
-	 * @param pstmt
-	 * @param value
-	 * @param index
-	 * @throws SQLException
-	 */
-	private void setParameterFromValue(PreparedStatement pstmt, Value value, int index) throws SQLException {
-		if(value.getValueType().equals(ValueType.INTEGER)) {
-			pstmt.setInt(index, ValueUtil.getIntegerFromValue(value));
-		} else if(value.getValueType().equals(ValueType.DECIMAL)) {
-			pstmt.setBigDecimal(index, ValueUtil.getDecimalFromValue(value));
-		} else if(value.getValueType().equals(ValueType.STRING)) {
-			pstmt.setString(index, ValueUtil.getStringFromValue(value));
-		} else if(value.getValueType().equals(ValueType.DATE)) {
-			pstmt.setTimestamp(index, ValueUtil.getDateFromValue(value));
-		}
 	}
 	
 	/**
