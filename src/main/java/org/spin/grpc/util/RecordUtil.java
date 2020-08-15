@@ -99,7 +99,7 @@ public class RecordUtil {
 			throw new AdempiereException("@Record_ID@ @NotFound@");
 		}
 		//	Default
-		return new Query(context, tableName, whereClause.toString(), null)
+		return new Query(context, tableName, whereClause.toString(), transactionName)
 				.setParameters(params)
 				.first();
 	}
@@ -122,7 +122,7 @@ public class RecordUtil {
 			throw new AdempiereException("@AD_Table_ID@ @NotFound@");
 		}
 		//	Default
-		return new Query(context, tableName, whereClause, null)
+		return new Query(context, tableName, whereClause, transactionName)
 				.setParameters(parameters)
 				.first();
 	}

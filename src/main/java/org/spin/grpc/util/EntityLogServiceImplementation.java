@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.logging.Level;
 
 import org.adempiere.exceptions.AdempiereException;
@@ -108,8 +107,11 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 				throw new AdempiereException("Process Activity Requested is Null");
 			}
 			log.fine("Object List Requested = " + request);
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
-			ListProcessLogsResponse.Builder entityValueList = convertProcessLogs(context, request);
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			ListProcessLogsResponse.Builder entityValueList = convertProcessLogs(request);
 			responseObserver.onNext(entityValueList.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -129,8 +131,11 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 				throw new AdempiereException("Process Activity Requested is Null");
 			}
 			log.fine("Recent Items Requested = " + request);
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
-			ListRecentItemsResponse.Builder entityValueList = convertRecentItems(context, request);
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			ListRecentItemsResponse.Builder entityValueList = convertRecentItems(request);
 			responseObserver.onNext(entityValueList.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -150,8 +155,11 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 				throw new AdempiereException("Record Logs Requested is Null");
 			}
 			log.fine("Object List Requested = " + request);
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
-			ListRecordLogsResponse.Builder entityValueList = convertRecordLogs(context, request);
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			ListRecordLogsResponse.Builder entityValueList = convertRecordLogs(request);
 			responseObserver.onNext(entityValueList.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -172,8 +180,11 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 				throw new AdempiereException("Workflow Logs Requested is Null");
 			}
 			log.fine("Object List Requested = " + request);
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
-			ListWorkflowLogsResponse.Builder entityValueList = convertWorkflowLogs(context, request);
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			ListWorkflowLogsResponse.Builder entityValueList = convertWorkflowLogs(request);
 			responseObserver.onNext(entityValueList.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -194,8 +205,11 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 				throw new AdempiereException("Record Chats Requested is Null");
 			}
 			log.fine("Object List Requested = " + request);
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
-			ListRecordChatsResponse.Builder entityValueList = convertRecordChats(context, request);
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			ListRecordChatsResponse.Builder entityValueList = convertRecordChats(request);
 			responseObserver.onNext(entityValueList.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -216,8 +230,11 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 				throw new AdempiereException("Chat Entries Requested is Null");
 			}
 			log.fine("Object List Requested = " + request);
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
-			ListChatEntriesResponse.Builder entityValueList = convertChatEntries(context, request);
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			ListChatEntriesResponse.Builder entityValueList = convertChatEntries(request);
 			responseObserver.onNext(entityValueList.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -232,15 +249,14 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 	
 	/**
 	 * Convert request for process log to builder
-	 * @param context
 	 * @param request
 	 * @return
 	 */
-	private ListProcessLogsResponse.Builder convertProcessLogs(Properties context, ListProcessLogsRequest request) {
+	private ListProcessLogsResponse.Builder convertProcessLogs(ListProcessLogsRequest request) {
 		String sql = null;
 		List<Object> parameters = new ArrayList<>();
 		if(!Util.isEmpty(request.getTableName())) {
-			MTable table = MTable.get(context, request.getTableName());
+			MTable table = MTable.get(Env.getCtx(), request.getTableName());
 			if(table == null
 					|| table.getAD_Table_ID() == 0) {
 				throw new AdempiereException("@AD_Table_ID@ @Invalid@");
@@ -258,7 +274,7 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 			parameters.add(request.getClientRequest().getSessionUuid());
 			sql = "EXISTS(SELECT 1 FROM AD_Session WHERE UUID = ? AND AD_Session_ID = AD_PInstance.AD_Session_ID)";
 		}
-		List<MPInstance> processInstanceList = new Query(context, I_AD_PInstance.Table_Name, 
+		List<MPInstance> processInstanceList = new Query(Env.getCtx(), I_AD_PInstance.Table_Name, 
 				sql, null)
 				.setParameters(parameters)
 				.setOrderBy(I_AD_PInstance.COLUMNNAME_Created + " DESC")
@@ -276,18 +292,17 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 	
 	/**
 	 * Convert request for workflow log to builder
-	 * @param context
 	 * @param request
 	 * @return
 	 */
-	private ListWorkflowLogsResponse.Builder convertWorkflowLogs(Properties context, ListWorkflowLogsRequest request) {
+	private ListWorkflowLogsResponse.Builder convertWorkflowLogs(ListWorkflowLogsRequest request) {
 		StringBuffer whereClause = new StringBuffer();
 		List<Object> parameters = new ArrayList<>();
 		if(Util.isEmpty(request.getTableName())) {
 			throw new AdempiereException("@AD_Table_ID@ @NotFound@");
 		}
 		//	
-		MTable table = MTable.get(context, request.getTableName());
+		MTable table = MTable.get(Env.getCtx(), request.getTableName());
 		if(table == null
 				|| table.getAD_Table_ID() == 0) {
 			throw new AdempiereException("@AD_Table_ID@ @Invalid@");
@@ -304,7 +319,7 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
 		int offset = (pageNumber > 0? pageNumber - 1: 0) * RecordUtil.PAGE_SIZE;
 		int limit = (pageNumber == 0? 1: pageNumber) * RecordUtil.PAGE_SIZE;
-		Query query = new Query(context, I_AD_WF_Process.Table_Name, whereClause.toString(), null)
+		Query query = new Query(Env.getCtx(), I_AD_WF_Process.Table_Name, whereClause.toString(), null)
 				.setParameters(parameters);
 		int count = query.count();
 		List<MWFProcess> workflowProcessLogList = query
@@ -452,15 +467,14 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 	
 	/**
 	 * Convert request for record log to builder
-	 * @param context
 	 * @param request
 	 * @return
 	 */
-	private ListRecordLogsResponse.Builder convertRecordLogs(Properties context, ListRecordLogsRequest request) {
+	private ListRecordLogsResponse.Builder convertRecordLogs(ListRecordLogsRequest request) {
 		StringBuffer whereClause = new StringBuffer();
 		List<Object> parameters = new ArrayList<>();
 		if(!Util.isEmpty(request.getTableName())) {
-			MTable table = MTable.get(context, request.getTableName());
+			MTable table = MTable.get(Env.getCtx(), request.getTableName());
 			if(table == null
 					|| table.getAD_Table_ID() == 0) {
 				throw new AdempiereException("@AD_Table_ID@ @Invalid@");
@@ -481,7 +495,7 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
 		int offset = (pageNumber > 0? pageNumber - 1: 0) * RecordUtil.PAGE_SIZE;
 		int limit = (pageNumber == 0? 1: pageNumber) * RecordUtil.PAGE_SIZE;
-		Query query = new Query(context, I_AD_ChangeLog.Table_Name, whereClause.toString(), null)
+		Query query = new Query(Env.getCtx(), I_AD_ChangeLog.Table_Name, whereClause.toString(), null)
 				.setParameters(parameters);
 		int count = query.count();
 		List<MChangeLog> recordLogList = query
@@ -698,13 +712,12 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 	
 	/**
 	 * Convert Recent Items
-	 * @param context
 	 * @param request
 	 * @return
 	 */
-	private ListRecentItemsResponse.Builder convertRecentItems(Properties context, ListRecentItemsRequest request) {
+	private ListRecentItemsResponse.Builder convertRecentItems(ListRecentItemsRequest request) {
 		ListRecentItemsResponse.Builder builder = ListRecentItemsResponse.newBuilder();
-		List<MRecentItem> recentItemsList = MRecentItem.getFromUserAndRole(context);
+		List<MRecentItem> recentItemsList = MRecentItem.getFromUserAndRole(Env.getCtx());
 		if(recentItemsList != null) {
 			for(MRecentItem recentItem : recentItemsList) {
 				try {
@@ -716,11 +729,11 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 					String menuDescription = "";
 					String referenceUuid = null;
 					if(recentItem.getAD_Tab_ID() > 0) {
-						MTab tab = MTab.get(context, recentItem.getAD_Tab_ID());
+						MTab tab = MTab.get(Env.getCtx(), recentItem.getAD_Tab_ID());
 						recentItemBuilder.setTabUuid(ValueUtil.validateNull(tab.getUUID()));
 						menuName = tab.getName();
 						menuDescription = tab.getDescription();
-						if(!Env.isBaseLanguage(context, "")) {
+						if(!Env.isBaseLanguage(Env.getCtx(), "")) {
 							menuName = tab.get_Translation("Name");
 							menuDescription = tab.get_Translation("Description");
 						}
@@ -728,12 +741,12 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 						recentItemBuilder.setAction(ValueUtil.validateNull(MMenu.ACTION_Window));
 					}
 					if(recentItem.getAD_Window_ID() > 0) {
-						MWindow window = MWindow.get(context, recentItem.getAD_Window_ID());
+						MWindow window = MWindow.get(Env.getCtx(), recentItem.getAD_Window_ID());
 						recentItemBuilder.setWindowUuid(ValueUtil.validateNull(window.getUUID()));
 						menuName = window.getName();
 						menuDescription = window.getDescription();
 						referenceUuid = window.getUUID();
-						if(!Env.isBaseLanguage(context, "")) {
+						if(!Env.isBaseLanguage(Env.getCtx(), "")) {
 							menuName = window.get_Translation("Name");
 							menuDescription = window.get_Translation("Description");
 						}
@@ -741,15 +754,13 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 						recentItemBuilder.setAction(ValueUtil.validateNull(MMenu.ACTION_Window));
 					}
 					if(recentItem.getAD_Menu_ID() > 0) {
-						MMenu menu = MMenu.getFromId(context, recentItem.getAD_Menu_ID());
+						MMenu menu = MMenu.getFromId(Env.getCtx(), recentItem.getAD_Menu_ID());
 						recentItemBuilder.setMenuUuid(ValueUtil.validateNull(menu.getUUID()));
-						if(!menu.isCentrallyMaintained()) {
-							menuName = menu.getName();
-							menuDescription = menu.getDescription();
-							if(!Env.isBaseLanguage(context, "")) {
-								menuName = menu.get_Translation("Name");
-								menuDescription = menu.get_Translation("Description");
-							}
+						menuName = menu.getName();
+						menuDescription = menu.getDescription();
+						if(!Env.isBaseLanguage(Env.getCtx(), "")) {
+							menuName = menu.get_Translation("Name");
+							menuDescription = menu.get_Translation("Description");
 						}
 						//	Add Action
 						recentItemBuilder.setAction(ValueUtil.validateNull(menu.getAction()));
@@ -757,23 +768,23 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 						if(!Util.isEmpty(menu.getAction())) {
 							if(menu.getAction().equals(MMenu.ACTION_Form)) {
 								if(menu.getAD_Form_ID() > 0) {
-									MForm form = new MForm(context, menu.getAD_Form_ID(), null);
+									MForm form = new MForm(Env.getCtx(), menu.getAD_Form_ID(), null);
 									referenceUuid = form.getUUID();
 								}
 							} else if(menu.getAction().equals(MMenu.ACTION_Window)) {
 								if(menu.getAD_Window_ID() > 0) {
-									MWindow window = new MWindow(context, menu.getAD_Window_ID(), null);
+									MWindow window = new MWindow(Env.getCtx(), menu.getAD_Window_ID(), null);
 									referenceUuid = window.getUUID();
 								}
 							} else if(menu.getAction().equals(MMenu.ACTION_Process)
 								|| menu.getAction().equals(MMenu.ACTION_Report)) {
 								if(menu.getAD_Process_ID() > 0) {
-									MProcess process = MProcess.get(context, menu.getAD_Process_ID());
+									MProcess process = MProcess.get(Env.getCtx(), menu.getAD_Process_ID());
 									referenceUuid = process.getUUID();
 								}
 							} else if(menu.getAction().equals(MMenu.ACTION_SmartBrowse)) {
 								if(menu.getAD_Browse_ID() > 0) {
-									MBrowse smartBrowser = MBrowse.get(context, menu.getAD_Browse_ID());
+									MBrowse smartBrowser = MBrowse.get(Env.getCtx(), menu.getAD_Browse_ID());
 									referenceUuid = smartBrowser.getUUID();
 								}
 							}
@@ -787,7 +798,7 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 					//	For uuid
 					if(recentItem.getAD_Table_ID() != 0
 							&& recentItem.getRecord_ID() != 0) {
-						MTable table = MTable.get(context, recentItem.getAD_Table_ID());
+						MTable table = MTable.get(Env.getCtx(), recentItem.getAD_Table_ID());
 						if(table != null
 								&& table.getAD_Table_ID() != 0) {
 							recentItemBuilder.setRecordUuid(ValueUtil.validateNull(table.getPO(recentItem.getRecord_ID(), null).get_UUID()));
@@ -929,11 +940,10 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 	
 	/**
 	 * Convert request for record chats to builder
-	 * @param context
 	 * @param request
 	 * @return
 	 */
-	private ListChatEntriesResponse.Builder convertChatEntries(Properties context, ListChatEntriesRequest request) {
+	private ListChatEntriesResponse.Builder convertChatEntries(ListChatEntriesRequest request) {
 		if(Util.isEmpty(request.getChatUuid())) {
 			throw new AdempiereException("@CM_Chat_ID@ @NotFound@");
 		}
@@ -942,7 +952,7 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
 		int offset = (pageNumber > 0? pageNumber - 1: 0) * RecordUtil.PAGE_SIZE;
 		int limit = (pageNumber == 0? 1: pageNumber) * RecordUtil.PAGE_SIZE;
-		Query query = new Query(context, I_CM_ChatEntry.Table_Name, "EXISTS(SELECT 1 FROM CM_Chat c WHERE c.CM_Chat_ID = CM_ChatEntry.CM_Chat_ID AND c.UUID = ?)", null)
+		Query query = new Query(Env.getCtx(), I_CM_ChatEntry.Table_Name, "EXISTS(SELECT 1 FROM CM_Chat c WHERE c.CM_Chat_ID = CM_ChatEntry.CM_Chat_ID AND c.UUID = ?)", null)
 				.setParameters(request.getChatUuid());
 		int count = query.count();
 		List<MChatEntry> chatEntryList = query
@@ -1021,18 +1031,17 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 	
 	/**
 	 * Convert request for record chats to builder
-	 * @param context
 	 * @param request
 	 * @return
 	 */
-	private ListRecordChatsResponse.Builder convertRecordChats(Properties context, ListRecordChatsRequest request) {
+	private ListRecordChatsResponse.Builder convertRecordChats(ListRecordChatsRequest request) {
 		StringBuffer whereClause = new StringBuffer();
 		List<Object> parameters = new ArrayList<>();
 		if(Util.isEmpty(request.getTableName())) {
 			throw new AdempiereException("@AD_Table_ID@ @NotFound@");
 		}
 		//	
-		MTable table = MTable.get(context, request.getTableName());
+		MTable table = MTable.get(Env.getCtx(), request.getTableName());
 		if(table == null
 				|| table.getAD_Table_ID() == 0) {
 			throw new AdempiereException("@AD_Table_ID@ @Invalid@");
@@ -1049,7 +1058,7 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
 		int offset = (pageNumber > 0? pageNumber - 1: 0) * RecordUtil.PAGE_SIZE;
 		int limit = (pageNumber == 0? 1: pageNumber) * RecordUtil.PAGE_SIZE;
-		Query query = new Query(context, I_CM_Chat.Table_Name, whereClause.toString(), null)
+		Query query = new Query(Env.getCtx(), I_CM_Chat.Table_Name, whereClause.toString(), null)
 				.setParameters(parameters);
 		int count = query.count();
 		List<MChat> chatList = query

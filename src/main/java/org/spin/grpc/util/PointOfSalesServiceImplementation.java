@@ -581,7 +581,6 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				if(!DocumentUtil.isDrafted(order)) {
 					throw new AdempiereException("@C_Order_ID@ @IsCompleted@");
 				}
-				order.set_TrxName(transactionName);
 				//	Update if exists
 				//	POS
 				if(!Util.isEmpty(request.getPosUuid())) {
@@ -664,18 +663,19 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			}
 			//	Validate Same BPartner
 			if(isSamePOSPartner) {
-				if(order.getPaymentRule()==null)
+				if(order.getPaymentRule() == null)
 					order.setPaymentRule(MOrder.PAYMENTRULE_Cash);
 			}
 			//	Set Sales Representative
-			if (order.getC_BPartner().getSalesRep_ID()!=0)
+			if (order.getC_BPartner().getSalesRep_ID() != 0) {
 				order.setSalesRep_ID(order.getC_BPartner().getSalesRep_ID());
-			else
-				order.setSalesRep_ID(pos.getSalesRep_ID());
+			} else {
+				order.setSalesRep_ID(Env.getAD_User_ID(Env.getCtx()));
+			}
 			//	Save Header
 			order.saveEx();
 			//	Load Price List Version
-			MPriceListVersion priceListVersion = loadPriceListVersion(order.getM_PriceList_ID(), order.getDateOrdered());
+			MPriceListVersion priceListVersion = loadPriceListVersion(order.getM_PriceList_ID(), order.getDateOrdered(), transactionName);
 			if(priceListVersion != null) {
 				MProductPrice[] productPrices = priceListVersion.getProductPrice("AND EXISTS("
 						+ "SELECT 1 "
@@ -707,11 +707,13 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	/**
 	 * Load Price List Version from Price List
 	 * @param priceListId
+	 * @param validFrom
+	 * @param transactionName
 	 * @return
 	 * @return MPriceListVersion
 	 */
-	public MPriceListVersion loadPriceListVersion(int priceListId, Timestamp validFrom) {
-		MPriceList priceList = MPriceList.get(Env.getCtx(), priceListId, null);
+	public MPriceListVersion loadPriceListVersion(int priceListId, Timestamp validFrom, String transactionName) {
+		MPriceList priceList = MPriceList.get(Env.getCtx(), priceListId, transactionName);
 		//
 		return priceList.getPriceListVersion(validFrom);
 	}
