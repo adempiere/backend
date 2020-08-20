@@ -1007,6 +1007,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				}
 				orderLine.setQty(quantityToOrder);
 				orderLine.setPrice();
+				orderLine.setTax();
+				orderLine.setLineNetAmt();
 				//	Save Line
 				orderLine.saveEx();
 				orderLineReference.set(orderLine);
@@ -1256,7 +1258,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				salesOrder.setInvoiceRule(pos.getInvoiceRule());
 			}
 			//	Set business partner
-			setBPartner(pos, salesOrder, request.getCustomerUuid(), transactionName);
+			setBPartner(pos, salesOrder, request.getCustomerUuid(), request.getSalesRepresentativeUuid(), transactionName);
 			maybeOrder.set(salesOrder);
 		});
 		//	Convert order
@@ -1268,8 +1270,10 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 * @param pos
 	 * @param salesOrder
 	 * @param businessPartnerUuid
+	 * @param salesRepresentativeUuid
+	 * @param transactionName
 	 */
-	private void setBPartner(MPOS pos, MOrder salesOrder, String businessPartnerUuid, String transactionName) {
+	private void setBPartner(MPOS pos, MOrder salesOrder, String businessPartnerUuid, String salesRepresentativeUuid, String transactionName) {
 		//	Valid if has a Order
 		if(DocumentUtil.isCompleted(salesOrder)
 				|| DocumentUtil.isVoided(salesOrder)) {
@@ -1308,16 +1312,26 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		}
 		//	Validate Same BPartner
 		if(isSamePOSPartner) {
-			if(salesOrder.getPaymentRule()==null)
+			if(salesOrder.getPaymentRule() == null) {
 				salesOrder.setPaymentRule(MOrder.PAYMENTRULE_Cash);
+			}
 		}
 		//	Set Sales Representative
-		if(pos.get_ValueAsBoolean("IsSharedPOS")) {
-			salesOrder.setSalesRep_ID(Env.getAD_User_ID(salesOrder.getCtx()));
-		} else if (businessPartner.getSalesRep_ID() != 0) {
-			salesOrder.setSalesRep_ID(salesOrder.getC_BPartner().getSalesRep_ID());
-		} else {
-			salesOrder.setSalesRep_ID(pos.getSalesRep_ID());
+		int salesRepresentativeId = RecordUtil.getIdFromUuid(I_AD_User.Table_Name, salesRepresentativeUuid, transactionName);
+		if(salesRepresentativeId <= 0) {
+			MUser currentUser = MUser.get(salesOrder.getCtx());
+			if(pos.get_ValueAsBoolean("IsSharedPOS")
+					|| currentUser.get_ValueAsBoolean("IsPOSManager")) {
+				salesRepresentativeId = currentUser.getAD_User_ID();
+			} else if (businessPartner.getSalesRep_ID() != 0) {
+				salesRepresentativeId = salesOrder.getC_BPartner().getSalesRep_ID();
+			} else {
+				salesRepresentativeId = pos.getSalesRep_ID();
+			}
+		}
+		//	Set
+		if(salesRepresentativeId > 0) {
+			salesOrder.setSalesRep_ID(salesRepresentativeId);
 		}
 		//	Save Header
 		salesOrder.saveEx();

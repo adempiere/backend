@@ -168,6 +168,7 @@ message CreateOrderRequest {
 	string posUuid = 2;
 	string customerUuid = 3;
 	string documentTypeUuid = 4;
+	string salesRepresentativeUuid = 5;
 }
 
 // Request for delete a order
