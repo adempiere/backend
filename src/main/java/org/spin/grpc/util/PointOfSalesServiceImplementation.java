@@ -1007,8 +1007,6 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				}
 				orderLine.setQty(quantityToOrder);
 				orderLine.setPrice();
-				orderLine.setTax();
-				orderLine.setLineNetAmt();
 				//	Save Line
 				orderLine.saveEx();
 				orderLineReference.set(orderLine);
