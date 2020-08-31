@@ -12,7 +12,7 @@
  * You should have received a copy of the GNU General Public License                *
  * along with this program.	If not, see <https://www.gnu.org/licenses/>.            *
  ************************************************************************************/
-package org.spin.grpc.util;
+package org.spin.grpc.service;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -48,6 +48,21 @@ import org.compiere.wf.MWFNode;
 import org.compiere.wf.MWFNodeNext;
 import org.compiere.wf.MWFResponsible;
 import org.compiere.wf.MWorkflow;
+import org.spin.base.util.ContextManager;
+import org.spin.base.util.ConvertUtil;
+import org.spin.base.util.RecordUtil;
+import org.spin.base.util.ValueUtil;
+import org.spin.grpc.util.DocumentStatus;
+import org.spin.grpc.util.ListDocumentActionsRequest;
+import org.spin.grpc.util.ListDocumentActionsResponse;
+import org.spin.grpc.util.ListDocumentStatusesRequest;
+import org.spin.grpc.util.ListDocumentStatusesResponse;
+import org.spin.grpc.util.ListWorkflowsRequest;
+import org.spin.grpc.util.ListWorkflowsResponse;
+import org.spin.grpc.util.WorkflowCondition;
+import org.spin.grpc.util.WorkflowDefinition;
+import org.spin.grpc.util.WorkflowNode;
+import org.spin.grpc.util.WorkflowTransition;
 import org.spin.grpc.util.WorkflowCondition.ConditionType;
 import org.spin.grpc.util.WorkflowCondition.Operation;
 import org.spin.grpc.util.WorkflowDefinition.DurationUnit;

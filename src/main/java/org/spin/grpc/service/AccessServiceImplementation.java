@@ -12,7 +12,7 @@
  * You should have received a copy of the GNU General Public License                *
  * along with this program.	If not, see <https://www.gnu.org/licenses/>.            *
  ************************************************************************************/
-package org.spin.grpc.util;
+package org.spin.grpc.service;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -79,6 +79,23 @@ import org.compiere.util.Login;
 import org.compiere.util.Msg;
 import org.compiere.util.Util;
 import org.compiere.wf.MWorkflowAccess;
+import org.spin.base.util.ContextManager;
+import org.spin.base.util.RecordUtil;
+import org.spin.base.util.ValueUtil;
+import org.spin.grpc.util.Access;
+import org.spin.grpc.util.ColumnAccess;
+import org.spin.grpc.util.ContextValue;
+import org.spin.grpc.util.LoginRequest;
+import org.spin.grpc.util.LogoutRequest;
+import org.spin.grpc.util.Menu;
+import org.spin.grpc.util.RecordAccess;
+import org.spin.grpc.util.Role;
+import org.spin.grpc.util.Session;
+import org.spin.grpc.util.SessionRequest;
+import org.spin.grpc.util.TableAccess;
+import org.spin.grpc.util.UserInfo;
+import org.spin.grpc.util.UserInfoRequest;
+import org.spin.grpc.util.UserInfoValue;
 import org.spin.grpc.util.SecurityGrpc.SecurityImplBase;
 import org.spin.grpc.util.TableAccess.AccessTypeRule;
 import org.spin.model.I_AD_Dashboard_Access;

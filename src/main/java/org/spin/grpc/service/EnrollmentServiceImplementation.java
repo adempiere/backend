@@ -12,7 +12,7 @@
  * You should have received a copy of the GNU General Public License                *
  * along with this program.	If not, see <https://www.gnu.org/licenses/>.            *
  ************************************************************************************/
-package org.spin.grpc.util;
+package org.spin.grpc.service;
 
 import org.adempiere.exceptions.AdempiereException;
 import org.compiere.model.I_AD_User;
@@ -26,6 +26,13 @@ import org.compiere.util.CLogger;
 import org.compiere.util.EMail;
 import org.compiere.util.Env;
 import org.compiere.util.Util;
+import org.spin.grpc.util.ActivateUserRequest;
+import org.spin.grpc.util.ActivateUserResponse;
+import org.spin.grpc.util.EnrollUserRequest;
+import org.spin.grpc.util.ResetPasswordRequest;
+import org.spin.grpc.util.ResetPasswordResponse;
+import org.spin.grpc.util.ResetPasswordTokenRequest;
+import org.spin.grpc.util.User;
 import org.spin.grpc.util.RegisterGrpc.RegisterImplBase;
 import org.spin.grpc.util.ResetPasswordResponse.ResponseType;
 import org.spin.model.I_AD_Token;

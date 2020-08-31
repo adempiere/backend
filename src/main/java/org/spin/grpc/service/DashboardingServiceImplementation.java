@@ -12,7 +12,7 @@
  * You should have received a copy of the GNU General Public License                *
  * along with this program.	If not, see <https://www.gnu.org/licenses/>.            *
  ************************************************************************************/
-package org.spin.grpc.util;
+package org.spin.grpc.service;
 
 import java.util.Arrays;
 import java.util.Properties;
@@ -35,6 +35,18 @@ import org.compiere.model.X_AD_TreeNodeMM;
 import org.compiere.util.CLogger;
 import org.compiere.util.Env;
 import org.compiere.util.Util;
+import org.spin.base.util.ContextManager;
+import org.spin.base.util.ValueUtil;
+import org.spin.grpc.util.Criteria;
+import org.spin.grpc.util.Dashboard;
+import org.spin.grpc.util.Favorite;
+import org.spin.grpc.util.ListDashboardsRequest;
+import org.spin.grpc.util.ListDashboardsResponse;
+import org.spin.grpc.util.ListFavoritesRequest;
+import org.spin.grpc.util.ListFavoritesResponse;
+import org.spin.grpc.util.ListPendingDocumentsRequest;
+import org.spin.grpc.util.ListPendingDocumentsResponse;
+import org.spin.grpc.util.PendingDocument;
 import org.spin.grpc.util.DashboardingGrpc.DashboardingImplBase;
 
 import io.grpc.Status;

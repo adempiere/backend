@@ -12,7 +12,7 @@
  * You should have received a copy of the GNU General Public License                *
  * along with this program.	If not, see <https://www.gnu.org/licenses/>.            *
  ************************************************************************************/
-package org.spin.grpc.util;
+package org.spin.grpc.service;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -66,6 +66,40 @@ import org.compiere.util.Env;
 import org.compiere.util.TimeUtil;
 import org.compiere.util.Trx;
 import org.compiere.util.Util;
+import org.spin.base.util.ContextManager;
+import org.spin.base.util.ConvertUtil;
+import org.spin.base.util.DocumentUtil;
+import org.spin.base.util.RecordUtil;
+import org.spin.base.util.ValueUtil;
+import org.spin.grpc.util.Charge;
+import org.spin.grpc.util.CreateOrderLineRequest;
+import org.spin.grpc.util.CreateOrderRequest;
+import org.spin.grpc.util.DeleteOrderLineRequest;
+import org.spin.grpc.util.DeleteOrderRequest;
+import org.spin.grpc.util.Empty;
+import org.spin.grpc.util.GetKeyLayoutRequest;
+import org.spin.grpc.util.GetOrderRequest;
+import org.spin.grpc.util.GetProductPriceRequest;
+import org.spin.grpc.util.Key;
+import org.spin.grpc.util.KeyLayout;
+import org.spin.grpc.util.ListOrderLinesRequest;
+import org.spin.grpc.util.ListOrderLinesResponse;
+import org.spin.grpc.util.ListOrdersRequest;
+import org.spin.grpc.util.ListOrdersResponse;
+import org.spin.grpc.util.ListPointOfSalesRequest;
+import org.spin.grpc.util.ListPointOfSalesResponse;
+import org.spin.grpc.util.ListProductPriceRequest;
+import org.spin.grpc.util.ListProductPriceResponse;
+import org.spin.grpc.util.Order;
+import org.spin.grpc.util.OrderLine;
+import org.spin.grpc.util.PointOfSales;
+import org.spin.grpc.util.PointOfSalesRequest;
+import org.spin.grpc.util.Product;
+import org.spin.grpc.util.ProductPrice;
+import org.spin.grpc.util.SalesRepresentative;
+import org.spin.grpc.util.UpdateOrderLineRequest;
+import org.spin.grpc.util.UpdateOrderRequest;
+import org.spin.grpc.util.Warehouse;
 import org.spin.grpc.util.StoreGrpc.StoreImplBase;
 
 import io.grpc.Status;

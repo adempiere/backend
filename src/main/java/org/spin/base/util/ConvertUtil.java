@@ -13,7 +13,7 @@
  * Copyright (C) 2012-2018 E.R.P. Consultores y Asociados, S.A. All Rights Reserved. *
  * Contributor(s): Yamel Senih www.erpya.com				  		                 *
  *************************************************************************************/
-package org.spin.grpc.util;
+package org.spin.base.util;
 
 import java.util.Properties;
 
@@ -39,6 +39,25 @@ import org.compiere.model.MWarehouse;
 import org.compiere.util.Env;
 import org.compiere.util.MimeType;
 import org.compiere.util.Util;
+import org.spin.grpc.util.Attachment;
+import org.spin.grpc.util.BankAccount;
+import org.spin.grpc.util.BusinessPartner;
+import org.spin.grpc.util.Charge;
+import org.spin.grpc.util.ConversionRate;
+import org.spin.grpc.util.Country;
+import org.spin.grpc.util.Currency;
+import org.spin.grpc.util.DocumentAction;
+import org.spin.grpc.util.DocumentStatus;
+import org.spin.grpc.util.DocumentType;
+import org.spin.grpc.util.Language;
+import org.spin.grpc.util.Organization;
+import org.spin.grpc.util.PriceList;
+import org.spin.grpc.util.Product;
+import org.spin.grpc.util.ResourceReference;
+import org.spin.grpc.util.TaxRate;
+import org.spin.grpc.util.Warehouse;
+import org.spin.grpc.util.BankAccount.BankAccountType;
+import org.spin.grpc.util.BankAccount.Builder;
 import org.spin.model.MADAttachmentReference;
 
 /**

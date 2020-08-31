@@ -12,7 +12,7 @@
  * You should have received a copy of the GNU General Public License                *
  * along with this program.	If not, see <https://www.gnu.org/licenses/>.            *
  ************************************************************************************/
-package org.spin.grpc.util;
+package org.spin.grpc.service;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -67,6 +67,32 @@ import org.compiere.wf.MWFNode;
 import org.compiere.wf.MWFProcess;
 import org.compiere.wf.MWFResponsible;
 import org.compiere.wf.MWorkflow;
+import org.spin.base.util.ContextManager;
+import org.spin.base.util.RecordUtil;
+import org.spin.base.util.ValueUtil;
+import org.spin.grpc.util.ChangeLog;
+import org.spin.grpc.util.ChatEntry;
+import org.spin.grpc.util.ListChatEntriesRequest;
+import org.spin.grpc.util.ListChatEntriesResponse;
+import org.spin.grpc.util.ListProcessLogsRequest;
+import org.spin.grpc.util.ListProcessLogsResponse;
+import org.spin.grpc.util.ListRecentItemsRequest;
+import org.spin.grpc.util.ListRecentItemsResponse;
+import org.spin.grpc.util.ListRecordChatsRequest;
+import org.spin.grpc.util.ListRecordChatsResponse;
+import org.spin.grpc.util.ListRecordLogsRequest;
+import org.spin.grpc.util.ListRecordLogsResponse;
+import org.spin.grpc.util.ListWorkflowLogsRequest;
+import org.spin.grpc.util.ListWorkflowLogsResponse;
+import org.spin.grpc.util.ProcessInfoLog;
+import org.spin.grpc.util.ProcessLog;
+import org.spin.grpc.util.RecentItem;
+import org.spin.grpc.util.RecordChat;
+import org.spin.grpc.util.RecordLog;
+import org.spin.grpc.util.ReportOutput;
+import org.spin.grpc.util.Value;
+import org.spin.grpc.util.WorkflowEvent;
+import org.spin.grpc.util.WorkflowProcess;
 import org.spin.grpc.util.ChatEntry.ModeratorStatus;
 import org.spin.grpc.util.EntityLogGrpc.EntityLogImplBase;
 import org.spin.grpc.util.RecordChat.ConfidentialType;

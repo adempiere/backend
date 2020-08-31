@@ -12,7 +12,7 @@
  * You should have received a copy of the GNU General Public License                *
  * along with this program.	If not, see <https://www.gnu.org/licenses/>.            *
  ************************************************************************************/
-package org.spin.grpc.util;
+package org.spin.grpc.service;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -61,6 +61,25 @@ import org.compiere.util.Msg;
 import org.compiere.util.Trx;
 import org.compiere.util.Util;
 import org.eevolution.service.dsl.ProcessBuilder;
+import org.spin.base.util.ContextManager;
+import org.spin.base.util.RecordUtil;
+import org.spin.base.util.ValueUtil;
+import org.spin.grpc.util.CreateEntityRequest;
+import org.spin.grpc.util.Criteria;
+import org.spin.grpc.util.DeleteEntityRequest;
+import org.spin.grpc.util.Empty;
+import org.spin.grpc.util.Entity;
+import org.spin.grpc.util.GetEntityRequest;
+import org.spin.grpc.util.KeyValue;
+import org.spin.grpc.util.KeyValueSelection;
+import org.spin.grpc.util.ListEntitiesRequest;
+import org.spin.grpc.util.ListEntitiesResponse;
+import org.spin.grpc.util.ProcessInfoLog;
+import org.spin.grpc.util.ProcessLog;
+import org.spin.grpc.util.ReportOutput;
+import org.spin.grpc.util.RunBusinessProcessRequest;
+import org.spin.grpc.util.UpdateEntityRequest;
+import org.spin.grpc.util.Value;
 import org.spin.grpc.util.BusinessDataGrpc.BusinessDataImplBase;
 
 import com.google.protobuf.ByteString;

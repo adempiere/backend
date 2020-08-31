@@ -12,24 +12,31 @@
  * You should have received a copy of the GNU General Public License                *
  * along with this program.	If not, see <https://www.gnu.org/licenses/>.            *
  ************************************************************************************/
-package org.spin.grpc.util;
+package org.spin.client;
 
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.spin.grpc.util.EnrollUserRequest;
+import org.spin.grpc.util.RegisterGrpc;
+import org.spin.grpc.util.ResetPasswordRequest;
+import org.spin.grpc.util.ResetPasswordResponse;
+import org.spin.grpc.util.User;
+import org.spin.grpc.util.RegisterGrpc.RegisterBlockingStub;
+
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
 
-public class BusinessDataClient {
-	  private static final Logger logger = Logger.getLogger(BusinessDataClient.class.getName());
+public class EnrollmentClient {
+	  private static final Logger logger = Logger.getLogger(EnrollmentClient.class.getName());
 
 	  private final ManagedChannel channel;
-	  private final BusinessDataGrpc.BusinessDataBlockingStub blockingStub;
+	  private final RegisterGrpc.RegisterBlockingStub blockingStub;
 
 	  /** Construct client connecting to HelloWorld server at {@code host:port}. */
-	  public BusinessDataClient(String host, int port) {
+	  public EnrollmentClient(String host, int port) {
 	    this(ManagedChannelBuilder.forAddress(host, port)
 	        // Channels are secure by default (via SSL/TLS). For the example we disable TLS to avoid
 	        // needing certificates.
@@ -38,30 +45,46 @@ public class BusinessDataClient {
 	  }
 
 	  /** Construct client for accessing HelloWorld server using the existing channel. */
-	  BusinessDataClient(ManagedChannel channel) {
+	  EnrollmentClient(ManagedChannel channel) {
 	    this.channel = channel;
-	    blockingStub = BusinessDataGrpc.newBlockingStub(channel);
+	    blockingStub = RegisterGrpc.newBlockingStub(channel);
 	  }
 
 	  public void shutdown() throws InterruptedException {
 	    channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
 	  }
 	  
-	  /**
-	   * Request a process
+	  /** 
+	   * Request Enroll User 
 	   */
-	  public void requestProcess() {
-		  ClientRequest clientRequest = ClientRequest.newBuilder()
-				  .setSessionUuid("53c1c836-6e47-11e9-8160-3709b250e4e1")
+	  public void enrollUser() {
+		  EnrollUserRequest userRequest = EnrollUserRequest.newBuilder()
+				  .setUserName("yamelsenih")
+				  .setName("Yamel Senih")
+				  .setEMail("ysenih@erpya.com")
 				  .build();
-		  RunBusinessProcessRequest request = RunBusinessProcessRequest.newBuilder()
-				  .setClientRequest(clientRequest)
-				  .setUuid("a42acf86-fb40-11e8-a479-7a0060f0aa01")
-				  .build();
-		  ProcessLog response;
+		  User response;
 		  try {
-			  response = blockingStub.runBusinessProcess(request);
-			  logger.info("Cache Reset: " + response);
+			  response = blockingStub.enrollUser(userRequest);
+			  logger.info("User Enrolled: " + response);
+		  } catch (StatusRuntimeException e) {
+			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
+		      return;
+		  }
+	  }
+	  
+	  /** 
+	   * Request Enroll User 
+	   */
+	  public void resetPassword() {
+		  ResetPasswordRequest resetRequest = ResetPasswordRequest.newBuilder()
+				  .setUserName("yamelsenih")
+				  .setEMail("ysenih@erpya.com")
+				  .build();
+		  ResetPasswordResponse response;
+		  try {
+			  response = blockingStub.resetPassword(resetRequest);
+			  logger.info("Reset Password Status: " + response.getResponseTypeValue());
 		  } catch (StatusRuntimeException e) {
 			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
 		      return;
@@ -73,13 +96,14 @@ public class BusinessDataClient {
 	   * greeting.
 	   */
 	  public static void main(String[] args) throws Exception {
-		BusinessDataClient client = new BusinessDataClient("localhost", 50052);
+		EnrollmentClient client = new EnrollmentClient("localhost", 50047);
 	    try {
-	    	logger.info("####################### Report Output #####################");
-	    	client.requestProcess();
-	    	client.shutdown();
-	    } catch (Exception e) {
-			e.printStackTrace();
-		}
+	    	logger.info("####################### Enroll User #####################");
+	    	client.enrollUser();
+	    	logger.info("####################### Reset Password #####################");
+	    	client.resetPassword();
+	    } finally {
+	      client.shutdown();
+	    }
 	  }
 }

@@ -12,24 +12,30 @@
  * You should have received a copy of the GNU General Public License                *
  * along with this program.	If not, see <https://www.gnu.org/licenses/>.            *
  ************************************************************************************/
-package org.spin.grpc.util;
+package org.spin.client;
 
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.spin.grpc.util.BusinessDataGrpc;
+import org.spin.grpc.util.ClientRequest;
+import org.spin.grpc.util.ProcessLog;
+import org.spin.grpc.util.RunBusinessProcessRequest;
+import org.spin.grpc.util.BusinessDataGrpc.BusinessDataBlockingStub;
+
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
 
-public class DictionaryClient {
-	  private static final Logger logger = Logger.getLogger(DictionaryClient.class.getName());
+public class BusinessDataClient {
+	  private static final Logger logger = Logger.getLogger(BusinessDataClient.class.getName());
 
 	  private final ManagedChannel channel;
-	  private final DictionaryGrpc.DictionaryBlockingStub blockingStub;
+	  private final BusinessDataGrpc.BusinessDataBlockingStub blockingStub;
 
 	  /** Construct client connecting to HelloWorld server at {@code host:port}. */
-	  public DictionaryClient(String host, int port) {
+	  public BusinessDataClient(String host, int port) {
 	    this(ManagedChannelBuilder.forAddress(host, port)
 	        // Channels are secure by default (via SSL/TLS). For the example we disable TLS to avoid
 	        // needing certificates.
@@ -38,37 +44,30 @@ public class DictionaryClient {
 	  }
 
 	  /** Construct client for accessing HelloWorld server using the existing channel. */
-	  DictionaryClient(ManagedChannel channel) {
+	  BusinessDataClient(ManagedChannel channel) {
 	    this.channel = channel;
-	    blockingStub = DictionaryGrpc.newBlockingStub(channel);
+	    blockingStub = BusinessDataGrpc.newBlockingStub(channel);
 	  }
 
 	  public void shutdown() throws InterruptedException {
 	    channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
 	  }
-
-	  /** 
-	   * Request Window. 
+	  
+	  /**
+	   * Request a process
 	   */
-	  public void requestWindow(boolean withTabs) {
-		  ApplicationRequest applicationRequest = ApplicationRequest.newBuilder()
-				  .setLanguage("es_MX")
+	  public void requestProcess() {
+		  ClientRequest clientRequest = ClientRequest.newBuilder()
+				  .setSessionUuid("53c1c836-6e47-11e9-8160-3709b250e4e1")
 				  .build();
-		  EntityRequest request = EntityRequest.newBuilder()
-	    		.setUuid("a520de12-fb40-11e8-a479-7a0060f0aa01")
-	    		.setApplicationRequest(applicationRequest)
-	    		.build();
-		  Window response;
+		  RunBusinessProcessRequest request = RunBusinessProcessRequest.newBuilder()
+				  .setClientRequest(clientRequest)
+				  .setUuid("a42acf86-fb40-11e8-a479-7a0060f0aa01")
+				  .build();
+		  ProcessLog response;
 		  try {
-			  if(withTabs) {
-				  response = blockingStub.getWindowAndTabs(request);
-				  for(Tab tab : response.getTabsList()) {
-					  logger.info("Tab: " + tab);
-				  }
-			  } else {
-				  response = blockingStub.getWindow(request);
-			  }
-			  logger.info("Window: " + response);
+			  response = blockingStub.runBusinessProcess(request);
+			  logger.info("Cache Reset: " + response);
 		  } catch (StatusRuntimeException e) {
 			  logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
 		      return;
@@ -80,12 +79,13 @@ public class DictionaryClient {
 	   * greeting.
 	   */
 	  public static void main(String[] args) throws Exception {
-		DictionaryClient client = new DictionaryClient("localhost", 50051);
+		BusinessDataClient client = new BusinessDataClient("localhost", 50052);
 	    try {
-	    	logger.info("####################### Window + Tabs #####################");
-	    	client.requestWindow(true);
-	    } finally {
-	      client.shutdown();
-	    }
+	    	logger.info("####################### Report Output #####################");
+	    	client.requestProcess();
+	    	client.shutdown();
+	    } catch (Exception e) {
+			e.printStackTrace();
+		}
 	  }
 }

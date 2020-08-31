@@ -12,11 +12,18 @@
  * You should have received a copy of the GNU General Public License                *
  * along with this program.	If not, see <https://www.gnu.org/licenses/>.            *
  ************************************************************************************/
-package org.spin.grpc.util;
+package org.spin.client;
 
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.spin.grpc.util.LoginRequest;
+import org.spin.grpc.util.LogoutRequest;
+import org.spin.grpc.util.SecurityGrpc;
+import org.spin.grpc.util.Session;
+import org.spin.grpc.util.UserInfoValue;
+import org.spin.grpc.util.SecurityGrpc.SecurityBlockingStub;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;

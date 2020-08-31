@@ -13,7 +13,7 @@
  * Copyright (C) 2012-2018 E.R.P. Consultores y Asociados, S.A. All Rights Reserved. *
  * Contributor(s): Yamel Senih www.erpya.com				  		                 *
  *************************************************************************************/
-package org.spin.grpc.util;
+package org.spin.base.util;
 
 import java.util.ArrayList;
 import java.util.List;

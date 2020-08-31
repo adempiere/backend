@@ -12,13 +12,14 @@
  * You should have received a copy of the GNU General Public License                *
  * along with this program.	If not, see <https://www.gnu.org/licenses/>.            *
  ************************************************************************************/
-package org.spin.grpc.util;
+package org.spin.server;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Logger;
 
 import org.spin.base.setup.SetupLoader;
+import org.spin.grpc.service.AccessServiceImplementation;
 
 import io.grpc.Server;
 import io.grpc.ServerBuilder;

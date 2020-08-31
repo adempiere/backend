@@ -12,7 +12,7 @@
  * You should have received a copy of the GNU General Public License                *
  * along with this program.	If not, see <https://www.gnu.org/licenses/>.            *
  ************************************************************************************/
-package org.spin.grpc.util;
+package org.spin.grpc.service;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -47,6 +47,25 @@ import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.compiere.util.Trx;
 import org.compiere.util.Util;
+import org.spin.base.util.ContextManager;
+import org.spin.base.util.ConvertUtil;
+import org.spin.base.util.RecordUtil;
+import org.spin.base.util.ValueUtil;
+import org.spin.grpc.util.BusinessPartner;
+import org.spin.grpc.util.ConversionRate;
+import org.spin.grpc.util.Country;
+import org.spin.grpc.util.CreateBusinessPartnerRequest;
+import org.spin.grpc.util.GetBusinessPartnerRequest;
+import org.spin.grpc.util.GetConversionRateRequest;
+import org.spin.grpc.util.GetCountryRequest;
+import org.spin.grpc.util.ListBusinessPartnerRequest;
+import org.spin.grpc.util.ListBusinessPartnerResponse;
+import org.spin.grpc.util.ListLanguagesRequest;
+import org.spin.grpc.util.ListLanguagesResponse;
+import org.spin.grpc.util.ListOrganizationsRequest;
+import org.spin.grpc.util.ListOrganizationsResponse;
+import org.spin.grpc.util.ListWarehousesRequest;
+import org.spin.grpc.util.ListWarehousesResponse;
 import org.spin.grpc.util.CoreFunctionalityGrpc.CoreFunctionalityImplBase;
 
 import io.grpc.Status;

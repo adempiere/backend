@@ -13,7 +13,7 @@
  * Copyright (C) 2012-2018 E.R.P. Consultores y Asociados, S.A. All Rights Reserved. *
  * Contributor(s): Yamel Senih www.erpya.com				  		                 *
  *************************************************************************************/
-package org.spin.grpc.util;
+package org.spin.base.util;
 
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
@@ -31,7 +31,12 @@ import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
 import org.compiere.util.Language;
 import org.compiere.util.Util;
+import org.spin.grpc.util.Criteria;
+import org.spin.grpc.util.Decimal;
+import org.spin.grpc.util.KeyValue;
+import org.spin.grpc.util.Value;
 import org.spin.grpc.util.Condition.Operator;
+import org.spin.grpc.util.Decimal.Builder;
 import org.spin.grpc.util.Value.ValueType;
 
 /**

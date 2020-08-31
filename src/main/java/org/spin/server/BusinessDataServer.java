@@ -12,12 +12,20 @@
  * You should have received a copy of the GNU General Public License                *
  * along with this program.	If not, see <https://www.gnu.org/licenses/>.            *
  ************************************************************************************/
-package org.spin.grpc.util;
+package org.spin.server;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Logger;
+
 import org.spin.base.setup.SetupLoader;
+import org.spin.grpc.service.BusinessDataServiceImplementation;
+import org.spin.grpc.service.CoreFunctionalityImplementation;
+import org.spin.grpc.service.DashboardingServiceImplementation;
+import org.spin.grpc.service.EntityLogServiceImplementation;
+import org.spin.grpc.service.PointOfSalesServiceImplementation;
+import org.spin.grpc.service.UserInterfaceServiceImplementation;
+import org.spin.grpc.service.WorkflowServiceImplementation;
 
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
@@ -26,14 +34,14 @@ import io.grpc.netty.NettyServerBuilder;
 import io.netty.handler.ssl.ClientAuth;
 import io.netty.handler.ssl.SslContextBuilder;
 
-public class EnrollmentServer {
-	private static final Logger logger = Logger.getLogger(EnrollmentServer.class.getName());
+public class BusinessDataServer {
+	private static final Logger logger = Logger.getLogger(BusinessDataServer.class.getName());
 
 	private Server server;
 	/**
-	   * Get SSL / TLS context
-	   * @return
-	   */
+	  * Get SSL / TLS context
+	  * @return
+	  */
 	  private SslContextBuilder getSslContextBuilder() {
 	        SslContextBuilder sslClientContextBuilder = SslContextBuilder.forServer(new File(SetupLoader.getInstance().getServer().getCertificate_chain_file()),
 	                new File(SetupLoader.getInstance().getServer().getPrivate_key_file()));
@@ -47,13 +55,39 @@ public class EnrollmentServer {
 	  private void start() throws IOException {
 		  if(SetupLoader.getInstance().getServer().isTlsEnabled()) {
 			  server = NettyServerBuilder.forPort(SetupLoader.getInstance().getServer().getPort())
-		                .addService(new EnrollmentServiceImplementation())
+					  	//	Base Service
+				        .addService(new BusinessDataServiceImplementation())
+				        //	Core Functionality
+				        .addService(new CoreFunctionalityImplementation())
+				        //	User Interface
+				        .addService(new UserInterfaceServiceImplementation())
+				        //	Dashboarding
+				        .addService(new DashboardingServiceImplementation())
+				        //	Workflow
+				        .addService(new WorkflowServiceImplementation())
+				        //	Entity Log
+				        .addService(new EntityLogServiceImplementation())
+				        //	POS
+				        .addService(new PointOfSalesServiceImplementation())
 		                .sslContext(getSslContextBuilder().build())
 		                .build()
 		                .start();
 		  } else {
 			  server = ServerBuilder.forPort(SetupLoader.getInstance().getServer().getPort())
-				        .addService(new EnrollmentServiceImplementation())
+					  	//	Base Service
+				        .addService(new BusinessDataServiceImplementation())
+				        //	Core Functionality
+				        .addService(new CoreFunctionalityImplementation())
+				        //	User Interface
+				        .addService(new UserInterfaceServiceImplementation())
+				        //	Dashboarding
+				        .addService(new DashboardingServiceImplementation())
+				        //	Workflow
+				        .addService(new WorkflowServiceImplementation())
+				        //	Entity Log
+				        .addService(new EntityLogServiceImplementation())
+				        //	POS
+				        .addService(new PointOfSalesServiceImplementation())
 				        .build()
 				        .start();
 		  }
@@ -63,7 +97,7 @@ public class EnrollmentServer {
 		      public void run() {
 		        // Use stderr here since the logger may have been reset by its JVM shutdown hook.
 		    	  logger.info("*** shutting down gRPC server since JVM is shutting down");
-		    	  EnrollmentServer.this.stop();
+		    	  BusinessDataServer.this.stop();
 		        logger.info("*** server shut down");
 		      }
 		    });
@@ -103,7 +137,7 @@ public class EnrollmentServer {
 		  SetupLoader.loadSetup(setupFileName);
 		  //	Validate load
 		  SetupLoader.getInstance().validateLoad();
-		  final EnrollmentServer server = new EnrollmentServer();
+		  final BusinessDataServer server = new BusinessDataServer();
 		  server.start();
 		  server.blockUntilShutdown();
 	  }
