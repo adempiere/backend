@@ -23,7 +23,6 @@ import org.spin.grpc.service.BusinessDataServiceImplementation;
 import org.spin.grpc.service.CoreFunctionalityImplementation;
 import org.spin.grpc.service.DashboardingServiceImplementation;
 import org.spin.grpc.service.EntityLogServiceImplementation;
-import org.spin.grpc.service.PointOfSalesServiceImplementation;
 import org.spin.grpc.service.UserInterfaceServiceImplementation;
 import org.spin.grpc.service.WorkflowServiceImplementation;
 
@@ -67,8 +66,6 @@ public class BusinessDataServer {
 				        .addService(new WorkflowServiceImplementation())
 				        //	Entity Log
 				        .addService(new EntityLogServiceImplementation())
-				        //	POS
-				        .addService(new PointOfSalesServiceImplementation())
 		                .sslContext(getSslContextBuilder().build())
 		                .build()
 		                .start();
@@ -86,8 +83,6 @@ public class BusinessDataServer {
 				        .addService(new WorkflowServiceImplementation())
 				        //	Entity Log
 				        .addService(new EntityLogServiceImplementation())
-				        //	POS
-				        .addService(new PointOfSalesServiceImplementation())
 				        .build()
 				        .start();
 		  }
