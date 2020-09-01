@@ -20,6 +20,7 @@ option java_outer_classname = "ADempiereCoreFunctionality";
 option objc_class_prefix = "HLW";
 
 import "base_data_type.proto";
+import "client.proto";
 
 package data;
 
@@ -40,14 +41,6 @@ service CoreFunctionality {
 	rpc ListBusinessPartner(ListBusinessPartnerRequest) returns (ListBusinessPartnerResponse) {}
 	//	Get Currency Rate
 	rpc GetConversionRate(GetConversionRateRequest) returns (ConversionRate) {}
-}
-
-// The client request contains client info for request.
-message ClientRequest {
-	string sessionUuid = 1;
-	string language = 2;
-	string organizationUuid = 3;
-	string warehouseUuid = 4;
 }
 
 // Get Country Request

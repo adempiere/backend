@@ -21,6 +21,7 @@ option objc_class_prefix = "HLW";
 
 import "core_functionality.proto";
 import "base_data_type.proto";
+import "client.proto";
 
 package data;
 

@@ -49,15 +49,12 @@ import org.spin.grpc.util.Currency;
 import org.spin.grpc.util.DocumentAction;
 import org.spin.grpc.util.DocumentStatus;
 import org.spin.grpc.util.DocumentType;
-import org.spin.grpc.util.Language;
 import org.spin.grpc.util.Organization;
 import org.spin.grpc.util.PriceList;
 import org.spin.grpc.util.Product;
 import org.spin.grpc.util.ResourceReference;
 import org.spin.grpc.util.TaxRate;
 import org.spin.grpc.util.Warehouse;
-import org.spin.grpc.util.BankAccount.BankAccountType;
-import org.spin.grpc.util.BankAccount.Builder;
 import org.spin.model.MADAttachmentReference;
 
 /**
