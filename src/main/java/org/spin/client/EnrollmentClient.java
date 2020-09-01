@@ -10,7 +10,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the                     *
  * GNU General Public License for more details.                                     *
  * You should have received a copy of the GNU General Public License                *
- * along with this program.	If not, see <https://www.gnu.org/licenses/>.            *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.            *
  ************************************************************************************/
 package org.spin.client;
 
@@ -96,7 +96,7 @@ public class EnrollmentClient {
 	   * greeting.
 	   */
 	  public static void main(String[] args) throws Exception {
-		EnrollmentClient client = new EnrollmentClient("localhost", 50047);
+		EnrollmentClient client = new EnrollmentClient("localhost", 50053);
 	    try {
 	    	logger.info("####################### Enroll User #####################");
 	    	client.enrollUser();
