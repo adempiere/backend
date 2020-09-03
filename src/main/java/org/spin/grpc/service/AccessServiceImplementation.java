@@ -47,6 +47,7 @@ import org.compiere.model.MClient;
 import org.compiere.model.MClientInfo;
 import org.compiere.model.MColumn;
 import org.compiere.model.MColumnAccess;
+import org.compiere.model.MCountry;
 import org.compiere.model.MDocType;
 import org.compiere.model.MForm;
 import org.compiere.model.MFormAccess;
@@ -526,7 +527,10 @@ public class AccessServiceImplementation extends SecurityImplBase {
 			DB.close(rs, pstmt);
 		}
 		//	Country
-		Env.setContext(context, "#C_Country_ID", ContextManager.getDefaultCountry().getC_Country_ID());
+		MCountry country = ContextManager.getDefaultCountry();
+		if(country != null) {
+			Env.setContext(context, "#C_Country_ID", country.getC_Country_ID());
+		}
 		// Call ModelValidators afterLoadPreferences - teo_sarca FR [ 1670025 ]
 		ModelValidationEngine.get().afterLoadPreferences(context);
 	}	//	loadPreferences
