@@ -318,18 +318,7 @@ public class AccessServiceImplementation extends SecurityImplBase {
 					+ "WHERE ur.AD_User_ID = ? AND ur.IsActive = 'Y' "
 					+ "ORDER BY COALESCE(ur.IsDefault,'N') DESC", userId);
 			//	Organization
-			String organizationSQL = "SELECT o.AD_Org_ID "
-					+ "FROM AD_Role r "
-					+ "INNER JOIN AD_Client c ON(c.AD_Client_ID = r.AD_Client_ID) "
-					+ "INNER JOIN AD_Org o ON(c.AD_Client_ID=o.AD_Client_ID OR o.AD_Org_ID=0) "
-					+ "WHERE r.AD_Role_ID=? "
-					+ " AND o.IsActive='Y' AND o.IsSummary='N'"
-					+ " AND (r.IsAccessAllOrgs='Y' "
-						+ "OR (r.IsUseUserOrgAccess='N' AND EXISTS(SELECT 1 FROM AD_Role_OrgAccess ra WHERE ra.AD_Org_ID = o.AD_Org_ID AND ra.AD_Role_ID = r.AD_Role_ID AND ra.IsActive='Y')) "
-						+ "OR (r.IsUseUserOrgAccess='Y' AND EXISTS(SELECT 1 FROM AD_User_OrgAccess ua WHERE ua.AD_Org_ID = o.AD_Org_ID AND ua.AD_User_ID = ? AND ua.IsActive='Y'))"
-						+ ") "
-					+ "ORDER BY o.Name";
-			organizationId = DB.getSQLValue(null, organizationSQL, roleId, userId);
+			organizationId = getDefaultOrganizationId(roleId, userId);
 			warehouseId = DB.getSQLValue(null, "SELECT M_Warehouse_ID FROM M_Warehouse WHERE IsActive = 'Y' AND AD_Org_ID = ?", organizationId);
 		} else {
 			roleId = RecordUtil.getIdFromUuid(I_AD_Role.Table_Name, request.getRoleUuid(), null);
@@ -378,6 +367,27 @@ public class AccessServiceImplementation extends SecurityImplBase {
 		populateDefaultPreferences(builder);
 		//	Return session
 		return builder;
+	}
+	
+	/**
+	 * Get Default organization after login
+	 * @param roleId
+	 * @param userId
+	 * @return
+	 */
+	private int getDefaultOrganizationId(int roleId, int userId) {
+		String organizationSQL = "SELECT o.AD_Org_ID "
+				+ "FROM AD_Role r "
+				+ "INNER JOIN AD_Client c ON(c.AD_Client_ID = r.AD_Client_ID) "
+				+ "INNER JOIN AD_Org o ON(c.AD_Client_ID=o.AD_Client_ID OR o.AD_Org_ID=0) "
+				+ "WHERE r.AD_Role_ID=? "
+				+ " AND o.IsActive='Y' AND o.IsSummary='N'"
+				+ " AND (r.IsAccessAllOrgs='Y' "
+					+ "OR (r.IsUseUserOrgAccess='N' AND EXISTS(SELECT 1 FROM AD_Role_OrgAccess ra WHERE ra.AD_Org_ID = o.AD_Org_ID AND ra.AD_Role_ID = r.AD_Role_ID AND ra.IsActive='Y')) "
+					+ "OR (r.IsUseUserOrgAccess='Y' AND EXISTS(SELECT 1 FROM AD_User_OrgAccess ua WHERE ua.AD_Org_ID = o.AD_Org_ID AND ua.AD_User_ID = ? AND ua.IsActive='Y'))"
+					+ ") "
+				+ "ORDER BY o.Name";
+		return DB.getSQLValue(null, organizationSQL, roleId, userId);
 	}
 	
 	/**
@@ -616,11 +626,11 @@ public class AccessServiceImplementation extends SecurityImplBase {
 		MSession currentSession = MSession.get(Env.getCtx(), false);
 		int userId = currentSession.getCreatedBy();
 		int roleId = DB.getSQLValue(null, "SELECT AD_Role_ID FROM AD_Role WHERE UUID = ?", request.getRoleUuid());
-		int organizationId = DB.getSQLValue(null, "SELECT AD_Org_ID FROM AD_Org WHERE UUID = ?", request.getOrganizationUuid());
-		int warehouseId = DB.getSQLValue(null, "SELECT M_Warehouse_ID FROM M_Warehouse WHERE UUID = ?", request.getWarehouseUuid());
+		int organizationId = getDefaultOrganizationId(roleId, userId);
 		if(organizationId < 0) {
 			organizationId = 0;
 		}
+		int warehouseId = DB.getSQLValue(null, "SELECT M_Warehouse_ID FROM M_Warehouse WHERE UUID = ? AND AD_Org_ID = ?", request.getWarehouseUuid(), organizationId);
 		if(warehouseId < 0) {
 			warehouseId = 0;
 		}
