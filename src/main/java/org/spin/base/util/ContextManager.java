@@ -72,12 +72,14 @@ public class ContextManager {
 	 */
 	public static Properties getContext(String sessionUuid, String language, String organizationUuid, String warehouseUuid) {
 		Properties context = sessionsContext.get(sessionUuid);
-		if(context != null) {
+		if(context != null
+				&& context.size() > 0) {
 			Env.setContext(context, Env.LANGUAGE, getDefaultLanguage(language));
 			setDefault(context, Env.getAD_Org_ID(context), organizationUuid, warehouseUuid);
+			Env.setCtx((Properties) context.clone());
 			return context;
 		}
-		context = Env.getCtx();
+		context = (Properties) Env.getCtx().clone();
 		DB.validateSupportedUUIDFromDB();
 		MSession session = new Query(context, I_AD_Session.Table_Name, I_AD_Session.COLUMNNAME_UUID + " = ?", null)
 				.setParameters(sessionUuid)
@@ -95,6 +97,7 @@ public class ContextManager {
 		Env.setContext(context, Env.LANGUAGE, getDefaultLanguage(language));
 		//	Save to Cache
 		sessionsContext.put(sessionUuid, context);
+		Env.setCtx((Properties) context.clone());
 		return context;
 	}
 	
