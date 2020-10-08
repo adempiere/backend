@@ -133,25 +133,25 @@ message ListLanguagesResponse {
 message Country {
 	string uuid = 1;
 	int32 id = 2;
-	string countryCode = 3;
+	string country_code = 3;
 	string name = 4;
 	string description = 5;
-	bool hasRegion = 6;
-	string regionName = 7;
-	string displaySequence = 8;
-	bool isAddressLinesReverse = 9;
-	string captureSequence = 10;
-	string displaySequenceLocal = 11;
-	bool isAddressLinesLocalReverse = 12;
-	string expressionPostal = 13;
-	bool hasPostalAdd = 14;
-	string expressionPhone = 15;
-	string mediaSize = 16;
-	string expressionBankRoutingNo = 17;
-	string expressionBankAccountNo = 18;
+	bool has_region = 6;
+	string region_name = 7;
+	string display_sequence = 8;
+	bool is_address_lines_reverse = 9;
+	string capture_sequence = 10;
+	string display_sequence_local = 11;
+	bool is_address_lines_local_reverse = 12;
+	string expression_postal = 13;
+	bool has_postal_add = 14;
+	string expression_phone = 15;
+	string media_size = 16;
+	string expression_bank_routing_no = 17;
+	string expression_bank_account_no = 18;
 	string language = 19;
-	bool allowCitiesOutOfList = 20;
-	bool isPostcodeLookup = 21;
+	bool allow_cities_out_of_list = 20;
+	bool is_postcode_lookup = 21;
 	Currency currency = 22;
 }
 
@@ -168,11 +168,11 @@ message GetConversionRateRequest {
 message Currency {
 	string uuid = 1;
 	int32 id = 2;
-	string iSOCode = 3;
-	string curSymbol = 4;
+	string iSO_code = 3;
+	string cur_symbol = 4;
 	string description = 5;
-	int32 stdPrecision = 6;
-	int32 costingPrecision = 7;
+	int32 std_precision = 6;
+	int32 costing_precision = 7;
 }
 
 // Conversion Rate

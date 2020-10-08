@@ -71,6 +71,7 @@ import org.compiere.model.MAttachment;
 import org.compiere.model.MChangeLog;
 import org.compiere.model.MChat;
 import org.compiere.model.MChatEntry;
+import org.compiere.model.MClientInfo;
 import org.compiere.model.MColumn;
 import org.compiere.model.MField;
 import org.compiere.model.MMessage;
@@ -150,6 +151,7 @@ import org.spin.grpc.util.RollbackEntityRequest.EventType;
 import org.spin.grpc.util.UserInterfaceGrpc.UserInterfaceImplBase;
 import org.spin.model.I_AD_AttachmentReference;
 import org.spin.model.I_AD_ContextInfo;
+import org.spin.model.MADAttachmentReference;
 import org.spin.model.MADContextInfo;
 import org.spin.util.ASPUtil;
 import org.spin.util.AbstractExportFormat;
@@ -557,7 +559,8 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 	public void getResource(GetResourceRequest request, StreamObserver<Resource> responseObserver) {
 		try {
 			if(request == null
-					|| Util.isEmpty(request.getResourceUuid())) {
+					|| (Util.isEmpty(request.getResourceUuid()) 
+							&& Util.isEmpty(request.getResourceName()))) {
 				throw new AdempiereException("Object Request Null");
 			}
 			log.fine("Download Requested = " + request.getResourceUuid());
@@ -566,7 +569,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 					request.getClientRequest().getOrganizationUuid(), 
 					request.getClientRequest().getWarehouseUuid());
 			//	Get resource
-			getResource(request.getResourceUuid(), responseObserver);
+			getResource(request.getResourceUuid(), request.getResourceName(), responseObserver);
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
@@ -583,7 +586,25 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 	 * @param responseObserver
 	 * @throws Exception 
 	 */
-	private void getResource(String resourceUuid, StreamObserver<Resource> responseObserver) throws Exception {
+	private void getResource(String resourceUuid, String resourceName, StreamObserver<Resource> responseObserver) throws Exception {
+		if(Util.isEmpty(resourceUuid)
+				&& !Util.isEmpty(resourceName)
+				&& AttachmentUtil.getInstance().isValidForClient(Env.getAD_Client_ID(Env.getCtx()))) {
+			MClientInfo clientInfo = MClientInfo.get(Env.getCtx());
+			MADAttachmentReference reference = new Query(Env.getCtx(), I_AD_AttachmentReference.Table_Name, "(UUID || '-' || FileName) = ? AND FileHandler_ID = ?", null)
+					.setOrderBy(I_AD_AttachmentReference.COLUMNNAME_AD_Attachment_ID + " DESC")
+					.setParameters(resourceName, clientInfo.getFileHandler_ID())
+					.first();
+			if(reference == null
+					|| reference.getAD_AttachmentReference_ID() <= 0) {
+				responseObserver.onCompleted();
+				return;
+			}
+			resourceUuid = reference.getUUID();
+		} else {
+			responseObserver.onCompleted();
+			return;
+		}
 		byte[] data = AttachmentUtil.getInstance()
 			.withClientId(Env.getAD_Client_ID(Env.getCtx()))
 			.withAttachmentReferenceId(RecordUtil.getIdFromUuid(I_AD_AttachmentReference.Table_Name, resourceUuid, null))

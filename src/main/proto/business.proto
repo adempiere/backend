@@ -19,7 +19,6 @@ option java_package = "org.spin.grpc.util";
 option java_outer_classname = "ADempiereData";
 option objc_class_prefix = "HLW";
 
-import "core_functionality.proto";
 import "base_data_type.proto";
 import "client.proto";
 
@@ -130,8 +129,19 @@ message GetAttachmentRequest {
 
 // Request for download resource
 message GetResourceRequest {
-	ClientRequest clientRequest = 1;
-	string resourceUuid = 2;
+	ClientRequest client_request = 1;
+	string resource_uuid = 2;
+	string resource_name = 3;
+	int64 width = 4;
+	int64 height = 5;
+	enum Operation {
+		RESIZE = 0;
+		CROP = 1;
+		FIX = 2;
+		IDENTIFY = 3;
+	}
+	//	Operation
+	Operation operation = 6;
 }
 
 // Request for download resource reference

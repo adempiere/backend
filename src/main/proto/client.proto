@@ -23,8 +23,8 @@ package data;
 
 // The client request contains client info for request.
 message ClientRequest {
-	string sessionUuid = 1;
+	string session_uuid = 1;
 	string language = 2;
-	string organizationUuid = 3;
-	string warehouseUuid = 4;
+	string organization_uuid = 3;
+	string warehouse_uuid = 4;
 }

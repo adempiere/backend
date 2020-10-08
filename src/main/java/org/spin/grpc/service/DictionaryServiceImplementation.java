@@ -113,21 +113,11 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 	
 	@Override
 	public void getWindow(EntityRequest request, StreamObserver<Window> responseObserver) {
-		requestWindow(request, responseObserver, false);
-	}
-	
-	@Override
-	public void getWindowAndTabs(EntityRequest request, StreamObserver<Window> responseObserver) {
 		requestWindow(request, responseObserver, true);
 	}
 	
 	@Override
 	public void getTab(EntityRequest request, StreamObserver<Tab> responseObserver) {
-		requestTab(request, responseObserver, false);
-	}
-	
-	@Override
-	public void getTabAndFields(EntityRequest request, StreamObserver<Tab> responseObserver) {
 		requestTab(request, responseObserver, true);
 	}
 	
@@ -434,7 +424,7 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 				.setDescription(ValueUtil.validateNull(window.getDescription()))
 				.setHelp(ValueUtil.validateNull(window.getHelp()))
 				.setWindowType(ValueUtil.validateNull(window.getWindowType()))
-				.setIsSOTrx(window.isSOTrx())
+				.setIsSalesTransaction(window.isSOTrx())
 				.setIsActive(window.isActive());
 		if(contextInfoBuilder != null) {
 			builder.setContextInfo(contextInfoBuilder.build());
@@ -447,7 +437,7 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 				if(!tab.isActive()) {
 					continue;
 				}
-				Tab.Builder tabBuilder = convertTab(context, tab, tabs, false);
+				Tab.Builder tabBuilder = convertTab(context, tab, tabs, withTabs);
 				builder.addTabs(tabBuilder.build());
 				//	Get field group
 				int [] fieldGroupIdArray = getFieldGroupIdsFromTab(tab.getAD_Tab_ID());
@@ -803,8 +793,8 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 					.setId(message.getAD_Message_ID())
 					.setUuid(ValueUtil.validateNull(message.getUUID()))
 					.setValue(ValueUtil.validateNull(message.getValue()))
-					.setMsgText(ValueUtil.validateNull(msgText))
-					.setMsgTip(ValueUtil.validateNull(msgTip))
+					.setMessageText(ValueUtil.validateNull(msgText))
+					.setMessageTip(ValueUtil.validateNull(msgTip))
 					.build();
 			builder = ContextInfo.newBuilder()
 					.setId(contextInfoValue.getAD_ContextInfo_ID())
@@ -1269,7 +1259,7 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 				.setCallout(ValueUtil.validateNull(column.getCallout()))
 				.setColumnName(ValueUtil.validateNull(column.getColumnName()))
 				.setElementName(ValueUtil.validateNull(column.getColumnName()))
-				.setColumnSQL(ValueUtil.validateNull(column.getColumnSQL()))
+				.setColumnSql(ValueUtil.validateNull(column.getColumnSQL()))
 				.setDefaultValue(ValueUtil.validateNull(defaultValue))
 				.setDisplayType(displayTypeId)
 				.setFormatPattern(ValueUtil.validateNull(column.getFormatPattern()))
@@ -1399,7 +1389,7 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 				.setCallout(ValueUtil.validateNull(column.getCallout()))
 				.setColumnName(ValueUtil.validateNull(column.getColumnName()))
 				.setElementName(ValueUtil.validateNull(column.getColumnName()))
-				.setColumnSQL(ValueUtil.validateNull(column.getColumnSQL()))
+				.setColumnSql(ValueUtil.validateNull(column.getColumnSQL()))
 				.setDefaultValue(ValueUtil.validateNull(defaultValue))
 				.setDisplayLogic(ValueUtil.validateNull(field.getDisplayLogic()))
 				.setDisplayType(displayTypeId)
@@ -1630,10 +1620,10 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 		builder.setQuery(ValueUtil.validateNull(queryForLookup));
 		//	Window Reference
 		if(info.ZoomWindow > 0) {
-			builder.addWindows(convertZoomWindow(context, info.ZoomWindow).build());
+			builder.addZoomWindows(convertZoomWindow(context, info.ZoomWindow).build());
 		}
 		if(info.ZoomWindowPO > 0) {
-			builder.addWindows(convertZoomWindow(context, info.ZoomWindowPO).build());
+			builder.addZoomWindows(convertZoomWindow(context, info.ZoomWindowPO).build());
 		}
 		//	Return
 		return builder;
@@ -1679,6 +1669,6 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 				.setUuid(ValueUtil.validateNull(window.getUUID()))
 				.setName(ValueUtil.validateNull(name))
 				.setDescription(ValueUtil.validateNull(description))
-				.setIsSOTrx(window.isSOTrx());
+				.setIsSalesTransaction(window.isSOTrx());
 	}
 }

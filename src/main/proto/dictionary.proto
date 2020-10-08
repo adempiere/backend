@@ -25,12 +25,8 @@ package dictionary;
 service Dictionary {
 	// Request a Window
 	rpc GetWindow(EntityRequest) returns (Window) {}
-	// Request Window and tabs
-	rpc GetWindowAndTabs(EntityRequest) returns (Window) {}
 	// Request a Tab
 	rpc GetTab(EntityRequest) returns (Tab) {}
-	// Request a Tab and Fields
-	rpc GetTabAndFields(EntityRequest) returns (Tab) {}
 	// Request a Field
 	rpc GetField(FieldRequest) returns (Field) {}
 	// Reference Request
@@ -48,7 +44,7 @@ service Dictionary {
 
 // The client request contains client info for request.
 message ApplicationRequest {
-	string sessionUuid = 1;
+	string session_uuid = 1;
 	string language = 2;
 }
 
@@ -56,39 +52,39 @@ message ApplicationRequest {
 message EntityRequest {
 	int32 id = 1;
 	string uuid = 2;
-	ApplicationRequest applicationRequest = 3;
+	ApplicationRequest application_request = 3;
 }
 
 // Field request
 message FieldRequest {
-	ApplicationRequest applicationRequest = 1;
-	string fieldUuid = 2;
-	string columnUuid = 3;
-	string elementUuid = 4;
-	// TableName + ColumnName
-	string tableName = 5;
-	string columnName = 6;
-	string elementColumnName = 7;
+	ApplicationRequest application_request = 1;
+	string field_uuid = 2;
+	string column_uuid = 3;
+	string element_uuid = 4;
+	// Table_name + _column_name
+	string table_name = 5;
+	string column_name = 6;
+	string element_column_name = 7;
 }
 
 // Reference request
 message ReferenceRequest {
-	ApplicationRequest applicationRequest = 1;
-	string referenceUuid = 2;
-	// TableName + ColumnName assumed that it is Table Direct
-	string columnName = 3;
+	ApplicationRequest application_request = 1;
+	string reference_uuid = 2;
+	// Table_name + column_name assumed that it is Table Direct
+	string column_name = 3;
 }
 
 // Validation Code request
 message ValidationRuleRequest {
-	ApplicationRequest applicationRequest = 1;
-	string validationRuleUuid = 2;
+	ApplicationRequest application_request = 1;
+	string validation_rule_uuid = 2;
 }
 
 // Validation Code
 message ValidationRule {
-	string validationRuleUuid = 1;
-	string validationCode = 2;
+	string validation_rule_uuid = 1;
+	string validation_code = 2;
 	string name = 3;
 	string description = 4;
 	string type = 5;
@@ -101,11 +97,11 @@ message Window {
 	string name = 3;
 	string description = 4;
 	string help = 5;
-	bool isActive = 6;
-	bool isSOTrx = 7;
-	string windowType = 8;
+	bool is_active = 6;
+	bool is_sales_transaction = 7;
+	string window_type = 8;
 	//	External Info
-	ContextInfo contextInfo = 9;
+	ContextInfo context_info = 9;
 	repeated Tab tabs = 10;
 }
 
@@ -117,39 +113,39 @@ message Tab {
 	string description = 4;
 	string help = 5;
 	// Attributes
-	string tableName = 6;
+	string table_name = 6;
 	int32 sequence = 7;
-	int32 tabLevel = 8;
+	int32 tab_level = 8;
 	//
-	bool isActive = 9;
-	bool isSingleRow = 10;
-	bool isAdvancedTab = 11;
-	bool isHasTree = 12;
-	bool isInfoTab = 13;
-	bool isSortTab = 14;
-	bool isTranslationTab = 15;
-	bool isReadOnly = 16;
-	bool isInsertRecord = 17;
-	bool isView = 18;
-	bool isDeleteable = 19;
-	bool isDocument = 20;
-	bool isChangeLog = 21;
-	int32 accessLevel = 22;
-	string linkColumnName = 23;
-	string sortOrderColumnName = 24;
-	string sortYesNoColumnName = 25;
-	string parentColumnName = 26;
-	string displayLogic = 27;
-	string commitWarning = 28;
+	bool is_active = 9;
+	bool is_single_row = 10;
+	bool is_advanced_tab = 11;
+	bool is_has_tree = 12;
+	bool is_info_tab = 13;
+	bool is_sort_tab = 14;
+	bool is_translation_tab = 15;
+	bool is_read_only = 16;
+	bool is_insert_record = 17;
+	bool is_view = 18;
+	bool is_deleteable = 19;
+	bool is_document = 20;
+	bool is_change_log = 21;
+	int32 access_level = 22;
+	string link_column_name = 23;
+	string sort_order_column_name = 24;
+	string sort_yes_no_column_name = 25;
+	string parent_column_name = 26;
+	string display_logic = 27;
+	string commit_warning = 28;
 	string query = 29;
-	string whereClause = 30;
-	string orderByClause = 31;
-	string parentTabUuid = 32;
+	string where_clause = 30;
+	string order_by_clause = 31;
+	string parent_tab_uuid = 32;
 	// External Info
-	ContextInfo contextInfo = 33;
+	ContextInfo context_info = 33;
 	repeated Process processes = 34;
 	repeated Field fields = 35;
-	FieldGroup fieldGroup = 36;
+	FieldGroup field_group = 36;
 }
 
 // Field
@@ -160,55 +156,55 @@ message Field {
 	string description = 4;
 	string help = 5;
 	int32 sequence = 6;
-	string columnName = 7;
-	string elementName = 8;
-	bool isDisplayed = 9;
-	bool isDisplayedGrid = 10;
-	bool isReadOnly = 11;
-	bool isAllowCopy = 12;
-	bool isEncrypted = 13;
-	bool isSameLine = 14;
-	bool isHeading = 15;
-	bool isFieldOnly = 16;
-	bool isQuickEntry = 17;
-	bool isMandatory = 18;
-	bool isKey = 19;
-	bool isParent = 20;
-	bool isUpdateable = 21;
-	bool isIdentifier = 22;
-	bool isAllowLogging = 23;
-	bool isSelectionColumn = 24;
-	bool isRange = 25;
-	bool isAlwaysUpdateable = 26;
-	bool isTranslated = 27;
-	int32 identifierSequence = 78;
-	string displayLogic = 29;
-	int32 displayType = 30;
-	string defaultValue = 31;
-	string readOnlyLogic = 32;
-	string mandatoryLogic = 33;
+	string column_name = 7;
+	string element_name = 8;
+	bool is_displayed = 9;
+	bool is_displayed_grid = 10;
+	bool is_read_only = 11;
+	bool is_allow_copy = 12;
+	bool is_encrypted = 13;
+	bool is_same_line = 14;
+	bool is_heading = 15;
+	bool is_field_only = 16;
+	bool is_quick_entry = 17;
+	bool is_mandatory = 18;
+	bool is_key = 19;
+	bool is_parent = 20;
+	bool is_updateable = 21;
+	bool is_identifier = 22;
+	bool is_allow_logging = 23;
+	bool is_selection_column = 24;
+	bool is_range = 25;
+	bool is_always_updateable = 26;
+	bool is_translated = 27;
+	int32 identifier_sequence = 78;
+	string display_logic = 29;
+	int32 display_type = 30;
+	string default_value = 31;
+	string read_only_logic = 32;
+	string mandatory_logic = 33;
 	string callout = 34;
-	string columnSQL = 35;
-	string vFormat = 36;
-	string valueMin = 37;
-	string valueMax = 38;
-	string formatPattern = 39;
+	string column_sql = 35;
+	string v_format = 36;
+	string value_min = 37;
+	string value_max = 38;
+	string format_pattern = 39;
 	// External Info
-	ContextInfo contextInfo = 40;
-	FieldGroup fieldGroup = 41;
-	FieldDefinition fieldDefinition = 42;
+	ContextInfo context_info = 40;
+	FieldGroup field_group = 41;
+	FieldDefinition field_definition = 42;
 	Reference reference = 43;
 	Process process = 44;
 	// Smart Browser Field Compatibility
-	bool isQueryCriteria = 45;
-	bool isOrderBy = 46;
-	int32 seqNoGrid = 47;
-	int32 sortNo = 48;
-	bool isInfoOnly = 49;
-	bool isActive = 50;
+	bool is_query_criteria = 45;
+	bool is_order_by = 46;
+	int32 seq_no_grid = 47;
+	int32 sort_no = 48;
+	bool is_info_only = 49;
+	bool is_active = 50;
 	// Process Parameter Compatibility
-	string defaultValueTo = 51;
-	int32 fieldLength = 52;
+	string default_value_to = 51;
+	int32 field_length = 52;
 }
 
 // Context Info
@@ -217,9 +213,9 @@ message ContextInfo {
 	string uuid = 2;
 	string name = 3;
 	string description = 4;
-	MessageText messageText = 5;
-	string sqlStatement = 6;
-	bool isActive = 7;
+	MessageText message_text = 5;
+	string sql_statement = 6;
+	bool is_active = 7;
 }
 
 // Message
@@ -227,10 +223,10 @@ message MessageText {
 	int32 id = 1;
 	string uuid = 2;
 	string value = 3;
-	string msgType = 4;
-	string msgText = 5;
-	string msgTip = 6;
-	bool isActive = 7;
+	string message_type = 4;
+	string message_text = 5;
+	string message_tip = 6;
+	bool is_active = 7;
 }
 
 // Context Info
@@ -238,8 +234,8 @@ message FieldGroup {
 	int32 id = 1;
 	string uuid = 2;
 	string name = 3;
-	string fieldGroupType = 4;
-	bool isActive = 5;
+	string field_group_type = 4;
+	bool is_active = 5;
 }
 
 // Context Info
@@ -248,9 +244,9 @@ message FieldDefinition {
 	string uuid = 2;
 	string value = 3;
 	string name = 4;
-	string fieldGroupType = 5;
+	string field_group_type = 5;
 	repeated FieldCondition conditions = 6;
-	bool isActive = 7;
+	bool is_active = 7;
 }
 
 // Field Condition
@@ -259,7 +255,7 @@ message FieldCondition {
 	string uuid = 2;
 	string condition = 3;
 	string stylesheet = 4;
-	bool isActive = 5;
+	bool is_active = 5;
 }
 
 // Process
@@ -270,14 +266,14 @@ message Process {
 	string name = 4;
 	string description = 5;
 	string help = 6;
-	bool isReport = 7;
-	int32 accessLevel = 8;
-	string showHelp = 9;
-	bool isDirectPrint = 10;
+	bool is_report = 7;
+	int32 access_level = 8;
+	string show_help = 9;
+	bool is_direct_print = 10;
 	repeated Field parameters = 11;
-	bool isActive = 12;
+	bool is_active = 12;
 	// Reporty Type
-	repeated ReportExportType reportExportTypes = 13;
+	repeated ReportExportType report_export_types = 13;
 }
 
 // Form
@@ -287,9 +283,9 @@ message Form {
 	string name = 3;
 	string description = 4;
 	string help = 5;
-	int32 accessLevel = 6;
-	string fileName = 7;
-	bool isActive = 8;
+	int32 access_level = 6;
+	string file_name = 7;
+	bool is_active = 8;
 }
 
 // Smart Browser
@@ -300,22 +296,22 @@ message Browser {
 	string name = 4;
 	string description = 5;
 	string help = 6;
-	int32 accessLevel = 8;
+	int32 access_level = 8;
 	string query = 9;
-	string whereClause = 10;
-	string orderByClause = 11;
-	bool isUpdateable = 12;
-	bool IsDeleteable = 13;
-	bool IsSelectedByDefault = 14;
-	bool IsCollapsibleByDefault = 15;
-	bool IsExecutedQueryByDefault = 16;
-	bool IsShowTotal = 17;
-	string viewUuid = 18;
+	string where_clause = 10;
+	string order_by_clause = 11;
+	bool is_updateable = 12;
+	bool is_deleteable = 13;
+	bool is_selected_by_default = 14;
+	bool is_collapsible_by_default = 15;
+	bool is_executed_query_by_default = 16;
+	bool is_show_total = 17;
+	string view_uuid = 18;
 	// External Reference
 	Window window = 19;
 	Process process = 20;
 	repeated Field fields = 21;
-	bool isActive = 22;
+	bool is_active = 22;
 }
 
 // Zoom Window
@@ -324,20 +320,20 @@ message ZoomWindow {
 	string uuid = 2;
 	string name = 3;
 	string description = 4;
-	bool isSOTrx = 5;
-	bool isActive = 6;
+	bool is_sales_transaction = 5;
+	bool is_active = 6;
 }
 
 // Foreign Reference
 message Reference {
-	string tableName = 1;
-	string keyColumnName = 2;
-	string displayColumnName = 3;
+	string table_name = 1;
+	string key_column_name = 2;
+	string display_column_name = 3;
 	string query = 4;
-	string directQuery = 5;
-	string validationCode = 6;
+	string direct_query = 5;
+	string validation_code = 6;
 	// External Info
-	repeated ZoomWindow windows = 7;
+	repeated ZoomWindow zoom_windows = 7;
 }
 
 // Report Type for Export

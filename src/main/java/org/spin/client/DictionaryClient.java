@@ -23,7 +23,6 @@ import org.spin.grpc.util.DictionaryGrpc;
 import org.spin.grpc.util.EntityRequest;
 import org.spin.grpc.util.Tab;
 import org.spin.grpc.util.Window;
-import org.spin.grpc.util.DictionaryGrpc.DictionaryBlockingStub;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -68,7 +67,7 @@ public class DictionaryClient {
 		  Window response;
 		  try {
 			  if(withTabs) {
-				  response = blockingStub.getWindowAndTabs(request);
+				  response = blockingStub.getWindow(request);
 				  for(Tab tab : response.getTabsList()) {
 					  logger.info("Tab: " + tab);
 				  }

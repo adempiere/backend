@@ -23,72 +23,85 @@ package access;
 
 // The greeting service definition.
 service Security {
-  // Request user roles
-  rpc GetUserInfo(LoginRequest) returns (UserInfoValue) {}
   // Request login from user
   rpc RunLogin(LoginRequest) returns (Session) {}
-  // Request login and role
-  rpc RunLoginDefault(LoginRequest) returns (Session) {}
   // Request a Role from uuid
   rpc RunLogout(LogoutRequest) returns (Session) {}
   // Request user roles from Session
-  rpc GetUserInfoFromSession(UserInfoRequest) returns (UserInfoValue) {}
+  rpc GetUserInfo(UserInfoRequest) returns (UserInfo) {}
   // Request Menu from Parent UUID
-  rpc GetMenuAndChild(UserInfoRequest) returns (Menu) {}
+  rpc GetMenu(MenuRequest) returns (Menu) {}
   // Request change role
-  rpc RunChangeRole(UserInfoRequest) returns (Session) {}
+  rpc RunChangeRole(ChangeRoleRequest) returns (Session) {}
   // Request session
   rpc GetSession(SessionRequest) returns (Session) {}
+  // List Roles
+  rpc ListRoles(ListRolesRequest) returns (ListRolesResponse) {}
+}
+
+// Translations Request
+message ListRolesRequest {
+	string session_uuid = 1;
+	string language = 2;
+	string client_version = 3;
+	int32 page_size = 4;
+	string page_token = 5;
+}
+
+//	Roles List
+message ListRolesResponse {
+	int64 record_count = 1;
+	repeated Role roles = 2;
+	string next_page_token = 3;
 }
 
 // Request a Login Session
 message LoginRequest {
-	string userName = 2;
-	string userPass = 3;
-	string roleUuid = 4;
-	string organizationUuid = 5;
-	string warehouseUuid = 6;
-	string clientVersion = 7;
-	string language = 8;
+	string user_name = 1;
+	string user_pass = 2;
+	string role_uuid = 3;
+	string organization_uuid = 4;
+	string warehouse_uuid = 5;
+	string client_version = 6;
+	string language = 7;
 }
 
 // Request a Logout
 message LogoutRequest {
-	string sessionUuid = 1;
+	string session_uuid = 1;
 	string language = 2;
-	string clientVersion = 3;
+	string client_version = 3;
 }
 
 // Request a Session
 message SessionRequest {
-	string sessionUuid = 1;
-	string clientVersion = 2;
+	string session_uuid = 1;
+	string language = 2;
+	string client_version = 3;
 }
 
 // Request a Change Role
 message ChangeRoleRequest {
-	string sessionUuid = 1;
-	string roleUuid = 2;
-	string organizationUuid = 3;
-	string warehouseUuid = 4;
+	string session_uuid = 1;
+	string role_uuid = 2;
+	string organization_uuid = 3;
+	string warehouse_uuid = 4;
 	string language = 5;
-	string clientVersion = 6;
+	string client_version = 6;
 }
 
 // Request User Info
 message UserInfoRequest {
-	string sessionUuid = 1;
-	string roleUuid = 2;
-	string organizationUuid = 3;
-	string warehouseUuid = 4;
-	string language = 5;
-	string clientVersion = 6;
+	string session_uuid = 1;
+	string language = 2;
+	string client_version = 3;
 }
 
-// Role list from user
-message UserInfoValue {
-	UserInfo userInfo = 1;
-	repeated Role roles = 2;
+// Request Menu
+message MenuRequest {
+	string session_uuid = 1;
+	string language = 2;
+	string client_version = 3;
 }
 
 // User information
@@ -98,6 +111,7 @@ message UserInfo {
 	string name = 3;
 	string description = 4;
 	string comments = 5;
+	string image = 6;
 }
 
 
@@ -106,19 +120,29 @@ message Session {
 	int32 id = 1;
 	string uuid = 2;
 	string name = 3;
-	UserInfo userInfo = 4;
+	UserInfo user_info = 4;
 	Role role = 5;
 	bool processed = 6;
-	map<string, ContextValue> defaultContext = 7;
+	string language = 7;
+	int32 country_id = 8;
+	string country_code = 9;
+	string country_name = 10;
+	string display_sequence = 11;
+	string currency_name = 12;
+	string currency_iso_code = 13;
+	string currency_symbol = 14;
+	int32 standard_precision = 15;
+	int32 costing_precision = 16;
+	map<string, ContextValue> default_context = 17;
 }
 
 // Define value for object
 message ContextValue {
-	int32 intValue = 1;
-	int64 longValue = 2;
-	double doubleValue = 3;
-	bool booleanValue = 4;
-	string stringValue = 5;
+	int32 int_value = 1;
+	int64 long_value = 2;
+	double double_value = 3;
+	bool boolean_value = 4;
+	string string_value = 5;
 	enum ValueType {
 		NULL = 0;
 		INTEGER = 1;
@@ -128,7 +152,7 @@ message ContextValue {
 		STRING = 5;
 		DATE = 6;
 	}
-	ValueType valueType = 6;
+	ValueType value_type = 6;
 }
 
 // Role Definition
@@ -137,81 +161,28 @@ message Role {
 	string uuid = 2;
 	string name = 3;
 	string description = 4;
-	int32 clientId = 5;
-	string clientName = 6;
-	bool isCanReport = 7;
-	bool isCanExport = 8;
-	bool isPersonalLock = 9;
-	bool isPersonalAccess = 10;
-	// Entity Access
-	repeated Access organizations = 11;
-	repeated Access windows = 12;
-	repeated Access process = 13;
-	repeated Access forms = 14;
-	repeated Access browsers = 15;
-	repeated Access workflows = 16;
-	repeated Access tasks = 17;
-	repeated Access dashboards = 18;
-	repeated Access documentActions = 19;
-	repeated TableAccess tables = 20;
-	repeated ColumnAccess columns = 21;
-	repeated RecordAccess records = 22;
-}
-
-// Access for distinct entity
-message Access {
-	string uuid = 1;
-	bool isReadOnly = 2;
-	// Optional for Document Action Access
-	string action = 3;
-}
-
-// Access for Table
-message TableAccess {
-	string tableName = 1;
-	bool isExclude = 2;
-	bool isCanReport = 3;
-	bool isCanExport = 4;
-	enum AccessTypeRule {
-		ACCESSING = 0;
-		EXPORTING = 1;
-		REPORTING = 2;
-	}
-	AccessTypeRule accessTypeRules = 5;
-}
-
-// Access for Column
-message ColumnAccess {
-	string tableName = 1;
-	string columnName = 2;
-	bool isExclude = 3;
-	bool isReadOnly = 4;
-}
-
-// Access for Record
-message RecordAccess {
-	string tableName = 1;
-	int32 recordId = 2;
-	string recordUuid = 3;
-	bool isExclude = 4;
-	bool isReadOnly = 5;
-	bool isDependentEntities = 6;
+	int32 client_id = 5;
+	string client_name = 6;
+	bool is_can_report = 7;
+	bool is_can_export = 8;
+	bool is_personal_lock = 9;
+	bool is_personal_access = 10;
 }
 
 // Menu
 message Menu {
 	int32 id = 1;
 	string uuid = 2;
-	string parentUuid = 4;
+	string parent_uuid = 4;
 	string name = 5;
 	string description = 6;
 	string sequence = 7;
-	bool isReadOnly = 8;
-	bool isSummary = 9;
-	bool isSOTrx = 10;
+	bool is_read_only = 8;
+	bool is_summary = 9;
+	bool is_s_o_trx = 10;
 	string action = 11;
 	// Supported References
-	string referenceUuid = 12;
+	string reference_uuid = 12;
 	repeated Menu childs = 13;
-	bool isActive = 14;
+	bool is_active = 14;
 }
