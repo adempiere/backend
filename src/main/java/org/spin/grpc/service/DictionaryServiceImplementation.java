@@ -88,7 +88,6 @@ import org.spin.grpc.util.ReferenceRequest;
 import org.spin.grpc.util.ReportExportType;
 import org.spin.grpc.util.Tab;
 import org.spin.grpc.util.ValidationRule;
-import org.spin.grpc.util.ValidationRuleRequest;
 import org.spin.grpc.util.Window;
 import org.spin.grpc.util.ZoomWindow;
 import org.spin.grpc.util.DictionaryGrpc.DictionaryImplBase;
@@ -174,12 +173,12 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 	}
 	
 	@Override
-	public void getValidationRule(ValidationRuleRequest request, StreamObserver<ValidationRule> responseObserver) {
+	public void getValidationRule(EntityRequest request, StreamObserver<ValidationRule> responseObserver) {
 		try {
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			log.fine("Menu Requested = " + request.getValidationRuleUuid());
+			log.fine("Menu Requested = " + request.getUuid());
 			ApplicationRequest applicationInfo = request.getApplicationRequest();
 			if(applicationInfo == null
 					|| Util.isEmpty(applicationInfo.getSessionUuid())) {
@@ -212,7 +211,7 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 				throw new AdempiereException("Object Request Null");
 			}
 			Properties context = ContextManager.getContext(request.getApplicationRequest().getSessionUuid(), request.getApplicationRequest().getLanguage());
-			Process.Builder processBuilder = convertProcess(context, request.getUuid(), true);
+			Process.Builder processBuilder = convertProcess(context, request.getUuid(), request.getId(), true);
 			responseObserver.onNext(processBuilder.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -264,7 +263,7 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 				throw new AdempiereException("Object Request Null");
 			}
 			Properties context = ContextManager.getContext(request.getApplicationRequest().getSessionUuid(), request.getApplicationRequest().getLanguage());
-			Form.Builder formBuilder = convertForm(context, request.getUuid());
+			Form.Builder formBuilder = convertForm(context, request.getUuid(), request.getId());
 			responseObserver.onNext(formBuilder.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -294,7 +293,7 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 				throw new AdempiereException("Object Request Null");
 			}
 			Properties context = ContextManager.getContext(request.getApplicationRequest().getSessionUuid(), request.getApplicationRequest().getLanguage());
-			Window.Builder windowBuilder = convertWindow(context, request.getUuid(), withTabs);
+			Window.Builder windowBuilder = convertWindow(context, request.getUuid(), request.getId(), withTabs);
 			responseObserver.onNext(windowBuilder.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -341,25 +340,41 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 	/**
 	 * Request Window: can be only window or child
 	 * @param request
-	 * @param responseObserver
+	 * @param uuid
+	 * @param id
 	 * @param withTabs
 	 */
-	private Window.Builder convertWindow(Properties context, String uuid, boolean withTabs) {
-		MWindow window = new Query(context, I_AD_Window.Table_Name, I_AD_Window.COLUMNNAME_UUID + " = ?", null)
-				.setParameters(uuid)
-				.setOnlyActiveRecords(true)
-				.first();
+	private Window.Builder convertWindow(Properties context, String uuid, int id, boolean withTabs) {
+		MWindow window = null;
+		if(id > 0) {
+			window = MWindow.get(context, id);
+		} else {
+			window = new Query(context, I_AD_Window.Table_Name, I_AD_Window.COLUMNNAME_UUID + " = ?", null)
+					.setParameters(uuid)
+					.setOnlyActiveRecords(true)
+					.first(); 
+		}
 		return convertWindow(context, window, withTabs);
 	}
 	
 	/**
 	 * Request Form from uuid
-	 * @param request
-	 * @param responseObserver
+	 * @param context
+	 * @param uuid
+	 * @param id
 	 */
-	private Form.Builder convertForm(Properties context, String uuid) {
-		MForm form = new Query(context, I_AD_Form.Table_Name, I_AD_Window.COLUMNNAME_UUID + " = ?", null)
-				.setParameters(uuid)
+	private Form.Builder convertForm(Properties context, String uuid, int id) {
+		String whereClause = null;
+		Object parameter = null;
+		if(id > 0) {
+			whereClause = I_AD_Form.COLUMNNAME_AD_Form_ID + " = ?";
+			parameter = id;
+		} else {
+			whereClause = I_AD_Form.COLUMNNAME_UUID + " = ?";
+			parameter = uuid;
+		}
+		MForm form = new Query(context, I_AD_Form.Table_Name, whereClause, null)
+				.setParameters(parameter)
 				.setOnlyActiveRecords(true)
 				.first();
 		return convertForm(context, form);
@@ -520,11 +535,17 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 	/**
 	 * Convert Process from UUID
 	 * @param uuid
+	 * @param id
 	 * @param withParameters
 	 * @return
 	 */
-	private Process.Builder convertProcess(Properties context, String uuid, boolean withParameters) {
-		MProcess process = MProcess.get(context, RecordUtil.getIdFromUuid(I_AD_Process.Table_Name, uuid, null));
+	private Process.Builder convertProcess(Properties context, String uuid, int id, boolean withParameters) {
+		MProcess process = null;
+		if(id > 0) {
+			process = MProcess.get(context, id);
+		} else {
+			process = MProcess.get(context, RecordUtil.getIdFromUuid(I_AD_Process.Table_Name, uuid, null));
+		}
 		//	Convert
 		return convertProcess(context, process, withParameters);
 	}
@@ -1573,12 +1594,19 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 	 * @param request
 	 * @return
 	 */
-	private ValidationRule.Builder convertValidationRule(Properties context, ValidationRuleRequest request) {
-		MValRule validationRule = new Query(context, I_AD_Val_Rule.Table_Name, I_AD_Val_Rule.COLUMNNAME_UUID + " = ?", null)
-				.setParameters(request.getValidationRuleUuid())
-				.first();
+	private ValidationRule.Builder convertValidationRule(Properties context, EntityRequest request) {
+		MValRule validationRule = null;
+		if(request.getId() > 0) {
+			validationRule = MValRule.get(context, request.getId());
+		} else {
+			validationRule = new Query(context, I_AD_Val_Rule.Table_Name, I_AD_Val_Rule.COLUMNNAME_UUID + " = ?", null)
+					.setParameters(request.getUuid())
+					.first();
+		}
+		//	
 		return ValidationRule.newBuilder()
-				.setValidationRuleUuid(ValueUtil.validateNull(validationRule.getUUID()))
+				.setId(validationRule.getAD_Val_Rule_ID())
+				.setUuid(ValueUtil.validateNull(validationRule.getUUID()))
 				.setName(ValueUtil.validateNull(validationRule.getName()))
 				.setDescription(ValueUtil.validateNull(validationRule.getDescription()))
 				.setValidationCode(ValueUtil.validateNull(validationRule.getCode()))

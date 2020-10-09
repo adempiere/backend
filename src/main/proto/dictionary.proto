@@ -32,7 +32,7 @@ service Dictionary {
 	// Reference Request
 	rpc GetReference(ReferenceRequest) returns (Reference) {}
 	// Reference Request
-	rpc GetValidationRule(ValidationRuleRequest) returns (ValidationRule) {}
+	rpc GetValidationRule(EntityRequest) returns (ValidationRule) {}
 	// Request Process
 	rpc GetProcess(EntityRequest) returns (Process) {}
 	// Request Browser
@@ -75,19 +75,14 @@ message ReferenceRequest {
 	string column_name = 3;
 }
 
-// Validation Code request
-message ValidationRuleRequest {
-	ApplicationRequest application_request = 1;
-	string validation_rule_uuid = 2;
-}
-
 // Validation Code
 message ValidationRule {
-	string validation_rule_uuid = 1;
-	string validation_code = 2;
-	string name = 3;
-	string description = 4;
-	string type = 5;
+	int32 id = 1;
+	string uuid = 2;
+	string validation_code = 3;
+	string name = 4;
+	string description = 5;
+	string type = 6;
 }
 
 // Window
