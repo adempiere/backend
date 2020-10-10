@@ -348,11 +348,14 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 		MWindow window = null;
 		if(id > 0) {
 			window = MWindow.get(context, id);
-		} else {
+		} else if(!Util.isEmpty(uuid)) {
 			window = new Query(context, I_AD_Window.Table_Name, I_AD_Window.COLUMNNAME_UUID + " = ?", null)
 					.setParameters(uuid)
 					.setOnlyActiveRecords(true)
 					.first(); 
+		}
+		if(window == null) {
+			return Window.newBuilder();
 		}
 		return convertWindow(context, window, withTabs);
 	}
@@ -369,9 +372,12 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 		if(id > 0) {
 			whereClause = I_AD_Form.COLUMNNAME_AD_Form_ID + " = ?";
 			parameter = id;
-		} else {
+		} else if(!Util.isEmpty(uuid)) {
 			whereClause = I_AD_Form.COLUMNNAME_UUID + " = ?";
 			parameter = uuid;
+		}
+		if(parameter == null) {
+			return Form.newBuilder();
 		}
 		MForm form = new Query(context, I_AD_Form.Table_Name, whereClause, null)
 				.setParameters(parameter)
@@ -543,8 +549,11 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 		MProcess process = null;
 		if(id > 0) {
 			process = MProcess.get(context, id);
-		} else {
+		} else if(!Util.isEmpty(uuid)) {
 			process = MProcess.get(context, RecordUtil.getIdFromUuid(I_AD_Process.Table_Name, uuid, null));
+		}
+		if(process == null) {
+			return Process.newBuilder();
 		}
 		//	Convert
 		return convertProcess(context, process, withParameters);
