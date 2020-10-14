@@ -358,12 +358,12 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 			}
 		}
 		//	EMail
-		if(!Util.isEmpty(request.getEMail())) {
+		if(!Util.isEmpty(request.getEmail())) {
 			if(whereClause.length() > 0) {
 				whereClause.append(" AND ");
 				whereClause.append("(EXISTS(SELECT 1 FROM AD_User u WHERE u.C_BPartner_ID = C_BPartner.C_BPartner_ID AND UPPER(u.EMail) LIKE UPPER(?)))");
 				//	Add parameters
-				parameters.add(request.getEMail());
+				parameters.add(request.getEmail());
 			}
 		}
 		//	Phone
@@ -471,15 +471,15 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 			//	Save it
 			businessPartner.saveEx();
 			//	Contact
-			if(!Util.isEmpty(request.getContactName()) || !Util.isEmpty(request.getEMail()) || !Util.isEmpty(request.getPhone())) {
+			if(!Util.isEmpty(request.getContactName()) || !Util.isEmpty(request.getEmail()) || !Util.isEmpty(request.getPhone())) {
 				MUser contact = new MUser(businessPartner);
 				//	Name
 				if(!Util.isEmpty(request.getContactName())) {
 					contact.setName(request.getContactName());
 				}
 				//	EMail
-				if(!Util.isEmpty(request.getEMail())) {
-					contact.setEMail(request.getEMail());
+				if(!Util.isEmpty(request.getEmail())) {
+					contact.setEMail(request.getEmail());
 				}
 				//	Phone
 				if(!Util.isEmpty(request.getPhone())) {
@@ -595,12 +595,12 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 			}
 		}
 		//	EMail
-		if(!Util.isEmpty(request.getEMail())) {
+		if(!Util.isEmpty(request.getEmail())) {
 			if(whereClause.length() > 0) {
 				whereClause.append(" AND ");
 				whereClause.append("(EXISTS(SELECT 1 FROM AD_User u WHERE u.C_BPartner_ID = C_BPartner.C_BPartner_ID AND UPPER(u.EMail) = UPPER(?)))");
 				//	Add parameters
-				parameters.add(request.getEMail());
+				parameters.add(request.getEmail());
 			}
 		}
 		//	Phone

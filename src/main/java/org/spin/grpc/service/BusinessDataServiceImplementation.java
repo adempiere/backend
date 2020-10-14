@@ -206,7 +206,7 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 	public void runBusinessProcess(RunBusinessProcessRequest request, StreamObserver<ProcessLog> responseObserver) {
 		try {
 			if(request == null
-					|| Util.isEmpty(request.getUuid())) {
+					|| Util.isEmpty(request.getProcessUuid())) {
 				throw new AdempiereException("Object Request Null");
 			}
 			log.fine("Lookup List Requested = " + request.getUuid());
@@ -234,13 +234,13 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 	private ProcessLog.Builder runProcess(Properties context, RunBusinessProcessRequest request) throws FileNotFoundException, IOException {
 		ProcessLog.Builder response = ProcessLog.newBuilder();
 		//	Get Process definition
-		MProcess process = getProcess(context, request.getUuid());
+		MProcess process = MProcess.get(context, RecordUtil.getIdFromUuid(I_AD_Process.Table_Name, request.getProcessUuid(), null));
 		if(process == null
 				|| process.getAD_Process_ID() <= 0) {
 			throw new AdempiereException("@AD_Process_ID@ @NotFound@");
 		}
 		int tableId = 0;
-		int recordId = request.getRecordId();
+		int recordId = request.getId();
 		if(!Util.isEmpty(request.getTableName())) {
 			MTable table = MTable.get(context, request.getTableName());
 			if(table != null
@@ -466,19 +466,6 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 		processLog.setRecordId(log.getP_ID());
 		processLog.setLog(ValueUtil.validateNull(Msg.parseTranslation(Env.getCtx(), log.getP_Msg())));
 		return processLog;
-	}
-	
-	/**
-	 * Get Process from UUID
-	 * @param uuid
-	 * @param language
-	 * @return
-	 */
-	private MProcess getProcess(Properties context, String uuid) {
-		return new Query(context, I_AD_Process.Table_Name, I_AD_Process.COLUMNNAME_UUID + " = ?", null)
-				.setParameters(uuid)
-				.setOnlyActiveRecords(true)
-				.first();
 	}
 	
 	/**
@@ -783,6 +770,7 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 			.setId(entity.get_ID());
 		//	Convert attributes
 		POInfo poInfo = POInfo.getPOInfo(Env.getCtx(), entity.get_Table_ID());
+		builder.setTableName(ValueUtil.validateNull(poInfo.getTableName()));
 		for(int index = 0; index < poInfo.getColumnCount(); index++) {
 			String columnName = poInfo.getColumnName(index);
 			int referenceId = poInfo.getColumnDisplayType(index);

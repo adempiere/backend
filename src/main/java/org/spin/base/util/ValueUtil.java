@@ -36,7 +36,6 @@ import org.spin.grpc.util.Decimal;
 import org.spin.grpc.util.KeyValue;
 import org.spin.grpc.util.Value;
 import org.spin.grpc.util.Condition.Operator;
-import org.spin.grpc.util.Decimal.Builder;
 import org.spin.grpc.util.Value.ValueType;
 
 /**

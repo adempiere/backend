@@ -28,7 +28,7 @@ message Empty {
 
 //	BusinessProcess Selections
 message KeyValueSelection {
-	int32 selectionId = 1;
+	int32 selection_id = 1;
 	repeated KeyValue values = 2;
 }
 
@@ -40,11 +40,11 @@ message KeyValue {
 
 // Define value for object
 message Value {
-	int32 intValue = 1;
-	int64 longValue = 2;
-	bool booleanValue = 3;
-	string stringValue = 4;
-	Decimal decimalValue = 5;
+	int32 int_value = 1;
+	int64 long_value = 2;
+	bool boolean_value = 3;
+	string string_value = 4;
+	Decimal decimal_value = 5;
 	enum ValueType {
 		UNKNOWN = 0;
 		INTEGER = 1;
@@ -53,12 +53,12 @@ message Value {
 		STRING = 4;
 		DATE = 5;
 	}
-	ValueType valueType = 6;
+	ValueType value_type = 6;
 }
 
 // Define numeric types
 message Decimal {
-	string decimalValue = 1;
+	string decimal_value = 1;
 	int32 scale = 2;
 }
 
@@ -69,51 +69,51 @@ message Resource {
 
 // Attachment
 message Attachment {
-	string attachmentUuid = 1;
+	string attachment_uuid = 1;
 	string title = 2;
-	string textMsg = 3;
-	repeated ResourceReference resourceReferences = 4;
+	string text_msg = 3;
+	repeated ResourceReference resource_references = 4;
 }
 
 //	Resource reference
 message ResourceReference {
-	string resourceUuid = 1;
-	string fileName = 2;
-	Decimal fileSize = 3;
+	string resource_uuid = 1;
+	string file_name = 2;
+	Decimal file_size = 3;
 	string description = 4;
-	string textMsg = 5;
-	string contentType = 6;
+	string text_msg = 5;
+	string content_type = 6;
 }
 
 // Query for Request Object
 message Criteria {
-	string tableName = 1;
+	string table_name = 1;
 	string query = 2;
-	string whereClause = 3;
-	string orderByClause = 4;
-	string referenceUuid = 5;
+	string where_clause = 3;
+	string order_by_clause = 4;
+	string reference_uuid = 5;
 	repeated Condition conditions = 6;
 	repeated Value values = 7;
-	repeated OrderByProperty orderByColumn = 8;
+	repeated OrderByProperty order_by_column = 8;
 	int64 limit = 9;
 }
 
 // Order By Property
 message OrderByProperty {
-	string columnName = 1;
+	string column_name = 1;
 	enum OrderType {
 		ASCENDING = 0;
 		DESCENDING = 1;
 	}
 	//	Operators
-	OrderType orderType = 2;
+	OrderType order_type = 2;
 }
 
 // Condition for query data
 message Condition {
-	string columnName = 1;
+	string column_name = 1;
 	Value value = 2;
-	Value valueTo = 3;
+	Value value_to = 3;
 	repeated Value values = 4;
 	enum Operator {
 		EQUAL = 0;
@@ -132,16 +132,17 @@ message Condition {
 	}
 	//	Operators
 	Operator operator = 5;
+	repeated Condition conditions = 6;
 }
 
 // Zoom Information
 message RecordReferenceInfo {
 	string uuid = 1;
-	string windowUuid = 2;
+	string window_uuid = 2;
 	string displayName = 3;
-	string tableName = 4;
-	string whereClause = 5;
-	int64 recordCount = 6;
+	string table_name = 4;
+	string where_clause = 5;
+	int64 record_count = 6;
 }
 
 // Document Item
@@ -162,19 +163,19 @@ message DocumentAction {
 message Entity {
 	int32 id = 1;
 	string uuid = 2;
-	string tableName = 3;
+	string table_name = 3;
 	map<string, Value> values = 4;
 }
 
 //	Response with log and values from server
 message ProcessLog {
 	string uuid = 1;
-	string instanceUuid = 2;
-	bool isError = 3;
+	string instance_uuid = 2;
+	bool is_error = 3;
 	string summary = 4;
-	string resultTableName = 5;
-	bool isProcessing = 6;
-	int64 lastRun = 7;
+	string result_table_name = 5;
+	bool is_processing = 6;
+	int64 last_run = 7;
 	repeated ProcessInfoLog logs = 8;
 	map<string, Value> parameters = 9;
 	ReportOutput output = 10;
@@ -182,30 +183,30 @@ message ProcessLog {
 
 //	BusinessProcess Log result
 message ProcessInfoLog {
-	int32 recordId = 1;
+	int32 record_id = 1;
 	string log = 2;
 }
 
 // Translations Item
 message Translation {
 	string language = 1;
-	string translationUuid = 2;
+	string translation_uuid = 2;
 	map<string, Value> values = 3;
 }
 
 // Dashboard
 message Dashboard {
-	string windowUuid = 1;
-	string browserUuid = 2;
-	string dashboardName = 3;
-	string dashboardDescription = 4;
-	string dashboardHtml = 5;
-	int32 columnNo = 6;
-	int32 lineNo = 7;
-	bool isCollapsible = 8;
-	bool isOpenByDefault = 9;
-	bool isEventRequired = 10;
-	string fileName = 11;
+	string window_uuid = 1;
+	string browser_uuid = 2;
+	string dashboard_name = 3;
+	string dashboard_description = 4;
+	string dashboard_html = 5;
+	int32 column_no = 6;
+	int32 line_no = 7;
+	bool is_collapsible = 8;
+	bool is_open_by_default = 9;
+	bool is_event_required = 10;
+	string file_name = 11;
 }
 
 // Print Format
@@ -213,38 +214,38 @@ message PrintFormat {
 	string uuid = 1;
 	string name = 2;
 	string description = 3;
-	string tableName = 4;
-	bool isDefault = 5;
-	string reportViewUuid = 6;
+	string table_name = 4;
+	bool is_default = 5;
+	string report_view_uuid = 6;
 }
 
 // Record Log
 message RecordLog {
-	int32 logId = 1;
-	int32 recordId = 2;
-	string tableName = 3;
-	string sessionUuid = 4;
-	string userUuid = 5;
-	string userName = 6;
-	string transactionName = 7;
+	int32 log_id = 1;
+	int32 record_id = 2;
+	string table_name = 3;
+	string session_uuid = 4;
+	string user_uuid = 5;
+	string user_name = 6;
+	string transaction_name = 7;
 	enum EventType {
 		INSERT = 0;
 		UPDATE = 1;
 		DELETE = 2;
 	}
-	EventType eventType = 8;
-	int64 logDate = 9;
-	repeated ChangeLog changeLogs = 10; 
+	EventType event_type = 8;
+	int64 log_date = 9;
+	repeated ChangeLog change_logs = 10; 
 }
 
 // Record Log
 message ChangeLog {
-	string columnName = 4;
-	string displayColumnName = 5;
-	string oldValue = 10;
-	string oldDisplayValue = 11;
-	string newValue = 12;
-	string newDisplayValue = 13;
+	string column_name = 4;
+	string display_column_name = 5;
+	string old_value = 10;
+	string old_display_value = 11;
+	string new_value = 12;
+	string new_display_value = 13;
 	string description = 14;
 }
 
@@ -253,13 +254,13 @@ message ReportView {
 	string uuid = 1;
 	string name = 2;
 	string description = 3;
-	string tableName = 4;
+	string table_name = 4;
 }
 
 // Drill Table
 message DrillTable {
-	string tableName = 1;
-	string printName = 2;
+	string table_name = 1;
+	string print_name = 2;
 }
 
 //	Used for get output from report / BusinessProcess like PDF, HTML another result for show to end user
@@ -267,17 +268,17 @@ message ReportOutput {
 	string uuid = 1;
 	string name = 2;
 	string description = 3;
-	string fileName = 4;
+	string file_name = 4;
 	string output = 5;
-	string mimeType = 6;
-	int64 dataCols = 7;
-	int64 dataRows = 8;
-	string headerName = 9;
-	string footerName = 10;
-	string printFormatUuid = 11;
-	string reportViewUuid = 12;
-	string tableName = 13;
-	bytes outputStream = 14;
+	string mime_type = 6;
+	int64 data_cols = 7;
+	int64 data_rows = 8;
+	string header_name = 9;
+	string footer_name = 10;
+	string print_format_uuid = 11;
+	string report_view_uuid = 12;
+	string table_name = 13;
+	bytes output_stream = 14;
 	//	Output Type
-	string reportType = 15;
+	string report_type = 15;
 }

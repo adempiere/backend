@@ -122,9 +122,9 @@ service EntityLog {
 
 // Request attachment from table and record uuid
 message GetAttachmentRequest {
-	ClientRequest clientRequest = 1;
-	string tableName = 2;
-	string recordUuid = 3;
+	ClientRequest client_request = 1;
+	string table_name = 2;
+	string record_uuid = 3;
 }
 
 // Request for download resource
@@ -146,131 +146,131 @@ message GetResourceRequest {
 
 // Request for download resource reference
 message GetResourceReferenceRequest {
-	ClientRequest clientRequest = 1;
-	int32 imageId = 2;
+	ClientRequest client_request = 1;
+	int32 image_id = 2;
 }
 
 // Get Entity Request
 message GetReportOutputRequest {
-	string printFormatUuid = 1;
-	string reportViewUuid = 2;
-	bool isSummary = 3;
-	string reportName = 5;
-	string reportType = 6;
-	ClientRequest clientRequest = 7;
+	string print_format_uuid = 1;
+	string report_view_uuid = 2;
+	bool is_summary = 3;
+	string report_name = 5;
+	string report_type = 6;
+	ClientRequest client_request = 7;
 	// Query
 	Criteria criteria = 8;
 }
 // Create Entity Request
 message CreateEntityRequest {
-	ClientRequest clientRequest = 1;
-	string tableName = 2;
+	ClientRequest client_request = 1;
+	string table_name = 2;
 	repeated KeyValue attributes = 3;
 }
 
 // Create Private Access Request
 message LockPrivateAccessRequest {
-	ClientRequest clientRequest = 1;
-	string tableName = 2;
-	int32 recordId = 3;
-	string userUuid = 4;
+	ClientRequest client_request = 1;
+	string table_name = 2;
+	int32 record_id = 3;
+	string user_uuid = 4;
 }
 
 // Get Entity Request
 message GetEntityRequest {
 	string uuid = 1;
-	string tableName = 2;
-	int32 recordId = 3;
-	ClientRequest clientRequest = 4;
+	int32 record_id = 2;
+	string table_name = 3;
+	ClientRequest client_request = 4;
 	// Query
 	Criteria criteria = 5;
 }
 
 // Get Private Access Request
 message GetPrivateAccessRequest {
-	ClientRequest clientRequest = 1;
-	string tableName = 2;
-	int32 recordId = 3;
-	string userUuid = 4;
+	ClientRequest client_request = 1;
+	string table_name = 2;
+	int32 record_id = 3;
+	string user_uuid = 4;
 }
 
 // Delete Private Access Request
 message UnlockPrivateAccessRequest {
-	ClientRequest clientRequest = 1;
-	string tableName = 2;
-	int32 recordId = 3;
-	string userUuid = 4;
+	ClientRequest client_request = 1;
+	string table_name = 2;
+	int32 record_id = 3;
+	string user_uuid = 4;
 }
 
 // Private Access Object
 message PrivateAccess {
-	string tableName = 2;
-	int32 recordId = 3;
-	string userUuid = 4;
+	string table_name = 2;
+	int32 record_id = 3;
+	string user_uuid = 4;
 }
 
 //  Empty message
 message RollbackEntityRequest {
-	ClientRequest clientRequest = 1;
-	string tableName = 2;
-	int32 recordId = 3;
+	ClientRequest client_request = 1;
+	string table_name = 2;
+	int32 record_id = 3;
 	enum EventType {
 		INSERT = 0;
 		UPDATE = 1;
 		DELETE = 2;
 	}
-	EventType eventType = 4;
+	EventType event_type = 4;
 }
 
 // Update Entity Request
 message UpdateEntityRequest {
-	ClientRequest clientRequest = 1;
-	string tableName = 2;
+	ClientRequest client_request = 1;
+	string table_name = 2;
 	string uuid = 3;
-	int32 recordId = 4;
+	int32 record_id = 4;
 	repeated KeyValue attributes = 5;
 }
 
 // Delete Entity Request
 message DeleteEntityRequest {
-	ClientRequest clientRequest = 1;
-	string tableName = 2;
+	ClientRequest client_request = 1;
+	string table_name = 2;
 	string uuid = 3;
-	int32 recordId = 4;
+	int32 record_id = 4;
 }
 
 // Browsers List
 message ListBrowserItemsResponse {
-	int64 recordCount = 1;
+	int64 record_count = 1;
 	repeated Entity records = 2;
 	string next_page_token = 3;
 }
 
 // Context Info Value
 message ContextInfoValue {
-	string messageText = 1;
-	string messageTip = 2;
+	string message_text = 1;
+	string message_tip = 2;
 }
 
 // Get Lookup Item
 message GetLookupItemRequest {
 	int32 id = 1;
 	string uuid = 2;
-	ClientRequest clientRequest = 3;
+	ClientRequest client_request = 3;
 	// Query
 	Criteria criteria = 4;
 }
 
 // Get Default Value Request
 message GetDefaultValueRequest {
-	ClientRequest clientRequest = 1;
+	ClientRequest client_request = 1;
 	// Query
 	string query = 2;
 }
 
 // Get Lookup Item
 message GetContextInfoValueRequest {
-	ClientRequest clientRequest = 1;
+	ClientRequest client_request = 1;
 	string uuid = 2;
 	// Query
 	string query = 3;
@@ -280,13 +280,13 @@ message GetContextInfoValueRequest {
 message LookupItem {
 	int32 id = 1;
 	string uuid = 2;
-	string tableName = 3;
+	string table_name = 3;
 	map<string, Value> values = 4;
 }
 
 // List Lookup Item
 message ListLookupItemsRequest {
-	ClientRequest clientRequest = 3;
+	ClientRequest client_request = 3;
 	// Query
 	Criteria criteria = 4;
 	int32 page_size = 5;
@@ -295,38 +295,39 @@ message ListLookupItemsRequest {
 
 // List Lookup Item Response
 message ListLookupItemsResponse {
-	int64 recordCount = 1;
+	int64 record_count = 1;
 	repeated LookupItem records = 2;
 	string next_page_token = 3;
 }
 
 // List Entities Request
 message ListEntitiesRequest {
-	ClientRequest clientRequest = 3;
+	ClientRequest client_request = 3;
 	// Query
 	Criteria criteria = 4;
-	int32 page_size = 5;
-	string page_token = 6;
+	repeated string columns = 5;
+	int32 page_size = 6;
+	string page_token = 7;
 }
 
 // List Entities Response
 message ListEntitiesResponse {
-	int64 recordCount = 1;
+	int64 record_count = 1;
 	repeated Entity records = 2;
 	string next_page_token = 3;
 }
 
 // Callout Request
 message RunCalloutRequest {
-	ClientRequest clientRequest = 1;
-	string tableName = 2;
-	string windowUuid = 3;
-	string tabUuid = 4;
+	ClientRequest client_request = 1;
+	string table_name = 2;
+	string window_uuid = 3;
+	string tab_uuid = 4;
 	string callout = 5;
-	string columnName = 6;
-	Value oldValue = 7;
+	string column_name = 6;
+	Value old_value = 7;
 	Value value = 8;
-	int32 windowNo = 9;
+	int32 window_no = 9;
 	repeated KeyValue attributes = 10;
 }
 
@@ -338,100 +339,101 @@ message Callout {
 
 // BusinessProcess Request
 message RunBusinessProcessRequest {
-	ClientRequest clientRequest = 1;
-	string tableName = 2;
-	string uuid = 3;
-	int32 recordId = 4;
-	int32 tableSelectedId = 5;
-	string reportType = 6;
-	string printFormatUuid = 7;
-	string reportViewUuid = 8;
-	bool isSummary = 9;
-	repeated KeyValue parameters = 10;
-	repeated KeyValueSelection selections = 11;
+	ClientRequest client_request = 1;
+	string table_name = 2;
+	string process_uuid = 3;
+	string uuid = 4;
+	int32 id = 5;
+	int32 table_selected_id = 6;
+	string report_type = 7;
+	string print_format_uuid = 8;
+	string report_view_uuid = 9;
+	bool is_summary = 10;
+	repeated KeyValue parameters = 11;
+	repeated KeyValueSelection selections = 12;
 }
 
 // BusinessProcess Activity Request
 message ListProcessLogsRequest {
-	ClientRequest clientRequest = 1;
-	string userUuid = 2;
-	string instanceUuid = 3;
-	string tableName = 4;
-	int32 recordId = 5;
+	ClientRequest client_request = 1;
+	string user_uuid = 2;
+	string instance_uuid = 3;
+	string table_name = 4;
+	int32 record_id = 5;
 	int32 page_size = 6;
 	string page_token = 7;
 }
 
 // BusinessProcess Response List
 message ListProcessLogsResponse {
-	int64 recordCount = 1;
-	repeated ProcessLog processLogs = 2;
+	int64 record_count = 1;
+	repeated ProcessLog process_logs = 2;
 	string next_page_token = 3;
 }
 
 // Recent Items Request
 message ListRecentItemsRequest {
-	ClientRequest clientRequest = 1;
-	string userUuid = 2;
-	string roleUuid = 3;
-	bool currentSession = 4;
+	ClientRequest client_request = 1;
+	string user_uuid = 2;
+	string role_uuid = 3;
+	bool current_session = 4;
 	int32 page_size = 5;
 	string page_token = 6;
 }
 
 // Recent Item
 message RecentItem {
-	string menuUuid = 1;
-	string menuName = 2;
-	string menuDescription = 3;
-	string windowUuid = 4;
-	string tabUuid = 5;
-	int32 tableId = 6;
-	int32 recordId = 7;
-	string displayName = 8;
-	string recordUuid = 9;
+	string menu_uuid = 1;
+	string menu_name = 2;
+	string menu_description = 3;
+	string window_uuid = 4;
+	string tab_uuid = 5;
+	int32 table_id = 6;
+	int32 record_id = 7;
+	string display_name = 8;
+	string record_uuid = 9;
 	int64 updated = 10;
-	string referenceUuid = 11;
+	string reference_uuid = 11;
 	string action = 12;
 }
 
 //	Recent Items List
 message ListRecentItemsResponse {
-	int64 recordCount = 1;
-	repeated RecentItem recentItems = 2;
+	int64 record_count = 1;
+	repeated RecentItem recent_items = 2;
 	string next_page_token = 3;
 }
 
 // Favorites Items Request
 message ListFavoritesRequest {
-	ClientRequest clientRequest = 1;
-	string userUuid = 2;
+	ClientRequest client_request = 1;
+	string user_uuid = 2;
 	int32 page_size = 3;
 	string page_token = 4;
 }
 
 // Recent Item
 message Favorite {
-	string menuUuid = 1;
-	string menuName = 2;
-	string menuDescription = 3;
-	string referenceUuid = 4;
+	string menu_uuid = 1;
+	string menu_name = 2;
+	string menu_description = 3;
+	string reference_uuid = 4;
 	string action = 5;
 }
 
 //	Recent Items List
 message ListFavoritesResponse {
-	int64 recordCount = 1;
+	int64 record_count = 1;
 	repeated Favorite favorites = 2;
 	string next_page_token = 3;
 }
 
 // Translations Request
 message ListTranslationsRequest {
-	ClientRequest clientRequest = 1;
-	string tableName = 2;
-	string recordUuid = 3;
-	int32 recordId = 4;
+	ClientRequest client_request = 1;
+	string table_name = 2;
+	string record_uuid = 3;
+	int32 record_id = 4;
 	string language = 5;
 	int32 page_size = 6;
 	string page_token = 7;
@@ -439,102 +441,102 @@ message ListTranslationsRequest {
 
 //	Translations List
 message ListTranslationsResponse {
-	int64 recordCount = 1;
+	int64 record_count = 1;
 	repeated Translation translations = 2;
 	string next_page_token = 3;
 }
 
 // Document Statuses Request
 message ListPendingDocumentsRequest {
-	ClientRequest clientRequest = 1;
-	string userUuid = 2;
-	string roleUuid = 3;
+	ClientRequest client_request = 1;
+	string user_uuid = 2;
+	string role_uuid = 3;
 	int32 page_size = 4;
 	string page_token = 5;
 }
 
 // Recent Item
 message PendingDocument {
-	string windowUuid = 1;
-	string formUuid = 2;
-	string documentName = 3;
-	string documentDescription = 4;
+	string window_uuid = 1;
+	string form_uuid = 2;
+	string document_name = 3;
+	string document_description = 4;
 	int32 sequence = 5;
-	int64 recordCount = 6;
+	int64 record_count = 6;
 	// Query
 	Criteria criteria = 7;
 }
 
 //	Recent Items List
 message ListPendingDocumentsResponse {
-	int64 recordCount = 1;
-	repeated PendingDocument pendingDocuments = 2;
+	int64 record_count = 1;
+	repeated PendingDocument pending_documents = 2;
 	string next_page_token = 3;
 }
 
 // Dashboards Request
 message ListDashboardsRequest {
-	ClientRequest clientRequest = 1;
-	string roleUuid = 2;
+	ClientRequest client_request = 1;
+	string role_uuid = 2;
 	int32 page_size = 3;
 	string page_token = 4;
 }
 
 //	Dashboards List
 message ListDashboardsResponse {
-	int64 recordCount = 1;
+	int64 record_count = 1;
 	repeated Dashboard dashboards = 2;
 	string next_page_token = 3;
 }
 
 // Print Formats Request
 message ListPrintFormatsRequest {
-	ClientRequest clientRequest = 1;
-	string tableName = 2;
-	string reportViewUuid = 3;
-	string processUuid = 4;
+	ClientRequest client_request = 1;
+	string table_name = 2;
+	string report_view_uuid = 3;
+	string process_uuid = 4;
 	int32 page_size = 5;
 	string page_token = 6;
 }
 
 //	Print Format List
 message ListPrintFormatsResponse {
-	int64 recordCount = 1;
-	repeated PrintFormat printFormats = 2;
+	int64 record_count = 1;
+	repeated PrintFormat print_formats = 2;
 	string next_page_token = 3;
 }
 
 // Record Log Request
 message ListRecordLogsRequest {
-	ClientRequest clientRequest = 1;
-	string tableName = 2;
-	int32 recordId = 3;
+	ClientRequest client_request = 1;
+	string table_name = 2;
+	int32 record_id = 3;
 	int32 page_size = 4;
 	string page_token = 5;
 }
 
 //	Record Log List
 message ListRecordLogsResponse {
-	int64 recordCount = 1;
-	repeated RecordLog recordLogs = 2;
+	int64 record_count = 1;
+	repeated RecordLog record_logs = 2;
 	string next_page_token = 3;
 }
 
 // Record Chat Request
 message ListRecordChatsRequest {
-	ClientRequest clientRequest = 1;
-	string tableName = 2;
-	int32 recordId = 3;
+	ClientRequest client_request = 1;
+	string table_name = 2;
+	int32 record_id = 3;
 	int32 page_size = 4;
 	string page_token = 5;
 }
 
 // Record Chat
 message RecordChat {
-	string chatUuid = 1;
-	int32 recordId = 2;
-	string tableName = 3;
-	string chatTypeUuid = 4;
+	string chat_uuid = 1;
+	int32 record_id = 2;
+	string table_name = 3;
+	string chat_type_uuid = 4;
 	string description = 5;
 	enum ConfidentialType {
 		PUBLIC = 0;
@@ -546,34 +548,34 @@ message RecordChat {
 		BEFORE_PUBLISHING = 1;
 		AFTER_PUBLISHING = 2;
 	}
-	ConfidentialType confidentialType = 6;
-	ModerationType moderationType = 7;
-	int64 logDate = 8;
+	ConfidentialType confidential_type = 6;
+	ModerationType moderation_type = 7;
+	int64 log_date = 8;
 }
 
 //	Record Chats List
 message ListRecordChatsResponse {
-	int64 recordCount = 1;
-	repeated RecordChat recordChats = 2;
+	int64 record_count = 1;
+	repeated RecordChat record_chats = 2;
 	string next_page_token = 3;
 }
 
 // Record Chat Entry Request
 message ListChatEntriesRequest {
-	ClientRequest clientRequest = 1;
-	string chatUuid = 2;
+	ClientRequest client_request = 1;
+	string chat_uuid = 2;
 	int32 page_size = 3;
 	string page_token = 4;
 }
 
 // Record Chat
 message ChatEntry {
-	string chatUuid = 1;
-	string chatEntryUuid = 2;
+	string chat_uuid = 1;
+	string chat_entry_uuid = 2;
 	string subject = 3;
-	string characterData = 4;
-	string userUuid = 5;
-	string userName = 6;
+	string character_data = 4;
+	string user_uuid = 5;
+	string user_name = 6;
 	enum ConfidentialType {
 		PUBLIC = 0;
 		PARTER = 1;
@@ -590,49 +592,49 @@ message ChatEntry {
 		FORUM_THREADED = 1;
 		WIKI = 2;
 	}
-	ChatEntryType chatEntryType = 7;
-	ConfidentialType confidentialType = 8;
-	ModeratorStatus moderatorStatus = 9;
-	int64 logDate = 10;
+	ChatEntryType chat_entry_type = 7;
+	ConfidentialType confidential_type = 8;
+	ModeratorStatus moderator_status = 9;
+	int64 log_date = 10;
 }
 
 // Create Chat Entry Request
 message CreateChatEntryRequest {
-	ClientRequest clientRequest = 1;
-	string tableName = 2;
-	int32 recordId = 3;
+	ClientRequest client_request = 1;
+	string table_name = 2;
+	int32 record_id = 3;
 	string comment = 4;
 }
 
 //	Record Chats List
 message ListChatEntriesResponse {
-	int64 recordCount = 1;
-	repeated ChatEntry chatEntries = 2;
+	int64 record_count = 1;
+	repeated ChatEntry chat_entries = 2;
 	string next_page_token = 3;
 }
 
 // Workflow Definition Request
 message ListWorkflowsRequest {
-	ClientRequest clientRequest = 1;
-	string tableName = 2;
+	ClientRequest client_request = 1;
+	string table_name = 2;
 	int32 page_size = 4;
 	string page_token = 5;
 }
 
 // Workflow Definition
 message WorkflowDefinition {
-	string workflowUuid = 1;
+	string workflow_uuid = 1;
 	string value = 2;
 	string name = 3;
 	string description = 4;
 	string help = 5;
-	string tableName = 6;
-	string responsibleUuid = 7;
-	string responsibleName = 8;
+	string table_name = 6;
+	string responsible_uuid = 7;
+	string responsible_name = 8;
 	int32 priority = 9;
-	int64 validFrom = 10;
-	bool isDefault = 11;
-	bool isValid = 12;
+	int64 valid_from = 10;
+	bool is_default = 11;
+	bool is_valid = 12;
 	enum DurationUnit {
 		DAY = 0;
 		HOUR = 1;
@@ -647,23 +649,23 @@ message WorkflowDefinition {
 		UNDER_REVISION = 2;
 		VOID = 3;
 	}
-	PublishStatus publishStatus = 13;
-	DurationUnit durationUnit = 14;
-	WorkflowNode startNode = 15;
-	repeated WorkflowNode workflowNodes = 16;
+	PublishStatus publish_status = 13;
+	DurationUnit duration_unit = 14;
+	WorkflowNode start_node = 15;
+	repeated WorkflowNode workflow_nodes = 16;
 }
 
 // Workflow Node
 message WorkflowNode {
-	string nodeUuid = 1;
+	string node_uuid = 1;
 	string value = 2;
 	string name = 3;
 	string description = 4;
 	string help = 5;
-	string responsibleUuid = 6;
-	string responsibleName = 7;
-	string documentActionValue = 8;
-	string documentActionName = 9;
+	string responsible_uuid = 6;
+	string responsible_name = 7;
+	string document_action_value = 8;
+	string document_action_name = 9;
 	int32 priority = 10;
 	
 	enum Action {
@@ -688,14 +690,12 @@ message WorkflowNode {
 //	Condition for transition
 message WorkflowCondition {
 	int32 sequence = 1;
-	string columnName = 2;
+	string column_name = 2;
 	string value = 3;
-	
 	enum ConditionType {
 		AND = 0;
 		OR = 1;
 	}
-	
 	enum Operation {
 		EQUAL = 0;
 		NOT_EQUAL = 1;
@@ -708,23 +708,23 @@ message WorkflowCondition {
 		SQL = 9;
 	}
 	
-	ConditionType conditionType = 4;
+	ConditionType condition_type = 4;
 	Operation operation = 5;
 }
 
 //	Workflow Transition
 message WorkflowTransition {
-	string nodeNextUuid = 1;
+	string node_next_uuid = 1;
 	string description = 2;
-	bool isStdUserWorkflow = 3;
+	bool is_std_user_workflow = 3;
 	int32 sequence = 4;
-	repeated WorkflowCondition workflowConditions = 5;
+	repeated WorkflowCondition workflow_conditions = 5;
 }
 
 
 //	Workflow Definition List
 message ListWorkflowsResponse {
-	int64 recordCount = 1;
+	int64 record_count = 1;
 	repeated WorkflowDefinition workflows = 2;
 	string next_page_token = 3;
 }
@@ -732,11 +732,11 @@ message ListWorkflowsResponse {
 
 // Valid Document Actions Request
 message ListDocumentActionsRequest {
-	ClientRequest clientRequest = 1;
-	string tableName = 2;
-	int32 recordId = 3;
-	string recordUuid = 4;
-	string documentStatus = 5;
+	ClientRequest client_request = 1;
+	string table_name = 2;
+	int32 record_id = 3;
+	string record_uuid = 4;
+	string document_status = 5;
 	string documentAction = 6;
 	int32 page_size = 7;
 	string page_token = 8;
@@ -744,7 +744,7 @@ message ListDocumentActionsRequest {
 
 //	Document Actions List
 message ListDocumentActionsResponse {
-	int64 recordCount = 1;
+	int64 record_count = 1;
 	repeated DocumentAction documentActions = 2;
 	DocumentAction defaultDocumentAction = 3;
 	string next_page_token = 4;
@@ -752,43 +752,43 @@ message ListDocumentActionsResponse {
 
 // Valid Document Status Request
 message ListDocumentStatusesRequest {
-	ClientRequest clientRequest = 1;
-	string tableName = 2;
-	int32 recordId = 3;
-	string recordUuid = 4;
-	string documentStatus = 5;
+	ClientRequest client_request = 1;
+	string table_name = 2;
+	int32 record_id = 3;
+	string record_uuid = 4;
+	string document_status = 5;
 	int32 page_size = 6;
 	string page_token = 7;
 }
 
 //	Document Actions List
 message ListDocumentStatusesResponse {
-	int64 recordCount = 1;
-	repeated DocumentStatus documentStatuses = 2;
+	int64 record_count = 1;
+	repeated DocumentStatus document_statuses = 2;
 	string next_page_token = 3;
 }
 
 // Workflow Activities Request
 message ListWorkflowLogsRequest {
-	ClientRequest clientRequest = 1;
-	string tableName = 2;
-	int32 recordId = 3;
+	ClientRequest client_request = 1;
+	string table_name = 2;
+	int32 record_id = 3;
 	int32 page_size = 4;
 	string page_token = 5;
 }
 
 // Workflow Process
 message WorkflowProcess {
-	string processUuid = 1;
-	string workflowUuid = 2;
-	string workflowName = 3;
-	int32 recordId = 4;
-	string tableName = 5;
-	string userUuid = 6;
-	string userName = 7;
-	string responsibleUuid = 8;
-	string responsibleName = 9;
-	string textMessage = 10;
+	string process_uuid = 1;
+	string workflow_uuid = 2;
+	string workflow_name = 3;
+	int32 record_id = 4;
+	string table_name = 5;
+	string user_uuid = 6;
+	string user_name = 7;
+	string responsible_uuid = 8;
+	string responsible_name = 9;
+	string text_message = 10;
 	bool processed = 11;
 	enum WorkflowState {
 		RUNNING = 0;
@@ -806,27 +806,27 @@ message WorkflowProcess {
 		LOW = 3;
 		MINOR = 4;
 	}
-	WorkflowState workflowState = 12;
+	WorkflowState workflow_state = 12;
 	Priority priority = 13;
-	repeated WorkflowEvent workflowEvents = 14;
-	int64 logDate = 15;
+	repeated WorkflowEvent workflow_events = 14;
+	int64 log_date = 15;
 }
 
 // Workflow Event Audit
 message WorkflowEvent {
-	string nodeUuid = 1;
-	string nodeName = 2;
-	int32 recordId = 3;
-	string tableName = 4;
-	string userUuid = 5;
-	string userName = 6;
-	string responsibleUuid = 7;
-	string responsibleName = 8;
-	string textMessage = 9;
-	int64 timeElapsed = 10;
-	string attributeName = 11;
-	string oldValue = 12;
-	string newValue = 13;
+	string node_uuid = 1;
+	string node_name = 2;
+	int32 record_id = 3;
+	string table_name = 4;
+	string user_uuid = 5;
+	string user_name = 6;
+	string responsible_uuid = 7;
+	string responsible_name = 8;
+	string text_message = 9;
+	int64 time_elapsed = 10;
+	string attribute_name = 11;
+	string old_value = 12;
+	string new_value = 13;
 	enum WorkflowState {
 		RUNNING = 0;
 		COMPLETED = 1;
@@ -841,53 +841,53 @@ message WorkflowEvent {
 		PROCESS_COMPLETED = 1;
 		STATE_CHANGED = 2;
 	}
-	WorkflowState workflowState = 14;
-	EventType eventType = 15;
-	int64 logDate = 16;
+	WorkflowState workflow_state = 14;
+	EventType event_type = 15;
+	int64 log_date = 16;
 }
 
 //	Workflow Activities List
 message ListWorkflowLogsResponse {
-	int64 recordCount = 1;
-	repeated WorkflowProcess workflowLogs = 2;
+	int64 record_count = 1;
+	repeated WorkflowProcess workflow_logs = 2;
 	string next_page_token = 3;
 }
 
-// Report Views Request
+// Report _views Request
 message ListReportViewsRequest {
-	ClientRequest clientRequest = 1;
-	string tableName = 2;
-	string processUuid = 3;
+	ClientRequest client_request = 1;
+	string table_name = 2;
+	string process_uuid = 3;
 	int32 page_size = 4;
 	string page_token = 5;
 }
 
 //	Report View List
 message ListReportViewsResponse {
-	int64 recordCount = 1;
-	repeated ReportView reportViews = 2;
+	int64 record_count = 1;
+	repeated ReportView report_views = 2;
 	string next_page_token = 3;
 }
 
 // Drill table Request
 message ListDrillTablesRequest {
-	ClientRequest clientRequest = 1;
-	string tableName = 2;
+	ClientRequest client_request = 1;
+	string table_name = 2;
 	int32 page_size = 3;
 	string page_token = 4;
 }
 
 //	Drill Tables List
 message ListDrillTablesResponse {
-	int64 recordCount = 1;
-	repeated DrillTable drillTables = 2;
+	int64 record_count = 1;
+	repeated DrillTable drill_tables = 2;
 	string next_page_token = 3;
 }
 
 // Browser request
 message ListBrowserItemsRequest {
 	string uuid = 1;
-	ClientRequest clientRequest = 2;
+	ClientRequest client_request = 2;
 	Criteria criteria = 3;
 	repeated KeyValue parameters = 4;
 	int32 page_size = 5;
@@ -897,17 +897,17 @@ message ListBrowserItemsRequest {
 // List References
 message ListReferencesRequest {
 	string uuid = 1;
-	string tableName = 2;
-	int32 recordId = 3;
-	string windowUuid = 4;
-	ClientRequest clientRequest = 5;
+	string table_name = 2;
+	int32 record_id = 3;
+	string window_uuid = 4;
+	ClientRequest client_request = 5;
 	int32 page_size = 6;
 	string page_token = 7;
 }
 
 // List References Response
 message ListReferencesResponse {
-	int64 recordCount = 1;
+	int64 record_count = 1;
 	repeated RecordReferenceInfo references = 2;
 	string next_page_token = 3;
 }

@@ -45,27 +45,27 @@ service CoreFunctionality {
 
 // Get Country Request
 message GetCountryRequest {
-	string countryUuid = 1;
-	int32 countryId = 2;
-	ClientRequest clientRequest = 3;
+	string country_uuid = 1;
+	int32 country_id = 2;
+	ClientRequest client_request = 3;
 }
 
 //	List Business Partner Response
 message ListBusinessPartnerResponse {
-	int64 recordCount = 1;
-	repeated BusinessPartner businessPartners = 2;
+	int64 record_count = 1;
+	repeated BusinessPartner business_partners = 2;
 	string next_page_token = 3;
 }
 
 // List Business Partner Request
 message ListBusinessPartnerRequest {
-	ClientRequest clientRequest = 1;
-	string searchValue = 2;
+	ClientRequest client_request = 1;
+	string search_value = 2;
 	string value = 3;
 	string name = 4;
-	string contactName = 6;
-	string eMail = 7;
-	string postalCode = 8;
+	string contact_name = 6;
+	string email = 7;
+	string postal_code = 8;
 	string phone = 9;
 	// Query
 	Criteria criteria = 10;
@@ -75,13 +75,13 @@ message ListBusinessPartnerRequest {
 
 // Request Business Partner
 message GetBusinessPartnerRequest {
-	ClientRequest clientRequest = 1;
-	string searchValue = 2;
+	ClientRequest client_request = 1;
+	string search_value = 2;
 	string value = 3;
 	string name = 4;
-	string contactName = 6;
-	string eMail = 7;
-	string postalCode = 8;
+	string contact_name = 6;
+	string email = 7;
+	string postal_code = 8;
 	string phone = 9;
 	// Query
 	Criteria criteria = 10;
@@ -89,42 +89,42 @@ message GetBusinessPartnerRequest {
 
 // Request Business Partner
 message CreateBusinessPartnerRequest {
-	ClientRequest clientRequest = 1;
+	ClientRequest client_request = 1;
 	string value = 2;
-	string taxId = 3;
+	string tax_id = 3;
 	string duns = 4;
 	string naics = 5;
 	string name = 6;
-	string lastName = 7;
+	string last_name = 7;
 	string description = 8;
-	string contactName = 9;
-	string eMail = 10;
+	string contact_name = 9;
+	string email = 10;
 	string phone = 11;
-	string businessPartnerGroupUuid = 12;
+	string business_partner_group_uuid = 12;
 	//	Location
 	string address1 = 13;
 	string address2 = 14;
 	string address3 = 15;
 	string address4 = 16;
-	string cityUuid = 17;
-	string cityName = 18;
-	string postalCode = 19;
-	string regionUuid = 20;
-	string regionName = 21;
-	string countryUuid = 22;
-	string posUuid = 23;
+	string city_uuid = 17;
+	string city_name = 18;
+	string postal_code = 19;
+	string region_uuid = 20;
+	string region_name = 21;
+	string country_uuid = 22;
+	string pos_uuid = 23;
 }
 
 // Languages Request
 message ListLanguagesRequest {
-	ClientRequest clientRequest = 1;
+	ClientRequest client_request = 1;
 	int32 page_size = 2;
 	string page_token = 3;
 }
 
 //	Languages List
 message ListLanguagesResponse {
-	int64 recordCount = 1;
+	int64 record_count = 1;
 	repeated Language languages = 2;
 	string next_page_token = 3;
 }
@@ -157,21 +157,21 @@ message Country {
 
 // Request Currency Rate
 message GetConversionRateRequest {
-	ClientRequest clientRequest = 1;
-	string conversionTypeUuid = 2;
-	string currencyFromUuid = 3;
-	string currencyToUuid = 4;
-	int64 conversionDate = 5;
+	ClientRequest client_request = 1;
+	string conversion_type_uuid = 2;
+	string currency_from_uuid = 3;
+	string currency_to_uuid = 4;
+	int64 conversion_date = 5;
 }
 
 // Currency info
 message Currency {
 	string uuid = 1;
 	int32 id = 2;
-	string iSO_code = 3;
+	string iso_code = 3;
 	string cur_symbol = 4;
 	string description = 5;
-	int32 std_precision = 6;
+	int32 standard_precision = 6;
 	int32 costing_precision = 7;
 }
 
@@ -179,13 +179,13 @@ message Currency {
 message ConversionRate {
 	string uuid = 1;
 	int32 id = 2;
-	string conversionTypeUuid = 3;
-	int64 validFrom = 4;
-	int64 validTo = 5;
-	Currency currencyFrom = 6;
-	Currency currencyTo = 7;
-	Decimal multiplyRate = 8;
-	Decimal divideRate = 9;
+	string conversion_type_uuid = 3;
+	int64 valid_from = 4;
+	int64 valid_to = 5;
+	Currency currency_from = 6;
+	Currency currency_to = 7;
+	Decimal multiply_rate = 8;
+	Decimal divide_rate = 9;
 }
 
 // Organization
@@ -194,9 +194,9 @@ message Organization {
 	int32 id = 2;
 	string name = 3;
 	string description = 4;
-	bool isReadOnly = 5;
+	bool is_read_only = 5;
 	string duns = 6;
-	string taxId = 7;
+	string tax_id = 7;
 	string phone = 8;
 	string phone2 = 9;
 	string fax = 10;
@@ -204,16 +204,16 @@ message Organization {
 
 //	List Organizations Response
 message ListOrganizationsResponse {
-	int64 recordCount = 1;
+	int64 record_count = 1;
 	repeated Organization organizations = 2;
 	string next_page_token = 4;
 }
 
 // Organization from Role
 message ListOrganizationsRequest {
-	ClientRequest clientRequest = 1;
-	int32 roleId = 2;
-	string roleUuid = 3;
+	ClientRequest client_request = 1;
+	int32 role_id = 2;
+	string role_uuid = 3;
 	int32 page_size = 4;
 	string page_token = 5;
 }
@@ -228,16 +228,16 @@ message Warehouse {
 
 //	Lost Warehouses Response
 message ListWarehousesResponse {
-	int64 recordCount = 1;
+	int64 record_count = 1;
 	repeated Warehouse warehouses = 2;
 	string next_page_token = 4;
 }
 
 // Warehouses Request
 message ListWarehousesRequest {
-	ClientRequest clientRequest = 1;
-	int32 organizationId = 2;
-	string organizationUuid = 3;
+	ClientRequest client_request = 1;
+	int32 organization_id = 2;
+	string organization_uuid = 3;
 	int32 page_size = 4;
 	string page_token = 5;
 }
@@ -250,8 +250,8 @@ message UnitOfMeasure {
 	string symbol = 4;
 	string name = 5;
 	string description = 6;
-	int32 stdPrecision = 7;
-	int32 costingPrecision = 8;
+	int32 standard_precision = 7;
+	int32 costing_precision = 8;
 }
 
 // Charge definition
@@ -267,11 +267,11 @@ message BusinessPartner {
 	string uuid = 1;
 	int32 id = 2;
 	string value = 3;
-	string taxId = 4;
+	string tax_id = 4;
 	string duns = 5;
 	string naics = 6;
 	string name = 7;
-	string lastName = 8;
+	string last_name = 8;
 	string description = 9;
 	
 }
@@ -281,7 +281,7 @@ message DocumentType {
 	string uuid = 1;
 	int32 id = 2;
 	string name = 3;
-	string printName = 4;
+	string print_name = 4;
 	string description = 5;
 }
 
@@ -300,31 +300,31 @@ message Product {
 	string value = 3;
 	string name = 4;
 	string help = 5;
-	string documentNote = 6;
-	string uomName = 7;
-	string productType = 8;
-	bool isStocked = 9;
-	bool isDropShip = 10;
-	bool isPurchased = 11;
-	bool isSold = 12;
-	string imageURL = 13;
-	string productCategoryName = 14;
-	string productGroupName = 15;
-	string productClassName = 16;
-	string productClassificationName = 17;
+	string document_note = 6;
+	string uom_name = 7;
+	string product_type = 8;
+	bool is_stocked = 9;
+	bool is_drop_ship = 10;
+	bool is_purchased = 11;
+	bool is_sold = 12;
+	string image_url = 13;
+	string product_category_name = 14;
+	string product_group_name = 15;
+	string product_class_name = 16;
+	string product_classification_name = 17;
 	Decimal weight = 18;
 	Decimal volume = 19;
 	string upc = 20;
 	string sku = 21;
-	int32 shelfWidth = 22;
-	Decimal shelfHeight = 23;
-	int32 shelfDepth = 24;
-	int32 unitsPerPack = 25;
-	Decimal unitsPerPallet = 26;
-	int32 guaranteeDays = 27;
-	string descriptionURL = 28;
-	string versionNo = 29;
-	string taxCategory = 30;
+	int32 shelf_width = 22;
+	Decimal shelf_height = 23;
+	int32 shelf_depth = 24;
+	int32 units_per_pack = 25;
+	Decimal units_per_pallet = 26;
+	int32 guarantee_days = 27;
+	string description_url = 28;
+	string version_no = 29;
+	string tax_category = 30;
 	string description = 31;
 }
 
@@ -334,39 +334,39 @@ message TaxRate {
 	int32 id = 2;
 	string name = 3;
 	string description = 4;
-	string taxIndicator = 5;
+	string tax_indicator = 5;
 	Decimal rate = 6;
 }
 
 // Product Price
 message ProductPrice {
 	Product product = 1;
-	Decimal priceList = 2;
-	Decimal priceStd = 3;
-	Decimal priceLimit = 4;
-	string priceListName = 5;
-	bool isTaxIncluded = 6;
-	int64 validFrom = 7;
+	Decimal price_list = 2;
+	Decimal price_standard = 3;
+	Decimal price_limit = 4;
+	string price_list_name = 5;
+	bool is_tax_included = 6;
+	int64 valid_from = 7;
 	Currency currency = 8;
-	TaxRate taxRate = 9;
-	int32 pricePrecision = 10;
-	Decimal quantityOnHand = 11;
-	Decimal quantityReserved = 12;
-	Decimal quantityOrdered = 13;
-	Decimal quantityAvailable = 14;
+	TaxRate tax_rate = 9;
+	int32 price_precision = 10;
+	Decimal quantity_on_hand = 11;
+	Decimal quantity_reserved = 12;
+	Decimal quantity_ordered = 13;
+	Decimal quantity_available = 14;
 }
 
 // Language Item
 message Language {
 	string language = 1;
-	string languageName = 2;
-	string languageISO = 3;
-	string countryCode = 4;
-	bool isBaseLanguage = 5;
-	bool isSystemLanguage = 6;
-	bool isDecimalPoint = 7;
-	string datePattern = 8;
-	string timePattern = 9;
+	string language_name = 2;
+	string language_iso = 3;
+	string country_code = 4;
+	bool is_base_language = 5;
+	bool is_system_language = 6;
+	bool is_decimal_point = 7;
+	string date_pattern = 8;
+	string time_pattern = 9;
 }
 
 //	Price List
@@ -376,11 +376,11 @@ message PriceList {
 	string name = 3;
 	string description = 4;
 	Currency currency = 5;
-	bool isDefault = 6;
-	bool isTaxIncluded = 7;
-	bool isEnforcePriceLimit = 8;
-	bool isNetPrice = 9;
-	int32 pricePrecision = 10;
+	bool is_default = 6;
+	bool is_tax_included = 7;
+	bool is_enforce_price_limit = 8;
+	bool is_net_price = 9;
+	int32 price_precision = 10;
 }
 
 //	Bank Account
@@ -388,18 +388,18 @@ message BankAccount {
 	string uuid = 1;
 	int32 id = 2;
 	string name = 3;
-	string accountNo = 4;
+	string account_no = 4;
 	string description = 5;
 	Currency currency = 6;
 	string bban = 7;
 	string iban = 8;
-	Decimal creditLimit = 9;
-	Decimal currentBalance = 10;
-	bool isDefault = 11;
-	BusinessPartner businessPartner = 12;
+	Decimal credit_limit = 9;
+	Decimal current_balance = 10;
+	bool is_default = 11;
+	BusinessPartner business_partner = 12;
 	enum BankAccountType {
 		CHECKING = 0;
 		SAVINGS = 1;
 	}
-	BankAccountType bankAccountType = 13;
+	BankAccountType bank_account_type = 13;
 }

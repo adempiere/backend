@@ -186,13 +186,13 @@ public class ConvertUtil {
 				.setHelp(ValueUtil.validateNull(product.getHelp()))
 				.setDocumentNote(ValueUtil.validateNull(product.getDocumentNote()))
 				.setUomName(ValueUtil.validateNull(MUOM.get(product.getCtx(), product.getC_UOM_ID()).getName()))
-				.setDescriptionURL(ValueUtil.validateNull(product.getDescriptionURL()))
+				.setDescriptionUrl(ValueUtil.validateNull(product.getDescriptionURL()))
 				//	Product Type
 				.setIsStocked(product.isStocked())
 				.setIsDropShip(product.isDropShip())
 				.setIsPurchased(product.isPurchased())
 				.setIsSold(product.isSold())
-				.setImageURL(ValueUtil.validateNull(product.getImageURL()))
+				.setImageUrl(ValueUtil.validateNull(product.getImageURL()))
 				.setUpc(ValueUtil.validateNull(product.getUPC()))
 				.setSku(ValueUtil.validateNull(product.getSKU()))
 				.setVersionNo(ValueUtil.validateNull(product.getVersionNo()))
@@ -248,7 +248,7 @@ public class ConvertUtil {
 		return org.spin.grpc.util.Language.newBuilder()
 				.setLanguage(ValueUtil.validateNull(language.getAD_Language()))
 				.setCountryCode(ValueUtil.validateNull(language.getCountryCode()))
-				.setLanguageISO(ValueUtil.validateNull(language.getLanguageISO()))
+				.setLanguageIso(ValueUtil.validateNull(language.getLanguageISO()))
 				.setLanguageName(ValueUtil.validateNull(language.getName()))
 				.setDatePattern(ValueUtil.validateNull(datePattern))
 				.setTimePattern(ValueUtil.validateNull(timePattern))
@@ -309,10 +309,10 @@ public class ConvertUtil {
 		//	Set values
 		return builder.setUuid(ValueUtil.validateNull(currency.getUUID()))
 			.setId(currency.getC_Currency_ID())
-			.setISOCode(ValueUtil.validateNull(currency.getISO_Code()))
+			.setIsoCode(ValueUtil.validateNull(currency.getISO_Code()))
 			.setCurSymbol(ValueUtil.validateNull(currency.getCurSymbol()))
 			.setDescription(ValueUtil.validateNull(currency.getDescription()))
-			.setStdPrecision(currency.getStdPrecision())
+			.setStandardPrecision(currency.getStdPrecision())
 			.setCostingPrecision(currency.getCostingPrecision());
 	}
 	
