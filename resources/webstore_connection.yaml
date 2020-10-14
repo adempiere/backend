@@ -1,9 +1,9 @@
 server:
-    port: 50051
+    port: 50055
 database:
     host: localhost
     port: 5432
-    name: adempiere
+    name: "database"
     user: adempiere
     password: adempiere
     type: PostgreSQL

@@ -1,5 +1,5 @@
 server:
-    port: 50052
+    port: 50053
 database:
     host: localhost
     port: 5432
