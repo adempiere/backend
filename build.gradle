@@ -83,6 +83,14 @@ apply plugin: 'application'
 
 startScripts.enabled = false
 
+task ADempiereAllInOne(type: CreateStartScripts) {
+    mainClassName = 'org.spin.server.AllInOneServices'
+    applicationName = 'adempiere-all-in-one-server'
+    defaultJvmOpts = Arrays.asList("-DPropertyFile=Adempiere.properties", "-Dorg.adempiere.server.embedded=true")
+    outputDir = new File(project.buildDir, 'tmp')
+    classpath = jar.outputs.files + project.configurations.runtime
+}
+
 task ADempiereAccess(type: CreateStartScripts) {
     mainClassName = 'org.spin.server.AccessServer'
     applicationName = 'adempiere-access-server'
@@ -116,6 +124,7 @@ task ADempiereManagementEnrollment(type: CreateStartScripts) {
 }
 
 applicationDistribution.into('bin') {
+	from(ADempiereAllInOne)
 	from(ADempiereAccess)
 	from(ADempiereDictionary)
     from(ADempiereBusinessData)

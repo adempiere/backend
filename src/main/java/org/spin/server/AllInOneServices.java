@@ -36,8 +36,8 @@ import io.grpc.netty.NettyServerBuilder;
 import io.netty.handler.ssl.ClientAuth;
 import io.netty.handler.ssl.SslContextBuilder;
 
-public class AllServices {
-	private static final Logger logger = Logger.getLogger(AllServices.class.getName());
+public class AllInOneServices {
+	private static final Logger logger = Logger.getLogger(AllInOneServices.class.getName());
 
 	private Server server;
 	/**
@@ -117,7 +117,7 @@ public class AllServices {
 		      public void run() {
 		        // Use stderr here since the logger may have been reset by its JVM shutdown hook.
 		    	  logger.info("*** shutting down gRPC server since JVM is shutting down");
-		    	  AllServices.this.stop();
+		    	  AllInOneServices.this.stop();
 		        logger.info("*** server shut down");
 		      }
 		    });
@@ -157,7 +157,7 @@ public class AllServices {
 		  SetupLoader.loadSetup(setupFileName);
 		  //	Validate load
 		  SetupLoader.getInstance().validateLoad();
-		  final AllServices server = new AllServices();
+		  final AllInOneServices server = new AllInOneServices();
 		  server.start();
 		  server.blockUntilShutdown();
 	  }
