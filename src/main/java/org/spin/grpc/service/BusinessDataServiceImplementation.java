@@ -482,8 +482,8 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 		}
 		PO entity = null;
 		if(!Util.isEmpty(request.getUuid())
-				|| request.getRecordId() != 0) {
-			entity = RecordUtil.getEntity(Env.getCtx(), tableName, request.getUuid(), request.getRecordId(), null);
+				|| request.getId() != 0) {
+			entity = RecordUtil.getEntity(Env.getCtx(), tableName, request.getUuid(), request.getId(), null);
 		} else if(request.getCriteria() != null) {
 			List<Object> parameters = new ArrayList<Object>();
 			String whereClause = ValueUtil.getWhereClauseFromCriteria(request.getCriteria(), parameters);
@@ -501,7 +501,7 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 	 */
 	private Empty.Builder deleteEntity(Properties context, DeleteEntityRequest request) {
 		Trx.run(transactionName -> {
-			PO entity = RecordUtil.getEntity(context, request.getTableName(), request.getUuid(), request.getRecordId(), transactionName);
+			PO entity = RecordUtil.getEntity(context, request.getTableName(), request.getUuid(), request.getId(), transactionName);
 			if(entity != null
 					&& entity.get_ID() >= 0) {
 				entity.deleteEx(true);
@@ -551,7 +551,7 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 	 * @return
 	 */
 	private Entity.Builder updateEntity(Properties context, UpdateEntityRequest request) {
-		PO entity = RecordUtil.getEntity(context, request.getTableName(), request.getUuid(), request.getRecordId(), null);
+		PO entity = RecordUtil.getEntity(context, request.getTableName(), request.getUuid(), request.getId(), null);
 		if(entity != null
 				&& entity.get_ID() >= 0) {
 			request.getAttributesList().forEach(attribute -> {

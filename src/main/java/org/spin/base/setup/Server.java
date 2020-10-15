@@ -15,6 +15,8 @@
  ************************************************************************************/
 package org.spin.base.setup;
 
+import java.util.List;
+
 /**
  * Determinate all ADempiere client setup values for Human Resource
  * @author Yamel Senih
@@ -30,6 +32,8 @@ public class Server {
 	private String private_key_file;
 	/**	Trust Certificate	*/
 	private String trust_certificate_collection_file;
+	/**	Embedded services	*/
+	private List<String> services;
 	/**
 	 * Default constructor
 	 * @param host
@@ -37,13 +41,15 @@ public class Server {
 	 * @param certificate_chain_file
 	 * @param private_key_file
 	 * @param trust_certificate_collection_file
+	 * @param services
 	 */
-	public Server(String host, int port, String certificate_chain_file, String private_key_file, String trust_certificate_collection_file) {
+	public Server(String host, int port, String certificate_chain_file, String private_key_file, String trust_certificate_collection_file, List<String> services) {
 		this.host = host;
 		this.port = port;
 		this.certificate_chain_file = certificate_chain_file;
 		this.private_key_file = private_key_file;
 		this.trust_certificate_collection_file = trust_certificate_collection_file;
+		this.services = services;
 	}
 	
 	/**
@@ -95,11 +101,35 @@ public class Server {
 		return getCertificate_chain_file() != null 
 				&& getPrivate_key_file() != null;
 	}
+	
+	/**
+	 * Get Services
+	 * @return
+	 */
+	public final List<String> getServices() {
+		return services;
+	}
 
+	/**
+	 * Validate is a service is enabled
+	 * @param service
+	 * @return
+	 */
+	public final boolean isValidService(String service) {
+		if(service == null
+				|| service.trim().length() == 0
+				|| services == null) {
+			return false;
+		}
+		return getServices()
+			.stream()
+			.filter(serviceToFind -> serviceToFind != null && serviceToFind.equals(service)).findFirst().isPresent();
+	}
+	
 	@Override
 	public String toString() {
 		return "Server [host=" + host + ", port=" + port + ", certificate_chain_file=" + certificate_chain_file
 				+ ", private_key_file=" + private_key_file + ", trust_certificate_collection_file="
-				+ trust_certificate_collection_file + "]";
+				+ trust_certificate_collection_file + ", services=" + services + "]";
 	}
 }

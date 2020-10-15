@@ -587,9 +587,12 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 	 * @throws Exception 
 	 */
 	private void getResource(String resourceUuid, String resourceName, StreamObserver<Resource> responseObserver) throws Exception {
-		if(Util.isEmpty(resourceUuid)
-				&& !Util.isEmpty(resourceName)
-				&& AttachmentUtil.getInstance().isValidForClient(Env.getAD_Client_ID(Env.getCtx()))) {
+		if(!AttachmentUtil.getInstance().isValidForClient(Env.getAD_Client_ID(Env.getCtx()))) {
+			responseObserver.onCompleted();
+			return;
+		}
+		//	Validate by name
+		if(!Util.isEmpty(resourceName)) {
 			MClientInfo clientInfo = MClientInfo.get(Env.getCtx());
 			MADAttachmentReference reference = new Query(Env.getCtx(), I_AD_AttachmentReference.Table_Name, "(UUID || '-' || FileName) = ? AND FileHandler_ID = ?", null)
 					.setOrderBy(I_AD_AttachmentReference.COLUMNNAME_AD_Attachment_ID + " DESC")
@@ -601,7 +604,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 				return;
 			}
 			resourceUuid = reference.getUUID();
-		} else {
+		} else if(Util.isEmpty(resourceUuid)) {
 			responseObserver.onCompleted();
 			return;
 		}
@@ -687,7 +690,10 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 				tableId = table.getAD_Table_ID();
 			}
 		}
-		int recordId = RecordUtil.getIdFromUuid(request.getTableName(), request.getRecordUuid(), null);
+		int recordId = request.getId();
+		if(recordId <= 0) {
+			recordId = RecordUtil.getIdFromUuid(request.getTableName(), request.getUuid(), null);
+		}
 		if(tableId != 0
 				&& recordId !=  0) {
 			return ConvertUtil.convertAttachment(MAttachment.get(Env.getCtx(), tableId, recordId));

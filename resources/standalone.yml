@@ -1,0 +1,19 @@
+server:
+    port: 50059
+    services:
+       -   access
+       -   enrollment
+       -   dictionary
+       -   business
+       -   core
+       -   ui
+       -   dashboarding
+       -   workflow
+       -   log
+database:
+    host: localhost
+    port: 5432
+    name: adempiere
+    user: adempiere
+    password: adempiere
+    type: PostgreSQL

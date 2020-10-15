@@ -81,7 +81,7 @@ service UserInterface {
 	//	Service for get a resource reference from image, attachment or archive
 	rpc GetResourceReference(GetResourceReferenceRequest) returns (ResourceReference) {}
 	//	Service for get a attachment from table and record uuid
-	rpc GetAttachment(GetAttachmentRequest) returns (Attachment) {}	
+	rpc GetAttachment(GetAttachmentRequest) returns (Attachment) {}
 }
 
 //	Workflow management service
@@ -124,7 +124,8 @@ service EntityLog {
 message GetAttachmentRequest {
 	ClientRequest client_request = 1;
 	string table_name = 2;
-	string record_uuid = 3;
+	int32 id = 3;
+	string uuid = 4;
 }
 
 // Request for download resource
@@ -179,7 +180,7 @@ message LockPrivateAccessRequest {
 // Get Entity Request
 message GetEntityRequest {
 	string uuid = 1;
-	int32 record_id = 2;
+	int32 id = 2;
 	string table_name = 3;
 	ClientRequest client_request = 4;
 	// Query
@@ -227,7 +228,7 @@ message UpdateEntityRequest {
 	ClientRequest client_request = 1;
 	string table_name = 2;
 	string uuid = 3;
-	int32 record_id = 4;
+	int32 id = 4;
 	repeated KeyValue attributes = 5;
 }
 
@@ -236,7 +237,7 @@ message DeleteEntityRequest {
 	ClientRequest client_request = 1;
 	string table_name = 2;
 	string uuid = 3;
-	int32 record_id = 4;
+	int32 id = 4;
 }
 
 // Browsers List
@@ -667,7 +668,7 @@ message WorkflowNode {
 	string document_action_value = 8;
 	string document_action_name = 9;
 	int32 priority = 10;
-	
+
 	enum Action {
 		USER_CHOICE = 0;
 		DOCUMENT_ACTION = 1;
@@ -707,7 +708,7 @@ message WorkflowCondition {
 		BETWEEN = 8;
 		SQL = 9;
 	}
-	
+
 	ConditionType condition_type = 4;
 	Operation operation = 5;
 }
@@ -797,7 +798,7 @@ message WorkflowProcess {
 		TERMINATED = 3;
 		SUSPENDED = 4;
 		NOT_STARTED = 5;
-		
+
 	}
 	enum Priority {
 		URGENT = 0;
@@ -834,7 +835,7 @@ message WorkflowEvent {
 		TERMINATED = 3;
 		SUSPENDED = 4;
 		NOT_STARTED = 5;
-		
+
 	}
 	enum EventType {
 		PROCESS_CREATED = 0;
