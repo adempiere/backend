@@ -39,6 +39,7 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
 import javax.script.ScriptEngine;
@@ -97,6 +98,7 @@ import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
 import org.compiere.util.MimeType;
 import org.compiere.util.Msg;
+import org.compiere.util.Trx;
 import org.compiere.util.Util;
 import org.spin.base.util.ContextManager;
 import org.spin.base.util.ConvertUtil;
@@ -801,7 +803,9 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 					|| request.getReportType().endsWith("txt")) {
 				builder.setOutputBytes(resultFile);
 			}
-			builder.setReportViewUuid(ValueUtil.validateNull(reportView.getUUID()));
+			if(reportView != null) {
+				builder.setReportViewUuid(ValueUtil.validateNull(reportView.getUUID()));
+			}
 			builder.setPrintFormatUuid(ValueUtil.validateNull(printFormat.getUUID()));
 			builder.setTableName(ValueUtil.validateNull(table.getTableName()));
 			builder.setOutputStream(resultFile);
@@ -953,39 +957,41 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 		if(Util.isEmpty(tableName)) {
 			throw new AdempiereException("@TableName@ @NotFound@");
 		}
-		MTable table = MTable.get(context, tableName);
-		PO entity = getEntity(context, tableName, request.getRecordUuid(), request.getRecordId());
-		List<Object> parameters = new ArrayList<>();
-		StringBuffer whereClause = new StringBuffer(entity.get_KeyColumns()[0] + " = ?");
-		parameters.add(entity.get_ID());
-		if(!Util.isEmpty(request.getLanguage())) {
-			whereClause.append(" AND AD_Language = ?");
-			parameters.add(request.getLanguage());
-		}
-		new Query(context, tableName + "_Trl", whereClause.toString(), null)
-			.setParameters(parameters)
-			.<PO>list()
-			.forEach(translation -> {
-				Translation.Builder translationBuilder = Translation.newBuilder();
-				table.getColumnsAsList().stream().filter(column -> column.isTranslated()).forEach(column -> {
-					Object value = translation.get_Value(column.getColumnName());
-					if(value != null) {
-						Value.Builder builderValue = ValueUtil.getValueFromObject(value);
-						if(builderValue != null) {
-							translationBuilder.putValues(column.getColumnName(), builderValue.build());
+		Trx.run(transactionName -> {
+			MTable table = MTable.get(context, tableName);
+			PO entity = RecordUtil.getEntity(context, tableName, request.getRecordUuid(), request.getRecordId(), transactionName);
+			List<Object> parameters = new ArrayList<>();
+			StringBuffer whereClause = new StringBuffer(entity.get_KeyColumns()[0] + " = ?");
+			parameters.add(entity.get_ID());
+			if(!Util.isEmpty(request.getLanguage())) {
+				whereClause.append(" AND AD_Language = ?");
+				parameters.add(request.getLanguage());
+			}
+			new Query(context, tableName + "_Trl", whereClause.toString(), transactionName)
+				.setParameters(parameters)
+				.<PO>list()
+				.forEach(translation -> {
+					Translation.Builder translationBuilder = Translation.newBuilder();
+					table.getColumnsAsList().stream().filter(column -> column.isTranslated()).forEach(column -> {
+						Object value = translation.get_Value(column.getColumnName());
+						if(value != null) {
+							Value.Builder builderValue = ValueUtil.getValueFromObject(value);
+							if(builderValue != null) {
+								translationBuilder.putValues(column.getColumnName(), builderValue.build());
+							}
+							//	Set uuid
+							if(Util.isEmpty(translationBuilder.getTranslationUuid())) {
+								translationBuilder.setTranslationUuid(ValueUtil.validateNull(translation.get_UUID()));
+							}
+							//	Set Language
+							if(Util.isEmpty(translationBuilder.getLanguage())) {
+								translationBuilder.setLanguage(ValueUtil.validateNull(translation.get_ValueAsString("AD_Language")));
+							}
 						}
-						//	Set uuid
-						if(Util.isEmpty(translationBuilder.getTranslationUuid())) {
-							translationBuilder.setTranslationUuid(ValueUtil.validateNull(translation.get_UUID()));
-						}
-						//	Set Language
-						if(Util.isEmpty(translationBuilder.getLanguage())) {
-							translationBuilder.setLanguage(ValueUtil.validateNull(translation.get_ValueAsString("AD_Language")));
-						}
-					}
+					});
+					builder.addTranslations(translationBuilder);
 				});
-				builder.addTranslations(translationBuilder);
-			});
+		});
 		//	Return
 		return builder;
 	}
@@ -1242,38 +1248,40 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 				|| table.getAD_Table_ID() == 0) {
 			throw new AdempiereException("@AD_Table_ID@ @Invalid@");
 		}
-		String eventType = MChangeLog.EVENTCHANGELOG_Delete;
-		if(request.getEventTypeValue() == EventType.INSERT_VALUE) {
-			eventType = MChangeLog.EVENTCHANGELOG_Insert;
-		} else if(request.getEventTypeValue() == EventType.UPDATE_VALUE) {
-			eventType = MChangeLog.EVENTCHANGELOG_Update;
-		}
 		Entity.Builder builder = Entity.newBuilder();
-		//	get Table from table name
-		int lastChangeLogId = getLastChangeLogId(Env.getContextAsInt(Env.getCtx(), "#AD_Session_ID"), table.getAD_Table_ID(), request.getRecordId(), eventType);
-		if(lastChangeLogId > 0) {
-			if(eventType.equals(MChangeLog.EVENTCHANGELOG_Insert)) {
-				MChangeLog changeLog = new MChangeLog(Env.getCtx(), lastChangeLogId, null);
-				PO entity = getEntity(Env.getCtx(), table.getTableName(), null, changeLog.getRecord_ID());
-				if(entity != null
-						&& entity.get_ID() >= 0) {
-					entity.delete(true);
-				}
-			} else if(eventType.equals(MChangeLog.EVENTCHANGELOG_Delete)
-					|| eventType.equals(MChangeLog.EVENTCHANGELOG_Update)) {
-				PO entity = table.getPO(0, null);
-				if(entity == null) {
-					throw new AdempiereException("@Error@ PO is null");
-				}
-				new Query(Env.getCtx(), I_AD_ChangeLog.Table_Name, I_AD_ChangeLog.COLUMNNAME_AD_ChangeLog_ID + " = ?", null)
-					.setParameters(lastChangeLogId)
-					.<MChangeLog>list().forEach(changeLog -> {
-						setValueFromChangeLog(entity, changeLog);
-					});
+		Trx.run(transactionName -> {
+			String eventType = MChangeLog.EVENTCHANGELOG_Delete;
+			if(request.getEventTypeValue() == EventType.INSERT_VALUE) {
+				eventType = MChangeLog.EVENTCHANGELOG_Insert;
+			} else if(request.getEventTypeValue() == EventType.UPDATE_VALUE) {
+				eventType = MChangeLog.EVENTCHANGELOG_Update;
 			}
-		} else {
-			throw new AdempiereException("@AD_ChangeLog_ID@ @NotFound@");
-		}
+			//	get Table from table name
+			int lastChangeLogId = getLastChangeLogId(Env.getContextAsInt(Env.getCtx(), "#AD_Session_ID"), table.getAD_Table_ID(), request.getRecordId(), eventType, transactionName);
+			if(lastChangeLogId > 0) {
+				if(eventType.equals(MChangeLog.EVENTCHANGELOG_Insert)) {
+					MChangeLog changeLog = new MChangeLog(Env.getCtx(), lastChangeLogId, null);
+					PO entity = RecordUtil.getEntity(Env.getCtx(), table.getTableName(), null, changeLog.getRecord_ID(), transactionName);
+					if(entity != null
+							&& entity.get_ID() >= 0) {
+						entity.delete(true);
+					}
+				} else if(eventType.equals(MChangeLog.EVENTCHANGELOG_Delete)
+						|| eventType.equals(MChangeLog.EVENTCHANGELOG_Update)) {
+					PO entity = table.getPO(0, null);
+					if(entity == null) {
+						throw new AdempiereException("@Error@ PO is null");
+					}
+					new Query(Env.getCtx(), I_AD_ChangeLog.Table_Name, I_AD_ChangeLog.COLUMNNAME_AD_ChangeLog_ID + " = ?", transactionName)
+						.setParameters(lastChangeLogId)
+						.<MChangeLog>list().forEach(changeLog -> {
+							setValueFromChangeLog(entity, changeLog);
+						});
+				}
+			} else {
+				throw new AdempiereException("@AD_ChangeLog_ID@ @NotFound@");
+			}
+		});
 		//	Return
 		return builder;
 	}
@@ -1338,41 +1346,6 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 	}
 	
 	/**
-	 * get Entity from Table and (UUID / Record ID)
-	 * @param context
-	 * @param tableName
-	 * @param uuid
-	 * @param recordId
-	 * @return
-	 */
-	private PO getEntity(Properties context, String tableName, String uuid, int recordId) {
-		//	Validate ID
-		if(recordId == 0
-				&& Util.isEmpty(uuid)) {
-			throw new AdempiereException("@Record_ID@ @NotFound@");
-		}
-		
-		if(Util.isEmpty(tableName)) {
-			throw new AdempiereException("@AD_Table_ID@ @NotFound@");
-		}
-		StringBuffer whereClause = new StringBuffer();
-		List<Object> params = new ArrayList<>();
-		if(!Util.isEmpty(uuid)) {
-			whereClause.append(I_AD_Element.COLUMNNAME_UUID + " = ?");
-			params.add(uuid);
-		} else if(recordId > 0) {
-			whereClause.append(tableName + "_ID = ?");
-			params.add(recordId);
-		} else {
-			throw new AdempiereException("@Record_ID@ @NotFound@");
-		}
-		//	Default
-		return new Query(context, tableName, whereClause.toString(), null)
-				.setParameters(params)
-				.first();
-	}
-	
-	/**
 	 * Create Chat Entry
 	 * @param context
 	 * @param request
@@ -1382,35 +1355,39 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 		if(Util.isEmpty(request.getTableName())) {
 			throw new AdempiereException("@AD_Table_ID@ @NotFound@");
 		}
-		String tableName = request.getTableName();
-		MTable table = MTable.get(context, tableName);
-		PO entity = getEntity(context, tableName, null, request.getRecordId());
-		//	
-		StringBuffer whereClause = new StringBuffer();
-		List<Object> parameters = new ArrayList<>();
-		//	
-		whereClause
-			.append(I_CM_Chat.COLUMNNAME_AD_Table_ID).append(" = ?")
-			.append(" AND ")
-			.append(I_CM_Chat.COLUMNNAME_Record_ID).append(" = ?");
-		//	Set parameters
-		parameters.add(table.getAD_Table_ID());
-		parameters.add(request.getRecordId());
-		MChat chat = new Query(context, I_CM_Chat.Table_Name, whereClause.toString(), null)
-				.setParameters(parameters)
-				.setClient_ID()
-				.first();
-		//	Add or create chat
-		if (chat == null 
-				|| chat.getCM_Chat_ID() == 0) {
-			chat = new MChat (context, table.getAD_Table_ID(), entity.get_ID(), entity.getDisplayValue(), null);
-			chat.saveEx();
-		}
-		//	Add entry PO
-		MChatEntry entry = new MChatEntry(chat, request.getComment());
-		entry.saveEx();
+		AtomicReference<MChatEntry> entryReference = new AtomicReference<>();
+		Trx.run(transactionName -> {
+			String tableName = request.getTableName();
+			MTable table = MTable.get(context, tableName);
+			PO entity = RecordUtil.getEntity(context, tableName, request.getUuid(), request.getId(), transactionName);
+			//	
+			StringBuffer whereClause = new StringBuffer();
+			List<Object> parameters = new ArrayList<>();
+			//	
+			whereClause
+				.append(I_CM_Chat.COLUMNNAME_AD_Table_ID).append(" = ?")
+				.append(" AND ")
+				.append(I_CM_Chat.COLUMNNAME_Record_ID).append(" = ?");
+			//	Set parameters
+			parameters.add(table.getAD_Table_ID());
+			parameters.add(request.getId());
+			MChat chat = new Query(context, I_CM_Chat.Table_Name, whereClause.toString(), transactionName)
+					.setParameters(parameters)
+					.setClient_ID()
+					.first();
+			//	Add or create chat
+			if (chat == null 
+					|| chat.getCM_Chat_ID() == 0) {
+				chat = new MChat (context, table.getAD_Table_ID(), entity.get_ID(), entity.getDisplayValue(), transactionName);
+				chat.saveEx();
+			}
+			//	Add entry PO
+			MChatEntry entry = new MChatEntry(chat, request.getComment());
+			entry.saveEx(transactionName);
+			entryReference.set(entry);
+		});
 		//	Return
-		return convertChatEntry(entry);
+		return convertChatEntry(entryReference.get());
 	}
 	
 	/**
@@ -1419,9 +1396,10 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 	 * @param tableId
 	 * @param recordId
 	 * @param eventType
+	 * @param transactionName
 	 * @return
 	 */
-	private int getLastChangeLogId(int sessionId, int tableId, int recordId, String eventType) {
+	private int getLastChangeLogId(int sessionId, int tableId, int recordId, String eventType, String transactionName) {
 		return DB.getSQLValue(null, "SELECT AD_ChangeLog_ID "
 				+ "FROM AD_ChangeLog "
 				+ "WHERE AD_Session_ID = ? "

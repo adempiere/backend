@@ -603,8 +603,9 @@ message ChatEntry {
 message CreateChatEntryRequest {
 	ClientRequest client_request = 1;
 	string table_name = 2;
-	int32 record_id = 3;
-	string comment = 4;
+	int32 id = 3;
+	string uuid = 4;
+	string comment = 5;
 }
 
 //	Record Chats List
