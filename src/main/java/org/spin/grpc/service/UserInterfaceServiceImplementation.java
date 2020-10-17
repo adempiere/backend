@@ -41,6 +41,8 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.script.ScriptEngine;
 
@@ -65,7 +67,6 @@ import org.compiere.model.I_AD_Private_Access;
 import org.compiere.model.I_AD_Process;
 import org.compiere.model.I_AD_ReportView;
 import org.compiere.model.I_AD_Tab;
-import org.compiere.model.I_AD_User;
 import org.compiere.model.I_AD_Window;
 import org.compiere.model.I_CM_Chat;
 import org.compiere.model.MAttachment;
@@ -356,8 +357,17 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
+			if(request.getId() <= 0
+					&& Util.isEmpty(request.getUuid())) {
+				throw new AdempiereException("@Record_ID@ / @UUID@ @NotFound@");
+			}
 			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
-			PrivateAccess.Builder privateaccess = lockUnlockPrivateAccess(context, request.getTableName(), request.getRecordId(), request.getUserUuid(), true);
+			int recordId = request.getId();
+			if(recordId <= 0) {
+				recordId = RecordUtil.getIdFromUuid(request.getTableName(), request.getUuid(), null);
+			}
+			MUser user = MUser.get(context);
+			PrivateAccess.Builder privateaccess = lockUnlockPrivateAccess(context, request.getTableName(), recordId, user.getAD_User_ID(), true, null);
 			responseObserver.onNext(privateaccess.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -378,7 +388,8 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 				throw new AdempiereException("Object Request Null");
 			}
 			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
-			PrivateAccess.Builder privateaccess = lockUnlockPrivateAccess(context, request.getTableName(), request.getRecordId(), request.getUserUuid(), false);
+			MUser user = MUser.get(context);
+			PrivateAccess.Builder privateaccess = lockUnlockPrivateAccess(context, request.getTableName(), request.getId(), user.getAD_User_ID(), false, null);
 			responseObserver.onNext(privateaccess.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -398,7 +409,8 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 				throw new AdempiereException("Object Request Null");
 			}
 			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
-			PrivateAccess.Builder privateaccess = convertPrivateAccess(context, getPrivateAccess(context, request.getTableName(), request.getRecordId(), request.getUserUuid()));
+			MUser user = MUser.get(context);
+			PrivateAccess.Builder privateaccess = convertPrivateAccess(context, getPrivateAccess(context, request.getTableName(), request.getId(), user.getAD_User_ID(), null));
 			responseObserver.onNext(privateaccess.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -842,13 +854,14 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 	 * @param tableName
 	 * @param recordId
 	 * @param userUuid
+	 * @param transactionName
 	 * @return
 	 */
-	private MPrivateAccess getPrivateAccess(Properties context, String tableName, int recordId, String userUuid) {
+	private MPrivateAccess getPrivateAccess(Properties context, String tableName, int recordId, int userId, String transactionName) {
 		return new Query(context, I_AD_Private_Access.Table_Name, "EXISTS(SELECT 1 FROM AD_Table t WHERE t.AD_Table_ID = AD_Private_Access.AD_Table_ID AND t.TableName = ?) "
 				+ "AND Record_ID = ? "
-				+ "AND EXISTS(SELECT 1 FROM AD_User u WHERE u.AD_User_ID = AD_Private_Access.AD_User_ID AND u.UUID = ?)", null)
-			.setParameters(tableName, recordId, userUuid)
+				+ "AND AD_User_ID = ?", transactionName)
+			.setParameters(tableName, recordId, userId)
 			.first();
 	}
 	
@@ -857,25 +870,21 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 	 * @param context
 	 * @param request
 	 * @param lock
+	 * @param transactionName
 	 * @return
 	 */
-	private PrivateAccess.Builder lockUnlockPrivateAccess(Properties context, String tableName, int recordId, String userUuid, boolean lock) {
-		MPrivateAccess privateAccess = getPrivateAccess(context, tableName, recordId, userUuid);
+	private PrivateAccess.Builder lockUnlockPrivateAccess(Properties context, String tableName, int recordId, int userId, boolean lock, String transactionName) {
+		MPrivateAccess privateAccess = getPrivateAccess(context, tableName, recordId, userId, transactionName);
 		//	Create new
 		if(privateAccess == null
 				|| privateAccess.getAD_Table_ID() == 0) {
 			MTable table = MTable.get(context, tableName);
 			//	Set values
-			MUser user = new Query(context, I_AD_User.Table_Name, I_AD_User.COLUMNNAME_UUID + " = ? ", null).setParameters(userUuid).first();
-			if(user == null
-					|| user.getAD_User_ID() == 0) {
-				throw new AdempiereException("@AD_User_ID@ @NotFound@");
-			}
-			privateAccess = new MPrivateAccess(context, user.getAD_User_ID(), table.getAD_Table_ID(), recordId);
+			privateAccess = new MPrivateAccess(context, userId, table.getAD_Table_ID(), recordId);
 		}
 		//	Set active
 		privateAccess.setIsActive(lock);
-		privateAccess.saveEx();
+		privateAccess.saveEx(transactionName);
 		//	Convert Private Access
 		return convertPrivateAccess(context, privateAccess);
 	}
@@ -889,7 +898,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 	private ListReferencesResponse.Builder convertRecordReferences(Properties context, ListReferencesRequest request) {
 		ListReferencesResponse.Builder builder = ListReferencesResponse.newBuilder();
 		//	Get entity
-		if(request.getRecordId() == 0
+		if(request.getId() == 0
 				&& Util.isEmpty(request.getUuid())) {
 			throw new AdempiereException("@Record_ID@ @NotFound@");
 		}
@@ -903,9 +912,9 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 		if(!Util.isEmpty(request.getUuid())) {
 			whereClause.append(I_AD_Element.COLUMNNAME_UUID + " = ?");
 			params.add(request.getUuid());
-		} else if(request.getRecordId() > 0) {
+		} else if(request.getId() > 0) {
 			whereClause.append(tableName + "_ID = ?");
-			params.add(request.getRecordId());
+			params.add(request.getId());
 		} else {
 			throw new AdempiereException("@Record_ID@ @NotFound@");
 		}
@@ -1014,8 +1023,11 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 		//	For Table Name
 		if(!Util.isEmpty(request.getTableName())) {
 			MTable table = MTable.get(context, request.getTableName());
+			if(table == null) {
+				throw new AdempiereException("@TableName@ @NotFound@");
+			}
 			whereClause = "AD_Table_ID = ?";
-			parameters.add(table);
+			parameters.add(table.getAD_Table_ID());
 		} else if(!Util.isEmpty(request.getProcessUuid())) {
 			whereClause = "EXISTS(SELECT 1 FROM AD_Process p WHERE p.UUID = ? AND p.AD_ReportView_ID = AD_ReportView.AD_ReportView_ID)";
 			parameters.add(request.getProcessUuid());
@@ -1444,9 +1456,18 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 	 */
 	private ContextInfoValue.Builder convertContextInfoValue(Properties context, GetContextInfoValueRequest request) {
 		ContextInfoValue.Builder builder = ContextInfoValue.newBuilder();
-		MADContextInfo contextInfo = new Query(context, I_AD_ContextInfo.Table_Name, I_AD_ContextInfo.COLUMNNAME_UUID + " = ?", null)
-			.setParameters(request.getUuid())
-			.first();
+		if(request == null) {
+			throw new AdempiereException("Object Request Null");
+		}
+		if(request.getId() <= 0
+				&& Util.isEmpty(request.getUuid())) {
+			throw new AdempiereException("@Record_ID@ / @UUID@ @NotFound@");
+		}
+		int id = request.getId();
+		if(id <= 0) {
+			id = RecordUtil.getIdFromUuid(I_AD_ContextInfo.Table_Name, request.getUuid(), null);
+		}
+		MADContextInfo contextInfo = MADContextInfo.getById(context, id);
 		if(contextInfo != null
 				&& contextInfo.getAD_ContextInfo_ID() > 0) {
 			try {
@@ -1487,8 +1508,8 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 		//	Set values
 		builder.setTableName(table.getTableName());
 		MUser user = MUser.get(context, privateAccess.getAD_User_ID());
-		builder.setUserUuid(ValueUtil.validateNull(user.getUUID()));
-		builder.setRecordId(privateAccess.getRecord_ID());
+		builder.setUuid(ValueUtil.validateNull(user.getUUID()));
+		builder.setId(privateAccess.getRecord_ID());
 		//	Return values
 		return builder;
 	}
@@ -1913,8 +1934,14 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 	 * @return
 	 */
 	private int countRecords(String sql, String tableName, List<Object> parameters) {
-		int positionFrom = sql.lastIndexOf(" FROM " + tableName);
-		String queryCount = "SELECT COUNT(*) " + sql.substring(positionFrom, sql.length());
+		Matcher matcher = Pattern.compile("[[FROM]+[\\s]?]" + tableName, Pattern.CASE_INSENSITIVE | Pattern.DOTALL).matcher(sql);
+		int positionFrom = -1;
+		if(matcher.find()) {
+			positionFrom = matcher.start();
+		} else {
+			return 0;
+		}
+		String queryCount = "SELECT COUNT(*) FROM " + sql.substring(positionFrom, sql.length());
 		return DB.getSQLValueEx(null, queryCount, parameters);
 	}
 	

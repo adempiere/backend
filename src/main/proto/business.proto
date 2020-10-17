@@ -173,8 +173,8 @@ message CreateEntityRequest {
 message LockPrivateAccessRequest {
 	ClientRequest client_request = 1;
 	string table_name = 2;
-	int32 record_id = 3;
-	string user_uuid = 4;
+	int32 id = 3;
+	string uuid = 4;
 }
 
 // Get Entity Request
@@ -191,23 +191,23 @@ message GetEntityRequest {
 message GetPrivateAccessRequest {
 	ClientRequest client_request = 1;
 	string table_name = 2;
-	int32 record_id = 3;
-	string user_uuid = 4;
+	int32 id = 3;
+	string uuid = 4;
 }
 
 // Delete Private Access Request
 message UnlockPrivateAccessRequest {
 	ClientRequest client_request = 1;
 	string table_name = 2;
-	int32 record_id = 3;
-	string user_uuid = 4;
+	int32 id = 3;
+	string uuid = 4;
 }
 
 // Private Access Object
 message PrivateAccess {
-	string table_name = 2;
-	int32 record_id = 3;
-	string user_uuid = 4;
+	string table_name = 1;
+	int32 id = 2;
+	string uuid = 3;
 }
 
 //  Empty message
@@ -272,9 +272,10 @@ message GetDefaultValueRequest {
 // Get Lookup Item
 message GetContextInfoValueRequest {
 	ClientRequest client_request = 1;
-	string uuid = 2;
+	int32 id = 2;
+	string uuid = 3;
 	// Query
-	string query = 3;
+	string query = 4;
 }
 
 // Lookup Item Response
@@ -900,7 +901,7 @@ message ListBrowserItemsRequest {
 message ListReferencesRequest {
 	string uuid = 1;
 	string table_name = 2;
-	int32 record_id = 3;
+	int32 id = 3;
 	string window_uuid = 4;
 	ClientRequest client_request = 5;
 	int32 page_size = 6;

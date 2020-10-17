@@ -139,7 +139,7 @@ message Condition {
 message RecordReferenceInfo {
 	string uuid = 1;
 	string window_uuid = 2;
-	string displayName = 3;
+	string display_name = 3;
 	string table_name = 4;
 	string where_clause = 5;
 	int64 record_count = 6;
