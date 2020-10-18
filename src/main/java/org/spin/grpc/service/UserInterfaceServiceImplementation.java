@@ -150,7 +150,6 @@ import org.spin.grpc.util.UnlockPrivateAccessRequest;
 import org.spin.grpc.util.Value;
 import org.spin.grpc.util.ChatEntry.ModeratorStatus;
 import org.spin.grpc.util.Condition.Operator;
-import org.spin.grpc.util.RollbackEntityRequest.EventType;
 import org.spin.grpc.util.UserInterfaceGrpc.UserInterfaceImplBase;
 import org.spin.model.I_AD_AttachmentReference;
 import org.spin.model.I_AD_ContextInfo;
@@ -195,7 +194,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			log.fine("Rollback Requested = " + request.getRecordId());
+			log.fine("Rollback Requested = " + request.getId());
 			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
 					request.getClientRequest().getLanguage(), 
 					request.getClientRequest().getOrganizationUuid(), 
@@ -968,7 +967,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 		}
 		Trx.run(transactionName -> {
 			MTable table = MTable.get(context, tableName);
-			PO entity = RecordUtil.getEntity(context, tableName, request.getRecordUuid(), request.getRecordId(), transactionName);
+			PO entity = RecordUtil.getEntity(context, tableName, request.getUuid(), request.getId(), transactionName);
 			List<Object> parameters = new ArrayList<>();
 			StringBuffer whereClause = new StringBuffer(entity.get_KeyColumns()[0] + " = ?");
 			parameters.add(entity.get_ID());
@@ -1260,42 +1259,56 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 				|| table.getAD_Table_ID() == 0) {
 			throw new AdempiereException("@AD_Table_ID@ @Invalid@");
 		}
-		Entity.Builder builder = Entity.newBuilder();
+		AtomicReference<PO> entityWrapper = new AtomicReference<PO>();
 		Trx.run(transactionName -> {
-			String eventType = MChangeLog.EVENTCHANGELOG_Delete;
-			if(request.getEventTypeValue() == EventType.INSERT_VALUE) {
-				eventType = MChangeLog.EVENTCHANGELOG_Insert;
-			} else if(request.getEventTypeValue() == EventType.UPDATE_VALUE) {
-				eventType = MChangeLog.EVENTCHANGELOG_Update;
+			int id = request.getId();
+			if(id <= 0) {
+				id = RecordUtil.getIdFromUuid(request.getTableName(), request.getUuid(), transactionName);
 			}
 			//	get Table from table name
-			int lastChangeLogId = getLastChangeLogId(Env.getContextAsInt(Env.getCtx(), "#AD_Session_ID"), table.getAD_Table_ID(), request.getRecordId(), eventType, transactionName);
-			if(lastChangeLogId > 0) {
-				if(eventType.equals(MChangeLog.EVENTCHANGELOG_Insert)) {
-					MChangeLog changeLog = new MChangeLog(Env.getCtx(), lastChangeLogId, null);
-					PO entity = RecordUtil.getEntity(Env.getCtx(), table.getTableName(), null, changeLog.getRecord_ID(), transactionName);
-					if(entity != null
-							&& entity.get_ID() >= 0) {
-						entity.delete(true);
-					}
-				} else if(eventType.equals(MChangeLog.EVENTCHANGELOG_Delete)
-						|| eventType.equals(MChangeLog.EVENTCHANGELOG_Update)) {
-					PO entity = table.getPO(0, null);
-					if(entity == null) {
-						throw new AdempiereException("@Error@ PO is null");
-					}
-					new Query(Env.getCtx(), I_AD_ChangeLog.Table_Name, I_AD_ChangeLog.COLUMNNAME_AD_ChangeLog_ID + " = ?", transactionName)
-						.setParameters(lastChangeLogId)
-						.<MChangeLog>list().forEach(changeLog -> {
+			int logId = request.getLogId();
+			if(logId <= 0) {
+				logId = getLastChangeLogId(table.getAD_Table_ID(), id, transactionName);
+			}
+			if(logId > 0) {
+				List<MChangeLog> changeLogList = new Query(Env.getCtx(), I_AD_ChangeLog.Table_Name, I_AD_ChangeLog.COLUMNNAME_AD_ChangeLog_ID + " = ?", transactionName)
+						.setParameters(logId)
+						.<MChangeLog>list();
+				String eventType = MChangeLog.EVENTCHANGELOG_Update;
+				if(changeLogList.size() > 0) {
+					MChangeLog log = changeLogList.get(0);
+					eventType = log.getEventChangeLog();
+					if(eventType.equals(MChangeLog.EVENTCHANGELOG_Insert)) {
+						MChangeLog changeLog = new MChangeLog(Env.getCtx(), logId, transactionName);
+						PO entity = RecordUtil.getEntity(Env.getCtx(), table.getTableName(), request.getUuid(), changeLog.getRecord_ID(), transactionName);
+						if(entity != null
+								&& entity.get_ID() >= 0) {
+							entity.delete(true);
+						}
+					} else if(eventType.equals(MChangeLog.EVENTCHANGELOG_Delete)
+							|| eventType.equals(MChangeLog.EVENTCHANGELOG_Update)) {
+						PO entity = table.getPO(id, transactionName);
+						if(entity == null
+								|| entity.get_ID() <= 0) {
+							throw new AdempiereException("@Error@ @PO@ @NotFound@");
+						}
+						changeLogList.forEach(changeLog -> {
 							setValueFromChangeLog(entity, changeLog);
 						});
+						entity.saveEx(transactionName);
+						entityWrapper.set(entity);
+					}
 				}
 			} else {
 				throw new AdempiereException("@AD_ChangeLog_ID@ @NotFound@");
 			}
 		});
 		//	Return
-		return builder;
+		if(entityWrapper.get() != null) {
+			return ConvertUtil.convertEntity(entityWrapper.get());
+		}
+		//	Instead
+		return Entity.newBuilder();
 	}
 
 	/**
@@ -1404,22 +1417,18 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 	
 	/**
 	 * Get Last change Log
-	 * @param sessionId
 	 * @param tableId
 	 * @param recordId
-	 * @param eventType
 	 * @param transactionName
 	 * @return
 	 */
-	private int getLastChangeLogId(int sessionId, int tableId, int recordId, String eventType, String transactionName) {
+	private int getLastChangeLogId(int tableId, int recordId, String transactionName) {
 		return DB.getSQLValue(null, "SELECT AD_ChangeLog_ID "
 				+ "FROM AD_ChangeLog "
-				+ "WHERE AD_Session_ID = ? "
-				+ "AND AD_Table_ID = ? "
+				+ "WHERE AD_Table_ID = ? "
 				+ "AND Record_ID = ? "
-				+ "AND EventChangeLog = ? "
 				+ "AND ROWNUM <= 1 "
-				+ "ORDER BY Updated DESC", sessionId, tableId, recordId, eventType);
+				+ "ORDER BY Updated DESC", tableId, recordId);
 	}
 	
 	/**
@@ -1580,6 +1589,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 			}
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
+			throw new AdempiereException(e);
 		} finally {
 			DB.close(rs, pstmt);
 		}
@@ -1657,6 +1667,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 			}
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
+			throw new AdempiereException(e);
 		} finally {
 			DB.close(rs, pstmt);
 		}
@@ -2097,56 +2108,54 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 	 */
 	private org.spin.grpc.util.Callout.Builder runcallout(RunCalloutRequest request) {
 		org.spin.grpc.util.Callout.Builder calloutBuilder = org.spin.grpc.util.Callout.newBuilder();
-		MTab tab = tabRequested.get(request.getTabUuid());
-		if(tab == null) {
-			tab = new Query(Env.getCtx(), I_AD_Tab.Table_Name, I_AD_Tab.COLUMNNAME_UUID + " = ?", null)
-					.setParameters(request.getTabUuid())
-					.first();
-		}
-		if(tab == null) {
-			return calloutBuilder;
-		}
-		//	
-		MField field = null;
-		if(tab != null) {
-			Optional<MField> searchedValue = Arrays.asList(tab.getFields(false, null)).stream().filter(searchField -> searchField.getAD_Column().getColumnName().equals(request.getColumnName())).findFirst();
-			if(searchedValue.isPresent()) {
-				field = searchedValue.get();
+		Trx.run(transactionName -> {
+			MTab tab = tabRequested.get(request.getTabUuid());
+			if(tab == null) {
+				tab = MTab.get(Env.getCtx(), RecordUtil.getIdFromUuid(I_AD_Tab.Table_Name, request.getTabUuid(), transactionName));
 			}
-		}
-		int tabNo = (tab.getSeqNo() / 10) - 1;
-		if(tabNo < 0) {
-			tabNo = 0;
-		}
-		//	window
-		int windowNo = request.getWindowNo();
-		if(windowNo <= 0) {
-			windowNo = windowNoEmulation.getAndIncrement();
-		}
-		//	Initial load for callout wrapper
-		GridWindowVO gridWindowVo = GridWindowVO.create(Env.getCtx(), windowNo, tab.getAD_Window_ID());
-		GridWindow gridWindow = new GridWindow(gridWindowVo, true);
-		GridTabVO gridTabVo = GridTabVO.create(gridWindowVo, tabNo, tab, false, true);
-		GridFieldVO gridFieldVo = GridFieldVO.create(Env.getCtx(), windowNo, tabNo, tab.getAD_Window_ID(), tab.getAD_Tab_ID(), false, field);
-		GridField gridField = new GridField(gridFieldVo);
-		GridTab gridTab = new GridTab(gridTabVo, gridWindow, true);
-		//	Init tab
-		gridTab.query(false);
-		gridTab.clearSelection();
-		gridTab.dataNew(false);
-		//	load values
-		Map<String, Object> attributes = ValueUtil.convertValuesToObjects(request.getAttributesList());
-		for(Entry<String, Object> attribute : attributes.entrySet()) {
-			gridTab.setValue(attribute.getKey(), attribute.getValue());
-		}
-		//	Load value for field
-		gridField.setValue(ValueUtil.getObjectFromValue(request.getOldValue()), false);
-		gridField.setValue(ValueUtil.getObjectFromValue(request.getValue()), false);
-		//	Run it
-		String result = processCallout(windowNo, gridTab, gridField);
-		Arrays.asList(gridTab.getFields()).stream().filter(fieldValue -> isValidChange(fieldValue))
-		.forEach(fieldValue -> calloutBuilder.putValues(fieldValue.getColumnName(), ValueUtil.getValueFromObject(fieldValue.getValue()).build()));
-		calloutBuilder.setResult(ValueUtil.validateNull(result));
+			if(tab != null) {
+				MField field = null;
+				if(tab != null) {
+					Optional<MField> searchedValue = Arrays.asList(tab.getFields(false, null)).stream().filter(searchField -> searchField.getAD_Column().getColumnName().equals(request.getColumnName())).findFirst();
+					if(searchedValue.isPresent()) {
+						field = searchedValue.get();
+					}
+				}
+				int tabNo = (tab.getSeqNo() / 10) - 1;
+				if(tabNo < 0) {
+					tabNo = 0;
+				}
+				//	window
+				int windowNo = request.getWindowNo();
+				if(windowNo <= 0) {
+					windowNo = windowNoEmulation.getAndIncrement();
+				}
+				//	Initial load for callout wrapper
+				GridWindowVO gridWindowVo = GridWindowVO.create(Env.getCtx(), windowNo, tab.getAD_Window_ID());
+				GridWindow gridWindow = new GridWindow(gridWindowVo, true);
+				GridTabVO gridTabVo = GridTabVO.create(gridWindowVo, tabNo, tab, false, true);
+				GridFieldVO gridFieldVo = GridFieldVO.create(Env.getCtx(), windowNo, tabNo, tab.getAD_Window_ID(), tab.getAD_Tab_ID(), false, field);
+				GridField gridField = new GridField(gridFieldVo);
+				GridTab gridTab = new GridTab(gridTabVo, gridWindow, true);
+				//	Init tab
+				gridTab.query(false);
+				gridTab.clearSelection();
+				gridTab.dataNew(false);
+				//	load values
+				Map<String, Object> attributes = ValueUtil.convertValuesToObjects(request.getAttributesList());
+				for(Entry<String, Object> attribute : attributes.entrySet()) {
+					gridTab.setValue(attribute.getKey(), attribute.getValue());
+				}
+				//	Load value for field
+				gridField.setValue(ValueUtil.getObjectFromValue(request.getOldValue()), false);
+				gridField.setValue(ValueUtil.getObjectFromValue(request.getValue()), false);
+				//	Run it
+				String result = processCallout(windowNo, gridTab, gridField);
+				Arrays.asList(gridTab.getFields()).stream().filter(fieldValue -> isValidChange(fieldValue))
+				.forEach(fieldValue -> calloutBuilder.putValues(fieldValue.getColumnName(), ValueUtil.getValueFromObject(fieldValue.getValue()).build()));
+				calloutBuilder.setResult(ValueUtil.validateNull(result));
+			}
+		});
 		return calloutBuilder;
 	}
 	

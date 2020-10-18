@@ -29,7 +29,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.adempiere.exceptions.AdempiereException;
 import org.adempiere.model.I_AD_Browse;
-import org.compiere.model.I_AD_Element;
 import org.compiere.model.I_AD_Form;
 import org.compiere.model.I_AD_Menu;
 import org.compiere.model.I_AD_PInstance;
@@ -47,7 +46,6 @@ import org.compiere.model.MReportView;
 import org.compiere.model.MRole;
 import org.compiere.model.MTable;
 import org.compiere.model.PO;
-import org.compiere.model.POInfo;
 import org.compiere.model.Query;
 import org.compiere.print.MPrintFormat;
 import org.compiere.process.DocAction;
@@ -62,8 +60,10 @@ import org.compiere.util.Trx;
 import org.compiere.util.Util;
 import org.eevolution.service.dsl.ProcessBuilder;
 import org.spin.base.util.ContextManager;
+import org.spin.base.util.ConvertUtil;
 import org.spin.base.util.RecordUtil;
 import org.spin.base.util.ValueUtil;
+import org.spin.grpc.util.BusinessDataGrpc.BusinessDataImplBase;
 import org.spin.grpc.util.CreateEntityRequest;
 import org.spin.grpc.util.Criteria;
 import org.spin.grpc.util.DeleteEntityRequest;
@@ -80,7 +80,6 @@ import org.spin.grpc.util.ReportOutput;
 import org.spin.grpc.util.RunBusinessProcessRequest;
 import org.spin.grpc.util.UpdateEntityRequest;
 import org.spin.grpc.util.Value;
-import org.spin.grpc.util.BusinessDataGrpc.BusinessDataImplBase;
 
 import com.google.protobuf.ByteString;
 
@@ -490,7 +489,7 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 			entity = RecordUtil.getEntity(Env.getCtx(), tableName, whereClause, parameters, null);
 		}
 		//	Return
-		return convertEntity(entity);
+		return ConvertUtil.convertEntity(entity);
 	}
 	
 	/**
@@ -541,7 +540,7 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 		//	Save entity
 		entity.saveEx();
 		//	Return
-		return convertEntity(entity);
+		return ConvertUtil.convertEntity(entity);
 	}
 	
 	/**
@@ -569,7 +568,7 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 			entity.saveEx();
 		}
 		//	Return
-		return convertEntity(entity);
+		return ConvertUtil.convertEntity(entity);
 	}
 	
 	/**
@@ -637,7 +636,7 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 					.<PO>list();
 			//	
 			for(PO entity : entityList) {
-				Entity.Builder valueObject = convertEntity(entity);
+				Entity.Builder valueObject = ConvertUtil.convertEntity(entity);
 				builder.addRecords(valueObject.build());
 			}
 		} else {
@@ -754,38 +753,5 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 		int positionFrom = sql.lastIndexOf(" FROM " + tableName);
 		String queryCount = "SELECT COUNT(*) " + sql.substring(positionFrom, sql.length());
 		return DB.getSQLValueEx(null, queryCount, parameters);
-	}
-	
-	/**
-	 * Convert PO to Value Object
-	 * @param entity
-	 * @return
-	 */
-	private Entity.Builder convertEntity(PO entity) {
-		Entity.Builder builder = Entity.newBuilder();
-		if(entity == null) {
-			return builder;
-		}
-		builder.setUuid(ValueUtil.validateNull(entity.get_ValueAsString(I_AD_Element.COLUMNNAME_UUID)))
-			.setId(entity.get_ID());
-		//	Convert attributes
-		POInfo poInfo = POInfo.getPOInfo(Env.getCtx(), entity.get_Table_ID());
-		builder.setTableName(ValueUtil.validateNull(poInfo.getTableName()));
-		for(int index = 0; index < poInfo.getColumnCount(); index++) {
-			String columnName = poInfo.getColumnName(index);
-			int referenceId = poInfo.getColumnDisplayType(index);
-			Object value = entity.get_Value(index);
-			if(value == null) {
-				continue;
-			}
-			Value.Builder builderValue = ValueUtil.getValueFromReference(value, referenceId);
-			if(builderValue == null) {
-				continue;
-			}
-			//	Add
-			builder.putValues(columnName, builderValue.build());
-		}
-		//	
-		return builder;
 	}
 }

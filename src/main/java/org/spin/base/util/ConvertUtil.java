@@ -17,6 +17,7 @@ package org.spin.base.util;
 
 import java.util.Properties;
 
+import org.compiere.model.I_AD_Element;
 import org.compiere.model.I_C_ConversionType;
 import org.compiere.model.MAttachment;
 import org.compiere.model.MBPartner;
@@ -36,6 +37,8 @@ import org.compiere.model.MProductCategory;
 import org.compiere.model.MTax;
 import org.compiere.model.MUOM;
 import org.compiere.model.MWarehouse;
+import org.compiere.model.PO;
+import org.compiere.model.POInfo;
 import org.compiere.util.Env;
 import org.compiere.util.MimeType;
 import org.compiere.util.Util;
@@ -49,11 +52,13 @@ import org.spin.grpc.util.Currency;
 import org.spin.grpc.util.DocumentAction;
 import org.spin.grpc.util.DocumentStatus;
 import org.spin.grpc.util.DocumentType;
+import org.spin.grpc.util.Entity;
 import org.spin.grpc.util.Organization;
 import org.spin.grpc.util.PriceList;
 import org.spin.grpc.util.Product;
 import org.spin.grpc.util.ResourceReference;
 import org.spin.grpc.util.TaxRate;
+import org.spin.grpc.util.Value;
 import org.spin.grpc.util.Warehouse;
 import org.spin.model.MADAttachmentReference;
 
@@ -62,6 +67,39 @@ import org.spin.model.MADAttachmentReference;
  * @author Yamel Senih, ysenih@erpya.com , http://www.erpya.com
  */
 public class ConvertUtil {
+	
+	/**
+	 * Convert PO to Value Object
+	 * @param entity
+	 * @return
+	 */
+	public static Entity.Builder convertEntity(PO entity) {
+		Entity.Builder builder = Entity.newBuilder();
+		if(entity == null) {
+			return builder;
+		}
+		builder.setUuid(ValueUtil.validateNull(entity.get_ValueAsString(I_AD_Element.COLUMNNAME_UUID)))
+			.setId(entity.get_ID());
+		//	Convert attributes
+		POInfo poInfo = POInfo.getPOInfo(Env.getCtx(), entity.get_Table_ID());
+		builder.setTableName(ValueUtil.validateNull(poInfo.getTableName()));
+		for(int index = 0; index < poInfo.getColumnCount(); index++) {
+			String columnName = poInfo.getColumnName(index);
+			int referenceId = poInfo.getColumnDisplayType(index);
+			Object value = entity.get_Value(index);
+			if(value == null) {
+				continue;
+			}
+			Value.Builder builderValue = ValueUtil.getValueFromReference(value, referenceId);
+			if(builderValue == null) {
+				continue;
+			}
+			//	Add
+			builder.putValues(columnName, builderValue.build());
+		}
+		//	
+		return builder;
+	}
 	
 	/**
 	 * Convert Document Action

@@ -214,13 +214,9 @@ message PrivateAccess {
 message RollbackEntityRequest {
 	ClientRequest client_request = 1;
 	string table_name = 2;
-	int32 record_id = 3;
-	enum EventType {
-		INSERT = 0;
-		UPDATE = 1;
-		DELETE = 2;
-	}
-	EventType event_type = 4;
+	string uuid = 3;
+	int32 id = 4;
+	int32 log_id = 5;
 }
 
 // Update Entity Request
@@ -434,8 +430,8 @@ message ListFavoritesResponse {
 message ListTranslationsRequest {
 	ClientRequest client_request = 1;
 	string table_name = 2;
-	string record_uuid = 3;
-	int32 record_id = 4;
+	string uuid = 3;
+	int32 id = 4;
 	string language = 5;
 	int32 page_size = 6;
 	string page_token = 7;
