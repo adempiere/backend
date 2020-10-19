@@ -28,6 +28,7 @@ import org.spin.grpc.service.DictionaryServiceImplementation;
 import org.spin.grpc.service.EnrollmentServiceImplementation;
 import org.spin.grpc.service.LogsServiceImplementation;
 import org.spin.grpc.service.UserInterfaceServiceImplementation;
+import org.spin.grpc.service.WebStoreServiceImplementation;
 import org.spin.grpc.service.WorkflowServiceImplementation;
 
 import io.grpc.Server;
@@ -61,45 +62,50 @@ public class AllInOneServices {
 			  serverBuilder.addService(new AccessServiceImplementation());
 			  logger.info("Service " + Services.ACCESS.getServiceName() + " added on " + SetupLoader.getInstance().getServer().getPort());
 		  }
-		  //	
+		  //	Enrollment
 		  if(SetupLoader.getInstance().getServer().isValidService(Services.ENROLLMENT.getServiceName())) {
 			  serverBuilder.addService(new EnrollmentServiceImplementation());
 			  logger.info("Service " + Services.ENROLLMENT.getServiceName() + " added on " + SetupLoader.getInstance().getServer().getPort());
 		  }
-		  //	
+		  //	Dictionary
 		  if(SetupLoader.getInstance().getServer().isValidService(Services.DICTIONARY.getServiceName())) {
 			  serverBuilder.addService(new DictionaryServiceImplementation());
 			  logger.info("Service " + Services.DICTIONARY.getServiceName() + " added on " + SetupLoader.getInstance().getServer().getPort());
 		  }
-		  //	
+		  //	Business Logic
 		  if(SetupLoader.getInstance().getServer().isValidService(Services.BUSINESS.getServiceName())) {
 			  serverBuilder.addService(new BusinessDataServiceImplementation());
 			  logger.info("Service " + Services.BUSINESS.getServiceName() + " added on " + SetupLoader.getInstance().getServer().getPort());
 		  }
-		  //	
+		  //	Core Implementation
 		  if(SetupLoader.getInstance().getServer().isValidService(Services.CORE.getServiceName())) {
 			  serverBuilder.addService(new CoreFunctionalityImplementation());
 			  logger.info("Service " + Services.CORE.getServiceName() + " added on " + SetupLoader.getInstance().getServer().getPort());
 		  }
-		  //	
+		  //	User Interface
 		  if(SetupLoader.getInstance().getServer().isValidService(Services.UI.getServiceName())) {
 			  serverBuilder.addService(new UserInterfaceServiceImplementation());
 			  logger.info("Service " + Services.UI.getServiceName() + " added on " + SetupLoader.getInstance().getServer().getPort());
 		  }
-		  //	
+		  //	Dashboarding
 		  if(SetupLoader.getInstance().getServer().isValidService(Services.DASHBOARDING.getServiceName())) {
 			  serverBuilder.addService(new DashboardingServiceImplementation());
 			  logger.info("Service " + Services.DASHBOARDING.getServiceName() + " added on " + SetupLoader.getInstance().getServer().getPort());
 		  }
-		  //	
+		  //	Workflow
 		  if(SetupLoader.getInstance().getServer().isValidService(Services.WORKFLOW.getServiceName())) {
 			  serverBuilder.addService(new WorkflowServiceImplementation());
 			  logger.info("Service " + Services.WORKFLOW.getServiceName() + " added on " + SetupLoader.getInstance().getServer().getPort());
 		  }
-		  //	
+		  //	Log
 		  if(SetupLoader.getInstance().getServer().isValidService(Services.LOG.getServiceName())) {
 			  serverBuilder.addService(new LogsServiceImplementation());
 			  logger.info("Service " + Services.LOG.getServiceName() + " added on " + SetupLoader.getInstance().getServer().getPort());
+		  }
+		  //	Store
+		  if(SetupLoader.getInstance().getServer().isValidService(Services.STORE.getServiceName())) {
+			  serverBuilder.addService(new WebStoreServiceImplementation());
+			  logger.info("Service " + Services.STORE.getServiceName() + " added on " + SetupLoader.getInstance().getServer().getPort());
 		  }
 		  //	Add services
 		  if(SetupLoader.getInstance().getServer().isTlsEnabled()) {

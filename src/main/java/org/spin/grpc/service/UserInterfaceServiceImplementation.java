@@ -1890,7 +1890,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 		Criteria criteria = request.getCriteria();
 		HashMap<String, Object> parameterMap = new HashMap<>();
 		//	Populate map
-		request.getParametersList().forEach(parameter -> parameterMap.put(parameter.getKey(), ValueUtil.getObjectFromValue(parameter.getValue())));
+		criteria.getConditionsList().forEach(condition -> parameterMap.put(condition.getColumnName(), ValueUtil.getObjectFromValue(condition.getValue())));
 		List<Object> values = new ArrayList<Object>();
 		String whereClause = getBrowserWhereClause(browser, criteria.getWhereClause(), parameterMap, values);
 		//	Page prefix

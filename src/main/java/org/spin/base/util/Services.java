@@ -27,7 +27,8 @@ public enum Services {
     UI("ui"),
     DASHBOARDING("dashboarding"),
     WORKFLOW("workflow"),
-    LOG("log");
+    LOG("log"),
+    STORE("store");
 
 	/**	Service Name	*/
     private final String serviceName;

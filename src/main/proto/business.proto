@@ -300,12 +300,12 @@ message ListLookupItemsResponse {
 
 // List Entities Request
 message ListEntitiesRequest {
-	ClientRequest client_request = 3;
+	ClientRequest client_request = 1;
 	// Query
-	Criteria criteria = 4;
-	repeated string columns = 5;
-	int32 page_size = 6;
-	string page_token = 7;
+	Criteria criteria = 2;
+	repeated string columns = 3;
+	int32 page_size = 4;
+	string page_token = 5;
 }
 
 // List Entities Response
@@ -898,7 +898,6 @@ message ListBrowserItemsRequest {
 	string uuid = 1;
 	ClientRequest client_request = 2;
 	Criteria criteria = 3;
-	repeated KeyValue parameters = 4;
 	int32 page_size = 5;
 	string page_token = 6;
 }
