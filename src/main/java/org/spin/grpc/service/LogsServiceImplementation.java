@@ -68,6 +68,7 @@ import org.compiere.wf.MWFProcess;
 import org.compiere.wf.MWFResponsible;
 import org.compiere.wf.MWorkflow;
 import org.spin.base.util.ContextManager;
+import org.spin.base.util.ConvertUtil;
 import org.spin.base.util.RecordUtil;
 import org.spin.base.util.ValueUtil;
 import org.spin.grpc.util.ChangeLog;
@@ -78,25 +79,24 @@ import org.spin.grpc.util.ListProcessLogsRequest;
 import org.spin.grpc.util.ListProcessLogsResponse;
 import org.spin.grpc.util.ListRecentItemsRequest;
 import org.spin.grpc.util.ListRecentItemsResponse;
-import org.spin.grpc.util.ListRecordChatsRequest;
-import org.spin.grpc.util.ListRecordChatsResponse;
-import org.spin.grpc.util.ListRecordLogsRequest;
-import org.spin.grpc.util.ListRecordLogsResponse;
+import org.spin.grpc.util.ListEntityChatsRequest;
+import org.spin.grpc.util.ListEntityChatsResponse;
+import org.spin.grpc.util.ListEntityLogsRequest;
+import org.spin.grpc.util.ListEntityLogsResponse;
 import org.spin.grpc.util.ListWorkflowLogsRequest;
 import org.spin.grpc.util.ListWorkflowLogsResponse;
 import org.spin.grpc.util.ProcessInfoLog;
 import org.spin.grpc.util.ProcessLog;
 import org.spin.grpc.util.RecentItem;
-import org.spin.grpc.util.RecordChat;
-import org.spin.grpc.util.RecordLog;
+import org.spin.grpc.util.EntityChat;
+import org.spin.grpc.util.EntityLog;
 import org.spin.grpc.util.ReportOutput;
 import org.spin.grpc.util.Value;
 import org.spin.grpc.util.WorkflowEvent;
 import org.spin.grpc.util.WorkflowProcess;
-import org.spin.grpc.util.ChatEntry.ModeratorStatus;
-import org.spin.grpc.util.EntityLogGrpc.EntityLogImplBase;
-import org.spin.grpc.util.RecordChat.ConfidentialType;
-import org.spin.grpc.util.RecordChat.ModerationType;
+import org.spin.grpc.util.LogsGrpc.LogsImplBase;
+import org.spin.grpc.util.EntityChat.ConfidentialType;
+import org.spin.grpc.util.EntityChat.ModerationType;
 import org.spin.grpc.util.WorkflowProcess.WorkflowState;
 
 import io.grpc.Status;
@@ -107,9 +107,9 @@ import io.grpc.stub.StreamObserver;
  * @author Yamel Senih, ysenih@erpya.com, ERPCyA http://www.erpya.com
  * Business data service
  */
-public class EntityLogServiceImplementation extends EntityLogImplBase {
+public class LogsServiceImplementation extends LogsImplBase {
 	/**	Logger			*/
-	private CLogger log = CLogger.getCLogger(EntityLogServiceImplementation.class);
+	private CLogger log = CLogger.getCLogger(LogsServiceImplementation.class);
 	/** Date Time Format		*/
 	private SimpleDateFormat	dateTimeFormat = DisplayType.getDateFormat
 		(DisplayType.DateTime, Env.getLanguage(Env.getCtx()));
@@ -175,7 +175,7 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 	}
 	
 	@Override
-	public void listRecordLogs(ListRecordLogsRequest request, StreamObserver<ListRecordLogsResponse> responseObserver) {
+	public void listEntityLogs(ListEntityLogsRequest request, StreamObserver<ListEntityLogsResponse> responseObserver) {
 		try {
 			if(request == null) {
 				throw new AdempiereException("Record Logs Requested is Null");
@@ -185,7 +185,7 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 					request.getClientRequest().getLanguage(), 
 					request.getClientRequest().getOrganizationUuid(), 
 					request.getClientRequest().getWarehouseUuid());
-			ListRecordLogsResponse.Builder entityValueList = convertRecordLogs(request);
+			ListEntityLogsResponse.Builder entityValueList = convertEntityLogs(request);
 			responseObserver.onNext(entityValueList.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -224,8 +224,8 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 	}
 	
 	@Override
-	public void listRecordChats(ListRecordChatsRequest request,
-			StreamObserver<ListRecordChatsResponse> responseObserver) {
+	public void listEntityChats(ListEntityChatsRequest request,
+			StreamObserver<ListEntityChatsResponse> responseObserver) {
 		try {
 			if(request == null) {
 				throw new AdempiereException("Record Chats Requested is Null");
@@ -235,7 +235,7 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 					request.getClientRequest().getLanguage(), 
 					request.getClientRequest().getOrganizationUuid(), 
 					request.getClientRequest().getWarehouseUuid());
-			ListRecordChatsResponse.Builder entityValueList = convertRecordChats(request);
+			ListEntityChatsResponse.Builder entityValueList = convertEntityChats(request);
 			responseObserver.onNext(entityValueList.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -287,7 +287,11 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 					|| table.getAD_Table_ID() == 0) {
 				throw new AdempiereException("@AD_Table_ID@ @Invalid@");
 			}
-			parameters.add(request.getRecordId());
+			int id = request.getId();
+			if(id <= 0) {
+				id = RecordUtil.getIdFromUuid(table.getTableName(), request.getUuid(), null);
+			}
+			parameters.add(id);
 			parameters.add(table.getAD_Table_ID());
 			sql = "Record_ID = ? AND EXISTS(SELECT 1 FROM AD_Process WHERE AD_Table_ID = ? AND AD_Process_ID = AD_PInstance.AD_Process_ID)";
 		} if(!Util.isEmpty(request.getUserUuid())) {
@@ -338,8 +342,12 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 			.append(" AND ")
 			.append(I_AD_WF_Process.COLUMNNAME_Record_ID).append(" = ?");
 		//	Set parameters
+		int id = request.getId();
+		if(id <= 0) {
+			id = RecordUtil.getIdFromUuid(table.getTableName(), request.getUuid(), null);
+		}
 		parameters.add(table.getAD_Table_ID());
-		parameters.add(request.getRecordId());
+		parameters.add(id);
 		//	Get page and count
 		String nexPageToken = null;
 		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
@@ -399,7 +407,8 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 			builder.setUserName(ValueUtil.validateNull(user.getName()));
 		}
 		builder.setWorkflowName(ValueUtil.validateNull(workflowName));
-		builder.setRecordId(workflowProcess.getRecord_ID());
+		builder.setId(workflowProcess.getRecord_ID());
+		builder.setUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(table.getTableName(), workflowProcess.getRecord_ID())));
 		builder.setTableName(ValueUtil.validateNull(table.getTableName()));
 		builder.setTextMessage(ValueUtil.validateNull(Msg.parseTranslation(workflowProcess.getCtx(), workflowProcess.getTextMsg())));
 		builder.setProcessed(workflowProcess.isProcessed());
@@ -461,7 +470,8 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 			builder.setUserUuid(ValueUtil.validateNull(user.getUUID()));
 			builder.setUserName(ValueUtil.validateNull(user.getName()));
 		}
-		builder.setRecordId(workflowEventAudit.getRecord_ID());
+		builder.setId(workflowEventAudit.getRecord_ID());
+		builder.setUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(table.getTableName(), workflowEventAudit.getRecord_ID())));
 		builder.setTableName(ValueUtil.validateNull(table.getTableName()));
 		builder.setTextMessage(ValueUtil.validateNull(Msg.parseTranslation(workflowEventAudit.getCtx(), workflowEventAudit.getTextMsg())));
 		builder.setLogDate(workflowEventAudit.getCreated().getTime());
@@ -496,7 +506,7 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 	 * @param request
 	 * @return
 	 */
-	private ListRecordLogsResponse.Builder convertRecordLogs(ListRecordLogsRequest request) {
+	private ListEntityLogsResponse.Builder convertEntityLogs(ListEntityLogsRequest request) {
 		StringBuffer whereClause = new StringBuffer();
 		List<Object> parameters = new ArrayList<>();
 		if(!Util.isEmpty(request.getTableName())) {
@@ -510,8 +520,12 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 				.append(" AND ")
 				.append(I_AD_ChangeLog.COLUMNNAME_Record_ID).append(" = ?");
 			//	Set parameters
+			int id = request.getId();
+			if(id <= 0) {
+				id = RecordUtil.getIdFromUuid(table.getTableName(), request.getUuid(), null);
+			}
 			parameters.add(table.getAD_Table_ID());
-			parameters.add(request.getRecordId());
+			parameters.add(id);
 		} else {
 			whereClause.append("EXISTS(SELECT 1 FROM AD_Session WHERE UUID = ? AND AD_Session_ID = AD_ChangeLog.AD_Session_ID)");
 			parameters.add(request.getClientRequest().getSessionUuid());
@@ -528,7 +542,7 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 				.setLimit(limit, offset)
 				.<MChangeLog>list();
 		//	Convert Record Log
-		ListRecordLogsResponse.Builder builder = convertRecordLog(recordLogList);
+		ListEntityLogsResponse.Builder builder = convertRecordLog(recordLogList);
 		//	
 		builder.setRecordCount(count);
 		//	Set page token
@@ -546,12 +560,13 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 	 * @param recordLog
 	 * @return
 	 */
-	private RecordLog.Builder convertRecordLogHeader(MChangeLog recordLog) {
+	private EntityLog.Builder convertRecordLogHeader(MChangeLog recordLog) {
 		MTable table = MTable.get(recordLog.getCtx(), recordLog.getAD_Table_ID());
 		MUser user = MUser.get(recordLog.getCtx(), recordLog.getCreatedBy());
-		RecordLog.Builder builder = RecordLog.newBuilder();
+		EntityLog.Builder builder = EntityLog.newBuilder();
 		builder.setLogId(recordLog.getAD_ChangeLog_ID());
-		builder.setRecordId(recordLog.getRecord_ID());
+		builder.setId(recordLog.getRecord_ID());
+		builder.setUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(table.getTableName(), recordLog.getRecord_ID())));
 		builder.setTableName(ValueUtil.validateNull(table.getTableName()));
 		builder.setSessionUuid(ValueUtil.validateNull(recordLog.getAD_Session().getUUID()));
 		builder.setUserUuid(ValueUtil.validateNull(user.getUUID()));
@@ -559,11 +574,11 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 		builder.setTransactionName(ValueUtil.validateNull(recordLog.getTrxName()));
 		builder.setLogDate(recordLog.getCreated().getTime());
 		if(recordLog.getEventChangeLog().endsWith(MChangeLog.EVENTCHANGELOG_Insert)) {
-			builder.setEventType(org.spin.grpc.util.RecordLog.EventType.INSERT);
+			builder.setEventType(org.spin.grpc.util.EntityLog.EventType.INSERT);
 		} else if(recordLog.getEventChangeLog().endsWith(MChangeLog.EVENTCHANGELOG_Update)) {
-			builder.setEventType(org.spin.grpc.util.RecordLog.EventType.UPDATE);
+			builder.setEventType(org.spin.grpc.util.EntityLog.EventType.UPDATE);
 		} else if(recordLog.getEventChangeLog().endsWith(MChangeLog.EVENTCHANGELOG_Delete)) {
-			builder.setEventType(org.spin.grpc.util.RecordLog.EventType.DELETE);
+			builder.setEventType(org.spin.grpc.util.EntityLog.EventType.DELETE);
 		}
 		//	Return
 		return builder;
@@ -574,20 +589,20 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 	 * @param recordLog
 	 * @return
 	 */
-	private ListRecordLogsResponse.Builder convertRecordLog(List<MChangeLog> recordLogList) {
-		Map<Integer, RecordLog.Builder> indexMap = new HashMap<Integer, RecordLog.Builder>();
+	private ListEntityLogsResponse.Builder convertRecordLog(List<MChangeLog> recordLogList) {
+		Map<Integer, EntityLog.Builder> indexMap = new HashMap<Integer, EntityLog.Builder>();
 		recordLogList.stream().filter(recordLog -> !indexMap.containsKey(recordLog.getAD_ChangeLog_ID())).forEach(recordLog -> {
 			indexMap.put(recordLog.getAD_ChangeLog_ID(), convertRecordLogHeader(recordLog));
 		});
 		//	convert changes
 		recordLogList.forEach(recordLog -> {
 			ChangeLog.Builder changeLog = convertChangeLog(recordLog);
-			RecordLog.Builder recordLogBuilder = indexMap.get(recordLog.getAD_ChangeLog_ID());
+			EntityLog.Builder recordLogBuilder = indexMap.get(recordLog.getAD_ChangeLog_ID());
 			recordLogBuilder.addChangeLogs(changeLog);
 			indexMap.put(recordLog.getAD_ChangeLog_ID(), recordLogBuilder);
 		});
-		ListRecordLogsResponse.Builder builder = ListRecordLogsResponse.newBuilder();
-		indexMap.values().stream().forEach(recordLog -> builder.addRecordLogs(recordLog));
+		ListEntityLogsResponse.Builder builder = ListEntityLogsResponse.newBuilder();
+		indexMap.values().stream().forEach(recordLog -> builder.addEntityLogs(recordLog));
 		return builder;
 	}
 	
@@ -748,8 +763,6 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 			for(MRecentItem recentItem : recentItemsList) {
 				try {
 					RecentItem.Builder recentItemBuilder = RecentItem.newBuilder()
-							.setRecordId(recentItem.getRecord_ID())
-							.setTableId(recentItem.getAD_Table_ID())
 							.setDisplayName(ValueUtil.validateNull(recentItem.getLabel()));
 					String menuName = "";
 					String menuDescription = "";
@@ -827,7 +840,10 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 						MTable table = MTable.get(Env.getCtx(), recentItem.getAD_Table_ID());
 						if(table != null
 								&& table.getAD_Table_ID() != 0) {
-							recentItemBuilder.setRecordUuid(ValueUtil.validateNull(table.getPO(recentItem.getRecord_ID(), null).get_UUID()));
+							recentItemBuilder.setId(recentItem.getRecord_ID())
+								.setUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(table.getTableName(), recentItem.getRecord_ID())))
+								.setTableName(ValueUtil.validateNull(table.getTableName()))
+								.setTableId(recentItem.getAD_Table_ID());
 						}
 					}
 					//	
@@ -970,7 +986,8 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 	 * @return
 	 */
 	private ListChatEntriesResponse.Builder convertChatEntries(ListChatEntriesRequest request) {
-		if(Util.isEmpty(request.getChatUuid())) {
+		if(request.getId() <= 0
+				&& Util.isEmpty(request.getUuid())) {
 			throw new AdempiereException("@CM_Chat_ID@ @NotFound@");
 		}
 		//	Get page and count
@@ -978,8 +995,12 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
 		int offset = (pageNumber > 0? pageNumber - 1: 0) * RecordUtil.PAGE_SIZE;
 		int limit = (pageNumber == 0? 1: pageNumber) * RecordUtil.PAGE_SIZE;
-		Query query = new Query(Env.getCtx(), I_CM_ChatEntry.Table_Name, "EXISTS(SELECT 1 FROM CM_Chat c WHERE c.CM_Chat_ID = CM_ChatEntry.CM_Chat_ID AND c.UUID = ?)", null)
-				.setParameters(request.getChatUuid());
+		int id = request.getId();
+		if(id <= 0) {
+			id = RecordUtil.getIdFromUuid(I_CM_Chat.Table_Name, request.getUuid(), null);
+		}
+		Query query = new Query(Env.getCtx(), I_CM_ChatEntry.Table_Name, I_CM_ChatEntry.COLUMNNAME_CM_Chat_ID + " = ?", null)
+				.setParameters(id);
 		int count = query.count();
 		List<MChatEntry> chatEntryList = query
 				.setLimit(limit, offset)
@@ -988,7 +1009,7 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 		ListChatEntriesResponse.Builder builder = ListChatEntriesResponse.newBuilder();
 		//	Convert Record Log
 		for(MChatEntry chatEntry : chatEntryList) {
-			ChatEntry.Builder valueObject = convertChatEntry(chatEntry);
+			ChatEntry.Builder valueObject = ConvertUtil.convertChatEntry(chatEntry);
 			builder.addChatEntries(valueObject.build());
 		}
 		//	
@@ -1004,63 +1025,11 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 	}
 	
 	/**
-	 * Convert PO class from Chat Entry process to builder
-	 * @param chatEntry
-	 * @return
-	 */
-	private ChatEntry.Builder convertChatEntry(MChatEntry chatEntry) {
-		ChatEntry.Builder builder = ChatEntry.newBuilder();
-		builder.setChatEntryUuid(ValueUtil.validateNull(chatEntry.getUUID()));
-		builder.setChatUuid(ValueUtil.validateNull(chatEntry.getCM_Chat().getUUID()));
-		builder.setSubject(ValueUtil.validateNull(chatEntry.getSubject()));
-		builder.setCharacterData(ValueUtil.validateNull(chatEntry.getCharacterData()));
-		if(chatEntry.getAD_User_ID() != 0) {
-			MUser user = MUser.get(chatEntry.getCtx(), chatEntry.getAD_User_ID());
-			builder.setUserUuid(ValueUtil.validateNull(user.getUUID()));
-			builder.setUserName(ValueUtil.validateNull(user.getName()));
-		}
-		builder.setLogDate(chatEntry.getCreated().getTime());
-		//	Confidential Type
-		if(!Util.isEmpty(chatEntry.getConfidentialType())) {
-			if(chatEntry.getConfidentialType().equals(MChatEntry.CONFIDENTIALTYPE_PublicInformation)) {
-				builder.setConfidentialType(org.spin.grpc.util.ChatEntry.ConfidentialType.PUBLIC);
-			} else if(chatEntry.getConfidentialType().equals(MChatEntry.CONFIDENTIALTYPE_PartnerConfidential)) {
-				builder.setConfidentialType(org.spin.grpc.util.ChatEntry.ConfidentialType.PARTER);
-			} else if(chatEntry.getConfidentialType().equals(MChatEntry.CONFIDENTIALTYPE_Internal)) {
-				builder.setConfidentialType(org.spin.grpc.util.ChatEntry.ConfidentialType.INTERNAL);
-			}
-		}
-		//	Moderator Status
-		if(!Util.isEmpty(chatEntry.getModeratorStatus())) {
-			if(chatEntry.getModeratorStatus().equals(MChatEntry.MODERATORSTATUS_NotDisplayed)) {
-				builder.setModeratorStatus(ModeratorStatus.NOT_DISPLAYED);
-			} else if(chatEntry.getModeratorStatus().equals(MChatEntry.MODERATORSTATUS_Published)) {
-				builder.setModeratorStatus(ModeratorStatus.PUBLISHED);
-			} else if(chatEntry.getModeratorStatus().equals(MChatEntry.MODERATORSTATUS_Suspicious)) {
-				builder.setModeratorStatus(ModeratorStatus.SUSPICIUS);
-			} else if(chatEntry.getModeratorStatus().equals(MChatEntry.MODERATORSTATUS_ToBeReviewed)) {
-				builder.setModeratorStatus(ModeratorStatus.TO_BE_REVIEWED);
-			}
-		}
-		//	Chat entry type
-		if(!Util.isEmpty(chatEntry.getChatEntryType())) {
-			if(chatEntry.getChatEntryType().equals(MChatEntry.CHATENTRYTYPE_NoteFlat)) {
-				builder.setChatEntryType(org.spin.grpc.util.ChatEntry.ChatEntryType.NOTE_FLAT);
-			} else if(chatEntry.getChatEntryType().equals(MChatEntry.CHATENTRYTYPE_ForumThreaded)) {
-				builder.setChatEntryType(org.spin.grpc.util.ChatEntry.ChatEntryType.NOTE_FLAT);
-			} else if(chatEntry.getChatEntryType().equals(MChatEntry.CHATENTRYTYPE_Wiki)) {
-				builder.setChatEntryType(org.spin.grpc.util.ChatEntry.ChatEntryType.NOTE_FLAT);
-			}
-		}
-  		return builder;
-	}
-	
-	/**
 	 * Convert request for record chats to builder
 	 * @param request
 	 * @return
 	 */
-	private ListRecordChatsResponse.Builder convertRecordChats(ListRecordChatsRequest request) {
+	private ListEntityChatsResponse.Builder convertEntityChats(ListEntityChatsRequest request) {
 		StringBuffer whereClause = new StringBuffer();
 		List<Object> parameters = new ArrayList<>();
 		if(Util.isEmpty(request.getTableName())) {
@@ -1077,8 +1046,12 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 			.append(" AND ")
 			.append(I_CM_Chat.COLUMNNAME_Record_ID).append(" = ?");
 		//	Set parameters
+		int id = request.getId();
+		if(id <= 0) {
+			id = RecordUtil.getIdFromUuid(table.getTableName(), request.getUuid(), null);
+		}
 		parameters.add(table.getAD_Table_ID());
-		parameters.add(request.getRecordId());
+		parameters.add(id);
 		//	Get page and count
 		String nexPageToken = null;
 		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
@@ -1091,11 +1064,11 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 				.setLimit(limit, offset)
 				.<MChat>list();
 		//	
-		ListRecordChatsResponse.Builder builder = ListRecordChatsResponse.newBuilder();
+		ListEntityChatsResponse.Builder builder = ListEntityChatsResponse.newBuilder();
 		//	Convert Record Log
 		for(MChat chat : chatList) {
-			RecordChat.Builder valueObject = convertRecordChat(chat);
-			builder.addRecordChats(valueObject.build());
+			EntityChat.Builder valueObject = convertRecordChat(chat);
+			builder.addEntityChats(valueObject.build());
 		}
 		//	
 		builder.setRecordCount(count);
@@ -1114,16 +1087,17 @@ public class EntityLogServiceImplementation extends EntityLogImplBase {
 	 * @param recordChat
 	 * @return
 	 */
-	private RecordChat.Builder convertRecordChat(MChat recordChat) {
+	private EntityChat.Builder convertRecordChat(MChat recordChat) {
 		MTable table = MTable.get(recordChat.getCtx(), recordChat.getAD_Table_ID());
-		RecordChat.Builder builder = RecordChat.newBuilder();
+		EntityChat.Builder builder = EntityChat.newBuilder();
 		builder.setChatUuid(ValueUtil.validateNull(recordChat.getUUID()));
 		builder.setTableName(ValueUtil.validateNull(table.getTableName()));
 		if(recordChat.getCM_ChatType_ID() != 0) {
 			MChatType chatType = MChatType.get(recordChat.getCtx(), recordChat.getCM_Chat_ID());
 			builder.setChatTypeUuid(ValueUtil.validateNull(chatType.getUUID()));
 		}
-		builder.setRecordId(recordChat.getRecord_ID());
+		builder.setId(recordChat.getRecord_ID());
+		builder.setUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(table.getTableName(), recordChat.getRecord_ID())));
 		builder.setDescription(ValueUtil.validateNull(recordChat.getDescription()));
 		builder.setLogDate(recordChat.getCreated().getTime());
 		//	Confidential Type

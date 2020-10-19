@@ -22,7 +22,7 @@ import org.spin.base.setup.SetupLoader;
 import org.spin.grpc.service.BusinessDataServiceImplementation;
 import org.spin.grpc.service.CoreFunctionalityImplementation;
 import org.spin.grpc.service.DashboardingServiceImplementation;
-import org.spin.grpc.service.EntityLogServiceImplementation;
+import org.spin.grpc.service.LogsServiceImplementation;
 import org.spin.grpc.service.UserInterfaceServiceImplementation;
 import org.spin.grpc.service.WorkflowServiceImplementation;
 
@@ -65,7 +65,7 @@ public class BusinessDataServer {
 				        //	Workflow
 				        .addService(new WorkflowServiceImplementation())
 				        //	Entity Log
-				        .addService(new EntityLogServiceImplementation())
+				        .addService(new LogsServiceImplementation())
 		                .sslContext(getSslContextBuilder().build())
 		                .build()
 		                .start();
@@ -82,7 +82,7 @@ public class BusinessDataServer {
 				        //	Workflow
 				        .addService(new WorkflowServiceImplementation())
 				        //	Entity Log
-				        .addService(new EntityLogServiceImplementation())
+				        .addService(new LogsServiceImplementation())
 				        .build()
 				        .start();
 		  }

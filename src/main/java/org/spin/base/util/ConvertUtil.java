@@ -23,6 +23,7 @@ import org.compiere.model.MAttachment;
 import org.compiere.model.MBPartner;
 import org.compiere.model.MBankAccount;
 import org.compiere.model.MCharge;
+import org.compiere.model.MChatEntry;
 import org.compiere.model.MClientInfo;
 import org.compiere.model.MConversionRate;
 import org.compiere.model.MCountry;
@@ -36,6 +37,7 @@ import org.compiere.model.MProduct;
 import org.compiere.model.MProductCategory;
 import org.compiere.model.MTax;
 import org.compiere.model.MUOM;
+import org.compiere.model.MUser;
 import org.compiere.model.MWarehouse;
 import org.compiere.model.PO;
 import org.compiere.model.POInfo;
@@ -46,6 +48,7 @@ import org.spin.grpc.util.Attachment;
 import org.spin.grpc.util.BankAccount;
 import org.spin.grpc.util.BusinessPartner;
 import org.spin.grpc.util.Charge;
+import org.spin.grpc.util.ChatEntry;
 import org.spin.grpc.util.ConversionRate;
 import org.spin.grpc.util.Country;
 import org.spin.grpc.util.Currency;
@@ -60,6 +63,7 @@ import org.spin.grpc.util.ResourceReference;
 import org.spin.grpc.util.TaxRate;
 import org.spin.grpc.util.Value;
 import org.spin.grpc.util.Warehouse;
+import org.spin.grpc.util.ChatEntry.ModeratorStatus;
 import org.spin.model.MADAttachmentReference;
 
 /**
@@ -67,6 +71,59 @@ import org.spin.model.MADAttachmentReference;
  * @author Yamel Senih, ysenih@erpya.com , http://www.erpya.com
  */
 public class ConvertUtil {
+	
+	/**
+	 * Convert PO class from Chat Entry process to builder
+	 * @param chatEntry
+	 * @return
+	 */
+	public static ChatEntry.Builder convertChatEntry(MChatEntry chatEntry) {
+		ChatEntry.Builder builder = ChatEntry.newBuilder();
+		builder.setUuid(ValueUtil.validateNull(chatEntry.getUUID()));
+		builder.setId(chatEntry.getCM_ChatEntry_ID());
+		builder.setChatUuid(ValueUtil.validateNull(chatEntry.getCM_Chat().getUUID()));
+		builder.setSubject(ValueUtil.validateNull(chatEntry.getSubject()));
+		builder.setCharacterData(ValueUtil.validateNull(chatEntry.getCharacterData()));
+		if(chatEntry.getAD_User_ID() != 0) {
+			MUser user = MUser.get(chatEntry.getCtx(), chatEntry.getAD_User_ID());
+			builder.setUserUuid(ValueUtil.validateNull(user.getUUID()));
+			builder.setUserName(ValueUtil.validateNull(user.getName()));
+		}
+		builder.setLogDate(chatEntry.getCreated().getTime());
+		//	Confidential Type
+		if(!Util.isEmpty(chatEntry.getConfidentialType())) {
+			if(chatEntry.getConfidentialType().equals(MChatEntry.CONFIDENTIALTYPE_PublicInformation)) {
+				builder.setConfidentialType(org.spin.grpc.util.ChatEntry.ConfidentialType.PUBLIC);
+			} else if(chatEntry.getConfidentialType().equals(MChatEntry.CONFIDENTIALTYPE_PartnerConfidential)) {
+				builder.setConfidentialType(org.spin.grpc.util.ChatEntry.ConfidentialType.PARTER);
+			} else if(chatEntry.getConfidentialType().equals(MChatEntry.CONFIDENTIALTYPE_Internal)) {
+				builder.setConfidentialType(org.spin.grpc.util.ChatEntry.ConfidentialType.INTERNAL);
+			}
+		}
+		//	Moderator Status
+		if(!Util.isEmpty(chatEntry.getModeratorStatus())) {
+			if(chatEntry.getModeratorStatus().equals(MChatEntry.MODERATORSTATUS_NotDisplayed)) {
+				builder.setModeratorStatus(ModeratorStatus.NOT_DISPLAYED);
+			} else if(chatEntry.getModeratorStatus().equals(MChatEntry.MODERATORSTATUS_Published)) {
+				builder.setModeratorStatus(ModeratorStatus.PUBLISHED);
+			} else if(chatEntry.getModeratorStatus().equals(MChatEntry.MODERATORSTATUS_Suspicious)) {
+				builder.setModeratorStatus(ModeratorStatus.SUSPICIUS);
+			} else if(chatEntry.getModeratorStatus().equals(MChatEntry.MODERATORSTATUS_ToBeReviewed)) {
+				builder.setModeratorStatus(ModeratorStatus.TO_BE_REVIEWED);
+			}
+		}
+		//	Chat entry type
+		if(!Util.isEmpty(chatEntry.getChatEntryType())) {
+			if(chatEntry.getChatEntryType().equals(MChatEntry.CHATENTRYTYPE_NoteFlat)) {
+				builder.setChatEntryType(org.spin.grpc.util.ChatEntry.ChatEntryType.NOTE_FLAT);
+			} else if(chatEntry.getChatEntryType().equals(MChatEntry.CHATENTRYTYPE_ForumThreaded)) {
+				builder.setChatEntryType(org.spin.grpc.util.ChatEntry.ChatEntryType.NOTE_FLAT);
+			} else if(chatEntry.getChatEntryType().equals(MChatEntry.CHATENTRYTYPE_Wiki)) {
+				builder.setChatEntryType(org.spin.grpc.util.ChatEntry.ChatEntryType.NOTE_FLAT);
+			}
+		}
+  		return builder;
+	}
 	
 	/**
 	 * Convert PO to Value Object

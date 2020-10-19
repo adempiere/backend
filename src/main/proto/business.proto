@@ -105,13 +105,13 @@ service Dashboarding {
 }
 
 //	Logger services
-service EntityLog {
+service Logs {
 	//	Request BusinessProcess Activity from current session
 	rpc ListProcessLogs(ListProcessLogsRequest) returns (ListProcessLogsResponse) {}
 	//	Request Record Log List
-	rpc ListRecordLogs(ListRecordLogsRequest) returns (ListRecordLogsResponse) {}
+	rpc ListEntityLogs(ListEntityLogsRequest) returns (ListEntityLogsResponse) {}
 	//	Request Record Chat List
-	rpc ListRecordChats(ListRecordChatsRequest) returns (ListRecordChatsResponse) {}
+	rpc ListEntityChats(ListEntityChatsRequest) returns (ListEntityChatsResponse) {}
 	//	Request Chat Entries List
 	rpc ListChatEntries(ListChatEntriesRequest) returns (ListChatEntriesResponse) {}
 	//	List workflow processes
@@ -357,9 +357,10 @@ message ListProcessLogsRequest {
 	string user_uuid = 2;
 	string instance_uuid = 3;
 	string table_name = 4;
-	int32 record_id = 5;
-	int32 page_size = 6;
-	string page_token = 7;
+	int32 id = 5;
+	string uuid = 6;
+	int32 page_size = 7;
+	string page_token = 8;
 }
 
 // BusinessProcess Response List
@@ -387,12 +388,13 @@ message RecentItem {
 	string window_uuid = 4;
 	string tab_uuid = 5;
 	int32 table_id = 6;
-	int32 record_id = 7;
-	string display_name = 8;
-	string record_uuid = 9;
-	int64 updated = 10;
-	string reference_uuid = 11;
-	string action = 12;
+	string table_name = 7;
+	int32 id = 8;
+	string uuid = 9;
+	string display_name = 10;
+	int64 updated = 11;
+	string reference_uuid = 12;
+	string action = 13;
 }
 
 //	Recent Items List
@@ -505,37 +507,40 @@ message ListPrintFormatsResponse {
 }
 
 // Record Log Request
-message ListRecordLogsRequest {
+message ListEntityLogsRequest {
 	ClientRequest client_request = 1;
 	string table_name = 2;
-	int32 record_id = 3;
-	int32 page_size = 4;
-	string page_token = 5;
+	int32 id = 3;
+	string uuid = 4;
+	int32 page_size = 5;
+	string page_token = 6;
 }
 
 //	Record Log List
-message ListRecordLogsResponse {
+message ListEntityLogsResponse {
 	int64 record_count = 1;
-	repeated RecordLog record_logs = 2;
+	repeated EntityLog entity_logs = 2;
 	string next_page_token = 3;
 }
 
 // Record Chat Request
-message ListRecordChatsRequest {
+message ListEntityChatsRequest {
 	ClientRequest client_request = 1;
 	string table_name = 2;
-	int32 record_id = 3;
-	int32 page_size = 4;
-	string page_token = 5;
+	int32 id = 3;
+	string uuid = 4;
+	int32 page_size = 5;
+	string page_token = 6;
 }
 
 // Record Chat
-message RecordChat {
+message EntityChat {
 	string chat_uuid = 1;
-	int32 record_id = 2;
-	string table_name = 3;
-	string chat_type_uuid = 4;
-	string description = 5;
+	int32 id = 2;
+	string uuid = 3;
+	string table_name = 4;
+	string chat_type_uuid = 5;
+	string description = 6;
 	enum ConfidentialType {
 		PUBLIC = 0;
 		PARTER = 1;
@@ -546,34 +551,36 @@ message RecordChat {
 		BEFORE_PUBLISHING = 1;
 		AFTER_PUBLISHING = 2;
 	}
-	ConfidentialType confidential_type = 6;
-	ModerationType moderation_type = 7;
-	int64 log_date = 8;
+	ConfidentialType confidential_type = 7;
+	ModerationType moderation_type = 8;
+	int64 log_date = 9;
 }
 
 //	Record Chats List
-message ListRecordChatsResponse {
+message ListEntityChatsResponse {
 	int64 record_count = 1;
-	repeated RecordChat record_chats = 2;
+	repeated EntityChat entity_chats = 2;
 	string next_page_token = 3;
 }
 
 // Record Chat Entry Request
 message ListChatEntriesRequest {
 	ClientRequest client_request = 1;
-	string chat_uuid = 2;
-	int32 page_size = 3;
-	string page_token = 4;
+	string uuid = 2;
+	int32 id = 3;
+	int32 page_size = 4;
+	string page_token = 5;
 }
 
 // Record Chat
 message ChatEntry {
 	string chat_uuid = 1;
-	string chat_entry_uuid = 2;
-	string subject = 3;
-	string character_data = 4;
-	string user_uuid = 5;
-	string user_name = 6;
+	int32 id = 2;
+	string uuid = 3;
+	string subject = 4;
+	string character_data = 5;
+	string user_uuid = 6;
+	string user_name = 7;
 	enum ConfidentialType {
 		PUBLIC = 0;
 		PARTER = 1;
@@ -590,10 +597,10 @@ message ChatEntry {
 		FORUM_THREADED = 1;
 		WIKI = 2;
 	}
-	ChatEntryType chat_entry_type = 7;
-	ConfidentialType confidential_type = 8;
-	ModeratorStatus moderator_status = 9;
-	int64 log_date = 10;
+	ChatEntryType chat_entry_type = 8;
+	ConfidentialType confidential_type = 9;
+	ModeratorStatus moderator_status = 10;
+	int64 log_date = 11;
 }
 
 // Create Chat Entry Request
@@ -771,9 +778,10 @@ message ListDocumentStatusesResponse {
 message ListWorkflowLogsRequest {
 	ClientRequest client_request = 1;
 	string table_name = 2;
-	int32 record_id = 3;
-	int32 page_size = 4;
-	string page_token = 5;
+	int32 id = 3;
+	string uuid = 4;
+	int32 page_size = 5;
+	string page_token = 6;
 }
 
 // Workflow Process
@@ -781,14 +789,15 @@ message WorkflowProcess {
 	string process_uuid = 1;
 	string workflow_uuid = 2;
 	string workflow_name = 3;
-	int32 record_id = 4;
-	string table_name = 5;
-	string user_uuid = 6;
-	string user_name = 7;
-	string responsible_uuid = 8;
-	string responsible_name = 9;
-	string text_message = 10;
-	bool processed = 11;
+	int32 id = 4;
+	string uuid = 5;
+	string table_name = 6;
+	string user_uuid = 7;
+	string user_name = 8;
+	string responsible_uuid = 9;
+	string responsible_name = 10;
+	string text_message = 11;
+	bool processed = 12;
 	enum WorkflowState {
 		RUNNING = 0;
 		COMPLETED = 1;
@@ -805,27 +814,28 @@ message WorkflowProcess {
 		LOW = 3;
 		MINOR = 4;
 	}
-	WorkflowState workflow_state = 12;
-	Priority priority = 13;
-	repeated WorkflowEvent workflow_events = 14;
-	int64 log_date = 15;
+	WorkflowState workflow_state = 13;
+	Priority priority = 14;
+	repeated WorkflowEvent workflow_events = 15;
+	int64 log_date = 16;
 }
 
 // Workflow Event Audit
 message WorkflowEvent {
 	string node_uuid = 1;
 	string node_name = 2;
-	int32 record_id = 3;
-	string table_name = 4;
-	string user_uuid = 5;
-	string user_name = 6;
-	string responsible_uuid = 7;
-	string responsible_name = 8;
-	string text_message = 9;
-	int64 time_elapsed = 10;
-	string attribute_name = 11;
-	string old_value = 12;
-	string new_value = 13;
+	int32 id = 3;
+	string uuid = 4;
+	string table_name = 5;
+	string user_uuid = 6;
+	string user_name = 7;
+	string responsible_uuid = 8;
+	string responsible_name = 9;
+	string text_message = 10;
+	int64 time_elapsed = 11;
+	string attribute_name = 12;
+	string old_value = 13;
+	string new_value = 14;
 	enum WorkflowState {
 		RUNNING = 0;
 		COMPLETED = 1;
@@ -840,9 +850,9 @@ message WorkflowEvent {
 		PROCESS_COMPLETED = 1;
 		STATE_CHANGED = 2;
 	}
-	WorkflowState workflow_state = 14;
-	EventType event_type = 15;
-	int64 log_date = 16;
+	WorkflowState workflow_state = 15;
+	EventType event_type = 16;
+	int64 log_date = 17;
 }
 
 //	Workflow Activities List

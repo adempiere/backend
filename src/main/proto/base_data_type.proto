@@ -220,22 +220,23 @@ message PrintFormat {
 }
 
 // Record Log
-message RecordLog {
+message EntityLog {
 	int32 log_id = 1;
-	int32 record_id = 2;
-	string table_name = 3;
-	string session_uuid = 4;
-	string user_uuid = 5;
-	string user_name = 6;
-	string transaction_name = 7;
+	int32 id = 2;
+	string uuid = 3;
+	string table_name = 4;
+	string session_uuid = 5;
+	string user_uuid = 6;
+	string user_name = 7;
+	string transaction_name = 8;
 	enum EventType {
 		INSERT = 0;
 		UPDATE = 1;
 		DELETE = 2;
 	}
-	EventType event_type = 8;
-	int64 log_date = 9;
-	repeated ChangeLog change_logs = 10; 
+	EventType event_type = 9;
+	int64 log_date = 10;
+	repeated ChangeLog change_logs = 11; 
 }
 
 // Record Log

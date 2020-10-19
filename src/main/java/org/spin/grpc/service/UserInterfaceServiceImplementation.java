@@ -148,7 +148,6 @@ import org.spin.grpc.util.RunCalloutRequest;
 import org.spin.grpc.util.Translation;
 import org.spin.grpc.util.UnlockPrivateAccessRequest;
 import org.spin.grpc.util.Value;
-import org.spin.grpc.util.ChatEntry.ModeratorStatus;
 import org.spin.grpc.util.Condition.Operator;
 import org.spin.grpc.util.UserInterfaceGrpc.UserInterfaceImplBase;
 import org.spin.model.I_AD_AttachmentReference;
@@ -1412,7 +1411,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 			entryReference.set(entry);
 		});
 		//	Return
-		return convertChatEntry(entryReference.get());
+		return ConvertUtil.convertChatEntry(entryReference.get());
 	}
 	
 	/**
@@ -2047,58 +2046,6 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 		}
 		//	
 		return browser;
-	}
-	
-	/**
-	 * Convert PO class from Chat Entry process to builder
-	 * @param chatEntry
-	 * @return
-	 */
-	private ChatEntry.Builder convertChatEntry(MChatEntry chatEntry) {
-		ChatEntry.Builder builder = ChatEntry.newBuilder();
-		builder.setChatEntryUuid(ValueUtil.validateNull(chatEntry.getUUID()));
-		builder.setChatUuid(ValueUtil.validateNull(chatEntry.getCM_Chat().getUUID()));
-		builder.setSubject(ValueUtil.validateNull(chatEntry.getSubject()));
-		builder.setCharacterData(ValueUtil.validateNull(chatEntry.getCharacterData()));
-		if(chatEntry.getAD_User_ID() != 0) {
-			MUser user = MUser.get(chatEntry.getCtx(), chatEntry.getAD_User_ID());
-			builder.setUserUuid(ValueUtil.validateNull(user.getUUID()));
-			builder.setUserName(ValueUtil.validateNull(user.getName()));
-		}
-		builder.setLogDate(chatEntry.getCreated().getTime());
-		//	Confidential Type
-		if(!Util.isEmpty(chatEntry.getConfidentialType())) {
-			if(chatEntry.getConfidentialType().equals(MChatEntry.CONFIDENTIALTYPE_PublicInformation)) {
-				builder.setConfidentialType(org.spin.grpc.util.ChatEntry.ConfidentialType.PUBLIC);
-			} else if(chatEntry.getConfidentialType().equals(MChatEntry.CONFIDENTIALTYPE_PartnerConfidential)) {
-				builder.setConfidentialType(org.spin.grpc.util.ChatEntry.ConfidentialType.PARTER);
-			} else if(chatEntry.getConfidentialType().equals(MChatEntry.CONFIDENTIALTYPE_Internal)) {
-				builder.setConfidentialType(org.spin.grpc.util.ChatEntry.ConfidentialType.INTERNAL);
-			}
-		}
-		//	Moderator Status
-		if(!Util.isEmpty(chatEntry.getModeratorStatus())) {
-			if(chatEntry.getModeratorStatus().equals(MChatEntry.MODERATORSTATUS_NotDisplayed)) {
-				builder.setModeratorStatus(ModeratorStatus.NOT_DISPLAYED);
-			} else if(chatEntry.getModeratorStatus().equals(MChatEntry.MODERATORSTATUS_Published)) {
-				builder.setModeratorStatus(ModeratorStatus.PUBLISHED);
-			} else if(chatEntry.getModeratorStatus().equals(MChatEntry.MODERATORSTATUS_Suspicious)) {
-				builder.setModeratorStatus(ModeratorStatus.SUSPICIUS);
-			} else if(chatEntry.getModeratorStatus().equals(MChatEntry.MODERATORSTATUS_ToBeReviewed)) {
-				builder.setModeratorStatus(ModeratorStatus.TO_BE_REVIEWED);
-			}
-		}
-		//	Chat entry type
-		if(!Util.isEmpty(chatEntry.getChatEntryType())) {
-			if(chatEntry.getChatEntryType().equals(MChatEntry.CHATENTRYTYPE_NoteFlat)) {
-				builder.setChatEntryType(org.spin.grpc.util.ChatEntry.ChatEntryType.NOTE_FLAT);
-			} else if(chatEntry.getChatEntryType().equals(MChatEntry.CHATENTRYTYPE_ForumThreaded)) {
-				builder.setChatEntryType(org.spin.grpc.util.ChatEntry.ChatEntryType.NOTE_FLAT);
-			} else if(chatEntry.getChatEntryType().equals(MChatEntry.CHATENTRYTYPE_Wiki)) {
-				builder.setChatEntryType(org.spin.grpc.util.ChatEntry.ChatEntryType.NOTE_FLAT);
-			}
-		}
-  		return builder;
 	}
 	
 	/**

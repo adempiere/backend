@@ -26,7 +26,7 @@ import org.spin.grpc.service.CoreFunctionalityImplementation;
 import org.spin.grpc.service.DashboardingServiceImplementation;
 import org.spin.grpc.service.DictionaryServiceImplementation;
 import org.spin.grpc.service.EnrollmentServiceImplementation;
-import org.spin.grpc.service.EntityLogServiceImplementation;
+import org.spin.grpc.service.LogsServiceImplementation;
 import org.spin.grpc.service.UserInterfaceServiceImplementation;
 import org.spin.grpc.service.WorkflowServiceImplementation;
 
@@ -98,7 +98,7 @@ public class AllInOneServices {
 		  }
 		  //	
 		  if(SetupLoader.getInstance().getServer().isValidService(Services.LOG.getServiceName())) {
-			  serverBuilder.addService(new EntityLogServiceImplementation());
+			  serverBuilder.addService(new LogsServiceImplementation());
 			  logger.info("Service " + Services.LOG.getServiceName() + " added on " + SetupLoader.getInstance().getServer().getPort());
 		  }
 		  //	Add services
