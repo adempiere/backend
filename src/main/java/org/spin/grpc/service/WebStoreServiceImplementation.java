@@ -13,6 +13,8 @@
  * along with this program.	If not, see <https://www.gnu.org/licenses/>.            *
  ************************************************************************************/
 package org.spin.grpc.service;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.sql.Timestamp;
@@ -92,6 +94,7 @@ import org.spin.grpc.store.FormattedPrice;
 import org.spin.grpc.store.GetCartRequest;
 import org.spin.grpc.store.GetCartTotalsRequest;
 import org.spin.grpc.store.GetCustomerRequest;
+import org.spin.grpc.store.GetResourceRequest;
 import org.spin.grpc.store.GetShippingInformationRequest;
 import org.spin.grpc.store.GetStockRequest;
 import org.spin.grpc.store.ListPaymentMethodsRequest;
@@ -111,6 +114,7 @@ import org.spin.grpc.store.Region;
 import org.spin.grpc.store.RenderProduct;
 import org.spin.grpc.store.ResetPasswordRequest;
 import org.spin.grpc.store.ResetPasswordResponse;
+import org.spin.grpc.store.Resource;
 import org.spin.grpc.store.ResetPasswordResponse.ResponseType;
 import org.spin.grpc.store.ShippingInformation;
 import org.spin.grpc.store.ShippingMethod;
@@ -122,12 +126,17 @@ import org.spin.grpc.store.UpdateCustomerRequest;
 import org.spin.grpc.store.WebStoreGrpc.WebStoreImplBase;
 import org.spin.model.MADToken;
 import org.spin.model.MADTokenDefinition;
+import org.spin.util.AttachmentUtil;
 import org.spin.util.TokenGeneratorHandler;
+import org.spin.model.I_AD_AttachmentReference;
 import org.spin.model.I_W_DeliveryViaRuleAllocation;
 import org.spin.model.I_W_PaymentMethod;
+import org.spin.model.MADAttachmentReference;
 import org.spin.model.MWDeliveryViaRuleAllocation;
 import org.spin.model.MWPaymentMethod;
 import org.spin.util.VueStoreFrontUtil;
+
+import com.google.protobuf.ByteString;
 
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
@@ -557,6 +566,81 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 					.withCause(e)
 					.asRuntimeException());
 		}
+	}
+	
+	@Override
+	public void getResource(GetResourceRequest request, StreamObserver<Resource> responseObserver) {
+		try {
+			if(request == null
+					|| (Util.isEmpty(request.getResourceUuid()) 
+							&& Util.isEmpty(request.getResourceName()))) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Download Requested = " + request.getResourceUuid());
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			//	Get resource
+			getResource(request.getResourceUuid(), request.getResourceName(), responseObserver);
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	/**
+	 * Get File from fileName
+	 * @param resourceUuid
+	 * @param responseObserver
+	 * @throws Exception 
+	 */
+	private void getResource(String resourceUuid, String resourceName, StreamObserver<Resource> responseObserver) throws Exception {
+		if(!AttachmentUtil.getInstance().isValidForClient(Env.getAD_Client_ID(Env.getCtx()))) {
+			responseObserver.onCompleted();
+			return;
+		}
+		//	Validate by name
+		if(!Util.isEmpty(resourceName)) {
+			MClientInfo clientInfo = MClientInfo.get(Env.getCtx());
+			MADAttachmentReference reference = new Query(Env.getCtx(), I_AD_AttachmentReference.Table_Name, "(UUID || '-' || FileName) = ? AND FileHandler_ID = ?", null)
+					.setOrderBy(I_AD_AttachmentReference.COLUMNNAME_AD_Attachment_ID + " DESC")
+					.setParameters(resourceName, clientInfo.getFileHandler_ID())
+					.first();
+			if(reference == null
+					|| reference.getAD_AttachmentReference_ID() <= 0) {
+				responseObserver.onCompleted();
+				return;
+			}
+			resourceUuid = reference.getUUID();
+		} else if(Util.isEmpty(resourceUuid)) {
+			responseObserver.onCompleted();
+			return;
+		}
+		byte[] data = AttachmentUtil.getInstance()
+			.withClientId(Env.getAD_Client_ID(Env.getCtx()))
+			.withAttachmentReferenceId(RecordUtil.getIdFromUuid(I_AD_AttachmentReference.Table_Name, resourceUuid, null))
+			.getAttachment();
+		if(data == null) {
+			responseObserver.onCompleted();
+			return;
+		}
+		//	For all
+		int bufferSize = 256 * 1024;// 256k
+        byte[] buffer = new byte[bufferSize];
+        int length;
+        InputStream is = new ByteArrayInputStream(data);
+        while ((length = is.read(buffer, 0, bufferSize)) != -1) {
+          responseObserver.onNext(
+        		  Resource.newBuilder().setData(ByteString.copyFrom(buffer, 0, length)).build()
+          );
+        }
+        //	Completed
+        responseObserver.onCompleted();
 	}
 	
 	/**
