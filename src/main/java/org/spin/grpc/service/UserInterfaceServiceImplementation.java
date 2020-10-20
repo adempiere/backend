@@ -1531,7 +1531,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 		Criteria criteria = request.getCriteria();
 		String sql = criteria.getQuery();
 		List<Object> params = new ArrayList<>();
-		criteria.getValuesList().forEach(value -> params.add(ValueUtil.getObjectFromValue(value)));
+		criteria.getConditionsList().forEach(condition -> params.add(ValueUtil.getObjectFromValue(condition.getValue())));
 		//	For dynamic condition
 		String dynamicWhere = ValueUtil.getWhereClauseFromCriteria(criteria, params);
 		if(!Util.isEmpty(dynamicWhere)) {
@@ -1605,7 +1605,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 		Criteria criteria = request.getCriteria();
 		String sql = criteria.getQuery();
 		List<Object> params = new ArrayList<>();
-		criteria.getValuesList().forEach(value -> params.add(ValueUtil.getObjectFromValue(value)));
+		criteria.getConditionsList().forEach(condition -> params.add(ValueUtil.getObjectFromValue(condition.getValue())));
 		//	For dynamic condition
 		String dynamicWhere = ValueUtil.getWhereClauseFromCriteria(criteria, params);
 		if(!Util.isEmpty(dynamicWhere)) {
