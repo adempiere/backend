@@ -17,6 +17,7 @@ before_script:
   - mv Adempiere/lib/*.jar dependences/
   - mv Adempiere/packages/FleetManagement/lib/*.jar dependences/
   - mv Adempiere/packages/FreightManagement/lib/*.jar dependences/
+  - mv Adempiere/packages/StoreIntegration/lib/*.jar dependences/
   
 jobs:
   include:
