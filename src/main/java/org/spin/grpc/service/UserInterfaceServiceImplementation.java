@@ -987,8 +987,8 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 								translationBuilder.putValues(column.getColumnName(), builderValue.build());
 							}
 							//	Set uuid
-							if(Util.isEmpty(translationBuilder.getTranslationUuid())) {
-								translationBuilder.setTranslationUuid(ValueUtil.validateNull(translation.get_UUID()));
+							if(Util.isEmpty(translationBuilder.getUuid())) {
+								translationBuilder.setUuid(ValueUtil.validateNull(translation.get_UUID()));
 							}
 							//	Set Language
 							if(Util.isEmpty(translationBuilder.getLanguage())) {

@@ -36,6 +36,7 @@ import org.compiere.util.CLogger;
 import org.compiere.util.Env;
 import org.compiere.util.Util;
 import org.spin.base.util.ContextManager;
+import org.spin.base.util.RecordUtil;
 import org.spin.base.util.ValueUtil;
 import org.spin.grpc.util.Criteria;
 import org.spin.grpc.util.Dashboard;
@@ -129,18 +130,22 @@ public class DashboardingServiceImplementation extends DashboardingImplBase {
 	private ListPendingDocumentsResponse.Builder convertPendingDocumentList(Properties context, ListPendingDocumentsRequest request) {
 		ListPendingDocumentsResponse.Builder builder = ListPendingDocumentsResponse.newBuilder();
 		//	Get entity
-		if(Util.isEmpty(request.getUserUuid())
-				|| Util.isEmpty(request.getRoleUuid())) {
+		if(request.getUserId() <= 0
+				&& Util.isEmpty(request.getUserUuid())
+				&& request.getRoleId() <= 0
+				&& Util.isEmpty(request.getRoleUuid())) {
 			throw new AdempiereException("@AD_User_ID@ / @AD_Role_ID@ @NotFound@");
 		}
 		//	Get user
-		int userId = new Query(context, I_AD_User.Table_Name, I_AD_User.COLUMNNAME_UUID + " = ?", null)
-				.setParameters(request.getUserUuid())
-				.firstId();
+		int userId = request.getUserId();
+		if(userId <= 0) {
+			userId = RecordUtil.getIdFromUuid(I_AD_User.Table_Name, request.getUserUuid(), null);
+		}
 		//	Get role
-		int roleId = new Query(context, I_AD_Role.Table_Name, I_AD_Role.COLUMNNAME_UUID + " = ?", null)
-				.setParameters(request.getRoleUuid())
-				.firstId();
+		int roleId = request.getRoleId();
+		if(roleId <= 0) {
+			roleId = RecordUtil.getIdFromUuid(I_AD_Role.Table_Name, request.getRoleUuid(), null);
+		}
 		//	Get from document status
 		Arrays.asList(MDocumentStatus.getDocumentStatusIndicators(context, userId, roleId)).forEach(documentStatus -> {
 			PendingDocument.Builder pendingDocument = PendingDocument.newBuilder();
@@ -176,13 +181,15 @@ public class DashboardingServiceImplementation extends DashboardingImplBase {
 	private ListDashboardsResponse.Builder convertDashboarsList(Properties context, ListDashboardsRequest request) {
 		ListDashboardsResponse.Builder builder = ListDashboardsResponse.newBuilder();
 		//	Get entity
-		if(Util.isEmpty(request.getRoleUuid())) {
+		if(request.getRoleId() <= 0
+				&& Util.isEmpty(request.getRoleUuid())) {
 			throw new AdempiereException("@AD_Role_ID@ @NotFound@");
 		}
 		//	Get role
-		int roleId = new Query(context, I_AD_Role.Table_Name, I_AD_Role.COLUMNNAME_UUID + " = ?", null)
-				.setParameters(request.getRoleUuid())
-				.firstId();
+		int roleId = request.getRoleId();
+		if(roleId <= 0) {
+			roleId = RecordUtil.getIdFromUuid(I_AD_Role.Table_Name, request.getRoleUuid(), null);
+		}
 		new Query(context, I_PA_DashboardContent.Table_Name, 
 				"EXISTS(SELECT 1 FROM AD_Dashboard_Access da WHERE da.PA_DashboardContent_ID = PA_DashboardContent.PA_DashboardContent_ID AND da.AD_Role_ID = ?)", null)
 			.setParameters(roleId)
@@ -240,13 +247,15 @@ public class DashboardingServiceImplementation extends DashboardingImplBase {
 	private ListFavoritesResponse.Builder convertFavoritesList(Properties context, ListFavoritesRequest request) {
 		ListFavoritesResponse.Builder builder = ListFavoritesResponse.newBuilder();
 		//	Get entity
-		if(Util.isEmpty(request.getUserUuid())) {
+		if(request.getUserId() <= 0
+				&& Util.isEmpty(request.getUserUuid())) {
 			throw new AdempiereException("@AD_User_ID@ @NotFound@");
 		}
 		//	Get user
-		int userId = new Query(context, I_AD_User.Table_Name, I_AD_User.COLUMNNAME_UUID + " = ?", null)
-				.setParameters(request.getUserUuid())
-				.firstId();
+		int userId = request.getUserId();
+		if(userId <= 0) {
+			userId = RecordUtil.getIdFromUuid(I_AD_Role.Table_Name, request.getUserUuid(), null);
+		}
 		//	TODO: add tree criteria
 		new Query(context, I_AD_TreeNodeMM.Table_Name, "EXISTS(SELECT 1 "
 				+ "FROM AD_TreeBar tb "

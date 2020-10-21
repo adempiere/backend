@@ -190,7 +190,7 @@ message ProcessInfoLog {
 // Translations Item
 message Translation {
 	string language = 1;
-	string translation_uuid = 2;
+	string uuid = 2;
 	map<string, Value> values = 3;
 }
 

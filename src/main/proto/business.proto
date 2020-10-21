@@ -408,8 +408,9 @@ message ListRecentItemsResponse {
 message ListFavoritesRequest {
 	ClientRequest client_request = 1;
 	string user_uuid = 2;
-	int32 page_size = 3;
-	string page_token = 4;
+	int32 user_id = 3;
+	int32 page_size = 4;
+	string page_token = 5;
 }
 
 // Recent Item
@@ -450,9 +451,11 @@ message ListTranslationsResponse {
 message ListPendingDocumentsRequest {
 	ClientRequest client_request = 1;
 	string user_uuid = 2;
-	string role_uuid = 3;
-	int32 page_size = 4;
-	string page_token = 5;
+	int32 user_id = 3;
+	string role_uuid = 4;
+	int32 role_id = 5;
+	int32 page_size = 6;
+	string page_token = 7;
 }
 
 // Recent Item
@@ -478,8 +481,9 @@ message ListPendingDocumentsResponse {
 message ListDashboardsRequest {
 	ClientRequest client_request = 1;
 	string role_uuid = 2;
-	int32 page_size = 3;
-	string page_token = 4;
+	int32 role_id = 3;
+	int32 page_size = 4;
+	string page_token = 5;
 }
 
 //	Dashboards List
@@ -740,10 +744,10 @@ message ListWorkflowsResponse {
 message ListDocumentActionsRequest {
 	ClientRequest client_request = 1;
 	string table_name = 2;
-	int32 record_id = 3;
-	string record_uuid = 4;
+	int32 id = 3;
+	string uuid = 4;
 	string document_status = 5;
-	string documentAction = 6;
+	string document_action = 6;
 	int32 page_size = 7;
 	string page_token = 8;
 }
@@ -751,8 +755,8 @@ message ListDocumentActionsRequest {
 //	Document Actions List
 message ListDocumentActionsResponse {
 	int64 record_count = 1;
-	repeated DocumentAction documentActions = 2;
-	DocumentAction defaultDocumentAction = 3;
+	repeated DocumentAction document_actions = 2;
+	DocumentAction default_document_action = 3;
 	string next_page_token = 4;
 }
 
@@ -760,8 +764,8 @@ message ListDocumentActionsResponse {
 message ListDocumentStatusesRequest {
 	ClientRequest client_request = 1;
 	string table_name = 2;
-	int32 record_id = 3;
-	string record_uuid = 4;
+	int32 id = 3;
+	string uuid = 4;
 	string document_status = 5;
 	int32 page_size = 6;
 	string page_token = 7;

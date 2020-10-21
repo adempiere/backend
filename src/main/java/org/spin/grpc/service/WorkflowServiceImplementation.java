@@ -167,7 +167,7 @@ public class WorkflowServiceImplementation extends WorkflowImplBase {
 		MTable table = MTable.get(context, request.getTableName());
 		int recordId = 0;
 		//	Get entity
-		PO entity = RecordUtil.getEntity(context, request.getTableName(), request.getRecordUuid(), request.getRecordId(), null);
+		PO entity = RecordUtil.getEntity(context, request.getTableName(), request.getUuid(), request.getId(), null);
 		if(entity != null) {
 			//	
 			documentStatus = entity.get_ValueAsString(I_C_Order.COLUMNNAME_DocStatus);
@@ -598,7 +598,7 @@ public class WorkflowServiceImplementation extends WorkflowImplBase {
 	 * @return
 	 */
 	private ListDocumentActionsResponse.Builder convertDocumentActions(Properties context, ListDocumentActionsRequest request) {
-		PO entity = RecordUtil.getEntity(context, request.getTableName(), request.getRecordUuid(), request.getRecordId(), null);
+		PO entity = RecordUtil.getEntity(context, request.getTableName(), request.getUuid(), request.getId(), null);
 		//	
 		String documentStatus = entity.get_ValueAsString(I_C_Order.COLUMNNAME_DocStatus);
 		String documentAction = entity.get_ValueAsString(I_C_Order.COLUMNNAME_DocAction);
