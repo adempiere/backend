@@ -32,6 +32,7 @@ import org.compiere.model.I_C_Region;
 import org.compiere.model.I_M_Product;
 import org.compiere.model.I_M_Storage;
 import org.compiere.model.I_W_Basket;
+import org.compiere.model.I_W_Store;
 import org.compiere.model.MBPartner;
 import org.compiere.model.MBPartnerLocation;
 import org.compiere.model.MCharge;
@@ -40,9 +41,11 @@ import org.compiere.model.MClient;
 import org.compiere.model.MClientInfo;
 import org.compiere.model.MCountry;
 import org.compiere.model.MCurrency;
+import org.compiere.model.MDocType;
 import org.compiere.model.MFreightCategory;
 import org.compiere.model.MLocation;
 import org.compiere.model.MMailText;
+import org.compiere.model.MOrder;
 import org.compiere.model.MOrg;
 import org.compiere.model.MPackage;
 import org.compiere.model.MPriceList;
@@ -78,6 +81,7 @@ import org.spin.base.util.ContextManager;
 import org.spin.base.util.RecordUtil;
 import org.spin.base.util.ValueUtil;
 import org.spin.grpc.store.Address;
+import org.spin.grpc.store.AddressRequest;
 import org.spin.grpc.store.Attribute;
 import org.spin.grpc.store.Cart;
 import org.spin.grpc.store.CartItem;
@@ -87,6 +91,7 @@ import org.spin.grpc.store.ChangePasswordResponse;
 import org.spin.grpc.store.City;
 import org.spin.grpc.store.CreateCartRequest;
 import org.spin.grpc.store.CreateCustomerRequest;
+import org.spin.grpc.store.CreateOrderRequest;
 import org.spin.grpc.store.Customer;
 import org.spin.grpc.store.DeleteCartItemRequest;
 import org.spin.grpc.store.Empty;
@@ -107,6 +112,7 @@ import org.spin.grpc.store.ListShippingMethodsRequest;
 import org.spin.grpc.store.ListShippingMethodsResponse;
 import org.spin.grpc.store.ListStocksRequest;
 import org.spin.grpc.store.ListStocksResponse;
+import org.spin.grpc.store.Order;
 import org.spin.grpc.store.PaymentMethod;
 import org.spin.grpc.store.PriceInfo;
 import org.spin.grpc.store.Product;
@@ -114,8 +120,8 @@ import org.spin.grpc.store.Region;
 import org.spin.grpc.store.RenderProduct;
 import org.spin.grpc.store.ResetPasswordRequest;
 import org.spin.grpc.store.ResetPasswordResponse;
-import org.spin.grpc.store.Resource;
 import org.spin.grpc.store.ResetPasswordResponse.ResponseType;
+import org.spin.grpc.store.Resource;
 import org.spin.grpc.store.ShippingInformation;
 import org.spin.grpc.store.ShippingMethod;
 import org.spin.grpc.store.Stock;
@@ -124,16 +130,16 @@ import org.spin.grpc.store.TotalSegment;
 import org.spin.grpc.store.UpdateCartRequest;
 import org.spin.grpc.store.UpdateCustomerRequest;
 import org.spin.grpc.store.WebStoreGrpc.WebStoreImplBase;
-import org.spin.model.MADToken;
-import org.spin.model.MADTokenDefinition;
-import org.spin.util.AttachmentUtil;
-import org.spin.util.TokenGeneratorHandler;
 import org.spin.model.I_AD_AttachmentReference;
 import org.spin.model.I_W_DeliveryViaRuleAllocation;
 import org.spin.model.I_W_PaymentMethod;
 import org.spin.model.MADAttachmentReference;
+import org.spin.model.MADToken;
+import org.spin.model.MADTokenDefinition;
 import org.spin.model.MWDeliveryViaRuleAllocation;
 import org.spin.model.MWPaymentMethod;
+import org.spin.util.AttachmentUtil;
+import org.spin.util.TokenGeneratorHandler;
 import org.spin.util.VueStoreFrontUtil;
 
 import com.google.protobuf.ByteString;
@@ -385,7 +391,7 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 					request.getClientRequest().getOrganizationUuid(), 
 					request.getClientRequest().getWarehouseUuid());
 			Trx.run(transactionName -> {
-				Cart.Builder cart = convertCart(getCart(request.getCartId(), request.getCartUuid(), request.getIsGuest(), transactionName), transactionName);
+				Cart.Builder cart = convertCart(getCart(request.getCartId(), request.getCartUuid(), request.getIsGuest(), 0, transactionName), transactionName);
 				responseObserver.onNext(cart.build());
 				responseObserver.onCompleted();
 			});
@@ -593,6 +599,140 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 		}
 	}
 	
+	@Override
+	public void createOrder(CreateOrderRequest request, StreamObserver<Order> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			log.fine("Object Requested = " + request.getClientRequest().getSessionUuid());
+			Trx.run(transactionName -> {
+				Order.Builder orderBuilder = createOrder(request, transactionName);
+				responseObserver.onNext(orderBuilder.build());
+				responseObserver.onCompleted();
+			});
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	/**
+	 * Create Order from Request
+	 * @param request
+	 * @param transactionName
+	 * @return
+	 */
+	private Order.Builder createOrder(CreateOrderRequest request, String transactionName) {
+		Order.Builder builder = Order.newBuilder();
+		if(request.getCartId() == 0
+				&& Util.isEmpty(request.getCartUuid())) {
+			throw new AdempiereException("@W_Basket_ID@ @IsMandatory@");
+		}
+		MStore store = VueStoreFrontUtil.getDefaultStore(Env.getAD_Org_ID(Env.getCtx()));
+		if(store == null) {
+			throw new AdempiereException("@W_Store_ID@ @NotFound@");
+		}
+		//	Validate Shipping Address
+		if(Util.isEmpty(request.getShippingAddress().getCountryCode())
+				&& Util.isEmpty(request.getShippingAddress().getRegionName())
+				&& Util.isEmpty(request.getShippingAddress().getCityName())) {
+			throw new AdempiereException("@IsShipTo@ @IsMandatory@");
+		}
+		//	Validate Bulling Address
+		if(Util.isEmpty(request.getBillingAddress().getCountryCode())
+				&& Util.isEmpty(request.getBillingAddress().getRegionName())
+				&& Util.isEmpty(request.getBillingAddress().getCityName())) {
+			throw new AdempiereException("@IsBillTo@ @IsMandatory@");
+		}
+		//	Validate Payment Method Code
+		if(Util.isEmpty(request.getPaymentMethodCode())) {
+			throw new AdempiereException("@PaymentRule@ @IsMandatory@");
+		}
+		//	Validate Business Partner
+		X_W_Basket basket = getCart(request.getCartId(), request.getCartUuid(), !Util.isEmpty(request.getCartUuid()), request.getUserId(), transactionName);
+		if(basket == null) {
+			throw new AdempiereException("@W_Basket_ID@ @IsMandatory@");
+		}
+		//	
+		if(basket.getC_BPartner_ID() <= 0) {
+			throw new AdempiereException("@C_BPartner_ID@ @IsMandatory@");
+		}
+		//	
+		MOrder salesOrder = new MOrder(Env.getCtx(), 0, transactionName);
+		salesOrder.setDateOrdered(getDate());
+		salesOrder.setDateAcct(getDate());
+		salesOrder.setDatePromised(getDate());
+		//	Default values
+		salesOrder.setIsSOTrx(true);
+		salesOrder.setAD_Org_ID(store.getAD_Org_ID());
+		MBPartner businessPartner = MBPartner.get(Env.getCtx(), basket.getC_BPartner_ID());
+		//	Set default from business partner
+		salesOrder.setBPartner(businessPartner);
+		salesOrder.set_ValueOfColumn(I_W_Store.COLUMNNAME_W_Store_ID, store.getW_Store_ID());
+		//	Warehouse
+		salesOrder.setM_Warehouse_ID(store.getM_Warehouse_ID());
+		//	Price List
+		salesOrder.setM_PriceList_ID(store.getM_PriceList_ID());
+		//	Document Type
+		int documeDocTypeId = MDocType.getDocTypeBaseOnSubType(store.getAD_Org_ID(), MDocType.DOCBASETYPE_SalesOrder, MDocType.DOCSUBTYPESO_InvoiceOrder);
+		//	Validate
+		if(documeDocTypeId <= 0) {
+			throw new AdempiereException("@C_DocType_ID@ @IsMandatory@");
+		}
+		//	Validate
+		salesOrder.setC_DocTypeTarget_ID(documeDocTypeId);
+		//	Set Billing Address
+		setAddress(salesOrder, request.getBillingAddress(), true);
+		//	Set Shipping Address
+		setAddress(salesOrder, request.getBillingAddress(), false);
+		//	Set Freight Rules
+		MWDeliveryViaRuleAllocation deliveryViaRuleAllocation = MWDeliveryViaRuleAllocation.getFromUuid(Env.getCtx(), request.getMethodCode(), transactionName);
+		if(!Util.isEmpty(deliveryViaRuleAllocation.getDeliveryViaRule())) {
+			salesOrder.setDeliveryRule(deliveryViaRuleAllocation.getDeliveryViaRule());
+		}
+		if(deliveryViaRuleAllocation.getM_Shipper_ID() > 0) {
+			salesOrder.setM_Shipper_ID(deliveryViaRuleAllocation.getM_Shipper_ID());
+		}
+		if(!Util.isEmpty(deliveryViaRuleAllocation.getFreightCostRule())) {
+			salesOrder.setFreightCostRule(deliveryViaRuleAllocation.getFreightCostRule());
+		}
+		if(deliveryViaRuleAllocation.getM_FreightCategory_ID() > 0) {
+			salesOrder.setM_FreightCategory_ID(deliveryViaRuleAllocation.getM_FreightCategory_ID());
+		}
+		if(!Util.isEmpty(deliveryViaRuleAllocation.getNote())) {
+			salesOrder.addDescription(deliveryViaRuleAllocation.getNote());
+		}
+		salesOrder.saveEx();
+		return builder;
+	}
+	
+	/**
+	 * Set Address
+	 * @param salesOrder
+	 * @param address
+	 * @param isBillto
+	 */
+	private void setAddress(MOrder salesOrder, AddressRequest address, boolean isBillto) {
+		
+	}
+	
+	/**
+	 * Get Date
+	 * @return
+	 */
+	private Timestamp getDate() {
+		return TimeUtil.getDay(System.currentTimeMillis());
+	}
+	
 	/**
 	 * Get File from fileName
 	 * @param resourceUuid
@@ -660,7 +800,7 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 					|| product.getM_Product_ID() == 0) {
 				throw new AdempiereException("@M_Product_ID@ @NotFound@");
 			}
-			X_W_Basket basket = getCart(request.getCartId(), request.getCartUuid(), !Util.isEmpty(request.getCartUuid()), transactionName);
+			X_W_Basket basket = getCart(request.getCartId(), request.getCartUuid(), !Util.isEmpty(request.getCartUuid()), 0, transactionName);
 			//	Get Lines
 			List<X_W_BasketLine> items = new Query(Env.getCtx(), X_W_BasketLine.Table_Name, X_W_BasketLine.COLUMNNAME_W_Basket_ID + " = ? "
 					+ "AND (M_Product_ID = ? OR EXISTS(SELECT 1 FROM M_Product p WHERE p.M_Product_ID = W_BasketLine.M_Product_ID AND p.SKU = ?))", transactionName)
@@ -683,7 +823,7 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 	private CartTotals.Builder getCartTotals(GetCartTotalsRequest request) {
 		CartTotals.Builder builder = CartTotals.newBuilder();
 		Trx.run(transactionName -> {
-			X_W_Basket basket = getCart(request.getCartId(), request.getCartUuid(), !Util.isEmpty(request.getCartUuid()), transactionName);
+			X_W_Basket basket = getCart(request.getCartId(), request.getCartUuid(), !Util.isEmpty(request.getCartUuid()), 0, transactionName);
 			if(basket == null) {
 				throw new AdempiereException("@W_Basket_ID@ @NotFound@");
 			}
@@ -718,7 +858,7 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 	private ShippingInformation.Builder getShippingInformation(GetShippingInformationRequest request) {
 		ShippingInformation.Builder builder = ShippingInformation.newBuilder();
 		Trx.run(transactionName -> {
-			X_W_Basket basket = getCart(request.getCartId(), request.getCartUuid(), !Util.isEmpty(request.getCartUuid()), transactionName);
+			X_W_Basket basket = getCart(request.getCartId(), request.getCartUuid(), !Util.isEmpty(request.getCartUuid()), 0, transactionName);
 			if(basket == null) {
 				throw new AdempiereException("@W_Basket_ID@ @NotFound@");
 			}
@@ -1022,7 +1162,7 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 	 * @param transactionName
 	 * @return
 	 */
-	private X_W_Basket getCart(int cartId, String cartUuid, boolean isGuest, String transactionName) {
+	private X_W_Basket getCart(int cartId, String cartUuid, boolean isGuest, int userId, String transactionName) {
 		String whereClause = I_W_Basket.COLUMNNAME_W_Basket_ID + " = ? AND " + I_W_Basket.COLUMNNAME_AD_User_ID + " = ?";
 		List<Object> parameters = new ArrayList<>();
 		if(isGuest) {
@@ -1030,7 +1170,11 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 			parameters.add(cartUuid);
 		} else {
 			parameters.add(cartId);
-			parameters.add(Env.getAD_User_ID(Env.getCtx()));
+			if(userId > 0) {
+				parameters.add(userId);
+			} else {
+				parameters.add(Env.getAD_User_ID(Env.getCtx()));
+			}
 		}
 		//	Return cart
 		return new Query(Env.getCtx(), I_W_Basket.Table_Name, whereClause, null)
@@ -1093,7 +1237,7 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 					|| product.getM_Product_ID() == 0) {
 				throw new AdempiereException("@M_Product_ID@ @NotFound@");
 			}
-			X_W_Basket basket = getCart(request.getCartId(), request.getCartUuid(), request.getIsGuest(), transactionName);
+			X_W_Basket basket = getCart(request.getCartId(), request.getCartUuid(), request.getIsGuest(), 0, transactionName);
 			//	Get Lines
 			List<X_W_BasketLine> items = new Query(Env.getCtx(), X_W_BasketLine.Table_Name, X_W_BasketLine.COLUMNNAME_W_Basket_ID + " = ?", transactionName)
 					.setParameters(basket.getW_Basket_ID())
