@@ -58,8 +58,8 @@ import org.spin.grpc.util.CreateBusinessPartnerRequest;
 import org.spin.grpc.util.GetBusinessPartnerRequest;
 import org.spin.grpc.util.GetConversionRateRequest;
 import org.spin.grpc.util.GetCountryRequest;
-import org.spin.grpc.util.ListBusinessPartnerRequest;
-import org.spin.grpc.util.ListBusinessPartnerResponse;
+import org.spin.grpc.util.ListBusinessPartnersRequest;
+import org.spin.grpc.util.ListBusinessPartnersResponse;
 import org.spin.grpc.util.ListLanguagesRequest;
 import org.spin.grpc.util.ListLanguagesResponse;
 import org.spin.grpc.util.ListOrganizationsRequest;
@@ -135,7 +135,7 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 			if(request == null) {
 				throw new AdempiereException("Country Request Null");
 			}
-			log.fine("Country Requested = " + request.getCountryUuid());
+			log.fine("Country Requested = " + request.getUuid());
 			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
 					request.getClientRequest().getLanguage(), 
 					request.getClientRequest().getOrganizationUuid(), 
@@ -177,8 +177,8 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 	}
 	
 	@Override
-	public void listBusinessPartner(ListBusinessPartnerRequest request,
-			StreamObserver<ListBusinessPartnerResponse> responseObserver) {
+	public void listBusinessPartners(ListBusinessPartnersRequest request,
+			StreamObserver<ListBusinessPartnersResponse> responseObserver) {
 		try {
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
@@ -188,7 +188,7 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 					request.getClientRequest().getLanguage(), 
 					request.getClientRequest().getOrganizationUuid(), 
 					request.getClientRequest().getWarehouseUuid());
-			ListBusinessPartnerResponse.Builder businessPartnerList = getBusinessPartnerList(request);
+			ListBusinessPartnersResponse.Builder businessPartnerList = getBusinessPartnerList(request);
 			responseObserver.onNext(businessPartnerList.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -307,8 +307,8 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 	 * @param request
 	 * @return
 	 */
-	private ListBusinessPartnerResponse.Builder getBusinessPartnerList(ListBusinessPartnerRequest request) {
-		ListBusinessPartnerResponse.Builder builder = ListBusinessPartnerResponse.newBuilder();
+	private ListBusinessPartnersResponse.Builder getBusinessPartnerList(ListBusinessPartnersRequest request) {
+		ListBusinessPartnersResponse.Builder builder = ListBusinessPartnersResponse.newBuilder();
 		String nexPageToken = null;
 		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
 		int offset = (pageNumber > 0? pageNumber - 1: 0) * RecordUtil.PAGE_SIZE;
@@ -648,24 +648,20 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 	private Country.Builder getCountry(GetCountryRequest request) {
 		String key = null;
 		MCountry country = null;
-		if(Util.isEmpty(request.getCountryUuid()) && request.getCountryId() == 0) {
+		if(Util.isEmpty(request.getUuid()) && request.getId() == 0) {
 			country = ContextManager.getDefaultCountry();
 		}
-		//	By UUID
-		if(!Util.isEmpty(request.getCountryUuid())
-				&& country == null) {
-			key = request.getCountryUuid();
-			country = countryCache.put(key, country);
-			if(country == null) {
-				country = new Query(Env.getCtx(), I_C_Country.Table_Name, I_C_Country.COLUMNNAME_UUID + " = ?", null).first();
-			}
+		int id = request.getId();
+		if(id <= 0) {
+			id = RecordUtil.getIdFromUuid(I_C_Country.Table_Name, request.getUuid(), null);
 		}
-		if(request.getCountryId() != 0
+		//	
+		if(id > 0
 				&& country == null) {
-			key = "ID:|" + request.getCountryId();
+			key = "ID:|" + request.getId();
 			country = countryCache.put(key, country);
 			if(country == null) {
-				country = MCountry.get(Env.getCtx(), request.getCountryId());
+				country = MCountry.get(Env.getCtx(), request.getId());
 			}
 		}
 		if(!Util.isEmpty(key)
@@ -767,9 +763,13 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
 		int offset = (pageNumber > 0? pageNumber - 1: 0) * RecordUtil.PAGE_SIZE;
 		int limit = (pageNumber == 0? 1: pageNumber) * RecordUtil.PAGE_SIZE;
-		Query query = new Query(Env.getCtx(), I_M_Warehouse.Table_Name, "EXISTS(SELECT 1 FROM AD_Org o WHERE o.AD_Org_ID = M_Warehouse.AD_Org_ID AND o.UUID = ?)", null)
+		int id = request.getOrganizationId();
+		if(id <= 0) {
+			id = RecordUtil.getIdFromUuid(I_AD_Org.Table_Name, request.getOrganizationUuid(), null);
+		}
+		Query query = new Query(Env.getCtx(), I_M_Warehouse.Table_Name, "AD_Org_ID = ?", null)
 				.setOnlyActiveRecords(true)
-				.setParameters(request.getOrganizationUuid())
+				.setParameters(id)
 				.setLimit(limit, offset);
 		//	Count
 		int count = query.count();

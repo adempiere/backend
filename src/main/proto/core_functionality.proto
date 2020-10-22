@@ -38,27 +38,27 @@ service CoreFunctionality {
 	//	Create Business Partner
 	rpc CreateBusinessPartner(CreateBusinessPartnerRequest) returns (BusinessPartner) {}
 	//	List Business Partner
-	rpc ListBusinessPartner(ListBusinessPartnerRequest) returns (ListBusinessPartnerResponse) {}
+	rpc ListBusinessPartners(ListBusinessPartnersRequest) returns (ListBusinessPartnersResponse) {}
 	//	Get Currency Rate
 	rpc GetConversionRate(GetConversionRateRequest) returns (ConversionRate) {}
 }
 
 // Get Country Request
 message GetCountryRequest {
-	string country_uuid = 1;
-	int32 country_id = 2;
+	string uuid = 1;
+	int32 id = 2;
 	ClientRequest client_request = 3;
 }
 
 //	List Business Partner Response
-message ListBusinessPartnerResponse {
+message ListBusinessPartnersResponse {
 	int64 record_count = 1;
 	repeated BusinessPartner business_partners = 2;
 	string next_page_token = 3;
 }
 
 // List Business Partner Request
-message ListBusinessPartnerRequest {
+message ListBusinessPartnersRequest {
 	ClientRequest client_request = 1;
 	string search_value = 2;
 	string value = 3;
