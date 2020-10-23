@@ -46,6 +46,7 @@ import org.compiere.model.MFreightCategory;
 import org.compiere.model.MLocation;
 import org.compiere.model.MMailText;
 import org.compiere.model.MOrder;
+import org.compiere.model.MOrderLine;
 import org.compiere.model.MOrg;
 import org.compiere.model.MPackage;
 import org.compiere.model.MPriceList;
@@ -78,6 +79,7 @@ import org.eevolution.engine.freight.FreightEngine;
 import org.eevolution.engine.freight.FreightEngineFactory;
 import org.eevolution.engine.freight.FreightInfo;
 import org.spin.base.util.ContextManager;
+import org.spin.base.util.DocumentUtil;
 import org.spin.base.util.RecordUtil;
 import org.spin.base.util.ValueUtil;
 import org.spin.grpc.store.Address;
@@ -116,6 +118,7 @@ import org.spin.grpc.store.Order;
 import org.spin.grpc.store.PaymentMethod;
 import org.spin.grpc.store.PriceInfo;
 import org.spin.grpc.store.Product;
+import org.spin.grpc.store.ProductOrderLine;
 import org.spin.grpc.store.Region;
 import org.spin.grpc.store.RenderProduct;
 import org.spin.grpc.store.ResetPasswordRequest;
@@ -674,6 +677,9 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 		//	Default values
 		salesOrder.setIsSOTrx(true);
 		salesOrder.setAD_Org_ID(store.getAD_Org_ID());
+		if(store.getSalesRep_ID() > 0) {
+			salesOrder.setSalesRep_ID(store.getSalesRep_ID());
+		}
 		MBPartner businessPartner = MBPartner.get(Env.getCtx(), basket.getC_BPartner_ID());
 		//	Set default from business partner
 		salesOrder.setBPartner(businessPartner);
@@ -691,13 +697,13 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 		//	Validate
 		salesOrder.setC_DocTypeTarget_ID(documeDocTypeId);
 		//	Set Billing Address
-		setAddress(salesOrder, request.getBillingAddress(), true);
+		setAddress(salesOrder, businessPartner, request.getBillingAddress(), true, transactionName);
 		//	Set Shipping Address
-		setAddress(salesOrder, request.getBillingAddress(), false);
+		setAddress(salesOrder, businessPartner, request.getBillingAddress(), false, transactionName);
 		//	Set Freight Rules
 		MWDeliveryViaRuleAllocation deliveryViaRuleAllocation = MWDeliveryViaRuleAllocation.getFromUuid(Env.getCtx(), request.getMethodCode(), transactionName);
 		if(!Util.isEmpty(deliveryViaRuleAllocation.getDeliveryViaRule())) {
-			salesOrder.setDeliveryRule(deliveryViaRuleAllocation.getDeliveryViaRule());
+			salesOrder.setDeliveryViaRule(deliveryViaRuleAllocation.getDeliveryViaRule());
 		}
 		if(deliveryViaRuleAllocation.getM_Shipper_ID() > 0) {
 			salesOrder.setM_Shipper_ID(deliveryViaRuleAllocation.getM_Shipper_ID());
@@ -712,17 +718,86 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 			salesOrder.addDescription(deliveryViaRuleAllocation.getNote());
 		}
 		salesOrder.saveEx();
+		//	Add Lines
+		request.getProductsList().forEach(product -> addLinesToOrder(salesOrder, product, transactionName));
+		//	Process it
+		if(!salesOrder.processIt(MOrder.ACTION_Complete)) {
+			throw new AdempiereException("@Error@ " + salesOrder.getProcessMsg());
+		}
+		//	
+		salesOrder.saveEx();
 		return builder;
+	}
+	
+	/**
+	 * Add Line to order
+	 * @param salesOrder
+	 * @param product
+	 * @param transactionName
+	 */
+	private void addLinesToOrder(MOrder salesOrder, ProductOrderLine product, String transactionName) {
+		//	Valid Complete
+		if (!DocumentUtil.isDrafted(salesOrder))
+			throw new AdempiereException("@C_Order_ID@ @IsDrafted@");
+		BigDecimal quantityToOrder = new BigDecimal(product.getQuantity());
+		//create new line
+		MOrderLine orderLine = new MOrderLine(salesOrder);
+		orderLine.setProduct(MProduct.get(salesOrder.getCtx(), product.getId()));
+		orderLine.setQty(quantityToOrder);
+		orderLine.setPrice();
+		//	Save Line
+		orderLine.saveEx();
 	}
 	
 	/**
 	 * Set Address
 	 * @param salesOrder
+	 * @param customer
 	 * @param address
 	 * @param isBillto
+	 * @param transactionName
 	 */
-	private void setAddress(MOrder salesOrder, AddressRequest address, boolean isBillto) {
-		
+	private void setAddress(MOrder salesOrder, MBPartner customer, AddressRequest address, boolean isBillto, String transactionName) {
+		List<MBPartnerLocation> businessPartnerLocations = Arrays.asList(customer.getLocations(false));
+		int businessPartnerLocationId = 0;
+		if(address.getLocationId() > 0) {
+			Optional<MBPartnerLocation> maybeLocation = businessPartnerLocations.stream().filter(bPLocation -> bPLocation.getC_Location_ID() == address.getLocationId()).findFirst();
+			if(maybeLocation.isPresent()) {
+				businessPartnerLocationId = maybeLocation.get().getC_BPartner_Location_ID();
+			}
+		} else {	//	Find Match
+			Optional<MBPartnerLocation> maybeLocation = businessPartnerLocations
+					.stream()
+					.filter(bPLocation -> {
+						MLocation location = MLocation.get(Env.getCtx(), bPLocation.getC_Location_ID(), transactionName);
+						MCountry country = MCountry.get(Env.getCtx(), location.getC_Country_ID());
+						if((bPLocation.isBillTo() == isBillto
+								|| bPLocation.isShipTo() == !isBillto)
+								&& Optional.ofNullable(country.getCountryCode()).orElse("").equals(Optional.ofNullable(address.getCountryCode()).orElse(""))
+								&& Optional.ofNullable(location.getRegionName()).orElse("").equals(Optional.ofNullable(address.getRegionName()).orElse(""))
+								&& Optional.ofNullable(location.getCity()).orElse("").equals(Optional.ofNullable(address.getCityName()).orElse(""))
+								&& Optional.ofNullable(location.getAddress1()).orElse("").equals(Optional.ofNullable(address.getAddress1()).orElse(""))
+								&& Optional.ofNullable(location.getAddress2()).orElse("").equals(Optional.ofNullable(address.getAddress2()).orElse(""))
+								&& Optional.ofNullable(location.getAddress3()).orElse("").equals(Optional.ofNullable(address.getAddress3()).orElse(""))
+								&& Optional.ofNullable(location.getAddress4()).orElse("").equals(Optional.ofNullable(address.getAddress4()).orElse(""))
+								&& Optional.ofNullable(location.getPostal()).orElse("").equals(Optional.ofNullable(address.getPostalCode()).orElse(""))) {
+							return true;
+						}
+						//	Default
+						return false;
+					}).findFirst();
+	        if (maybeLocation.isPresent()) {
+	        	businessPartnerLocationId = maybeLocation.get().getC_BPartner_Location_ID();
+	        }
+		}
+		//	Set Location
+		if(businessPartnerLocationId > 0) {
+			if(isBillto) {
+				salesOrder.setBill_Location_ID(businessPartnerLocationId);
+			} else {
+				salesOrder.setC_BPartner_Location_ID(businessPartnerLocationId);
+			}
+		}
 	}
 	
 	/**
