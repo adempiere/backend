@@ -139,7 +139,7 @@ message ListPointOfSalesRequest {
 // Point of Sales request
 message PointOfSalesRequest {
 	ClientRequest client_request = 1;
-	string point_of_sales_uuid = 2;
+	string pos_uuid = 2;
 }
 
 // Point of Sales definition
@@ -250,7 +250,7 @@ message OrderLine {
 	string order_uuid = 2;
 	Product product = 3;
 	Charge charge = 4;
-	string lineDescription = 5;
+	string line_description = 5;
 	string description = 6;
 	Warehouse warehouse = 7;
 	Decimal quantity = 8;

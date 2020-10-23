@@ -169,7 +169,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			log.fine("Get Point of Sales = " + request.getPointOfSalesUuid());
+			log.fine("Get Point of Sales = " + request.getPosUuid());
 			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
 					request.getClientRequest().getLanguage(), 
 					request.getClientRequest().getOrganizationUuid(), 
@@ -606,6 +606,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 * @return
 	 */
 	private MOrder updateOrder(UpdateOrderRequest request) {
+		AtomicReference<MOrder> orderReference = new AtomicReference<MOrder>();
 		if(!Util.isEmpty(request.getOrderUuid())) {
 			Trx.run(transactionName -> {
 				MOrder order = getOrder(request.getOrderUuid(), transactionName);
@@ -649,10 +650,11 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				}
 				//	Save
 				order.saveEx();
+				orderReference.set(order);
 			});
 		}
 		//	Return order
-		return null;
+		return orderReference.get();
 	}
 	
 	/**
@@ -792,8 +794,9 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		if(Util.isEmpty(request.getOrderUuid())) {
 			throw new AdempiereException("@C_Order_ID@ @NotFound@");
 		}
-		MOrder order = new Query(Env.getCtx(), I_C_Order.Table_Name, " = ?", null)
-				.setParameters(request.getOrderUuid())
+		int orderId = RecordUtil.getIdFromUuid(I_C_Order.Table_Name, request.getOrderUuid(), null);
+		MOrder order = new Query(Env.getCtx(), I_C_Order.Table_Name, I_C_Order.COLUMNNAME_C_Order_ID + " = ?", null)
+				.setParameters(orderId)
 				.setClient_ID()
 				.first();
 		if(order == null
@@ -1069,12 +1072,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			MOrder order = orderLine.getParent();
 			orderLine.setHeaderInfo(order);
 			//	Valid Complete
-			if (!DocumentUtil.isDrafted(order))
-				throw new AdempiereException("@C_ORder_ID@ @IsDrafted@");
-			if((quantity == null || quantity.equals(Env.ZERO))
-					&& (price == null || price.equals(Env.ZERO))
-					&& (discountRate == null || discountRate.equals(Env.ZERO))) {
-				throw new AdempiereException("@C_ORder_ID@ @IsDrafted@");
+			if (!DocumentUtil.isDrafted(order)) {
+				throw new AdempiereException("@C_Order_ID@ @IsDrafted@");
 			}
 			//	Get if is null
 			BigDecimal quantityToOrder = quantity;
@@ -1162,7 +1161,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 * @return
 	 */
 	private PointOfSales.Builder getPosBuilder(PointOfSalesRequest request) {
-		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPointOfSalesUuid(), null);
+		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), null);
 		if(posId <= 0) {
 			throw new AdempiereException("@C_POS_ID@ @NotFound@");
 		}

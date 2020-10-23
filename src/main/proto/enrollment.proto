@@ -15,7 +15,7 @@
 syntax = "proto3";
 
 option java_multiple_files = true;
-option java_package = "org.spin.grpc.util";
+option java_package = "org.spin.grpc.enrollment";
 option java_outer_classname = "Enrollment";
 option objc_class_prefix = "HLW";
 
@@ -35,39 +35,39 @@ service Register {
 
 // Request a Enroll for a user
 message EnrollUserRequest {
-	string userName = 1;
+	string user_name = 1;
 	string name = 2;
-	string eMail = 4;
-	string clientVersion = 5;
-	string applicationType = 6;
+	string email = 4;
+	string client_version = 5;
+	string application_type = 6;
 	string password = 7;
 }
 
 // Request a Password Reset
 message ResetPasswordRequest {
-	string userName = 1;
-	string eMail = 2;
-	string clientVersion = 3;
+	string user_name = 1;
+	string email = 2;
+	string client_version = 3;
 }
 
 // Request a Password Reset
 message ResetPasswordTokenRequest {
 	string token = 1;
 	string password = 2;
-	string clientVersion = 3;
+	string client_version = 3;
 }
 
 // Request a Password Reset
 message ActivateUserRequest {
 	string token = 1;
-	string clientVersion = 2;
+	string client_version = 2;
 }
 
 // user enrolled
 message User {
-	string userName = 1;
+	string user_name = 1;
 	string name = 2;
-	string eMail = 4;
+	string email = 4;
 }
 
 // Reset Password Response
@@ -78,7 +78,7 @@ message ResetPasswordResponse {
 		TOKEN_NOT_FOUND = 2;
 		ERROR = 3;
 	}
-	ResponseType responseType = 1;
+	ResponseType response_type = 1;
 }
 
 // Reset Password Response
@@ -88,5 +88,5 @@ message ActivateUserResponse {
 		TOKEN_NOT_FOUND = 2;
 		ERROR = 3;
 	}
-	ResponseType responseType = 1;
+	ResponseType response_type = 1;
 }

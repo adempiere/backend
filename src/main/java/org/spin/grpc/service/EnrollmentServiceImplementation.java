@@ -26,15 +26,15 @@ import org.compiere.util.CLogger;
 import org.compiere.util.EMail;
 import org.compiere.util.Env;
 import org.compiere.util.Util;
-import org.spin.grpc.util.ActivateUserRequest;
-import org.spin.grpc.util.ActivateUserResponse;
-import org.spin.grpc.util.EnrollUserRequest;
-import org.spin.grpc.util.ResetPasswordRequest;
-import org.spin.grpc.util.ResetPasswordResponse;
-import org.spin.grpc.util.ResetPasswordTokenRequest;
-import org.spin.grpc.util.User;
-import org.spin.grpc.util.RegisterGrpc.RegisterImplBase;
-import org.spin.grpc.util.ResetPasswordResponse.ResponseType;
+import org.spin.grpc.enrollment.ActivateUserRequest;
+import org.spin.grpc.enrollment.ActivateUserResponse;
+import org.spin.grpc.enrollment.EnrollUserRequest;
+import org.spin.grpc.enrollment.ResetPasswordRequest;
+import org.spin.grpc.enrollment.ResetPasswordResponse;
+import org.spin.grpc.enrollment.ResetPasswordTokenRequest;
+import org.spin.grpc.enrollment.User;
+import org.spin.grpc.enrollment.RegisterGrpc.RegisterImplBase;
+import org.spin.grpc.enrollment.ResetPasswordResponse.ResponseType;
 import org.spin.model.I_AD_Token;
 import org.spin.model.MADToken;
 import org.spin.model.MADTokenDefinition;
@@ -59,7 +59,7 @@ public class EnrollmentServiceImplementation extends RegisterImplBase {
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			log.fine("Object Requested = " + request.getUserName() + " - " + request.getEMail());
+			log.fine("Object Requested = " + request.getUserName() + " - " + request.getEmail());
 			User.Builder userInfoValue = enrollUser(request);
 			responseObserver.onNext(userInfoValue.build());
 			responseObserver.onCompleted();
@@ -79,7 +79,7 @@ public class EnrollmentServiceImplementation extends RegisterImplBase {
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			log.fine("Object Requested = " + request.getUserName() + " - " + request.getEMail());
+			log.fine("Object Requested = " + request.getUserName() + " - " + request.getEmail());
 			ResetPasswordResponse.Builder passwordResetReponse = resetPassword(request);
 			responseObserver.onNext(passwordResetReponse.build());
 			responseObserver.onCompleted();
@@ -211,12 +211,12 @@ public class EnrollmentServiceImplementation extends RegisterImplBase {
 	private ResetPasswordResponse.Builder resetPassword(ResetPasswordRequest request) {
 		//	User Name
 		if(Util.isEmpty(request.getUserName())
-				&& Util.isEmpty(request.getEMail())) {
+				&& Util.isEmpty(request.getEmail())) {
 			throw new AdempiereException("@UserName@ / @EMail@ @IsMandatory@");
 		}
 		ResetPasswordResponse.Builder builder = ResetPasswordResponse.newBuilder();
 		MUser user = new Query(Env.getCtx(), I_AD_User.Table_Name, "Value = ? OR EMail = ?", null)
-			.setParameters(request.getUserName(), request.getEMail())
+			.setParameters(request.getUserName(), request.getEmail())
 			.first();
 		//	Validate if exist
 		if(user == null
@@ -248,7 +248,7 @@ public class EnrollmentServiceImplementation extends RegisterImplBase {
 			throw new AdempiereException("@UserName@ @IsMandatory@");
 		}
 		//	EMail
-		if(Util.isEmpty(request.getEMail())) {
+		if(Util.isEmpty(request.getEmail())) {
 			throw new AdempiereException("@EMail@ @IsMandatory@");
 		}
 		//	
@@ -257,7 +257,7 @@ public class EnrollmentServiceImplementation extends RegisterImplBase {
 		}
 		User.Builder builder = User.newBuilder();
 		int userId = new Query(Env.getCtx(), I_AD_User.Table_Name, "Value = ? OR EMail = ?", null)
-			.setParameters(request.getUserName(), request.getEMail())
+			.setParameters(request.getUserName(), request.getEmail())
 			.firstId();
 		//	Validate if exist
 		if(userId > 0) {
@@ -267,7 +267,7 @@ public class EnrollmentServiceImplementation extends RegisterImplBase {
 		MUser newUser = new MUser(Env.getCtx(), 0, null);
 		newUser.setName(request.getName());
 		//	Add Email
-		newUser.setEMail(request.getEMail());
+		newUser.setEMail(request.getEmail());
 		newUser.setValue(request.getUserName());
 		newUser.setIsLoginUser(true);
 		newUser.setIsInternalUser(false);
@@ -289,7 +289,7 @@ public class EnrollmentServiceImplementation extends RegisterImplBase {
 		}
 		builder.setUserName(newUser.getValue());
 		builder.setName(newUser.getName());
-		builder.setEMail(newUser.getEMail());
+		builder.setEmail(newUser.getEMail());
 		return builder;
 	}
 	

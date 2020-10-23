@@ -18,12 +18,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.spin.grpc.util.EnrollUserRequest;
-import org.spin.grpc.util.RegisterGrpc;
-import org.spin.grpc.util.ResetPasswordRequest;
-import org.spin.grpc.util.ResetPasswordResponse;
-import org.spin.grpc.util.User;
-import org.spin.grpc.util.RegisterGrpc.RegisterBlockingStub;
+import org.spin.grpc.enrollment.EnrollUserRequest;
+import org.spin.grpc.enrollment.RegisterGrpc;
+import org.spin.grpc.enrollment.ResetPasswordRequest;
+import org.spin.grpc.enrollment.ResetPasswordResponse;
+import org.spin.grpc.enrollment.User;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -61,7 +60,7 @@ public class EnrollmentClient {
 		  EnrollUserRequest userRequest = EnrollUserRequest.newBuilder()
 				  .setUserName("yamelsenih")
 				  .setName("Yamel Senih")
-				  .setEMail("ysenih@erpya.com")
+				  .setEmail("ysenih@erpya.com")
 				  .build();
 		  User response;
 		  try {
@@ -79,7 +78,7 @@ public class EnrollmentClient {
 	  public void resetPassword() {
 		  ResetPasswordRequest resetRequest = ResetPasswordRequest.newBuilder()
 				  .setUserName("yamelsenih")
-				  .setEMail("ysenih@erpya.com")
+				  .setEmail("ysenih@erpya.com")
 				  .build();
 		  ResetPasswordResponse response;
 		  try {

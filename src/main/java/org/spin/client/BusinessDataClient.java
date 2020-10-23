@@ -22,7 +22,6 @@ import org.spin.grpc.util.BusinessDataGrpc;
 import org.spin.grpc.util.ClientRequest;
 import org.spin.grpc.util.ProcessLog;
 import org.spin.grpc.util.RunBusinessProcessRequest;
-import org.spin.grpc.util.BusinessDataGrpc.BusinessDataBlockingStub;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
