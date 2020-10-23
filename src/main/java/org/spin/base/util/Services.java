@@ -28,7 +28,8 @@ public enum Services {
     DASHBOARDING("dashboarding"),
     WORKFLOW("workflow"),
     LOG("log"),
-    STORE("store");
+    STORE("store"),
+    POS("pos");
 
 	/**	Service Name	*/
     private final String serviceName;

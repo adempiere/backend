@@ -1,0 +1,304 @@
+/************************************************************************************
+ * Copyright (C) 2012-2018 E.R.P. Consultores y Asociados, C.A.                     *
+ * Contributor(s): Yamel Senih ysenih@erpya.com                                     *
+ * This program is free software: you can redistribute it and/or modify             *
+ * it under the terms of the GNU General Public License as published by             *
+ * the Free Software Foundation, either version 2 of the License, or                *
+ * (at your option) any later version.                                              *
+ * This program is distributed in the hope that it will be useful,                  *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of                   *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the                     *
+ * GNU General Public License for more details.                                     *
+ * You should have received a copy of the GNU General Public License                *
+ * along with this program.	If not, see <https://www.gnu.org/licenses/>.            *
+ ************************************************************************************/
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "org.spin.grpc.util";
+option java_outer_classname = "ADempierePOS";
+option objc_class_prefix = "HLW";
+
+import "core_functionality.proto";
+import "base_data_type.proto";
+import "client.proto";
+
+package data;
+
+//	POS Service used for ADempiere integration 
+service Store {
+	//	Get POS Definition
+	rpc GetPointOfSales(PointOfSalesRequest) returns (PointOfSales) {}
+	//	List Point of Sales
+	rpc ListPointOfSales(ListPointOfSalesRequest) returns (ListPointOfSalesResponse) {}
+	//	Get Product Price from Code / UPC / Name
+	rpc GetProductPrice(GetProductPriceRequest) returns (ProductPrice) {}
+	//	List Product Price
+	rpc ListProductPrice(ListProductPriceRequest) returns (ListProductPriceResponse) {}
+	//	Create Order
+	rpc CreateOrder(CreateOrderRequest) returns (Order) {}
+	//	Delete Order
+	rpc DeleteOrder(DeleteOrderRequest) returns (Empty) {}
+	//	Create Order Line
+	rpc CreateOrderLine(CreateOrderLineRequest) returns (OrderLine) {}
+	//	Delete Order Line
+	rpc DeleteOrderLine(DeleteOrderLineRequest) returns (Empty) {}
+	//	Update Order
+	rpc UpdateOrder(UpdateOrderRequest) returns (Order) {}
+	//	Update Order Line
+	rpc UpdateOrderLine(UpdateOrderLineRequest) returns (OrderLine) {}
+	//	Get a Order
+	rpc GetOrder(GetOrderRequest) returns (Order) {}
+	//	List Orders
+	rpc ListOrders(ListOrdersRequest) returns (ListOrdersResponse) {}
+	//	List Order Lines
+	rpc ListOrderLines(ListOrderLinesRequest) returns (ListOrderLinesResponse) {}
+	//	Get a Key Layout
+	rpc GetKeyLayout(GetKeyLayoutRequest) returns (KeyLayout) {}
+}
+
+//	List POS Response
+message ListPointOfSalesResponse {
+	int64 record_count = 1;
+	repeated PointOfSales selling_points = 2;
+	string next_page_token = 3;
+}
+
+//	List Product Price Response
+message ListProductPriceResponse {
+	int64 record_count = 1;
+	repeated ProductPrice product_prices = 2;
+	string next_page_token = 3;
+}
+
+//	List Orders Response
+message ListOrdersResponse {
+	int64 record_count = 1;
+	repeated Order orders = 2;
+	string next_page_token = 3;
+}
+
+// List Orders Request
+message ListOrdersRequest {
+	ClientRequest client_request = 1;
+	string pos_uuid = 2;
+	string document_no = 3;
+	string business_partner_uuid = 4;
+	Decimal grand_total = 5;
+	Decimal open_amount = 6;
+	bool is_paid = 7;
+	bool is_processed = 8;
+	bool is_aisle_seller = 9;
+	bool is_invoiced = 10;
+	int64 date_ordered_from = 11;
+	int64 date_ordered_to = 12;
+	string sales_representative_uuid = 13;
+	int32 page_size = 14;
+	string page_token = 15;
+	// Query
+	Criteria criteria = 16;
+}
+
+//	List Order Lines Response
+message ListOrderLinesResponse {
+	int64 record_count = 1;
+	repeated OrderLine order_lines = 2;
+	string next_page_token = 3;
+}
+
+// List Orders Request
+message ListOrderLinesRequest {
+	ClientRequest client_request = 1;
+	string order_uuid = 2;
+	int32 page_size = 3;
+	string page_token = 4;
+}
+
+// List Product Price Request
+message ListProductPriceRequest {
+	ClientRequest client_request = 1;
+	string search_value = 2;
+	string price_list_uuid = 3;
+	string business_partner_uuid = 4;
+	string warehouse_uuid = 5;
+	int64 valid_from = 6;
+	// Query
+	Criteria criteria = 7;
+	int32 page_size = 8;
+	string page_token = 9;
+}
+
+// POS from user uuid
+message ListPointOfSalesRequest {
+	ClientRequest client_request = 1;
+	string user_uuid = 2;
+	int32 page_size = 3;
+	string page_token = 4;
+}
+
+// Point of Sales request
+message PointOfSalesRequest {
+	ClientRequest client_request = 1;
+	string point_of_sales_uuid = 2;
+}
+
+// Point of Sales definition
+message PointOfSales {
+	string uuid = 1;
+	int32 id = 2;
+	string name = 3;
+	string description = 4;
+	string help = 5;
+	bool is_modify_price = 6;
+	bool is_pos_required_pin = 7;
+	bool is_aisle_seller = 8;
+	bool is_shared_pos = 9;
+	DocumentType document_type = 10;
+	BankAccount cash_bank_account = 11;
+	BankAccount cash_transfer_bank_account = 12;
+	SalesRepresentative sales_representative = 13;
+	BusinessPartner template_business_partner = 14;
+	PriceList price_list = 15;
+	string conversion_type_uuid = 16;
+	string key_layout_uuid = 17;
+}
+
+// Request for create a order
+message CreateOrderRequest {
+	ClientRequest client_request = 1;
+	string pos_uuid = 2;
+	string customer_uuid = 3;
+	string document_type_uuid = 4;
+	string sales_representative_uuid = 5;
+}
+
+// Request for delete a order
+message DeleteOrderRequest {
+	ClientRequest client_request = 1;
+	string order_uuid = 2;
+}
+
+// Request for delete a order
+message DeleteOrderLineRequest {
+	ClientRequest client_request = 1;
+	string order_line_uuid = 2;
+}
+
+// Request for create a order line
+message CreateOrderLineRequest {
+	ClientRequest client_request = 1;
+	string order_uuid = 2;
+	string product_uuid = 3;
+	string charge_uuid = 4;
+	string description = 5;
+	Decimal quantity = 6;
+	Decimal price = 7;
+	Decimal discount_rate = 8;
+	string warehouse_uuid = 9;
+}
+
+// Request for update a order
+message UpdateOrderRequest {
+	ClientRequest client_request = 1;
+	string order_uuid = 2;
+	string pos_uuid = 3;
+	string customer_uuid = 4;
+	string document_type_uuid = 5;
+	string description = 6;
+}
+
+// Request for update a order line
+message UpdateOrderLineRequest {
+	ClientRequest client_request = 1;
+	string order_line_uuid = 2;
+	string description = 5;
+	Decimal quantity = 6;
+	Decimal price = 7;
+	Decimal discount_rate = 8;
+	bool is_add_quantity = 9;
+}
+
+// Request for get a order
+message GetOrderRequest {
+	ClientRequest client_request = 1;
+	string order_uuid = 2;
+}
+
+// Request for get a key layout
+message GetKeyLayoutRequest {
+	ClientRequest client_request = 1;
+	string key_layout_uuid = 2;
+}
+
+// Sales Order
+message Order {
+	string uuid = 1;
+	int32 id = 2;
+	string document_no = 3;
+	DocumentType document_type = 4;
+	SalesRepresentative sales_representative = 5;
+	DocumentStatus document_status = 6;
+	Decimal total_lines = 7;
+	Decimal grand_total = 8;
+	int64 date_ordered = 9;
+	BusinessPartner business_partner = 10;
+}
+
+// Sales Order Line
+message OrderLine {
+	string uuid = 1;
+	string order_uuid = 2;
+	Product product = 3;
+	Charge charge = 4;
+	string lineDescription = 5;
+	string description = 6;
+	Warehouse warehouse = 7;
+	Decimal quantity = 8;
+	Decimal price = 9;
+	Decimal discount_rate = 10;
+	TaxRate tax_rate = 11;
+	Decimal line_net_amount = 12;
+	int32 line = 13;
+}
+
+// Request Product Price
+message GetProductPriceRequest {
+	ClientRequest client_request = 1;
+	string search_value = 2;
+	string upc = 3;
+	string value = 4;
+	string name = 5;
+	string price_list_uuid = 6;
+	string business_partner_uuid = 7;
+	string warehouse_uuid = 8;
+	int64 valid_from = 9;
+}
+
+// Layout for POS
+message KeyLayout {
+	string uuid = 1;
+	int32 id = 2;
+	string name = 3;
+	string description = 4;
+	string help = 5;
+	string layout_type = 6;
+	int32 columns = 7;
+	string color = 8;
+	repeated Key keys = 9;
+}
+
+// Key for layout
+message Key {
+	string uuid = 1;
+	int32 id = 2;
+	string name = 3;
+	string description = 4;
+	string sub_key_layout_uuid = 5;
+	string color = 6;
+	int32 sequence = 7;
+	int32 span_x = 8;
+	int32 span_y = 9;
+	string product_uuid = 10;
+	Decimal quantity = 11;
+	ResourceReference resource_reference = 12;
+}

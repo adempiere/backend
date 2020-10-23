@@ -27,6 +27,7 @@ import org.spin.grpc.service.DashboardingServiceImplementation;
 import org.spin.grpc.service.DictionaryServiceImplementation;
 import org.spin.grpc.service.EnrollmentServiceImplementation;
 import org.spin.grpc.service.LogsServiceImplementation;
+import org.spin.grpc.service.PointOfSalesServiceImplementation;
 import org.spin.grpc.service.UserInterfaceServiceImplementation;
 import org.spin.grpc.service.WebStoreServiceImplementation;
 import org.spin.grpc.service.WorkflowServiceImplementation;
@@ -106,6 +107,11 @@ public class AllInOneServices {
 		  if(SetupLoader.getInstance().getServer().isValidService(Services.STORE.getServiceName())) {
 			  serverBuilder.addService(new WebStoreServiceImplementation());
 			  logger.info("Service " + Services.STORE.getServiceName() + " added on " + SetupLoader.getInstance().getServer().getPort());
+		  }
+		  //	POS
+		  if(SetupLoader.getInstance().getServer().isValidService(Services.POS.getServiceName())) {
+			  serverBuilder.addService(new PointOfSalesServiceImplementation());
+			  logger.info("Service " + Services.POS.getServiceName() + " added on " + SetupLoader.getInstance().getServer().getPort());
 		  }
 		  //	Add services
 		  if(SetupLoader.getInstance().getServer().isTlsEnabled()) {
