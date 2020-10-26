@@ -391,6 +391,12 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 				parameters.add(request.getPostalCode());
 			}
 		}
+		//	
+		String criteriaWhereClause = ValueUtil.getWhereClauseFromCriteria(request.getCriteria(), parameters);
+		if(whereClause.length() > 0
+				&& !Util.isEmpty(criteriaWhereClause)) {
+			whereClause.append(" AND (").append(criteriaWhereClause).append(")");
+		}
 		//	Get Product list
 		Query query = new Query(Env.getCtx(), I_C_BPartner.Table_Name, 
 				whereClause.toString(), null)
@@ -627,6 +633,12 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 				//	Add parameters
 				parameters.add(request.getPostalCode());
 			}
+		}
+		//	
+		String criteriaWhereClause = ValueUtil.getWhereClauseFromCriteria(request.getCriteria(), parameters);
+		if(whereClause.length() > 0
+				&& !Util.isEmpty(criteriaWhereClause)) {
+			whereClause.append(" AND (").append(criteriaWhereClause).append(")");
 		}
 		//	Get business partner
 		MBPartner businessPartner = new Query(Env.getCtx(), I_C_BPartner.Table_Name, 

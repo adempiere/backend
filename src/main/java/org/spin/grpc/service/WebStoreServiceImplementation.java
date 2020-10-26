@@ -28,6 +28,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.adempiere.exceptions.AdempiereException;
 import org.compiere.model.I_AD_User;
+import org.compiere.model.I_C_City;
 import org.compiere.model.I_C_Region;
 import org.compiere.model.I_M_Product;
 import org.compiere.model.I_M_Storage;
@@ -115,6 +116,7 @@ import org.spin.grpc.store.ListShippingMethodsResponse;
 import org.spin.grpc.store.ListStocksRequest;
 import org.spin.grpc.store.ListStocksResponse;
 import org.spin.grpc.store.Order;
+import org.spin.grpc.store.OrderLine;
 import org.spin.grpc.store.PaymentMethod;
 import org.spin.grpc.store.PriceInfo;
 import org.spin.grpc.store.Product;
@@ -635,7 +637,6 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 	 * @return
 	 */
 	private Order.Builder createOrder(CreateOrderRequest request, String transactionName) {
-		Order.Builder builder = Order.newBuilder();
 		if(request.getCartId() == 0
 				&& Util.isEmpty(request.getCartUuid())) {
 			throw new AdempiereException("@W_Basket_ID@ @IsMandatory@");
@@ -717,6 +718,13 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 		if(!Util.isEmpty(deliveryViaRuleAllocation.getNote())) {
 			salesOrder.addDescription(deliveryViaRuleAllocation.getNote());
 		}
+		if(Util.isEmpty(request.getPaymentMethodCode())) {
+			throw new AdempiereException("@TenderType@ @IsMandatory@");
+		}
+		//	
+		MWPaymentMethod paymentMethod = MWPaymentMethod.getByValue(Env.getCtx(), request.getPaymentMethodCode(), transactionName);
+		salesOrder.setDocStatus(MOrder.DOCSTATUS_Drafted);
+		salesOrder.setDocAction(MOrder.ACTION_Complete);
 		salesOrder.saveEx();
 		//	Add Lines
 		request.getProductsList().forEach(product -> addLinesToOrder(salesOrder, product, transactionName));
@@ -726,6 +734,49 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 		}
 		//	
 		salesOrder.saveEx();
+		//	Process Payments
+		processPayments(paymentMethod, salesOrder, transactionName);
+		return convertOrder(request, salesOrder, transactionName);
+	}
+	
+	/**
+	 * Process Payments
+	 * @param paymentMethod
+	 * @param salesOrder
+	 * @param transactionName
+	 */
+	private void processPayments(MWPaymentMethod paymentMethod, MOrder salesOrder, String transactionName) {
+		//	TODO: Implement it for payments
+	}
+	
+	/**
+	 * Convert Order
+	 * @param request
+	 * @param salesOrder
+	 * @param transactionName
+	 * @return
+	 */
+	private Order.Builder convertOrder(CreateOrderRequest request, MOrder salesOrder, String transactionName) {
+		Order.Builder builder = Order.newBuilder();
+		builder.setId(salesOrder.getC_Order_ID())
+			.setDocumentNo(ValueUtil.validateNull(salesOrder.getDocumentNo()))
+			.setCreated(dateConverter.format(salesOrder.getCreated()))
+			.setUpdated(dateConverter.format(salesOrder.getUpdated()))
+			.setTransmited(dateConverter.format(salesOrder.getUpdated()))
+			.setCarrierCode(request.getCarrierCode())
+			.setMethodCode(request.getMethodCode())
+			.setPaymentMethodCode(request.getPaymentMethodCode())
+			.setShippingAddress(convertAddress(MUser.get(Env.getCtx(), salesOrder.getAD_User_ID()), ((MBPartnerLocation) salesOrder.getC_BPartner_Location()), transactionName))
+			.setShippingAddress(convertAddress(MUser.get(Env.getCtx(), salesOrder.getAD_User_ID()), ((MBPartnerLocation) salesOrder.getBill_Location()), transactionName));
+		//	Add Lines
+		Arrays.asList(salesOrder.getLines(true, null)).forEach(orderLine -> {
+			MProduct product = MProduct.get(Env.getCtx(), orderLine.getM_Product_ID());
+			builder.addOrderLines(OrderLine.newBuilder()
+					.setSku(ValueUtil.validateNull(product.getSKU()))
+					.setName(ValueUtil.validateNull(product.getName()))
+					.setPrice(orderLine.getPriceActual().doubleValue())
+					.setQuantity(orderLine.getQtyOrdered().doubleValue()));
+		});
 		return builder;
 	}
 	
@@ -746,7 +797,7 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 		orderLine.setQty(quantityToOrder);
 		orderLine.setPrice();
 		//	Save Line
-		orderLine.saveEx();
+		orderLine.saveEx(transactionName);
 	}
 	
 	/**
@@ -758,7 +809,7 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 	 * @param transactionName
 	 */
 	private void setAddress(MOrder salesOrder, MBPartner customer, AddressRequest address, boolean isBillto, String transactionName) {
-		List<MBPartnerLocation> businessPartnerLocations = Arrays.asList(customer.getLocations(false));
+		List<MBPartnerLocation> businessPartnerLocations = Arrays.asList(customer.getLocations(true));
 		int businessPartnerLocationId = 0;
 		if(address.getLocationId() > 0) {
 			Optional<MBPartnerLocation> maybeLocation = businessPartnerLocations.stream().filter(bPLocation -> bPLocation.getC_Location_ID() == address.getLocationId()).findFirst();
@@ -773,13 +824,14 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 						MCountry country = MCountry.get(Env.getCtx(), location.getC_Country_ID());
 						if((bPLocation.isBillTo() == isBillto
 								|| bPLocation.isShipTo() == !isBillto)
-								&& Optional.ofNullable(country.getCountryCode()).orElse("").equals(Optional.ofNullable(address.getCountryCode()).orElse(""))
-								&& Optional.ofNullable(location.getRegionName()).orElse("").equals(Optional.ofNullable(address.getRegionName()).orElse(""))
+								&& Optional.ofNullable(country.getCountryCode()).orElse("").toUpperCase().trim().equals(Optional.ofNullable(address.getCountryCode()).orElse("").toUpperCase().trim())
+								&& (Optional.ofNullable(location.getRegionName()).orElse("").toUpperCase().trim().equals(Optional.ofNullable(address.getRegionName()).orElse("").toUpperCase().trim())
+										|| location.getC_Region_ID() == address.getRegionId())
 								&& Optional.ofNullable(location.getCity()).orElse("").equals(Optional.ofNullable(address.getCityName()).orElse(""))
-								&& Optional.ofNullable(location.getAddress1()).orElse("").equals(Optional.ofNullable(address.getAddress1()).orElse(""))
-								&& Optional.ofNullable(location.getAddress2()).orElse("").equals(Optional.ofNullable(address.getAddress2()).orElse(""))
-								&& Optional.ofNullable(location.getAddress3()).orElse("").equals(Optional.ofNullable(address.getAddress3()).orElse(""))
-								&& Optional.ofNullable(location.getAddress4()).orElse("").equals(Optional.ofNullable(address.getAddress4()).orElse(""))
+								&& Optional.ofNullable(location.getAddress1()).orElse("").toUpperCase().trim().equals(Optional.ofNullable(address.getAddress1()).orElse("").toUpperCase().trim())
+								&& Optional.ofNullable(location.getAddress2()).orElse("").toUpperCase().trim().equals(Optional.ofNullable(address.getAddress2()).orElse("").toUpperCase().trim())
+								&& Optional.ofNullable(location.getAddress3()).orElse("").toUpperCase().trim().equals(Optional.ofNullable(address.getAddress3()).orElse("").toUpperCase().trim())
+								&& Optional.ofNullable(location.getAddress4()).orElse("").toUpperCase().trim().equals(Optional.ofNullable(address.getAddress4()).orElse("").toUpperCase().trim())
 								&& Optional.ofNullable(location.getPostal()).orElse("").equals(Optional.ofNullable(address.getPostalCode()).orElse(""))) {
 							return true;
 						}
@@ -788,6 +840,9 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 					}).findFirst();
 	        if (maybeLocation.isPresent()) {
 	        	businessPartnerLocationId = maybeLocation.get().getC_BPartner_Location_ID();
+	        } else {	//	Create new
+	        	MBPartnerLocation businessPartnerLocation = createBusinessPartnerLocation(customer, address, transactionName);
+	        	businessPartnerLocationId = businessPartnerLocation.getC_BPartner_Location_ID();
 	        }
 		}
 		//	Set Location
@@ -798,6 +853,79 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 				salesOrder.setC_BPartner_Location_ID(businessPartnerLocationId);
 			}
 		}
+	}
+	
+	/**
+	 * Create Business Partner Location
+	 * @param customer
+	 * @param address
+	 * @param transactionName
+	 * @return
+	 */
+	private MBPartnerLocation createBusinessPartnerLocation(MBPartner customer, AddressRequest address, String transactionName) {
+    	//	Location
+		int countryId = 0;
+		if(!Util.isEmpty(address.getCountryCode())) {
+			MCountry country = MCountry.get(Env.getCtx(), address.getCountryCode());
+			if(Optional.ofNullable(country).isPresent()) {
+				countryId = country.getC_Country_ID();
+			}
+		}
+		if(countryId <= 0) {
+			countryId = Env.getContextAsInt(Env.getCtx(), "#C_Country_ID");
+		}
+		//	
+		int regionId = address.getRegionId();
+		if(regionId <= 0 && !Util.isEmpty(address.getRegionName())) {
+			Optional<MRegion> maybeRegion = Arrays.asList(MRegion.getDefault(Env.getCtx())).stream().filter(region -> region.getName().equals(address.getRegionName())).findFirst();
+			if(maybeRegion.isPresent()) {
+				regionId = maybeRegion.get().getC_Region_ID();
+			}
+		}
+		String cityName = null;
+		int cityId = 0;
+		//	City Name
+		if(!Util.isEmpty(address.getCityName())) {
+			cityName = address.getCityName();
+			MCity city = new Query(Env.getCtx(), I_C_City.Table_Name, "UPPER(" + I_C_City.COLUMNNAME_Name + ") = ?", transactionName).setParameters(address.getCityName().toUpperCase()).first();
+			if(city != null
+					&& city.getC_City_ID() > 0) {
+				cityId = city.getC_City_ID();
+				if(regionId <= 0
+						&& city.getC_Region_ID() > 0) {
+					regionId = city.getC_Region_ID();
+				}
+			}
+		}
+		if(regionId > 0) {
+			MRegion region = MRegion.get(Env.getCtx(), regionId);
+			countryId = region.getC_Country_ID();
+		}
+		//	Instance it
+		MLocation location = new MLocation(Env.getCtx(), countryId, regionId, cityName, transactionName);
+		if(cityId > 0) {
+			location.setC_City_ID(cityId);
+		}
+		//	Postal Code
+		if(!Util.isEmpty(address.getPostalCode())) {
+			location.setPostal(address.getPostalCode());
+		}
+		//	Set Address
+		location.setAddress1(address.getAddress1());
+		location.setAddress2(address.getAddress2());
+		location.setAddress3(address.getAddress3());
+		location.setAddress4(address.getAddress4());
+		location.saveEx(transactionName);
+		//	Create BP location
+		MBPartnerLocation businessPartnerLocation = new MBPartnerLocation(customer);
+		businessPartnerLocation.setC_Location_ID(location.getC_Location_ID());
+		//	Phone
+		if(!Util.isEmpty(address.getPhone())) {
+			businessPartnerLocation.setPhone(address.getPhone());
+		}
+		//	Save
+		businessPartnerLocation.saveEx(transactionName);
+		return businessPartnerLocation;
 	}
 	
 	/**
@@ -1685,11 +1813,15 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 	 */
 	private Address.Builder convertAddress(MUser contact, MBPartnerLocation businessPartnerLocation, String transactionName) {
 		Address.Builder builder = Address.newBuilder();
+		String phone = null;
+		if(contact != null) {
+			phone = contact.getPhone();
+		}
 		MLocation location = MLocation.get(Env.getCtx(), businessPartnerLocation.getC_Location_ID(), transactionName);
 		builder.setId(businessPartnerLocation.getC_BPartner_Location_ID())
 			.setCountryCode(MCountry.get(Env.getCtx(), location.getC_Country_ID()).getCountryCode())
 			.setPostalCode(ValueUtil.validateNull(location.getPostal()))
-			.setPhone(ValueUtil.validateNull(!Util.isEmpty(businessPartnerLocation.getPhone())? businessPartnerLocation.getPhone(): contact.getPhone()))
+			.setPhone(ValueUtil.validateNull(Optional.ofNullable(businessPartnerLocation.getPhone()).orElse(Optional.ofNullable(phone).orElse(""))))
 			.setFirstName(ValueUtil.validateNull(businessPartnerLocation.getName()))
 			.setLastName(ValueUtil.validateNull(businessPartnerLocation.get_ValueAsString(VueStoreFrontUtil.COLUMNNAME_LastName)))
 			.setAddress1(ValueUtil.validateNull(location.getAddress1()))

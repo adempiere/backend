@@ -597,7 +597,6 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 		if(!Util.isEmpty(criteria.getWhereClause())) {
 			whereClause.append("(").append(criteria.getWhereClause()).append(")");
 		}
-		criteria.getValuesList().forEach(value -> params.add(ValueUtil.getObjectFromValue(value)));
 		//	For dynamic condition
 		String dynamicWhere = ValueUtil.getWhereClauseFromCriteria(criteria, params);
 		if(!Util.isEmpty(dynamicWhere)) {

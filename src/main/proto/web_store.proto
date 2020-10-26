@@ -246,6 +246,41 @@ message ProductOrderLine {
 message Order {
 	int32 id = 1;
 	string document_no = 2;
+	string created = 3;
+	string updated = 4;
+	string transmited = 5;
+	Address shipping_address = 6;
+	Address billing_address = 7;
+	string method_code = 8;
+	string carrier_code = 9;
+	string payment_method_code = 10;
+	repeated OrderLine order_lines = 11;
+}
+
+//	Order Line response
+message OrderLine {
+	string sku = 1;
+	string name = 2;
+	double quantity = 3;
+	double price = 4;
+		enum ProductType {
+		//	Simple Product
+		SIMPLE = 0;
+		//	Configurable Product
+		CONFIGURABLE = 1;
+		//	Grouped Product
+		GROUPED = 2;
+		//	Virtual Product
+		VIRTUAL = 3;
+		//	Bundle Product
+		BUNDLE = 4;
+		//	Downloadable Product
+		DOWNLOADABLE = 5;
+		//	Gift Cards
+		GIFT = 6;
+	}
+	ProductType product_type = 5;
+	
 }
 
 //	https://docs.storefrontapi.com/guide/default-modules/api.html#post-api-cart-update
