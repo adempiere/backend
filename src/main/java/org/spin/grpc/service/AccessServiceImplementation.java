@@ -625,7 +625,10 @@ public class AccessServiceImplementation extends SecurityImplBase {
 		MSession currentSession = MSession.get(Env.getCtx(), false);
 		int userId = currentSession.getCreatedBy();
 		int roleId = DB.getSQLValue(null, "SELECT AD_Role_ID FROM AD_Role WHERE UUID = ?", request.getRoleUuid());
-		int organizationId = getDefaultOrganizationId(roleId, userId);
+		int organizationId = DB.getSQLValue(null, "SELECT AD_Org_ID FROM AD_Org WHERE UUID = ?", request.getOrganizationUuid());
+		if(organizationId < 0) {
+			organizationId = getDefaultOrganizationId(roleId, userId);
+		}
 		if(organizationId < 0) {
 			organizationId = 0;
 		}

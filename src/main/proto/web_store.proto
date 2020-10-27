@@ -131,6 +131,8 @@ message AddressRequest {
 	string address2 = 12;
 	string address3 = 13;
 	string address4 = 14;
+	bool is_default_billing = 15;
+	bool is_default_shipping = 16;
 }
 
 //	Shipping Information for Order
@@ -639,8 +641,9 @@ message Address {
 	string address4 = 9;
 	string phone = 10;
 	string postal_code = 11;
-	bool is_default_shipping = 12;
-	string country_code = 13;
+	string country_code = 12;
+	bool is_default_shipping = 13;
+	bool is_default_billing = 14;
 }
 
 //	City

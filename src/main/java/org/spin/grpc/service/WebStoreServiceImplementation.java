@@ -36,6 +36,7 @@ import org.compiere.model.I_W_Basket;
 import org.compiere.model.I_W_Store;
 import org.compiere.model.MBPartner;
 import org.compiere.model.MBPartnerLocation;
+import org.compiere.model.MBankAccount;
 import org.compiere.model.MCharge;
 import org.compiere.model.MCity;
 import org.compiere.model.MClient;
@@ -50,6 +51,7 @@ import org.compiere.model.MOrder;
 import org.compiere.model.MOrderLine;
 import org.compiere.model.MOrg;
 import org.compiere.model.MPackage;
+import org.compiere.model.MPayment;
 import org.compiere.model.MPriceList;
 import org.compiere.model.MProduct;
 import org.compiere.model.MProductPricing;
@@ -64,10 +66,13 @@ import org.compiere.model.MUser;
 import org.compiere.model.MUserMail;
 import org.compiere.model.MWarehouse;
 import org.compiere.model.Query;
+import org.compiere.model.X_C_Bank;
+import org.compiere.model.X_C_Payment;
 import org.compiere.model.X_W_Basket;
 import org.compiere.model.X_W_BasketLine;
 import org.compiere.util.CCache;
 import org.compiere.util.CLogger;
+import org.compiere.util.DB;
 import org.compiere.util.DisplayType;
 import org.compiere.util.EMail;
 import org.compiere.util.Env;
@@ -667,9 +672,18 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 			throw new AdempiereException("@W_Basket_ID@ @IsMandatory@");
 		}
 		//	
+		MBPartner businessPartner = null;
 		if(basket.getC_BPartner_ID() <= 0) {
-			throw new AdempiereException("@C_BPartner_ID@ @IsMandatory@");
+			businessPartner = VueStoreFrontUtil.getTemplate(Env.getCtx(), store.get_ValueAsInt(VueStoreFrontUtil.COLUMNNAME_C_TemplateBPartner_ID), transactionName);
+			businessPartner.setName(request.getBillingAddress().getFirstName());
+			businessPartner.setName2(request.getBillingAddress().getLastName());
+			businessPartner.saveEx(transactionName);
+		} else {
+			businessPartner = ((MBPartner) basket.getC_BPartner());
 		}
+		businessPartner.set_TrxName(transactionName);
+		int shippingLocationId = findAddress(businessPartner, request.getShippingAddress(), false, transactionName);
+		int billingLocationId = findAddress(businessPartner, request.getBillingAddress(), true, transactionName);
 		//	
 		MOrder salesOrder = new MOrder(Env.getCtx(), 0, transactionName);
 		salesOrder.setDateOrdered(getDate());
@@ -681,9 +695,12 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 		if(store.getSalesRep_ID() > 0) {
 			salesOrder.setSalesRep_ID(store.getSalesRep_ID());
 		}
-		MBPartner businessPartner = MBPartner.get(Env.getCtx(), basket.getC_BPartner_ID());
 		//	Set default from business partner
 		salesOrder.setBPartner(businessPartner);
+		//	Set Billing Address
+		salesOrder.setBill_Location_ID(billingLocationId);
+		//	Set Shipping Address
+		salesOrder.setC_BPartner_Location_ID(shippingLocationId);
 		salesOrder.set_ValueOfColumn(I_W_Store.COLUMNNAME_W_Store_ID, store.getW_Store_ID());
 		//	Warehouse
 		salesOrder.setM_Warehouse_ID(store.getM_Warehouse_ID());
@@ -697,10 +714,6 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 		}
 		//	Validate
 		salesOrder.setC_DocTypeTarget_ID(documeDocTypeId);
-		//	Set Billing Address
-		setAddress(salesOrder, businessPartner, request.getBillingAddress(), true, transactionName);
-		//	Set Shipping Address
-		setAddress(salesOrder, businessPartner, request.getBillingAddress(), false, transactionName);
 		//	Set Freight Rules
 		MWDeliveryViaRuleAllocation deliveryViaRuleAllocation = MWDeliveryViaRuleAllocation.getFromUuid(Env.getCtx(), request.getMethodCode(), transactionName);
 		if(!Util.isEmpty(deliveryViaRuleAllocation.getDeliveryViaRule())) {
@@ -746,7 +759,59 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 	 * @param transactionName
 	 */
 	private void processPayments(MWPaymentMethod paymentMethod, MOrder salesOrder, String transactionName) {
-		//	TODO: Implement it for payments
+		//	e-Commerce cash waiting for collect is generated as draft documents
+		if(paymentMethod.getTenderType().equals(MPayment.TENDERTYPE_Cash)) {
+			payWithCashAsPayment(salesOrder, transactionName);
+		}
+	}
+	
+	/**
+	 * Get Bank Account for Cash as Payment
+	 * @param salesOrder
+	 * @return
+	 */
+	private int getCashBankAccount(MOrder salesOrder) {
+		MBankAccount bankAccount = MBankAccount.getDefault(Env.getCtx(), salesOrder.getAD_Org_ID(), X_C_Bank.BANKTYPE_CashJournal);
+		if (bankAccount != null) {
+			return bankAccount.getC_BankAccount_ID();
+		}
+		return -1;
+	}
+	
+	/**
+	 * Pay it with cash
+	 * @param salesOrder
+	 * @return message
+	 */
+	private String payWithCashAsPayment(MOrder salesOrder, String transactionName) {
+		int cashAccountId = getCashBankAccount(salesOrder);
+		if(cashAccountId <= 0) {
+			throw new AdempiereException("@NoCashBook@");
+		}
+		//	
+		MPayment paymentCash = new MPayment(Env.getCtx(), 0, transactionName);
+		paymentCash.setC_BankAccount_ID(cashAccountId);
+		paymentCash.setC_DocType_ID(true);
+		paymentCash.setAD_Org_ID(salesOrder.getAD_Org_ID());
+        String value = DB.getDocumentNo(paymentCash.getC_DocType_ID(), transactionName, false,  paymentCash);
+        paymentCash.setDocumentNo(value);
+        paymentCash.setDateAcct(salesOrder.getDateAcct());
+        paymentCash.setDateTrx(salesOrder.getDateOrdered());
+        paymentCash.setTenderType(MPayment.TENDERTYPE_Cash);
+        paymentCash.setDescription(salesOrder.getDescription());
+        paymentCash.setC_BPartner_ID (salesOrder.getC_BPartner_ID());
+        paymentCash.setC_Currency_ID(salesOrder.getC_Currency_ID());
+        paymentCash.setPayAmt(salesOrder.getGrandTotal());
+        paymentCash.setOverUnderAmt(Env.ZERO);
+        //	Order Reference
+        paymentCash.setC_Order_ID(salesOrder.getC_Order_ID());
+        paymentCash.setDocStatus(MPayment.DOCSTATUS_Drafted);
+		paymentCash.saveEx();
+		if (!paymentCash.processIt(X_C_Payment.DOCACTION_Prepare)) {
+			throw new AdempiereException("@Error@: " + paymentCash.getProcessMsg());
+		}
+		paymentCash.saveEx();
+		return "@C_Payment_ID@: " + paymentCash.getDocumentNo();
 	}
 	
 	/**
@@ -801,14 +866,14 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 	}
 	
 	/**
-	 * Set Address
-	 * @param salesOrder
+	 * Find a location and create if not exist
 	 * @param customer
 	 * @param address
 	 * @param isBillto
 	 * @param transactionName
+	 * @return
 	 */
-	private void setAddress(MOrder salesOrder, MBPartner customer, AddressRequest address, boolean isBillto, String transactionName) {
+	private int findAddress(MBPartner customer, AddressRequest address, boolean isBillto, String transactionName) {
 		List<MBPartnerLocation> businessPartnerLocations = Arrays.asList(customer.getLocations(true));
 		int businessPartnerLocationId = 0;
 		if(address.getLocationId() > 0) {
@@ -841,18 +906,12 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 	        if (maybeLocation.isPresent()) {
 	        	businessPartnerLocationId = maybeLocation.get().getC_BPartner_Location_ID();
 	        } else {	//	Create new
-	        	MBPartnerLocation businessPartnerLocation = createBusinessPartnerLocation(customer, address, transactionName);
+	        	MBPartnerLocation businessPartnerLocation = createBusinessPartnerLocation(customer, address, isBillto, transactionName);
 	        	businessPartnerLocationId = businessPartnerLocation.getC_BPartner_Location_ID();
 	        }
 		}
-		//	Set Location
-		if(businessPartnerLocationId > 0) {
-			if(isBillto) {
-				salesOrder.setBill_Location_ID(businessPartnerLocationId);
-			} else {
-				salesOrder.setC_BPartner_Location_ID(businessPartnerLocationId);
-			}
-		}
+		//	Default location
+		return businessPartnerLocationId;
 	}
 	
 	/**
@@ -862,7 +921,7 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 	 * @param transactionName
 	 * @return
 	 */
-	private MBPartnerLocation createBusinessPartnerLocation(MBPartner customer, AddressRequest address, String transactionName) {
+	private MBPartnerLocation createBusinessPartnerLocation(MBPartner customer, AddressRequest address, boolean isBillTo, String transactionName) {
     	//	Location
 		int countryId = 0;
 		if(!Util.isEmpty(address.getCountryCode())) {
@@ -923,6 +982,11 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 		if(!Util.isEmpty(address.getPhone())) {
 			businessPartnerLocation.setPhone(address.getPhone());
 		}
+		//	Set Bill
+		businessPartnerLocation.setIsShipTo(true);
+		businessPartnerLocation.setIsBillTo(isBillTo);
+		businessPartnerLocation.set_ValueOfColumn(VueStoreFrontUtil.COLUMNNAME_IsDefaultBilling, address.getIsDefaultBilling());
+		businessPartnerLocation.set_ValueOfColumn(VueStoreFrontUtil.COLUMNNAME_IsDefaultShipping, address.getIsDefaultShipping());
 		//	Save
 		businessPartnerLocation.saveEx(transactionName);
 		return businessPartnerLocation;
@@ -1733,7 +1797,7 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 			.setOrganizationName(ValueUtil.validateNull(MOrg.get(Env.getCtx(), customer.getAD_Org_ID()).getName()));
 		//	TODO: Add Web Site ID and Web Store ID
 		if(customer.getC_BPartner_ID() > 0) {
-			Arrays.asList(MBPartner.get(Env.getCtx(), customer.getC_BPartner_ID()).getLocations(true))
+			Arrays.asList(((MBPartner) customer.getC_BPartner()).getLocations(true))
 				.forEach(businessPartnerLocation -> builder.addAddresses(convertAddress(customer, businessPartnerLocation, customer.get_TrxName())));
 		}
 		return builder;
@@ -1762,25 +1826,37 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 			if(userId > 0) {
 				throw new AdempiereException("@UserName@ / @EMail@ @AlreadyExists@");
 			}
-			//	Create
-			MUser newUser = new MUser(Env.getCtx(), 0, transactionName);
-			newUser.setName(request.getFirstName());
-			newUser.set_ValueOfColumn(VueStoreFrontUtil.COLUMNNAME_LastName, request.getLastName());
-			//	Add Email
-			newUser.setEMail(request.getEmail());
-			newUser.setValue(request.getEmail());
-			newUser.setIsLoginUser(true);
-			newUser.setIsInternalUser(false);
-			newUser.setIsWebstoreUser(true);
-			newUser.saveEx(transactionName);
-			if(!Util.isEmpty(request.getPassword())) {
-				newUser.setPassword(request.getPassword());
-				newUser.saveEx(transactionName);
-			}
 			//	Set builder
-			builder.set(convertCustomer(newUser));
+			builder.set(convertCustomer(createUser(request.getFirstName(), request.getLastName(), request.getEmail(), request.getPassword(), transactionName)));
 		});
 		return builder.get();
+	}
+	
+	/**
+	 * Create Customer
+	 * @param firtName
+	 * @param lastName
+	 * @param email
+	 * @param password
+	 * @param transactionName
+	 * @return
+	 */
+	private MUser createUser(String firtName, String lastName, String email, String password, String transactionName) {
+		MUser newUser = new MUser(Env.getCtx(), 0, transactionName);
+		newUser.setName(firtName);
+		newUser.set_ValueOfColumn(VueStoreFrontUtil.COLUMNNAME_LastName, lastName);
+		//	Add Email
+		newUser.setEMail(email);
+		newUser.setValue(email);
+		newUser.setIsLoginUser(true);
+		newUser.setIsInternalUser(false);
+		newUser.setIsWebstoreUser(true);
+		newUser.saveEx(transactionName);
+		if(!Util.isEmpty(password)) {
+			newUser.setPassword(password);
+			newUser.saveEx(transactionName);
+		}
+		return newUser;
 	}
 	
 	/**
@@ -1828,7 +1904,8 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 			.setAddress2(ValueUtil.validateNull(location.getAddress2()))
 			.setAddress3(ValueUtil.validateNull(location.getAddress3()))
 			.setAddress4(ValueUtil.validateNull(location.getAddress4()))
-			.setIsDefaultShipping(businessPartnerLocation.isShipTo() && businessPartnerLocation.get_ValueAsBoolean(VueStoreFrontUtil.COLUMNNAME_IsDefaultShipping));
+			.setIsDefaultShipping(businessPartnerLocation.isShipTo() && businessPartnerLocation.get_ValueAsBoolean(VueStoreFrontUtil.COLUMNNAME_IsDefaultShipping))
+			.setIsDefaultShipping(businessPartnerLocation.isBillTo() && businessPartnerLocation.get_ValueAsBoolean(VueStoreFrontUtil.COLUMNNAME_IsDefaultBilling));
 		//	City
 		if(location.getC_City_ID() > 0) {
 			MCity city = MCity.get(Env.getCtx(), location.getC_City_ID());
