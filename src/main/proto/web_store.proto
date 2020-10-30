@@ -236,12 +236,25 @@ message CreateOrderRequest {
 	string carrier_code = 8;
 	string payment_method_code = 9;
 	repeated ProductOrderLine products = 10;
+	repeated PaymentRequest payments = 11;
 }
 
 //	Product used for create order line
 message ProductOrderLine {
 	int32 id = 1;
 	double quantity = 2;
+}
+
+//	Payment detail for request
+message PaymentRequest {
+	int32 bank_id = 1;
+	string reference_no = 2;
+	string description = 3;
+	double amount = 4;
+	string payment_date = 5;
+	string payment_method_code = 6;
+	string currency_code = 7;
+	AddressRequest billing_address = 8;
 }
 
 //	Order

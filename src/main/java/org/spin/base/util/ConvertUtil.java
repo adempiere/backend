@@ -505,7 +505,7 @@ public class ConvertUtil {
 		}
 		return ResourceReference.newBuilder()
 				.setResourceUuid(ValueUtil.validateNull(reference.getUUID()))
-				.setFileName(ValueUtil.validateNull(reference.getFileName()))
+				.setFileName(ValueUtil.validateNull(reference.getValidFileName()))
 				.setDescription(ValueUtil.validateNull(reference.getDescription()))
 				.setTextMsg(ValueUtil.validateNull(reference.getTextMsg()))
 				.setContentType(ValueUtil.validateNull(MimeType.getMimeType(reference.getFileName())))

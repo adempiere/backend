@@ -36,6 +36,7 @@ import org.compiere.model.I_W_Basket;
 import org.compiere.model.I_W_Store;
 import org.compiere.model.MBPartner;
 import org.compiere.model.MBPartnerLocation;
+import org.compiere.model.MBank;
 import org.compiere.model.MBankAccount;
 import org.compiere.model.MCharge;
 import org.compiere.model.MCity;
@@ -45,6 +46,7 @@ import org.compiere.model.MCountry;
 import org.compiere.model.MCurrency;
 import org.compiere.model.MDocType;
 import org.compiere.model.MFreightCategory;
+import org.compiere.model.MInvoice;
 import org.compiere.model.MLocation;
 import org.compiere.model.MMailText;
 import org.compiere.model.MOrder;
@@ -123,6 +125,7 @@ import org.spin.grpc.store.ListStocksResponse;
 import org.spin.grpc.store.Order;
 import org.spin.grpc.store.OrderLine;
 import org.spin.grpc.store.PaymentMethod;
+import org.spin.grpc.store.PaymentRequest;
 import org.spin.grpc.store.PriceInfo;
 import org.spin.grpc.store.Product;
 import org.spin.grpc.store.ProductOrderLine;
@@ -747,21 +750,103 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 		}
 		//	
 		salesOrder.saveEx();
+		//	Update Basket
+		basket.setIsActive(false);
+		basket.saveEx(transactionName);
 		//	Process Payments
-		processPayments(paymentMethod, salesOrder, transactionName);
+		processPayments(paymentMethod, salesOrder, request.getPaymentsList(), transactionName);
 		return convertOrder(request, salesOrder, transactionName);
 	}
 	
 	/**
 	 * Process Payments
-	 * @param paymentMethod
+	 * @param defaultPaymentMethod
 	 * @param salesOrder
 	 * @param transactionName
 	 */
-	private void processPayments(MWPaymentMethod paymentMethod, MOrder salesOrder, String transactionName) {
-		//	e-Commerce cash waiting for collect is generated as draft documents
-		if(paymentMethod.getTenderType().equals(MPayment.TENDERTYPE_Cash)) {
-			payWithCashAsPayment(salesOrder, transactionName);
+	private void processPayments(MWPaymentMethod defaultPaymentMethod, MOrder salesOrder, List<PaymentRequest> paymentList, String transactionName) {
+		AtomicReference<BigDecimal> paymentAmount = new AtomicReference<BigDecimal>();
+		//	Additional Payments
+		paymentList.forEach(paymentRequest -> {
+			MWPaymentMethod paymentMethod = MWPaymentMethod.getByValue(Env.getCtx(), paymentRequest.getPaymentMethodCode(), transactionName);
+			int currencyId = salesOrder.getC_Currency_ID();
+			if(!Util.isEmpty(paymentRequest.getCurrencyCode())) {
+				MCurrency currency = MCurrency.get(Env.getCtx(), paymentRequest.getCurrencyCode());
+				if(currency != null) {
+					currencyId = currency.getC_Currency_ID();
+				}
+			}
+			//	Process Payment
+			processPayment(salesOrder, paymentMethod.getTenderType(), currencyId, new BigDecimal(paymentRequest.getAmount()), paymentRequest, transactionName);
+			//	Cumulate
+			paymentAmount.updateAndGet(amount -> amount.add(new BigDecimal(paymentRequest.getAmount())));
+		});
+		//	All Payments
+		if(paymentAmount.get().signum() != 0) {
+			//	e-Commerce cash waiting for collect is generated as draft documents
+			if(defaultPaymentMethod.getTenderType().equals(MPayment.TENDERTYPE_Cash)) {
+				processPayment(salesOrder, MPayment.TENDERTYPE_Cash, salesOrder.getC_Currency_ID(), paymentAmount.get(), null, transactionName);
+			}
+		}
+	}
+	
+	/**
+	 * Process Payment
+	 * @param salesOrder
+	 * @param tenderType
+	 * @param currencyId
+	 * @param paymentAmount
+	 * @param paymentRequest
+	 * @param transactionName
+	 */
+	private void processPayment(MOrder salesOrder, String tenderType, int currencyId, BigDecimal paymentAmount, PaymentRequest paymentRequest, String transactionName) {
+		if(paymentRequest == null) {
+			paymentRequest = PaymentRequest.newBuilder().build();
+		}
+		if(Util.isEmpty(tenderType)) {
+			tenderType = MPayment.TENDERTYPE_Cash;
+		}
+		MPayment payment = createPayment(salesOrder, tenderType, currencyId, paymentAmount, transactionName);
+		switch (tenderType) {
+			case MPayment.TENDERTYPE_Check:
+				//	TODO: Add references
+//				payment.setAccountNo(accountNo);
+//				payment.setRoutingNo(routingNo);
+				payment.setCheckNo(paymentRequest.getReferenceNo());
+				break;
+			case MPayment.TENDERTYPE_DirectDebit:
+				//	TODO: Add Information
+//				payment.setRoutingNo(routingNo);
+//				payment.setA_Country(accountCountry);
+//				payment.setCreditCardVV(cVV);
+				break;
+			case MPayment.TENDERTYPE_CreditCard:
+				//	TODO: Add Information
+//				payment.setCreditCard(MPayment.TRXTYPE_Sales, cardtype, cardNo, cvc, month, year);
+				break;
+			default:
+				payment.setDescription(paymentRequest.getDescription());
+				break;
+		}
+		//	Set Bank Id
+		if(paymentRequest.getBankId() > 0) {
+			payment.set_ValueOfColumn(MBank.COLUMNNAME_C_Bank_ID, paymentRequest.getBankId());
+		}
+		//	Validate reference
+		if(!Util.isEmpty(paymentRequest.getReferenceNo())) {
+			payment.addDescription(paymentRequest.getReferenceNo());
+		}
+		//	Set Description
+		if(!Util.isEmpty(paymentRequest.getDescription())) {
+			payment.addDescription(paymentRequest.getDescription());
+		}
+		payment.save(transactionName);
+		//	Process Payment
+		if(payment != null) {
+			if (!payment.processIt(X_C_Payment.DOCACTION_Prepare)) {
+				throw new AdempiereException("@Error@: " + payment.getProcessMsg());
+			}
+			payment.saveEx(transactionName);
 		}
 	}
 	
@@ -779,39 +864,47 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 	}
 	
 	/**
-	 * Pay it with cash
-	 * @param salesOrder
-	 * @return message
+	 * 	Create Payment object
+	 *  Refer to invoice if there is an invoice.
+	 *  Otherwise refer to order (it is a prepayment)
+	 * 
+	 * @return Payment object
+	 * 
 	 */
-	private String payWithCashAsPayment(MOrder salesOrder, String transactionName) {
+	private MPayment createPayment(MOrder salesOrder, String tenderType, int currencyId, BigDecimal paymentAmount, String transactionName) {
 		int cashAccountId = getCashBankAccount(salesOrder);
 		if(cashAccountId <= 0) {
 			throw new AdempiereException("@NoCashBook@");
 		}
 		//	
-		MPayment paymentCash = new MPayment(Env.getCtx(), 0, transactionName);
-		paymentCash.setC_BankAccount_ID(cashAccountId);
-		paymentCash.setC_DocType_ID(true);
-		paymentCash.setAD_Org_ID(salesOrder.getAD_Org_ID());
-        String value = DB.getDocumentNo(paymentCash.getC_DocType_ID(), transactionName, false,  paymentCash);
-        paymentCash.setDocumentNo(value);
-        paymentCash.setDateAcct(salesOrder.getDateAcct());
-        paymentCash.setDateTrx(salesOrder.getDateOrdered());
-        paymentCash.setTenderType(MPayment.TENDERTYPE_Cash);
-        paymentCash.setDescription(salesOrder.getDescription());
-        paymentCash.setC_BPartner_ID (salesOrder.getC_BPartner_ID());
-        paymentCash.setC_Currency_ID(salesOrder.getC_Currency_ID());
-        paymentCash.setPayAmt(salesOrder.getGrandTotal());
-        paymentCash.setOverUnderAmt(Env.ZERO);
+		MPayment payment = new MPayment(Env.getCtx(), 0, transactionName);
+		payment.setC_BankAccount_ID(cashAccountId);
+		payment.setC_DocType_ID(true);
+		payment.setAD_Org_ID(salesOrder.getAD_Org_ID());
+        String value = DB.getDocumentNo(payment.getC_DocType_ID(), transactionName, false,  payment);
+        payment.setDocumentNo(value);
+        payment.setDateAcct(salesOrder.getDateAcct());
+        payment.setDateTrx(salesOrder.getDateOrdered());
+        payment.setTenderType(MPayment.TENDERTYPE_Cash);
+        payment.setDescription(salesOrder.getDescription());
+        payment.setC_BPartner_ID (salesOrder.getC_BPartner_ID());
+        payment.setC_Currency_ID(salesOrder.getC_Currency_ID());
+        payment.setPayAmt(paymentAmount);
+        payment.setOverUnderAmt(Env.ZERO);
         //	Order Reference
-        paymentCash.setC_Order_ID(salesOrder.getC_Order_ID());
-        paymentCash.setDocStatus(MPayment.DOCSTATUS_Drafted);
-		paymentCash.saveEx();
-		if (!paymentCash.processIt(X_C_Payment.DOCACTION_Prepare)) {
-			throw new AdempiereException("@Error@: " + paymentCash.getProcessMsg());
+        payment.setC_Order_ID(salesOrder.getC_Order_ID());
+        payment.setDocStatus(MPayment.DOCSTATUS_Drafted);
+		payment.saveEx();
+		int invoiceId = salesOrder.getC_Invoice_ID();
+		if(invoiceId > 0) {
+			payment.setC_Invoice_ID(invoiceId);
+			MInvoice invoice = new MInvoice(Env.getCtx(), payment.getC_Invoice_ID(), transactionName);
+			payment.setDescription(Msg.getMsg(Env.getCtx(), "Invoice No ") + invoice.getDocumentNo());
+		} else {
+			payment.setDescription(Msg.getMsg(Env.getCtx(), "Order No ") + salesOrder.getDocumentNo());
 		}
-		paymentCash.saveEx();
-		return "@C_Payment_ID@: " + paymentCash.getDocumentNo();
+		payment.saveEx(transactionName);
+		return payment;
 	}
 	
 	/**
@@ -1460,6 +1553,7 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 		if(!isGuest) {
 			basket = new Query(Env.getCtx(), I_W_Basket.Table_Name, I_W_Basket.COLUMNNAME_AD_User_ID + " = ?", transactionName)
 					.setParameters(Env.getAD_User_ID(Env.getCtx()))
+					.setOnlyActiveRecords(true)
 					.first();
 		}
 		//	Create instead
