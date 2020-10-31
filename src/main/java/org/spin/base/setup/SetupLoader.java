@@ -17,8 +17,10 @@ package org.spin.base.setup;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
 
 import org.compiere.db.CConnection;
+import org.compiere.util.CLogMgt;
 import org.compiere.util.DB;
 import org.compiere.util.Ini;
 
@@ -89,6 +91,10 @@ public class SetupLoader {
 			connection.setAppsPort(0);
 		//	Set default init
 		Ini.setProperty(Ini.P_CONNECTION, connection.toStringLong());
+		Ini.setClient(false);
+		Level logLevel = Level.parse(setup.getServer().getLog_level().toUpperCase());
+		Ini.setProperty(Ini.P_TRACEFILE, logLevel.getName());
+		CLogMgt.setLevel(logLevel);
 		DB.setDBTarget(connection);
 	}
 	

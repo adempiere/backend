@@ -81,6 +81,16 @@ import io.grpc.stub.StreamObserver;
  * Access service
  */
 public class AccessServiceImplementation extends SecurityImplBase {
+	
+	/**
+	 * Load Validators
+	 */
+	public AccessServiceImplementation() {
+		super();
+		DB.validateSupportedUUIDFromDB();
+		MCountry.getCountries(Env.getCtx());
+	}
+	
 	/**	Logger			*/
 	private CLogger log = CLogger.getCLogger(AccessServiceImplementation.class);
 	/**	Menu */
@@ -300,7 +310,6 @@ public class AccessServiceImplementation extends SecurityImplBase {
 	 */
 	private Session.Builder createSession(LoginRequest request, boolean isDefaultRole) {
 		Session.Builder builder = Session.newBuilder();
-		DB.validateSupportedUUIDFromDB();
 		//	Get Session
 		Properties context = Env.getCtx();
 		int userId = getUserId(request.getUserName(), request.getUserPass());
