@@ -150,7 +150,7 @@ import org.spin.model.MADAttachmentReference;
 import org.spin.model.MADToken;
 import org.spin.model.MADTokenDefinition;
 import org.spin.model.MWDeliveryViaRuleAllocation;
-import org.spin.model.MWPaymentMethod;
+import org.spin.model.MCPaymentMethod;
 import org.spin.util.AttachmentUtil;
 import org.spin.util.TokenGeneratorHandler;
 import org.spin.util.VueStoreFrontUtil;
@@ -738,7 +738,7 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 			throw new AdempiereException("@TenderType@ @IsMandatory@");
 		}
 		//	
-		MWPaymentMethod paymentMethod = MWPaymentMethod.getByValue(Env.getCtx(), request.getPaymentMethodCode(), transactionName);
+		MCPaymentMethod paymentMethod = MCPaymentMethod.getByValue(Env.getCtx(), request.getPaymentMethodCode(), transactionName);
 		salesOrder.setDocStatus(MOrder.DOCSTATUS_Drafted);
 		salesOrder.setDocAction(MOrder.ACTION_Complete);
 		salesOrder.saveEx();
@@ -764,11 +764,11 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 	 * @param salesOrder
 	 * @param transactionName
 	 */
-	private void processPayments(MWPaymentMethod defaultPaymentMethod, MOrder salesOrder, List<PaymentRequest> paymentList, String transactionName) {
-		AtomicReference<BigDecimal> paymentAmount = new AtomicReference<BigDecimal>();
+	private void processPayments(MCPaymentMethod defaultPaymentMethod, MOrder salesOrder, List<PaymentRequest> paymentList, String transactionName) {
+		AtomicReference<BigDecimal> paymentAmount = new AtomicReference<BigDecimal>(Env.ZERO);
 		//	Additional Payments
 		paymentList.forEach(paymentRequest -> {
-			MWPaymentMethod paymentMethod = MWPaymentMethod.getByValue(Env.getCtx(), paymentRequest.getPaymentMethodCode(), transactionName);
+			MCPaymentMethod paymentMethod = MCPaymentMethod.getByValue(Env.getCtx(), paymentRequest.getPaymentMethodCode(), transactionName);
 			int currencyId = salesOrder.getC_Currency_ID();
 			if(!Util.isEmpty(paymentRequest.getCurrencyCode())) {
 				MCurrency currency = MCurrency.get(Env.getCtx(), paymentRequest.getCurrencyCode());
@@ -778,15 +778,14 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 			}
 			//	Process Payment
 			processPayment(salesOrder, paymentMethod.getTenderType(), currencyId, new BigDecimal(paymentRequest.getAmount()), paymentRequest, transactionName);
-			//	Cumulate
+			//	Cummulate
 			paymentAmount.updateAndGet(amount -> amount.add(new BigDecimal(paymentRequest.getAmount())));
 		});
 		//	All Payments
-		if(paymentAmount.get().signum() != 0) {
+		if(paymentAmount.get().compareTo(Env.ZERO) >= 0
+				&& salesOrder.getGrandTotal().subtract(paymentAmount.get()).compareTo(Env.ZERO) > 0) {
 			//	e-Commerce cash waiting for collect is generated as draft documents
-			if(defaultPaymentMethod.getTenderType().equals(MPayment.TENDERTYPE_Cash)) {
-				processPayment(salesOrder, MPayment.TENDERTYPE_Cash, salesOrder.getC_Currency_ID(), paymentAmount.get(), null, transactionName);
-			}
+			processPayment(salesOrder, defaultPaymentMethod.getTenderType(), salesOrder.getC_Currency_ID(), salesOrder.getGrandTotal().subtract(paymentAmount.get()), null, transactionName);
 		}
 	}
 	
@@ -840,7 +839,7 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 		if(!Util.isEmpty(paymentRequest.getDescription())) {
 			payment.addDescription(paymentRequest.getDescription());
 		}
-		payment.save(transactionName);
+		payment.saveEx(transactionName);
 		//	Process Payment
 		if(payment != null) {
 			if (!payment.processIt(X_C_Payment.DOCACTION_Prepare)) {
@@ -1226,7 +1225,7 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 			if(store == null) {
 				throw new AdempiereException("@W_Store_ID@ @NotFound@");
 			}
-			MWPaymentMethod.getOfStore(Env.getCtx(), store.getW_Store_ID(), transactionName).forEach(paymentMethod -> builder.addPaymentMethods(
+			MCPaymentMethod.getOfStore(Env.getCtx(), store.getW_Store_ID(), transactionName).forEach(paymentMethod -> builder.addPaymentMethods(
 					PaymentMethod.newBuilder()
 						.setCode(ValueUtil.validateNull(paymentMethod.getValue()))
 						.setName(ValueUtil.validateNull(paymentMethod.getName())))
@@ -1497,7 +1496,7 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 				.setOnlyActiveRecords(true);
 		//	Count it
 		int count = query.count();
-		query.setLimit(limit, offset).<MWPaymentMethod>list().forEach(paymentMethod -> builder.addPaymentMethods(
+		query.setLimit(limit, offset).<MCPaymentMethod>list().forEach(paymentMethod -> builder.addPaymentMethods(
 				PaymentMethod.newBuilder()
 					.setCode(ValueUtil.validateNull(paymentMethod.getValue()))
 					.setName(ValueUtil.validateNull(paymentMethod.getName())))
