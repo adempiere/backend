@@ -145,7 +145,7 @@ import org.spin.grpc.store.UpdateCustomerRequest;
 import org.spin.grpc.store.WebStoreGrpc.WebStoreImplBase;
 import org.spin.model.I_AD_AttachmentReference;
 import org.spin.model.I_W_DeliveryViaRuleAllocation;
-import org.spin.model.I_W_PaymentMethod;
+import org.spin.model.I_C_PaymentMethod;
 import org.spin.model.MADAttachmentReference;
 import org.spin.model.MADToken;
 import org.spin.model.MADTokenDefinition;
@@ -1488,8 +1488,8 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
 		int offset = (pageNumber > 0? pageNumber - 1: 0) * RecordUtil.PAGE_SIZE;
 		int limit = (pageNumber == 0? 1: pageNumber) * RecordUtil.PAGE_SIZE;
-		Query query = new Query(Env.getCtx(), I_W_PaymentMethod.Table_Name, "EXISTS(SELECT 1 FROM W_PaymentMethodAllocation a "
-				+ "WHERE a.W_PaymentMethod_ID = W_PaymentMethod.W_PaymentMethod_ID "
+		Query query = new Query(Env.getCtx(), I_C_PaymentMethod.Table_Name, "EXISTS(SELECT 1 FROM C_PaymentMethodAllocation a "
+				+ "WHERE a.C_PaymentMethod_ID = C_PaymentMethod.C_PaymentMethod_ID "
 				+ "AND a.W_Store_ID = ?)" , null)
 				.setParameters(store.getW_Store_ID())
 				.setClient_ID()
