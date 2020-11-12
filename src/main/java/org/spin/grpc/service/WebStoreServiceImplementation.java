@@ -1816,7 +1816,7 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 			}
 			//	Create
 			customer.setName(request.getFirstName());
-			customer.set_ValueOfColumn(VueStoreFrontUtil.COLUMNNAME_LastName, request.getLastName());
+			customer.set_ValueOfColumn(MBPartner.COLUMNNAME_Name2, request.getLastName());
 			//	Add Email
 			customer.setEMail(request.getEmail());
 			customer.setValue(request.getEmail());			
@@ -1854,7 +1854,7 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 				location.saveEx(transactionName);
 				//	Update location of business partner
 				businessPartnerLocation.setName(ValueUtil.validateNull(address.getFirstName()));
-				businessPartnerLocation.set_ValueOfColumn(VueStoreFrontUtil.COLUMNNAME_LastName, ValueUtil.validateNull(address.getFirstName()));
+				businessPartnerLocation.set_ValueOfColumn(MBPartner.COLUMNNAME_Description, ValueUtil.validateNull(address.getLastName()));
 				businessPartnerLocation.setC_Location_ID(location.getC_Location_ID());
 				businessPartnerLocation.setPhone(address.getPhone());
 				boolean isDefaultShipping = request.getDefaultShipping() == businessPartnerLocation.getC_BPartner_Location_ID();
@@ -1883,7 +1883,7 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 		//	Set builder
 		builder.setEmail(ValueUtil.validateNull(customer.getEMail()))
 			.setFirstName(ValueUtil.validateNull(customer.getName()))
-			.setLastName(ValueUtil.validateNull(customer.get_ValueAsString(VueStoreFrontUtil.COLUMNNAME_LastName)))
+			.setLastName(ValueUtil.validateNull(customer.get_ValueAsString(MBPartner.COLUMNNAME_Name2)))
 			.setId(customer.getAD_User_ID())
 			.setCreated(dateConverter.format(customer.getCreated()))
 			.setUpdated(dateConverter.format(customer.getUpdated()))
@@ -1937,7 +1937,7 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 	private MUser createUser(String firtName, String lastName, String email, String password, String transactionName) {
 		MUser newUser = new MUser(Env.getCtx(), 0, transactionName);
 		newUser.setName(firtName);
-		newUser.set_ValueOfColumn(VueStoreFrontUtil.COLUMNNAME_LastName, lastName);
+		newUser.set_ValueOfColumn(MBPartner.COLUMNNAME_Name2, lastName);
 		//	Add Email
 		newUser.setEMail(email);
 		newUser.setValue(email);
@@ -1992,7 +1992,7 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 			.setPostalCode(ValueUtil.validateNull(location.getPostal()))
 			.setPhone(ValueUtil.validateNull(Optional.ofNullable(businessPartnerLocation.getPhone()).orElse(Optional.ofNullable(phone).orElse(""))))
 			.setFirstName(ValueUtil.validateNull(businessPartnerLocation.getName()))
-			.setLastName(ValueUtil.validateNull(businessPartnerLocation.get_ValueAsString(VueStoreFrontUtil.COLUMNNAME_LastName)))
+			.setLastName(ValueUtil.validateNull(businessPartnerLocation.get_ValueAsString(MBPartner.COLUMNNAME_Description)))
 			.setAddress1(ValueUtil.validateNull(location.getAddress1()))
 			.setAddress2(ValueUtil.validateNull(location.getAddress2()))
 			.setAddress3(ValueUtil.validateNull(location.getAddress3()))
