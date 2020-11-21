@@ -64,6 +64,7 @@ message LoginRequest {
 	string warehouse_uuid = 5;
 	string client_version = 6;
 	string language = 7;
+	string token = 8;
 }
 
 // Request a Logout

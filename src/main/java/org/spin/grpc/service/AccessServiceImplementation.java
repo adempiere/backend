@@ -20,6 +20,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.logging.Level;
 
@@ -72,7 +73,12 @@ import org.spin.grpc.util.SessionRequest;
 import org.spin.grpc.util.UserInfo;
 import org.spin.grpc.util.UserInfoRequest;
 import org.spin.model.MADAttachmentReference;
+import org.spin.model.MADToken;
+import org.spin.model.MADTokenDefinition;
 import org.spin.util.AttachmentUtil;
+import org.spin.util.IThirdPartyAccessGenerator;
+import org.spin.util.ITokenGenerator;
+import org.spin.util.TokenGeneratorHandler;
 
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
@@ -312,25 +318,62 @@ public class AccessServiceImplementation extends SecurityImplBase {
 		Session.Builder builder = Session.newBuilder();
 		//	Get Session
 		Properties context = Env.getCtx();
-		int userId = getUserId(request.getUserName(), request.getUserPass());
-		//	Get Values from role
-		if(userId < 0) {
-			throw new AdempiereException("@AD_User_ID@ / @AD_Role_ID@ / @AD_Org_ID@ @NotFound@");
-		}
+		//	Validate if is token based
+		int userId = -1;
 		int roleId = -1;
 		int organizationId = -1;
 		int warehouseId = -1;
+		if(!Util.isEmpty(request.getToken())) {
+			try {
+				ITokenGenerator generator = TokenGeneratorHandler.getInstance().getTokenGenerator(MADTokenDefinition.TOKENTYPE_ThirdPartyAccess);
+				if(generator == null) {
+					throw new AdempiereException("@AD_TokenDefinition_ID@ @NotFound@");
+				}
+				//	No child of definition
+				if(!IThirdPartyAccessGenerator.class.isAssignableFrom(generator.getClass())) {
+					throw new AdempiereException("@AD_TokenDefinition_ID@ @Invalid@");	
+				}
+				//	Validate
+				IThirdPartyAccessGenerator thirdPartyAccessGenerator = ((IThirdPartyAccessGenerator) generator);
+				if(!thirdPartyAccessGenerator.validateToken(request.getToken())) {
+					throw new AdempiereException("@Invalid@ @AD_Token_ID@");
+				}
+				//	Default
+				MADToken token = thirdPartyAccessGenerator.getToken();
+				if(Optional.ofNullable(token).isPresent()) {
+					userId = token.getAD_User_ID();
+					roleId = token.getAD_Role_ID();
+					organizationId = token.getAD_Org_ID();
+				}
+			} catch (Exception e) {
+				throw new AdempiereException(e);
+			}
+		} else {
+			userId = getUserId(request.getUserName(), request.getUserPass());
+			//	Get Values from role
+			if(userId < 0) {
+				throw new AdempiereException("@AD_User_ID@ / @AD_Role_ID@ / @AD_Org_ID@ @NotFound@");
+			}
+		}
 		if(isDefaultRole) {
-			roleId = DB.getSQLValue(null, "SELECT ur.AD_Role_ID "
-					+ "FROM AD_User_Roles ur "
-					+ "WHERE ur.AD_User_ID = ? AND ur.IsActive = 'Y' "
-					+ "ORDER BY COALESCE(ur.IsDefault,'N') DESC", userId);
+			if(roleId <= 0) {
+				roleId = DB.getSQLValue(null, "SELECT ur.AD_Role_ID "
+						+ "FROM AD_User_Roles ur "
+						+ "WHERE ur.AD_User_ID = ? AND ur.IsActive = 'Y' "
+						+ "ORDER BY COALESCE(ur.IsDefault,'N') DESC", userId);
+			}
 			//	Organization
-			organizationId = getDefaultOrganizationId(roleId, userId);
+			if(organizationId < 0) {
+				organizationId = getDefaultOrganizationId(roleId, userId);
+			}
 			warehouseId = DB.getSQLValue(null, "SELECT M_Warehouse_ID FROM M_Warehouse WHERE IsActive = 'Y' AND AD_Org_ID = ?", organizationId);
 		} else {
-			roleId = RecordUtil.getIdFromUuid(I_AD_Role.Table_Name, request.getRoleUuid(), null);
-			organizationId = RecordUtil.getIdFromUuid(I_AD_Org.Table_Name, request.getOrganizationUuid(), null);
+			if(roleId <= 0) {
+				roleId = RecordUtil.getIdFromUuid(I_AD_Role.Table_Name, request.getRoleUuid(), null);
+			}
+			if(organizationId < 0) {
+				organizationId = RecordUtil.getIdFromUuid(I_AD_Org.Table_Name, request.getOrganizationUuid(), null);
+			}
 			warehouseId = RecordUtil.getIdFromUuid(I_M_Warehouse.Table_Name, request.getWarehouseUuid(), null);
 		}
 		if(organizationId < 0) {
