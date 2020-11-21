@@ -16,6 +16,7 @@
 package org.spin.base.util;
 
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.compiere.model.I_AD_Element;
 import org.compiere.model.I_C_ConversionType;
@@ -65,6 +66,7 @@ import org.spin.grpc.util.Value;
 import org.spin.grpc.util.Warehouse;
 import org.spin.grpc.util.ChatEntry.ModeratorStatus;
 import org.spin.model.MADAttachmentReference;
+import org.spin.util.AttachmentUtil;
 
 /**
  * Class for convert any document
@@ -468,7 +470,17 @@ public class ConvertUtil {
 	 */
 	public static Organization.Builder convertOrganization(MOrg organization) {
 		MOrgInfo organizationInfo = MOrgInfo.get(Env.getCtx(), organization.getAD_Org_ID(), null);
+		AtomicReference<String> corporateImageBranding = new AtomicReference<String>();
+		if(organizationInfo.getCorporateBrandingImage_ID() > 0 && AttachmentUtil.getInstance().isValidForClient(organizationInfo.getAD_Client_ID())) {
+			MClientInfo clientInfo = MClientInfo.get(Env.getCtx(), organizationInfo.getAD_Client_ID());
+			MADAttachmentReference attachmentReference = MADAttachmentReference.getByImageId(Env.getCtx(), clientInfo.getFileHandler_ID(), organizationInfo.getCorporateBrandingImage_ID(), null);
+			if(attachmentReference != null
+					&& attachmentReference.getAD_AttachmentReference_ID() > 0) {
+				corporateImageBranding.set(attachmentReference.getValidFileName());
+			}
+		}
 		return Organization.newBuilder()
+				.setCorporateBrandingImage(ValueUtil.validateNull(corporateImageBranding.get()))
 				.setUuid(ValueUtil.validateNull(organization.getUUID()))
 				.setId(organization.getAD_Org_ID())
 				.setName(ValueUtil.validateNull(organization.getName()))

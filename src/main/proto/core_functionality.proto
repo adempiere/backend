@@ -200,6 +200,7 @@ message Organization {
 	string phone = 8;
 	string phone2 = 9;
 	string fax = 10;
+	string corporate_branding_image = 11;
 }
 
 //	List Organizations Response
