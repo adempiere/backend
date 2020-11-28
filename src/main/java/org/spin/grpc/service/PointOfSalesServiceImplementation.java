@@ -1677,8 +1677,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	Validate Price List
 		MPriceList priceList = null;
 		if(Util.isEmpty(request.getPriceListUuid())) {
-			priceList = new Query(Env.getCtx(), I_M_PriceList.Table_Name, "EXISTS(SELECT 1 FROM C_POS p WHERE p.M_PriceList_ID = M_PriceList.M_PriceList_ID AND p.AD_Org_ID IN(0, ?))", null)
-					.setParameters(Env.getAD_Org_ID(Env.getCtx()))
+			priceList = new Query(Env.getCtx(), I_M_PriceList.Table_Name, "EXISTS(SELECT 1 FROM C_POS p WHERE p.M_PriceList_ID = M_PriceList.M_PriceList_ID AND p.AD_Org_ID IN(0, ?) AND p.SalesRep_ID = ?)", null)
+					.setParameters(Env.getAD_Org_ID(Env.getCtx()), Env.getAD_User_ID(Env.getCtx()))
 					.setClient_ID()
 					.setOnlyActiveRecords(true)
 					.first();
