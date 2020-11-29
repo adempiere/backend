@@ -40,6 +40,7 @@ import org.compiere.model.MBPartner;
 import org.compiere.model.MBPartnerLocation;
 import org.compiere.model.MBankAccount;
 import org.compiere.model.MCharge;
+import org.compiere.model.MConversionRate;
 import org.compiere.model.MCurrency;
 import org.compiere.model.MDocType;
 import org.compiere.model.MOrder;
@@ -1439,8 +1440,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	private MPriceList getPriceList(String priceListUuid) {
 		MPriceList priceList = null;
 		if(Util.isEmpty(priceListUuid)) {
-			priceList = new Query(Env.getCtx(), I_M_PriceList.Table_Name, "EXISTS(SELECT 1 FROM C_POS p WHERE p.M_PriceList_ID = M_PriceList.M_PriceList_ID AND p.AD_Org_ID IN(0, ?))", null)
-					.setParameters(Env.getAD_Org_ID(Env.getCtx()))
+			priceList = new Query(Env.getCtx(), I_M_PriceList.Table_Name, "EXISTS(SELECT 1 FROM C_POS p WHERE p.M_PriceList_ID = M_PriceList.M_PriceList_ID AND p.AD_Org_ID IN(0, ?) AND p.SalesRep_ID = ?)", null)
+					.setParameters(Env.getAD_Org_ID(Env.getCtx()), Env.getAD_User_ID(Env.getCtx()))
 					.setClient_ID()
 					.setOnlyActiveRecords(true)
 					.first();
@@ -1582,12 +1583,23 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	Pricing
 		builder.setPricePrecision(productPricing.getPrecision());
 		//	Prices
-		if(productPricing.getPriceList() != null && productPricing.getPriceList().compareTo(Env.ZERO) > 0
-				&& productPricing.getPriceStd() != null && productPricing.getPriceStd().compareTo(Env.ZERO) > 0
-				&& productPricing.getPriceLimit() != null && productPricing.getPriceLimit().compareTo(Env.ZERO) > 0) {
+		if(Optional.ofNullable(productPricing.getPriceList()).orElse(Env.ZERO).signum() > 0
+				&& Optional.ofNullable(productPricing.getPriceStd()).orElse(Env.ZERO).signum() > 0
+				&& Optional.ofNullable(productPricing.getPriceLimit()).orElse(Env.ZERO).signum() > 0) {
 			builder.setPriceList(ValueUtil.getDecimalFromBigDecimal(productPricing.getPriceList()));
 			builder.setPriceStandard(ValueUtil.getDecimalFromBigDecimal(productPricing.getPriceStd()));
 			builder.setPriceLimit(ValueUtil.getDecimalFromBigDecimal(productPricing.getPriceLimit()));
+			//	Get from schema
+			int schemaCurrencyId = Env.getContextAsInt(Env.getCtx(), "$C_Currency_ID");
+			if(schemaCurrencyId > 0) {
+				builder.setSchemaCurrency(ConvertUtil.convertCurrency(MCurrency.get(Env.getCtx(), schemaCurrencyId)));
+				//	Get
+				BigDecimal conversionRate = Optional.ofNullable(MConversionRate.getRate(priceList.getC_Currency_ID(), schemaCurrencyId, getDate(), getConversionTypeForPrice(), Env.getAD_Client_ID(Env.getCtx()), Env.getAD_Org_ID(Env.getCtx())))
+						.orElse(Env.ZERO);
+				builder.setSchemaPriceList(ValueUtil.getDecimalFromBigDecimal(Optional.ofNullable(productPricing.getPriceList()).orElse(Env.ZERO).multiply(conversionRate).setScale(productPricing.getPrecision(), BigDecimal.ROUND_HALF_UP)));
+				builder.setSchemaPriceStandard(ValueUtil.getDecimalFromBigDecimal(Optional.ofNullable(productPricing.getPriceStd()).orElse(Env.ZERO).multiply(conversionRate).setScale(productPricing.getPrecision(), BigDecimal.ROUND_HALF_UP)));
+				builder.setSchemaPriceLimit(ValueUtil.getDecimalFromBigDecimal(Optional.ofNullable(productPricing.getPriceLimit()).orElse(Env.ZERO).multiply(conversionRate).setScale(productPricing.getPrecision(), BigDecimal.ROUND_HALF_UP)));
+			}
 		}
 		//	Get Storage
 		if(warehouseId > 0) {
@@ -1611,6 +1623,20 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			builder.setQuantityAvailable(ValueUtil.getDecimalFromBigDecimal(quantityAvailable.get()));
 		}
 		return builder;
+	}
+	
+	/**
+	 * Get Conversion Type from Sales Rep and POS
+	 * @return
+	 */
+	private int getConversionTypeForPrice() {
+		return new Query(Env.getCtx(), I_C_ConversionType.Table_Name, "EXISTS(SELECT 1 FROM C_POS p "
+				+ "WHERE p.C_ConversionType_ID = C_ConversionType.C_ConversionType_ID "
+				+ "AND p.AD_Org_ID IN(0, ?) "
+				+ "AND p.SalesRep_ID = ?)", null)
+				.setParameters(Env.getAD_Org_ID(Env.getCtx()), Env.getAD_User_ID(Env.getCtx()))
+				.setOnlyActiveRecords(true)
+				.firstId();
 	}
 	
 	/**
@@ -1677,11 +1703,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	Validate Price List
 		MPriceList priceList = null;
 		if(Util.isEmpty(request.getPriceListUuid())) {
-			priceList = new Query(Env.getCtx(), I_M_PriceList.Table_Name, "EXISTS(SELECT 1 FROM C_POS p WHERE p.M_PriceList_ID = M_PriceList.M_PriceList_ID AND p.AD_Org_ID IN(0, ?) AND p.SalesRep_ID = ?)", null)
-					.setParameters(Env.getAD_Org_ID(Env.getCtx()), Env.getAD_User_ID(Env.getCtx()))
-					.setClient_ID()
-					.setOnlyActiveRecords(true)
-					.first();
+			priceList = getPriceList(null);
 		} else {
 			int priceListId = RecordUtil.getIdFromUuid(I_M_PriceList.Table_Name, request.getPriceListUuid(), null);
 			if(priceListId > 0) {
