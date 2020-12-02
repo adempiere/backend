@@ -274,17 +274,7 @@ public class AccessServiceImplementation extends SecurityImplBase {
 		query.setLimit(limit, offset)
 			.<MRole>list()
 			.forEach(role -> {
-				builder.addRoles(Role.newBuilder()
-						.setClientId(role.getAD_Client_ID())
-						.setClientName(ValueUtil.validateNull(MClient.get(Env.getCtx(), role.getAD_Client_ID()).getName()))
-						.setDescription(ValueUtil.validateNull(role.getDescription()))
-						.setId(role.getAD_Role_ID())
-						.setUuid(ValueUtil.validateNull(role.getUUID()))
-						.setIsCanExport(role.isCanExport())
-						.setIsCanReport(role.isCanReport())
-						.setIsPersonalAccess(role.isPersonalAccess())
-						.setIsPersonalLock(role.isPersonalLock())
-						.setName(ValueUtil.validateNull(role.getName())));
+				builder.addRoles(convertRole(role, false));
 			});
 		//	
 		builder.setRecordCount(count);
@@ -956,7 +946,22 @@ public class AccessServiceImplementation extends SecurityImplBase {
 					.setIsCanExport(role.isCanExport())
 					.setIsCanReport(role.isCanReport())
 					.setIsPersonalAccess(role.isPersonalAccess())
-					.setIsPersonalLock(role.isPersonalLock());
+					.setIsPersonalLock(role.isPersonalLock())
+					.setIsAllowHtmlView(role.isAllow_HTML_View())
+					.setIsAllowInfoAccount(role.isAllow_Info_Account())
+					.setIsAllowInfoAsset(role.isAllow_Info_Asset())
+					.setIsAllowInfoBusinessPartner(role.isAllow_Info_BPartner())
+					.setIsAllowInfoCashJournal(role.isAllow_Info_CashJournal())
+					.setIsAllowInfoCrp(role.isAllow_Info_CRP())
+					.setIsAllowInfoInOut(role.isAllow_Info_InOut())
+					.setIsAllowInfoInvoice(role.isAllow_Info_Invoice())
+					.setIsAllowInfoMrp(role.isAllow_Info_MRP())
+					.setIsAllowInfoOrder(role.isAllow_Info_Order())
+					.setIsAllowInfoPayment(role.isAllow_Info_Payment())
+					.setIsAllowInfoProduct(role.isAllow_Info_Product())
+					.setIsAllowInfoResource(role.isAllow_Info_Resource())
+					.setIsAllowInfoSchedule(role.isAllow_Info_Schedule())
+					.setIsAllowXlsView(role.isAllow_XLS_View());
 			//	With Access
 			// TODO: load from other service
 			if(withAccess) {
