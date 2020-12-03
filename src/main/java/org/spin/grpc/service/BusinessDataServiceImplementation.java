@@ -24,6 +24,7 @@ import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -315,6 +316,10 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 			result = builder.execute();
 		} catch (Exception e) {
 			result = builder.getProcessInfo();
+			//	Set error message
+			if(Util.isEmpty(result.getSummary())) {
+				result.setSummary(e.getLocalizedMessage());
+			}
 		}
 		String reportViewUuid = null;
 		String printFormatUuid = request.getPrintFormatUuid();
@@ -389,7 +394,7 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 		}
 		//	Verify Output
 		if(process.isReport()) {
-			File reportFile = result.getReportAsFile();
+			File reportFile = Optional.ofNullable(result.getReportAsFile()).orElse(result.getPDFReport());
 			if(reportFile != null
 					&& reportFile.exists()) {
 				String validFileName = getValidName(reportFile.getName());
@@ -399,12 +404,20 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 				output.setMimeType(ValueUtil.validateNull(MimeType.getMimeType(validFileName)));
 				output.setDescription(ValueUtil.validateNull(process.getDescription()));
 				//	Type
+				String reportType = result.getReportType();
+				if(Util.isEmpty(result.getReportType())) {
+					reportType = result.getReportType();
+				}
+				if(!Util.isEmpty(getExtension(validFileName))
+						&& !getExtension(validFileName).equals(reportType)) {
+					reportType = getExtension(validFileName);
+				}
 				output.setReportType(request.getReportType());
 				ByteString resultFile = ByteString.readFrom(new FileInputStream(reportFile));
-				if(request.getReportType().endsWith("html")
-						|| request.getReportType().endsWith("txt")) {
+				if(reportType.endsWith("html") || reportType.endsWith("txt")) {
 					output.setOutputBytes(resultFile);
 				}
+				output.setReportType(reportType);
 				output.setOutputStream(resultFile);
 				output.setReportViewUuid(ValueUtil.validateNull(reportViewUuid));
 				output.setPrintFormatUuid(ValueUtil.validateNull(printFormatUuid));
@@ -448,11 +461,28 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 	 * @param name
 	 * @return
 	 */
-	private String getValidName(String name) {
-		if(Util.isEmpty(name)) {
+	private String getValidName(String fileName) {
+		if(Util.isEmpty(fileName)) {
 			return "";
 		}
-		return name.replaceAll("[+^:&áàäéèëíìïóòöúùñÁÀÄÉÈËÍÌÏÓÒÖÚÙÜÑçÇ$()*#/><]", "").replaceAll(" ", "-");
+		return fileName.replaceAll("[+^:&áàäéèëíìïóòöúùñÁÀÄÉÈËÍÌÏÓÒÖÚÙÜÑçÇ$()*#/><]", "").replaceAll(" ", "-");
+	}
+	
+	/**
+	 * get file extension
+	 * @param fileName
+	 * @return
+	 */
+	private String getExtension(String fileName) {
+		if(Util.isEmpty(fileName)) {
+			return "";
+		}
+		int index = fileName.lastIndexOf(".");
+		if(index <= -1) {
+			return "";
+		}
+		//	return
+		return fileName.substring(index + 1);
 	}
 	
 	/**
