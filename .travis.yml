@@ -15,9 +15,7 @@ before_script:
   - wget https://github.com/erpcya/adempiere/releases/download/3.9.3-rt-1.0/Adempiere_393LTS.tar.gz -c -O Adempiere.tar.gz
   - tar -xzf Adempiere.tar.gz
   - mv Adempiere/lib/*.jar dependences/
-  - mv Adempiere/packages/FleetManagement/lib/*.jar dependences/
-  - mv Adempiere/packages/FreightManagement/lib/*.jar dependences/
-  - mv Adempiere/packages/StoreIntegration/lib/*.jar dependences/
+  - mv Adempiere/packages/*/lib/*.jar dependences/
   
 jobs:
   include:
