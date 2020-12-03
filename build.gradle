@@ -52,8 +52,8 @@ dependencies {
     testCompile "org.mockito:mockito-core:1.9.5"
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.0.1'
 	compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.11.0'
-	implementation 'com.itextpdf:itext-pdfa:5.5.2'
-	implementation 'com.lowagie:itext:2.1.7'
+	compile 'com.itextpdf:itext-pdfa:5.5.2'
+	compile 'com.lowagie:itext:2.1.7'
 }
 
 protobuf {
@@ -93,44 +93,8 @@ task ADempiereAllInOne(type: CreateStartScripts) {
     classpath = jar.outputs.files + project.configurations.runtime
 }
 
-task ADempiereAccess(type: CreateStartScripts) {
-    mainClassName = 'org.spin.server.AccessServer'
-    applicationName = 'adempiere-access-server'
-    defaultJvmOpts = Arrays.asList("-DPropertyFile=Adempiere.properties", "-Dorg.adempiere.server.embedded=true")
-    outputDir = new File(project.buildDir, 'tmp')
-    classpath = jar.outputs.files + project.configurations.runtime
-}
-
-task ADempiereDictionary(type: CreateStartScripts) {
-    mainClassName = 'org.spin.server.DictionaryServer'
-    applicationName = 'adempiere-dictionary-server'
-    defaultJvmOpts = Arrays.asList("-DPropertyFile=Adempiere.properties", "-Dorg.adempiere.server.embedded=true")
-    outputDir = new File(project.buildDir, 'tmp')
-    classpath = jar.outputs.files + project.configurations.runtime
-}
-
-task ADempiereBusinessData(type: CreateStartScripts) {
-    mainClassName = 'org.spin.server.BusinessDataServer'
-    applicationName = 'adempiere-businessdata-server'
-    defaultJvmOpts = Arrays.asList("-DPropertyFile=Adempiere.properties", "-Dorg.adempiere.server.embedded=true")
-    outputDir = new File(project.buildDir, 'tmp')
-    classpath = jar.outputs.files + project.configurations.runtime
-}
-
-task ADempiereManagementEnrollment(type: CreateStartScripts) {
-    mainClassName = 'org.spin.server.EnrollmentServer'
-    applicationName = 'adempiere-enrollment-server'
-    defaultJvmOpts = Arrays.asList("-DPropertyFile=Adempiere.properties", "-Dorg.adempiere.server.embedded=true")
-    outputDir = new File(project.buildDir, 'tmp')
-    classpath = jar.outputs.files + project.configurations.runtime
-}
-
 applicationDistribution.into('bin') {
 	from(ADempiereAllInOne)
-	from(ADempiereAccess)
-	from(ADempiereDictionary)
-    from(ADempiereBusinessData)
-    from(ADempiereManagementEnrollment)
     fileMode = 0755
 }
 
