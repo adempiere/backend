@@ -45,6 +45,7 @@ import org.compiere.util.CCache;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
+import org.compiere.util.TimeUtil;
 import org.compiere.util.Trx;
 import org.compiere.util.Util;
 import org.spin.base.util.ContextManager;
@@ -287,13 +288,17 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 			return null;
 		}
 		//	Get values
-		Timestamp conversionDate = new Timestamp(request.getConversionDate() == 0? System.currentTimeMillis(): request.getConversionDate());
+		Timestamp conversionDate = TimeUtil.getDay(new Timestamp(request.getConversionDate() == 0? System.currentTimeMillis(): request.getConversionDate()));
+		int organizationId = RecordUtil.getIdFromUuid(I_AD_Org.Table_Name, request.getClientRequest().getOrganizationUuid(), null);
+		if(organizationId < 0) {
+			organizationId = 0;
+		}
 		int conversionRateId = MConversionRate.getConversionRateId(RecordUtil.getIdFromUuid(I_C_Currency.Table_Name, request.getCurrencyFromUuid(), null), 
 				RecordUtil.getIdFromUuid(I_C_Currency.Table_Name, request.getCurrencyToUuid(), null), 
 				conversionDate, 
 				RecordUtil.getIdFromUuid(I_C_ConversionType.Table_Name, request.getConversionTypeUuid(), null), 
 				Env.getAD_Client_ID(Env.getCtx()), 
-				RecordUtil.getIdFromUuid(I_AD_Org.Table_Name, request.getClientRequest().getOrganizationUuid(), null));
+				organizationId);
 		if(conversionRateId > 0) {
 			return MConversionRate.get(Env.getCtx(), conversionRateId);
 		}
@@ -441,10 +446,12 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 			businessPartner.setIsVendor (false);
 			businessPartner.set_TrxName(transactionName);
 			//	Set Value
-			if(Util.isEmpty(request.getValue())) {
-				String value = DB.getDocumentNo(Env.getAD_Client_ID(Env.getCtx()), "C_BPartner", transactionName, businessPartner);
-				businessPartner.setValue(value);
+			String value = request.getValue();
+			if(Util.isEmpty(value)) {
+				value = DB.getDocumentNo(Env.getAD_Client_ID(Env.getCtx()), "C_BPartner", transactionName, businessPartner);
 			}
+			//	
+			businessPartner.setValue(value);
 			//	Tax Id
 			if(!Util.isEmpty(request.getTaxId())) {
 				businessPartner.setTaxID(request.getTaxId());
