@@ -425,7 +425,7 @@ public class ConvertUtil {
 		}
 		//	
 		return builder.setUuid(ValueUtil.validateNull(priceList.getUUID()))
-			.setId(priceList.getAD_Org_ID())
+			.setId(priceList.getM_PriceList_ID())
 			.setName(ValueUtil.validateNull(priceList.getName()))
 			.setDescription(ValueUtil.validateNull(priceList.getDescription()))
 			.setCurrency(convertCurrency(MCurrency.get(priceList.getCtx(), priceList.getC_Currency_ID())))
