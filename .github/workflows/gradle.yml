@@ -20,5 +20,15 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
+    - name: create dependences folder
+      run: mkdir dependences
+    - name: get adempiere source
+      run: wget https://github.com/erpcya/adempiere/releases/download/3.9.3-rs-4.0/Adempiere_393LTS.tar.gz -c -O Adempiere.tar.gz
+    - name: uncompress file
+      run: tar -xzf Adempiere.tar.gz
+    - name: move dependences
+      run: mv Adempiere/lib/*.jar dependences/
+    - name: move packages
+      run: mv Adempiere/packages/*/lib/*.jar dependences/
     - name: Build with Gradle
-      run: gradle build
+      run: gradle createRelease
