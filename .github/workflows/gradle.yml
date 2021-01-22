@@ -40,7 +40,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.TOKEN_ACCESS }}
       with:
-        args: 'build/release/*.zip'
+        args: 'build/release/adempiere-gRPC-Server.zip'
   publish:
     needs: build
     # The type of runner that the job will run on
