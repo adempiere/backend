@@ -11,7 +11,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -32,3 +31,34 @@ jobs:
       run: mv Adempiere/packages/*/lib/*.jar dependences/
     - name: Build with Gradle
       run: gradle createRelease
+  publish:
+    needs: build
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: Upload zip
+        uses: skx/github-action-publish-binaries@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN_ACCESS }}
+        with:
+          args: 'build/release/*.zip'
+      - name: Upload zip.MD5
+        uses: skx/github-action-publish-binaries@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN_ACCESS }}
+        with:
+          args: 'build/release/*.zip.MD5'
+      - name: Upload tar.gz
+        uses: skx/github-action-publish-binaries@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN_ACCESS }}
+        with:
+          args: 'build/release/*.tar.gz'
+      - name: Upload tar.MD5
+        uses: skx/github-action-publish-binaries@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN_ACCESS }}
+        with:
+          args: 'build/release/*.tar.gz.MD5'
