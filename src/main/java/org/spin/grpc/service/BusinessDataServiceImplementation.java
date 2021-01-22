@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.adempiere.exceptions.AdempiereException;
 import org.adempiere.model.I_AD_Browse;
@@ -624,9 +626,6 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 		Criteria criteria = request.getCriteria();
 		StringBuffer whereClause = new StringBuffer();
 		List<Object> params = new ArrayList<>();
-		if(!Util.isEmpty(criteria.getWhereClause())) {
-			whereClause.append("(").append(criteria.getWhereClause()).append(")");
-		}
 		//	For dynamic condition
 		String dynamicWhere = ValueUtil.getWhereClauseFromCriteria(criteria, params);
 		if(!Util.isEmpty(dynamicWhere)) {
@@ -651,12 +650,13 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
 		int offset = (pageNumber > 0? pageNumber - 1: 0) * RecordUtil.PAGE_SIZE;
 		int limit = (pageNumber == 0? 1: pageNumber) * RecordUtil.PAGE_SIZE;
-		Query query = new Query(context, criteria.getTableName(), whereClause.toString(), null)
-				.setParameters(params);
-		int count = query.count();
+		int count = 0;
 		ListEntitiesResponse.Builder builder = ListEntitiesResponse.newBuilder();
 		//	
 		if(Util.isEmpty(criteria.getQuery())) {
+			Query query = new Query(context, criteria.getTableName(), whereClause.toString(), null)
+					.setParameters(params);
+			count = query.count();
 			if(!Util.isEmpty(criteria.getOrderByClause())) {
 				query.setOrderBy(criteria.getOrderByClause());
 			}
@@ -675,7 +675,7 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 			}
 			//	
 			String parsedSQL = MRole.getDefault().addAccessSQL(sql.toString(),
-					criteria.getTableName(), MRole.SQL_FULLYQUALIFIED,
+					null, MRole.SQL_FULLYQUALIFIED,
 					MRole.SQL_RO);
 			String orderByClause = criteria.getOrderByClause();
 			if(Util.isEmpty(orderByClause)) {
@@ -684,7 +684,7 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 				orderByClause = " ORDER BY " + orderByClause;
 			}
 			//	Count records
-			count = countRecords(context, parsedSQL, criteria.getTableName(), params);
+			count = countRecords(parsedSQL, criteria.getTableName(), params);
 			//	Add Row Number
 			parsedSQL = parsedSQL + " AND ROWNUM >= " + offset + " AND ROWNUM <= " + limit;
 			//	Add Order By
@@ -772,15 +772,20 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 	
 	/**
 	 * Count records
-	 * @param context
 	 * @param sql
 	 * @param tableName
 	 * @param parameters
 	 * @return
 	 */
-	private int countRecords(Properties context, String sql, String tableName, List<Object> parameters) {
-		int positionFrom = sql.lastIndexOf(" FROM " + tableName);
-		String queryCount = "SELECT COUNT(*) " + sql.substring(positionFrom, sql.length());
+	private int countRecords(String sql, String tableName, List<Object> parameters) {
+		Matcher matcher = Pattern.compile("[[FROM]+[\\s]?]" + tableName, Pattern.CASE_INSENSITIVE | Pattern.DOTALL).matcher(sql);
+		int positionFrom = -1;
+		if(matcher.find()) {
+			positionFrom = matcher.start();
+		} else {
+			return 0;
+		}
+		String queryCount = "SELECT COUNT(*) FROM " + sql.substring(positionFrom, sql.length());
 		return DB.getSQLValueEx(null, queryCount, parameters);
 	}
 }
