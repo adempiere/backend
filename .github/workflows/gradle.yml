@@ -130,5 +130,6 @@ jobs:
 
           args: 'build/release/*.tar.gz.MD5'
 
-© 2021 GitHub, Inc.
+
+
 
