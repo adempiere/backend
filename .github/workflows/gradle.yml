@@ -70,7 +70,7 @@ jobs:
 
     steps:
       - name: ls
-        run: ls-la
+        run: ls -la
 
       - name: Upload zip
 
