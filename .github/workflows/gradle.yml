@@ -108,50 +108,50 @@ jobs:
 
       run: gradle createRelease
 
-      - name: Upload zip
+    - name: Upload zip
 
-        uses: skx/github-action-publish-binaries@master
+      uses: skx/github-action-publish-binaries@master
 
-        env:
+      env:
 
-          GITHUB_TOKEN: ${{ secrets.TOKEN_ACCESS }}
+        GITHUB_TOKEN: ${{ secrets.TOKEN_ACCESS }}
 
-        with:
+      with:
 
-          args: 'build/release/*.zip'
+        args: 'build/release/*.zip'
 
-      - name: Upload zip.MD5
+    - name: Upload zip.MD5
 
-        uses: skx/github-action-publish-binaries@master
+      uses: skx/github-action-publish-binaries@master
 
-        env:
+      env:
 
-          GITHUB_TOKEN: ${{ secrets.TOKEN_ACCESS }}
+        GITHUB_TOKEN: ${{ secrets.TOKEN_ACCESS }}
 
-        with:
+      with:
 
-          args: 'build/release/*.zip.MD5'
+        args: 'build/release/*.zip.MD5'
 
-      - name: Upload tar.gz
+    - name: Upload tar.gz
 
-        uses: skx/github-action-publish-binaries@master
+      uses: skx/github-action-publish-binaries@master
 
-        env:
+      env:
 
-          GITHUB_TOKEN: ${{ secrets.TOKEN_ACCESS }}
+        GITHUB_TOKEN: ${{ secrets.TOKEN_ACCESS }}
 
-        with:
+      with:
 
-          args: 'build/release/*.tar.gz'
+        args: 'build/release/*.tar.gz'
 
-      - name: Upload tar.MD5
+    - name: Upload tar.MD5
 
-        uses: skx/github-action-publish-binaries@master
+      uses: skx/github-action-publish-binaries@master
 
-        env:
+      env:
 
-          GITHUB_TOKEN: ${{ secrets.TOKEN_ACCESS }}
+        GITHUB_TOKEN: ${{ secrets.TOKEN_ACCESS }}
 
-        with:
+      with:
 
-          args: 'build/release/*.tar.gz.MD5'
+        args: 'build/release/*.tar.gz.MD5'
