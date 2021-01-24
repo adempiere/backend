@@ -134,7 +134,7 @@ jobs:
 
         args: 'build/release/*.zip.MD5'
 
-    - name: Upload tar.gz
+    - name: Upload tar
 
       uses: skx/github-action-publish-binaries@master
 
@@ -144,7 +144,7 @@ jobs:
 
       with:
 
-        args: 'build/release/*.tar.gz'
+        args: 'build/release/*.tar'
 
     - name: Upload tar.MD5
 
@@ -156,4 +156,4 @@ jobs:
 
       with:
 
-        args: 'build/release/*.tar.gz.MD5'
+        args: 'build/release/*.tar.MD5'
