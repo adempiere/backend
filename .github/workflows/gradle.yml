@@ -24,6 +24,8 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
+    - name: event
+      run: echo ${{ github.event_name }}
     - name: create dependences folder
       run: mkdir dependences
     - name: get adempiere source
