@@ -1,0 +1,106 @@
+/*************************************************************************************
+ * Copyright (C) 2012-2018 E.R.P. Consultores y Asociados, C.A.                      *
+ * Contributor(s): Yamel Senih ysenih@erpya.com                                      *
+ * This program is free software: you can redistribute it and/or modify              *
+ * it under the terms of the GNU General Public License as published by              *
+ * the Free Software Foundation, either version 2 of the License, or                 *
+ * (at your option) any later version.                                               *
+ * This program is distributed in the hope that it will be useful,                   *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of                    *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                     *
+ * GNU General Public License for more details.                                      *
+ * You should have received a copy of the GNU General Public License                 *
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.            *
+ ************************************************************************************/
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "org.spin.grpc.util";
+option java_outer_classname = "ADempiereUpdate";
+option objc_class_prefix = "HLW";
+
+package updates;
+
+// The Update service definition.
+service UpdateCenter {
+  // List Available Updates
+  rpc ListUpdates(ListUpdatesRequest) returns (ListUpdatesResponse) {}
+  // List Steps
+  rpc ListSteps(ListStepsRequest) returns (ListStepsResponse) {}
+}
+
+// Updates Request
+message ListUpdatesRequest {
+	string token = 1;
+	string language = 2;
+	string release_no = 3;
+	string version = 4;
+	string entity_type = 5;	
+	int32 page_size = 6;
+	string page_token = 7;
+}
+
+//	List Updates Response
+message ListUpdatesResponse {
+	int64 record_count = 1;
+	repeated Update updates = 2;
+	string next_page_token = 3;
+}
+
+// Update
+message Update {
+	int32 id = 1;
+	string uuid = 2;
+	string entity_type = 3;
+	string release_no = 4;
+	string version = 5;
+	string sequence = 6;	
+	string name = 7;
+	string comments = 8;
+}
+
+// Steps Request
+message ListStepsRequest {
+	int32 update_id = 1;
+	string update_uuid = 2;	
+	int32 page_size = 3;
+	string page_token = 4;
+}
+
+//	List Steps Response
+message ListStepsResponse {
+	int64 record_count = 1;
+	repeated Step steps = 2;
+	string next_page_token = 3;
+}
+
+// Step
+message Step {
+	int32 id = 1;
+	string uuid = 2;
+	string step_type = 3;
+	string action = 4;
+	int32 table_id = 5;
+	int32 record_id = 7;
+	int32 column_id = 8;
+	string database_type = 9;
+	string sequence = 10;
+	string comments = 11;
+	bool is_parsed = 12;
+	string sql_statement = 13;
+	string rollback_statement = 14;
+	repeated StepValue step_values = 15;
+}
+
+// Step Value
+message StepValue {
+	int32 id = 1;
+	string uuid = 2;
+	int32 column_id = 3;
+	string old_value = 4;
+	string new_value = 5;
+	string backup_value = 7;
+	bool is_old_null = 8;
+	bool is_new_null = 9;
+	bool is_backup_null = 10;
+}
