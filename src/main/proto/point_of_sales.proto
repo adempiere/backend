@@ -55,6 +55,15 @@ service Store {
 	rpc ListOrderLines(ListOrderLinesRequest) returns (ListOrderLinesResponse) {}
 	//	Get a Key Layout
 	rpc GetKeyLayout(GetKeyLayoutRequest) returns (KeyLayout) {}
+	//	Payments
+	//	Create Payment
+	rpc CreatePayment(CreatePaymentRequest) returns (Payment) {}
+	//	Update Payment
+	rpc UpdatePayment(UpdatePaymentRequest) returns (Payment) {}
+	//	Delete Payment
+	rpc DeletePayment(DeletePaymentRequest) returns (Empty) {}
+	//	List Payments
+	rpc ListPayments(ListPaymentsRequest) returns (ListPaymentsResponse) {}
 }
 
 //	List POS Response
@@ -170,6 +179,75 @@ message CreateOrderRequest {
 	string customer_uuid = 3;
 	string document_type_uuid = 4;
 	string sales_representative_uuid = 5;
+}
+
+//	Create Payment
+message CreatePaymentRequest {
+	ClientRequest client_request = 1;
+	string pos_uuid = 2;
+	string order_uuid = 3;
+	string invoice_uuid = 4;
+	string bank_uuid = 5;
+	string reference_no = 6;
+	string description = 7;
+	Decimal amount = 8;
+	int64 payment_date = 9;
+	string tender_type_code = 10;
+	string currency_uuid = 11;
+}
+
+//	Update Payment
+message UpdatePaymentRequest {
+	ClientRequest client_request = 1;
+	string bank_uuid = 5;
+	string reference_no = 6;
+	string description = 7;
+	Decimal amount = 8;
+	int64 payment_date = 9;
+	string tender_type_code = 10;
+}
+
+// Request for delete a payment
+message DeletePaymentRequest {
+	ClientRequest client_request = 1;
+	string payment_uuid = 2;
+}
+
+// List Payments Request
+message ListPaymentsRequest {
+	ClientRequest client_request = 1;
+	string order_uuid = 2;
+	int32 page_size = 14;
+	string page_token = 15;
+	// Query
+	Criteria criteria = 16;
+}
+
+//	List Payments Response
+message ListPaymentsResponse {
+	int64 record_count = 1;
+	repeated Payment payments = 2;
+	string next_page_token = 3;
+}
+
+//	Payment
+message Payment {
+	string uuid = 1;
+	int32 id = 2;
+	string document_no = 3;
+	SalesRepresentative collecting_agent = 4;
+	DocumentStatus document_status = 5;
+	BusinessPartner business_partner = 6;
+	string pos_uuid = 7;
+	string order_uuid = 8;
+	string invoice_uuid = 9;
+	string bank_uuid = 10;
+	string reference_no = 11;
+	string description = 12;
+	Decimal amount = 13;
+	int64 payment_date = 14;
+	string tender_type_code = 15;
+	string currency_uuid = 16;
 }
 
 // Request for delete a order
