@@ -199,12 +199,13 @@ message CreatePaymentRequest {
 //	Update Payment
 message UpdatePaymentRequest {
 	ClientRequest client_request = 1;
-	string bank_uuid = 5;
-	string reference_no = 6;
-	string description = 7;
-	Decimal amount = 8;
-	int64 payment_date = 9;
-	string tender_type_code = 10;
+	string payment_uuid = 2;
+	string bank_uuid = 3;
+	string reference_no = 4;
+	string description = 5;
+	Decimal amount = 6;
+	int64 payment_date = 7;
+	string tender_type_code = 8;
 }
 
 // Request for delete a payment
@@ -216,11 +217,12 @@ message DeletePaymentRequest {
 // List Payments Request
 message ListPaymentsRequest {
 	ClientRequest client_request = 1;
-	string order_uuid = 2;
-	int32 page_size = 14;
-	string page_token = 15;
+	string pos_uuid = 2;
+	string order_uuid = 3;
+	int32 page_size = 4;
+	string page_token = 5;
 	// Query
-	Criteria criteria = 16;
+	Criteria criteria = 6;
 }
 
 //	List Payments Response
