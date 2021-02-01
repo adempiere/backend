@@ -66,7 +66,6 @@ import org.compiere.model.MUser;
 import org.compiere.model.MWarehouse;
 import org.compiere.model.M_Element;
 import org.compiere.model.Query;
-import org.compiere.model.X_C_Payment;
 import org.compiere.util.CCache;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
@@ -1662,19 +1661,6 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	        BigDecimal paymentAmount = ValueUtil.getBigDecimalFromDecimal(request.getAmount());
 	        payment.setPayAmt(paymentAmount);
 	        payment.setOverUnderAmt(Env.ZERO);
-	        //	Set Bank Id
-			if(!Util.isEmpty(request.getBankUuid())) {
-				int bankId = RecordUtil.getIdFromUuid(I_C_Bank.Table_Name, request.getBankUuid(), transactionName);
-				payment.set_ValueOfColumn(MBank.COLUMNNAME_C_Bank_ID, bankId);
-			}
-			//	Validate reference
-			if(!Util.isEmpty(request.getReferenceNo())) {
-				payment.addDescription(request.getReferenceNo());
-			}
-			//	Set Description
-			if(!Util.isEmpty(request.getDescription())) {
-				payment.addDescription(request.getDescription());
-			}
 			payment.saveEx(transactionName);
 			maybePayment.set(payment);
 		});
@@ -1702,8 +1688,15 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			if(pos.getC_BankAccount_ID() <= 0) {
 				throw new AdempiereException("@NoCashBook@");
 			}
+			if(request.getAmount() == null) {
+				throw new AdempiereException("@PayAmt@ @NotFound@");
+			}
 			//	Order
 			MOrder salesOrder = getOrder(request.getOrderUuid(), transactionName);
+			int currencyId = RecordUtil.getIdFromUuid(I_C_Currency.Table_Name, request.getCurrencyUuid(), transactionName);
+			if(currencyId <= 0) {
+				currencyId = salesOrder.getC_Currency_ID();
+			}
 			//	
 			MPayment payment = new MPayment(Env.getCtx(), 0, transactionName);
 			payment.setC_BankAccount_ID(pos.getC_BankAccount_ID());
@@ -1713,10 +1706,14 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	        payment.setDocumentNo(value);
 	        payment.setDateAcct(salesOrder.getDateAcct());
 	        payment.setDateTrx(salesOrder.getDateOrdered());
-	        payment.setTenderType(MPayment.TENDERTYPE_Cash);
-	        payment.setDescription(salesOrder.getDescription());
+	        payment.setTenderType(tenderType);
+	        payment.setDescription(Optional.ofNullable(request.getDescription()).orElse(salesOrder.getDescription()));
 	        payment.setC_BPartner_ID (salesOrder.getC_BPartner_ID());
-	        payment.setC_Currency_ID(salesOrder.getC_Currency_ID());
+	        payment.setC_Currency_ID(currencyId);
+	        payment.setC_POS_ID(pos.getC_POS_ID());
+	        if(pos.get_ValueAsInt(I_C_ConversionType.COLUMNNAME_C_ConversionType_ID) > 0) {
+	        	payment.setC_ConversionType_ID(pos.get_ValueAsInt(I_C_ConversionType.COLUMNNAME_C_ConversionType_ID));
+	        }
 	        //	Amount
 	        BigDecimal paymentAmount = ValueUtil.getBigDecimalFromDecimal(request.getAmount());
 	        payment.setPayAmt(paymentAmount);
@@ -1724,7 +1721,6 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	        //	Order Reference
 	        payment.setC_Order_ID(salesOrder.getC_Order_ID());
 	        payment.setDocStatus(MPayment.DOCSTATUS_Drafted);
-			payment.saveEx();
 			int invoiceId = salesOrder.getC_Invoice_ID();
 			if(invoiceId > 0) {
 				payment.setC_Invoice_ID(invoiceId);
@@ -1733,7 +1729,6 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			} else {
 				payment.setDescription(Msg.getMsg(Env.getCtx(), "Order No ") + salesOrder.getDocumentNo());
 			}
-			payment.saveEx(transactionName);
 			switch (tenderType) {
 				case MPayment.TENDERTYPE_Check:
 					//	TODO: Add references
@@ -1764,18 +1759,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			if(!Util.isEmpty(request.getReferenceNo())) {
 				payment.addDescription(request.getReferenceNo());
 			}
-			//	Set Description
-			if(!Util.isEmpty(request.getDescription())) {
-				payment.addDescription(request.getDescription());
-			}
+			//	
 			payment.saveEx(transactionName);
-			//	Process Payment
-			if(payment != null) {
-				if (!payment.processIt(X_C_Payment.DOCACTION_Prepare)) {
-					throw new AdempiereException("@Error@: " + payment.getProcessMsg());
-				}
-				payment.saveEx(transactionName);
-			}
 			maybePayment.set(payment);
 		});
 		//	Return payment
