@@ -670,8 +670,9 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 * @return
 	 */
 	private ListPaymentsResponse.Builder listPayments(ListPaymentsRequest request) {
-		if(Util.isEmpty(request.getPosUuid())) {
-			throw new AdempiereException("@C_POS_ID@ @NotFound@");
+		if(Util.isEmpty(request.getPosUuid())
+				&& Util.isEmpty(request.getOrderUuid())) {
+			throw new AdempiereException("@C_POS_ID@ / @C_Order_ID@ @NotFound@");
 		}
 		ListPaymentsResponse.Builder builder = ListPaymentsResponse.newBuilder();
 		String nexPageToken = null;
@@ -1614,10 +1615,15 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	
 		MRefList reference = MRefList.get(Env.getCtx(), MPayment.DOCSTATUS_AD_REFERENCE_ID, payment.getDocStatus(), null);
 		//	Convert
-		builder.setDocumentNo(ValueUtil.validateNull(payment.getDocumentNo()))
+		builder
+			.setId(payment.getC_Payment_ID())
+			.setUuid(ValueUtil.validateNull(payment.getUUID()))
+			.setOrderUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_Order.Table_Name, payment.getC_Order_ID())))
+			.setDocumentNo(ValueUtil.validateNull(payment.getDocumentNo()))
 			.setReferenceNo(ValueUtil.validateNull(payment.getCheckNo()))
+			.setDescription(ValueUtil.validateNull(payment.getDescription()))
 			.setAmount(ValueUtil.getDecimalFromBigDecimal(payment.getPayAmt()))
-			.setBankUuid(RecordUtil.getUuidFromId(I_C_Bank.Table_Name, payment.getC_Bank_ID()))
+			.setBankUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_Bank.Table_Name, payment.getC_Bank_ID())))
 			.setBusinessPartner(ConvertUtil.convertBusinessPartner((MBPartner) payment.getC_BPartner()))
 			.setCurrencyUuid(RecordUtil.getUuidFromId(I_C_Currency.Table_Name, payment.getC_Currency_ID()))
 			.setDocumentStatus(ConvertUtil.convertDocumentStatus(ValueUtil.validateNull(payment.getDocStatus()), 
