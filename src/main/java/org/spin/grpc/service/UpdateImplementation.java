@@ -19,9 +19,13 @@ import java.util.List;
 import org.adempiere.exceptions.AdempiereException;
 import org.compiere.model.I_AD_EntityType;
 import org.compiere.model.I_AD_Migration;
+import org.compiere.model.I_AD_MigrationData;
+import org.compiere.model.I_AD_MigrationStep;
 import org.compiere.model.I_AD_Modification;
 import org.compiere.model.MEntityType;
 import org.compiere.model.MMigration;
+import org.compiere.model.MMigrationData;
+import org.compiere.model.MMigrationStep;
 import org.compiere.model.Query;
 import org.compiere.model.X_AD_Modification;
 import org.compiere.util.CLogger;
@@ -38,6 +42,8 @@ import org.spin.grpc.util.ListUpdatesRequest;
 import org.spin.grpc.util.ListUpdatesResponse;
 import org.spin.grpc.util.Package;
 import org.spin.grpc.util.PackageVersion;
+import org.spin.grpc.util.Step;
+import org.spin.grpc.util.StepValue;
 import org.spin.grpc.util.Update;
 import org.spin.grpc.util.UpdateCenterGrpc.UpdateCenterImplBase;
 
@@ -96,7 +102,110 @@ public class UpdateImplementation extends UpdateCenterImplBase {
 	
 	@Override
 	public void listSteps(ListStepsRequest request, StreamObserver<ListStepsResponse> responseObserver) {
-		
+		try {
+			if(request == null) {
+				throw new AdempiereException("Steps Requested is Null");
+			}
+			log.fine("Object List Requested = " + request);
+			SessionManager.createSessionFromToken(request.getToken());
+			ListStepsResponse.Builder stepsList = convertStepsList(request);
+			responseObserver.onNext(stepsList.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	/**
+	 * Get steps from update
+	 * @param request
+	 * @return
+	 */
+	private ListStepsResponse.Builder convertStepsList(ListStepsRequest request) {
+		ListStepsResponse.Builder builder = ListStepsResponse.newBuilder();
+		//	Get Migration
+		int migrationId = request.getUpdateId();
+		if(migrationId <= 0) {
+			migrationId = RecordUtil.getIdFromUuid(I_AD_Migration.Table_Name, request.getUpdateUuid(), null);
+		}
+		//	Validate
+		if(request.getUpdateId() < 0) {
+			throw new AdempiereException("@AD_Migration_ID@ @NotFound@");
+		}
+		//	Get page and count
+		String nexPageToken = null;
+		int pageNumber = RecordUtil.getPageNumber(SessionManager.getSessionUuid(), request.getPageToken());
+		int offset = (pageNumber > 0? pageNumber - 1: 0) * RecordUtil.PAGE_SIZE;
+		int limit = (pageNumber == 0? 1: pageNumber) * RecordUtil.PAGE_SIZE;
+		//	Get POS List
+		StringBuffer whereClause = new StringBuffer("AD_Migration_ID = ?");
+		//	Get
+		Query query = new Query(Env.getCtx(), I_AD_MigrationStep.Table_Name , whereClause.toString(), null)
+				.setOnlyActiveRecords(true)
+				.setParameters(migrationId)
+				.setOrderBy(I_AD_MigrationStep.COLUMNNAME_SeqNo);
+		int count = query.count();
+		query
+			.setLimit(limit, offset)
+			.<MMigrationStep>list()
+			.forEach(migration -> builder.addSteps(convertStep(migration)));
+		//	
+		builder.setRecordCount(count);
+		//	Set page token
+		if(count > limit) {
+			nexPageToken = RecordUtil.getPagePrefix(SessionManager.getSessionUuid()) + (pageNumber + 1);
+		}
+		//	Set next page
+		builder.setNextPageToken(ValueUtil.validateNull(nexPageToken));
+		return builder;
+	}
+	
+	/**
+	 * Convert step
+	 * @param migrationStep
+	 * @return
+	 */
+	private Step.Builder convertStep(MMigrationStep migrationStep) {
+		Step.Builder builder = Step.newBuilder()
+				.setId(migrationStep.getAD_MigrationStep_ID())
+				.setUuid(ValueUtil.validateNull(migrationStep.getUUID()))
+				.setAction(ValueUtil.validateNull(migrationStep.getAction()))
+				.setComments(ValueUtil.validateNull(migrationStep.getComments()))
+				.setStepType(ValueUtil.validateNull(migrationStep.getStepType()))
+				.setTableId(migrationStep.getAD_Table_ID())
+				.setRecordId(migrationStep.getRecord_ID())
+				.setIsParsed(migrationStep.isParse())
+				.setSqlStatement(ValueUtil.validateNull(migrationStep.getSQLStatement()))
+				.setRollbackStatement(ValueUtil.validateNull(migrationStep.getRollbackStatement()));
+		new Query(Env.getCtx(), I_AD_MigrationData.Table_Name, I_AD_MigrationData.COLUMNNAME_AD_MigrationStep_ID + " = ?", null)
+			.setParameters(migrationStep.getAD_MigrationStep_ID())
+			.<MMigrationData>list()
+			.forEach(modification -> builder.addStepValues(convertStepValue(modification)));
+		return builder;
+	}
+	
+	/**
+	 * Convert step value
+	 * @param migrationData
+	 * @return
+	 */
+	private StepValue.Builder convertStepValue(MMigrationData migrationData) {
+		StepValue.Builder builder = StepValue.newBuilder()
+				.setId(migrationData.getAD_MigrationData_ID())
+				.setUuid(ValueUtil.validateNull(migrationData.getUUID()))
+				.setColumnId(migrationData.getAD_Column_ID())
+				.setOldValue(ValueUtil.validateNull(migrationData.getOldValue()))
+				.setBackupValue(ValueUtil.validateNull(migrationData.getBackupValue()))
+				.setNewValue(ValueUtil.validateNull(migrationData.getNewValue()))
+				.setIsOldNull(migrationData.isOldNull())
+				.setIsBackupNull(migrationData.isBackupNull())
+				.setIsNewNull(migrationData.isNewNull());
+		return builder;
 	}
 	
 	/**

@@ -103,10 +103,11 @@ message Update {
 
 // Steps Request
 message ListStepsRequest {
-	int32 update_id = 1;
-	string update_uuid = 2;	
-	int32 page_size = 3;
-	string page_token = 4;
+	string token = 1;
+	int32 update_id = 2;
+	string update_uuid = 3;	
+	int32 page_size = 4;
+	string page_token = 5;
 }
 
 //	List Steps Response
