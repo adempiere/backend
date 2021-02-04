@@ -692,6 +692,9 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		}
 		//	For order
 		if(orderId > 0) {
+			if(whereClause.length() > 0) {
+				whereClause.append(" AND ");
+			}
 			whereClause.append("C_Payment.C_Order_ID = ?");
 			parameters.add(orderId);
 		}
@@ -1620,6 +1623,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			.setUuid(ValueUtil.validateNull(payment.getUUID()))
 			.setOrderUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_Order.Table_Name, payment.getC_Order_ID())))
 			.setDocumentNo(ValueUtil.validateNull(payment.getDocumentNo()))
+			.setTenderTypeCode(ValueUtil.validateNull(payment.getTenderType()))
 			.setReferenceNo(ValueUtil.validateNull(payment.getCheckNo()))
 			.setDescription(ValueUtil.validateNull(payment.getDescription()))
 			.setAmount(ValueUtil.getDecimalFromBigDecimal(payment.getPayAmt()))
