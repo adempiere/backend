@@ -23,10 +23,53 @@ package updates;
 
 // The Update service definition.
 service UpdateCenter {
+  // List Available Packages
+  rpc ListPackages(ListPackagesRequest) returns (ListPackagesResponse) {}
   // List Available Updates
   rpc ListUpdates(ListUpdatesRequest) returns (ListUpdatesResponse) {}
   // List Steps
   rpc ListSteps(ListStepsRequest) returns (ListStepsResponse) {}
+}
+
+// Packages Request
+message ListPackagesRequest {
+	string token = 1;
+	string language = 2;
+	string release_no = 3;
+	string version = 4;
+	int32 page_size = 6;
+	string page_token = 7;
+}
+
+// Package
+message Package {
+	int32 id = 1;
+	string uuid = 2;
+	string entity_type = 3;
+	string model_package = 4;
+	string version = 5;	
+	string name = 6;
+	string description = 7;
+	string help = 8;
+	repeated PackageVersion versions = 9;
+}
+
+// Package Version
+message PackageVersion {
+	int32 id = 1;
+	string uuid = 2;
+	string version = 3;
+	int32 sequence = 4;	
+	string name = 5;
+	string description = 6;
+	string help = 7;
+}
+
+//	List Packages Response
+message ListPackagesResponse {
+	int64 record_count = 1;
+	repeated Package packages = 2;
+	string next_page_token = 3;
 }
 
 // Updates Request
@@ -53,8 +96,7 @@ message Update {
 	string uuid = 2;
 	string entity_type = 3;
 	string release_no = 4;
-	string version = 5;
-	string sequence = 6;	
+	int32 sequence = 6;	
 	string name = 7;
 	string comments = 8;
 }

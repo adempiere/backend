@@ -29,7 +29,8 @@ public enum Services {
     WORKFLOW("workflow"),
     LOG("log"),
     STORE("store"),
-    POS("pos");
+    POS("pos"),
+    UPDATER("updater");
 
 	/**	Service Name	*/
     private final String serviceName;
