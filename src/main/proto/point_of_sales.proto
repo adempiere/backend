@@ -64,6 +64,8 @@ service Store {
 	rpc DeletePayment(DeletePaymentRequest) returns (Empty) {}
 	//	List Payments
 	rpc ListPayments(ListPaymentsRequest) returns (ListPaymentsResponse) {}
+	//	Process Order
+	rpc ProcessOrder(ProcessOrderRequest) returns (Order) {}
 }
 
 //	List POS Response
@@ -179,6 +181,15 @@ message CreateOrderRequest {
 	string customer_uuid = 3;
 	string document_type_uuid = 4;
 	string sales_representative_uuid = 5;
+}
+
+// Request for process a order
+message ProcessOrderRequest {
+	ClientRequest client_request = 1;
+	string pos_uuid = 2;
+	string order_uuid = 3;
+	bool create_payments = 4;
+	repeated CreatePaymentRequest payments = 5;
 }
 
 //	Create Payment
