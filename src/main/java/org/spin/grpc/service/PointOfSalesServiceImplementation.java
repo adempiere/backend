@@ -613,8 +613,10 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				if (order.getDocStatus().equalsIgnoreCase(MOrder.STATUS_Invalid))  {
 					order.setDocStatus(MOrder.STATUS_InProgress);
 				}
-				//	Set Document Action
+				//	Set default values
 				order.setDocAction(DocAction.ACTION_Complete);
+				order.setDateOrdered(TimeUtil.getDay(System.currentTimeMillis()));
+				order.setDateAcct(TimeUtil.getDay(System.currentTimeMillis()));
 				order.setC_POS_ID(posId);
 				order.saveEx();
 				//	Update Process if exists
@@ -2074,19 +2076,19 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		if(!Util.isEmpty(request.getPriceListUuid())) {
 			if(whereClause.length() > 0) {
 				whereClause.append(" AND ");
-				whereClause.append("(EXISTS(SELECT 1 FROM M_PriceList_Version plv "
-						+ "INNER JOIN M_ProductPrice pp ON(pp.M_PriceList_Version_ID = plv.M_PriceList_Version_ID) "
-						+ "WHERE plv.M_PriceList_ID = ? "
-						+ "AND plv.ValidFrom <= ? "
-						+ "AND plv.IsActive = 'Y' "
-						+ "AND pp.PriceList IS NOT NULL AND pp.PriceList > 0 "
-						+ "AND pp.PriceStd IS NOT NULL AND pp.PriceStd > 0 "
-						+ "AND pp.PriceLimit IS NOT NULL AND pp.PriceLimit > 0 "
-						+ "AND pp.M_Product_ID = M_Product.M_Product_ID))");
-				//	Add parameters
-				parameters.add(RecordUtil.getIdFromUuid(I_M_PriceList.Table_Name, request.getPriceListUuid(), null));
-				parameters.add(validFrom);
 			}
+			//	Add Price List
+			whereClause.append("(EXISTS(SELECT 1 FROM M_PriceList_Version plv "
+					+ "INNER JOIN M_ProductPrice pp ON(pp.M_PriceList_Version_ID = plv.M_PriceList_Version_ID) "
+					+ "WHERE plv.M_PriceList_ID = ? "
+					+ "AND plv.ValidFrom <= ? "
+					+ "AND plv.IsActive = 'Y' "
+					+ "AND pp.PriceList IS NOT NULL AND pp.PriceList > 0 "
+					+ "AND pp.PriceStd IS NOT NULL AND pp.PriceStd > 0 "
+					+ "AND pp.M_Product_ID = M_Product.M_Product_ID))");
+			//	Add parameters
+			parameters.add(RecordUtil.getIdFromUuid(I_M_PriceList.Table_Name, request.getPriceListUuid(), null));
+			parameters.add(validFrom);
 		}
 		//	Get Product list
 		Query query = new Query(Env.getCtx(), I_M_Product.Table_Name, 
@@ -2162,12 +2164,10 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	Pricing
 		builder.setPricePrecision(productPricing.getPrecision());
 		//	Prices
-		if(Optional.ofNullable(productPricing.getPriceList()).orElse(Env.ZERO).signum() > 0
-				&& Optional.ofNullable(productPricing.getPriceStd()).orElse(Env.ZERO).signum() > 0
-				&& Optional.ofNullable(productPricing.getPriceLimit()).orElse(Env.ZERO).signum() > 0) {
-			builder.setPriceList(ValueUtil.getDecimalFromBigDecimal(productPricing.getPriceList()));
-			builder.setPriceStandard(ValueUtil.getDecimalFromBigDecimal(productPricing.getPriceStd()));
-			builder.setPriceLimit(ValueUtil.getDecimalFromBigDecimal(productPricing.getPriceLimit()));
+		if(Optional.ofNullable(productPricing.getPriceStd()).orElse(Env.ZERO).signum() > 0) {
+			builder.setPriceList(ValueUtil.getDecimalFromBigDecimal(Optional.ofNullable(productPricing.getPriceList()).orElse(Env.ZERO)));
+			builder.setPriceStandard(ValueUtil.getDecimalFromBigDecimal(Optional.ofNullable(productPricing.getPriceStd()).orElse(Env.ZERO)));
+			builder.setPriceLimit(ValueUtil.getDecimalFromBigDecimal(Optional.ofNullable(productPricing.getPriceLimit()).orElse(Env.ZERO)));
 			//	Get from schema
 			int schemaCurrencyId = Env.getContextAsInt(Env.getCtx(), "$C_Currency_ID");
 			if(schemaCurrencyId > 0) {
