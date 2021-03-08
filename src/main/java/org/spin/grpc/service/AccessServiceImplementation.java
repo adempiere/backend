@@ -316,7 +316,8 @@ public class AccessServiceImplementation extends SecurityImplBase {
 				throw new AdempiereException("@AD_User_ID@ / @AD_Role_ID@ / @AD_Org_ID@ @NotFound@");
 			}
 		}
-		if(isDefaultRole) {
+		if(isDefaultRole
+				&& Util.isEmpty(request.getRoleUuid())) {
 			if(roleId <= 0) {
 				roleId = DB.getSQLValue(null, "SELECT ur.AD_Role_ID "
 						+ "FROM AD_User_Roles ur "
