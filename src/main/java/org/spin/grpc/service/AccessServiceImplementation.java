@@ -332,6 +332,18 @@ public class AccessServiceImplementation extends SecurityImplBase {
 		} else {
 			if(roleId <= 0) {
 				roleId = RecordUtil.getIdFromUuid(I_AD_Role.Table_Name, request.getRoleUuid(), null);
+				MRole role = MRole.get(context, roleId);
+				if(role != null
+						&& !Optional.ofNullable(role.getUUID()).orElse("").equals(Optional.ofNullable(request.getRoleUuid()).orElse(""))) {
+					roleId = DB.getSQLValue(null, "SELECT ur.AD_Role_ID "
+							+ "FROM AD_User_Roles ur "
+							+ "WHERE ur.AD_User_ID = ? AND ur.IsActive = 'Y' "
+							+ "ORDER BY COALESCE(ur.IsDefault,'N') DESC", userId);
+					//	Organization
+					if(organizationId < 0) {
+						organizationId = SessionManager.getDefaultOrganizationId(roleId, userId);
+					}
+				}
 			}
 			if(organizationId < 0) {
 				organizationId = RecordUtil.getIdFromUuid(I_AD_Org.Table_Name, request.getOrganizationUuid(), null);
