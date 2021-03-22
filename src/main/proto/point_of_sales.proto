@@ -389,7 +389,7 @@ message Key {
 	int32 sequence = 7;
 	int32 span_x = 8;
 	int32 span_y = 9;
-	string product_uuid = 10;
+	string product_value = 10;
 	Decimal quantity = 11;
 	ResourceReference resource_reference = 12;
 }

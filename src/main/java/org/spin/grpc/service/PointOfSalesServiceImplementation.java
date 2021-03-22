@@ -1376,6 +1376,10 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 * @return
 	 */
 	private Key.Builder convertKey(MPOSKey key) {
+		String productValue = null;
+		if(key.getM_Product_ID() > 0) {
+			productValue = MProduct.get(Env.getCtx(), key.getM_Product_ID()).getValue();
+		}
 		return Key.newBuilder()
 				.setUuid(ValueUtil.validateNull(key.getUUID()))
 				.setId(key.getC_POSKeyLayout_ID())
@@ -1385,8 +1389,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				.setSpanX(key.getSpanX())
 				.setSpanY(key.getSpanY())
 				.setSubKeyLayoutUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_POSKeyLayout.Table_Name, key.getSubKeyLayout_ID())))
-				.setQuantity(ValueUtil.getDecimalFromBigDecimal(key.getQty() == null || key.getQty().equals(Env.ZERO)? Env.ONE: key.getQty()))
-				.setProductUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_M_Product.Table_Name, key.getM_Product_ID())))
+				.setQuantity(ValueUtil.getDecimalFromBigDecimal(Optional.ofNullable(key.getQty()).orElse(Env.ZERO)))
+				.setProductValue(ValueUtil.validateNull(productValue))
 				.setResourceReference(ConvertUtil.convertResourceReference(RecordUtil.getResourceFromImageId(key.getAD_Image_ID())));
 	}
 	
