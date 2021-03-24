@@ -82,6 +82,10 @@ service UserInterface {
 	rpc GetResourceReference(GetResourceReferenceRequest) returns (ResourceReference) {}
 	//	Service for get a attachment from table and record uuid
 	rpc GetAttachment(GetAttachmentRequest) returns (Attachment) {}
+	//	Set Preference from field
+	rpc SetPreference(SetPreferenceRequest) returns (Preference) {}
+	//	Delete Preference from field
+	rpc DeletePreference(DeletePreferenceRequest) returns (Empty) {}
 }
 
 //	Workflow management service
@@ -126,6 +130,57 @@ message GetAttachmentRequest {
 	string table_name = 2;
 	int32 id = 3;
 	string uuid = 4;
+}
+
+// Request for set preference
+message SetPreferenceRequest {
+	ClientRequest client_request = 1;
+	string container_uuid = 2;
+	string column_name = 3;
+	bool is_for_current_user = 4;
+	bool is_for_current_client = 5;
+	bool is_for_current_organization = 6;
+	bool is_for_current_container = 7;
+	enum Type {
+		WINDOW = 0;
+		PROCESS = 1;
+		SMART_BROWSER = 2;
+	}
+	Type type = 8;
+	string value = 9;
+}
+
+// Request for delete preference
+message DeletePreferenceRequest {
+	ClientRequest client_request = 1;
+	string container_uuid = 2;
+	string column_name = 3;
+	bool is_for_current_user = 4;
+	bool is_for_current_client = 5;
+	bool is_for_current_organization = 6;
+	bool is_for_current_container = 7;
+	enum Type {
+		WINDOW = 0;
+		PROCESS = 1;
+		SMART_BROWSER = 2;
+	}
+	Type type = 8;
+}
+
+// Preference from window
+message Preference {
+	string container_uuid = 2;
+	string column_name = 3;
+	string value = 4;
+	enum Type {
+		WINDOW = 0;
+		PROCESS = 1;
+		SMART_BROWSER = 2;
+	}
+	Type type = 5;
+	string user_uuid = 6;
+	string client_uuid = 7;
+	string organization_uuid = 8;
 }
 
 // Request for download resource

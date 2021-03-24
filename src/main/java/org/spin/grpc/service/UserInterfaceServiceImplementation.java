@@ -61,12 +61,16 @@ import org.compiere.model.GridTabVO;
 import org.compiere.model.GridWindow;
 import org.compiere.model.GridWindowVO;
 import org.compiere.model.I_AD_ChangeLog;
+import org.compiere.model.I_AD_Client;
 import org.compiere.model.I_AD_Element;
+import org.compiere.model.I_AD_Org;
+import org.compiere.model.I_AD_Preference;
 import org.compiere.model.I_AD_PrintFormat;
 import org.compiere.model.I_AD_Private_Access;
 import org.compiere.model.I_AD_Process;
 import org.compiere.model.I_AD_ReportView;
 import org.compiere.model.I_AD_Tab;
+import org.compiere.model.I_AD_User;
 import org.compiere.model.I_AD_Window;
 import org.compiere.model.I_CM_Chat;
 import org.compiere.model.MAttachment;
@@ -77,6 +81,7 @@ import org.compiere.model.MClientInfo;
 import org.compiere.model.MColumn;
 import org.compiere.model.MField;
 import org.compiere.model.MMessage;
+import org.compiere.model.MPreference;
 import org.compiere.model.MPrivateAccess;
 import org.compiere.model.MQuery;
 import org.compiere.model.MReportView;
@@ -107,10 +112,13 @@ import org.spin.base.util.RecordUtil;
 import org.spin.base.util.ValueUtil;
 import org.spin.grpc.util.Attachment;
 import org.spin.grpc.util.ChatEntry;
+import org.spin.grpc.util.Condition.Operator;
 import org.spin.grpc.util.ContextInfoValue;
 import org.spin.grpc.util.CreateChatEntryRequest;
 import org.spin.grpc.util.Criteria;
+import org.spin.grpc.util.DeletePreferenceRequest;
 import org.spin.grpc.util.DrillTable;
+import org.spin.grpc.util.Empty;
 import org.spin.grpc.util.Entity;
 import org.spin.grpc.util.GetAttachmentRequest;
 import org.spin.grpc.util.GetContextInfoValueRequest;
@@ -136,6 +144,7 @@ import org.spin.grpc.util.ListTranslationsRequest;
 import org.spin.grpc.util.ListTranslationsResponse;
 import org.spin.grpc.util.LockPrivateAccessRequest;
 import org.spin.grpc.util.LookupItem;
+import org.spin.grpc.util.Preference;
 import org.spin.grpc.util.PrintFormat;
 import org.spin.grpc.util.PrivateAccess;
 import org.spin.grpc.util.RecordReferenceInfo;
@@ -145,11 +154,11 @@ import org.spin.grpc.util.Resource;
 import org.spin.grpc.util.ResourceReference;
 import org.spin.grpc.util.RollbackEntityRequest;
 import org.spin.grpc.util.RunCalloutRequest;
+import org.spin.grpc.util.SetPreferenceRequest;
 import org.spin.grpc.util.Translation;
 import org.spin.grpc.util.UnlockPrivateAccessRequest;
-import org.spin.grpc.util.Value;
-import org.spin.grpc.util.Condition.Operator;
 import org.spin.grpc.util.UserInterfaceGrpc.UserInterfaceImplBase;
+import org.spin.grpc.util.Value;
 import org.spin.model.I_AD_AttachmentReference;
 import org.spin.model.I_AD_ContextInfo;
 import org.spin.model.MADAttachmentReference;
@@ -686,6 +695,174 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 					.withCause(e)
 					.asRuntimeException());
 		}
+	}
+	
+	@Override
+	public void setPreference(SetPreferenceRequest request, StreamObserver<Preference> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			//	Create Preference
+			MPreference preference = getPreference(request.getTypeValue(), request.getColumnName(), request.getIsForCurrentClient(), request.getIsForCurrentOrganization(), request.getIsForCurrentUser(), request.getIsForCurrentContainer(), request.getContainerUuid());
+			if(preference == null
+					|| preference.getAD_Preference_ID() <= 0) {
+				preference = new MPreference(Env.getCtx(), 0, null);
+			}
+			//	Save preference
+			Preference.Builder preferenceBuilder = savePreference(preference, request.getTypeValue(), request.getColumnName(), request.getIsForCurrentClient(), request.getIsForCurrentOrganization(), request.getIsForCurrentUser(), request.getIsForCurrentContainer(), request.getContainerUuid(), request.getValue());
+			responseObserver.onNext(preferenceBuilder.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void deletePreference(DeletePreferenceRequest request, StreamObserver<Empty> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			//	Delete Preference
+			Empty.Builder empty = Empty.newBuilder();
+			MPreference preference = getPreference(request.getTypeValue(), request.getColumnName(), request.getIsForCurrentClient(), request.getIsForCurrentOrganization(), request.getIsForCurrentUser(), request.getIsForCurrentContainer(), request.getContainerUuid());
+			if(preference != null
+					&& preference.getAD_Preference_ID() > 0) {
+				preference.deleteEx(true);
+			}
+			responseObserver.onNext(empty.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	/**
+	 * Save preference from values
+	 * @param preference
+	 * @param preferenceType
+	 * @param attribute
+	 * @param isCurrentClient
+	 * @param isCurrentOrganization
+	 * @param isCurrentUser
+	 * @param isCurrentContainer
+	 * @param uuid
+	 * @param value
+	 * @return
+	 */
+	private Preference.Builder savePreference(MPreference preference, int preferenceType, String attribute, boolean isCurrentClient, boolean isCurrentOrganization, boolean isCurrentUser, boolean isCurrentContainer, String uuid, String value) {
+		Preference.Builder builder = Preference.newBuilder();
+		if(preferenceType == SetPreferenceRequest.Type.WINDOW_VALUE) {
+			int windowId = RecordUtil.getIdFromUuid(I_AD_Window.Table_Name, uuid, null);
+			int clientId = Env.getAD_Client_ID(Env.getCtx());
+			int orgId = Env.getAD_Org_ID(Env.getCtx());
+			int userId = Env.getAD_User_ID(Env.getCtx());
+			//	For client
+			if(!isCurrentClient) {
+				clientId = 0;
+			}
+			//	For Organization
+			if(!isCurrentOrganization) {
+				orgId = 0;
+			}
+			//For User
+			if(!isCurrentUser) {
+				userId = -1;
+			}
+			//	For Window
+			if(!isCurrentContainer) {
+				windowId = -1;
+			}
+			//	Set values
+			preference.set_ValueOfColumn(I_AD_Client.COLUMNNAME_AD_Client_ID, clientId);
+			preference.setAD_Org_ID(orgId);
+			preference.setAD_User_ID(userId);
+			preference.setAD_Window_ID(windowId);
+			preference.setAttribute(attribute);
+			preference.setValue(value);
+			//	
+			preference.saveEx();
+			builder.setClientUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_AD_Client.Table_Name, preference.getAD_Client_ID())))
+				.setOrganizationUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_AD_Org.Table_Name, preference.getAD_Org_ID())))
+				.setUserUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_AD_User.Table_Name, preference.getAD_User_ID())))
+				.setContainerUuid(ValueUtil.validateNull(uuid))
+				.setColumnName(ValueUtil.validateNull(preference.getAttribute()))
+				.setValue(preference.getValue());
+		}
+		//	
+		return builder;
+	}
+	
+	/**
+	 * Get preference
+	 * @param preferenceType
+	 * @param attribute
+	 * @param isCurrentClient
+	 * @param isCurrentOrganization
+	 * @param isCurrentUser
+	 * @param isCurrentContainer
+	 * @param uuid
+	 * @return
+	 */
+	private MPreference getPreference(int preferenceType, String attribute, boolean isCurrentClient, boolean isCurrentOrganization, boolean isCurrentUser, boolean isCurrentContainer, String uuid) {
+		if(preferenceType == SetPreferenceRequest.Type.WINDOW_VALUE) {
+			int windowId = RecordUtil.getIdFromUuid(I_AD_Window.Table_Name, uuid, null);
+			StringBuffer whereClause = new StringBuffer("Attribute = ?");
+			List<Object> parameters = new ArrayList<>();
+			parameters.add(attribute);
+			//	For client
+			whereClause.append(" AND AD_Client_ID = ?");
+			if(isCurrentClient) {
+				parameters.add(Env.getAD_Client_ID(Env.getCtx()));
+			} else {
+				parameters.add(0);
+			}
+			//	For Organization
+			whereClause.append(" AND AD_Org_ID = ?");
+			if(isCurrentOrganization) {
+				parameters.add(Env.getAD_Org_ID(Env.getCtx()));
+			} else {
+				parameters.add(0);
+			}
+			//For User
+			if(isCurrentUser) {
+				parameters.add(Env.getAD_User_ID(Env.getCtx()));
+				whereClause.append(" AND AD_User_ID = ?");
+			} else {
+				whereClause.append(" AND AD_User_ID IS NULL");
+			}
+			//	For Window
+			if(isCurrentContainer) {
+				parameters.add(windowId);
+				whereClause.append(" AND AD_Window_ID = ?");
+			} else {
+				whereClause.append(" AND AD_Window_ID IS NULL");
+			}
+			return new Query(Env.getCtx(), I_AD_Preference.Table_Name, whereClause.toString(), null)
+					.setParameters(parameters)
+					.first();
+		}
+		//	
+		return null;
 	}
 	
 	/**
