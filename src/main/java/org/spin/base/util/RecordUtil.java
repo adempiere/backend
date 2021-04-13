@@ -15,17 +15,21 @@
  *************************************************************************************/
 package org.spin.base.util;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 
 import org.adempiere.exceptions.AdempiereException;
 import org.adempiere.pipo.IDFinder;
 import org.compiere.model.I_AD_Element;
 import org.compiere.model.MClientInfo;
+import org.compiere.model.MConversionRate;
 import org.compiere.model.PO;
 import org.compiere.model.Query;
 import org.compiere.util.Env;
+import org.compiere.util.TimeUtil;
 import org.compiere.util.Util;
 import org.spin.model.MADAttachmentReference;
 import org.spin.util.AttachmentUtil;
@@ -156,6 +160,20 @@ public class RecordUtil {
 	}
 	
 	/**
+	 * Get UUID from record id
+	 * @param tableName
+	 * @param id
+	 * @return
+	 */
+	public static String getUuidFromId(String tableName, int id, String transactionName) {
+		if(Util.isEmpty(tableName) || id <= 0) {
+			return null;
+		}
+		//	Get
+		return IDFinder.getUUIDFromId(tableName, id, Env.getAD_Client_ID(Env.getCtx()), transactionName);
+	}
+	
+	/**
 	 * Get resource UUID from image id
 	 * @param imageId
 	 * @return
@@ -180,5 +198,34 @@ public class RecordUtil {
 		}
 		//	
 		return MADAttachmentReference.getByImageId(Env.getCtx(), MClientInfo.get(Env.getCtx(), Env.getAD_Client_ID(Env.getCtx())).getFileHandler_ID(), imageId, null);
+	}
+	
+	/**
+	 * Get conversion Rate from ValidFrom, Currency From, Currency To and Conversion Type
+	 * @param request
+	 * @return
+	 */
+	public static MConversionRate getConversionRate(int organizationId, int conversionTypeId, int currencyFromId, int currencyToId, Timestamp conversionDate) {
+		if(conversionTypeId <= 0
+				|| currencyFromId <= 0
+				|| currencyToId <= 0) {
+			return null;
+		}
+		//	Get values
+		conversionDate = TimeUtil.getDay(Optional.ofNullable(conversionDate).orElse(new Timestamp(System.currentTimeMillis())));
+		if(organizationId < 0) {
+			organizationId = 0;
+		}
+		int conversionRateId = MConversionRate.getConversionRateId(currencyFromId, 
+				currencyToId, 
+				conversionDate, 
+				conversionTypeId, 
+				Env.getAD_Client_ID(Env.getCtx()), 
+				organizationId);
+		if(conversionRateId > 0) {
+			return MConversionRate.get(Env.getCtx(), conversionRateId);
+		}
+		//	
+		return null;
 	}
 }

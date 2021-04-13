@@ -1592,7 +1592,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				.setIsAisleSeller(pos.get_ValueAsBoolean("IsAisleSeller"))
 				.setIsSharedPos(pos.get_ValueAsBoolean("IsSharedPOS"))
 				.setConversionTypeUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_ConversionType.Table_Name, pos.get_ValueAsInt(I_C_ConversionType.COLUMNNAME_C_ConversionType_ID))));
-		//	Set Price List adn currency
+		//	Set Price List and currency
 		if(pos.getM_PriceList_ID() != 0) {
 			MPriceList priceList = MPriceList.get(Env.getCtx(), pos.getM_PriceList_ID(), null);
 			builder.setPriceList(ConvertUtil.convertPriceList(priceList));

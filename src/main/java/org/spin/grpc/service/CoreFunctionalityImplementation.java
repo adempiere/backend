@@ -293,17 +293,12 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 		if(organizationId < 0) {
 			organizationId = 0;
 		}
-		int conversionRateId = MConversionRate.getConversionRateId(RecordUtil.getIdFromUuid(I_C_Currency.Table_Name, request.getCurrencyFromUuid(), null), 
-				RecordUtil.getIdFromUuid(I_C_Currency.Table_Name, request.getCurrencyToUuid(), null), 
-				conversionDate, 
-				RecordUtil.getIdFromUuid(I_C_ConversionType.Table_Name, request.getConversionTypeUuid(), null), 
-				Env.getAD_Client_ID(Env.getCtx()), 
-				organizationId);
-		if(conversionRateId > 0) {
-			return MConversionRate.get(Env.getCtx(), conversionRateId);
-		}
 		//	
-		return null;
+		return RecordUtil.getConversionRate(organizationId, 
+				RecordUtil.getIdFromUuid(I_C_ConversionType.Table_Name, request.getConversionTypeUuid(), null), 
+				RecordUtil.getIdFromUuid(I_C_Currency.Table_Name, request.getCurrencyFromUuid(), null), 
+				RecordUtil.getIdFromUuid(I_C_Currency.Table_Name, request.getCurrencyToUuid(), null), 
+				conversionDate);
 	}
 	
 	/**

@@ -66,6 +66,10 @@ service UserInterface {
 	rpc LockPrivateAccess(LockPrivateAccessRequest) returns (PrivateAccess) {}
 	// Change Private Access
 	rpc UnlockPrivateAccess(UnlockPrivateAccessRequest) returns (PrivateAccess) {}
+	// Get Record Access
+	rpc GetRecordAccess(GetRecordAccessRequest) returns (RecordAccess) {}
+	// Set Record Access
+	rpc SetRecordAccess(SetRecordAccessRequest) returns (RecordAccess) {}
 	//	Request Print Format List
 	rpc ListPrintFormats(ListPrintFormatsRequest) returns (ListPrintFormatsResponse) {}
 	//	Request Report View List
@@ -122,6 +126,43 @@ service Logs {
 	rpc ListWorkflowLogs(ListWorkflowLogsRequest) returns (ListWorkflowLogsResponse) {}
 	//	Request Recent Items
 	rpc ListRecentItems(ListRecentItemsRequest) returns (ListRecentItemsResponse) {}
+}
+
+//	Role Access Request
+message GetRecordAccessRequest {
+	ClientRequest client_request = 1;
+	string table_name = 2;
+	int32 id = 3;
+	string uuid = 4;
+}
+
+//	Set Access Request
+message SetRecordAccessRequest {
+	ClientRequest client_request = 1;
+	string table_name = 2;
+	int32 id = 3;
+	string uuid = 4;
+	repeated RecordAccessRole record_accesses = 5;
+}
+
+//	Record Access Definition
+message RecordAccess {
+	string table_name = 2;
+	int32 id = 3;
+	string uuid = 4;
+	repeated RecordAccessRole available_roles = 5;
+	repeated RecordAccessRole current_roles = 6;
+}
+
+//	Record Access Stub
+message RecordAccessRole {
+	int32 role_id = 1;
+	string role_uuid = 2;
+	string role_name = 3;
+	bool is_active = 4;
+	bool is_exclude = 5;
+	bool is_read_only = 6;
+	bool is_dependent_entities = 7;
 }
 
 // Request attachment from table and record uuid

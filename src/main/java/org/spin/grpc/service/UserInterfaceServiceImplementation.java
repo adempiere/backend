@@ -68,7 +68,9 @@ import org.compiere.model.I_AD_Preference;
 import org.compiere.model.I_AD_PrintFormat;
 import org.compiere.model.I_AD_Private_Access;
 import org.compiere.model.I_AD_Process;
+import org.compiere.model.I_AD_Record_Access;
 import org.compiere.model.I_AD_ReportView;
+import org.compiere.model.I_AD_Role;
 import org.compiere.model.I_AD_Tab;
 import org.compiere.model.I_AD_User;
 import org.compiere.model.I_AD_Window;
@@ -84,6 +86,7 @@ import org.compiere.model.MMessage;
 import org.compiere.model.MPreference;
 import org.compiere.model.MPrivateAccess;
 import org.compiere.model.MQuery;
+import org.compiere.model.MRecordAccess;
 import org.compiere.model.MReportView;
 import org.compiere.model.MRole;
 import org.compiere.model.MRule;
@@ -125,6 +128,7 @@ import org.spin.grpc.util.GetContextInfoValueRequest;
 import org.spin.grpc.util.GetDefaultValueRequest;
 import org.spin.grpc.util.GetLookupItemRequest;
 import org.spin.grpc.util.GetPrivateAccessRequest;
+import org.spin.grpc.util.GetRecordAccessRequest;
 import org.spin.grpc.util.GetReportOutputRequest;
 import org.spin.grpc.util.GetResourceReferenceRequest;
 import org.spin.grpc.util.GetResourceRequest;
@@ -147,6 +151,8 @@ import org.spin.grpc.util.LookupItem;
 import org.spin.grpc.util.Preference;
 import org.spin.grpc.util.PrintFormat;
 import org.spin.grpc.util.PrivateAccess;
+import org.spin.grpc.util.RecordAccess;
+import org.spin.grpc.util.RecordAccessRole;
 import org.spin.grpc.util.RecordReferenceInfo;
 import org.spin.grpc.util.ReportOutput;
 import org.spin.grpc.util.ReportView;
@@ -155,6 +161,7 @@ import org.spin.grpc.util.ResourceReference;
 import org.spin.grpc.util.RollbackEntityRequest;
 import org.spin.grpc.util.RunCalloutRequest;
 import org.spin.grpc.util.SetPreferenceRequest;
+import org.spin.grpc.util.SetRecordAccessRequest;
 import org.spin.grpc.util.Translation;
 import org.spin.grpc.util.UnlockPrivateAccessRequest;
 import org.spin.grpc.util.UserInterfaceGrpc.UserInterfaceImplBase;
@@ -754,6 +761,194 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 					.withCause(e)
 					.asRuntimeException());
 		}
+	}
+	
+	@Override
+	public void getRecordAccess(GetRecordAccessRequest request, StreamObserver<RecordAccess> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			
+			RecordAccess.Builder recordAccess = convertRecordAccess(request);
+			responseObserver.onNext(recordAccess.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void setRecordAccess(SetRecordAccessRequest request, StreamObserver<RecordAccess> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			
+			RecordAccess.Builder recordAccess = saveRecordAccess(request);
+			responseObserver.onNext(recordAccess.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	/**
+	 * Convert Record Access
+	 * @param request
+	 * @return
+	 */
+	private RecordAccess.Builder convertRecordAccess(GetRecordAccessRequest request) {
+		if(Util.isEmpty(request.getTableName())) {
+			throw new AdempiereException("@AD_Table_ID@ @NotFound@");
+		}
+		if(Util.isEmpty(request.getUuid())
+				&& request.getId() <= 0) {
+			throw new AdempiereException("@Record_ID@ @NotFound@");
+		}
+		//	
+		int tableId = MTable.getTable_ID(request.getTableName());
+		int recordId = request.getId();
+		String uuid = request.getUuid();
+		if(recordId <= 0) {
+			recordId = RecordUtil.getIdFromUuid(request.getTableName(), request.getUuid(), null);
+		}
+		if(Util.isEmpty(uuid)) {
+			uuid = RecordUtil.getUuidFromId(request.getTableName(), recordId);
+		}
+		RecordAccess.Builder builder = RecordAccess.newBuilder().setTableName(ValueUtil.validateNull(request.getTableName()))
+				.setUuid(ValueUtil.validateNull(uuid))
+				.setId(recordId);
+		//	Populate access List
+		getRecordAccess(tableId, recordId, null).forEach(recordAccess -> {
+			MRole role = MRole.get(Env.getCtx(), recordAccess.getAD_Role_ID());
+			builder.addCurrentRoles(RecordAccessRole.newBuilder()
+				.setRoleId(role.getAD_Role_ID())
+				.setRoleUuid(ValueUtil.validateNull(role.getUUID()))
+				.setRoleName(ValueUtil.validateNull(role.getName()))
+				.setIsActive(recordAccess.isActive())
+				.setIsDependentEntities(recordAccess.isDependentEntities())
+				.setIsExclude(recordAccess.isExclude())
+				.setIsReadOnly(recordAccess.isReadOnly()));
+		});
+		//	Populate roles list
+		getRolesList(null).forEach(role -> {
+			builder.addAvailableRoles(RecordAccessRole.newBuilder()
+					.setRoleId(role.getAD_Role_ID())
+					.setRoleUuid(ValueUtil.validateNull(role.getUUID()))
+					.setRoleName(ValueUtil.validateNull(role.getName())));
+		});
+		return builder;
+	}
+	
+	/**
+	 * Get record access from client, role , table id and record id
+	 * @param tableId
+	 * @param recordId
+	 * @param transactionName
+	 * @return
+	 */
+	private List<MRecordAccess> getRecordAccess(int tableId, int recordId, String transactionName) {
+		return new Query(Env.getCtx(), I_AD_Record_Access.Table_Name,"AD_Table_ID = ? "
+				+ "AND Record_ID = ? "
+				+ "AND AD_Role_ID = ? "
+				+ "AND AD_Client_ID = ?", transactionName)
+			.setParameters(tableId, recordId, Env.getAD_Role_ID(Env.getCtx()), Env.getAD_Client_ID(Env.getCtx()))
+			.list();
+	}
+	
+	/**
+	 * Get role for this client
+	 * @param transactionName
+	 * @return
+	 */
+	private List<MRole> getRolesList(String transactionName) {
+		return new Query(Env.getCtx(), I_AD_Role.Table_Name, null, transactionName)
+			.setClient_ID()
+			.setOnlyActiveRecords(true)
+			.list();
+	}
+	
+	/**
+	 * save record Access
+	 * @param request
+	 * @return
+	 */
+	private RecordAccess.Builder saveRecordAccess(SetRecordAccessRequest request) {
+		if(Util.isEmpty(request.getTableName())) {
+			throw new AdempiereException("@AD_Table_ID@ @NotFound@");
+		}
+		if(Util.isEmpty(request.getUuid())
+				&& request.getId() <= 0) {
+			throw new AdempiereException("@Record_ID@ @NotFound@");
+		}
+		//	
+		RecordAccess.Builder builder = RecordAccess.newBuilder();
+		MRole role = MRole.get(Env.getCtx(), Env.getAD_Role_ID(Env.getCtx()));
+		Trx.run(transactionName -> {
+			int tableId = MTable.getTable_ID(request.getTableName());
+			AtomicInteger recordId = new AtomicInteger(request.getId());
+			String uuid = request.getUuid();
+			if(recordId.get() <= 0) {
+				recordId.set(RecordUtil.getIdFromUuid(request.getTableName(), request.getUuid(), transactionName));
+			}
+			if(Util.isEmpty(uuid)) {
+				uuid = RecordUtil.getUuidFromId(request.getTableName(), recordId.get(), transactionName);
+			}
+			builder.setTableName(ValueUtil.validateNull(request.getTableName()))
+				.setUuid(ValueUtil.validateNull(uuid))
+				.setId(recordId.get());
+			//	Delete old
+			DB.executeUpdateEx("DELETE FROM AD_Record_Access "
+					+ "WHERE AD_Table_ID = ? "
+					+ "AND Record_ID = ? "
+					+ "AND AD_Role_ID = ? "
+					+ "AND AD_Client_ID = ?", new Object[]{tableId, recordId.get(), Env.getAD_Role_ID(Env.getCtx()), Env.getAD_Client_ID(Env.getCtx())}, transactionName);
+			//	Add new record access
+			request.getRecordAccessesList().forEach(recordAccessToSet -> {
+				MRecordAccess recordAccess = new MRecordAccess(Env.getCtx(), Env.getAD_Role_ID(Env.getCtx()), tableId, recordId.get(), transactionName);
+				recordAccess.setIsActive(recordAccessToSet.getIsActive());
+				recordAccess.setIsExclude(recordAccessToSet.getIsExclude());
+				recordAccess.setIsDependentEntities(recordAccessToSet.getIsDependentEntities());
+				recordAccess.setIsReadOnly(recordAccessToSet.getIsReadOnly());
+				recordAccess.saveEx();
+				//	Add current roles
+				builder.addCurrentRoles(RecordAccessRole.newBuilder()
+						.setRoleId(role.getAD_Role_ID())
+						.setRoleUuid(ValueUtil.validateNull(role.getUUID()))
+						.setRoleName(ValueUtil.validateNull(role.getName()))
+						.setIsActive(recordAccess.isActive())
+						.setIsDependentEntities(recordAccess.isDependentEntities())
+						.setIsExclude(recordAccess.isExclude())
+						.setIsReadOnly(recordAccess.isReadOnly()));
+			});
+			//	Populate roles list
+			getRolesList(transactionName).forEach(roleToGet -> {
+				builder.addAvailableRoles(RecordAccessRole.newBuilder()
+						.setRoleId(roleToGet.getAD_Role_ID())
+						.setRoleUuid(ValueUtil.validateNull(roleToGet.getUUID())));
+			});
+		});
+		//	
+		return builder;
 	}
 	
 	/**
