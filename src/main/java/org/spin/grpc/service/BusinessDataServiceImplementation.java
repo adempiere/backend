@@ -778,7 +778,7 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 	 * @return
 	 */
 	private int countRecords(String sql, String tableName, List<Object> parameters) {
-		Matcher matcher = Pattern.compile("\\b(?:FROM+)+\\s+" + tableName, Pattern.CASE_INSENSITIVE | Pattern.DOTALL).matcher(sql);
+		Matcher matcher = Pattern.compile("\\b(?:FROM+)+\\s+" + tableName + " AS " + tableName, Pattern.CASE_INSENSITIVE | Pattern.DOTALL).matcher(sql);
 		int positionFrom = -1;
 		if(matcher.find()) {
 			positionFrom = matcher.start();
