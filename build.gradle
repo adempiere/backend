@@ -39,7 +39,7 @@ dependencies {
     implementation "io.grpc:grpc-netty-shaded:${grpcVersion}"
     implementation "io.grpc:grpc-protobuf:${grpcVersion}"
     implementation "io.grpc:grpc-stub:${grpcVersion}"
-    compileOnly "javax.annotation:javax.annotation-api:1.2"
+    runtimeOnly "javax.annotation:javax.annotation-api:1.2"
 
     // Used in HelloWorldServerTls
     implementation "io.grpc:grpc-netty:${grpcVersion}"
@@ -47,9 +47,9 @@ dependencies {
 
     implementation "com.google.protobuf:protobuf-java-util:${protobufVersion}"
 
-    testCompile "io.grpc:grpc-testing:${grpcVersion}"
-    testCompile "junit:junit:4.12"
-    testCompile "org.mockito:mockito-core:1.9.5"
+    testImplementation "io.grpc:grpc-testing:${grpcVersion}"
+    testImplementation "junit:junit:4.12"
+    testImplementation "org.mockito:mockito-core:1.9.5"
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.0.1'
 	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.11.0'
 	implementation 'com.itextpdf:itext-pdfa:5.5.2'
