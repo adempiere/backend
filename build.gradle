@@ -33,27 +33,27 @@ def protobufVersion = '3.5.1'
 def protocVersion = '3.5.1-1'
 
 dependencies {
-    compile fileTree(dir: 'dependences', include: ['*.jar'])
-	compile "com.google.api.grpc:proto-google-common-protos:1.0.0"
-    compile "io.grpc:grpc-alts:${grpcVersion}"
-    compile "io.grpc:grpc-netty-shaded:${grpcVersion}"
-    compile "io.grpc:grpc-protobuf:${grpcVersion}"
-    compile "io.grpc:grpc-stub:${grpcVersion}"
+    implementation fileTree(dir: 'dependences', include: ['*.jar'])
+	implementation "com.google.api.grpc:proto-google-common-protos:1.0.0"
+    implementation "io.grpc:grpc-alts:${grpcVersion}"
+    implementation "io.grpc:grpc-netty-shaded:${grpcVersion}"
+    implementation "io.grpc:grpc-protobuf:${grpcVersion}"
+    implementation "io.grpc:grpc-stub:${grpcVersion}"
     compileOnly "javax.annotation:javax.annotation-api:1.2"
 
     // Used in HelloWorldServerTls
-    compile "io.grpc:grpc-netty:${grpcVersion}"
-    compile "io.netty:netty-tcnative-boringssl-static:${nettyTcNativeVersion}"
+    implementation "io.grpc:grpc-netty:${grpcVersion}"
+    implementation "io.netty:netty-tcnative-boringssl-static:${nettyTcNativeVersion}"
 
-    compile "com.google.protobuf:protobuf-java-util:${protobufVersion}"
+    implementation "com.google.protobuf:protobuf-java-util:${protobufVersion}"
 
     testCompile "io.grpc:grpc-testing:${grpcVersion}"
     testCompile "junit:junit:4.12"
     testCompile "org.mockito:mockito-core:1.9.5"
-    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.0.1'
-	compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.11.0'
-	compile 'com.itextpdf:itext-pdfa:5.5.2'
-	compile 'com.lowagie:itext:2.1.7'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.0.1'
+	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.11.0'
+	implementation 'com.itextpdf:itext-pdfa:5.5.2'
+	implementation 'com.lowagie:itext:2.1.7'
 }
 
 protobuf {
