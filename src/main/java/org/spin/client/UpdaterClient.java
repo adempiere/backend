@@ -30,21 +30,21 @@ public class UpdaterClient {
 		  UpdateManager.newInstance()
 		  	.withHost("localhost")
 	    	.withPort(50059)
-	    	.withToken("7ee9d420726d71c9b2c54388b16ae5bd64b27c6cd828d48022050cd7161cfc888a8c661c5edfc563")
+	    	.withToken(args[0])
 	    	.listAvailablePackages("", "2020-12-01", null)
 	    	.getPackagesList().forEach(packageValue -> logger.info("Package: " + packageValue));
 		  logger.info("####################### Updates #####################");
 		  UpdateManager.newInstance()
 		  	.withHost("localhost")
 	    	.withPort(50059)
-	    	.withToken("7ee9d420726d71c9b2c54388b16ae5bd64b27c6cd828d48022050cd7161cfc888a8c661c5edfc563")
+	    	.withToken(args[0])
 	    	.listUpdates("D", null)
 	    	.getUpdatesList().forEach(packageValue -> logger.info("Updates: " + packageValue));
 		  logger.info("####################### Steps #####################");
 		  UpdateManager.newInstance()
 		  	.withHost("localhost")
 	    	.withPort(50059)
-	    	.withToken("7ee9d420726d71c9b2c54388b16ae5bd64b27c6cd828d48022050cd7161cfc888a8c661c5edfc563")
+	    	.withToken(args[0])
 	    	.listSteps("0a229f92-8933-499b-9ad0-56489dd9fbf9", null)
 	    	.getStepsList().forEach(packageValue -> logger.info("Steps: " + packageValue));
 		  

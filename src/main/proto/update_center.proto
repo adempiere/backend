@@ -99,6 +99,7 @@ message Update {
 	int32 sequence = 6;	
 	string name = 7;
 	string comments = 8;
+	int32 step_quantity = 9;
 }
 
 // Steps Request
@@ -108,6 +109,7 @@ message ListStepsRequest {
 	string update_uuid = 3;	
 	int32 page_size = 4;
 	string page_token = 5;
+	int32 from_step = 6;
 }
 
 //	List Steps Response
@@ -127,7 +129,7 @@ message Step {
 	int32 record_id = 7;
 	int32 column_id = 8;
 	string database_type = 9;
-	string sequence = 10;
+	int32 sequence = 10;
 	string comments = 11;
 	bool is_parsed = 12;
 	string sql_statement = 13;

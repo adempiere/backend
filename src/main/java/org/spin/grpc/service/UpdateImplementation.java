@@ -144,10 +144,16 @@ public class UpdateImplementation extends UpdateCenterImplBase {
 		int limit = (pageNumber == 0? 1: pageNumber) * RecordUtil.PAGE_SIZE;
 		//	Get POS List
 		StringBuffer whereClause = new StringBuffer("AD_Migration_ID = ?");
+		List<Object> parameters = new ArrayList<>();
+		parameters.add(migrationId);
+		if(request.getFromStep() > 0) {
+			parameters.add(request.getFromStep());
+			whereClause.append(" AND ").append(I_AD_MigrationStep.COLUMNNAME_SeqNo).append(" >= ?");
+		}
 		//	Get
 		Query query = new Query(Env.getCtx(), I_AD_MigrationStep.Table_Name , whereClause.toString(), null)
 				.setOnlyActiveRecords(true)
-				.setParameters(migrationId)
+				.setParameters(parameters)
 				.setOrderBy(I_AD_MigrationStep.COLUMNNAME_SeqNo);
 		int count = query.count();
 		query
@@ -180,6 +186,7 @@ public class UpdateImplementation extends UpdateCenterImplBase {
 				.setTableId(migrationStep.getAD_Table_ID())
 				.setRecordId(migrationStep.getRecord_ID())
 				.setIsParsed(migrationStep.isParse())
+				.setSequence(migrationStep.getSeqNo())
 				.setSqlStatement(ValueUtil.validateNull(migrationStep.getSQLStatement()))
 				.setRollbackStatement(ValueUtil.validateNull(migrationStep.getRollbackStatement()));
 		new Query(Env.getCtx(), I_AD_MigrationData.Table_Name, I_AD_MigrationData.COLUMNNAME_AD_MigrationStep_ID + " = ?", null)
@@ -266,7 +273,19 @@ public class UpdateImplementation extends UpdateCenterImplBase {
 				.setSequence(migration.getSeqNo())
 				.setName(ValueUtil.validateNull(migration.getName()))
 				.setComments(ValueUtil.validateNull(migration.getComments()))
-				.setReleaseNo(ValueUtil.validateNull(migration.getReleaseNo()));
+				.setReleaseNo(ValueUtil.validateNull(migration.getReleaseNo()))
+				.setStepQuantity(getStepQuantity(migration));
+	}
+	
+	/**
+	 * Get Step quantity
+	 * @param migration
+	 * @return
+	 */
+	private int getStepQuantity(MMigration migration) {
+		return new Query(Env.getCtx(), I_AD_MigrationStep.Table_Name, I_AD_MigrationStep.COLUMNNAME_AD_Migration_ID + " = ?", null)
+				.setParameters(migration.getAD_Migration_ID())
+				.count();
 	}
 	
 	/**
