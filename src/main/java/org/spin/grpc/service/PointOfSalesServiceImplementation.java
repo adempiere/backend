@@ -842,7 +842,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		Query query = new Query(Env.getCtx(), I_C_Order.Table_Name, whereClause.toString(), null)
 				.setParameters(parameters)
 				.setClient_ID()
-				.setOnlyActiveRecords(true);
+				.setOnlyActiveRecords(true)
+				.setOrderBy(I_C_Order.COLUMNNAME_DateOrdered + " DESC");
 		int count = query.count();
 		query
 		.setLimit(limit, offset)
