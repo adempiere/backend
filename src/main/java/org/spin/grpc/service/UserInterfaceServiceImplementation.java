@@ -869,9 +869,8 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 	private List<MRecordAccess> getRecordAccess(int tableId, int recordId, String transactionName) {
 		return new Query(Env.getCtx(), I_AD_Record_Access.Table_Name,"AD_Table_ID = ? "
 				+ "AND Record_ID = ? "
-				+ "AND AD_Role_ID = ? "
 				+ "AND AD_Client_ID = ?", transactionName)
-			.setParameters(tableId, recordId, Env.getAD_Role_ID(Env.getCtx()), Env.getAD_Client_ID(Env.getCtx()))
+			.setParameters(tableId, recordId, Env.getAD_Client_ID(Env.getCtx()))
 			.list();
 	}
 	
@@ -902,7 +901,6 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 		}
 		//	
 		RecordAccess.Builder builder = RecordAccess.newBuilder();
-		MRole role = MRole.get(Env.getCtx(), Env.getAD_Role_ID(Env.getCtx()));
 		Trx.run(transactionName -> {
 			int tableId = MTable.getTable_ID(request.getTableName());
 			AtomicInteger recordId = new AtomicInteger(request.getId());
@@ -920,11 +918,18 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 			DB.executeUpdateEx("DELETE FROM AD_Record_Access "
 					+ "WHERE AD_Table_ID = ? "
 					+ "AND Record_ID = ? "
-					+ "AND AD_Role_ID = ? "
-					+ "AND AD_Client_ID = ?", new Object[]{tableId, recordId.get(), Env.getAD_Role_ID(Env.getCtx()), Env.getAD_Client_ID(Env.getCtx())}, transactionName);
+					+ "AND AD_Client_ID = ?", new Object[]{tableId, recordId.get(), Env.getAD_Client_ID(Env.getCtx())}, transactionName);
 			//	Add new record access
 			request.getRecordAccessesList().forEach(recordAccessToSet -> {
-				MRecordAccess recordAccess = new MRecordAccess(Env.getCtx(), Env.getAD_Role_ID(Env.getCtx()), tableId, recordId.get(), transactionName);
+				int roleId = recordAccessToSet.getRoleId();
+				if(roleId <= 0) {
+					roleId = RecordUtil.getIdFromUuid(I_AD_Role.Table_Name, recordAccessToSet.getRoleUuid(), transactionName);
+				}
+				if(roleId <= 0) {
+					throw new AdempiereException("@AD_Role_ID@ @NotFound@");
+				}
+				MRole role = MRole.get(Env.getCtx(), roleId);
+				MRecordAccess recordAccess = new MRecordAccess(Env.getCtx(), role.getAD_Role_ID(), tableId, recordId.get(), transactionName);
 				recordAccess.setIsActive(recordAccessToSet.getIsActive());
 				recordAccess.setIsExclude(recordAccessToSet.getIsExclude());
 				recordAccess.setIsDependentEntities(recordAccessToSet.getIsDependentEntities());
