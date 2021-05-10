@@ -167,7 +167,7 @@ public class ContextManager {
 		MClient client = MClient.get(Env.getCtx());
 		String clientLanguage = client.getAD_Language();
 		if(!Util.isEmpty(clientLanguage)
-				&& (Util.isEmpty(language) || language.length() < 4)) {
+				&& Util.isEmpty(language)) {
 			return clientLanguage;
 		}
 		String defaultLanguage = language;
