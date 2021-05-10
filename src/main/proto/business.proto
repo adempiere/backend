@@ -304,6 +304,7 @@ message PrivateAccess {
 	string table_name = 1;
 	int32 id = 2;
 	string uuid = 3;
+	bool is_locked = 4;
 }
 
 //  Empty message

@@ -424,7 +424,14 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 			}
 			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			MUser user = MUser.get(context);
-			PrivateAccess.Builder privateaccess = convertPrivateAccess(context, getPrivateAccess(context, request.getTableName(), request.getId(), user.getAD_User_ID(), null));
+			MPrivateAccess privateAccess = getPrivateAccess(context, request.getTableName(), request.getId(), user.getAD_User_ID(), null);
+			if(privateAccess == null
+					|| privateAccess.getAD_Table_ID() == 0) {
+				MTable table = MTable.get(context, request.getTableName());
+				//	Set values
+				privateAccess = new MPrivateAccess(context, user.getAD_User_ID(), table.getAD_Table_ID(), request.getId());
+			}
+			PrivateAccess.Builder privateaccess = convertPrivateAccess(context, privateAccess);
 			responseObserver.onNext(privateaccess.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -1895,6 +1902,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 		MUser user = MUser.get(context, privateAccess.getAD_User_ID());
 		builder.setUuid(ValueUtil.validateNull(user.getUUID()));
 		builder.setId(privateAccess.getRecord_ID());
+		builder.setIsLocked(privateAccess.isActive());
 		//	Return values
 		return builder;
 	}
