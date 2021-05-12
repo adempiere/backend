@@ -321,9 +321,9 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 		//	For search value
 		if(!Util.isEmpty(request.getSearchValue())) {
 			whereClause.append("("
-				+ "UPPER(Value) LIKE '%' || UPPER(?) || '%'"
-				+ "OR UPPER(Name) LIKE '%' || UPPER(?) || '%'"
-				+ "OR UPPER(Name2) LIKE '%' || UPPER(?) || '%'"
+				+ "UPPER(Value) LIKE '%' || UPPER(?) || '%' "
+				+ "OR UPPER(Name) LIKE '%' || UPPER(?) || '%' "
+				+ "OR UPPER(Name2) LIKE '%' || UPPER(?) || '%' "
 				+ "OR UPPER(Description) LIKE '%' || UPPER(?) || '%'"
 				+ ")");
 			//	Add parameters
@@ -334,6 +334,9 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 		}
 		//	For value
 		if(!Util.isEmpty(request.getValue())) {
+			if(whereClause.length() > 0) {
+				whereClause.append(" AND ");
+			}
 			whereClause.append("("
 				+ "UPPER(Value) LIKE UPPER(?)"
 				+ ")");
@@ -342,6 +345,9 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 		}
 		//	For name
 		if(!Util.isEmpty(request.getName())) {
+			if(whereClause.length() > 0) {
+				whereClause.append(" AND ");
+			}
 			whereClause.append("("
 				+ "UPPER(Name) LIKE UPPER(?)"
 				+ ")");
@@ -352,44 +358,45 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 		if(!Util.isEmpty(request.getContactName())) {
 			if(whereClause.length() > 0) {
 				whereClause.append(" AND ");
-				whereClause.append("(EXISTS(SELECT 1 FROM AD_User u WHERE u.C_BPartner_ID = C_BPartner.C_BPartner_ID AND UPPER(u.Name) LIKE UPPER(?)))");
-				//	Add parameters
-				parameters.add(request.getContactName());
 			}
+			whereClause.append("(EXISTS(SELECT 1 FROM AD_User u WHERE u.C_BPartner_ID = C_BPartner.C_BPartner_ID AND UPPER(u.Name) LIKE UPPER(?)))");
+			//	Add parameters
+			parameters.add(request.getContactName());
 		}
 		//	EMail
 		if(!Util.isEmpty(request.getEmail())) {
 			if(whereClause.length() > 0) {
 				whereClause.append(" AND ");
-				whereClause.append("(EXISTS(SELECT 1 FROM AD_User u WHERE u.C_BPartner_ID = C_BPartner.C_BPartner_ID AND UPPER(u.EMail) LIKE UPPER(?)))");
-				//	Add parameters
-				parameters.add(request.getEmail());
+			}
+			if(whereClause.length() > 0) {
+				whereClause.append(" AND ");
+				
 			}
 		}
 		//	Phone
 		if(!Util.isEmpty(request.getPhone())) {
 			if(whereClause.length() > 0) {
 				whereClause.append(" AND ");
-				whereClause.append("("
-						+ "EXISTS(SELECT 1 FROM AD_User u WHERE u.C_BPartner_ID = C_BPartner.C_BPartner_ID AND UPPER(u.Phone) LIKE UPPER(?)) "
-						+ "OR EXISTS(SELECT 1 FROM C_BPartner_Location bpl WHERE bpl.C_BPartner_ID = C_BPartner.C_BPartner_ID AND UPPER(bpl.Phone) LIKE UPPER(?))"
-						+ ")");
-				//	Add parameters
-				parameters.add(request.getPhone());
-				parameters.add(request.getPhone());
 			}
+			whereClause.append("("
+					+ "EXISTS(SELECT 1 FROM AD_User u WHERE u.C_BPartner_ID = C_BPartner.C_BPartner_ID AND UPPER(u.Phone) LIKE UPPER(?)) "
+					+ "OR EXISTS(SELECT 1 FROM C_BPartner_Location bpl WHERE bpl.C_BPartner_ID = C_BPartner.C_BPartner_ID AND UPPER(bpl.Phone) LIKE UPPER(?))"
+					+ ")");
+			//	Add parameters
+			parameters.add(request.getPhone());
+			parameters.add(request.getPhone());
 		}
 		//	Postal Code
 		if(!Util.isEmpty(request.getPostalCode())) {
 			if(whereClause.length() > 0) {
 				whereClause.append(" AND ");
-				whereClause.append("(EXISTS(SELECT 1 FROM C_BPartner_Location bpl "
-						+ "INNER JOIN C_Location l ON(l.C_Location_ID = bpl.C_Location_ID) "
-						+ "WHERE bpl.C_BPartner_ID = C_BPartner.C_BPartner_ID "
-						+ "AND UPPER(l.Postal) LIKE UPPER(?)))");
-				//	Add parameters
-				parameters.add(request.getPostalCode());
 			}
+			whereClause.append("(EXISTS(SELECT 1 FROM C_BPartner_Location bpl "
+					+ "INNER JOIN C_Location l ON(l.C_Location_ID = bpl.C_Location_ID) "
+					+ "WHERE bpl.C_BPartner_ID = C_BPartner.C_BPartner_ID "
+					+ "AND UPPER(l.Postal) LIKE UPPER(?)))");
+			//	Add parameters
+			parameters.add(request.getPostalCode());
 		}
 		//	
 		String criteriaWhereClause = ValueUtil.getWhereClauseFromCriteria(request.getCriteria(), parameters);
@@ -570,7 +577,7 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 		//	For search value
 		if(!Util.isEmpty(request.getSearchValue())) {
 			whereClause.append("("
-				+ "UPPER(Value) = UPPER(?)"
+				+ "UPPER(Value) = UPPER(?) "
 				+ "OR UPPER(Name) = UPPER(?)"
 				+ ")");
 			//	Add parameters
@@ -579,6 +586,9 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 		}
 		//	For value
 		if(!Util.isEmpty(request.getValue())) {
+			if(whereClause.length() > 0) {
+				whereClause.append(" AND ");
+			}
 			whereClause.append("("
 				+ "UPPER(Value) = UPPER(?)"
 				+ ")");
@@ -587,6 +597,9 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 		}
 		//	For name
 		if(!Util.isEmpty(request.getName())) {
+			if(whereClause.length() > 0) {
+				whereClause.append(" AND ");
+			}
 			whereClause.append("("
 				+ "UPPER(Name) = UPPER(?)"
 				+ ")");
@@ -597,44 +610,44 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 		if(!Util.isEmpty(request.getContactName())) {
 			if(whereClause.length() > 0) {
 				whereClause.append(" AND ");
-				whereClause.append("(EXISTS(SELECT 1 FROM AD_User u WHERE u.C_BPartner_ID = C_BPartner.C_BPartner_ID AND UPPER(u.Name) = UPPER(?)))");
-				//	Add parameters
-				parameters.add(request.getContactName());
 			}
+			whereClause.append("(EXISTS(SELECT 1 FROM AD_User u WHERE u.C_BPartner_ID = C_BPartner.C_BPartner_ID AND UPPER(u.Name) = UPPER(?)))");
+			//	Add parameters
+			parameters.add(request.getContactName());
 		}
 		//	EMail
 		if(!Util.isEmpty(request.getEmail())) {
 			if(whereClause.length() > 0) {
 				whereClause.append(" AND ");
-				whereClause.append("(EXISTS(SELECT 1 FROM AD_User u WHERE u.C_BPartner_ID = C_BPartner.C_BPartner_ID AND UPPER(u.EMail) = UPPER(?)))");
-				//	Add parameters
-				parameters.add(request.getEmail());
 			}
+			whereClause.append("(EXISTS(SELECT 1 FROM AD_User u WHERE u.C_BPartner_ID = C_BPartner.C_BPartner_ID AND UPPER(u.EMail) = UPPER(?)))");
+			//	Add parameters
+			parameters.add(request.getEmail());
 		}
 		//	Phone
 		if(!Util.isEmpty(request.getPhone())) {
 			if(whereClause.length() > 0) {
 				whereClause.append(" AND ");
-				whereClause.append("("
-						+ "EXISTS(SELECT 1 FROM AD_User u WHERE u.C_BPartner_ID = C_BPartner.C_BPartner_ID AND UPPER(u.Phone) = UPPER(?)) "
-						+ "OR EXISTS(SELECT 1 FROM C_BPartner_Location bpl WHERE bpl.C_BPartner_ID = C_BPartner.C_BPartner_ID AND UPPER(bpl.Phone) = UPPER(?))"
-						+ ")");
-				//	Add parameters
-				parameters.add(request.getPhone());
-				parameters.add(request.getPhone());
 			}
+			whereClause.append("("
+					+ "EXISTS(SELECT 1 FROM AD_User u WHERE u.C_BPartner_ID = C_BPartner.C_BPartner_ID AND UPPER(u.Phone) = UPPER(?)) "
+					+ "OR EXISTS(SELECT 1 FROM C_BPartner_Location bpl WHERE bpl.C_BPartner_ID = C_BPartner.C_BPartner_ID AND UPPER(bpl.Phone) = UPPER(?))"
+					+ ")");
+			//	Add parameters
+			parameters.add(request.getPhone());
+			parameters.add(request.getPhone());
 		}
 		//	Postal Code
 		if(!Util.isEmpty(request.getPostalCode())) {
 			if(whereClause.length() > 0) {
 				whereClause.append(" AND ");
-				whereClause.append("(EXISTS(SELECT 1 FROM C_BPartner_Location bpl "
-						+ "INNER JOIN C_Location l ON(l.C_Location_ID = bpl.C_Location_ID) "
-						+ "WHERE bpl.C_BPartner_ID = C_BPartner.C_BPartner_ID "
-						+ "AND UPPER(l.Postal) = UPPER(?)))");
-				//	Add parameters
-				parameters.add(request.getPostalCode());
 			}
+			whereClause.append("(EXISTS(SELECT 1 FROM C_BPartner_Location bpl "
+					+ "INNER JOIN C_Location l ON(l.C_Location_ID = bpl.C_Location_ID) "
+					+ "WHERE bpl.C_BPartner_ID = C_BPartner.C_BPartner_ID "
+					+ "AND UPPER(l.Postal) = UPPER(?)))");
+			//	Add parameters
+			parameters.add(request.getPostalCode());
 		}
 		//	
 		String criteriaWhereClause = ValueUtil.getWhereClauseFromCriteria(request.getCriteria(), parameters);
