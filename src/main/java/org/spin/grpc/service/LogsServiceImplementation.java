@@ -351,8 +351,8 @@ public class LogsServiceImplementation extends LogsImplBase {
 		//	Get page and count
 		String nexPageToken = null;
 		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
-		int offset = (pageNumber > 0? pageNumber - 1: 0) * RecordUtil.PAGE_SIZE;
-		int limit = (pageNumber == 0? 1: pageNumber) * RecordUtil.PAGE_SIZE;
+		int offset = pageNumber * RecordUtil.PAGE_SIZE;
+		int limit = (pageNumber + 1) * RecordUtil.PAGE_SIZE;
 		Query query = new Query(Env.getCtx(), I_AD_WF_Process.Table_Name, whereClause.toString(), null)
 				.setParameters(parameters);
 		int count = query.count();
@@ -533,8 +533,8 @@ public class LogsServiceImplementation extends LogsImplBase {
 		//	Get page and count
 		String nexPageToken = null;
 		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
-		int offset = (pageNumber > 0? pageNumber - 1: 0) * RecordUtil.PAGE_SIZE;
-		int limit = (pageNumber == 0? 1: pageNumber) * RecordUtil.PAGE_SIZE;
+		int offset = pageNumber * RecordUtil.PAGE_SIZE;
+		int limit = (pageNumber + 1) * RecordUtil.PAGE_SIZE;
 		Query query = new Query(Env.getCtx(), I_AD_ChangeLog.Table_Name, whereClause.toString(), null)
 				.setParameters(parameters);
 		int count = query.count();
@@ -993,8 +993,8 @@ public class LogsServiceImplementation extends LogsImplBase {
 		//	Get page and count
 		String nexPageToken = null;
 		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
-		int offset = (pageNumber > 0? pageNumber - 1: 0) * RecordUtil.PAGE_SIZE;
-		int limit = (pageNumber == 0? 1: pageNumber) * RecordUtil.PAGE_SIZE;
+		int offset = pageNumber * RecordUtil.PAGE_SIZE;
+		int limit = (pageNumber + 1) * RecordUtil.PAGE_SIZE;
 		int id = request.getId();
 		if(id <= 0) {
 			id = RecordUtil.getIdFromUuid(I_CM_Chat.Table_Name, request.getUuid(), null);
@@ -1055,8 +1055,8 @@ public class LogsServiceImplementation extends LogsImplBase {
 		//	Get page and count
 		String nexPageToken = null;
 		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
-		int offset = (pageNumber > 0? pageNumber - 1: 0) * RecordUtil.PAGE_SIZE;
-		int limit = (pageNumber == 0? 1: pageNumber) * RecordUtil.PAGE_SIZE;
+		int offset = pageNumber * RecordUtil.PAGE_SIZE;
+		int limit = (pageNumber + 1) * RecordUtil.PAGE_SIZE;
 		Query query = new Query(Env.getCtx(), I_CM_Chat.Table_Name, whereClause.toString(), null)
 				.setParameters(parameters);
 		int count = query.count();

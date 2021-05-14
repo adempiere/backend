@@ -139,9 +139,9 @@ public class UpdateImplementation extends UpdateCenterImplBase {
 		}
 		//	Get page and count
 		String nexPageToken = null;
-		int pageNumber = RecordUtil.getPageNumber(SessionManager.getSessionUuid(), request.getPageToken());
-		int offset = (pageNumber > 0? pageNumber - 1: 0) * RecordUtil.PAGE_SIZE;
-		int limit = (pageNumber == 0? 1: pageNumber) * RecordUtil.PAGE_SIZE;
+		int pageNumber = RecordUtil.getPageNumber("page-token", request.getPageToken());
+		int offset = pageNumber * RecordUtil.PAGE_SIZE;
+		int limit = (pageNumber + 1) * RecordUtil.PAGE_SIZE;
 		//	Get POS List
 		StringBuffer whereClause = new StringBuffer("AD_Migration_ID = ?");
 		List<Object> parameters = new ArrayList<>();
@@ -164,7 +164,7 @@ public class UpdateImplementation extends UpdateCenterImplBase {
 		builder.setRecordCount(count);
 		//	Set page token
 		if(count > limit) {
-			nexPageToken = RecordUtil.getPagePrefix(SessionManager.getSessionUuid()) + (pageNumber + 1);
+			nexPageToken = RecordUtil.getPagePrefix("page-token") + (pageNumber + 1);
 		}
 		//	Set next page
 		builder.setNextPageToken(ValueUtil.validateNull(nexPageToken));
@@ -228,9 +228,9 @@ public class UpdateImplementation extends UpdateCenterImplBase {
 		}
 		//	Get page and count
 		String nexPageToken = null;
-		int pageNumber = RecordUtil.getPageNumber(SessionManager.getSessionUuid(), request.getPageToken());
-		int offset = (pageNumber > 0? pageNumber - 1: 0) * RecordUtil.PAGE_SIZE;
-		int limit = (pageNumber == 0? 1: pageNumber) * RecordUtil.PAGE_SIZE;
+		int pageNumber = RecordUtil.getPageNumber("page-token", request.getPageToken());
+		int offset = pageNumber * RecordUtil.PAGE_SIZE;
+		int limit = (pageNumber + 1) * RecordUtil.PAGE_SIZE;
 		//	Get POS List
 		StringBuffer whereClause = new StringBuffer("EntityType = ?");
 		List<Object> parameters = new ArrayList<>();
@@ -253,7 +253,7 @@ public class UpdateImplementation extends UpdateCenterImplBase {
 		builder.setRecordCount(count);
 		//	Set page token
 		if(count > limit) {
-			nexPageToken = RecordUtil.getPagePrefix(SessionManager.getSessionUuid()) + (pageNumber + 1);
+			nexPageToken = RecordUtil.getPagePrefix("page-token") + (pageNumber + 1);
 		}
 		//	Set next page
 		builder.setNextPageToken(ValueUtil.validateNull(nexPageToken));
@@ -301,9 +301,9 @@ public class UpdateImplementation extends UpdateCenterImplBase {
 		}
 		//	Get page and count
 		String nexPageToken = null;
-		int pageNumber = RecordUtil.getPageNumber(SessionManager.getSessionUuid(), request.getPageToken());
-		int offset = (pageNumber > 0? pageNumber - 1: 0) * RecordUtil.PAGE_SIZE;
-		int limit = (pageNumber == 0? 1: pageNumber) * RecordUtil.PAGE_SIZE;
+		int pageNumber = RecordUtil.getPageNumber("page-token", request.getPageToken());
+		int offset = pageNumber * RecordUtil.PAGE_SIZE;
+		int limit = (pageNumber + 1) * RecordUtil.PAGE_SIZE;
 		//	Get POS List
 		String whereClause = null;
 		List<Object> parameters = new ArrayList<>();
@@ -329,7 +329,7 @@ public class UpdateImplementation extends UpdateCenterImplBase {
 		builder.setRecordCount(count);
 		//	Set page token
 		if(count > limit) {
-			nexPageToken = RecordUtil.getPagePrefix(SessionManager.getSessionUuid()) + (pageNumber + 1);
+			nexPageToken = RecordUtil.getPagePrefix("page-token") + (pageNumber + 1);
 		}
 		//	Set next page
 		builder.setNextPageToken(ValueUtil.validateNull(nexPageToken));

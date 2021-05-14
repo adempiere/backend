@@ -362,8 +362,8 @@ public class WorkflowServiceImplementation extends WorkflowImplBase {
 		//	Get page and count
 		String nexPageToken = null;
 		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
-		int offset = (pageNumber > 0? pageNumber - 1: 0) * RecordUtil.PAGE_SIZE;
-		int limit = (pageNumber == 0? 1: pageNumber) * RecordUtil.PAGE_SIZE;
+		int offset = pageNumber * RecordUtil.PAGE_SIZE;
+		int limit = (pageNumber + 1) * RecordUtil.PAGE_SIZE;
 		Query query = new Query(context, I_AD_Workflow.Table_Name, whereClause.toString(), null)
 				.setParameters(parameters);
 		int count = query.count();

@@ -311,8 +311,8 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 		ListBusinessPartnersResponse.Builder builder = ListBusinessPartnersResponse.newBuilder();
 		String nexPageToken = null;
 		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
-		int offset = (pageNumber > 0? pageNumber - 1: 0) * RecordUtil.PAGE_SIZE;
-		int limit = (pageNumber == 0? 1: pageNumber) * RecordUtil.PAGE_SIZE;
+		int offset = pageNumber * RecordUtil.PAGE_SIZE;
+		int limit = (pageNumber + 1) * RecordUtil.PAGE_SIZE;
 		//	Get business partner list
 		//	Dynamic where clause
 		StringBuffer whereClause = new StringBuffer();
@@ -754,8 +754,8 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 		//	Get page and count
 		String nexPageToken = null;
 		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
-		int offset = (pageNumber > 0? pageNumber - 1: 0) * RecordUtil.PAGE_SIZE;
-		int limit = (pageNumber == 0? 1: pageNumber) * RecordUtil.PAGE_SIZE;
+		int offset = pageNumber * RecordUtil.PAGE_SIZE;
+		int limit = (pageNumber + 1) * RecordUtil.PAGE_SIZE;
 		Query query = new Query(Env.getCtx(), I_AD_Org.Table_Name, whereClause, null)
 				.setParameters(parameters)
 				.setOnlyActiveRecords(true)
@@ -788,8 +788,8 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 		//	Get page and count
 		String nexPageToken = null;
 		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
-		int offset = (pageNumber > 0? pageNumber - 1: 0) * RecordUtil.PAGE_SIZE;
-		int limit = (pageNumber == 0? 1: pageNumber) * RecordUtil.PAGE_SIZE;
+		int offset = pageNumber * RecordUtil.PAGE_SIZE;
+		int limit = (pageNumber + 1) * RecordUtil.PAGE_SIZE;
 		int id = request.getOrganizationId();
 		if(id <= 0) {
 			id = RecordUtil.getIdFromUuid(I_AD_Org.Table_Name, request.getOrganizationUuid(), null);
