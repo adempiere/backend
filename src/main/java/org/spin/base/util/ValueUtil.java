@@ -20,16 +20,19 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.adempiere.exceptions.AdempiereException;
 import org.compiere.model.MQuery;
 import org.compiere.model.PO;
 import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
 import org.compiere.util.Language;
+import org.compiere.util.TimeUtil;
 import org.compiere.util.Util;
 import org.spin.grpc.util.Criteria;
 import org.spin.grpc.util.Decimal;
@@ -43,6 +46,9 @@ import org.spin.grpc.util.Value.ValueType;
  * @author Yamel Senih, ysenih@erpya.com , http://www.erpya.com
  */
 public class ValueUtil {
+	
+	/**	Date format	*/
+	private static final String DATE_FORMAT = "yyyy-MM-dd hh:mm:ss";
 	
 	/**
 	 * Get Value 
@@ -630,6 +636,36 @@ public class ValueUtil {
 		});
 		//	Return where clause
 		return whereClause.toString();
+	}
+	
+	/**
+	 * Convert string to dates
+	 * @param date
+	 * @return
+	 */
+	public static Timestamp convertStringToDate(String date) {
+		if(Util.isEmpty(date)) {
+			return null;
+		}
+		SimpleDateFormat dateConverter = new SimpleDateFormat(DATE_FORMAT);
+		try {
+			Date validFromParameter = dateConverter.parse(date);
+			return TimeUtil.getDay(validFromParameter.getTime());
+		} catch (Exception e) {
+			throw new AdempiereException(e);
+		}
+	}
+	
+	/**
+	 * Convert Timestamp to String
+	 * @param date
+	 * @return
+	 */
+	public static String convertDateToString(Timestamp date) {
+		if(date == null) {
+			return null;
+		}
+		return new SimpleDateFormat(DATE_FORMAT).format(date);
 	}
 
 }

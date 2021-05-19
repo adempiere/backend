@@ -823,14 +823,14 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			parameters.add(request.getIsPaid()? "Y": "N");
 		}
 		//	Date Order From
-		if(request.getDateOrderedFrom() > 0) {
+		if(!Util.isEmpty(request.getDateOrderedFrom())) {
 			whereClause.append(" AND DateOrdered >= ?");
-			parameters.add(new Timestamp(request.getDateOrderedFrom()));
+			parameters.add(ValueUtil.convertStringToDate(request.getDateOrderedFrom()));
 		}
 		//	Date Order To
-		if(request.getDateOrderedTo() > 0) {
+		if(!Util.isEmpty(request.getDateOrderedTo())) {
 			whereClause.append(" AND DateOrdered <= ?");
-			parameters.add(new Timestamp(request.getDateOrderedTo()));
+			parameters.add(ValueUtil.convertStringToDate(request.getDateOrderedTo()));
 		}
 		//	Sales Representative
 		if(!Util.isEmpty(request.getSalesRepresentativeUuid())) {
@@ -1833,12 +1833,13 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			.setOrderUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_Order.Table_Name, payment.getC_Order_ID())))
 			.setDocumentNo(ValueUtil.validateNull(payment.getDocumentNo()))
 			.setTenderTypeCode(ValueUtil.validateNull(payment.getTenderType()))
-			.setReferenceNo(ValueUtil.validateNull(payment.getCheckNo()))
+			.setReferenceNo(ValueUtil.validateNull(Optional.ofNullable(payment.getCheckNo()).orElse(payment.getDocumentNo())))
 			.setDescription(ValueUtil.validateNull(payment.getDescription()))
 			.setAmount(ValueUtil.getDecimalFromBigDecimal(payment.getPayAmt()))
 			.setBankUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_Bank.Table_Name, payment.getC_Bank_ID())))
 			.setBusinessPartner(ConvertUtil.convertBusinessPartner((MBPartner) payment.getC_BPartner()))
 			.setCurrencyUuid(RecordUtil.getUuidFromId(I_C_Currency.Table_Name, payment.getC_Currency_ID()))
+			.setPaymentDate(ValueUtil.convertDateToString(payment.getDateTrx()))
 			.setDocumentStatus(ConvertUtil.convertDocumentStatus(ValueUtil.validateNull(payment.getDocStatus()), 
 					ValueUtil.validateNull(ValueUtil.getTranslation(reference, I_AD_Ref_List.COLUMNNAME_Name)), 
 					ValueUtil.validateNull(ValueUtil.getTranslation(reference, I_AD_Ref_List.COLUMNNAME_Description))))
@@ -1970,6 +1971,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		}
 		//	Validate reference
 		if(!Util.isEmpty(request.getReferenceNo())) {
+			payment.setDocumentNo(request.getReferenceNo());
 			payment.addDescription(request.getReferenceNo());
 		}
 		//	
@@ -2021,7 +2023,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					ValueUtil.validateNull(ValueUtil.getTranslation(reference, I_AD_Ref_List.COLUMNNAME_Description))))
 			.setTotalLines(ValueUtil.getDecimalFromBigDecimal(order.getTotalLines()))
 			.setGrandTotal(ValueUtil.getDecimalFromBigDecimal(order.getGrandTotal()))
-			.setDateOrdered(order.getDateOrdered().getTime())
+			.setDateOrdered(ValueUtil.convertDateToString(order.getDateOrdered()))
 			.setBusinessPartner(ConvertUtil.convertBusinessPartner((MBPartner) order.getC_BPartner()));
 	}
 	
@@ -2061,7 +2063,12 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	Validate Price List
 		MPriceList priceList = getPriceList(request.getPriceListUuid());
 		//	Get Valid From
-		Timestamp validFrom = TimeUtil.getDay(request.getValidFrom() > 0? request.getValidFrom(): System.currentTimeMillis());
+		AtomicReference<Timestamp> validFrom = new AtomicReference<>();
+		if(!Util.isEmpty(request.getValidFrom())) {
+			validFrom.set(ValueUtil.convertStringToDate(request.getValidFrom()));
+		} else {
+			validFrom.set(TimeUtil.getDay(System.currentTimeMillis()));
+		}
 		String nexPageToken = null;
 		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
 		int offset = pageNumber * RecordUtil.PAGE_SIZE;
@@ -2100,7 +2107,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					+ "AND pp.M_Product_ID = M_Product.M_Product_ID))");
 			//	Add parameters
 			parameters.add(RecordUtil.getIdFromUuid(I_M_PriceList.Table_Name, request.getPriceListUuid(), null));
-			parameters.add(validFrom);
+			parameters.add(validFrom.get());
 		}
 		//	Get Product list
 		Query query = new Query(Env.getCtx(), I_M_Product.Table_Name, 
@@ -2118,7 +2125,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					RecordUtil.getIdFromUuid(I_C_BPartner.Table_Name, request.getBusinessPartnerUuid(), null), 
 					priceList, 
 					RecordUtil.getIdFromUuid(I_M_Warehouse.Table_Name, request.getWarehouseUuid(), null), 
-					validFrom, 
+					validFrom.get(), 
 					null);
 			if(productPrice.hasPriceList()
 					&& productPrice.hasPriceStandard()
@@ -2312,12 +2319,17 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			}
 		}
 		//	Get Valid From
-		Timestamp validFrom = TimeUtil.getDay(request.getValidFrom() > 0? request.getValidFrom(): System.currentTimeMillis());
+		AtomicReference<Timestamp> validFrom = new AtomicReference<>();
+		if(!Util.isEmpty(request.getValidFrom())) {
+			validFrom.set(ValueUtil.convertStringToDate(request.getValidFrom()));
+		} else {
+			validFrom.set(TimeUtil.getDay(System.currentTimeMillis()));
+		}
 		return convertProductPrice(product,
 				RecordUtil.getIdFromUuid(I_C_BPartner.Table_Name, request.getBusinessPartnerUuid(), null), 
 				priceList, 
 				RecordUtil.getIdFromUuid(I_M_Warehouse.Table_Name, request.getWarehouseUuid(), null), 
-				validFrom,
+				validFrom.get(),
 				Env.ONE);
 	}
 }

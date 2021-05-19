@@ -101,8 +101,8 @@ message ListOrdersRequest {
 	bool is_processed = 8;
 	bool is_aisle_seller = 9;
 	bool is_invoiced = 10;
-	int64 date_ordered_from = 11;
-	int64 date_ordered_to = 12;
+	string date_ordered_from = 11;
+	string date_ordered_to = 12;
 	string sales_representative_uuid = 13;
 	int32 page_size = 14;
 	string page_token = 15;
@@ -132,7 +132,7 @@ message ListProductPriceRequest {
 	string price_list_uuid = 3;
 	string business_partner_uuid = 4;
 	string warehouse_uuid = 5;
-	int64 valid_from = 6;
+	string valid_from = 6;
 	// Query
 	Criteria criteria = 7;
 	int32 page_size = 8;
@@ -202,7 +202,7 @@ message CreatePaymentRequest {
 	string reference_no = 6;
 	string description = 7;
 	Decimal amount = 8;
-	int64 payment_date = 9;
+	string payment_date = 9;
 	string tender_type_code = 10;
 	string currency_uuid = 11;
 }
@@ -215,7 +215,7 @@ message UpdatePaymentRequest {
 	string reference_no = 4;
 	string description = 5;
 	Decimal amount = 6;
-	int64 payment_date = 7;
+	string payment_date = 7;
 	string tender_type_code = 8;
 }
 
@@ -258,7 +258,7 @@ message Payment {
 	string reference_no = 11;
 	string description = 12;
 	Decimal amount = 13;
-	int64 payment_date = 14;
+	string payment_date = 14;
 	string tender_type_code = 15;
 	string currency_uuid = 16;
 }
@@ -331,7 +331,7 @@ message Order {
 	DocumentStatus document_status = 6;
 	Decimal total_lines = 7;
 	Decimal grand_total = 8;
-	int64 date_ordered = 9;
+	string date_ordered = 9;
 	BusinessPartner business_partner = 10;
 }
 
@@ -362,7 +362,7 @@ message GetProductPriceRequest {
 	string price_list_uuid = 6;
 	string business_partner_uuid = 7;
 	string warehouse_uuid = 8;
-	int64 valid_from = 9;
+	string valid_from = 9;
 }
 
 // Layout for POS
