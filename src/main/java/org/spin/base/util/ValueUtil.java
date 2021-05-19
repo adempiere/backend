@@ -32,7 +32,6 @@ import org.compiere.model.PO;
 import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
 import org.compiere.util.Language;
-import org.compiere.util.TimeUtil;
 import org.compiere.util.Util;
 import org.spin.grpc.util.Criteria;
 import org.spin.grpc.util.Decimal;
@@ -650,7 +649,7 @@ public class ValueUtil {
 		SimpleDateFormat dateConverter = new SimpleDateFormat(DATE_FORMAT);
 		try {
 			Date validFromParameter = dateConverter.parse(date);
-			return TimeUtil.getDay(validFromParameter.getTime());
+			return new Timestamp(validFromParameter.getTime());
 		} catch (Exception e) {
 			throw new AdempiereException(e);
 		}

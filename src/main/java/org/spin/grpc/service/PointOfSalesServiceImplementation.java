@@ -825,12 +825,12 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	Date Order From
 		if(!Util.isEmpty(request.getDateOrderedFrom())) {
 			whereClause.append(" AND DateOrdered >= ?");
-			parameters.add(ValueUtil.convertStringToDate(request.getDateOrderedFrom()));
+			parameters.add(TimeUtil.getDay(ValueUtil.convertStringToDate(request.getDateOrderedFrom())));
 		}
 		//	Date Order To
 		if(!Util.isEmpty(request.getDateOrderedTo())) {
 			whereClause.append(" AND DateOrdered <= ?");
-			parameters.add(ValueUtil.convertStringToDate(request.getDateOrderedTo()));
+			parameters.add(TimeUtil.getDay(ValueUtil.convertStringToDate(request.getDateOrderedTo())));
 		}
 		//	Sales Representative
 		if(!Util.isEmpty(request.getSalesRepresentativeUuid())) {
@@ -2107,7 +2107,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					+ "AND pp.M_Product_ID = M_Product.M_Product_ID))");
 			//	Add parameters
 			parameters.add(RecordUtil.getIdFromUuid(I_M_PriceList.Table_Name, request.getPriceListUuid(), null));
-			parameters.add(validFrom.get());
+			parameters.add(TimeUtil.getDay(validFrom.get()));
 		}
 		//	Get Product list
 		Query query = new Query(Env.getCtx(), I_M_Product.Table_Name, 
@@ -2178,7 +2178,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		builder.setCurrency(ConvertUtil.convertCurrency(MCurrency.get(Env.getCtx(), priceList.getC_Currency_ID())));
 		//	Price List Attributes
 		builder.setIsTaxIncluded(priceList.isTaxIncluded());
-		builder.setValidFrom(productPricing.getPriceDate().getTime());
+		builder.setValidFrom(ValueUtil.validateNull(ValueUtil.convertDateToString(productPricing.getPriceDate())));
 		builder.setPriceListName(ValueUtil.validateNull(priceList.getName()));
 		//	Pricing
 		builder.setPricePrecision(productPricing.getPrecision());
@@ -2329,7 +2329,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				RecordUtil.getIdFromUuid(I_C_BPartner.Table_Name, request.getBusinessPartnerUuid(), null), 
 				priceList, 
 				RecordUtil.getIdFromUuid(I_M_Warehouse.Table_Name, request.getWarehouseUuid(), null), 
-				validFrom.get(),
+				TimeUtil.getDay(validFrom.get()),
 				Env.ONE);
 	}
 }

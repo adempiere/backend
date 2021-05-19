@@ -161,7 +161,7 @@ message GetConversionRateRequest {
 	string conversion_type_uuid = 2;
 	string currency_from_uuid = 3;
 	string currency_to_uuid = 4;
-	int64 conversion_date = 5;
+	string conversion_date = 5;
 }
 
 // Currency info
@@ -180,8 +180,8 @@ message ConversionRate {
 	string uuid = 1;
 	int32 id = 2;
 	string conversion_type_uuid = 3;
-	int64 valid_from = 4;
-	int64 valid_to = 5;
+	string valid_from = 4;
+	string valid_to = 5;
 	Currency currency_from = 6;
 	Currency currency_to = 7;
 	Decimal multiply_rate = 8;
@@ -347,7 +347,7 @@ message ProductPrice {
 	Decimal price_limit = 4;
 	string price_list_name = 5;
 	bool is_tax_included = 6;
-	int64 valid_from = 7;
+	string valid_from = 7;
 	Currency currency = 8;
 	TaxRate tax_rate = 9;
 	int32 price_precision = 10;

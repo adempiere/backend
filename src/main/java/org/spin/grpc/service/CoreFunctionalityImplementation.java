@@ -288,7 +288,10 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 			return null;
 		}
 		//	Get values
-		Timestamp conversionDate = TimeUtil.getDay(new Timestamp(request.getConversionDate() == 0? System.currentTimeMillis(): request.getConversionDate()));
+		Timestamp conversionDate = ValueUtil.convertStringToDate(request.getConversionDate());
+		if(conversionDate == null) {
+			conversionDate = TimeUtil.getDay(System.currentTimeMillis());
+		}
 		int organizationId = RecordUtil.getIdFromUuid(I_AD_Org.Table_Name, request.getClientRequest().getOrganizationUuid(), null);
 		if(organizationId < 0) {
 			organizationId = 0;
@@ -298,7 +301,7 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 				RecordUtil.getIdFromUuid(I_C_ConversionType.Table_Name, request.getConversionTypeUuid(), null), 
 				RecordUtil.getIdFromUuid(I_C_Currency.Table_Name, request.getCurrencyFromUuid(), null), 
 				RecordUtil.getIdFromUuid(I_C_Currency.Table_Name, request.getCurrencyToUuid(), null), 
-				conversionDate);
+				TimeUtil.getDay(conversionDate));
 	}
 	
 	/**

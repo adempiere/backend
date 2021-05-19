@@ -255,14 +255,14 @@ public class ConvertUtil {
 		builder
 			.setUuid(ValueUtil.validateNull(conversionRate.getUUID()))
 			.setId(conversionRate.getC_Conversion_Rate_ID())
-			.setValidFrom(conversionRate.getValidFrom().getTime())
+			.setValidFrom(ValueUtil.validateNull(ValueUtil.convertDateToString(conversionRate.getValidFrom())))
 			.setConversionTypeUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_ConversionType.Table_Name, conversionRate.getC_ConversionType_ID())))
 			.setCurrencyFrom(convertCurrency(MCurrency.get(Env.getCtx(), conversionRate.getC_Currency_ID())))
 			.setCurrencyTo(convertCurrency(MCurrency.get(Env.getCtx(), conversionRate.getC_Currency_ID_To())))
 			.setMultiplyRate(ValueUtil.getDecimalFromBigDecimal(conversionRate.getMultiplyRate()))
 			.setDivideRate(ValueUtil.getDecimalFromBigDecimal(conversionRate.getDivideRate()));
 		if(conversionRate.getValidTo() != null) {
-			builder.setValidTo(conversionRate.getValidTo().getTime());
+			builder.setValidTo(ValueUtil.validateNull(ValueUtil.convertDateToString(conversionRate.getValidTo())));
 		}
 		//	
 		return builder;
