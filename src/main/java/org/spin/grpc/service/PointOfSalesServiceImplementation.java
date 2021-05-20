@@ -1496,11 +1496,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					|| price.equals(Env.ZERO)) {
 				priceToOrder = orderLine.getPriceEntered();
 			}
-			if(discountRate != null
-					&& !discountRate.equals(Env.ZERO)) {
-				BigDecimal discountAmount = orderLine.getPriceList().multiply(discountRate.divide(Env.ONEHUNDRED));
-				priceToOrder = orderLine.getPriceList().subtract(discountAmount);
-			}
+			BigDecimal discountAmount = orderLine.getPriceList().multiply(Optional.ofNullable(discountRate).orElse(Env.ZERO).divide(Env.ONEHUNDRED));
+			priceToOrder = orderLine.getPriceList().subtract(discountAmount);
 			//	Set values
 			orderLine.setPrice(priceToOrder); //	sets List/limit
 			orderLine.setQty(quantityToOrder);

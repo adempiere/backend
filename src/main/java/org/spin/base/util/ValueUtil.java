@@ -47,7 +47,8 @@ import org.spin.grpc.util.Value.ValueType;
 public class ValueUtil {
 	
 	/**	Date format	*/
-	private static final String DATE_FORMAT = "yyyy-MM-dd hh:mm:ss";
+	private static final String TIME_FORMAT = "yyyy-MM-dd hh:mm:ss";
+	private static final String DATE_FORMAT = "yyyy-MM-dd";
 	
 	/**
 	 * Get Value 
@@ -646,7 +647,13 @@ public class ValueUtil {
 		if(Util.isEmpty(date)) {
 			return null;
 		}
-		SimpleDateFormat dateConverter = new SimpleDateFormat(DATE_FORMAT);
+		String format = DATE_FORMAT;
+		if(date.length() == TIME_FORMAT.length()) {
+			format = TIME_FORMAT;
+		} else if(date.length() != DATE_FORMAT.length()) {
+			throw new AdempiereException("Invalid date format, please use some like this: \"" + DATE_FORMAT + "\" or \"" + TIME_FORMAT + "\"");
+		}
+		SimpleDateFormat dateConverter = new SimpleDateFormat(format);
 		try {
 			Date validFromParameter = dateConverter.parse(date);
 			return new Timestamp(validFromParameter.getTime());
@@ -664,7 +671,7 @@ public class ValueUtil {
 		if(date == null) {
 			return null;
 		}
-		return new SimpleDateFormat(DATE_FORMAT).format(date);
+		return new SimpleDateFormat(TIME_FORMAT).format(date);
 	}
 
 }

@@ -17,6 +17,7 @@ package org.spin.grpc.service;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.adempiere.exceptions.AdempiereException;
 import org.compiere.model.I_AD_Language;
@@ -487,10 +488,11 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 				}
 			}
 			//	Save it
-			businessPartner.saveEx();
+			businessPartner.saveEx(transactionName);
+			MUser contact = null;
 			//	Contact
 			if(!Util.isEmpty(request.getContactName()) || !Util.isEmpty(request.getEmail()) || !Util.isEmpty(request.getPhone())) {
-				MUser contact = new MUser(businessPartner);
+				contact = new MUser(businessPartner);
 				//	Name
 				if(!Util.isEmpty(request.getContactName())) {
 					contact.setName(request.getContactName());
@@ -508,60 +510,59 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 					contact.setDescription(request.getDescription());
 				}
 				//	Save
-				contact.saveEx();
-				//	Location
-				int countryId = 0;
-				if(!Util.isEmpty(request.getCountryUuid())) {
-					countryId = RecordUtil.getIdFromUuid(I_C_Country.Table_Name, request.getCountryUuid(), transactionName);
-				}
-				if(countryId <= 0) {
-					countryId = Env.getContextAsInt(Env.getCtx(), "#C_Country_ID");
-				}
-				//	
-				int regionId = 0;
-				if(!Util.isEmpty(request.getRegionUuid())) {
-					regionId = RecordUtil.getIdFromUuid(I_C_Region.Table_Name, request.getRegionUuid(), transactionName);
-				}
-				String cityName = null;
-				int cityId = 0;
-				//	City Name
-				if(!Util.isEmpty(request.getCityName())) {
-					cityName = request.getCityName();
-				}
-				//	City Reference
-				if(!Util.isEmpty(request.getCityUuid())) {
-					cityId = RecordUtil.getIdFromUuid(I_C_Region.Table_Name, request.getRegionUuid(), transactionName);
-					if(cityId > 0) {
-						cityName = null;
-					}
-				}
-				//	Instance it
-				MLocation location = new MLocation(Env.getCtx(), countryId, regionId, cityName, null);
-				if(cityId > 0) {
-					location.setC_City_ID(cityId);
-				}
-				//	Postal Code
-				if(!Util.isEmpty(request.getPostalCode())) {
-					location.setPostal(request.getPostalCode());
-				}
-				location.saveEx();
-				//	Create BP location
-				MBPartnerLocation businessPartnerLocation = new MBPartnerLocation(businessPartner);
-				businessPartnerLocation.setC_Location_ID(location.getC_Location_ID());
-				//	Phone
-				if(!Util.isEmpty(request.getPhone())) {
-					businessPartnerLocation.setPhone(request.getPhone());
-				}
-				//	Contact
-				if(!Util.isEmpty(request.getContactName())) {
-					businessPartnerLocation.setContactPerson(request.getContactName());
-				}
-				//	Save
-				businessPartnerLocation.saveEx();
-				//	Set Location
-				contact.setC_BPartner_Location_ID(businessPartnerLocation.getC_BPartner_Location_ID());
-				contact.saveEx();
+				contact.saveEx(transactionName);
 	 		}
+			//	Location
+			int countryId = 0;
+			if(!Util.isEmpty(request.getCountryUuid())) {
+				countryId = RecordUtil.getIdFromUuid(I_C_Country.Table_Name, request.getCountryUuid(), transactionName);
+			}
+			if(countryId <= 0) {
+				countryId = Env.getContextAsInt(Env.getCtx(), "#C_Country_ID");
+			}
+			//	
+			int regionId = 0;
+			if(!Util.isEmpty(request.getRegionUuid())) {
+				regionId = RecordUtil.getIdFromUuid(I_C_Region.Table_Name, request.getRegionUuid(), transactionName);
+			}
+			String cityName = null;
+			int cityId = 0;
+			//	City Name
+			if(!Util.isEmpty(request.getCityName())) {
+				cityName = request.getCityName();
+			}
+			//	City Reference
+			if(!Util.isEmpty(request.getCityUuid())) {
+				cityId = RecordUtil.getIdFromUuid(I_C_Region.Table_Name, request.getRegionUuid(), transactionName);
+			}
+			//	Instance it
+			MLocation location = new MLocation(Env.getCtx(), countryId, regionId, cityName, transactionName);
+			if(cityId > 0) {
+				location.setC_City_ID(cityId);
+			}
+			//	Postal Code
+			if(!Util.isEmpty(request.getPostalCode())) {
+				location.setPostal(request.getPostalCode());
+			}
+			location.saveEx(transactionName);
+			//	Create BP location
+			MBPartnerLocation businessPartnerLocation = new MBPartnerLocation(businessPartner);
+			businessPartnerLocation.setC_Location_ID(location.getC_Location_ID());
+			//	Phone
+			if(!Util.isEmpty(request.getPhone())) {
+				businessPartnerLocation.setPhone(request.getPhone());
+			}
+			//	Contact
+			if(!Util.isEmpty(request.getContactName())) {
+				businessPartnerLocation.setContactPerson(request.getContactName());
+			}
+			//	Save
+			businessPartnerLocation.saveEx(transactionName);
+			//	Set Location
+			Optional.ofNullable(contact).ifPresent(contactToSave -> {
+				contactToSave.setC_BPartner_Location_ID(businessPartnerLocation.getC_BPartner_Location_ID());
+				contactToSave.saveEx(transactionName);
+			});
 		});
 		//	Default return
 		return ConvertUtil.convertBusinessPartner(businessPartner);
