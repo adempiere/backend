@@ -117,6 +117,7 @@ import org.spin.grpc.util.StoreGrpc.StoreImplBase;
 import org.spin.grpc.util.UpdateOrderLineRequest;
 import org.spin.grpc.util.UpdateOrderRequest;
 import org.spin.grpc.util.UpdatePaymentRequest;
+import org.spin.grpc.util.ValidatePINRequest;
 import org.spin.grpc.util.Warehouse;
 
 import io.grpc.Status;
@@ -577,6 +578,30 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					request.getClientRequest().getWarehouseUuid());
 			Order.Builder order = convertOrder(processOrder(request));
 			responseObserver.onNext(order.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void validatePIN(ValidatePINRequest request, StreamObserver<Empty> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Update Order = " + request.getPosUuid());
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			Empty.Builder empty = validatePIN(request);
+			responseObserver.onNext(empty.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
@@ -1106,6 +1131,44 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	}
 	
 	/**
+	 * Validate User PIN
+	 * @param userPin
+     */
+	private Empty.Builder validatePIN(ValidatePINRequest request) {
+		MPOS pos = getPOSFromUuid(request.getPosUuid());
+		if(Util.isEmpty(request.getPin())) {
+			throw new AdempiereException("@UserPIN@ @IsMandatory@");
+		}
+		int supervisorId = pos.get_ValueAsInt("Supervisor_ID");
+		MUser user = MUser.get(Env.getCtx(), (supervisorId > 0? supervisorId: pos.getSalesRep_ID()));
+		if(supervisorId <= 0) {
+			supervisorId = user.getSupervisor_ID();
+		}
+		if(supervisorId > 0) {
+			MUser supervisor = MUser.get(Env.getCtx(), supervisorId);
+			Optional<String> superVisorName = Optional.ofNullable(supervisor.getName());
+			if (Util.isEmpty(supervisor.getUserPIN())) {
+				throw new AdempiereException("@Supervisor@ \"" + superVisorName.orElseGet(() -> "") + "\": @UserPIN@ @NotFound@");
+			}
+			//	Validate PIN
+			if(!request.getPin().equals(supervisor.getUserPIN())) {
+				throw new AdempiereException("@Invalid@ @UserPIN@");
+			}
+		} else {	//	Find a supervisor for POS
+			boolean match = new Query(Env.getCtx(), I_AD_User.Table_Name, "IsPOSManager = 'Y' AND UserPIN = ?", null)
+					.setParameters(String.valueOf(request.getPin()))
+					.setClient_ID()
+					.setOnlyActiveRecords(true)
+					.match();
+			if(!match) {
+				throw new AdempiereException("@Invalid@ @UserPIN@");
+			}
+		}
+		//	Default
+		return Empty.newBuilder();
+	}
+	
+	/**
 	 * Load Price List Version from Price List
 	 * @param priceListId
 	 * @param validFrom
@@ -1562,12 +1625,20 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 * @return
 	 */
 	private PointOfSales.Builder getPosBuilder(PointOfSalesRequest request) {
-		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), null);
+		return convertPointOfSales(getPOSFromUuid(request.getPosUuid()));
+	}
+	
+	/**
+	 * Get POS from UUID
+	 * @param uuid
+	 * @return
+	 */
+	private MPOS getPOSFromUuid(String uuid) {
+		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, uuid, null);
 		if(posId <= 0) {
 			throw new AdempiereException("@C_POS_ID@ @NotFound@");
 		}
-		//	
-		return convertPointOfSales(MPOS.get(Env.getCtx(), posId));
+		return MPOS.get(Env.getCtx(), posId);
 	}
 	
 	/**

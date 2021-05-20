@@ -66,6 +66,8 @@ service Store {
 	rpc ListPayments(ListPaymentsRequest) returns (ListPaymentsResponse) {}
 	//	Process Order
 	rpc ProcessOrder(ProcessOrderRequest) returns (Order) {}
+	//	Validate PIN
+	rpc ValidatePIN(ValidatePINRequest) returns (Empty) {}
 }
 
 //	List POS Response
@@ -234,6 +236,13 @@ message ListPaymentsRequest {
 	string page_token = 5;
 	// Query
 	Criteria criteria = 6;
+}
+
+// Validate PIN Request
+message ValidatePINRequest {
+	ClientRequest client_request = 1;
+	string pos_uuid = 2;
+	string pin = 3;
 }
 
 //	List Payments Response
