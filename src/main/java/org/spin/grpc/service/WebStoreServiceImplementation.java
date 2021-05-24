@@ -2567,6 +2567,7 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 		if(store != null) {
 			builder.setStoreId(store.getW_Store_ID());
 		}
+		builder.setIsManageStock(product.isStocked());
 		//	
 		return builder;
 	}
