@@ -303,7 +303,7 @@ public class AccessServiceImplementation extends SecurityImplBase {
 		int organizationId = -1;
 		int warehouseId = -1;
 		if(!Util.isEmpty(request.getToken())) {
-			MADToken token = SessionManager.getsessionFromToken(request.getToken());
+			MADToken token = SessionManager.getSessionFromToken(request.getToken());
 			if(Optional.ofNullable(token).isPresent()) {
 				userId = token.getAD_User_ID();
 				roleId = token.getAD_Role_ID();

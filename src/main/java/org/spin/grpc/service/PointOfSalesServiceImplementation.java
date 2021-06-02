@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.adempiere.exceptions.AdempiereException;
@@ -646,8 +647,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				order.saveEx();
 				//	Update Process if exists
 				if (!order.processIt(MOrder.DOCACTION_Complete)) {
-					log.warning("@ProcessFailed@ :" + order.getDocumentInfo());
-					throw new AdempiereException("@ProcessFailed@ :" + order.getDocumentInfo());
+					log.warning("@ProcessFailed@ :" + order.getProcessMsg());
+					throw new AdempiereException("@ProcessFailed@ :" + order.getProcessMsg());
 				}
 				order.saveEx();
 				//	Create or process payments
@@ -673,8 +674,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					payment.setDocAction(MPayment.DOCACTION_Complete);
 					payment.saveEx(transactionName);
 					if (!payment.processIt(MPayment.DOCACTION_Complete)) {
-						log.warning("@ProcessFailed@ :" + payment.getDocumentInfo());
-						throw new AdempiereException("@ProcessFailed@ :" + payment.getDocumentInfo());
+						log.warning("@ProcessFailed@ :" + payment.getProcessMsg());
+						throw new AdempiereException("@ProcessFailed@ :" + payment.getProcessMsg());
 					}
 					order.saveEx(transactionName);
 					MBankStatement.addPayment(payment);
@@ -1077,6 +1078,16 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		} else {
 			log.info("CPOS.SetC_BPartner_ID -" + partner);
 			order.setBPartner(partner);
+			AtomicBoolean priceListIsChanged = new AtomicBoolean(false);
+			if(partner.getM_PriceList_ID() > 0) {
+				MPriceList businesPartnerPriceList = MPriceList.get(Env.getCtx(), partner.getM_PriceList_ID(), transactionName);
+				MPriceList currentPriceList = MPriceList.get(Env.getCtx(), pos.getM_PriceList_ID(), transactionName);
+				if(currentPriceList.getC_Currency_ID() != businesPartnerPriceList.getC_Currency_ID()) {
+					order.setM_PriceList_ID(currentPriceList.getM_PriceList_ID());
+				} else if(currentPriceList.getM_PriceList_ID() != partner.getM_PriceList_ID()) {
+					priceListIsChanged.set(true);
+				}
+			}
 			//	
 			MBPartnerLocation [] partnerLocations = partner.getLocations(true);
 			if(partnerLocations.length > 0) {
@@ -1101,32 +1112,18 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			//	Save Header
 			order.saveEx();
 			//	Load Price List Version
-			MPriceListVersion priceListVersion = loadPriceListVersion(order.getM_PriceList_ID(), order.getDateOrdered(), transactionName);
-			if(priceListVersion != null) {
-				MProductPrice[] productPrices = priceListVersion.getProductPrice("AND EXISTS("
-						+ "SELECT 1 "
-						+ "FROM C_OrderLine ol "
-						+ "WHERE ol.C_Order_ID = " + order.getC_Order_ID() + " "
-						+ "AND ol.M_Product_ID = M_ProductPrice.M_Product_ID)");
-				//	Update Lines
-				Arrays.asList(order.getLines())
-					.forEach(orderLine -> {
-						//	Verify if exist
-						if(Arrays.asList(productPrices)
-								.stream()
-								.filter(productPrice -> productPrice.getM_Product_ID() == orderLine.getM_Product_ID())
-								.findFirst()
-								.isPresent()) {
-							orderLine.setC_BPartner_ID(partner.getC_BPartner_ID());
-							orderLine.setC_BPartner_Location_ID(order.getC_BPartner_Location_ID());
-							orderLine.setPrice();
-							orderLine.setTax();
-							orderLine.saveEx();
-						} else {
-							orderLine.deleteEx(true);
-						}
-					});
-			}
+			Arrays.asList(order.getLines())
+			.forEach(orderLine -> {
+				orderLine.setC_BPartner_ID(partner.getC_BPartner_ID());
+				orderLine.setC_BPartner_Location_ID(order.getC_BPartner_Location_ID());
+				orderLine.setPrice();
+				orderLine.setTax();
+				orderLine.saveEx();
+				if(Optional.ofNullable(orderLine.getPriceActual()).orElse(Env.ZERO).signum() == 0
+						&& priceListIsChanged.get()) {
+					orderLine.deleteEx(true);
+				}
+			});
 		}
 	}
 	

@@ -63,7 +63,7 @@ public class SessionManager {
 		int roleId = -1;
 		int organizationId = -1;
 		int warehouseId = -1;
-		MADToken token = getsessionFromToken(tokenValue);
+		MADToken token = getSessionFromToken(tokenValue);
 		if(Optional.ofNullable(token).isPresent()) {
 			userId = token.getAD_User_ID();
 			roleId = token.getAD_Role_ID();
@@ -121,7 +121,7 @@ public class SessionManager {
 	 * @param tokenValue
 	 * @return
 	 */
-	public static MADToken getsessionFromToken(String tokenValue) {
+	public static MADToken getSessionFromToken(String tokenValue) {
 		if(Util.isEmpty(tokenValue)) {
 			throw new AdempiereException("@AD_Token_ID@ @NotFound@");
 		}
