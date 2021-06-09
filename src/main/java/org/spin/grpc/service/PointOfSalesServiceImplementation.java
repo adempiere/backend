@@ -63,6 +63,7 @@ import org.compiere.model.MProductPrice;
 import org.compiere.model.MProductPricing;
 import org.compiere.model.MRefList;
 import org.compiere.model.MStorage;
+import org.compiere.model.MTable;
 import org.compiere.model.MTax;
 import org.compiere.model.MUser;
 import org.compiere.model.MWarehouse;
@@ -95,6 +96,14 @@ import org.spin.grpc.util.GetOrderRequest;
 import org.spin.grpc.util.GetProductPriceRequest;
 import org.spin.grpc.util.Key;
 import org.spin.grpc.util.KeyLayout;
+import org.spin.grpc.util.ListAvailableCurrenciesRequest;
+import org.spin.grpc.util.ListAvailableCurrenciesResponse;
+import org.spin.grpc.util.ListAvailablePriceListRequest;
+import org.spin.grpc.util.ListAvailablePriceListResponse;
+import org.spin.grpc.util.ListAvailableTenderTypesRequest;
+import org.spin.grpc.util.ListAvailableTenderTypesResponse;
+import org.spin.grpc.util.ListAvailableWarehousesRequest;
+import org.spin.grpc.util.ListAvailableWarehousesResponse;
 import org.spin.grpc.util.ListOrderLinesRequest;
 import org.spin.grpc.util.ListOrderLinesResponse;
 import org.spin.grpc.util.ListOrdersRequest;
@@ -596,7 +605,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			log.fine("Update Order = " + request.getPosUuid());
+			log.fine("Validate PIN = " + request.getPosUuid());
 			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
 					request.getClientRequest().getLanguage(), 
 					request.getClientRequest().getOrganizationUuid(), 
@@ -612,6 +621,281 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					.withCause(e)
 					.asRuntimeException());
 		}
+	}
+	
+	@Override
+	public void listAvailableWarehouses(ListAvailableWarehousesRequest request,
+			StreamObserver<ListAvailableWarehousesResponse> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("List Available Warehouses = " + request.getPosUuid());
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			ListAvailableWarehousesResponse.Builder warehouses = listWarehouses(request);
+			responseObserver.onNext(warehouses.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void listAvailablePriceList(ListAvailablePriceListRequest request,
+			StreamObserver<ListAvailablePriceListResponse> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("List Available Price List = " + request.getPosUuid());
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			ListAvailablePriceListResponse.Builder priceList = listPriceList(request);
+			responseObserver.onNext(priceList.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void listAvailableTenderTypes(ListAvailableTenderTypesRequest request,
+			StreamObserver<ListAvailableTenderTypesResponse> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("List Available Tender Types = " + request.getPosUuid());
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			ListAvailableTenderTypesResponse.Builder tenderTypes = listTenderTypes(request);
+			responseObserver.onNext(tenderTypes.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void listAvailableCurrencies(ListAvailableCurrenciesRequest request,
+			StreamObserver<ListAvailableCurrenciesResponse> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("List Available Warehouses = " + request.getPosUuid());
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			ListAvailableCurrenciesResponse.Builder currencies = listCurrencies(request);
+			responseObserver.onNext(currencies.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	/**
+	 * List Warehouses from POS UUID
+	 * @param request
+	 * @return
+	 */
+	private ListAvailableWarehousesResponse.Builder listWarehouses(ListAvailableWarehousesRequest request) {
+		if(Util.isEmpty(request.getPosUuid())) {
+			throw new AdempiereException("@C_POS_ID@ @NotFound@");
+		}
+		ListAvailableWarehousesResponse.Builder builder = ListAvailableWarehousesResponse.newBuilder();
+		final String TABLE_NAME = "C_POSWarehouseAllocation";
+		if(MTable.getTable_ID(TABLE_NAME) <= 0) {
+			return builder;
+		}
+		String nexPageToken = null;
+		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
+		int offset = pageNumber * RecordUtil.PAGE_SIZE;
+		int limit = (pageNumber + 1) * RecordUtil.PAGE_SIZE;
+		//	Dynamic where clause
+		String whereClause = "EXISTS(SELECT 1 FROM " + TABLE_NAME + " r WHERE r.M_Warehouse_ID = M_Warehouse.M_Warehouse_ID AND r.C_POS_ID = ?)";
+		//	Aisle Seller
+		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), null);
+		//	Get Product list
+		Query query = new Query(Env.getCtx(), I_M_Warehouse.Table_Name, whereClause.toString(), null)
+				.setParameters(posId)
+				.setClient_ID()
+				.setOnlyActiveRecords(true);
+		int count = query.count();
+		query
+		.setLimit(limit, offset)
+		.<MWarehouse>list()
+		.forEach(warehouse -> {
+			builder.addWarehouses(ConvertUtil.convertListValue(warehouse.getM_Warehouse_ID(), warehouse.getUUID(), warehouse.getValue(), warehouse.getName()));
+		});
+		//	
+		builder.setRecordCount(count);
+		//	Set page token
+		if(count > limit) {
+			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
+		}
+		//	Set next page
+		builder.setNextPageToken(ValueUtil.validateNull(nexPageToken));
+		return builder;
+	}
+	
+	/**
+	 * List Price List from POS UUID
+	 * @param request
+	 * @return
+	 */
+	private ListAvailablePriceListResponse.Builder listPriceList(ListAvailablePriceListRequest request) {
+		if(Util.isEmpty(request.getPosUuid())) {
+			throw new AdempiereException("@C_POS_ID@ @NotFound@");
+		}
+		ListAvailablePriceListResponse.Builder builder = ListAvailablePriceListResponse.newBuilder();
+		final String TABLE_NAME = "C_POSPriceListAllocation";
+		if(MTable.getTable_ID(TABLE_NAME) <= 0) {
+			return builder;
+		}
+		String nexPageToken = null;
+		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
+		int offset = pageNumber * RecordUtil.PAGE_SIZE;
+		int limit = (pageNumber + 1) * RecordUtil.PAGE_SIZE;
+		//	Dynamic where clause
+		String whereClause = "EXISTS(SELECT 1 FROM " + TABLE_NAME + " r WHERE r.M_PriceList_ID = M_PriceList.M_PriceList_ID AND r.C_POS_ID = ?)";
+		//	Aisle Seller
+		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), null);
+		//	Get Product list
+		Query query = new Query(Env.getCtx(), I_M_PriceList.Table_Name, whereClause.toString(), null)
+				.setParameters(posId)
+				.setClient_ID()
+				.setOnlyActiveRecords(true);
+		int count = query.count();
+		query
+		.setLimit(limit, offset)
+		.<MPriceList>list()
+		.forEach(priceList -> {
+			builder.addPriceList(ConvertUtil.convertListValue(priceList.getM_PriceList_ID(), priceList.getUUID(), priceList.getName(), priceList.getName()));
+		});
+		//	
+		builder.setRecordCount(count);
+		//	Set page token
+		if(count > limit) {
+			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
+		}
+		//	Set next page
+		builder.setNextPageToken(ValueUtil.validateNull(nexPageToken));
+		return builder;
+	}
+	
+	/**
+	 * List tender Types from POS UUID
+	 * @param request
+	 * @return
+	 */
+	private ListAvailableTenderTypesResponse.Builder listTenderTypes(ListAvailableTenderTypesRequest request) {
+		if(Util.isEmpty(request.getPosUuid())) {
+			throw new AdempiereException("@C_POS_ID@ @NotFound@");
+		}
+		ListAvailableTenderTypesResponse.Builder builder = ListAvailableTenderTypesResponse.newBuilder();
+		final String TABLE_NAME = "C_POSTenderTypeAllocation";
+		if(MTable.getTable_ID(TABLE_NAME) <= 0) {
+			return builder;
+		}
+		String nexPageToken = null;
+		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
+		int offset = pageNumber * RecordUtil.PAGE_SIZE;
+		int limit = (pageNumber + 1) * RecordUtil.PAGE_SIZE;
+		//	Dynamic where clause
+		String whereClause = "EXISTS(SELECT 1 FROM " + TABLE_NAME + " r WHERE AD_Ref_List.Value = r.TenderType AND r.C_POS_ID = ?) AND AD_Ref_List.AD_Reference_ID = ?";
+		//	Aisle Seller
+		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), null);
+		//	Get Product list
+		Query query = new Query(Env.getCtx(), I_AD_Ref_List.Table_Name, whereClause.toString(), null)
+				.setParameters(posId, MPayment.TENDERTYPE_AD_Reference_ID)
+				.setOnlyActiveRecords(true);
+		int count = query.count();
+		query
+		.setLimit(limit, offset)
+		.<MRefList>list()
+		.forEach(priceList -> {
+			builder.addTenderTypes(ConvertUtil.convertListValue(0, priceList.getUUID(), priceList.getValue(), priceList.getName()));
+		});
+		//	
+		builder.setRecordCount(count);
+		//	Set page token
+		if(count > limit) {
+			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
+		}
+		//	Set next page
+		builder.setNextPageToken(ValueUtil.validateNull(nexPageToken));
+		return builder;
+	}
+	
+	/**
+	 * List Currencies from POS UUID
+	 * @param request
+	 * @return
+	 */
+	private ListAvailableCurrenciesResponse.Builder listCurrencies(ListAvailableCurrenciesRequest request) {
+		if(Util.isEmpty(request.getPosUuid())) {
+			throw new AdempiereException("@C_POS_ID@ @NotFound@");
+		}
+		ListAvailableCurrenciesResponse.Builder builder = ListAvailableCurrenciesResponse.newBuilder();
+		String nexPageToken = null;
+		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
+		int offset = pageNumber * RecordUtil.PAGE_SIZE;
+		int limit = (pageNumber + 1) * RecordUtil.PAGE_SIZE;
+		//	Dynamic where clause
+		String whereClause = "EXISTS(SELECT 1 FROM C_Conversion_Rate cr WHERE (cr.C_Currency_ID = C_Currency.C_Currency_ID  OR cr.C_Currency_ID_To = C_Currency.C_Currency_ID) AND cr.C_ConversionType_ID = ?)";
+		//	Aisle Seller
+		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), null);
+		MPOS pos = MPOS.get(Env.getCtx(), posId);
+		//	Get Product list
+		Query query = new Query(Env.getCtx(), I_C_Currency.Table_Name, whereClause.toString(), null)
+				.setParameters(pos.get_ValueAsInt(I_C_ConversionType.COLUMNNAME_C_ConversionType_ID))
+				.setOnlyActiveRecords(true);
+		int count = query.count();
+		query
+		.setLimit(limit, offset)
+		.<MCurrency>list()
+		.forEach(currency -> {
+			builder.addCurrencies(ConvertUtil.convertListValue(currency.getC_Currency_ID(), currency.getUUID(), currency.getISO_Code(), currency.getISO_Code() + " (" + currency.getCurSymbol() + ")"));
+		});
+		//	
+		builder.setRecordCount(count);
+		//	Set page token
+		if(count > limit) {
+			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
+		}
+		//	Set next page
+		builder.setNextPageToken(ValueUtil.validateNull(nexPageToken));
+		return builder;
 	}
 	
 	/**

@@ -32,6 +32,14 @@ message KeyValueSelection {
 	repeated KeyValue values = 2;
 }
 
+// List Value
+message ListValue {
+	int32 id = 2;
+	string uuid = 3;
+	string key = 4;
+	string name = 5;
+}
+
 // Key and Value pairs
 message KeyValue {
 	string key = 1;

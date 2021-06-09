@@ -57,6 +57,7 @@ import org.spin.grpc.util.DocumentAction;
 import org.spin.grpc.util.DocumentStatus;
 import org.spin.grpc.util.DocumentType;
 import org.spin.grpc.util.Entity;
+import org.spin.grpc.util.ListValue;
 import org.spin.grpc.util.Organization;
 import org.spin.grpc.util.PriceList;
 import org.spin.grpc.util.Product;
@@ -125,6 +126,22 @@ public class ConvertUtil {
 			}
 		}
   		return builder;
+	}
+	
+	/**
+	 * Convert List Values
+	 * @param id
+	 * @param uuid
+	 * @param key
+	 * @param name
+	 * @return
+	 */
+	public static ListValue.Builder convertListValue(int id, String uuid, String key, String name) {
+		return ListValue.newBuilder()
+				.setId(id)
+				.setUuid(ValueUtil.validateNull(uuid))
+				.setKey(ValueUtil.validateNull(key))
+				.setName(ValueUtil.validateNull(name));
 	}
 	
 	/**

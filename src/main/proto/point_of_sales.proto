@@ -68,6 +68,74 @@ service Store {
 	rpc ProcessOrder(ProcessOrderRequest) returns (Order) {}
 	//	Validate PIN
 	rpc ValidatePIN(ValidatePINRequest) returns (Empty) {}
+	//	List of Available Warehouses
+	rpc ListAvailableWarehouses(ListAvailableWarehousesRequest) returns (ListAvailableWarehousesResponse) {}
+	//	List of Available Tender Types
+	rpc ListAvailableTenderTypes(ListAvailableTenderTypesRequest) returns (ListAvailableTenderTypesResponse) {}
+	//	List of Available Price List
+	rpc ListAvailablePriceList(ListAvailablePriceListRequest) returns (ListAvailablePriceListResponse) {}
+	//	List of Available Currencies
+	rpc ListAvailableCurrencies(ListAvailableCurrenciesRequest) returns (ListAvailableCurrenciesResponse) {}
+}
+
+//	List warehouses for POS
+message ListAvailableWarehousesRequest {
+	ClientRequest client_request = 1;
+	string pos_uuid = 2;
+	int32 page_size = 3;
+	string page_token = 4;
+}
+
+//	List Available Warehouses
+message ListAvailableWarehousesResponse {
+	int64 record_count = 1;
+	repeated ListValue warehouses = 2;
+	string next_page_token = 3;
+}
+
+//	List warehouses for POS
+message ListAvailableTenderTypesRequest {
+	ClientRequest client_request = 1;
+	string pos_uuid = 2;
+	int32 page_size = 3;
+	string page_token = 4;
+}
+
+//	List Available Tender Types
+message ListAvailableTenderTypesResponse {
+	int64 record_count = 1;
+	repeated ListValue tender_types = 2;
+	string next_page_token = 3;
+}
+
+//	List warehouses for POS
+message ListAvailablePriceListRequest {
+	ClientRequest client_request = 1;
+	string pos_uuid = 2;
+	int32 page_size = 3;
+	string page_token = 4;
+}
+
+//	Price List Response
+message ListAvailablePriceListResponse {
+	int64 record_count = 1;
+	repeated ListValue price_list = 2;
+	string next_page_token = 3;
+}
+
+//	List warehouses for POS
+message ListAvailableCurrenciesRequest {
+	ClientRequest client_request = 1;
+	string pos_uuid = 2;
+	int32 page_size = 3;
+	string page_token = 4;
+}
+
+//	Currencies Response
+message ListAvailableCurrenciesResponse {
+	int64 record_count = 1;
+	repeated ListValue currencies = 2;
+	string next_page_token = 3;
 }
 
 //	List POS Response
