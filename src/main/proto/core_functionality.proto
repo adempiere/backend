@@ -356,10 +356,10 @@ message ProductPrice {
 	Decimal quantity_ordered = 13;
 	Decimal quantity_available = 14;
 	//	Schema Values
-	Currency schema_currency = 15;
-	Decimal schema_price_list = 16;
-	Decimal schema_price_standard = 17;
-	Decimal schema_price_limit = 18;
+	Currency display_currency = 15;
+	Decimal display_price_list = 16;
+	Decimal display_price_standard = 17;
+	Decimal display_price_limit = 18;
 }
 
 // Language Item

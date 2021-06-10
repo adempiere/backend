@@ -203,10 +203,11 @@ message ListProductPriceRequest {
 	string business_partner_uuid = 4;
 	string warehouse_uuid = 5;
 	string valid_from = 6;
+	string display_currency_uuid = 7;
 	// Query
-	Criteria criteria = 7;
-	int32 page_size = 8;
-	string page_token = 9;
+	Criteria criteria = 8;
+	int32 page_size = 9;
+	string page_token = 10;
 }
 
 // POS from user uuid
@@ -240,8 +241,10 @@ message PointOfSales {
 	SalesRepresentative sales_representative = 13;
 	BusinessPartner template_business_partner = 14;
 	PriceList price_list = 15;
-	string conversion_type_uuid = 16;
-	string key_layout_uuid = 17;
+	Warehouse warehouse = 16;
+	Currency display_currency = 17;
+	string conversion_type_uuid = 18;
+	string key_layout_uuid = 19;
 }
 
 // Request for create a order
@@ -250,7 +253,9 @@ message CreateOrderRequest {
 	string pos_uuid = 2;
 	string customer_uuid = 3;
 	string document_type_uuid = 4;
-	string sales_representative_uuid = 5;
+	string price_list_uuid = 5;
+	string warehouse_uuid = 6;
+	string sales_representative_uuid = 7;
 }
 
 // Request for process a order
@@ -372,7 +377,9 @@ message UpdateOrderRequest {
 	string pos_uuid = 3;
 	string customer_uuid = 4;
 	string document_type_uuid = 5;
-	string description = 6;
+	string price_list_uuid = 6;
+	string warehouse_uuid = 7;
+	string description = 8;
 }
 
 // Request for update a order line
@@ -384,6 +391,7 @@ message UpdateOrderLineRequest {
 	Decimal price = 7;
 	Decimal discount_rate = 8;
 	bool is_add_quantity = 9;
+	string warehouse_uuid = 10;
 }
 
 // Request for get a order
@@ -440,6 +448,7 @@ message GetProductPriceRequest {
 	string business_partner_uuid = 7;
 	string warehouse_uuid = 8;
 	string valid_from = 9;
+	string display_currency_uuid = 10;
 }
 
 // Layout for POS

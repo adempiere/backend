@@ -1284,11 +1284,11 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		AtomicReference<MOrder> orderReference = new AtomicReference<MOrder>();
 		if(!Util.isEmpty(request.getOrderUuid())) {
 			Trx.run(transactionName -> {
-				MOrder order = getOrder(request.getOrderUuid(), transactionName);
-				if(order == null) {
+				MOrder salesOrder = getOrder(request.getOrderUuid(), transactionName);
+				if(salesOrder == null) {
 					throw new AdempiereException("@C_Order_ID@ @NotFound@");
 				}
-				if(!DocumentUtil.isDrafted(order)) {
+				if(!DocumentUtil.isDrafted(salesOrder)) {
 					throw new AdempiereException("@C_Order_ID@ @IsCompleted@");
 				}
 				//	Update if exists
@@ -1296,18 +1296,18 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				if(!Util.isEmpty(request.getPosUuid())) {
 					int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), transactionName);
 					if(posId > 0) {
-						order.setC_POS_ID(posId);
+						salesOrder.setC_POS_ID(posId);
 					}
 				}
 				//	Document Type
 				if(!Util.isEmpty(request.getDocumentTypeUuid())) {
 					int documentTypeId = RecordUtil.getIdFromUuid(I_C_DocType.Table_Name, request.getDocumentTypeUuid(), transactionName);
 					if(documentTypeId > 0) {
-						order.setC_DocTypeTarget_ID(documentTypeId);
+						salesOrder.setC_DocTypeTarget_ID(documentTypeId);
 						//	Set Sequenced No
-						String value = DB.getDocumentNo(documentTypeId, transactionName, false, order);
+						String value = DB.getDocumentNo(documentTypeId, transactionName, false, salesOrder);
 						if (value != null) {
-							order.setDocumentNo(value);
+							salesOrder.setDocumentNo(value);
 						}
 					}
 				}
@@ -1315,17 +1315,33 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				if(!Util.isEmpty(request.getCustomerUuid())) {
 					int businessPartnerId = RecordUtil.getIdFromUuid(I_C_BPartner.Table_Name, request.getCustomerUuid(), transactionName);
 					if(businessPartnerId > 0
-							&& order.getC_POS_ID() > 0) {
-						configureBPartner(order, businessPartnerId, transactionName);
+							&& salesOrder.getC_POS_ID() > 0) {
+						configureBPartner(salesOrder, businessPartnerId, transactionName);
 					}
 				}
 				//	Description
 				if(!Util.isEmpty(request.getDescription())) {
-					order.setDescription(request.getDescription());
+					salesOrder.setDescription(request.getDescription());
+				}
+				//	Warehouse
+				int warehouseId = 0;
+				int priceListId = 0;
+				if(!Util.isEmpty(request.getWarehouseUuid())) {
+					warehouseId = RecordUtil.getIdFromUuid(I_M_Warehouse.Table_Name, request.getWarehouseUuid(), transactionName);
+				}
+				//	Price List
+				if(!Util.isEmpty(request.getPriceListUuid())) {
+					priceListId = RecordUtil.getIdFromUuid(I_M_PriceList.Table_Name, request.getPriceListUuid(), transactionName);
+				}
+				if(priceListId > 0) {
+					salesOrder.setM_PriceList_ID(priceListId);
+				}
+				if(warehouseId > 0) {
+					salesOrder.setM_Warehouse_ID(warehouseId);
 				}
 				//	Save
-				order.saveEx();
-				orderReference.set(order);
+				salesOrder.saveEx();
+				orderReference.set(salesOrder);
 			});
 		}
 		//	Return order
@@ -1585,7 +1601,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 						ValueUtil.getBigDecimalFromDecimal(request.getQuantity()), 
 						ValueUtil.getBigDecimalFromDecimal(request.getPrice()), 
 						ValueUtil.getBigDecimalFromDecimal(request.getDiscountRate()),
-						request.getIsAddQuantity()));
+						request.getIsAddQuantity(),
+						RecordUtil.getIdFromUuid(I_M_Warehouse.Table_Name, request.getWarehouseUuid(), null)));
 	}
 	
 	/**
@@ -1808,9 +1825,10 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 * @param price
 	 * @param discountRate
 	 * @param isAddQuantity
+	 * @param warehouseId
 	 * @return
 	 */
-	private MOrderLine updateOrderLine(int orderLineId, BigDecimal quantity, BigDecimal price, BigDecimal discountRate, boolean isAddQuantity) {
+	private MOrderLine updateOrderLine(int orderLineId, BigDecimal quantity, BigDecimal price, BigDecimal discountRate, boolean isAddQuantity, int warehouseId) {
 		if(orderLineId <= 0) {
 			return null;
 		}
@@ -1842,6 +1860,9 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			}
 			BigDecimal discountAmount = orderLine.getPriceList().multiply(Optional.ofNullable(discountRate).orElse(Env.ZERO).divide(Env.ONEHUNDRED));
 			priceToOrder = orderLine.getPriceList().subtract(discountAmount);
+			if(warehouseId > 0) {
+				orderLine.setM_Warehouse_ID(warehouseId);
+			}
 			//	Set values
 			orderLine.setPrice(priceToOrder); //	sets List/limit
 			orderLine.setQty(quantityToOrder);
@@ -1955,6 +1976,16 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		if(pos.getCashTransferBankAccount_ID() != 0) {
 			builder.setCashBankAccount(ConvertUtil.convertBankAccount(MBankAccount.get(Env.getCtx(), pos.getCashTransferBankAccount_ID())));
 		}
+		//	Warehouse
+		if(pos.getM_Warehouse_ID() > 0) {
+			MWarehouse warehouse = MWarehouse.get(Env.getCtx(), pos.getM_Warehouse_ID());
+			builder.setWarehouse(ConvertUtil.convertWarehouse(warehouse));
+		}
+		//	Price List
+		if(pos.get_ValueAsInt("Display_Currency_ID") > 0) {
+			MCurrency display_curency = MCurrency.get(Env.getCtx(), pos.get_ValueAsInt("Display_Currency_ID"));
+			builder.setDisplayCurrency(ConvertUtil.convertCurrency(display_curency));
+		}
 		return builder;
 	}
 	
@@ -2010,13 +2041,25 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			salesOrder.setAD_Org_ID(pos.getAD_Org_ID());
 			salesOrder.setC_POS_ID(pos.getC_POS_ID());
 			//	Warehouse
-			if(pos.getM_Warehouse_ID() != 0) {
-				salesOrder.setM_Warehouse_ID(pos.getM_Warehouse_ID());
+			int warehouseId = pos.getM_Warehouse_ID();
+			int priceListId = pos.getM_PriceList_ID();
+			if(!Util.isEmpty(request.getWarehouseUuid())) {
+				warehouseId = RecordUtil.getIdFromUuid(I_M_Warehouse.Table_Name, request.getWarehouseUuid(), transactionName);
+			}
+			//	From POS
+			if(warehouseId < 0) {
+				warehouseId = pos.getM_Warehouse_ID();
 			}
 			//	Price List
-			if(pos.getM_PriceList_ID() != 0) {
-				salesOrder.setM_PriceList_ID(pos.getM_PriceList_ID());
+			if(!Util.isEmpty(request.getPriceListUuid())) {
+				priceListId = RecordUtil.getIdFromUuid(I_M_PriceList.Table_Name, request.getPriceListUuid(), transactionName);
 			}
+			//	From POS
+			if(priceListId < 0) {
+				priceListId = pos.getM_Warehouse_ID();
+			}
+			salesOrder.setM_PriceList_ID(priceListId);
+			salesOrder.setM_Warehouse_ID(warehouseId);
 			//	Document Type
 			int documentTypeId = 0;
 			if(!Util.isEmpty(request.getDocumentTypeUuid())) {
@@ -2458,6 +2501,9 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			parameters.add(RecordUtil.getIdFromUuid(I_M_PriceList.Table_Name, request.getPriceListUuid(), null));
 			parameters.add(TimeUtil.getDay(validFrom.get()));
 		}
+		int businessPartnerId = RecordUtil.getIdFromUuid(I_C_BPartner.Table_Name, request.getBusinessPartnerUuid(), null);
+		int warehouseId = RecordUtil.getIdFromUuid(I_M_Warehouse.Table_Name, request.getWarehouseUuid(), null);
+		int displayCurrencyId = RecordUtil.getIdFromUuid(I_C_Currency.Table_Name, request.getDisplayCurrencyUuid(), null);
 		//	Get Product list
 		Query query = new Query(Env.getCtx(), I_M_Product.Table_Name, 
 				whereClause.toString(), null)
@@ -2471,10 +2517,11 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		.forEach(product -> {
 			ProductPrice.Builder productPrice = convertProductPrice(
 					product, 
-					RecordUtil.getIdFromUuid(I_C_BPartner.Table_Name, request.getBusinessPartnerUuid(), null), 
+					businessPartnerId, 
 					priceList, 
-					RecordUtil.getIdFromUuid(I_M_Warehouse.Table_Name, request.getWarehouseUuid(), null), 
-					validFrom.get(), 
+					warehouseId, 
+					validFrom.get(),
+					displayCurrencyId,
 					null);
 			if(productPrice.hasPriceList()
 					&& productPrice.hasPriceStandard()
@@ -2503,7 +2550,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 * @param quantity
 	 * @return
 	 */
-	private ProductPrice.Builder convertProductPrice(MProduct product, int businessPartnerId, MPriceList priceList, int warehouseId, Timestamp validFrom, BigDecimal priceQuantity) {
+	private ProductPrice.Builder convertProductPrice(MProduct product, int businessPartnerId, MPriceList priceList, int warehouseId, Timestamp validFrom, int displayCurrencyId, BigDecimal priceQuantity) {
 		ProductPrice.Builder builder = ProductPrice.newBuilder();
 		//	Get Price
 		MProductPricing productPricing = new MProductPricing(product.getM_Product_ID(), businessPartnerId, priceQuantity, true, null);
@@ -2537,15 +2584,14 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			builder.setPriceStandard(ValueUtil.getDecimalFromBigDecimal(Optional.ofNullable(productPricing.getPriceStd()).orElse(Env.ZERO)));
 			builder.setPriceLimit(ValueUtil.getDecimalFromBigDecimal(Optional.ofNullable(productPricing.getPriceLimit()).orElse(Env.ZERO)));
 			//	Get from schema
-			int schemaCurrencyId = Env.getContextAsInt(Env.getCtx(), "$C_Currency_ID");
-			if(schemaCurrencyId > 0) {
-				builder.setSchemaCurrency(ConvertUtil.convertCurrency(MCurrency.get(Env.getCtx(), schemaCurrencyId)));
+			if(displayCurrencyId > 0) {
+				builder.setDisplayCurrency(ConvertUtil.convertCurrency(MCurrency.get(Env.getCtx(), displayCurrencyId)));
 				//	Get
-				BigDecimal conversionRate = Optional.ofNullable(MConversionRate.getRate(priceList.getC_Currency_ID(), schemaCurrencyId, getDate(), getConversionTypeForPrice(), Env.getAD_Client_ID(Env.getCtx()), Env.getAD_Org_ID(Env.getCtx())))
+				BigDecimal conversionRate = Optional.ofNullable(MConversionRate.getRate(priceList.getC_Currency_ID(), displayCurrencyId, getDate(), getConversionTypeForPrice(), Env.getAD_Client_ID(Env.getCtx()), Env.getAD_Org_ID(Env.getCtx())))
 						.orElse(Env.ZERO);
-				builder.setSchemaPriceList(ValueUtil.getDecimalFromBigDecimal(Optional.ofNullable(productPricing.getPriceList()).orElse(Env.ZERO).multiply(conversionRate).setScale(productPricing.getPrecision(), BigDecimal.ROUND_HALF_UP)));
-				builder.setSchemaPriceStandard(ValueUtil.getDecimalFromBigDecimal(Optional.ofNullable(productPricing.getPriceStd()).orElse(Env.ZERO).multiply(conversionRate).setScale(productPricing.getPrecision(), BigDecimal.ROUND_HALF_UP)));
-				builder.setSchemaPriceLimit(ValueUtil.getDecimalFromBigDecimal(Optional.ofNullable(productPricing.getPriceLimit()).orElse(Env.ZERO).multiply(conversionRate).setScale(productPricing.getPrecision(), BigDecimal.ROUND_HALF_UP)));
+				builder.setDisplayPriceList(ValueUtil.getDecimalFromBigDecimal(Optional.ofNullable(productPricing.getPriceList()).orElse(Env.ZERO).multiply(conversionRate).setScale(productPricing.getPrecision(), BigDecimal.ROUND_HALF_UP)));
+				builder.setDisplayPriceStandard(ValueUtil.getDecimalFromBigDecimal(Optional.ofNullable(productPricing.getPriceStd()).orElse(Env.ZERO).multiply(conversionRate).setScale(productPricing.getPrecision(), BigDecimal.ROUND_HALF_UP)));
+				builder.setDisplayPriceLimit(ValueUtil.getDecimalFromBigDecimal(Optional.ofNullable(productPricing.getPriceLimit()).orElse(Env.ZERO).multiply(conversionRate).setScale(productPricing.getPrecision(), BigDecimal.ROUND_HALF_UP)));
 			}
 		}
 		//	Get Storage
@@ -2679,6 +2725,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				priceList, 
 				RecordUtil.getIdFromUuid(I_M_Warehouse.Table_Name, request.getWarehouseUuid(), null), 
 				TimeUtil.getDay(validFrom.get()),
+				RecordUtil.getIdFromUuid(I_C_Currency.Table_Name, request.getDisplayCurrencyUuid(), null),
 				Env.ONE);
 	}
 }
