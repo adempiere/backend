@@ -199,15 +199,13 @@ message ListOrderLinesRequest {
 message ListProductPriceRequest {
 	ClientRequest client_request = 1;
 	string search_value = 2;
-	string price_list_uuid = 3;
-	string business_partner_uuid = 4;
-	string warehouse_uuid = 5;
-	string valid_from = 6;
-	string display_currency_uuid = 7;
+	string business_partner_uuid = 3;
+	string valid_from = 4;
+	string pos_uuid = 5;
 	// Query
-	Criteria criteria = 8;
-	int32 page_size = 9;
-	string page_token = 10;
+	Criteria criteria = 6;
+	int32 page_size = 7;
+	string page_token = 8;
 }
 
 // POS from user uuid
@@ -444,11 +442,9 @@ message GetProductPriceRequest {
 	string upc = 3;
 	string value = 4;
 	string name = 5;
-	string price_list_uuid = 6;
-	string business_partner_uuid = 7;
-	string warehouse_uuid = 8;
-	string valid_from = 9;
-	string display_currency_uuid = 10;
+	string business_partner_uuid = 6;
+	string valid_from = 7;
+	string pos_uuid = 8;
 }
 
 // Layout for POS

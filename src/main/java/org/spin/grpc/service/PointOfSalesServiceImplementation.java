@@ -1982,9 +1982,9 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			builder.setWarehouse(ConvertUtil.convertWarehouse(warehouse));
 		}
 		//	Price List
-		if(pos.get_ValueAsInt("Display_Currency_ID") > 0) {
-			MCurrency display_curency = MCurrency.get(Env.getCtx(), pos.get_ValueAsInt("Display_Currency_ID"));
-			builder.setDisplayCurrency(ConvertUtil.convertCurrency(display_curency));
+		if(pos.get_ValueAsInt("DisplayCurrency_ID") > 0) {
+			MCurrency displayCurency = MCurrency.get(Env.getCtx(), pos.get_ValueAsInt("DisplayCurrency_ID"));
+			builder.setDisplayCurrency(ConvertUtil.convertCurrency(displayCurency));
 		}
 		return builder;
 	}
@@ -2420,31 +2420,6 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	}
 	
 	/**
-	 * Get PriceList
-	 * @param priceListUuid
-	 * @return
-	 */
-	private MPriceList getPriceList(String priceListUuid) {
-		MPriceList priceList = null;
-		if(Util.isEmpty(priceListUuid)) {
-			priceList = new Query(Env.getCtx(), I_M_PriceList.Table_Name, "EXISTS(SELECT 1 FROM C_POS p WHERE p.M_PriceList_ID = M_PriceList.M_PriceList_ID AND p.AD_Org_ID IN(0, ?) AND p.SalesRep_ID = ?)", null)
-					.setParameters(Env.getAD_Org_ID(Env.getCtx()), Env.getAD_User_ID(Env.getCtx()))
-					.setClient_ID()
-					.setOnlyActiveRecords(true)
-					.first();
-		} else {
-			int priceListId = RecordUtil.getIdFromUuid(I_M_PriceList.Table_Name, priceListUuid, null);
-			if(priceListId > 0) {
-				priceList = MPriceList.get(Env.getCtx(), priceListId, null);
-			}
-		}
-		if(priceList == null) {
-			throw new AdempiereException("@M_PriceList_ID@ @NotFound@");
-		}
-		return priceList;
-	}
-	
-	/**
 	 * Get Product Price Method
 	 * @param context
 	 * @param request
@@ -2452,8 +2427,13 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 */
 	private ListProductPriceResponse.Builder getProductPriceList(ListProductPriceRequest request) {
 		ListProductPriceResponse.Builder builder = ListProductPriceResponse.newBuilder();
+		if(Util.isEmpty(request.getPosUuid())) {
+			throw new AdempiereException("@C_POS_ID@ @NotFound@");
+		}
+		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), null);
+		MPOS pos = MPOS.get(Env.getCtx(), posId);
 		//	Validate Price List
-		MPriceList priceList = getPriceList(request.getPriceListUuid());
+		MPriceList priceList = MPriceList.get(Env.getCtx(), pos.getM_PriceList_ID(), null);
 		//	Get Valid From
 		AtomicReference<Timestamp> validFrom = new AtomicReference<>();
 		if(!Util.isEmpty(request.getValidFrom())) {
@@ -2484,26 +2464,25 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			parameters.add(request.getSearchValue());
 		} 
 		//	for price list
-		if(!Util.isEmpty(request.getPriceListUuid())) {
-			if(whereClause.length() > 0) {
-				whereClause.append(" AND ");
-			}
-			//	Add Price List
-			whereClause.append("(EXISTS(SELECT 1 FROM M_PriceList_Version plv "
-					+ "INNER JOIN M_ProductPrice pp ON(pp.M_PriceList_Version_ID = plv.M_PriceList_Version_ID) "
-					+ "WHERE plv.M_PriceList_ID = ? "
-					+ "AND plv.ValidFrom <= ? "
-					+ "AND plv.IsActive = 'Y' "
-					+ "AND pp.PriceList IS NOT NULL AND pp.PriceList > 0 "
-					+ "AND pp.PriceStd IS NOT NULL AND pp.PriceStd > 0 "
-					+ "AND pp.M_Product_ID = M_Product.M_Product_ID))");
-			//	Add parameters
-			parameters.add(RecordUtil.getIdFromUuid(I_M_PriceList.Table_Name, request.getPriceListUuid(), null));
-			parameters.add(TimeUtil.getDay(validFrom.get()));
+		if(whereClause.length() > 0) {
+			whereClause.append(" AND ");
 		}
+		//	Add Price List
+		whereClause.append("(EXISTS(SELECT 1 FROM M_PriceList_Version plv "
+				+ "INNER JOIN M_ProductPrice pp ON(pp.M_PriceList_Version_ID = plv.M_PriceList_Version_ID) "
+				+ "WHERE plv.M_PriceList_ID = ? "
+				+ "AND plv.ValidFrom <= ? "
+				+ "AND plv.IsActive = 'Y' "
+				+ "AND pp.PriceList IS NOT NULL AND pp.PriceList > 0 "
+				+ "AND pp.PriceStd IS NOT NULL AND pp.PriceStd > 0 "
+				+ "AND pp.M_Product_ID = M_Product.M_Product_ID))");
+		//	Add parameters
+		parameters.add(priceList.getM_PriceList_ID());
+		parameters.add(TimeUtil.getDay(validFrom.get()));
 		int businessPartnerId = RecordUtil.getIdFromUuid(I_C_BPartner.Table_Name, request.getBusinessPartnerUuid(), null);
-		int warehouseId = RecordUtil.getIdFromUuid(I_M_Warehouse.Table_Name, request.getWarehouseUuid(), null);
-		int displayCurrencyId = RecordUtil.getIdFromUuid(I_C_Currency.Table_Name, request.getDisplayCurrencyUuid(), null);
+		int warehouseId = pos.getM_Warehouse_ID();
+		int displayCurrencyId = pos.get_ValueAsInt("DisplayCurrency_ID");
+		int conversionTypeId = pos.get_ValueAsInt("C_ConversionType_ID");
 		//	Get Product list
 		Query query = new Query(Env.getCtx(), I_M_Product.Table_Name, 
 				whereClause.toString(), null)
@@ -2522,6 +2501,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					warehouseId, 
 					validFrom.get(),
 					displayCurrencyId,
+					conversionTypeId,
 					null);
 			if(productPrice.hasPriceList()
 					&& productPrice.hasPriceStandard()
@@ -2550,7 +2530,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 * @param quantity
 	 * @return
 	 */
-	private ProductPrice.Builder convertProductPrice(MProduct product, int businessPartnerId, MPriceList priceList, int warehouseId, Timestamp validFrom, int displayCurrencyId, BigDecimal priceQuantity) {
+	private ProductPrice.Builder convertProductPrice(MProduct product, int businessPartnerId, MPriceList priceList, int warehouseId, Timestamp validFrom, int displayCurrencyId, int conversionTypeId, BigDecimal priceQuantity) {
 		ProductPrice.Builder builder = ProductPrice.newBuilder();
 		//	Get Price
 		MProductPricing productPricing = new MProductPricing(product.getM_Product_ID(), businessPartnerId, priceQuantity, true, null);
@@ -2587,7 +2567,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			if(displayCurrencyId > 0) {
 				builder.setDisplayCurrency(ConvertUtil.convertCurrency(MCurrency.get(Env.getCtx(), displayCurrencyId)));
 				//	Get
-				BigDecimal conversionRate = Optional.ofNullable(MConversionRate.getRate(priceList.getC_Currency_ID(), displayCurrencyId, getDate(), getConversionTypeForPrice(), Env.getAD_Client_ID(Env.getCtx()), Env.getAD_Org_ID(Env.getCtx())))
+				BigDecimal conversionRate = Optional.ofNullable(MConversionRate.getRate(priceList.getC_Currency_ID(), displayCurrencyId, getDate(), conversionTypeId, Env.getAD_Client_ID(Env.getCtx()), Env.getAD_Org_ID(Env.getCtx())))
 						.orElse(Env.ZERO);
 				builder.setDisplayPriceList(ValueUtil.getDecimalFromBigDecimal(Optional.ofNullable(productPricing.getPriceList()).orElse(Env.ZERO).multiply(conversionRate).setScale(productPricing.getPrecision(), BigDecimal.ROUND_HALF_UP)));
 				builder.setDisplayPriceStandard(ValueUtil.getDecimalFromBigDecimal(Optional.ofNullable(productPricing.getPriceStd()).orElse(Env.ZERO).multiply(conversionRate).setScale(productPricing.getPrecision(), BigDecimal.ROUND_HALF_UP)));
@@ -2616,20 +2596,6 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			builder.setQuantityAvailable(ValueUtil.getDecimalFromBigDecimal(quantityAvailable.get()));
 		}
 		return builder;
-	}
-	
-	/**
-	 * Get Conversion Type from Sales Rep and POS
-	 * @return
-	 */
-	private int getConversionTypeForPrice() {
-		return new Query(Env.getCtx(), I_C_ConversionType.Table_Name, "EXISTS(SELECT 1 FROM C_POS p "
-				+ "WHERE p.C_ConversionType_ID = C_ConversionType.C_ConversionType_ID "
-				+ "AND p.AD_Org_ID IN(0, ?) "
-				+ "AND p.SalesRep_ID = ?)", null)
-				.setParameters(Env.getAD_Org_ID(Env.getCtx()), Env.getAD_User_ID(Env.getCtx()))
-				.setOnlyActiveRecords(true)
-				.firstId();
 	}
 	
 	/**
@@ -2693,26 +2659,10 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		} else {
 			productCache.put(key, product);
 		}
+		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), null);
+		MPOS pos = MPOS.get(Env.getCtx(), posId);
 		//	Validate Price List
-		MPriceList priceList = null;
-		if(Util.isEmpty(request.getPriceListUuid())) {
-			priceList = getPriceList(null);
-		} else {
-			int priceListId = RecordUtil.getIdFromUuid(I_M_PriceList.Table_Name, request.getPriceListUuid(), null);
-			if(priceListId > 0) {
-				priceList = MPriceList.get(Env.getCtx(), priceListId, null);
-			}
-		}
-		if(priceList == null) {
-			priceList = new Query(Env.getCtx(), I_M_PriceList.Table_Name, I_M_PriceList.COLUMNNAME_UUID + " = ?", null)
-					.setParameters(request.getPriceListUuid())
-					.setClient_ID()
-					.setOnlyActiveRecords(true)
-					.first();
-			if(priceList == null) {
-				throw new AdempiereException("@M_PriceList_ID@ @NotFound@");
-			}
-		}
+		MPriceList priceList = MPriceList.get(Env.getCtx(), pos.getM_PriceList_ID(), null);
 		//	Get Valid From
 		AtomicReference<Timestamp> validFrom = new AtomicReference<>();
 		if(!Util.isEmpty(request.getValidFrom())) {
@@ -2720,12 +2670,18 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		} else {
 			validFrom.set(TimeUtil.getDay(System.currentTimeMillis()));
 		}
-		return convertProductPrice(product,
-				RecordUtil.getIdFromUuid(I_C_BPartner.Table_Name, request.getBusinessPartnerUuid(), null), 
+		int businessPartnerId = RecordUtil.getIdFromUuid(I_C_BPartner.Table_Name, request.getBusinessPartnerUuid(), null);
+		int warehouseId = pos.getM_Warehouse_ID();
+		int displayCurrencyId = pos.get_ValueAsInt("DisplayCurrency_ID");
+		int conversionTypeId = pos.get_ValueAsInt("C_ConversionType_ID");
+		return convertProductPrice(
+				product, 
+				businessPartnerId, 
 				priceList, 
-				RecordUtil.getIdFromUuid(I_M_Warehouse.Table_Name, request.getWarehouseUuid(), null), 
-				TimeUtil.getDay(validFrom.get()),
-				RecordUtil.getIdFromUuid(I_C_Currency.Table_Name, request.getDisplayCurrencyUuid(), null),
+				warehouseId, 
+				validFrom.get(),
+				displayCurrencyId,
+				conversionTypeId,
 				Env.ONE);
 	}
 }
