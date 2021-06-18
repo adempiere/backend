@@ -694,7 +694,7 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 		//	
 		builder.setRecordCount(count);
 		//	Set page token
-		if(count > limit) {
+		if(count > offset) {
 			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
 		}
 		//	Set netxt page
