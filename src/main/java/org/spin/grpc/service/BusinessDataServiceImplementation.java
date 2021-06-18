@@ -648,8 +648,8 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 		//	Get page and count
 		String nexPageToken = null;
 		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
+		int limit = RecordUtil.PAGE_SIZE;
 		int offset = pageNumber * RecordUtil.PAGE_SIZE;
-		int limit = (pageNumber + 1) * RecordUtil.PAGE_SIZE;
 		int count = 0;
 		ListEntitiesResponse.Builder builder = ListEntitiesResponse.newBuilder();
 		//	
