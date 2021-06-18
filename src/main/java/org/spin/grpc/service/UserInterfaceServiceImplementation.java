@@ -430,6 +430,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 				MTable table = MTable.get(context, request.getTableName());
 				//	Set values
 				privateAccess = new MPrivateAccess(context, user.getAD_User_ID(), table.getAD_Table_ID(), request.getId());
+				privateAccess.setIsActive(false);
 			}
 			PrivateAccess.Builder privateaccess = convertPrivateAccess(context, privateAccess);
 			responseObserver.onNext(privateaccess.build());
