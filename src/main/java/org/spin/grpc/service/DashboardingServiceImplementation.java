@@ -14,9 +14,16 @@
  ************************************************************************************/
 package org.spin.grpc.service;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
+import org.adempiere.apps.graph.GraphColumn;
 import org.adempiere.exceptions.AdempiereException;
 import org.adempiere.model.MBrowse;
 import org.adempiere.model.MDocumentStatus;
@@ -24,8 +31,11 @@ import org.compiere.model.I_AD_Role;
 import org.compiere.model.I_AD_TreeNodeMM;
 import org.compiere.model.I_AD_User;
 import org.compiere.model.I_PA_DashboardContent;
+import org.compiere.model.I_PA_Goal;
 import org.compiere.model.MDashboardContent;
 import org.compiere.model.MForm;
+import org.compiere.model.MGoal;
+import org.compiere.model.MMeasure;
 import org.compiere.model.MMenu;
 import org.compiere.model.MProcess;
 import org.compiere.model.MTable;
@@ -38,9 +48,14 @@ import org.compiere.util.Util;
 import org.spin.base.util.ContextManager;
 import org.spin.base.util.RecordUtil;
 import org.spin.base.util.ValueUtil;
+import org.spin.grpc.util.Chart;
+import org.spin.grpc.util.ChartData;
+import org.spin.grpc.util.ChartSerie;
 import org.spin.grpc.util.Criteria;
 import org.spin.grpc.util.Dashboard;
+import org.spin.grpc.util.DashboardingGrpc.DashboardingImplBase;
 import org.spin.grpc.util.Favorite;
+import org.spin.grpc.util.GetChartRequest;
 import org.spin.grpc.util.ListDashboardsRequest;
 import org.spin.grpc.util.ListDashboardsResponse;
 import org.spin.grpc.util.ListFavoritesRequest;
@@ -48,7 +63,6 @@ import org.spin.grpc.util.ListFavoritesResponse;
 import org.spin.grpc.util.ListPendingDocumentsRequest;
 import org.spin.grpc.util.ListPendingDocumentsResponse;
 import org.spin.grpc.util.PendingDocument;
-import org.spin.grpc.util.DashboardingGrpc.DashboardingImplBase;
 
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
@@ -119,6 +133,74 @@ public class DashboardingServiceImplementation extends DashboardingImplBase {
 					.withCause(e)
 					.asRuntimeException());
 		}
+	}
+	
+	@Override
+	public void getChart(GetChartRequest request, StreamObserver<Chart> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
+			Chart.Builder chart = convertChart(request);
+			responseObserver.onNext(chart.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	/**
+	 * Convert chart and data
+	 * @param request
+	 * @return
+	 */
+	private Chart.Builder convertChart(GetChartRequest request) {
+		Chart.Builder builder = Chart.newBuilder();
+		MGoal goal = (MGoal) RecordUtil.getEntity(Env.getCtx(), I_PA_Goal.Table_Name, request.getUuid(), request.getId(), null);
+		if(goal == null) {
+			throw new AdempiereException("@PA_Goal_ID@ @NotFound@");
+		}
+		//	Load
+		MMeasure measure = goal.getMeasure();
+		List<GraphColumn> chartData = measure.getGraphColumnList(goal);
+		//	Set values
+		builder.setName(ValueUtil.validateNull(goal.getName()));
+		builder.setDescription(ValueUtil.validateNull(goal.getDescription()));
+		builder.setId(goal.getPA_Goal_ID());
+		builder.setUuid(ValueUtil.validateNull(goal.getUUID()));
+		builder.setXAxisLabel(ValueUtil.validateNull(goal.getXAxisText()));
+		builder.setYAxisLabel(ValueUtil.validateNull(goal.getName()));
+		Map<String, List<ChartData>> chartSeries = new HashMap<>();
+		chartData.forEach(data -> {
+			String key = "";
+			if (data.getDate() != null) {
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(data.getDate());
+				key = Integer.toString(cal.get(Calendar.YEAR));
+			}
+			//	Get from map
+			List<ChartData> serie = chartSeries.get(key);
+			if(serie == null) {
+				serie = new ArrayList<>();
+			}
+			//	Add
+			serie.add(ChartData.newBuilder()
+					.setName(data.getLabel())
+					.setValue(ValueUtil.getDecimalFromBigDecimal(new BigDecimal(data.getValue())))
+					.build());
+			chartSeries.put(key, serie);
+		});
+		//	Add all
+		chartSeries.keySet().forEach(serie -> {
+			builder.addSeries(ChartSerie.newBuilder().setName(serie).addAllDataSet(chartSeries.get(serie)));
+		});
+		return builder;
 	}
 	
 	/**
@@ -198,14 +280,17 @@ public class DashboardingServiceImplementation extends DashboardingImplBase {
 			.<MDashboardContent>list()
 			.forEach(dashboard -> {
 				Dashboard.Builder dashboardBuilder = Dashboard.newBuilder();
-				dashboardBuilder.setDashboardName(ValueUtil.validateNull(dashboard.getName()));
-				dashboardBuilder.setDashboardDescription(ValueUtil.validateNull(dashboard.getDescription()));
-				dashboardBuilder.setDashboardHtml(ValueUtil.validateNull(dashboard.getHTML()));
+				dashboardBuilder.setId(dashboard.getPA_DashboardContent_ID());
+				dashboardBuilder.setUuid(ValueUtil.validateNull(dashboard.getUUID()));
+				dashboardBuilder.setName(ValueUtil.validateNull(dashboard.getName()));
+				dashboardBuilder.setDescription(ValueUtil.validateNull(dashboard.getDescription()));
+				dashboardBuilder.setHtml(ValueUtil.validateNull(dashboard.getHTML()));
 				dashboardBuilder.setColumnNo(dashboard.getColumnNo());
 				dashboardBuilder.setLineNo(dashboard.getLine());
 				dashboardBuilder.setIsEventRequired(dashboard.isEventRequired());
 				dashboardBuilder.setIsCollapsible(dashboard.isCollapsible());
 				dashboardBuilder.setIsOpenByDefault(dashboard.isOpenByDefault());
+				dashboardBuilder.setDashboardType("dashboard");
 				//	For Window
 				if(dashboard.getAD_Window_ID() != 0) {
 					MWindow window = MWindow.get(context, dashboard.getAD_Window_ID());
@@ -232,6 +317,29 @@ public class DashboardingServiceImplementation extends DashboardingImplBase {
 					//	Set
 					dashboardBuilder.setFileName(ValueUtil.validateNull(fileName.substring(beginIndex, endIndex)));
 				}
+				builder.addDashboards(dashboardBuilder);
+			});
+		//	Get from util
+		new Query(Env.getCtx(), I_PA_Goal.Table_Name, 
+				"((AD_User_ID IS NULL AND AD_Role_ID IS NULL)"
+						+ " OR AD_Role_ID=?"	//	#2
+						+ " OR EXISTS (SELECT 1 FROM AD_User_Roles ur "
+							+ "WHERE ur.AD_User_ID=PA_Goal.AD_User_ID AND ur.AD_Role_ID = ? AND ur.IsActive='Y')) ", null)
+			.setParameters(roleId, roleId)
+			.setOnlyActiveRecords(true)
+			.setClient_ID()
+			.setOrderBy(I_PA_Goal.COLUMNNAME_SeqNo)
+			.<MGoal>list()
+			.forEach(chartDefinition -> {
+				Dashboard.Builder dashboardBuilder = Dashboard.newBuilder();
+				dashboardBuilder.setId(chartDefinition.getPA_Goal_ID());
+				dashboardBuilder.setUuid(ValueUtil.validateNull(chartDefinition.getUUID()));
+				dashboardBuilder.setName(ValueUtil.validateNull(chartDefinition.getName()));
+				dashboardBuilder.setDescription(ValueUtil.validateNull(chartDefinition.getDescription()));
+				dashboardBuilder.setLineNo(chartDefinition.getSeqNo());
+				dashboardBuilder.setDashboardType("chart");
+				dashboardBuilder.setChartType(ValueUtil.validateNull(chartDefinition.getChartType()));
+				//	Add to builder
 				builder.addDashboards(dashboardBuilder);
 			});
 		//	Return

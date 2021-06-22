@@ -110,6 +110,8 @@ service Dashboarding {
 	rpc ListFavorites(ListFavoritesRequest) returns (ListFavoritesResponse) {}
 	//	Request Document Statuses
 	rpc ListPendingDocuments(ListPendingDocumentsRequest) returns (ListPendingDocumentsResponse) {}
+	//	Get Chart
+	rpc GetChart(GetChartRequest) returns (Chart) {}
 }
 
 //	Logger services
@@ -572,6 +574,36 @@ message ListPendingDocumentsResponse {
 	int64 record_count = 1;
 	repeated PendingDocument pending_documents = 2;
 	string next_page_token = 3;
+}
+
+// Chart Request
+message GetChartRequest {
+	ClientRequest client_request = 1;
+	string uuid = 2;
+	int32 id = 3;
+}
+
+// Chart
+message Chart {	
+	string uuid = 1;
+	int32 id = 2;
+	string name = 3;
+	string description = 4;
+	string x_axis_label = 5;
+	string y_axis_label = 6;
+	repeated ChartSerie series = 7;
+}
+
+//	Serie
+message ChartSerie {
+	string name = 1;
+	repeated ChartData data_set = 2;
+}
+
+//	Data of Chart
+message ChartData {
+	string name = 1;
+	Decimal value = 2;
 }
 
 // Dashboards Request
