@@ -197,7 +197,7 @@ public class DashboardingServiceImplementation extends DashboardingImplBase {
 			chartSeries.put(key, serie);
 		});
 		//	Add all
-		chartSeries.keySet().forEach(serie -> {
+		chartSeries.keySet().stream().sorted().forEach(serie -> {
 			builder.addSeries(ChartSerie.newBuilder().setName(serie).addAllDataSet(chartSeries.get(serie)));
 		});
 		return builder;
@@ -272,6 +272,31 @@ public class DashboardingServiceImplementation extends DashboardingImplBase {
 		if(roleId <= 0) {
 			roleId = RecordUtil.getIdFromUuid(I_AD_Role.Table_Name, request.getRoleUuid(), null);
 		}
+		//	Get from Charts
+		new Query(Env.getCtx(), I_PA_Goal.Table_Name, 
+				"((AD_User_ID IS NULL AND AD_Role_ID IS NULL)"
+						+ " OR AD_Role_ID=?"	//	#2
+						+ " OR EXISTS (SELECT 1 FROM AD_User_Roles ur "
+							+ "WHERE ur.AD_User_ID=PA_Goal.AD_User_ID AND ur.AD_Role_ID = ? AND ur.IsActive='Y')) ", null)
+			.setParameters(roleId, roleId)
+			.setOnlyActiveRecords(true)
+			.setClient_ID()
+			.setOrderBy(I_PA_Goal.COLUMNNAME_SeqNo)
+			.<MGoal>list()
+			.forEach(chartDefinition -> {
+				Dashboard.Builder dashboardBuilder = Dashboard.newBuilder();
+				dashboardBuilder.setId(chartDefinition.getPA_Goal_ID());
+				dashboardBuilder.setUuid(ValueUtil.validateNull(chartDefinition.getUUID()));
+				dashboardBuilder.setName(ValueUtil.validateNull(chartDefinition.getName()));
+				dashboardBuilder.setDescription(ValueUtil.validateNull(chartDefinition.getDescription()));
+				dashboardBuilder.setDashboardType("chart");
+				dashboardBuilder.setChartType(ValueUtil.validateNull(chartDefinition.getChartType()));
+				dashboardBuilder.setIsCollapsible(true);
+				dashboardBuilder.setIsOpenByDefault(true);
+				//	Add to builder
+				builder.addDashboards(dashboardBuilder);
+			});
+		//	Get from activity
 		new Query(context, I_PA_DashboardContent.Table_Name, 
 				"EXISTS(SELECT 1 FROM AD_Dashboard_Access da WHERE da.PA_DashboardContent_ID = PA_DashboardContent.PA_DashboardContent_ID AND da.AD_Role_ID = ?)", null)
 			.setParameters(roleId)
@@ -317,29 +342,6 @@ public class DashboardingServiceImplementation extends DashboardingImplBase {
 					//	Set
 					dashboardBuilder.setFileName(ValueUtil.validateNull(fileName.substring(beginIndex, endIndex)));
 				}
-				builder.addDashboards(dashboardBuilder);
-			});
-		//	Get from util
-		new Query(Env.getCtx(), I_PA_Goal.Table_Name, 
-				"((AD_User_ID IS NULL AND AD_Role_ID IS NULL)"
-						+ " OR AD_Role_ID=?"	//	#2
-						+ " OR EXISTS (SELECT 1 FROM AD_User_Roles ur "
-							+ "WHERE ur.AD_User_ID=PA_Goal.AD_User_ID AND ur.AD_Role_ID = ? AND ur.IsActive='Y')) ", null)
-			.setParameters(roleId, roleId)
-			.setOnlyActiveRecords(true)
-			.setClient_ID()
-			.setOrderBy(I_PA_Goal.COLUMNNAME_SeqNo)
-			.<MGoal>list()
-			.forEach(chartDefinition -> {
-				Dashboard.Builder dashboardBuilder = Dashboard.newBuilder();
-				dashboardBuilder.setId(chartDefinition.getPA_Goal_ID());
-				dashboardBuilder.setUuid(ValueUtil.validateNull(chartDefinition.getUUID()));
-				dashboardBuilder.setName(ValueUtil.validateNull(chartDefinition.getName()));
-				dashboardBuilder.setDescription(ValueUtil.validateNull(chartDefinition.getDescription()));
-				dashboardBuilder.setLineNo(chartDefinition.getSeqNo());
-				dashboardBuilder.setDashboardType("chart");
-				dashboardBuilder.setChartType(ValueUtil.validateNull(chartDefinition.getChartType()));
-				//	Add to builder
 				builder.addDashboards(dashboardBuilder);
 			});
 		//	Return
