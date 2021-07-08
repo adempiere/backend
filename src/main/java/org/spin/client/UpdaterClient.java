@@ -38,7 +38,7 @@ public class UpdaterClient {
 		  	.withHost("localhost")
 	    	.withPort(50059)
 	    	.withToken(args[0])
-	    	.listUpdates("D", null)
+	    	.listUpdates("D", null, null)
 	    	.getUpdatesList().forEach(packageValue -> logger.info("Updates: " + packageValue));
 		  logger.info("####################### Steps #####################");
 		  UpdateManager.newInstance()

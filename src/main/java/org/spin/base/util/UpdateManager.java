@@ -144,10 +144,11 @@ public class UpdateManager {
 	/**
 	 * List Updates
 	 * @param entityType
+	 * @param releaseNo
 	 * @param pageToken
 	 * @return
 	 */
-	public ListUpdatesResponse listUpdates(String entityType, String pageToken) {
+	public ListUpdatesResponse listUpdates(String entityType, String releaseNo, String pageToken) {
 		try {
 			buildConnection();
 			return blockingStub.listUpdates(
@@ -155,6 +156,7 @@ public class UpdateManager {
 				  	.setToken(getToken())
 				  	.setPageToken(ValueUtil.validateNull(pageToken))
 				  	.setEntityType(entityType)
+				  	.setReleaseNo(ValueUtil.validateNull(releaseNo))
 				  	.build());
 		} catch (Exception e) {
 			throw e;
