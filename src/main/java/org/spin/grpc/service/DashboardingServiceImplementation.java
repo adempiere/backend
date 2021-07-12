@@ -32,6 +32,7 @@ import org.compiere.model.I_AD_TreeNodeMM;
 import org.compiere.model.I_AD_User;
 import org.compiere.model.I_PA_DashboardContent;
 import org.compiere.model.I_PA_Goal;
+import org.compiere.model.MChart;
 import org.compiere.model.MDashboardContent;
 import org.compiere.model.MForm;
 import org.compiere.model.MGoal;
@@ -45,6 +46,7 @@ import org.compiere.model.X_AD_TreeNodeMM;
 import org.compiere.util.CLogger;
 import org.compiere.util.Env;
 import org.compiere.util.Util;
+import org.jfree.data.category.CategoryDataset;
 import org.spin.base.util.ContextManager;
 import org.spin.base.util.RecordUtil;
 import org.spin.base.util.ValueUtil;
@@ -160,6 +162,7 @@ public class DashboardingServiceImplementation extends DashboardingImplBase {
 	 * @param request
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	private Chart.Builder convertChart(GetChartRequest request) {
 		Chart.Builder builder = Chart.newBuilder();
 		MGoal goal = (MGoal) RecordUtil.getEntity(Env.getCtx(), I_PA_Goal.Table_Name, request.getUuid(), request.getId(), null);
@@ -167,35 +170,58 @@ public class DashboardingServiceImplementation extends DashboardingImplBase {
 			throw new AdempiereException("@PA_Goal_ID@ @NotFound@");
 		}
 		//	Load
-		MMeasure measure = goal.getMeasure();
-		List<GraphColumn> chartData = measure.getGraphColumnList(goal);
-		//	Set values
-		builder.setName(ValueUtil.validateNull(goal.getName()));
-		builder.setDescription(ValueUtil.validateNull(goal.getDescription()));
-		builder.setId(goal.getPA_Goal_ID());
-		builder.setUuid(ValueUtil.validateNull(goal.getUUID()));
-		builder.setXAxisLabel(ValueUtil.validateNull(goal.getXAxisText()));
-		builder.setYAxisLabel(ValueUtil.validateNull(goal.getName()));
 		Map<String, List<ChartData>> chartSeries = new HashMap<>();
-		chartData.forEach(data -> {
-			String key = "";
-			if (data.getDate() != null) {
-				Calendar cal = Calendar.getInstance();
-				cal.setTime(data.getDate());
-				key = Integer.toString(cal.get(Calendar.YEAR));
-			}
-			//	Get from map
-			List<ChartData> serie = chartSeries.get(key);
-			if(serie == null) {
-				serie = new ArrayList<>();
-			}
-			//	Add
-			serie.add(ChartData.newBuilder()
-					.setName(data.getLabel())
-					.setValue(ValueUtil.getDecimalFromBigDecimal(new BigDecimal(data.getValue())))
-					.build());
-			chartSeries.put(key, serie);
-		});
+		if(goal.get_ValueAsInt("AD_Chart_ID") > 0) {
+			MChart chart = new MChart(Env.getCtx(), goal.get_ValueAsInt("AD_Chart_ID"), null);
+			CategoryDataset dataSet = chart.getCategoryDataset();
+			dataSet.getRowKeys();
+			dataSet.getColumnKeys().forEach(column -> {
+				dataSet.getRowKeys().forEach(row -> {
+					//	Get from map
+					List<ChartData> serie = chartSeries.get(row);
+					if(serie == null) {
+						serie = new ArrayList<>();
+					}
+					//	Add
+					Number value = dataSet.getValue((Comparable<?>)row, (Comparable<?>)column);
+					BigDecimal numberValue = (value != null? new BigDecimal(value.doubleValue()): Env.ZERO);
+					serie.add(ChartData.newBuilder()
+							.setName(column.toString())
+							.setValue(ValueUtil.getDecimalFromBigDecimal(numberValue))
+							.build());
+					chartSeries.put(row.toString(), serie);
+				});
+			});
+		} else {
+			MMeasure measure = goal.getMeasure();
+			List<GraphColumn> chartData = measure.getGraphColumnList(goal);
+			//	Set values
+			builder.setName(ValueUtil.validateNull(goal.getName()));
+			builder.setDescription(ValueUtil.validateNull(goal.getDescription()));
+			builder.setId(goal.getPA_Goal_ID());
+			builder.setUuid(ValueUtil.validateNull(goal.getUUID()));
+			builder.setXAxisLabel(ValueUtil.validateNull(goal.getXAxisText()));
+			builder.setYAxisLabel(ValueUtil.validateNull(goal.getName()));
+			chartData.forEach(data -> {
+				String key = "";
+				if (data.getDate() != null) {
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(data.getDate());
+					key = Integer.toString(cal.get(Calendar.YEAR));
+				}
+				//	Get from map
+				List<ChartData> serie = chartSeries.get(key);
+				if(serie == null) {
+					serie = new ArrayList<>();
+				}
+				//	Add
+				serie.add(ChartData.newBuilder()
+						.setName(data.getLabel())
+						.setValue(ValueUtil.getDecimalFromBigDecimal(new BigDecimal(data.getValue())))
+						.build());
+				chartSeries.put(key, serie);
+			});
+		}
 		//	Add all
 		chartSeries.keySet().stream().sorted().forEach(serie -> {
 			builder.addSeries(ChartSerie.newBuilder().setName(serie).addAllDataSet(chartSeries.get(serie)));
