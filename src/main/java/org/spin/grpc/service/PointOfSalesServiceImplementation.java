@@ -98,6 +98,8 @@ import org.spin.grpc.util.Key;
 import org.spin.grpc.util.KeyLayout;
 import org.spin.grpc.util.ListAvailableCurrenciesRequest;
 import org.spin.grpc.util.ListAvailableCurrenciesResponse;
+import org.spin.grpc.util.ListAvailableDocumentTypesRequest;
+import org.spin.grpc.util.ListAvailableDocumentTypesResponse;
 import org.spin.grpc.util.ListAvailablePriceListRequest;
 import org.spin.grpc.util.ListAvailablePriceListResponse;
 import org.spin.grpc.util.ListAvailableTenderTypesRequest;
@@ -699,6 +701,31 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	}
 	
 	@Override
+	public void listAvailableDocumentTypes(ListAvailableDocumentTypesRequest request,
+			StreamObserver<ListAvailableDocumentTypesResponse> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("List Available Tender Types = " + request.getPosUuid());
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			ListAvailableDocumentTypesResponse.Builder documentTypes = listDocumentTypes(request);
+			responseObserver.onNext(documentTypes.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
 	public void listAvailableCurrencies(ListAvailableCurrenciesRequest request,
 			StreamObserver<ListAvailableCurrenciesResponse> responseObserver) {
 		try {
@@ -845,6 +872,51 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		.<MRefList>list()
 		.forEach(priceList -> {
 			builder.addTenderTypes(ConvertUtil.convertListValue(0, priceList.getUUID(), priceList.getValue(), priceList.getName()));
+		});
+		//	
+		builder.setRecordCount(count);
+		//	Set page token
+		if(count > offset) {
+			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
+		}
+		//	Set next page
+		builder.setNextPageToken(ValueUtil.validateNull(nexPageToken));
+		return builder;
+	}
+	
+	/**
+	 * List Document Types from POS UUID
+	 * @param request
+	 * @return
+	 */
+	private ListAvailableDocumentTypesResponse.Builder listDocumentTypes(ListAvailableDocumentTypesRequest request) {
+		if(Util.isEmpty(request.getPosUuid())) {
+			throw new AdempiereException("@C_POS_ID@ @NotFound@");
+		}
+		ListAvailableDocumentTypesResponse.Builder builder = ListAvailableDocumentTypesResponse.newBuilder();
+		final String TABLE_NAME = "C_POSDocumentTypeAllocation";
+		if(MTable.getTable_ID(TABLE_NAME) <= 0) {
+			return builder;
+		}
+		String nexPageToken = null;
+		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
+		int limit = RecordUtil.PAGE_SIZE;
+		int offset = pageNumber * RecordUtil.PAGE_SIZE;
+		//	Dynamic where clause
+		String whereClause = "EXISTS(SELECT 1 FROM " + TABLE_NAME + " r WHERE r.C_DocType_ID = C_DocType.C_DocType_ID AND r.C_POS_ID = ?)";
+		//	Aisle Seller
+		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), null);
+		//	Get Product list
+		Query query = new Query(Env.getCtx(), I_C_DocType.Table_Name, whereClause.toString(), null)
+				.setParameters(posId)
+				.setClient_ID()
+				.setOnlyActiveRecords(true);
+		int count = query.count();
+		query
+		.setLimit(limit, offset)
+		.<MDocType>list()
+		.forEach(documentType -> {
+			builder.addDocumentTypes(ConvertUtil.convertListValue(documentType.getC_DocType_ID(), documentType.getUUID(), documentType.getName(), documentType.getPrintName()));
 		});
 		//	
 		builder.setRecordCount(count);
@@ -1335,12 +1407,16 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				}
 				if(priceListId > 0) {
 					salesOrder.setM_PriceList_ID(priceListId);
+					salesOrder.saveEx(transactionName);
+					configurePriceList(salesOrder);
 				}
 				if(warehouseId > 0) {
 					salesOrder.setM_Warehouse_ID(warehouseId);
+					salesOrder.saveEx(transactionName);
+					configureWarehouse(salesOrder);
 				}
 				//	Save
-				salesOrder.saveEx();
+				salesOrder.saveEx(transactionName);
 				orderReference.set(salesOrder);
 			});
 		}
@@ -1425,6 +1501,35 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				}
 			});
 		}
+	
+	}
+	
+	/**
+	 * Configure Warehouse after change
+	 * @param order
+	 */
+	private void configureWarehouse(MOrder order) {
+		Arrays.asList(order.getLines())
+		.forEach(orderLine -> {
+			orderLine.setM_Warehouse_ID(order.getM_Warehouse_ID());
+			orderLine.saveEx();
+		});
+	}
+	
+	/**
+	 * Configure Price List after change
+	 * @param order
+	 */
+	private void configurePriceList(MOrder order) {
+		Arrays.asList(order.getLines())
+		.forEach(orderLine -> {
+			orderLine.setPrice();
+			orderLine.setTax();
+			orderLine.saveEx();
+			if(Optional.ofNullable(orderLine.getPriceActual()).orElse(Env.ZERO).signum() == 0) {
+				orderLine.deleteEx(true);
+			}
+		});
 	}
 	
 	/**
@@ -1985,6 +2090,10 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		if(pos.get_ValueAsInt("DisplayCurrency_ID") > 0) {
 			MCurrency displayCurency = MCurrency.get(Env.getCtx(), pos.get_ValueAsInt("DisplayCurrency_ID"));
 			builder.setDisplayCurrency(ConvertUtil.convertCurrency(displayCurency));
+		}
+		//	Document Type
+		if(pos.getC_DocType_ID() > 0) {
+			builder.setDocumentType(ConvertUtil.convertDocumentType(MDocType.get(Env.getCtx(), pos.getC_DocType_ID())));
 		}
 		return builder;
 	}

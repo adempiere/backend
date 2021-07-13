@@ -76,10 +76,20 @@ service Store {
 	rpc ListAvailablePriceList(ListAvailablePriceListRequest) returns (ListAvailablePriceListResponse) {}
 	//	List of Available Currencies
 	rpc ListAvailableCurrencies(ListAvailableCurrenciesRequest) returns (ListAvailableCurrenciesResponse) {}
+	//	List of Available Document Types
+	rpc ListAvailableDocumentTypes(ListAvailableDocumentTypesRequest) returns (ListAvailableDocumentTypesResponse) {}
 }
 
 //	List warehouses for POS
 message ListAvailableWarehousesRequest {
+	ClientRequest client_request = 1;
+	string pos_uuid = 2;
+	int32 page_size = 3;
+	string page_token = 4;
+}
+
+//	List document types for POS
+message ListAvailableDocumentTypesRequest {
 	ClientRequest client_request = 1;
 	string pos_uuid = 2;
 	int32 page_size = 3;
@@ -105,6 +115,13 @@ message ListAvailableTenderTypesRequest {
 message ListAvailableTenderTypesResponse {
 	int64 record_count = 1;
 	repeated ListValue tender_types = 2;
+	string next_page_token = 3;
+}
+
+//	List Available Document Types
+message ListAvailableDocumentTypesResponse {
+	int64 record_count = 1;
+	repeated ListValue document_types = 2;
 	string next_page_token = 3;
 }
 
