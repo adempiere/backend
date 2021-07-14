@@ -100,6 +100,8 @@ service Workflow {
 	rpc ListDocumentActions(ListDocumentActionsRequest) returns (ListDocumentActionsResponse) {}
 	//	List Document Statuses
 	rpc ListDocumentStatuses(ListDocumentStatusesRequest) returns (ListDocumentStatusesResponse) {}
+	//	List Workflow Activities
+	rpc ListWorkflowActivities(ListWorkflowActivitiesRequest) returns (ListWorkflowActivitiesResponse) {}
 }
 
 //	All related to dashboarding
@@ -758,6 +760,41 @@ message ListWorkflowsRequest {
 	string table_name = 2;
 	int32 page_size = 4;
 	string page_token = 5;
+}
+
+// Workflow Activities Request
+message ListWorkflowActivitiesRequest {
+	ClientRequest client_request = 1;
+	string user_uuid = 2;
+	int32 page_size = 4;
+	string page_token = 5;
+}
+
+//	Workflow Activities Response
+message ListWorkflowActivitiesResponse {
+	int64 record_count = 1;
+	repeated WorkflowActivity activities = 2;
+	string next_page_token = 3;
+}
+
+//	Workflow Activity
+message WorkflowActivity {
+	int32 id = 1;
+	string uuid = 2;
+	string table_name = 3;
+	string record_uuid = 4;
+	string user_uuid = 5;
+	string user_name = 6;
+	string responsible_uuid = 7;
+	string responsible_name = 8;
+	string text_message = 9;
+	bool processed = 10;
+	int32 priority = 11;
+	int64 created = 12;
+	int64 last_alert = 13;
+	WorkflowProcess workflow_process = 14;
+	WorkflowDefinition workflow = 15;
+	WorkflowNode node = 16;
 }
 
 // Workflow Definition

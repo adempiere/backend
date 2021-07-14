@@ -29,7 +29,6 @@ import org.adempiere.model.MBrowse;
 import org.compiere.model.I_AD_ChangeLog;
 import org.compiere.model.I_AD_PInstance;
 import org.compiere.model.I_AD_PInstance_Log;
-import org.compiere.model.I_AD_WF_EventAudit;
 import org.compiere.model.I_AD_WF_Process;
 import org.compiere.model.I_CM_Chat;
 import org.compiere.model.I_CM_ChatEntry;
@@ -62,42 +61,37 @@ import org.compiere.util.Msg;
 import org.compiere.util.NamePair;
 import org.compiere.util.TimeUtil;
 import org.compiere.util.Util;
-import org.compiere.wf.MWFEventAudit;
-import org.compiere.wf.MWFNode;
 import org.compiere.wf.MWFProcess;
-import org.compiere.wf.MWFResponsible;
-import org.compiere.wf.MWorkflow;
 import org.spin.base.util.ContextManager;
 import org.spin.base.util.ConvertUtil;
 import org.spin.base.util.RecordUtil;
 import org.spin.base.util.ValueUtil;
+import org.spin.base.util.WorkflowUtil;
 import org.spin.grpc.util.ChangeLog;
 import org.spin.grpc.util.ChatEntry;
+import org.spin.grpc.util.EntityChat;
+import org.spin.grpc.util.EntityChat.ConfidentialType;
+import org.spin.grpc.util.EntityChat.ModerationType;
+import org.spin.grpc.util.EntityLog;
 import org.spin.grpc.util.ListChatEntriesRequest;
 import org.spin.grpc.util.ListChatEntriesResponse;
-import org.spin.grpc.util.ListProcessLogsRequest;
-import org.spin.grpc.util.ListProcessLogsResponse;
-import org.spin.grpc.util.ListRecentItemsRequest;
-import org.spin.grpc.util.ListRecentItemsResponse;
 import org.spin.grpc.util.ListEntityChatsRequest;
 import org.spin.grpc.util.ListEntityChatsResponse;
 import org.spin.grpc.util.ListEntityLogsRequest;
 import org.spin.grpc.util.ListEntityLogsResponse;
+import org.spin.grpc.util.ListProcessLogsRequest;
+import org.spin.grpc.util.ListProcessLogsResponse;
+import org.spin.grpc.util.ListRecentItemsRequest;
+import org.spin.grpc.util.ListRecentItemsResponse;
 import org.spin.grpc.util.ListWorkflowLogsRequest;
 import org.spin.grpc.util.ListWorkflowLogsResponse;
+import org.spin.grpc.util.LogsGrpc.LogsImplBase;
 import org.spin.grpc.util.ProcessInfoLog;
 import org.spin.grpc.util.ProcessLog;
 import org.spin.grpc.util.RecentItem;
-import org.spin.grpc.util.EntityChat;
-import org.spin.grpc.util.EntityLog;
 import org.spin.grpc.util.ReportOutput;
 import org.spin.grpc.util.Value;
-import org.spin.grpc.util.WorkflowEvent;
 import org.spin.grpc.util.WorkflowProcess;
-import org.spin.grpc.util.LogsGrpc.LogsImplBase;
-import org.spin.grpc.util.EntityChat.ConfidentialType;
-import org.spin.grpc.util.EntityChat.ModerationType;
-import org.spin.grpc.util.WorkflowProcess.WorkflowState;
 
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
@@ -363,7 +357,7 @@ public class LogsServiceImplementation extends LogsImplBase {
 		ListWorkflowLogsResponse.Builder builder = ListWorkflowLogsResponse.newBuilder();
 		//	Convert Record Log
 		for(MWFProcess workflowProcessLog : workflowProcessLogList) {
-			WorkflowProcess.Builder valueObject = convertWorkflowLog(workflowProcessLog);
+			WorkflowProcess.Builder valueObject = WorkflowUtil.convertWorkflowProcess(workflowProcessLog);
 			builder.addWorkflowLogs(valueObject.build());
 		}
 		//	
@@ -376,129 +370,6 @@ public class LogsServiceImplementation extends LogsImplBase {
 		builder.setNextPageToken(ValueUtil.validateNull(nexPageToken));
 		//	Return
 		return builder;
-	}
-	
-	/**
-	 * Convert PO class from Workflow process to builder
-	 * @param workflowProcess
-	 * @return
-	 */
-	private WorkflowProcess.Builder convertWorkflowLog(MWFProcess workflowProcess) {
-		MTable table = MTable.get(workflowProcess.getCtx(), workflowProcess.getAD_Table_ID());
-		WorkflowProcess.Builder builder = WorkflowProcess.newBuilder();
-		builder.setProcessUuid(ValueUtil.validateNull(workflowProcess.getUUID()));
-		MWorkflow workflow = MWorkflow.get(workflowProcess.getCtx(), workflowProcess.getAD_Workflow_ID());
-		builder.setWorkflowUuid(ValueUtil.validateNull(workflow.getUUID()));
-		String workflowName = workflow.getName();
-		if(!Env.isBaseLanguage(workflowProcess.getCtx(), "")) {
-			String translation = workflow.get_Translation(MWorkflow.COLUMNNAME_Name);
-			if(!Util.isEmpty(translation)) {
-				workflowName = translation;
-			}
-		}
-		if(workflowProcess.getAD_WF_Responsible_ID() != 0) {
-			MWFResponsible responsible = MWFResponsible.get(workflowProcess.getCtx(), workflowProcess.getAD_WF_Responsible_ID());
-			builder.setResponsibleUuid(ValueUtil.validateNull(responsible.getUUID()));
-			builder.setResponsibleName(ValueUtil.validateNull(responsible.getName()));
-		}
-		if(workflowProcess.getAD_User_ID() != 0) {
-			MUser user = MUser.get(workflowProcess.getCtx(), workflowProcess.getAD_User_ID());
-			builder.setUserUuid(ValueUtil.validateNull(user.getUUID()));
-			builder.setUserName(ValueUtil.validateNull(user.getName()));
-		}
-		builder.setWorkflowName(ValueUtil.validateNull(workflowName));
-		builder.setId(workflowProcess.getRecord_ID());
-		builder.setUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(table.getTableName(), workflowProcess.getRecord_ID())));
-		builder.setTableName(ValueUtil.validateNull(table.getTableName()));
-		builder.setTextMessage(ValueUtil.validateNull(Msg.parseTranslation(workflowProcess.getCtx(), workflowProcess.getTextMsg())));
-		builder.setProcessed(workflowProcess.isProcessed());
-		builder.setLogDate(workflowProcess.getCreated().getTime());
-		//	State
-		if(!Util.isEmpty(workflowProcess.getWFState())) {
-			if(workflowProcess.getWFState().equals(MWFProcess.WFSTATE_Running)) {
-				builder.setWorkflowState(WorkflowState.RUNNING);
-			} else if(workflowProcess.getWFState().equals(MWFProcess.WFSTATE_Completed)) {
-				builder.setWorkflowState(WorkflowState.COMPLETED);
-			} else if(workflowProcess.getWFState().equals(MWFProcess.WFSTATE_Aborted)) {
-				builder.setWorkflowState(WorkflowState.ABORTED);
-			} else if(workflowProcess.getWFState().equals(MWFProcess.WFSTATE_Terminated)) {
-				builder.setWorkflowState(WorkflowState.TERMINATED);
-			} else if(workflowProcess.getWFState().equals(MWFProcess.WFSTATE_Suspended)) {
-				builder.setWorkflowState(WorkflowState.SUSPENDED);
-			} else if(workflowProcess.getWFState().equals(MWFProcess.WFSTATE_NotStarted)) {
-				builder.setWorkflowState(WorkflowState.NOT_STARTED);
-			}
-		}
-		builder.setPriorityValue(workflowProcess.getPriority());
-		//	Get Events
-		List<MWFEventAudit> workflowEventsList = new Query(workflowProcess.getCtx(), I_AD_WF_EventAudit.Table_Name, I_AD_WF_EventAudit.COLUMNNAME_AD_WF_Process_ID + " = ?", null)
-			.setParameters(workflowProcess.getAD_WF_Process_ID())
-			.<MWFEventAudit>list();
-		//	populate
-		for(MWFEventAudit eventAudit : workflowEventsList) {
-			WorkflowEvent.Builder valueObject = convertWorkflowEventAudit(eventAudit);
-			builder.addWorkflowEvents(valueObject.build());
-		}
-  		return builder;
-	}
-	
-	/**
-	 * Convert PO class from Workflow event audit to builder
-	 * @param workflowEventAudit
-	 * @return
-	 */
-	private WorkflowEvent.Builder convertWorkflowEventAudit(MWFEventAudit workflowEventAudit) {
-		MTable table = MTable.get(workflowEventAudit.getCtx(), workflowEventAudit.getAD_Table_ID());
-		WorkflowEvent.Builder builder = WorkflowEvent.newBuilder();
-		MWFNode node = MWFNode.get(workflowEventAudit.getCtx(), workflowEventAudit.getAD_WF_Node_ID());
-		builder.setNodeUuid(ValueUtil.validateNull(node.getUUID()));
-		String nodeName = node.getName();
-		if(!Env.isBaseLanguage(workflowEventAudit.getCtx(), "")) {
-			String translation = node.get_Translation(MWFNode.COLUMNNAME_Name);
-			if(!Util.isEmpty(translation)) {
-				nodeName = translation;
-			}
-		}
-		builder.setNodeName(ValueUtil.validateNull(nodeName));
-		if(workflowEventAudit.getAD_WF_Responsible_ID() != 0) {
-			MWFResponsible responsible = MWFResponsible.get(workflowEventAudit.getCtx(), workflowEventAudit.getAD_WF_Responsible_ID());
-			builder.setResponsibleUuid(ValueUtil.validateNull(responsible.getUUID()));
-			builder.setResponsibleName(ValueUtil.validateNull(responsible.getName()));
-		}
-		if(workflowEventAudit.getAD_User_ID() != 0) {
-			MUser user = MUser.get(workflowEventAudit.getCtx(), workflowEventAudit.getAD_User_ID());
-			builder.setUserUuid(ValueUtil.validateNull(user.getUUID()));
-			builder.setUserName(ValueUtil.validateNull(user.getName()));
-		}
-		builder.setId(workflowEventAudit.getRecord_ID());
-		builder.setUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(table.getTableName(), workflowEventAudit.getRecord_ID())));
-		builder.setTableName(ValueUtil.validateNull(table.getTableName()));
-		builder.setTextMessage(ValueUtil.validateNull(Msg.parseTranslation(workflowEventAudit.getCtx(), workflowEventAudit.getTextMsg())));
-		builder.setLogDate(workflowEventAudit.getCreated().getTime());
-		if(workflowEventAudit.getElapsedTimeMS() != null) {
-			builder.setTimeElapsed(workflowEventAudit.getElapsedTimeMS().longValue());
-		}
-		//	State
-		if(!Util.isEmpty(workflowEventAudit.getWFState())) {
-			if(workflowEventAudit.getWFState().equals(MWFProcess.WFSTATE_Running)) {
-				builder.setWorkflowState(org.spin.grpc.util.WorkflowEvent.WorkflowState.RUNNING);
-			} else if(workflowEventAudit.getWFState().equals(MWFProcess.WFSTATE_Completed)) {
-				builder.setWorkflowState(org.spin.grpc.util.WorkflowEvent.WorkflowState.COMPLETED);
-			} else if(workflowEventAudit.getWFState().equals(MWFProcess.WFSTATE_Aborted)) {
-				builder.setWorkflowState(org.spin.grpc.util.WorkflowEvent.WorkflowState.ABORTED);
-			} else if(workflowEventAudit.getWFState().equals(MWFProcess.WFSTATE_Terminated)) {
-				builder.setWorkflowState(org.spin.grpc.util.WorkflowEvent.WorkflowState.TERMINATED);
-			} else if(workflowEventAudit.getWFState().equals(MWFProcess.WFSTATE_Suspended)) {
-				builder.setWorkflowState(org.spin.grpc.util.WorkflowEvent.WorkflowState.SUSPENDED);
-			} else if(workflowEventAudit.getWFState().equals(MWFProcess.WFSTATE_NotStarted)) {
-				builder.setWorkflowState(org.spin.grpc.util.WorkflowEvent.WorkflowState.NOT_STARTED);
-			}
-		}
-		//	
-		builder.setAttributeName(ValueUtil.validateNull(workflowEventAudit.getAttributeName()));
-		builder.setOldValue(ValueUtil.validateNull(workflowEventAudit.getOldValue()));
-		builder.setNewValue(ValueUtil.validateNull(workflowEventAudit.getNewValue()));
-  		return builder;
 	}
 	
 	/**

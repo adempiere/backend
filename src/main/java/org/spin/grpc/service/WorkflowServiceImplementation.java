@@ -24,12 +24,10 @@ import java.util.Properties;
 import java.util.logging.Level;
 
 import org.adempiere.exceptions.AdempiereException;
-import org.compiere.model.I_AD_WF_NextCondition;
-import org.compiere.model.I_AD_WF_Node;
-import org.compiere.model.I_AD_WF_NodeNext;
+import org.compiere.model.I_AD_User;
+import org.compiere.model.I_AD_WF_Activity;
 import org.compiere.model.I_AD_Workflow;
 import org.compiere.model.I_C_Order;
-import org.compiere.model.MColumn;
 import org.compiere.model.MDocType;
 import org.compiere.model.MOrder;
 import org.compiere.model.MTable;
@@ -43,30 +41,23 @@ import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.compiere.util.Util;
 import org.compiere.wf.MWFActivity;
-import org.compiere.wf.MWFNextCondition;
-import org.compiere.wf.MWFNode;
-import org.compiere.wf.MWFNodeNext;
-import org.compiere.wf.MWFResponsible;
 import org.compiere.wf.MWorkflow;
 import org.spin.base.util.ContextManager;
 import org.spin.base.util.ConvertUtil;
 import org.spin.base.util.RecordUtil;
 import org.spin.base.util.ValueUtil;
+import org.spin.base.util.WorkflowUtil;
 import org.spin.grpc.util.DocumentStatus;
 import org.spin.grpc.util.ListDocumentActionsRequest;
 import org.spin.grpc.util.ListDocumentActionsResponse;
 import org.spin.grpc.util.ListDocumentStatusesRequest;
 import org.spin.grpc.util.ListDocumentStatusesResponse;
+import org.spin.grpc.util.ListWorkflowActivitiesRequest;
+import org.spin.grpc.util.ListWorkflowActivitiesResponse;
 import org.spin.grpc.util.ListWorkflowsRequest;
 import org.spin.grpc.util.ListWorkflowsResponse;
-import org.spin.grpc.util.WorkflowCondition;
+import org.spin.grpc.util.WorkflowActivity;
 import org.spin.grpc.util.WorkflowDefinition;
-import org.spin.grpc.util.WorkflowNode;
-import org.spin.grpc.util.WorkflowTransition;
-import org.spin.grpc.util.WorkflowCondition.ConditionType;
-import org.spin.grpc.util.WorkflowCondition.Operation;
-import org.spin.grpc.util.WorkflowDefinition.DurationUnit;
-import org.spin.grpc.util.WorkflowDefinition.PublishStatus;
 import org.spin.grpc.util.WorkflowGrpc.WorkflowImplBase;
 
 import io.grpc.Status;
@@ -144,6 +135,80 @@ public class WorkflowServiceImplementation extends WorkflowImplBase {
 					.withCause(e)
 					.asRuntimeException());
 		}
+	}
+	
+	@Override
+	public void listWorkflowActivities(ListWorkflowActivitiesRequest request,
+			StreamObserver<ListWorkflowActivitiesResponse> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Request is Null");
+			}
+			log.fine("Object List Requested = " + request);
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
+			ListWorkflowActivitiesResponse.Builder activitiesList = convertWorkflowActivities(context, request);
+			responseObserver.onNext(activitiesList.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	/**
+	 * Convert request for workflow to builder
+	 * @param context
+	 * @param request
+	 * @return
+	 */
+	private ListWorkflowActivitiesResponse.Builder convertWorkflowActivities(Properties context, ListWorkflowActivitiesRequest request) {
+		if(Util.isEmpty(request.getUserUuid())) {
+			throw new AdempiereException("@AD_User_ID@ @NotFound@");
+		}
+		//	
+		int userId = RecordUtil.getIdFromUuid(I_AD_User.Table_Name, request.getUserUuid(), null);
+		String whereClause = "AD_WF_Activity.Processed='N' "
+				+ "AND AD_WF_Activity.WFState='OS' "
+				+ "AND ( AD_WF_Activity.AD_User_ID=? "
+				+ "				OR EXISTS (SELECT * FROM AD_WF_Responsible r WHERE AD_WF_Activity.AD_WF_Responsible_ID=r.AD_WF_Responsible_ID AND COALESCE(r.AD_User_ID,0)=0 AND COALESCE(r.AD_Role_ID,0)=0 "
+				+ "AND (AD_WF_Activity.AD_User_ID=? "
+				+ "				OR AD_WF_Activity.AD_User_ID IS NULL)) "
+				+ "				OR EXISTS (SELECT * FROM AD_WF_Responsible r WHERE AD_WF_Activity.AD_WF_Responsible_ID=r.AD_WF_Responsible_ID AND r.AD_User_ID=?) "
+				+ "				OR EXISTS (SELECT * FROM AD_WF_Responsible r INNER JOIN AD_User_Roles ur ON (r.AD_Role_ID=ur.AD_Role_ID) WHERE AD_WF_Activity.AD_WF_Responsible_ID=r.AD_WF_Responsible_ID AND ur.AD_User_ID=?)"
+				+ ")";
+		//	Get page and count
+		String nexPageToken = null;
+		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
+		int limit = RecordUtil.PAGE_SIZE;
+		int offset = pageNumber * RecordUtil.PAGE_SIZE;
+		Query query = new Query(context, I_AD_WF_Activity.Table_Name, whereClause, null)
+				.setParameters(userId, userId, userId, userId);
+		int count = query.count();
+		List<MWFActivity> workflowActivitiesList = query
+				.setLimit(limit, offset)
+				.setOrderBy("Priority DESC, Created")
+				.<MWFActivity>list();
+		//	
+		ListWorkflowActivitiesResponse.Builder builder = ListWorkflowActivitiesResponse.newBuilder();
+		//	Convert Record Log
+		for(MWFActivity workflowActivity : workflowActivitiesList) {
+			WorkflowActivity.Builder valueObject = WorkflowUtil.convertWorkflowActivity(workflowActivity);
+			builder.addActivities(valueObject.build());
+		}
+		//	
+		builder.setRecordCount(count);
+		//	Set page token
+		if(count > offset) {
+			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
+		}
+		//	Set next page
+		builder.setNextPageToken(ValueUtil.validateNull(nexPageToken));
+		//	Return
+		return builder;
 	}
 	
 	/**
@@ -374,7 +439,7 @@ public class WorkflowServiceImplementation extends WorkflowImplBase {
 		ListWorkflowsResponse.Builder builder = ListWorkflowsResponse.newBuilder();
 		//	Convert Record Log
 		for(MWorkflow workflowDefinition : workflowList) {
-			WorkflowDefinition.Builder valueObject = convertWorkflowDefinition(workflowDefinition);
+			WorkflowDefinition.Builder valueObject = WorkflowUtil.convertWorkflowDefinition(workflowDefinition);
 			builder.addWorkflows(valueObject.build());
 		}
 		//	
@@ -387,208 +452,6 @@ public class WorkflowServiceImplementation extends WorkflowImplBase {
 		builder.setNextPageToken(ValueUtil.validateNull(nexPageToken));
 		//	Return
 		return builder;
-	}
-	
-	/**
-	 * Convert PO class from Workflow to builder
-	 * @param workflow
-	 * @return
-	 */
-	private WorkflowDefinition.Builder convertWorkflowDefinition(MWorkflow workflow) {
-		MTable table = MTable.get(workflow.getCtx(), workflow.getAD_Table_ID());
-		WorkflowDefinition.Builder builder = WorkflowDefinition.newBuilder();
-		builder.setWorkflowUuid(ValueUtil.validateNull(workflow.getUUID()));
-		builder.setValue(ValueUtil.validateNull(workflow.getValue()));
-		String name = workflow.getName();
-		String description = workflow.getDescription();
-		String help = workflow.getHelp();
-		if(!Env.isBaseLanguage(workflow.getCtx(), "")) {
-			String translation = workflow.get_Translation(MWorkflow.COLUMNNAME_Name);
-			if(!Util.isEmpty(translation)) {
-				name = translation;
-			}
-			translation = workflow.get_Translation(MWorkflow.COLUMNNAME_Description);
-			if(!Util.isEmpty(translation)) {
-				description = translation;
-			}
-			translation = workflow.get_Translation(MWorkflow.COLUMNNAME_Help);
-			if(!Util.isEmpty(translation)) {
-				help = translation;
-			}
-		}
-		builder.setName(ValueUtil.validateNull(name));
-		builder.setDescription(ValueUtil.validateNull(description));
-		builder.setHelp(ValueUtil.validateNull(help));
-		
-		if(workflow.getAD_WF_Responsible_ID() != 0) {
-			MWFResponsible responsible = MWFResponsible.get(workflow.getCtx(), workflow.getAD_WF_Responsible_ID());
-			builder.setResponsibleUuid(ValueUtil.validateNull(responsible.getUUID()));
-			builder.setResponsibleName(ValueUtil.validateNull(responsible.getName()));
-		}
-		builder.setPriority(workflow.getPriority());
-		builder.setTableName(ValueUtil.validateNull(table.getTableName()));
-		builder.setIsDefault(workflow.isDefault());
-		builder.setIsValid(workflow.isValid());
-		if(workflow.getValidFrom() != null) {
-			builder.setValidFrom(workflow.getValidFrom().getTime());
-		}
-		//	Duration Unit
-		if(!Util.isEmpty(workflow.getDurationUnit())) {
-			if(workflow.getDurationUnit().equals(MWorkflow.DURATIONUNIT_Day)) {
-				builder.setDurationUnitValue(DurationUnit.HOUR_VALUE);
-			} else if(workflow.getDurationUnit().equals(MWorkflow.DURATIONUNIT_Minute)) {
-				builder.setDurationUnitValue(DurationUnit.MINUTE_VALUE);
-			} else if(workflow.getDurationUnit().equals(MWorkflow.DURATIONUNIT_Month)) {
-				builder.setDurationUnitValue(DurationUnit.MONTH_VALUE);
-			} else if(workflow.getDurationUnit().equals(MWorkflow.DURATIONUNIT_Second)) {
-				builder.setDurationUnitValue(DurationUnit.SECOND_VALUE);
-			} else if(workflow.getDurationUnit().equals(MWorkflow.DURATIONUNIT_Year)) {
-				builder.setDurationUnitValue(DurationUnit.YEAR_VALUE);
-			}
-		}
-		//	Publish Status
-		if(!Util.isEmpty(workflow.getPublishStatus())) {
-			if(workflow.getPublishStatus().equals(MWorkflow.PUBLISHSTATUS_Released)) {
-				builder.setPublishStatusValue(PublishStatus.RELEASED_VALUE);
-			} else if(workflow.getPublishStatus().equals(MWorkflow.PUBLISHSTATUS_Test)) {
-				builder.setDurationUnitValue(PublishStatus.TEST_VALUE);
-			} else if(workflow.getPublishStatus().equals(MWorkflow.PUBLISHSTATUS_UnderRevision)) {
-				builder.setDurationUnitValue(PublishStatus.UNDER_REVISION_VALUE);
-			} else if(workflow.getPublishStatus().equals(MWorkflow.PUBLISHSTATUS_Void)) {
-				builder.setDurationUnitValue(PublishStatus.VOID_VALUE);
-			}
-		}
-		//	Next node
-		if(workflow.getAD_WF_Node_ID() != 0) {
-			MWFNode startNode = MWFNode.get(workflow.getCtx(), workflow.getAD_WF_Node_ID());
-			builder.setStartNode(convertWorkflowNode(startNode));
-		}
-		//	Get Events
-		List<MWFNode> workflowNodeList = new Query(workflow.getCtx(), I_AD_WF_Node.Table_Name, I_AD_WF_Node.COLUMNNAME_AD_Workflow_ID + " = ?", null)
-			.setParameters(workflow.getAD_Workflow_ID())
-			.<MWFNode>list();
-		//	populate
-		for(MWFNode node : workflowNodeList) {
-			WorkflowNode.Builder valueObject = convertWorkflowNode(node);
-			builder.addWorkflowNodes(valueObject.build());
-		}
-  		return builder;
-	}
-	
-	/**
-	 * Convert PO class from Workflow node to builder
-	 * @param node
-	 * @return
-	 */
-	private WorkflowNode.Builder convertWorkflowNode(MWFNode node) {
-		WorkflowNode.Builder builder = WorkflowNode.newBuilder();
-		builder.setNodeUuid(ValueUtil.validateNull(node.getUUID()));
-		builder.setValue(ValueUtil.validateNull(node.getValue()));
-		String name = node.getName();
-		String description = node.getDescription();
-		String help = node.getHelp();
-		if(!Env.isBaseLanguage(node.getCtx(), "")) {
-			String translation = node.get_Translation(MWFNode.COLUMNNAME_Name);
-			if(!Util.isEmpty(translation)) {
-				name = translation;
-			}
-			translation = node.get_Translation(MWFNode.COLUMNNAME_Description);
-			if(!Util.isEmpty(translation)) {
-				description = translation;
-			}
-			translation = node.get_Translation(MWFNode.COLUMNNAME_Help);
-			if(!Util.isEmpty(translation)) {
-				help = translation;
-			}
-		}
-		builder.setName(ValueUtil.validateNull(name));
-		builder.setDescription(ValueUtil.validateNull(description));
-		builder.setHelp(ValueUtil.validateNull(help));
-		
-		if(node.getAD_WF_Responsible_ID() != 0) {
-			MWFResponsible responsible = MWFResponsible.get(node.getCtx(), node.getAD_WF_Responsible_ID());
-			builder.setResponsibleUuid(ValueUtil.validateNull(responsible.getUUID()));
-			builder.setResponsibleName(ValueUtil.validateNull(responsible.getName()));
-		}
-		builder.setPriority(node.getPriority());
-		//	Get Events
-		List<MWFNodeNext> workflowNodeTransitionList = new Query(node.getCtx(), I_AD_WF_NodeNext.Table_Name, I_AD_WF_NodeNext.COLUMNNAME_AD_WF_Node_ID + " = ?", null)
-			.setParameters(node.getAD_WF_Node_ID())
-			.<MWFNodeNext>list();
-		//	populate
-		for(MWFNodeNext nodeNext : workflowNodeTransitionList) {
-			WorkflowTransition.Builder valueObject = convertTransition(nodeNext);
-			builder.addTransitions(valueObject.build());
-		}
-  		return builder;
-	}
-	
-	/**
-	 * Convert PO class from Transition to builder
-	 * @param transition
-	 * @return
-	 */
-	private WorkflowTransition.Builder convertTransition(MWFNodeNext transition) {
-		WorkflowTransition.Builder builder = WorkflowTransition.newBuilder();
-		MWFNode nodeNext = MWFNode.get(transition.getCtx(), transition.getAD_WF_NodeNext_ID());
-		builder.setNodeNextUuid(ValueUtil.validateNull(nodeNext.getUUID()));
-		builder.setDescription(ValueUtil.validateNull(transition.getDescription()));
-		builder.setSequence(transition.getSeqNo());
-		builder.setIsStdUserWorkflow(transition.isStdUserWorkflow());
-		//	Get Events
-		List<MWFNextCondition> workflowNodeTransitionList = new Query(transition.getCtx(), I_AD_WF_NextCondition.Table_Name, I_AD_WF_NextCondition.COLUMNNAME_AD_WF_NodeNext_ID + " = ?", null)
-			.setParameters(transition.getAD_WF_Node_ID())
-			.<MWFNextCondition>list();
-		//	populate
-		for(MWFNextCondition nextCondition : workflowNodeTransitionList) {
-			WorkflowCondition.Builder valueObject = convertWorkflowCondition(nextCondition);
-			builder.addWorkflowConditions(valueObject.build());
-		}
-  		return builder;
-	}
-	
-	/**
-	 * Convert PO class from Workflow condition to builder
-	 * @param condition
-	 * @return
-	 */
-	private WorkflowCondition.Builder convertWorkflowCondition(MWFNextCondition condition) {
-		WorkflowCondition.Builder builder = WorkflowCondition.newBuilder();
-		builder.setSequence(condition.getSeqNo());
-		MColumn column = MColumn.get(condition.getCtx(), condition.getAD_Column_ID());
-		builder.setColumnName(ValueUtil.validateNull(column.getColumnName()));
-		builder.setValue(ValueUtil.validateNull(condition.getValue()));
-		//	Condition Type
-		if(!Util.isEmpty(condition.getAndOr())) {
-			if(condition.getAndOr().equals(MWFNextCondition.ANDOR_And)) {
-				builder.setConditionTypeValue(ConditionType.AND_VALUE);
-			} else if(condition.getAndOr().equals(MWFNextCondition.ANDOR_Or)) {
-				builder.setConditionTypeValue(ConditionType.OR_VALUE);
-			}
-		}
-		//	Operation
-		if(!Util.isEmpty(condition.getOperation())) {
-			if(condition.getOperation().equals(MWFNextCondition.OPERATION_Eq)) {
-				builder.setOperation(Operation.EQUAL);
-			} else if(condition.getOperation().equals(MWFNextCondition.OPERATION_NotEq)) {
-				builder.setOperation(Operation.NOT_EQUAL);
-			} else if(condition.getOperation().equals(MWFNextCondition.OPERATION_Like)) {
-				builder.setOperation(Operation.LIKE);
-			} else if(condition.getOperation().equals(MWFNextCondition.OPERATION_Gt)) {
-				builder.setOperation(Operation.GREATER);
-			} else if(condition.getOperation().equals(MWFNextCondition.OPERATION_GtEq)) {
-				builder.setOperation(Operation.GREATER_EQUAL);
-			} else if(condition.getOperation().equals(MWFNextCondition.OPERATION_Le)) {
-				builder.setOperation(Operation.LESS);
-			} else if(condition.getOperation().equals(MWFNextCondition.OPERATION_LeEq)) {
-				builder.setOperation(Operation.LESS_EQUAL);
-			} else if(condition.getOperation().equals(MWFNextCondition.OPERATION_X)) {
-				builder.setOperation(Operation.BETWEEN);
-			} else if(condition.getOperation().equals(MWFNextCondition.OPERATION_Sql)) {
-				builder.setOperation(Operation.SQL);
-			}
-		}
-  		return builder;
 	}
 	
 	/**
