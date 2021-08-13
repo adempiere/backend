@@ -37,7 +37,7 @@ Don't forgive that for run server you need set yaml file line is /resources fold
 - run it
 
 ```Shell
-./adempiere-dictionary-server.sh "/tmp/dictionary_connection.yaml"
+./adempiere-all-in-one-server "/tmp/dictionary_connection.yaml"
 ```
 
 ## Client Test
