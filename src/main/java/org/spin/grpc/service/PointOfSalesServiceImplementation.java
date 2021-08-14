@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import org.adempiere.exceptions.AdempiereException;
 import org.compiere.model.I_AD_Ref_List;
@@ -1017,22 +1018,28 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				}
 				//	Get invoice if exists
 				int invoiceId = order.getC_Invoice_ID();
+				AtomicReference<BigDecimal> openAmount = new AtomicReference<BigDecimal>(order.getGrandTotal());
 				//	Process Payments
 				MPayment.getOfOrder(order).forEach(payment -> {
 					if(invoiceId > 0) {
 						payment.setC_Invoice_ID(invoiceId);
-						MInvoice invoice = new MInvoice(Env.getCtx(), payment.getC_Invoice_ID(), transactionName);
+						MInvoice invoice = new MInvoice(Env.getCtx(), invoiceId, transactionName);
 						payment.setDescription(Msg.parseTranslation(Env.getCtx(), "@C_Invoice_ID@ " + invoice.getDocumentNo()));
 					} else {
 						payment.setIsPrepayment(true);
-						payment.setDescription(Msg.parseTranslation(Env.getCtx(), "@C_Invoice_ID@ " + order.getDocumentNo()));
+						payment.setDescription(Msg.parseTranslation(Env.getCtx(), "@C_Order_ID@ " + order.getDocumentNo()));
 					}
+					BigDecimal convertedAmount = getConvetedAmount(order, payment);
+					//	Get current open amount
+					openAmount.updateAndGet(amount -> amount.subtract(convertedAmount));
+					payment.setOverUnderAmt(openAmount.get());
 					payment.setDocAction(MPayment.DOCACTION_Complete);
 					payment.saveEx(transactionName);
 					if (!payment.processIt(MPayment.DOCACTION_Complete)) {
 						log.warning("@ProcessFailed@ :" + payment.getProcessMsg());
 						throw new AdempiereException("@ProcessFailed@ :" + payment.getProcessMsg());
 					}
+					payment.saveEx(transactionName);
 					order.saveEx(transactionName);
 					MBankStatement.addPayment(payment);
 				});
@@ -1042,6 +1049,29 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		}
 		//	Return order
 		return orderReference.get();
+	}
+	
+	/**
+	 * Get Converted Amount based on Order currency
+	 * @author Yamel Senih, ysenih@erpcya.com, ERPCyA http://www.erpcya.com
+	 *		<li> FR [  ] 
+	 *		@see 
+	 * @param order
+	 * @param payment
+	 * @return
+	 * @return BigDecimal
+	 */
+	private BigDecimal getConvetedAmount(MOrder order, MPayment payment) {
+		if(payment.getC_Currency_ID() == order.getC_Currency_ID()) {
+			return payment.getPayAmt();
+		}
+		BigDecimal convertedAmount = MConversionRate.convert(payment.getCtx(), payment.getPayAmt(), payment.getC_Currency_ID(), order.getC_Currency_ID(), payment.getDateTrx(), payment.getC_ConversionType_ID(), payment.getAD_Client_ID(), payment.getAD_Org_ID());
+		if(convertedAmount == null
+				|| convertedAmount.compareTo(Env.ZERO) == 0) {
+			throw new AdempiereException("@C_Conversion_Rate_ID@ @NotFound@");
+		}
+		//	
+		return convertedAmount;
 	}
 	
 //	/**
@@ -2412,6 +2442,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		if(currencyId <= 0) {
 			currencyId = salesOrder.getC_Currency_ID();
 		}
+		Optional<BigDecimal> paidAmount = MPayment.getOfOrder(salesOrder).stream().map(payment -> getConvetedAmount(salesOrder, payment)).collect(Collectors.reducing(BigDecimal::add));
 		//	
 		MPayment payment = new MPayment(Env.getCtx(), 0, transactionName);
 		payment.setC_BankAccount_ID(pointOfSalesDefinition.getC_BankAccount_ID());
@@ -2432,7 +2463,6 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
         //	Amount
         BigDecimal paymentAmount = ValueUtil.getBigDecimalFromDecimal(request.getAmount());
         payment.setPayAmt(paymentAmount);
-        payment.setOverUnderAmt(Env.ZERO);
         //	Order Reference
         payment.setC_Order_ID(salesOrder.getC_Order_ID());
         payment.setDocStatus(MPayment.DOCSTATUS_Drafted);
@@ -2476,6 +2506,12 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			payment.addDescription(request.getReferenceNo());
 		}
 		//	
+		BigDecimal convertedPaymentAmount = getConvetedAmount(salesOrder, payment);
+		if(paidAmount.isPresent()) {
+			payment.setOverUnderAmt(salesOrder.getGrandTotal().subtract(paidAmount.get().add(convertedPaymentAmount)));
+		} else {
+			payment.setOverUnderAmt(salesOrder.getGrandTotal().subtract(convertedPaymentAmount));
+		}
 		payment.saveEx(transactionName);
 		return payment;
 	}
