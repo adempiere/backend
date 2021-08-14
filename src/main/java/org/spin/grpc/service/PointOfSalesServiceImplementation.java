@@ -1053,9 +1053,6 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	
 	/**
 	 * Get Converted Amount based on Order currency
-	 * @author Yamel Senih, ysenih@erpcya.com, ERPCyA http://www.erpcya.com
-	 *		<li> FR [  ] 
-	 *		@see 
 	 * @param order
 	 * @param payment
 	 * @return
