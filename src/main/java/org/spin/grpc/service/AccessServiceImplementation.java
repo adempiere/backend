@@ -268,7 +268,7 @@ public class AccessServiceImplementation extends SecurityImplBase {
 		//	
 		builder.setRecordCount(count);
 		//	Set page token
-		if(count > offset) {
+		if(count > offset && count > limit) {
 			nexPageToken = RecordUtil.getPagePrefix(request.getSessionUuid()) + (pageNumber + 1);
 		}
 		//	Set next page

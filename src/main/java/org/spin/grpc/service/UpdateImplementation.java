@@ -163,7 +163,7 @@ public class UpdateImplementation extends UpdateCenterImplBase {
 		//	
 		builder.setRecordCount(count);
 		//	Set page token
-		if(count > offset) {
+		if(count > offset && count > limit) {
 			nexPageToken = RecordUtil.getPagePrefix("page-token") + (pageNumber + 1);
 		}
 		//	Set next page
@@ -252,7 +252,7 @@ public class UpdateImplementation extends UpdateCenterImplBase {
 		//	
 		builder.setRecordCount(count);
 		//	Set page token
-		if(count > offset) {
+		if(count > offset && count > limit) {
 			nexPageToken = RecordUtil.getPagePrefix("page-token") + (pageNumber + 1);
 		}
 		//	Set next page
@@ -328,7 +328,7 @@ public class UpdateImplementation extends UpdateCenterImplBase {
 		//	
 		builder.setRecordCount(count);
 		//	Set page token
-		if(count > offset) {
+		if(count > offset && count > limit) {
 			nexPageToken = RecordUtil.getPagePrefix("page-token") + (pageNumber + 1);
 		}
 		//	Set next page

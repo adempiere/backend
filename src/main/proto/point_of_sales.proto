@@ -80,6 +80,53 @@ service Store {
 	rpc ListAvailableDocumentTypes(ListAvailableDocumentTypesRequest) returns (ListAvailableDocumentTypesResponse) {}
 }
 
+// Available Warehouse
+message AvailableWarehouse {
+	int32 id = 2;
+	string uuid = 3;
+	string key = 4;
+	string name = 5;
+	bool is_pos_required_pin = 6;
+}
+
+// Available Tender Type
+message AvailableTenderType {
+	int32 id = 2;
+	string uuid = 3;
+	string key = 4;
+	string name = 5;
+	bool is_pos_required_pin = 6;
+	bool is_allowed_to_refund = 7;
+	Decimal maximum_refund_allowed = 8;
+	Decimal maximum_daily_refund_allowed = 9;
+}
+
+// Available Document Type
+message AvailableDocumentType {
+	int32 id = 2;
+	string uuid = 3;
+	string key = 4;
+	string name = 5;
+	bool is_pos_required_pin = 6;
+}
+
+// Available Price List
+message AvailablePriceList {
+	int32 id = 2;
+	string uuid = 3;
+	string key = 4;
+	string name = 5;
+	bool is_pos_required_pin = 6;
+}
+
+// Available Currency
+message AvailableCurrency {
+	int32 id = 2;
+	string uuid = 3;
+	string key = 4;
+	string name = 5;
+}
+
 //	List warehouses for POS
 message ListAvailableWarehousesRequest {
 	ClientRequest client_request = 1;
@@ -99,7 +146,7 @@ message ListAvailableDocumentTypesRequest {
 //	List Available Warehouses
 message ListAvailableWarehousesResponse {
 	int64 record_count = 1;
-	repeated ListValue warehouses = 2;
+	repeated AvailableWarehouse warehouses = 2;
 	string next_page_token = 3;
 }
 
@@ -114,14 +161,14 @@ message ListAvailableTenderTypesRequest {
 //	List Available Tender Types
 message ListAvailableTenderTypesResponse {
 	int64 record_count = 1;
-	repeated ListValue tender_types = 2;
+	repeated AvailableTenderType tender_types = 2;
 	string next_page_token = 3;
 }
 
 //	List Available Document Types
 message ListAvailableDocumentTypesResponse {
 	int64 record_count = 1;
-	repeated ListValue document_types = 2;
+	repeated AvailableDocumentType document_types = 2;
 	string next_page_token = 3;
 }
 
@@ -136,7 +183,7 @@ message ListAvailablePriceListRequest {
 //	Price List Response
 message ListAvailablePriceListResponse {
 	int64 record_count = 1;
-	repeated ListValue price_list = 2;
+	repeated AvailablePriceList price_list = 2;
 	string next_page_token = 3;
 }
 
@@ -151,7 +198,7 @@ message ListAvailableCurrenciesRequest {
 //	Currencies Response
 message ListAvailableCurrenciesResponse {
 	int64 record_count = 1;
-	repeated ListValue currencies = 2;
+	repeated AvailableCurrency currencies = 2;
 	string next_page_token = 3;
 }
 
@@ -260,6 +307,11 @@ message PointOfSales {
 	Currency display_currency = 17;
 	string conversion_type_uuid = 18;
 	string key_layout_uuid = 19;
+	bool is_allows_modify_quantity = 20;
+	bool is_allows_return_order = 21;
+	bool is_allows_collect_order = 22;
+	Decimal maximum_refund_allowed = 23;
+	Decimal maximum_daily_refund_allowed = 24;
 }
 
 // Request for create a order
@@ -445,11 +497,12 @@ message OrderLine {
 	string description = 6;
 	Warehouse warehouse = 7;
 	Decimal quantity = 8;
-	Decimal price = 9;
-	Decimal discount_rate = 10;
-	TaxRate tax_rate = 11;
-	Decimal line_net_amount = 12;
-	int32 line = 13;
+	Decimal price_list = 9;
+	Decimal price = 10;
+	Decimal discount_rate = 11;
+	TaxRate tax_rate = 12;
+	Decimal line_net_amount = 13;
+	int32 line = 14;
 }
 
 // Request Product Price

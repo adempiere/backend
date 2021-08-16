@@ -84,6 +84,11 @@ import org.spin.base.util.ConvertUtil;
 import org.spin.base.util.DocumentUtil;
 import org.spin.base.util.RecordUtil;
 import org.spin.base.util.ValueUtil;
+import org.spin.grpc.util.AvailableCurrency;
+import org.spin.grpc.util.AvailableDocumentType;
+import org.spin.grpc.util.AvailablePriceList;
+import org.spin.grpc.util.AvailableTenderType;
+import org.spin.grpc.util.AvailableWarehouse;
 import org.spin.grpc.util.Charge;
 import org.spin.grpc.util.CreateOrderLineRequest;
 import org.spin.grpc.util.CreateOrderRequest;
@@ -769,26 +774,30 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
 		int limit = RecordUtil.PAGE_SIZE;
 		int offset = pageNumber * RecordUtil.PAGE_SIZE;
-		//	Dynamic where clause
-		String whereClause = "EXISTS(SELECT 1 FROM " + TABLE_NAME + " r WHERE r.M_Warehouse_ID = M_Warehouse.M_Warehouse_ID AND r.C_POS_ID = ?)";
 		//	Aisle Seller
 		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), null);
 		//	Get Product list
-		Query query = new Query(Env.getCtx(), I_M_Warehouse.Table_Name, whereClause.toString(), null)
+		Query query = new Query(Env.getCtx(), TABLE_NAME, "C_POS_ID = ?", null)
 				.setParameters(posId)
 				.setClient_ID()
 				.setOnlyActiveRecords(true);
 		int count = query.count();
 		query
 		.setLimit(limit, offset)
-		.<MWarehouse>list()
-		.forEach(warehouse -> {
-			builder.addWarehouses(ConvertUtil.convertListValue(warehouse.getM_Warehouse_ID(), warehouse.getUUID(), warehouse.getValue(), warehouse.getName()));
+		.list()
+		.forEach(availableWarehouse -> {
+			MWarehouse warehouse = MWarehouse.get(Env.getCtx(), availableWarehouse.get_ValueAsInt("M_Warehouse_ID"));
+			builder.addWarehouses(AvailableWarehouse.newBuilder()
+					.setId(warehouse.getM_Warehouse_ID())
+					.setUuid(ValueUtil.validateNull(warehouse.getUUID()))
+					.setKey(ValueUtil.validateNull(warehouse.getValue()))
+					.setName(ValueUtil.validateNull(warehouse.getName()))
+					.setIsPosRequiredPin(availableWarehouse.get_ValueAsBoolean(I_C_POS.COLUMNNAME_IsPOSRequiredPIN)));
 		});
 		//	
 		builder.setRecordCount(count);
 		//	Set page token
-		if(count > offset) {
+		if(count > offset && count > limit) {
 			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
 		}
 		//	Set next page
@@ -815,25 +824,30 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		int limit = RecordUtil.PAGE_SIZE;
 		int offset = pageNumber * RecordUtil.PAGE_SIZE;
 		//	Dynamic where clause
-		String whereClause = "EXISTS(SELECT 1 FROM " + TABLE_NAME + " r WHERE r.M_PriceList_ID = M_PriceList.M_PriceList_ID AND r.C_POS_ID = ?)";
 		//	Aisle Seller
 		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), null);
 		//	Get Product list
-		Query query = new Query(Env.getCtx(), I_M_PriceList.Table_Name, whereClause.toString(), null)
+		Query query = new Query(Env.getCtx(), TABLE_NAME, "C_POS_ID = ?", null)
 				.setParameters(posId)
 				.setClient_ID()
 				.setOnlyActiveRecords(true);
 		int count = query.count();
 		query
 		.setLimit(limit, offset)
-		.<MPriceList>list()
-		.forEach(priceList -> {
-			builder.addPriceList(ConvertUtil.convertListValue(priceList.getM_PriceList_ID(), priceList.getUUID(), priceList.getName(), priceList.getName()));
+		.list()
+		.forEach(availablePriceList -> {
+			MPriceList priceList = MPriceList.get(Env.getCtx(), availablePriceList.get_ValueAsInt("M_PriceList_ID"), null);
+			builder.addPriceList(AvailablePriceList.newBuilder()
+					.setId(priceList.getM_PriceList_ID())
+					.setUuid(ValueUtil.validateNull(priceList.getUUID()))
+					.setKey(ValueUtil.validateNull(priceList.getName()))
+					.setName(ValueUtil.validateNull(priceList.getName()))
+					.setIsPosRequiredPin(availablePriceList.get_ValueAsBoolean(I_C_POS.COLUMNNAME_IsPOSRequiredPIN)));
 		});
 		//	
 		builder.setRecordCount(count);
 		//	Set page token
-		if(count > offset) {
+		if(count > offset && count > limit) {
 			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
 		}
 		//	Set next page
@@ -860,24 +874,32 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		int limit = RecordUtil.PAGE_SIZE;
 		int offset = pageNumber * RecordUtil.PAGE_SIZE;
 		//	Dynamic where clause
-		String whereClause = "EXISTS(SELECT 1 FROM " + TABLE_NAME + " r WHERE AD_Ref_List.Value = r.TenderType AND r.C_POS_ID = ?) AND AD_Ref_List.AD_Reference_ID = ?";
 		//	Aisle Seller
 		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), null);
 		//	Get Product list
-		Query query = new Query(Env.getCtx(), I_AD_Ref_List.Table_Name, whereClause.toString(), null)
+		Query query = new Query(Env.getCtx(), TABLE_NAME, "C_POS_ID = ?", null)
 				.setParameters(posId, MPayment.TENDERTYPE_AD_Reference_ID)
 				.setOnlyActiveRecords(true);
 		int count = query.count();
 		query
 		.setLimit(limit, offset)
-		.<MRefList>list()
-		.forEach(priceList -> {
-			builder.addTenderTypes(ConvertUtil.convertListValue(0, priceList.getUUID(), priceList.getValue(), priceList.getName()));
+		.list()
+		.forEach(availableTenderType -> {
+			MRefList tenderType = MRefList.get(Env.getCtx(), MPayment.TENDERTYPE_AD_Reference_ID, availableTenderType.get_ValueAsString(I_C_Payment.COLUMNNAME_TenderType), null);
+			builder.addTenderTypes(AvailableTenderType.newBuilder()
+					.setId(0)
+					.setUuid(ValueUtil.validateNull(tenderType.getUUID()))
+					.setUuid(ValueUtil.validateNull(tenderType.getValue()))
+					.setUuid(ValueUtil.validateNull(tenderType.getName()))
+					.setIsPosRequiredPin(availableTenderType.get_ValueAsBoolean(I_C_POS.COLUMNNAME_IsPOSRequiredPIN))
+					.setIsAllowedToRefund(availableTenderType.get_ValueAsBoolean("IsAllowedToRefund"))
+					.setMaximumRefundAllowed(ValueUtil.getDecimalFromBigDecimal((BigDecimal) availableTenderType.get_Value("MaximumRefundAllowed")))
+					.setMaximumDailyRefundAllowed(ValueUtil.getDecimalFromBigDecimal((BigDecimal) availableTenderType.get_Value("MaximumDailyRefundAllowed"))));
 		});
 		//	
 		builder.setRecordCount(count);
 		//	Set page token
-		if(count > offset) {
+		if(count > offset && count > limit) {
 			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
 		}
 		//	Set next page
@@ -904,25 +926,30 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		int limit = RecordUtil.PAGE_SIZE;
 		int offset = pageNumber * RecordUtil.PAGE_SIZE;
 		//	Dynamic where clause
-		String whereClause = "EXISTS(SELECT 1 FROM " + TABLE_NAME + " r WHERE r.C_DocType_ID = C_DocType.C_DocType_ID AND r.C_POS_ID = ?)";
 		//	Aisle Seller
 		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), null);
 		//	Get Product list
-		Query query = new Query(Env.getCtx(), I_C_DocType.Table_Name, whereClause.toString(), null)
+		Query query = new Query(Env.getCtx(), TABLE_NAME, "C_POS_ID = ?", null)
 				.setParameters(posId)
 				.setClient_ID()
 				.setOnlyActiveRecords(true);
 		int count = query.count();
 		query
 		.setLimit(limit, offset)
-		.<MDocType>list()
-		.forEach(documentType -> {
-			builder.addDocumentTypes(ConvertUtil.convertListValue(documentType.getC_DocType_ID(), documentType.getUUID(), documentType.getName(), documentType.getPrintName()));
+		.list()
+		.forEach(availableDocumentType -> {
+			MDocType documentType = MDocType.get(Env.getCtx(), availableDocumentType.get_ValueAsInt("C_DocType_ID"));
+			builder.addDocumentTypes(AvailableDocumentType.newBuilder()
+					.setId(documentType.getC_DocType_ID())
+					.setUuid(ValueUtil.validateNull(documentType.getUUID()))
+					.setKey(ValueUtil.validateNull(documentType.getName()))
+					.setName(ValueUtil.validateNull(documentType.getPrintName()))
+					.setIsPosRequiredPin(availableDocumentType.get_ValueAsBoolean(I_C_POS.COLUMNNAME_IsPOSRequiredPIN)));
 		});
 		//	
 		builder.setRecordCount(count);
 		//	Set page token
-		if(count > offset) {
+		if(count > offset && count > limit) {
 			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
 		}
 		//	Set next page
@@ -958,12 +985,16 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		.setLimit(limit, offset)
 		.<MCurrency>list()
 		.forEach(currency -> {
-			builder.addCurrencies(ConvertUtil.convertListValue(currency.getC_Currency_ID(), currency.getUUID(), currency.getISO_Code(), currency.getISO_Code() + " (" + currency.getCurSymbol() + ")"));
+			builder.addCurrencies(AvailableCurrency.newBuilder()
+					.setId(currency.getC_Currency_ID())
+					.setUuid(ValueUtil.validateNull(currency.getUUID()))
+					.setKey(ValueUtil.validateNull(currency.getISO_Code()))
+					.setName(currency.getISO_Code() + " (" + currency.getCurSymbol() + ")"));
 		});
 		//	
 		builder.setRecordCount(count);
 		//	Set page token
-		if(count > offset) {
+		if(count > offset && count > limit) {
 			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
 		}
 		//	Set next page
@@ -1263,7 +1294,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	
 		builder.setRecordCount(count);
 		//	Set page token
-		if(count > offset) {
+		if(count > offset && count > limit) {
 			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
 		}
 		//	Set next page
@@ -1320,7 +1351,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	
 		builder.setRecordCount(count);
 		//	Set page token
-		if(count > offset) {
+		if(count > offset && count > limit) {
 			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
 		}
 		//	Set next page
@@ -1357,7 +1388,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	
 		builder.setRecordCount(count);
 		//	Set page token
-		if(count > offset) {
+		if(count > offset && count > limit) {
 			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
 		}
 		//	Set next page
@@ -1390,7 +1421,11 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				if(!DocumentUtil.isDrafted(salesOrder)) {
 					throw new AdempiereException("@C_Order_ID@ @IsCompleted@");
 				}
-				//	Update if exists
+				//	Update Date Ordered
+				Timestamp now = TimeUtil.getDay(System.currentTimeMillis());
+				salesOrder.setDateOrdered(now);
+				salesOrder.setDateAcct(now);
+				salesOrder.setDatePromised(now);
 				//	POS
 				if(!Util.isEmpty(request.getPosUuid())) {
 					int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), transactionName);
@@ -1787,6 +1822,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				.setWarehouse(convertWarehouse(orderLine.getM_Warehouse_ID()))
 				.setQuantity(ValueUtil.getDecimalFromBigDecimal(orderLine.getQtyOrdered()))
 				.setPrice(ValueUtil.getDecimalFromBigDecimal(orderLine.getPriceActual()))
+				.setPriceList(ValueUtil.getDecimalFromBigDecimal(orderLine.getPriceList()))
 				.setDiscountRate(ValueUtil.getDecimalFromBigDecimal(orderLine.getDiscount()))
 				.setTaxRate(ConvertUtil.convertTaxRate(MTax.get(Env.getCtx(), orderLine.getC_Tax_ID())))
 				.setLineNetAmount(ValueUtil.getDecimalFromBigDecimal(orderLine.getLineNetAmt()));
@@ -2044,7 +2080,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	
 		builder.setRecordCount(count);
 		//	Set page token
-		if(count > offset) {
+		if(count > offset && count > limit) {
 			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
 		}
 		//	Set next page
@@ -2095,6 +2131,13 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				.setIsAisleSeller(pos.get_ValueAsBoolean("IsAisleSeller"))
 				.setIsSharedPos(pos.get_ValueAsBoolean("IsSharedPOS"))
 				.setConversionTypeUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_ConversionType.Table_Name, pos.get_ValueAsInt(I_C_ConversionType.COLUMNNAME_C_ConversionType_ID))));
+		//	Special values
+		builder
+			.setIsAllowsModifyQuantity(pos.get_ValueAsBoolean("IsAllowsModifyQuantity"))
+			.setIsAllowsReturnOrder(pos.get_ValueAsBoolean("IsAllowsReturnOrder"))
+			.setIsAllowsCollectOrder(pos.get_ValueAsBoolean("IsAllowsCollectOrder"))
+			.setMaximumRefundAllowed(ValueUtil.getDecimalFromBigDecimal((BigDecimal) pos.get_Value("MaximumRefundAllowed")))
+			.setMaximumDailyRefundAllowed(ValueUtil.getDecimalFromBigDecimal((BigDecimal) pos.get_Value("MaximumDailyRefundAllowed")));
 		//	Set Price List and currency
 		if(pos.getM_PriceList_ID() != 0) {
 			MPriceList priceList = MPriceList.get(Env.getCtx(), pos.getM_PriceList_ID(), null);
@@ -2654,7 +2697,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	
 		builder.setRecordCount(count);
 		//	Set page token
-		if(count > offset) {
+		if(count > offset && count > limit) {
 			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
 		}
 		//	Set next page
