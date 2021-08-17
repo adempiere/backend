@@ -1,0 +1,12 @@
+server:
+    port: 50059
+    services:
+        - services_enabled
+    log_level: WARNING
+database:
+    host: localhost
+    port: 5432
+    name: adempieredb
+    user: adempiereuser
+    password: adempierepass
+    type: PostgreSQL
