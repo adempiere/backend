@@ -144,6 +144,8 @@ import org.spin.grpc.util.ListReferencesRequest;
 import org.spin.grpc.util.ListReferencesResponse;
 import org.spin.grpc.util.ListReportViewsRequest;
 import org.spin.grpc.util.ListReportViewsResponse;
+import org.spin.grpc.util.ListTabEntitiesRequest;
+import org.spin.grpc.util.ListTabEntitiesResponse;
 import org.spin.grpc.util.ListTranslationsRequest;
 import org.spin.grpc.util.ListTranslationsResponse;
 import org.spin.grpc.util.LockPrivateAccessRequest;
@@ -817,6 +819,114 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 					.withCause(e)
 					.asRuntimeException());
 		}
+	}
+	
+	@Override
+	public void listTabEntities(ListTabEntitiesRequest request, StreamObserver<ListTabEntitiesResponse> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
+			ListTabEntitiesResponse.Builder entityValueList = convertEntitiesList(context, request);
+			responseObserver.onNext(entityValueList.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	/**
+	 * Convert Object to list
+	 * @param request
+	 * @return
+	 */
+	private ListTabEntitiesResponse.Builder convertEntitiesList(Properties context, ListTabEntitiesRequest request) {
+		int tabId = RecordUtil.getIdFromUuid(I_AD_Tab.Table_Name, request.getTabUuid(), null);
+		if(tabId <= 0) {
+			throw new AdempiereException("@AD_Tab_ID@ @NotFound@");
+		}
+		//	
+		MTab tab = MTab.get(context, tabId);
+		String tableName = MTable.getTableName(context, tab.getAD_Table_ID());
+		Env.clearWinContext(request.getWindowNo());
+		Map<String, Object> attributes = ValueUtil.convertValuesToObjects(request.getAttributesList());
+		//	Fill context
+		attributes.entrySet().forEach(attribute -> {
+			if(attribute.getValue() instanceof Integer) {
+				Env.setContext(context, attribute.getKey(), (Integer) attribute.getValue());
+			} else if(attribute.getValue() instanceof Timestamp) {
+				Env.setContext(context, attribute.getKey(), (Timestamp) attribute.getValue());
+			} else if(attribute.getValue() instanceof Boolean) {
+				Env.setContext(context, attribute.getKey(), (Boolean) attribute.getValue());
+			} else if(attribute.getValue() instanceof String) {
+				Env.setContext(context, attribute.getKey(), (String) attribute.getValue());
+			}
+		});
+		String where = Env.parseContext(context, request.getWindowNo(), tab.getWhereClause(), false);
+		if(Util.isEmpty(where)
+				&& !Util.isEmpty(tab.getWhereClause())) {
+			throw new AdempiereException("@AD_Tab_ID@ @WhereClause@ @Unparseable@");
+		}
+		Criteria criteria = request.getFilters();
+		StringBuffer whereClause = new StringBuffer(where);
+		List<Object> params = new ArrayList<>();
+		//	For dynamic condition
+		String dynamicWhere = ValueUtil.getWhereClauseFromCriteria(criteria, tableName, params);
+		if(!Util.isEmpty(dynamicWhere)) {
+			if(whereClause.length() > 0) {
+				whereClause.append(" AND ");
+			}
+			//	Add
+			whereClause.append(dynamicWhere);
+		}
+		//	Add from reference
+		if(!Util.isEmpty(criteria.getReferenceUuid())) {
+			String referenceWhereClause = referenceWhereClauseCache.get(criteria.getReferenceUuid());
+			if(!Util.isEmpty(referenceWhereClause)) {
+				if(whereClause.length() > 0) {
+					whereClause.append(" AND ");
+				}
+				whereClause.append("(").append(referenceWhereClause).append(")");
+			}
+		}
+		//	Get page and count
+		String nexPageToken = null;
+		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
+		int limit = RecordUtil.PAGE_SIZE;
+		int offset = pageNumber * RecordUtil.PAGE_SIZE;
+		int count = 0;
+		ListTabEntitiesResponse.Builder builder = ListTabEntitiesResponse.newBuilder();
+		//	
+		Query query = new Query(context, tableName, whereClause.toString(), null)
+				.setParameters(params);
+		count = query.count();
+		if(!Util.isEmpty(criteria.getOrderByClause())) {
+			query.setOrderBy(criteria.getOrderByClause());
+		}
+		List<PO> entityList = query
+				.setLimit(limit, offset)
+				.<PO>list();
+		//	
+		for(PO entity : entityList) {
+			Entity.Builder valueObject = ConvertUtil.convertEntity(entity);
+			builder.addRecords(valueObject.build());
+		}
+		//	
+		builder.setRecordCount(count);
+		//	Set page token
+		if(count > offset && count > limit) {
+			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
+		}
+		//	Set next page
+		builder.setNextPageToken(ValueUtil.validateNull(nexPageToken));
+		//	Return
+		return builder;
 	}
 	
 	/**

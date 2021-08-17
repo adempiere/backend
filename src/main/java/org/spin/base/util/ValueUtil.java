@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.adempiere.exceptions.AdempiereException;
 import org.compiere.model.MQuery;
@@ -587,9 +588,29 @@ public class ValueUtil {
 	 * @return
 	 */
 	public static String getWhereClauseFromCriteria(Criteria criteria, List<Object> params) {
+		return getWhereClauseFromCriteria(criteria, null, params);
+	}
+	
+	
+	/**
+	 * Get Where Clause from criteria and dynamic condition
+	 * @param criteria
+	 * @param tableName optional table name
+	 * @param params
+	 * @return
+	 */
+	public static String getWhereClauseFromCriteria(Criteria criteria, String tableName, List<Object> params) {
 		StringBuffer whereClause = new StringBuffer();
 		if(!Util.isEmpty(criteria.getWhereClause())) {
 			whereClause.append("(").append(criteria.getWhereClause()).append(")");
+		}
+		AtomicReference<String> tableNameFromReference = new AtomicReference<String>(tableName);
+		if(Util.isEmpty(tableNameFromReference.get())) {
+			tableNameFromReference.set(criteria.getTableName());
+		}
+		//	Validate
+		if(Util.isEmpty(tableNameFromReference.get())) {
+			throw new AdempiereException("@AD_Table_ID@ @NotFound@");
 		}
 		criteria.getConditionsList().stream()
 			.filter(condition -> !Util.isEmpty(condition.getColumnName()))
@@ -597,7 +618,7 @@ public class ValueUtil {
 				if(whereClause.length() > 0) {
 					whereClause.append(" AND ");
 				}
-				String colummName = criteria.getTableName() + "." + condition.getColumnName(); 
+				String colummName = tableNameFromReference.get() + "." + condition.getColumnName(); 
 				//	Open
 				whereClause.append("(");
 				if(condition.getOperatorValue() == Operator.LIKE_VALUE

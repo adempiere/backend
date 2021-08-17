@@ -90,6 +90,8 @@ service UserInterface {
 	rpc SetPreference(SetPreferenceRequest) returns (Preference) {}
 	//	Delete Preference from field
 	rpc DeletePreference(DeletePreferenceRequest) returns (Empty) {}
+	//	List tab Entities
+	rpc ListTabEntities(ListTabEntitiesRequest) returns (ListTabEntitiesResponse) {}
 }
 
 //	Workflow management service
@@ -396,6 +398,26 @@ message ListLookupItemsRequest {
 message ListLookupItemsResponse {
 	int64 record_count = 1;
 	repeated LookupItem records = 2;
+	string next_page_token = 3;
+}
+
+// List Tab Entities Request
+message ListTabEntitiesRequest {
+	ClientRequest client_request = 1;
+	string window_uuid = 2;
+	string tab_uuid = 3;
+	int32 window_no = 4;
+	Criteria filters = 5;
+	repeated KeyValue attributes = 6;
+	repeated string columns = 7;
+	int32 page_size = 8;
+	string page_token = 9;
+}
+
+// List Entities Response
+message ListTabEntitiesResponse {
+	int64 record_count = 1;
+	repeated Entity records = 2;
 	string next_page_token = 3;
 }
 
