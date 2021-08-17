@@ -12,6 +12,23 @@ For recreate stub class you must have follow:
 - [Complete Java Documentation](https://grpc.io/docs/tutorials/basic/java.html)
 After installed it just go to source code folder an run it:
 
+## Include ADempiere dependencies
+
+In the build.gradle you need to include in the next sections the references to jars placed in lib, packages and zkpackages in your ADEMPIERE _HOME
+
+* In the repository section as flatDir
+Example:
+  ```
+  flatDir {
+        dirs $ad_path + '/lib'
+  }
+  ```
+* In de dependencie section,
+  Example
+    ```
+    implementation fileTree(dir: $ad_path + '/lib', include: '*.jar')
+    ```
+
 ## Init project
 ``` bash
 gradle wrapper
