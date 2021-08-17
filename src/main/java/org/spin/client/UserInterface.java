@@ -72,7 +72,7 @@ public class UserInterface {
 								  .setColumnName("Value")
 								  .setOperatorValue(Operator.IN_VALUE)
 								  .addValues(Value.newBuilder()
-										  .setStringValue("04-FR-21281")
+										  .setStringValue("Test")
 										  .setValueTypeValue(ValueType.STRING_VALUE)))
 						  )
 				  .build();
