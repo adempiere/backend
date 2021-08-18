@@ -1,5 +1,5 @@
 # This workflow will build a Java project with Gradle
-
+# This file was contributed by EdwinBetanc0urt@outlook.com from ERP Consultores y Asociados, C.A
 # For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
 
 name: Java CI with Gradle
@@ -7,30 +7,39 @@ name: Java CI with Gradle
 on:
   push:
    branches: [ "master", "develop", "bugfix/*", "feature/*" ]
-   tags:
-     - '*'
+
   pull_request:
    branches: [ "master", "develop", "bugfix/*", "feature/*" ]
 
 jobs:
 
-  build:
+  build-ci:
+    name: Build CI ADempiere-gRPC-Server
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up JDK 1.8
-      uses: actions/setup-java@v1
-      with:
-        java-version: 1.8
-    - name: create dependences folder
-      run: mkdir dependences
-    - name: get adempiere source
-      run: wget https://github.com/erpcya/adempiere/releases/download/3.9.3-rs-4.0/Adempiere_393LTS.tar.gz -c -O Adempiere.tar.gz
-    - name: uncompress file
-      run: tar -xzf Adempiere.tar.gz
-    - name: move dependences
-      run: mv Adempiere/lib/*.jar dependences/
-    - name: move packages
-      run: mv Adempiere/packages/*/lib/*.jar dependences/
-    - name: Build with Gradle
-      run: gradle build
+      - name: Check out the repo
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 8
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt-hotspot'
+          java-version: 8
+
+      - name: get adempiere source
+        run: |
+          download_repo="https://github.com/erpcya/adempiere/releases/download/3.9.3-rs-4.0/Adempiere_393LTS.tar.gz"
+          wget $download_repo -c -O Adempiere.tar.gz
+
+      - name: uncompress file
+        run: tar -xzf Adempiere.tar.gz
+
+      - name: create dependences folder
+        run: mkdir dependences
+      - name: move dependences
+        run: mv Adempiere/lib/*.jar dependences/
+      - name: move packages
+        run: mv Adempiere/packages/*/lib/*.jar dependences/
+
+      - name: Build with Gradle
+        run: gradle build
