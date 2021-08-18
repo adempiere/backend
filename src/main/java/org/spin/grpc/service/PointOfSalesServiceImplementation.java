@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -27,10 +28,12 @@ import java.util.stream.Collectors;
 import org.adempiere.exceptions.AdempiereException;
 import org.compiere.model.I_AD_Ref_List;
 import org.compiere.model.I_AD_User;
+import org.compiere.model.I_C_BP_Group;
 import org.compiere.model.I_C_BPartner;
 import org.compiere.model.I_C_Bank;
 import org.compiere.model.I_C_Charge;
 import org.compiere.model.I_C_ConversionType;
+import org.compiere.model.I_C_Country;
 import org.compiere.model.I_C_Currency;
 import org.compiere.model.I_C_DocType;
 import org.compiere.model.I_C_Order;
@@ -38,6 +41,7 @@ import org.compiere.model.I_C_OrderLine;
 import org.compiere.model.I_C_POS;
 import org.compiere.model.I_C_POSKeyLayout;
 import org.compiere.model.I_C_Payment;
+import org.compiere.model.I_C_Region;
 import org.compiere.model.I_M_PriceList;
 import org.compiere.model.I_M_Product;
 import org.compiere.model.I_M_Warehouse;
@@ -51,6 +55,7 @@ import org.compiere.model.MConversionRate;
 import org.compiere.model.MCurrency;
 import org.compiere.model.MDocType;
 import org.compiere.model.MInvoice;
+import org.compiere.model.MLocation;
 import org.compiere.model.MOrder;
 import org.compiere.model.MOrderLine;
 import org.compiere.model.MPOS;
@@ -90,9 +95,11 @@ import org.spin.grpc.util.AvailablePriceList;
 import org.spin.grpc.util.AvailableTenderType;
 import org.spin.grpc.util.AvailableWarehouse;
 import org.spin.grpc.util.Charge;
+import org.spin.grpc.util.CreateCustomerRequest;
 import org.spin.grpc.util.CreateOrderLineRequest;
 import org.spin.grpc.util.CreateOrderRequest;
 import org.spin.grpc.util.CreatePaymentRequest;
+import org.spin.grpc.util.Customer;
 import org.spin.grpc.util.DeleteOrderLineRequest;
 import org.spin.grpc.util.DeleteOrderRequest;
 import org.spin.grpc.util.DeletePaymentRequest;
@@ -132,6 +139,7 @@ import org.spin.grpc.util.Product;
 import org.spin.grpc.util.ProductPrice;
 import org.spin.grpc.util.SalesRepresentative;
 import org.spin.grpc.util.StoreGrpc.StoreImplBase;
+import org.spin.grpc.util.UpdateCustomerRequest;
 import org.spin.grpc.util.UpdateOrderLineRequest;
 import org.spin.grpc.util.UpdateOrderRequest;
 import org.spin.grpc.util.UpdatePaymentRequest;
@@ -756,6 +764,323 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		}
 	}
 	
+	@Override
+	public void createCustomer(CreateCustomerRequest request, StreamObserver<Customer> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Create customer = " + request.getPosUuid());
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			Customer.Builder customer = createCustomer(request);
+			responseObserver.onNext(customer.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void updateCustomer(UpdateCustomerRequest request, StreamObserver<Customer> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Update customer = " + request.getUuid());
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			Customer.Builder customer = updateCustomer(request);
+			responseObserver.onNext(customer.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	/**
+	 * Create Customer
+	 * @param request
+	 * @return
+	 */
+	private Customer.Builder createCustomer(CreateCustomerRequest request) {
+		//	Validate name
+		if(Util.isEmpty(request.getName())) {
+			throw new AdempiereException("@Name@ @IsMandatory@");
+		}
+		//	POS Uuid
+		if(Util.isEmpty(request.getPosUuid())) {
+			throw new AdempiereException("@C_POS_ID@ @IsMandatory@");
+		}
+		MBPartner businessPartner = MBPartner.getTemplate(Env.getCtx(), Env.getAD_Client_ID(Env.getCtx()), RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), null));
+		Trx.run(transactionName -> {
+			//	Create it
+			businessPartner.setAD_Org_ID(0);
+			businessPartner.setIsCustomer (true);
+			businessPartner.setIsVendor (false);
+			businessPartner.set_TrxName(transactionName);
+			//	Set Value
+			String value = request.getValue();
+			if(Util.isEmpty(value)) {
+				value = DB.getDocumentNo(Env.getAD_Client_ID(Env.getCtx()), "C_BPartner", transactionName, businessPartner);
+			}
+			//	
+			businessPartner.setValue(value);
+			//	Tax Id
+			if(!Util.isEmpty(request.getTaxId())) {
+				businessPartner.setTaxID(request.getTaxId());
+			}
+			//	Duns
+			if(!Util.isEmpty(request.getDuns())) {
+				businessPartner.setDUNS(request.getDuns());
+			}
+			//	Naics
+			if(!Util.isEmpty(request.getNaics())) {
+				businessPartner.setNAICS(request.getNaics());
+			}
+			//	Name
+			businessPartner.setName(request.getName());
+			//	Last name
+			if(!Util.isEmpty(request.getLastName())) {
+				businessPartner.setName2(request.getLastName());
+			}
+			//	Description
+			if(!Util.isEmpty(request.getDescription())) {
+				businessPartner.setDescription(request.getDescription());
+			}
+			//	Business partner group
+			if(!Util.isEmpty(request.getBusinessPartnerGroupUuid())) {
+				int businessPartnerGroupId = RecordUtil.getIdFromUuid(I_C_BP_Group.Table_Name, request.getBusinessPartnerGroupUuid(), transactionName);
+				if(businessPartnerGroupId != 0) {
+					businessPartner.setC_BP_Group_ID(businessPartnerGroupId);
+				}
+			}
+			//	Save it
+			businessPartner.saveEx(transactionName);
+			MUser contact = null;
+			//	Contact
+			if(!Util.isEmpty(request.getContactName()) || !Util.isEmpty(request.getEmail()) || !Util.isEmpty(request.getPhone())) {
+				contact = new MUser(businessPartner);
+				//	Name
+				if(!Util.isEmpty(request.getContactName())) {
+					contact.setName(request.getContactName());
+				}
+				//	EMail
+				if(!Util.isEmpty(request.getEmail())) {
+					contact.setEMail(request.getEmail());
+				}
+				//	Phone
+				if(!Util.isEmpty(request.getPhone())) {
+					contact.setPhone(request.getPhone());
+				}
+				//	Description
+				if(!Util.isEmpty(request.getDescription())) {
+					contact.setDescription(request.getDescription());
+				}
+				//	Save
+				contact.saveEx(transactionName);
+	 		}
+			//	Location
+			int countryId = 0;
+			if(!Util.isEmpty(request.getCountryUuid())) {
+				countryId = RecordUtil.getIdFromUuid(I_C_Country.Table_Name, request.getCountryUuid(), transactionName);
+			}
+			if(countryId <= 0) {
+				countryId = Env.getContextAsInt(Env.getCtx(), "#C_Country_ID");
+			}
+			//	
+			int regionId = 0;
+			if(!Util.isEmpty(request.getRegionUuid())) {
+				regionId = RecordUtil.getIdFromUuid(I_C_Region.Table_Name, request.getRegionUuid(), transactionName);
+			}
+			String cityName = null;
+			int cityId = 0;
+			//	City Name
+			if(!Util.isEmpty(request.getCityName())) {
+				cityName = request.getCityName();
+			}
+			//	City Reference
+			if(!Util.isEmpty(request.getCityUuid())) {
+				cityId = RecordUtil.getIdFromUuid(I_C_Region.Table_Name, request.getRegionUuid(), transactionName);
+			}
+			//	Instance it
+			MLocation location = new MLocation(Env.getCtx(), countryId, regionId, cityName, transactionName);
+			if(cityId > 0) {
+				location.setC_City_ID(cityId);
+			}
+			//	Postal Code
+			if(!Util.isEmpty(request.getPostalCode())) {
+				location.setPostal(request.getPostalCode());
+			}
+			location.saveEx(transactionName);
+			//	Create BP location
+			MBPartnerLocation businessPartnerLocation = new MBPartnerLocation(businessPartner);
+			businessPartnerLocation.setC_Location_ID(location.getC_Location_ID());
+			//	Phone
+			if(!Util.isEmpty(request.getPhone())) {
+				businessPartnerLocation.setPhone(request.getPhone());
+			}
+			//	Contact
+			if(!Util.isEmpty(request.getContactName())) {
+				businessPartnerLocation.setContactPerson(request.getContactName());
+			}
+			//	Default
+			businessPartnerLocation.setIsBillTo(true);
+			businessPartnerLocation.setIsShipTo(true);
+			//	Save
+			businessPartnerLocation.saveEx(transactionName);
+			//	Set Location
+			Optional.ofNullable(contact).ifPresent(contactToSave -> {
+				contactToSave.setC_BPartner_Location_ID(businessPartnerLocation.getC_BPartner_Location_ID());
+				contactToSave.saveEx(transactionName);
+			});
+		});
+		//	Default return
+		return convertCustomer(businessPartner);
+	}
+	
+	/**
+	 * update Customer
+	 * @param request
+	 * @return
+	 */
+	private Customer.Builder updateCustomer(UpdateCustomerRequest request) {
+		//	Customer Uuid
+		if(Util.isEmpty(request.getUuid())) {
+			throw new AdempiereException("@C_BPartner_ID@ @IsMandatory@");
+		}
+		//	
+		AtomicReference<MBPartner> customer = new AtomicReference<MBPartner>();
+		Trx.run(transactionName -> {
+			//	Create it
+			MBPartner businessPartner = MBPartner.get(Env.getCtx(), RecordUtil.getIdFromUuid(I_C_BPartner.Table_Name, request.getUuid(), transactionName));
+			businessPartner.set_TrxName(transactionName);
+			//	Set Value
+			Optional.ofNullable(request.getValue()).ifPresent(value -> businessPartner.setValue(value));			
+			//	Tax Id
+			Optional.ofNullable(request.getTaxId()).ifPresent(value -> businessPartner.setTaxID(value));
+			//	Duns
+			Optional.ofNullable(request.getDuns()).ifPresent(value -> businessPartner.setDUNS(value));
+			//	Naics
+			Optional.ofNullable(request.getNaics()).ifPresent(value -> businessPartner.setNAICS(value));
+			//	Name
+			Optional.ofNullable(request.getName()).ifPresent(value -> businessPartner.setName(value));
+			//	Last name
+			Optional.ofNullable(request.getLastName()).ifPresent(value -> businessPartner.setName2(value));
+			//	Description
+			Optional.ofNullable(request.getDescription()).ifPresent(value -> businessPartner.setDescription(value));
+			//	Save it
+			businessPartner.saveEx(transactionName);
+			//	Contact
+			if(!Util.isEmpty(request.getContactName()) || !Util.isEmpty(request.getEmail()) || !Util.isEmpty(request.getPhone())) {
+				Optional<MUser> maybeContact = Arrays.asList(businessPartner.getContacts(true)).stream().filter(customerLocation -> customerLocation.isActive()).sorted(Comparator.comparing(MUser::getCreated).reversed()).findFirst();
+				maybeContact.ifPresent(contact -> {
+					if(!Util.isEmpty(request.getContactName())) {
+						contact.setName(request.getContactName());
+					}
+					//	EMail
+					if(!Util.isEmpty(request.getEmail())) {
+						contact.setEMail(request.getEmail());
+					}
+					//	Phone
+					if(!Util.isEmpty(request.getPhone())) {
+						contact.setPhone(request.getPhone());
+					}
+					//	Description
+					if(!Util.isEmpty(request.getDescription())) {
+						contact.setDescription(request.getDescription());
+					}
+					//	Save
+					contact.saveEx(transactionName);
+				});
+	 		}
+			//	Location
+			int countryId = 0;
+			if(!Util.isEmpty(request.getCountryUuid())) {
+				countryId = RecordUtil.getIdFromUuid(I_C_Country.Table_Name, request.getCountryUuid(), transactionName);
+			}
+			//	
+			int regionId = 0;
+			if(!Util.isEmpty(request.getRegionUuid())) {
+				regionId = RecordUtil.getIdFromUuid(I_C_Region.Table_Name, request.getRegionUuid(), transactionName);
+			}
+			String cityName = null;
+			int cityId = 0;
+			//	City Name
+			if(!Util.isEmpty(request.getCityName())) {
+				cityName = request.getCityName();
+			}
+			//	City Reference
+			if(!Util.isEmpty(request.getCityUuid())) {
+				cityId = RecordUtil.getIdFromUuid(I_C_Region.Table_Name, request.getRegionUuid(), transactionName);
+			}
+			//	Validate it
+			if(countryId > 0
+					|| regionId > 0
+					|| cityId > 0
+					|| !Util.isEmpty(cityName)) {
+				//	Find it
+				Optional<MBPartnerLocation> maybeCustomerLocation = Arrays.asList(businessPartner.getLocations(true)).stream().filter(customerLocation -> customerLocation.isActive()).sorted(Comparator.comparing(MBPartnerLocation::getCreated).reversed()).findFirst();
+				if(maybeCustomerLocation.isPresent()) {
+					MLocation location = maybeCustomerLocation.get().getLocation(true);
+					location.set_TrxName(transactionName);
+					if(countryId > 0) {
+						location.setC_Country_ID(countryId);
+					}
+					if(regionId > 0) {
+						location.setC_Region_ID(regionId);
+					}
+					if(cityId > 0) {
+						location.setC_City_ID(cityId);
+					}
+					Optional.ofNullable(cityName).ifPresent(city -> location.setCity(city));
+					if(countryId > 0) {
+						location.setC_Country_ID(countryId);
+					}
+					location.saveEx();
+				}
+				customer.set(businessPartner);
+			}
+		});
+		//	Default return
+		return convertCustomer(customer.get());
+	}
+	
+	/**
+	 * Convert customer
+	 * @param businessPartner
+	 * @return
+	 */
+	public static Customer.Builder convertCustomer(MBPartner businessPartner) {
+		if(businessPartner == null) {
+			return Customer.newBuilder();
+		}
+		return Customer.newBuilder()
+				.setUuid(ValueUtil.validateNull(businessPartner.getUUID()))
+				.setId(businessPartner.getC_BPartner_ID())
+				.setValue(ValueUtil.validateNull(businessPartner.getValue()))
+				.setTaxId(ValueUtil.validateNull(businessPartner.getTaxID()))
+				.setDuns(ValueUtil.validateNull(businessPartner.getDUNS()))
+				.setNaics(ValueUtil.validateNull(businessPartner.getNAICS()))
+				.setName(ValueUtil.validateNull(businessPartner.getName()))
+				.setLastName(ValueUtil.validateNull(businessPartner.getName2()))
+				.setDescription(ValueUtil.validateNull(businessPartner.getDescription()));
+	}
+	
 	/**
 	 * List Warehouses from POS UUID
 	 * @param request
@@ -878,7 +1203,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), null);
 		//	Get Product list
 		Query query = new Query(Env.getCtx(), TABLE_NAME, "C_POS_ID = ?", null)
-				.setParameters(posId, MPayment.TENDERTYPE_AD_Reference_ID)
+				.setParameters(posId)
 				.setOnlyActiveRecords(true);
 		int count = query.count();
 		query
