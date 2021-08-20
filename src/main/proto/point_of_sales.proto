@@ -81,8 +81,31 @@ service Store {
 	//	Customer
 	//	Create Customer
 	rpc CreateCustomer(CreateCustomerRequest) returns (Customer) {}
-	//	Update Cutomer Info
+	//	Update Customer Info
 	rpc UpdateCustomer(UpdateCustomerRequest) returns (Customer) {}
+	//	Get Customer from search
+	rpc GetCustomer(GetCustomerRequest) returns (Customer) {}
+	//	Get Daily Refund
+	rpc GetAvailableRefund(GetAvailableRefundRequest) returns (AvailableRefund) {}
+}
+
+//	Request Daily Refund
+message GetAvailableRefundRequest {
+	ClientRequest client_request = 1;
+	string pos_uuid = 2;
+	string date = 3;
+}
+
+//	Daily Refund
+message AvailableRefund {
+	Decimal refund = 1;
+	repeated TenderTypeRefund tender_type_refunds = 2;
+}
+
+//	Tender Type Refund
+message TenderTypeRefund {
+	string tender_type = 1;
+	Decimal refund = 2;
 }
 
 // Request for create Customer
@@ -139,6 +162,19 @@ message UpdateCustomerRequest {
 	string region_name = 21;
 	string country_uuid = 22;
 	string pos_uuid = 23;
+	string address_uuid = 24;
+}
+
+// Request Business Partner
+message GetCustomerRequest {
+	ClientRequest client_request = 1;
+	string search_value = 2;
+	string value = 3;
+	string name = 4;
+	string contact_name = 6;
+	string email = 7;
+	string postal_code = 8;
+	string phone = 9;
 }
 
 // Customer
@@ -152,8 +188,41 @@ message Customer {
 	string name = 7;
 	string last_name = 8;
 	string description = 9;
-	
+	repeated Address addresses = 10;
 }
+
+//	Address
+message Address {
+	int32 id = 1;
+	string uuid = 2;
+	//	Location
+	Region region = 4;
+	City city = 5;
+	string address1 = 6;
+	string address2 = 7;
+	string address3 = 8;
+	string address4 = 9;
+	string phone = 10;
+	string postal_code = 11;
+	string country_code = 12;
+	bool is_default_shipping = 13;
+	bool is_default_billing = 14;
+}
+
+//	City
+message City {
+	int32 id = 1;
+	string uuid = 2;
+	string name = 3;
+}
+
+//	Region
+message Region {
+	int32 id = 1;
+	string uuid = 2;
+	string name = 3;
+}
+
 
 // Available Warehouse
 message AvailableWarehouse {
@@ -174,6 +243,7 @@ message AvailableTenderType {
 	bool is_allowed_to_refund = 7;
 	Decimal maximum_refund_allowed = 8;
 	Decimal maximum_daily_refund_allowed = 9;
+	Currency refund_reference_currency = 10;
 }
 
 // Available Document Type
@@ -385,8 +455,10 @@ message PointOfSales {
 	bool is_allows_modify_quantity = 20;
 	bool is_allows_return_order = 21;
 	bool is_allows_collect_order = 22;
-	Decimal maximum_refund_allowed = 23;
-	Decimal maximum_daily_refund_allowed = 24;
+	bool is_allows_create_order = 23;
+	Decimal maximum_refund_allowed = 24;
+	Decimal maximum_daily_refund_allowed = 25;
+	Currency refund_reference_currency = 26;
 }
 
 // Request for create a order

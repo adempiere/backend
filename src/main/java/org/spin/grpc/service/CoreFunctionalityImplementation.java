@@ -403,7 +403,7 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 			parameters.add(request.getPostalCode());
 		}
 		//	
-		String criteriaWhereClause = ValueUtil.getWhereClauseFromCriteria(request.getCriteria(), parameters);
+		String criteriaWhereClause = ValueUtil.getWhereClauseFromCriteria(request.getCriteria(), I_C_BPartner.Table_Name, parameters);
 		if(whereClause.length() > 0
 				&& !Util.isEmpty(criteriaWhereClause)) {
 			whereClause.append(" AND (").append(criteriaWhereClause).append(")");
@@ -544,6 +544,12 @@ public class CoreFunctionalityImplementation extends CoreFunctionalityImplBase {
 			if(!Util.isEmpty(request.getPostalCode())) {
 				location.setPostal(request.getPostalCode());
 			}
+			//	Address
+			Optional.ofNullable(request.getAddress1()).ifPresent(address -> location.setAddress1(address));
+			Optional.ofNullable(request.getAddress2()).ifPresent(address -> location.setAddress2(address));
+			Optional.ofNullable(request.getAddress3()).ifPresent(address -> location.setAddress3(address));
+			Optional.ofNullable(request.getAddress4()).ifPresent(address -> location.setAddress4(address));
+			//	
 			location.saveEx(transactionName);
 			//	Create BP location
 			MBPartnerLocation businessPartnerLocation = new MBPartnerLocation(businessPartner);

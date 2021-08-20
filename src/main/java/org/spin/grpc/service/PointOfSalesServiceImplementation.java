@@ -51,7 +51,9 @@ import org.compiere.model.MBank;
 import org.compiere.model.MBankAccount;
 import org.compiere.model.MBankStatement;
 import org.compiere.model.MCharge;
+import org.compiere.model.MCity;
 import org.compiere.model.MConversionRate;
+import org.compiere.model.MCountry;
 import org.compiere.model.MCurrency;
 import org.compiere.model.MDocType;
 import org.compiere.model.MInvoice;
@@ -68,6 +70,7 @@ import org.compiere.model.MProduct;
 import org.compiere.model.MProductPrice;
 import org.compiere.model.MProductPricing;
 import org.compiere.model.MRefList;
+import org.compiere.model.MRegion;
 import org.compiere.model.MStorage;
 import org.compiere.model.MTable;
 import org.compiere.model.MTax;
@@ -89,12 +92,15 @@ import org.spin.base.util.ConvertUtil;
 import org.spin.base.util.DocumentUtil;
 import org.spin.base.util.RecordUtil;
 import org.spin.base.util.ValueUtil;
+import org.spin.grpc.util.Address;
 import org.spin.grpc.util.AvailableCurrency;
 import org.spin.grpc.util.AvailableDocumentType;
 import org.spin.grpc.util.AvailablePriceList;
+import org.spin.grpc.util.AvailableRefund;
 import org.spin.grpc.util.AvailableTenderType;
 import org.spin.grpc.util.AvailableWarehouse;
 import org.spin.grpc.util.Charge;
+import org.spin.grpc.util.City;
 import org.spin.grpc.util.CreateCustomerRequest;
 import org.spin.grpc.util.CreateOrderLineRequest;
 import org.spin.grpc.util.CreateOrderRequest;
@@ -104,6 +110,8 @@ import org.spin.grpc.util.DeleteOrderLineRequest;
 import org.spin.grpc.util.DeleteOrderRequest;
 import org.spin.grpc.util.DeletePaymentRequest;
 import org.spin.grpc.util.Empty;
+import org.spin.grpc.util.GetAvailableRefundRequest;
+import org.spin.grpc.util.GetCustomerRequest;
 import org.spin.grpc.util.GetKeyLayoutRequest;
 import org.spin.grpc.util.GetOrderRequest;
 import org.spin.grpc.util.GetProductPriceRequest;
@@ -137,6 +145,7 @@ import org.spin.grpc.util.PointOfSalesRequest;
 import org.spin.grpc.util.ProcessOrderRequest;
 import org.spin.grpc.util.Product;
 import org.spin.grpc.util.ProductPrice;
+import org.spin.grpc.util.Region;
 import org.spin.grpc.util.SalesRepresentative;
 import org.spin.grpc.util.StoreGrpc.StoreImplBase;
 import org.spin.grpc.util.UpdateCustomerRequest;
@@ -145,6 +154,7 @@ import org.spin.grpc.util.UpdateOrderRequest;
 import org.spin.grpc.util.UpdatePaymentRequest;
 import org.spin.grpc.util.ValidatePINRequest;
 import org.spin.grpc.util.Warehouse;
+import org.spin.util.VueStoreFrontUtil;
 
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
@@ -592,6 +602,40 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	}
 	
 	@Override
+	public void getAvailableRefund(GetAvailableRefundRequest request, StreamObserver<AvailableRefund> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Available Refund = " + request.getDate());
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			AvailableRefund.Builder availableRefund = getAvailableRefund(request);
+			responseObserver.onNext(availableRefund.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	/**
+	 * Calculate Available refund from daily operations
+	 * @param request
+	 * @return
+	 * @return AvailableRefund.Builder
+	 */
+	private AvailableRefund.Builder getAvailableRefund(GetAvailableRefundRequest request) {
+		return AvailableRefund.newBuilder();
+	}
+	
+	@Override
 	public void processOrder(ProcessOrderRequest request, StreamObserver<Order> responseObserver) {
 		try {
 			if(request == null) {
@@ -812,6 +856,126 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		}
 	}
 	
+	@Override
+	public void getCustomer(GetCustomerRequest request, StreamObserver<Customer> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Get customer = " + request);
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			Customer.Builder customer = getCustomer(request);
+			responseObserver.onNext(customer.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	/**
+	 * Get Customer
+	 * @param request
+	 * @return
+	 */
+	private Customer.Builder getCustomer(GetCustomerRequest request) {
+		//	Dynamic where clause
+		StringBuffer whereClause = new StringBuffer();
+		//	Parameters
+		List<Object> parameters = new ArrayList<Object>();
+		//	For search value
+		if(!Util.isEmpty(request.getSearchValue())) {
+			whereClause.append("("
+				+ "UPPER(Value) = UPPER(?) "
+				+ "OR UPPER(Name) = UPPER(?)"
+				+ ")");
+			//	Add parameters
+			parameters.add(request.getSearchValue());
+			parameters.add(request.getSearchValue());
+		}
+		//	For value
+		if(!Util.isEmpty(request.getValue())) {
+			if(whereClause.length() > 0) {
+				whereClause.append(" AND ");
+			}
+			whereClause.append("("
+				+ "UPPER(Value) = UPPER(?)"
+				+ ")");
+			//	Add parameters
+			parameters.add(request.getValue());
+		}
+		//	For name
+		if(!Util.isEmpty(request.getName())) {
+			if(whereClause.length() > 0) {
+				whereClause.append(" AND ");
+			}
+			whereClause.append("("
+				+ "UPPER(Name) = UPPER(?)"
+				+ ")");
+			//	Add parameters
+			parameters.add(request.getName());
+		}
+		//	for contact name
+		if(!Util.isEmpty(request.getContactName())) {
+			if(whereClause.length() > 0) {
+				whereClause.append(" AND ");
+			}
+			whereClause.append("(EXISTS(SELECT 1 FROM AD_User u WHERE u.C_BPartner_ID = C_BPartner.C_BPartner_ID AND UPPER(u.Name) = UPPER(?)))");
+			//	Add parameters
+			parameters.add(request.getContactName());
+		}
+		//	EMail
+		if(!Util.isEmpty(request.getEmail())) {
+			if(whereClause.length() > 0) {
+				whereClause.append(" AND ");
+			}
+			whereClause.append("(EXISTS(SELECT 1 FROM AD_User u WHERE u.C_BPartner_ID = C_BPartner.C_BPartner_ID AND UPPER(u.EMail) = UPPER(?)))");
+			//	Add parameters
+			parameters.add(request.getEmail());
+		}
+		//	Phone
+		if(!Util.isEmpty(request.getPhone())) {
+			if(whereClause.length() > 0) {
+				whereClause.append(" AND ");
+			}
+			whereClause.append("("
+					+ "EXISTS(SELECT 1 FROM AD_User u WHERE u.C_BPartner_ID = C_BPartner.C_BPartner_ID AND UPPER(u.Phone) = UPPER(?)) "
+					+ "OR EXISTS(SELECT 1 FROM C_BPartner_Location bpl WHERE bpl.C_BPartner_ID = C_BPartner.C_BPartner_ID AND UPPER(bpl.Phone) = UPPER(?))"
+					+ ")");
+			//	Add parameters
+			parameters.add(request.getPhone());
+			parameters.add(request.getPhone());
+		}
+		//	Postal Code
+		if(!Util.isEmpty(request.getPostalCode())) {
+			if(whereClause.length() > 0) {
+				whereClause.append(" AND ");
+			}
+			whereClause.append("(EXISTS(SELECT 1 FROM C_BPartner_Location bpl "
+					+ "INNER JOIN C_Location l ON(l.C_Location_ID = bpl.C_Location_ID) "
+					+ "WHERE bpl.C_BPartner_ID = C_BPartner.C_BPartner_ID "
+					+ "AND UPPER(l.Postal) = UPPER(?)))");
+			//	Add parameters
+			parameters.add(request.getPostalCode());
+		}
+		//	Get business partner
+		MBPartner businessPartner = new Query(Env.getCtx(), I_C_BPartner.Table_Name, 
+				whereClause.toString(), null)
+				.setParameters(parameters)
+				.setClient_ID()
+				.setOnlyActiveRecords(true)
+				.first();
+		//	Default return
+		return convertCustomer(businessPartner);
+	}
+	
 	/**
 	 * Create Customer
 	 * @param request
@@ -926,6 +1090,12 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			if(!Util.isEmpty(request.getPostalCode())) {
 				location.setPostal(request.getPostalCode());
 			}
+			//	Address
+			Optional.ofNullable(request.getAddress1()).ifPresent(address -> location.setAddress1(address));
+			Optional.ofNullable(request.getAddress2()).ifPresent(address -> location.setAddress2(address));
+			Optional.ofNullable(request.getAddress3()).ifPresent(address -> location.setAddress3(address));
+			Optional.ofNullable(request.getAddress4()).ifPresent(address -> location.setAddress4(address));
+			//	
 			location.saveEx(transactionName);
 			//	Create BP location
 			MBPartnerLocation businessPartnerLocation = new MBPartnerLocation(businessPartner);
@@ -1034,7 +1204,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					|| cityId > 0
 					|| !Util.isEmpty(cityName)) {
 				//	Find it
-				Optional<MBPartnerLocation> maybeCustomerLocation = Arrays.asList(businessPartner.getLocations(true)).stream().filter(customerLocation -> customerLocation.isActive()).sorted(Comparator.comparing(MBPartnerLocation::getCreated).reversed()).findFirst();
+				Optional<MBPartnerLocation> maybeCustomerLocation = Arrays.asList(businessPartner.getLocations(true)).stream().filter(customerLocation -> ValueUtil.validateNull(customerLocation.getUUID()) == ValueUtil.validateNull(request.getAddressUuid())).findFirst();
 				if(maybeCustomerLocation.isPresent()) {
 					MLocation location = maybeCustomerLocation.get().getLocation(true);
 					location.set_TrxName(transactionName);
@@ -1065,11 +1235,11 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 * @param businessPartner
 	 * @return
 	 */
-	public static Customer.Builder convertCustomer(MBPartner businessPartner) {
+	private Customer.Builder convertCustomer(MBPartner businessPartner) {
 		if(businessPartner == null) {
 			return Customer.newBuilder();
 		}
-		return Customer.newBuilder()
+		Customer.Builder customer = Customer.newBuilder()
 				.setUuid(ValueUtil.validateNull(businessPartner.getUUID()))
 				.setId(businessPartner.getC_BPartner_ID())
 				.setValue(ValueUtil.validateNull(businessPartner.getValue()))
@@ -1079,7 +1249,72 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				.setName(ValueUtil.validateNull(businessPartner.getName()))
 				.setLastName(ValueUtil.validateNull(businessPartner.getName2()))
 				.setDescription(ValueUtil.validateNull(businessPartner.getDescription()));
+		//	Add Address
+		Arrays.asList(businessPartner.getLocations(true)).stream().filter(customerLocation -> customerLocation.isActive()).forEach(address -> customer.addAddresses(convertCustomerAddress(address)));
+		return customer;
 	}
+	
+	
+	/**
+	 * Convert Address
+	 * @param businessPartnerLocation
+	 * @return
+	 * @return Address.Builder
+	 */
+	private Address.Builder convertCustomerAddress(MBPartnerLocation businessPartnerLocation) {
+		if(businessPartnerLocation == null) {
+			return Address.newBuilder();
+		}
+		MLocation location = businessPartnerLocation.getLocation(true);
+		Address.Builder builder =  Address.newBuilder()
+				.setUuid(ValueUtil.validateNull(businessPartnerLocation.getUUID()))
+				.setId(businessPartnerLocation.getC_BPartner_Location_ID())
+				.setPostalCode(ValueUtil.validateNull(location.getPostal()))
+				.setAddress1(ValueUtil.validateNull(location.getAddress1()))
+				.setAddress2(ValueUtil.validateNull(location.getAddress2()))
+				.setAddress3(ValueUtil.validateNull(location.getAddress3()))
+				.setAddress4(ValueUtil.validateNull(location.getAddress4()))
+				.setPostalCode(ValueUtil.validateNull(location.getPostal()))
+				.setCountryCode(ValueUtil.validateNull(MCountry.get(Env.getCtx(), location.getC_Country_ID()).getCountryCode()))
+				.setIsDefaultShipping(businessPartnerLocation.isShipTo() && businessPartnerLocation.get_ValueAsBoolean(VueStoreFrontUtil.COLUMNNAME_IsDefaultShipping))
+				.setIsDefaultShipping(businessPartnerLocation.isBillTo() && businessPartnerLocation.get_ValueAsBoolean(VueStoreFrontUtil.COLUMNNAME_IsDefaultBilling));
+		//	Get user from location
+		MUser user = new Query(Env.getCtx(), I_AD_User.Table_Name, I_AD_User.COLUMNNAME_C_BPartner_Location_ID + " = ?", businessPartnerLocation.get_TrxName())
+				.setParameters(businessPartnerLocation.getC_BPartner_Location_ID())
+				.setOnlyActiveRecords(true)
+				.first();
+		String phone = null;
+		if(user != null
+				&& user.getAD_User_ID() > 0
+				&& Util.isEmpty(user.getPhone())) {
+			phone = user.getPhone();
+		}
+		//	
+		builder.setPhone(ValueUtil.validateNull(Optional.ofNullable(businessPartnerLocation.getPhone()).orElse(Optional.ofNullable(phone).orElse(""))));
+		//	City
+		if(location.getC_City_ID() > 0) {
+			MCity city = MCity.get(Env.getCtx(), location.getC_City_ID());
+			builder.setCity(City.newBuilder()
+					.setId(city.getC_City_ID())
+					.setName(ValueUtil.validateNull(city.getName())));
+		} else {
+			builder.setCity(City.newBuilder()
+					.setName(ValueUtil.validateNull(location.getCity())));
+		}
+		//	Region
+		if(location.getC_Region_ID() > 0) {
+			MRegion region = MRegion.get(Env.getCtx(), location.getC_Region_ID());
+			builder.setRegion(Region.newBuilder()
+					.setId(region.getC_Region_ID())
+					.setName(ValueUtil.validateNull(region.getName())));
+		} else {
+			builder.setCity(City.newBuilder()
+					.setName(ValueUtil.validateNull(location.getCity())));
+		}
+		//	
+		return builder;
+	}
+	
 	
 	/**
 	 * List Warehouses from POS UUID
@@ -1211,15 +1446,20 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		.list()
 		.forEach(availableTenderType -> {
 			MRefList tenderType = MRefList.get(Env.getCtx(), MPayment.TENDERTYPE_AD_Reference_ID, availableTenderType.get_ValueAsString(I_C_Payment.COLUMNNAME_TenderType), null);
-			builder.addTenderTypes(AvailableTenderType.newBuilder()
-					.setId(0)
+			AvailableTenderType.Builder tenderTypeValue = AvailableTenderType.newBuilder();
+			tenderTypeValue.setId(0)
 					.setUuid(ValueUtil.validateNull(tenderType.getUUID()))
-					.setUuid(ValueUtil.validateNull(tenderType.getValue()))
-					.setUuid(ValueUtil.validateNull(tenderType.getName()))
+					.setKey(ValueUtil.validateNull(tenderType.getValue()))
+					.setName(ValueUtil.validateNull(tenderType.get_Translation(I_AD_Ref_List.COLUMNNAME_Name)))
 					.setIsPosRequiredPin(availableTenderType.get_ValueAsBoolean(I_C_POS.COLUMNNAME_IsPOSRequiredPIN))
 					.setIsAllowedToRefund(availableTenderType.get_ValueAsBoolean("IsAllowedToRefund"))
 					.setMaximumRefundAllowed(ValueUtil.getDecimalFromBigDecimal((BigDecimal) availableTenderType.get_Value("MaximumRefundAllowed")))
-					.setMaximumDailyRefundAllowed(ValueUtil.getDecimalFromBigDecimal((BigDecimal) availableTenderType.get_Value("MaximumDailyRefundAllowed"))));
+					.setMaximumDailyRefundAllowed(ValueUtil.getDecimalFromBigDecimal((BigDecimal) availableTenderType.get_Value("MaximumDailyRefundAllowed")));
+					if(availableTenderType.get_ValueAsInt("RefundReferenceCurrency_ID") > 0) {
+						tenderTypeValue.setRefundReferenceCurrency(ConvertUtil.convertCurrency(MCurrency.get(Env.getCtx(), availableTenderType.get_ValueAsInt("RefundReferenceCurrency_ID"))));
+					}
+			builder.addTenderTypes(tenderTypeValue);
+			//	
 		});
 		//	
 		builder.setRecordCount(count);
@@ -1421,7 +1661,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		BigDecimal convertedAmount = MConversionRate.convert(payment.getCtx(), payment.getPayAmt(), payment.getC_Currency_ID(), order.getC_Currency_ID(), payment.getDateTrx(), payment.getC_ConversionType_ID(), payment.getAD_Client_ID(), payment.getAD_Org_ID());
 		if(convertedAmount == null
 				|| convertedAmount.compareTo(Env.ZERO) == 0) {
-			throw new AdempiereException("@C_Conversion_Rate_ID@ @NotFound@");
+			throw new AdempiereException(MConversionRate.getErrorMessage(payment.getCtx(), "ErrorConvertingDocumentCurrencyToBaseCurrency", payment.getC_Currency_ID(), order.getC_Currency_ID(), payment.getC_ConversionType_ID(), payment.getDateTrx(), payment.get_TrxName()));
 		}
 		//	
 		return convertedAmount;
@@ -1608,7 +1848,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				.setParameters(parameters)
 				.setClient_ID()
 				.setOnlyActiveRecords(true)
-				.setOrderBy(I_C_Order.COLUMNNAME_DateOrdered + " DESC");
+				.setOrderBy(I_C_Order.COLUMNNAME_DateOrdered);
 		int count = query.count();
 		query
 		.setLimit(limit, offset)
@@ -1763,6 +2003,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					int documentTypeId = RecordUtil.getIdFromUuid(I_C_DocType.Table_Name, request.getDocumentTypeUuid(), transactionName);
 					if(documentTypeId > 0) {
 						salesOrder.setC_DocTypeTarget_ID(documentTypeId);
+						salesOrder.setC_DocType_ID(documentTypeId);
 						//	Set Sequenced No
 						String value = DB.getDocumentNo(documentTypeId, transactionName, false, salesOrder);
 						if (value != null) {
@@ -2461,8 +2702,12 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			.setIsAllowsModifyQuantity(pos.get_ValueAsBoolean("IsAllowsModifyQuantity"))
 			.setIsAllowsReturnOrder(pos.get_ValueAsBoolean("IsAllowsReturnOrder"))
 			.setIsAllowsCollectOrder(pos.get_ValueAsBoolean("IsAllowsCollectOrder"))
+			.setIsAllowsCreateOrder(pos.get_ValueAsBoolean("IsAllowsCreateOrder"))
 			.setMaximumRefundAllowed(ValueUtil.getDecimalFromBigDecimal((BigDecimal) pos.get_Value("MaximumRefundAllowed")))
 			.setMaximumDailyRefundAllowed(ValueUtil.getDecimalFromBigDecimal((BigDecimal) pos.get_Value("MaximumDailyRefundAllowed")));
+		if(pos.get_ValueAsInt("RefundReferenceCurrency_ID") > 0) {
+			builder.setRefundReferenceCurrency(ConvertUtil.convertCurrency(MCurrency.get(Env.getCtx(), pos.get_ValueAsInt("RefundReferenceCurrency_ID"))));
+		}
 		//	Set Price List and currency
 		if(pos.getM_PriceList_ID() != 0) {
 			MPriceList priceList = MPriceList.get(Env.getCtx(), pos.getM_PriceList_ID(), null);

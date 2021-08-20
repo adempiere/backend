@@ -247,7 +247,7 @@ public class AccessServiceImplementation extends SecurityImplBase {
 	 */
 	private ListRolesResponse.Builder convertRolesList(ListRolesRequest request) {
 		ListRolesResponse.Builder builder = ListRolesResponse.newBuilder();
-		MSession session = MSession.get(Env.getCtx(), false);
+		MSession session = MSession.get(Env.getCtx(), false, false);
 		if(session == null) {
 			throw new AdempiereException("@AD_Session_ID@ @IsMandatory@");
 		}
@@ -431,7 +431,7 @@ public class AccessServiceImplementation extends SecurityImplBase {
 		Session.Builder builder = Session.newBuilder();
 		DB.validateSupportedUUIDFromDB();
 		//	Get / Validate Session
-		MSession currentSession = MSession.get(Env.getCtx(), false);
+		MSession currentSession = MSession.get(Env.getCtx(), false, false);
 		int userId = currentSession.getCreatedBy();
 		int roleId = DB.getSQLValue(null, "SELECT AD_Role_ID FROM AD_Role WHERE UUID = ?", request.getRoleUuid());
 		int organizationId = DB.getSQLValue(null, "SELECT AD_Org_ID FROM AD_Org WHERE UUID = ?", request.getOrganizationUuid());
