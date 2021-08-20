@@ -32,6 +32,7 @@ import org.compiere.model.I_C_BP_Group;
 import org.compiere.model.I_C_BPartner;
 import org.compiere.model.I_C_Bank;
 import org.compiere.model.I_C_Charge;
+import org.compiere.model.I_C_City;
 import org.compiere.model.I_C_ConversionType;
 import org.compiere.model.I_C_Country;
 import org.compiere.model.I_C_Currency;
@@ -77,6 +78,7 @@ import org.compiere.model.MTax;
 import org.compiere.model.MUser;
 import org.compiere.model.MWarehouse;
 import org.compiere.model.M_Element;
+import org.compiere.model.PO;
 import org.compiere.model.Query;
 import org.compiere.process.DocAction;
 import org.compiere.util.CCache;
@@ -990,7 +992,24 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		if(Util.isEmpty(request.getPosUuid())) {
 			throw new AdempiereException("@C_POS_ID@ @IsMandatory@");
 		}
-		MBPartner businessPartner = MBPartner.getTemplate(Env.getCtx(), Env.getAD_Client_ID(Env.getCtx()), RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), null));
+		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), null);
+		MPOS pos = MPOS.get(Env.getCtx(), posId);
+		MBPartner businessPartner = MBPartner.getTemplate(Env.getCtx(), Env.getAD_Client_ID(Env.getCtx()), posId);
+		//	Validate Template
+		if(pos.getC_BPartnerCashTrx_ID() <= 0) {
+			throw new AdempiereException("@C_BPartnerCashTrx_ID@ @NotFound@");
+		}
+		MBPartner template = MBPartner.get(Env.getCtx(), pos.getC_BPartnerCashTrx_ID());
+		Optional<MBPartnerLocation> maybeTemplateLocation = Arrays.asList(template.getLocations(false)).stream().findFirst();
+		if(!maybeTemplateLocation.isPresent()) {
+			throw new AdempiereException("@C_BPartnerCashTrx_ID@ @C_BPartner_Location_ID@ @NotFound@");
+		}
+		//	Get location from template
+		MLocation templateLocation = maybeTemplateLocation.get().getLocation(false);
+		if(templateLocation == null
+				|| templateLocation.getC_Location_ID() <= 0) {
+			throw new AdempiereException("@C_Location_ID@ @NotFound@");
+		}
 		Trx.run(transactionName -> {
 			//	Create it
 			businessPartner.setAD_Org_ID(0);
@@ -1063,28 +1082,33 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			if(!Util.isEmpty(request.getCountryUuid())) {
 				countryId = RecordUtil.getIdFromUuid(I_C_Country.Table_Name, request.getCountryUuid(), transactionName);
 			}
-			if(countryId <= 0) {
-				countryId = Env.getContextAsInt(Env.getCtx(), "#C_Country_ID");
-			}
-			//	
-			int regionId = 0;
-			if(!Util.isEmpty(request.getRegionUuid())) {
-				regionId = RecordUtil.getIdFromUuid(I_C_Region.Table_Name, request.getRegionUuid(), transactionName);
-			}
-			String cityName = null;
-			int cityId = 0;
-			//	City Name
-			if(!Util.isEmpty(request.getCityName())) {
-				cityName = request.getCityName();
-			}
-			//	City Reference
-			if(!Util.isEmpty(request.getCityUuid())) {
-				cityId = RecordUtil.getIdFromUuid(I_C_Region.Table_Name, request.getRegionUuid(), transactionName);
-			}
 			//	Instance it
-			MLocation location = new MLocation(Env.getCtx(), countryId, regionId, cityName, transactionName);
-			if(cityId > 0) {
-				location.setC_City_ID(cityId);
+			MLocation location = new MLocation(Env.getCtx(), 0, transactionName);
+			if(countryId > 0) {
+				int regionId = 0;
+				int cityId = 0;
+				String cityName = null;
+				//	
+				if(!Util.isEmpty(request.getRegionUuid())) {
+					regionId = RecordUtil.getIdFromUuid(I_C_Region.Table_Name, request.getRegionUuid(), transactionName);
+				}
+				//	City Name
+				if(!Util.isEmpty(request.getCityName())) {
+					cityName = request.getCityName();
+				}
+				//	City Reference
+				if(!Util.isEmpty(request.getCityUuid())) {
+					cityId = RecordUtil.getIdFromUuid(I_C_City.Table_Name, request.getRegionUuid(), transactionName);
+				}
+				location.setC_Country_ID(countryId);
+				location.setC_Region_ID(regionId);
+				location.setCity(cityName);
+				if(cityId > 0) {
+					location.setC_City_ID(cityId);
+				}
+			} else {
+				//	Copy
+				PO.copyValues(templateLocation, location);
 			}
 			//	Postal Code
 			if(!Util.isEmpty(request.getPostalCode())) {
@@ -1196,7 +1220,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			}
 			//	City Reference
 			if(!Util.isEmpty(request.getCityUuid())) {
-				cityId = RecordUtil.getIdFromUuid(I_C_Region.Table_Name, request.getRegionUuid(), transactionName);
+				cityId = RecordUtil.getIdFromUuid(I_C_City.Table_Name, request.getRegionUuid(), transactionName);
 			}
 			//	Validate it
 			if(countryId > 0
@@ -1204,7 +1228,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					|| cityId > 0
 					|| !Util.isEmpty(cityName)) {
 				//	Find it
-				Optional<MBPartnerLocation> maybeCustomerLocation = Arrays.asList(businessPartner.getLocations(true)).stream().filter(customerLocation -> ValueUtil.validateNull(customerLocation.getUUID()) == ValueUtil.validateNull(request.getAddressUuid())).findFirst();
+				Optional<MBPartnerLocation> maybeCustomerLocation = Arrays.asList(businessPartner.getLocations(true)).stream().filter(customerLocation -> ValueUtil.validateNull(customerLocation.getUUID()).equals(ValueUtil.validateNull(request.getAddressUuid()))).findFirst();
 				if(maybeCustomerLocation.isPresent()) {
 					MLocation location = maybeCustomerLocation.get().getLocation(true);
 					location.set_TrxName(transactionName);
@@ -1221,6 +1245,12 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					if(countryId > 0) {
 						location.setC_Country_ID(countryId);
 					}
+					//	Address
+					Optional.ofNullable(request.getAddress1()).ifPresent(address -> location.setAddress1(address));
+					Optional.ofNullable(request.getAddress2()).ifPresent(address -> location.setAddress2(address));
+					Optional.ofNullable(request.getAddress3()).ifPresent(address -> location.setAddress3(address));
+					Optional.ofNullable(request.getAddress4()).ifPresent(address -> location.setAddress4(address));
+					//	Save
 					location.saveEx();
 				}
 				customer.set(businessPartner);
@@ -1537,13 +1567,16 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		int limit = RecordUtil.PAGE_SIZE;
 		int offset = pageNumber * RecordUtil.PAGE_SIZE;
 		//	Dynamic where clause
-		String whereClause = "EXISTS(SELECT 1 FROM C_Conversion_Rate cr WHERE (cr.C_Currency_ID = C_Currency.C_Currency_ID  OR cr.C_Currency_ID_To = C_Currency.C_Currency_ID) AND cr.C_ConversionType_ID = ?)";
+		String whereClause = "EXISTS(SELECT 1 FROM C_Conversion_Rate cr "
+				+ "WHERE (cr.C_Currency_ID = C_Currency.C_Currency_ID  OR cr.C_Currency_ID_To = C_Currency.C_Currency_ID) "
+				+ "AND cr.C_ConversionType_ID = ? AND cr.ValidFrom >= ? AND cr.ValidTo <= ?)";
 		//	Aisle Seller
 		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), null);
 		MPOS pos = MPOS.get(Env.getCtx(), posId);
+		Timestamp now = TimeUtil.getDay(System.currentTimeMillis());
 		//	Get Product list
 		Query query = new Query(Env.getCtx(), I_C_Currency.Table_Name, whereClause.toString(), null)
-				.setParameters(pos.get_ValueAsInt(I_C_ConversionType.COLUMNNAME_C_ConversionType_ID))
+				.setParameters(pos.get_ValueAsInt(I_C_ConversionType.COLUMNNAME_C_ConversionType_ID), now, now)
 				.setOnlyActiveRecords(true);
 		int count = query.count();
 		query
