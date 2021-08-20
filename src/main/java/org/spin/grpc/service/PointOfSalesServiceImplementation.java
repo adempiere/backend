@@ -3206,7 +3206,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		List<Object> parameters = new ArrayList<Object>();
 		//	For search value
 		if(!Util.isEmpty(request.getSearchValue())) {
-			whereClause.append("("
+			whereClause.append("IsSold = 'Y' "
+				+ "AND ("
 				+ "UPPER(Value) LIKE '%' || UPPER(?) || '%'"
 				+ "OR UPPER(Name) LIKE '%' || UPPER(?) || '%'"
 				+ "OR UPPER(UPC) = UPPER(?)"
