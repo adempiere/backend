@@ -99,7 +99,7 @@ import org.spin.grpc.util.AvailableCurrency;
 import org.spin.grpc.util.AvailableDocumentType;
 import org.spin.grpc.util.AvailablePriceList;
 import org.spin.grpc.util.AvailableRefund;
-import org.spin.grpc.util.AvailableTenderType;
+import org.spin.grpc.util.AvailablePaymentMethod;
 import org.spin.grpc.util.AvailableWarehouse;
 import org.spin.grpc.util.Charge;
 import org.spin.grpc.util.City;
@@ -125,8 +125,8 @@ import org.spin.grpc.util.ListAvailableDocumentTypesRequest;
 import org.spin.grpc.util.ListAvailableDocumentTypesResponse;
 import org.spin.grpc.util.ListAvailablePriceListRequest;
 import org.spin.grpc.util.ListAvailablePriceListResponse;
-import org.spin.grpc.util.ListAvailableTenderTypesRequest;
-import org.spin.grpc.util.ListAvailableTenderTypesResponse;
+import org.spin.grpc.util.ListAvailablePaymentMethodsRequest;
+import org.spin.grpc.util.ListAvailablePaymentMethodsResponse;
 import org.spin.grpc.util.ListAvailableWarehousesRequest;
 import org.spin.grpc.util.ListAvailableWarehousesResponse;
 import org.spin.grpc.util.ListOrderLinesRequest;
@@ -736,8 +736,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	}
 	
 	@Override
-	public void listAvailableTenderTypes(ListAvailableTenderTypesRequest request,
-			StreamObserver<ListAvailableTenderTypesResponse> responseObserver) {
+	public void listAvailablePaymentMethods(ListAvailablePaymentMethodsRequest request,
+			StreamObserver<ListAvailablePaymentMethodsResponse> responseObserver) {
 		try {
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
@@ -747,7 +747,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					request.getClientRequest().getLanguage(), 
 					request.getClientRequest().getOrganizationUuid(), 
 					request.getClientRequest().getWarehouseUuid());
-			ListAvailableTenderTypesResponse.Builder tenderTypes = listTenderTypes(request);
+			ListAvailablePaymentMethodsResponse.Builder tenderTypes = listTenderTypes(request);
 			responseObserver.onNext(tenderTypes.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -1450,13 +1450,19 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 * @param request
 	 * @return
 	 */
-	private ListAvailableTenderTypesResponse.Builder listTenderTypes(ListAvailableTenderTypesRequest request) {
+	private ListAvailablePaymentMethodsResponse.Builder listTenderTypes(ListAvailablePaymentMethodsRequest request) {
 		if(Util.isEmpty(request.getPosUuid())) {
 			throw new AdempiereException("@C_POS_ID@ @NotFound@");
 		}
-		ListAvailableTenderTypesResponse.Builder builder = ListAvailableTenderTypesResponse.newBuilder();
-		final String TABLE_NAME = "C_POSTenderTypeAllocation";
+		ListAvailablePaymentMethodsResponse.Builder builder = ListAvailablePaymentMethodsResponse.newBuilder();
+		final String TABLE_NAME = "C_POSPaymentTypeAllocation";
 		if(MTable.getTable_ID(TABLE_NAME) <= 0) {
+			return builder;
+		}
+		final String PAYMENT_METHOD_TABLE_NAME = "C_PaymentMethod";
+		MTable paymentTypeTable = MTable.get(Env.getCtx(), PAYMENT_METHOD_TABLE_NAME);
+		if(paymentTypeTable == null
+				|| paymentTypeTable.getAD_Table_ID() <= 0) {
 			return builder;
 		}
 		String nexPageToken = null;
@@ -1474,21 +1480,22 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		query
 		.setLimit(limit, offset)
 		.list()
-		.forEach(availableTenderType -> {
-			MRefList tenderType = MRefList.get(Env.getCtx(), MPayment.TENDERTYPE_AD_Reference_ID, availableTenderType.get_ValueAsString(I_C_Payment.COLUMNNAME_TenderType), null);
-			AvailableTenderType.Builder tenderTypeValue = AvailableTenderType.newBuilder();
-			tenderTypeValue.setId(0)
-					.setUuid(ValueUtil.validateNull(tenderType.getUUID()))
-					.setKey(ValueUtil.validateNull(tenderType.getValue()))
-					.setName(ValueUtil.validateNull(tenderType.get_Translation(I_AD_Ref_List.COLUMNNAME_Name)))
-					.setIsPosRequiredPin(availableTenderType.get_ValueAsBoolean(I_C_POS.COLUMNNAME_IsPOSRequiredPIN))
-					.setIsAllowedToRefund(availableTenderType.get_ValueAsBoolean("IsAllowedToRefund"))
-					.setMaximumRefundAllowed(ValueUtil.getDecimalFromBigDecimal((BigDecimal) availableTenderType.get_Value("MaximumRefundAllowed")))
-					.setMaximumDailyRefundAllowed(ValueUtil.getDecimalFromBigDecimal((BigDecimal) availableTenderType.get_Value("MaximumDailyRefundAllowed")));
-					if(availableTenderType.get_ValueAsInt("RefundReferenceCurrency_ID") > 0) {
-						tenderTypeValue.setRefundReferenceCurrency(ConvertUtil.convertCurrency(MCurrency.get(Env.getCtx(), availableTenderType.get_ValueAsInt("RefundReferenceCurrency_ID"))));
+		.forEach(availablePaymentMethod -> {
+			PO paymentMethod = paymentTypeTable.getPO(availablePaymentMethod.get_ValueAsInt("C_PaymentMethod_ID"), null);
+			AvailablePaymentMethod.Builder tenderTypeValue = AvailablePaymentMethod.newBuilder();
+			tenderTypeValue.setId(paymentMethod.get_ID())
+					.setUuid(ValueUtil.validateNull(paymentMethod.get_UUID()))
+					.setKey(ValueUtil.validateNull(paymentMethod.get_ValueAsString("Value")))
+					.setName(ValueUtil.validateNull(paymentMethod.get_ValueAsString(I_AD_Ref_List.COLUMNNAME_Name)))
+					.setTenderType(ValueUtil.validateNull(paymentMethod.get_ValueAsString(I_C_Payment.COLUMNNAME_TenderType)))
+					.setIsPosRequiredPin(availablePaymentMethod.get_ValueAsBoolean(I_C_POS.COLUMNNAME_IsPOSRequiredPIN))
+					.setIsAllowedToRefund(availablePaymentMethod.get_ValueAsBoolean("IsAllowedToRefund"))
+					.setMaximumRefundAllowed(ValueUtil.getDecimalFromBigDecimal((BigDecimal) availablePaymentMethod.get_Value("MaximumRefundAllowed")))
+					.setMaximumDailyRefundAllowed(ValueUtil.getDecimalFromBigDecimal((BigDecimal) availablePaymentMethod.get_Value("MaximumDailyRefundAllowed")));
+					if(availablePaymentMethod.get_ValueAsInt("RefundReferenceCurrency_ID") > 0) {
+						tenderTypeValue.setRefundReferenceCurrency(ConvertUtil.convertCurrency(MCurrency.get(Env.getCtx(), availablePaymentMethod.get_ValueAsInt("RefundReferenceCurrency_ID"))));
 					}
-			builder.addTenderTypes(tenderTypeValue);
+			builder.addPaymentMethods(tenderTypeValue);
 			//	
 		});
 		//	
@@ -3133,6 +3140,15 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			case MPayment.TENDERTYPE_CreditCard:
 				//	TODO: Add Information
 //				payment.setCreditCard(MPayment.TRXTYPE_Sales, cardtype, cardNo, cvc, month, year);
+				break;
+			case MPayment.TENDERTYPE_MobilePaymentInterbank:
+				payment.setR_PnRef(request.getReferenceNo());
+				break;
+			case MPayment.TENDERTYPE_Zelle:
+				payment.setR_PnRef(request.getReferenceNo());
+				break;
+			case MPayment.TENDERTYPE_CreditMemo:
+				payment.setR_PnRef(request.getReferenceNo());
 				break;
 			default:
 				payment.setDescription(request.getDescription());

@@ -71,7 +71,7 @@ service Store {
 	//	List of Available Warehouses
 	rpc ListAvailableWarehouses(ListAvailableWarehousesRequest) returns (ListAvailableWarehousesResponse) {}
 	//	List of Available Tender Types
-	rpc ListAvailableTenderTypes(ListAvailableTenderTypesRequest) returns (ListAvailableTenderTypesResponse) {}
+	rpc ListAvailablePaymentMethods(ListAvailablePaymentMethodsRequest) returns (ListAvailablePaymentMethodsResponse) {}
 	//	List of Available Price List
 	rpc ListAvailablePriceList(ListAvailablePriceListRequest) returns (ListAvailablePriceListResponse) {}
 	//	List of Available Currencies
@@ -234,16 +234,17 @@ message AvailableWarehouse {
 }
 
 // Available Tender Type
-message AvailableTenderType {
+message AvailablePaymentMethod {
 	int32 id = 2;
 	string uuid = 3;
 	string key = 4;
 	string name = 5;
-	bool is_pos_required_pin = 6;
-	bool is_allowed_to_refund = 7;
-	Decimal maximum_refund_allowed = 8;
-	Decimal maximum_daily_refund_allowed = 9;
-	Currency refund_reference_currency = 10;
+	string tender_type = 6;
+	bool is_pos_required_pin = 7;
+	bool is_allowed_to_refund = 8;
+	Decimal maximum_refund_allowed = 9;
+	Decimal maximum_daily_refund_allowed = 10;
+	Currency refund_reference_currency = 11;
 }
 
 // Available Document Type
@@ -295,8 +296,8 @@ message ListAvailableWarehousesResponse {
 	string next_page_token = 3;
 }
 
-//	List warehouses for POS
-message ListAvailableTenderTypesRequest {
+//	List payment type for POS
+message ListAvailablePaymentMethodsRequest {
 	ClientRequest client_request = 1;
 	string pos_uuid = 2;
 	int32 page_size = 3;
@@ -304,9 +305,9 @@ message ListAvailableTenderTypesRequest {
 }
 
 //	List Available Tender Types
-message ListAvailableTenderTypesResponse {
+message ListAvailablePaymentMethodsResponse {
 	int64 record_count = 1;
-	repeated AvailableTenderType tender_types = 2;
+	repeated AvailablePaymentMethod payment_methods = 2;
 	string next_page_token = 3;
 }
 
