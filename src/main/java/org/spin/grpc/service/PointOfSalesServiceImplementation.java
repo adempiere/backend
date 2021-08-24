@@ -156,6 +156,7 @@ import org.spin.grpc.util.UpdateOrderRequest;
 import org.spin.grpc.util.UpdatePaymentRequest;
 import org.spin.grpc.util.ValidatePINRequest;
 import org.spin.grpc.util.Warehouse;
+import org.spin.model.I_C_PaymentMethod;
 import org.spin.util.VueStoreFrontUtil;
 
 import io.grpc.Status;
@@ -1490,6 +1491,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					.setTenderType(ValueUtil.validateNull(paymentMethod.get_ValueAsString(I_C_Payment.COLUMNNAME_TenderType)))
 					.setIsPosRequiredPin(availablePaymentMethod.get_ValueAsBoolean(I_C_POS.COLUMNNAME_IsPOSRequiredPIN))
 					.setIsAllowedToRefund(availablePaymentMethod.get_ValueAsBoolean("IsAllowedToRefund"))
+					.setIsAllowedToRefundOpen(availablePaymentMethod.get_ValueAsBoolean("IsAllowedToRefundOpen"))
 					.setMaximumRefundAllowed(ValueUtil.getDecimalFromBigDecimal((BigDecimal) availablePaymentMethod.get_Value("MaximumRefundAllowed")))
 					.setMaximumDailyRefundAllowed(ValueUtil.getDecimalFromBigDecimal((BigDecimal) availablePaymentMethod.get_Value("MaximumDailyRefundAllowed")));
 					if(availablePaymentMethod.get_ValueAsInt("RefundReferenceCurrency_ID") > 0) {
@@ -2743,6 +2745,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			.setIsAllowsReturnOrder(pos.get_ValueAsBoolean("IsAllowsReturnOrder"))
 			.setIsAllowsCollectOrder(pos.get_ValueAsBoolean("IsAllowsCollectOrder"))
 			.setIsAllowsCreateOrder(pos.get_ValueAsBoolean("IsAllowsCreateOrder"))
+			.setIsDisplayTaxAmount(pos.get_ValueAsBoolean("IsDisplayTaxAmount"))
+			.setIsDisplayDiscount(pos.get_ValueAsBoolean("IsDisplayDiscount"))
 			.setMaximumRefundAllowed(ValueUtil.getDecimalFromBigDecimal((BigDecimal) pos.get_Value("MaximumRefundAllowed")))
 			.setMaximumDailyRefundAllowed(ValueUtil.getDecimalFromBigDecimal((BigDecimal) pos.get_Value("MaximumDailyRefundAllowed")));
 		if(pos.get_ValueAsInt("RefundReferenceCurrency_ID") > 0) {
@@ -3100,8 +3104,14 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		payment.setAD_Org_ID(salesOrder.getAD_Org_ID());
         String value = DB.getDocumentNo(payment.getC_DocType_ID(), transactionName, false,  payment);
         payment.setDocumentNo(value);
-        payment.setDateAcct(salesOrder.getDateAcct());
         payment.setDateTrx(salesOrder.getDateOrdered());
+        payment.setDateAcct(salesOrder.getDateOrdered());
+        if(!Util.isEmpty(request.getPaymentAccountDate())) {
+        	Timestamp date = ValueUtil.getDateFromString(request.getPaymentAccountDate());
+        	if(date != null) {
+        		payment.setDateAcct(date);
+        	}
+        }
         payment.setTenderType(tenderType);
         payment.setDescription(Optional.ofNullable(request.getDescription()).orElse(salesOrder.getDescription()));
         payment.setC_BPartner_ID (salesOrder.getC_BPartner_ID());
@@ -3153,6 +3163,13 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			default:
 				payment.setDescription(request.getDescription());
 				break;
+		}
+		//	Payment Method
+		if(!Util.isEmpty(request.getPaymentMethodUuid())) {
+			int paymentMethodId = RecordUtil.getIdFromUuid(I_C_PaymentMethod.Table_Name, request.getPaymentMethodUuid(), transactionName);
+			if(paymentMethodId > 0) {
+				payment.set_ValueOfColumn(I_C_PaymentMethod.COLUMNNAME_C_PaymentMethod_ID, paymentMethodId);
+			}
 		}
 		//	Set Bank Id
 		if(!Util.isEmpty(request.getBankUuid())) {

@@ -242,9 +242,10 @@ message AvailablePaymentMethod {
 	string tender_type = 6;
 	bool is_pos_required_pin = 7;
 	bool is_allowed_to_refund = 8;
-	Decimal maximum_refund_allowed = 9;
-	Decimal maximum_daily_refund_allowed = 10;
-	Currency refund_reference_currency = 11;
+	bool is_allowed_to_refund_open = 9;
+	Decimal maximum_refund_allowed = 10;
+	Decimal maximum_daily_refund_allowed = 11;
+	Currency refund_reference_currency = 12;
 }
 
 // Available Document Type
@@ -457,9 +458,11 @@ message PointOfSales {
 	bool is_allows_return_order = 21;
 	bool is_allows_collect_order = 22;
 	bool is_allows_create_order = 23;
-	Decimal maximum_refund_allowed = 24;
-	Decimal maximum_daily_refund_allowed = 25;
-	Currency refund_reference_currency = 26;
+	bool is_display_tax_amount = 24;
+	bool is_display_discount = 25;
+	Decimal maximum_refund_allowed = 26;
+	Decimal maximum_daily_refund_allowed = 27;
+	Currency refund_reference_currency = 28;
 }
 
 // Request for create a order
@@ -495,6 +498,8 @@ message CreatePaymentRequest {
 	string payment_date = 9;
 	string tender_type_code = 10;
 	string currency_uuid = 11;
+	string payment_method_uuid = 12;
+	string payment_account_date = 13;
 }
 
 //	Update Payment
