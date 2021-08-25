@@ -903,9 +903,11 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), null);
 			int orderId = RecordUtil.getIdFromUuid(I_C_Order.Table_Name, request.getOrderUuid(), null);
 			MPOS pos = MPOS.get(Env.getCtx(), posId);
+			Env.clearWinContext(1);
 			CPOS posController = new CPOS();
 			posController.setOrder(orderId);
 			posController.setM_POS(pos);
+			posController.setWindowNo(1);
 			posController.printTicket();
 			PrintTicketResponse.Builder ticket = PrintTicketResponse.newBuilder().setResult("Ok");
 			responseObserver.onNext(ticket.build());
