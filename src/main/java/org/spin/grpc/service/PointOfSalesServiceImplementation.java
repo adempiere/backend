@@ -26,6 +26,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import org.adempiere.exceptions.AdempiereException;
+import org.adempiere.pos.service.CPOS;
 import org.compiere.model.I_AD_Ref_List;
 import org.compiere.model.I_AD_User;
 import org.compiere.model.I_C_BP_Group;
@@ -95,7 +96,6 @@ import org.spin.base.util.DocumentUtil;
 import org.spin.base.util.RecordUtil;
 import org.spin.base.util.ValueUtil;
 import org.spin.grpc.util.Address;
-import org.spin.grpc.util.AvailableCurrency;
 import org.spin.grpc.util.AvailableDocumentType;
 import org.spin.grpc.util.AvailablePriceList;
 import org.spin.grpc.util.AvailableRefund;
@@ -144,6 +144,8 @@ import org.spin.grpc.util.OrderLine;
 import org.spin.grpc.util.Payment;
 import org.spin.grpc.util.PointOfSales;
 import org.spin.grpc.util.PointOfSalesRequest;
+import org.spin.grpc.util.PrintTicketRequest;
+import org.spin.grpc.util.PrintTicketResponse;
 import org.spin.grpc.util.ProcessOrderRequest;
 import org.spin.grpc.util.Product;
 import org.spin.grpc.util.ProductPrice;
@@ -883,6 +885,41 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		}
 	}
 	
+	@Override
+	public void printTicket(PrintTicketRequest request, StreamObserver<PrintTicketResponse> responseObserver) {
+		try {
+			if(Util.isEmpty(request.getPosUuid())) {
+				throw new AdempiereException("@C_POS_ID@ @NotFound@");
+			}
+			if(Util.isEmpty(request.getOrderUuid())) {
+				throw new AdempiereException("@C_Order_ID@ @NotFound@");
+			}
+			log.fine("Print Ticket = " + request);
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			//	
+			int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), null);
+			int orderId = RecordUtil.getIdFromUuid(I_C_Order.Table_Name, request.getOrderUuid(), null);
+			MPOS pos = MPOS.get(Env.getCtx(), posId);
+			CPOS posController = new CPOS();
+			posController.setOrder(orderId);
+			posController.setM_POS(pos);
+			posController.printTicket();
+			PrintTicketResponse.Builder ticket = PrintTicketResponse.newBuilder().setResult("Ok");
+			responseObserver.onNext(ticket.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
 	/**
 	 * Get Customer
 	 * @param request
@@ -1592,11 +1629,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		.setLimit(limit, offset)
 		.<MCurrency>list()
 		.forEach(currency -> {
-			builder.addCurrencies(AvailableCurrency.newBuilder()
-					.setId(currency.getC_Currency_ID())
-					.setUuid(ValueUtil.validateNull(currency.getUUID()))
-					.setKey(ValueUtil.validateNull(currency.getISO_Code()))
-					.setName(currency.getISO_Code() + " (" + currency.getCurSymbol() + ")"));
+			builder.addCurrencies(ConvertUtil.convertCurrency(currency));
 		});
 		//	
 		builder.setRecordCount(count);

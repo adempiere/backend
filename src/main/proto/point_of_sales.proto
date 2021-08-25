@@ -87,6 +87,20 @@ service Store {
 	rpc GetCustomer(GetCustomerRequest) returns (Customer) {}
 	//	Get Daily Refund
 	rpc GetAvailableRefund(GetAvailableRefundRequest) returns (AvailableRefund) {}
+	//	Print Ticket
+	rpc PrintTicket(PrintTicketRequest) returns (PrintTicketResponse) {}
+}
+
+//	Print Ticket
+message PrintTicketRequest {
+	ClientRequest client_request = 1;
+	string pos_uuid = 2;
+	string order_uuid = 3;
+}
+
+//	Response after print
+message PrintTicketResponse {
+	string result = 1;
 }
 
 //	Request Daily Refund
@@ -266,14 +280,6 @@ message AvailablePriceList {
 	bool is_pos_required_pin = 6;
 }
 
-// Available Currency
-message AvailableCurrency {
-	int32 id = 2;
-	string uuid = 3;
-	string key = 4;
-	string name = 5;
-}
-
 //	List warehouses for POS
 message ListAvailableWarehousesRequest {
 	ClientRequest client_request = 1;
@@ -345,7 +351,7 @@ message ListAvailableCurrenciesRequest {
 //	Currencies Response
 message ListAvailableCurrenciesResponse {
 	int64 record_count = 1;
-	repeated AvailableCurrency currencies = 2;
+	repeated Currency currencies = 2;
 	string next_page_token = 3;
 }
 
