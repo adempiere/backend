@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 
 import org.adempiere.exceptions.AdempiereException;
 import org.adempiere.pos.service.CPOS;
+import org.adempiere.pos.util.POSTicketHandler;
 import org.compiere.model.I_AD_Ref_List;
 import org.compiere.model.I_AD_User;
 import org.compiere.model.I_C_BP_Group;
@@ -908,7 +909,12 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			posController.setOrder(orderId);
 			posController.setM_POS(pos);
 			posController.setWindowNo(1);
-			posController.printTicket();
+			POSTicketHandler handler = POSTicketHandler.getTicketHandler(posController);
+			if(handler == null) {
+				throw new AdempiereException("@TicketClassName@ " + pos.getTicketClassName() + " @NotFound@");
+			}
+			//	Print it
+			handler.printTicket();
 			PrintTicketResponse.Builder ticket = PrintTicketResponse.newBuilder().setResult("Ok");
 			responseObserver.onNext(ticket.build());
 			responseObserver.onCompleted();
