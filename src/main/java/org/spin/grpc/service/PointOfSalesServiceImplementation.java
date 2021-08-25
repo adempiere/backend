@@ -3022,7 +3022,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			.setDescription(ValueUtil.validateNull(payment.getDescription()))
 			.setAmount(ValueUtil.getDecimalFromBigDecimal(payment.getPayAmt()))
 			.setBankUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_Bank.Table_Name, payment.getC_Bank_ID())))
-			.setBusinessPartner(ConvertUtil.convertBusinessPartner((MBPartner) payment.getC_BPartner()))
+			.setCustomer(convertCustomer((MBPartner) payment.getC_BPartner()))
 			.setCurrencyUuid(RecordUtil.getUuidFromId(I_C_Currency.Table_Name, payment.getC_Currency_ID()))
 			.setPaymentDate(ValueUtil.convertDateToString(payment.getDateTrx()))
 			.setDocumentStatus(ConvertUtil.convertDocumentStatus(ValueUtil.validateNull(payment.getDocStatus()), 
@@ -3237,7 +3237,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			.setTotalLines(ValueUtil.getDecimalFromBigDecimal(order.getTotalLines()))
 			.setGrandTotal(ValueUtil.getDecimalFromBigDecimal(order.getGrandTotal()))
 			.setDateOrdered(ValueUtil.convertDateToString(order.getDateOrdered()))
-			.setBusinessPartner(ConvertUtil.convertBusinessPartner((MBPartner) order.getC_BPartner()));
+			.setCustomer(convertCustomer((MBPartner) order.getC_BPartner()));
 	}
 	
 	/**

@@ -165,7 +165,7 @@ message UpdateCustomerRequest {
 	string address_uuid = 24;
 }
 
-// Request Business Partner
+// Request Get a Customer
 message GetCustomerRequest {
 	ClientRequest client_request = 1;
 	string search_value = 2;
@@ -552,7 +552,7 @@ message Payment {
 	string document_no = 3;
 	SalesRepresentative collecting_agent = 4;
 	DocumentStatus document_status = 5;
-	BusinessPartner business_partner = 6;
+	Customer customer = 6;
 	string pos_uuid = 7;
 	string order_uuid = 8;
 	string invoice_uuid = 9;
@@ -637,7 +637,7 @@ message Order {
 	Decimal total_lines = 7;
 	Decimal grand_total = 8;
 	string date_ordered = 9;
-	BusinessPartner business_partner = 10;
+	Customer customer = 10;
 }
 
 // Sales Order Line
