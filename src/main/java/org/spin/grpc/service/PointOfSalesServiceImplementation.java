@@ -3066,6 +3066,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			.setCustomer(convertCustomer((MBPartner) payment.getC_BPartner()))
 			.setCurrencyUuid(RecordUtil.getUuidFromId(I_C_Currency.Table_Name, payment.getC_Currency_ID()))
 			.setPaymentDate(ValueUtil.convertDateToString(payment.getDateTrx()))
+			.setIsRefund(!payment.isReceipt())
+			.setPaymentAccountDate(ValueUtil.convertDateToString(payment.getDateAcct()))
 			.setDocumentStatus(ConvertUtil.convertDocumentStatus(ValueUtil.validateNull(payment.getDocStatus()), 
 					ValueUtil.validateNull(ValueUtil.getTranslation(reference, I_AD_Ref_List.COLUMNNAME_Name)), 
 					ValueUtil.validateNull(ValueUtil.getTranslation(reference, I_AD_Ref_List.COLUMNNAME_Description))))
@@ -3090,6 +3092,18 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			if(!Util.isEmpty(tenderType)) {
 				payment.setTenderType(tenderType);
 			}
+			if(!Util.isEmpty(request.getPaymentDate())) {
+	        	Timestamp date = ValueUtil.getDateFromString(request.getPaymentDate());
+	        	if(date != null) {
+	        		payment.setDateTrx(date);
+	        	}
+	        }
+			if(!Util.isEmpty(request.getPaymentAccountDate())) {
+	        	Timestamp date = ValueUtil.getDateFromString(request.getPaymentAccountDate());
+	        	if(date != null) {
+	        		payment.setDateAcct(date);
+	        	}
+	        }
 			//	Set Bank Id
 			if(!Util.isEmpty(request.getBankUuid())) {
 				int bankId = RecordUtil.getIdFromUuid(I_C_Bank.Table_Name, request.getBankUuid(), transactionName);
@@ -3141,7 +3155,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	
 		MPayment payment = new MPayment(Env.getCtx(), 0, transactionName);
 		payment.setC_BankAccount_ID(pointOfSalesDefinition.getC_BankAccount_ID());
-		payment.setC_DocType_ID(true);
+		payment.setC_DocType_ID(!request.getIsRefund());
 		payment.setAD_Org_ID(salesOrder.getAD_Org_ID());
         String value = DB.getDocumentNo(payment.getC_DocType_ID(), transactionName, false,  payment);
         payment.setDocumentNo(value);

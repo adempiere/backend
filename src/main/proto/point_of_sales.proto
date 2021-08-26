@@ -506,6 +506,7 @@ message CreatePaymentRequest {
 	string currency_uuid = 11;
 	string payment_method_uuid = 12;
 	string payment_account_date = 13;
+	bool is_refund = 14;
 }
 
 //	Update Payment
@@ -518,6 +519,8 @@ message UpdatePaymentRequest {
 	Decimal amount = 6;
 	string payment_date = 7;
 	string tender_type_code = 8;
+	string payment_method_uuid = 9;
+	string payment_account_date = 10;
 }
 
 // Request for delete a payment
@@ -567,8 +570,10 @@ message Payment {
 	string description = 12;
 	Decimal amount = 13;
 	string payment_date = 14;
-	string tender_type_code = 15;
-	string currency_uuid = 16;
+	string payment_account_date = 15;
+	string tender_type_code = 16;
+	string currency_uuid = 17;
+	bool is_refund = 18;
 }
 
 // Request for delete a order
