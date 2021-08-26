@@ -1703,6 +1703,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					if(invoiceId > 0) {
 						payment.setC_Invoice_ID(invoiceId);
 						MInvoice invoice = new MInvoice(Env.getCtx(), invoiceId, transactionName);
+						invoice.setIsPaid(false);
+						invoice.saveEx();
 						payment.setDescription(Msg.parseTranslation(Env.getCtx(), "@C_Invoice_ID@ " + invoice.getDocumentNo()));
 					} else {
 						payment.setIsPrepayment(true);
