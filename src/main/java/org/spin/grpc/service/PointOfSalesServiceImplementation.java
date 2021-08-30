@@ -30,6 +30,7 @@ import org.adempiere.pos.service.CPOS;
 import org.adempiere.pos.util.POSTicketHandler;
 import org.compiere.model.I_AD_Ref_List;
 import org.compiere.model.I_AD_User;
+import org.compiere.model.I_C_BP_BankAccount;
 import org.compiere.model.I_C_BP_Group;
 import org.compiere.model.I_C_BPartner;
 import org.compiere.model.I_C_Bank;
@@ -48,6 +49,7 @@ import org.compiere.model.I_C_Region;
 import org.compiere.model.I_M_PriceList;
 import org.compiere.model.I_M_Product;
 import org.compiere.model.I_M_Warehouse;
+import org.compiere.model.MBPBankAccount;
 import org.compiere.model.MBPartner;
 import org.compiere.model.MBPartnerLocation;
 import org.compiere.model.MBank;
@@ -104,16 +106,20 @@ import org.spin.grpc.util.AvailablePaymentMethod;
 import org.spin.grpc.util.AvailableWarehouse;
 import org.spin.grpc.util.Charge;
 import org.spin.grpc.util.City;
+import org.spin.grpc.util.CreateCustomerBankAccountRequest;
 import org.spin.grpc.util.CreateCustomerRequest;
 import org.spin.grpc.util.CreateOrderLineRequest;
 import org.spin.grpc.util.CreateOrderRequest;
 import org.spin.grpc.util.CreatePaymentRequest;
 import org.spin.grpc.util.Customer;
+import org.spin.grpc.util.CustomerBankAccount;
+import org.spin.grpc.util.DeleteCustomerBankAccountRequest;
 import org.spin.grpc.util.DeleteOrderLineRequest;
 import org.spin.grpc.util.DeleteOrderRequest;
 import org.spin.grpc.util.DeletePaymentRequest;
 import org.spin.grpc.util.Empty;
 import org.spin.grpc.util.GetAvailableRefundRequest;
+import org.spin.grpc.util.GetCustomerBankAccountRequest;
 import org.spin.grpc.util.GetCustomerRequest;
 import org.spin.grpc.util.GetKeyLayoutRequest;
 import org.spin.grpc.util.GetOrderRequest;
@@ -130,6 +136,8 @@ import org.spin.grpc.util.ListAvailablePaymentMethodsRequest;
 import org.spin.grpc.util.ListAvailablePaymentMethodsResponse;
 import org.spin.grpc.util.ListAvailableWarehousesRequest;
 import org.spin.grpc.util.ListAvailableWarehousesResponse;
+import org.spin.grpc.util.ListCustomerBankAccountsRequest;
+import org.spin.grpc.util.ListCustomerBankAccountsResponse;
 import org.spin.grpc.util.ListOrderLinesRequest;
 import org.spin.grpc.util.ListOrderLinesResponse;
 import org.spin.grpc.util.ListOrdersRequest;
@@ -152,6 +160,7 @@ import org.spin.grpc.util.Product;
 import org.spin.grpc.util.ProductPrice;
 import org.spin.grpc.util.Region;
 import org.spin.grpc.util.SalesRepresentative;
+import org.spin.grpc.util.UpdateCustomerBankAccountRequest;
 import org.spin.grpc.util.StoreGrpc.StoreImplBase;
 import org.spin.grpc.util.UpdateCustomerRequest;
 import org.spin.grpc.util.UpdateOrderLineRequest;
@@ -928,6 +937,262 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		}
 	}
 	
+	@Override
+	public void createCustomerBankAccount(CreateCustomerBankAccountRequest request, StreamObserver<CustomerBankAccount> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Get customer = " + request);
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			//	Validate name
+			if(Util.isEmpty(request.getCustomerUuid())) {
+				throw new AdempiereException("@C_BPartner_ID@ @IsMandatory@");
+			}
+			MBPartner businessPartner = MBPartner.get(Env.getCtx(), RecordUtil.getIdFromUuid(I_C_BPartner.Table_Name, request.getCustomerUuid(), null));
+			//	For data
+			MBPBankAccount businessPartnerBankAccount = new MBPBankAccount(Env.getCtx(), 0, null);
+			businessPartnerBankAccount.setC_BPartner_ID(businessPartner.getC_BPartner_ID());
+			businessPartnerBankAccount.setIsACH(request.getIsAch());
+			//	Validate all data
+			Optional.ofNullable(request.getCity()).ifPresent(value -> businessPartnerBankAccount.setA_City(value));
+			Optional.ofNullable(request.getCountry()).ifPresent(value -> businessPartnerBankAccount.setA_Country(value));
+			Optional.ofNullable(request.getEmail()).ifPresent(value -> businessPartnerBankAccount.setA_EMail(value));
+			Optional.ofNullable(request.getDriverLicense()).ifPresent(value -> businessPartnerBankAccount.setA_Ident_DL(value));
+			Optional.ofNullable(request.getSocialSecurityNumber()).ifPresent(value -> businessPartnerBankAccount.setA_Ident_SSN(value));
+			Optional.ofNullable(request.getName()).ifPresent(value -> businessPartnerBankAccount.setA_Name(value));
+			Optional.ofNullable(request.getState()).ifPresent(value -> businessPartnerBankAccount.setA_State(value));
+			Optional.ofNullable(request.getStreet()).ifPresent(value -> businessPartnerBankAccount.setA_Street(value));
+			Optional.ofNullable(request.getZip()).ifPresent(value -> businessPartnerBankAccount.setA_Zip(value));
+			if(!Util.isEmpty(request.getBankUuid())) {
+				businessPartnerBankAccount.setC_Bank_ID(RecordUtil.getIdFromUuid(I_C_Bank.Table_Name, request.getBankUuid(), null));
+			}
+			Optional.ofNullable(request.getAddressVerified()).ifPresent(value -> businessPartnerBankAccount.setR_AvsAddr(value));
+			Optional.ofNullable(request.getZipVerified()).ifPresent(value -> businessPartnerBankAccount.setR_AvsZip(value));
+			Optional.ofNullable(request.getRoutingNo()).ifPresent(value -> businessPartnerBankAccount.setAccountNo(value));
+			Optional.ofNullable(request.getIban()).ifPresent(value -> businessPartnerBankAccount.setIBAN(value));
+			//	Bank Account Type
+			if(Util.isEmpty(request.getBankAccountType())) {
+				businessPartnerBankAccount.setBankAccountType(MBPBankAccount.BANKACCOUNTTYPE_Savings);
+			} else {
+				businessPartnerBankAccount.setBankAccountType(request.getBankAccountType());
+			}
+			businessPartnerBankAccount.saveEx();
+			responseObserver.onNext(convertCustomerBankAccount(businessPartnerBankAccount).build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void updateCustomerBankAccount(UpdateCustomerBankAccountRequest request, StreamObserver<CustomerBankAccount> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Update customer bank account = " + request);
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			//	Validate name
+			if(Util.isEmpty(request.getCustomerBankAccountUuid())) {
+				throw new AdempiereException("@C_BPBankAccount_ID@ @IsMandatory@");
+			}
+			//	For data
+			MBPBankAccount businessPartnerBankAccount = new MBPBankAccount(Env.getCtx(), RecordUtil.getIdFromUuid(I_C_BP_BankAccount.Table_Name, request.getCustomerBankAccountUuid(), null), null);
+			businessPartnerBankAccount.setIsACH(request.getIsAch());
+			//	Validate all data
+			Optional.ofNullable(request.getCity()).ifPresent(value -> businessPartnerBankAccount.setA_City(value));
+			Optional.ofNullable(request.getCountry()).ifPresent(value -> businessPartnerBankAccount.setA_Country(value));
+			Optional.ofNullable(request.getEmail()).ifPresent(value -> businessPartnerBankAccount.setA_EMail(value));
+			Optional.ofNullable(request.getDriverLicense()).ifPresent(value -> businessPartnerBankAccount.setA_Ident_DL(value));
+			Optional.ofNullable(request.getSocialSecurityNumber()).ifPresent(value -> businessPartnerBankAccount.setA_Ident_SSN(value));
+			Optional.ofNullable(request.getName()).ifPresent(value -> businessPartnerBankAccount.setA_Name(value));
+			Optional.ofNullable(request.getState()).ifPresent(value -> businessPartnerBankAccount.setA_State(value));
+			Optional.ofNullable(request.getStreet()).ifPresent(value -> businessPartnerBankAccount.setA_Street(value));
+			Optional.ofNullable(request.getZip()).ifPresent(value -> businessPartnerBankAccount.setA_Zip(value));
+			if(!Util.isEmpty(request.getBankUuid())) {
+				businessPartnerBankAccount.setC_Bank_ID(RecordUtil.getIdFromUuid(I_C_Bank.Table_Name, request.getBankUuid(), null));
+			}
+			Optional.ofNullable(request.getAddressVerified()).ifPresent(value -> businessPartnerBankAccount.setR_AvsAddr(value));
+			Optional.ofNullable(request.getZipVerified()).ifPresent(value -> businessPartnerBankAccount.setR_AvsZip(value));
+			Optional.ofNullable(request.getRoutingNo()).ifPresent(value -> businessPartnerBankAccount.setAccountNo(value));
+			Optional.ofNullable(request.getIban()).ifPresent(value -> businessPartnerBankAccount.setIBAN(value));
+			//	Bank Account Type
+			if(Util.isEmpty(request.getBankAccountType())) {
+				businessPartnerBankAccount.setBankAccountType(MBPBankAccount.BANKACCOUNTTYPE_Savings);
+			} else {
+				businessPartnerBankAccount.setBankAccountType(request.getBankAccountType());
+			}
+			businessPartnerBankAccount.saveEx();
+			responseObserver.onNext(convertCustomerBankAccount(businessPartnerBankAccount).build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void getCustomerBankAccount(GetCustomerBankAccountRequest request, StreamObserver<CustomerBankAccount> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Get customer bank account = " + request);
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			//	Validate name
+			if(Util.isEmpty(request.getCustomerBankAccountUuid())) {
+				throw new AdempiereException("@C_BP_BankAccount_ID@ @IsMandatory@");
+			}
+			//	For data
+			MBPBankAccount businessPartnerBankAccount = new MBPBankAccount(Env.getCtx(), RecordUtil.getIdFromUuid(I_C_BP_BankAccount.Table_Name, request.getCustomerBankAccountUuid(), null), null);
+			responseObserver.onNext(convertCustomerBankAccount(businessPartnerBankAccount).build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void deleteCustomerBankAccount(DeleteCustomerBankAccountRequest request, StreamObserver<Empty> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Delete customer bank account = " + request);
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			//	Validate name
+			if(Util.isEmpty(request.getCustomerBankAccountUuid())) {
+				throw new AdempiereException("@C_BP_BankAccount_ID@ @IsMandatory@");
+			}
+			//	For data
+			MBPBankAccount businessPartnerBankAccount = new MBPBankAccount(Env.getCtx(), RecordUtil.getIdFromUuid(I_C_BP_BankAccount.Table_Name, request.getCustomerBankAccountUuid(), null), null);
+			businessPartnerBankAccount.deleteEx(true);
+			responseObserver.onNext(Empty.newBuilder().build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void listCustomerBankAccounts(ListCustomerBankAccountsRequest request, StreamObserver<ListCustomerBankAccountsResponse> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("list customer bank accounts = " + request);
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			//	Validate name
+			if(Util.isEmpty(request.getCustomerUuid())) {
+				throw new AdempiereException("@C_BPartner_ID@ @IsMandatory@");
+			}
+			//	For data
+			ListCustomerBankAccountsResponse.Builder builder = ListCustomerBankAccountsResponse.newBuilder();
+			int customerId = RecordUtil.getIdFromUuid(I_C_BPartner.Table_Name, request.getCustomerUuid(), null);
+			String nexPageToken = null;
+			int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
+			int limit = RecordUtil.PAGE_SIZE;
+			int offset = pageNumber * RecordUtil.PAGE_SIZE;
+			//	Dynamic where clause
+			//	Get Product list
+			Query query = new Query(Env.getCtx(), I_C_BP_BankAccount.Table_Name, I_C_BP_BankAccount.COLUMNNAME_C_BPartner_ID + " = ?", null)
+					.setParameters(customerId)
+					.setClient_ID()
+					.setOnlyActiveRecords(true);
+			int count = query.count();
+			query
+			.setLimit(limit, offset)
+			.<MBPBankAccount>list()
+			.forEach(customerBankAccount -> {
+				builder.addCustomerBankAccounts(convertCustomerBankAccount(customerBankAccount));
+			});
+			//	
+			builder.setRecordCount(count);
+			//	Set page token
+			if(count > offset && count > limit) {
+				nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
+			}
+			//	Set next page
+			builder.setNextPageToken(ValueUtil.validateNull(nexPageToken));
+			responseObserver.onNext(builder.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	/**
+	 * Convert customer bank account
+	 * @param customerBankAccount
+	 * @return
+	 * @return CustomerBankAccount.Builder
+	 */
+	private CustomerBankAccount.Builder convertCustomerBankAccount(MBPBankAccount customerBankAccount) {
+		CustomerBankAccount.Builder builder = CustomerBankAccount.newBuilder();
+		builder.setCustomerBankAccountUuid(ValueUtil.validateNull(customerBankAccount.getUUID()))
+			.setCity(ValueUtil.validateNull(customerBankAccount.getA_City()))
+			.setCountry(ValueUtil.validateNull(customerBankAccount.getA_Country()))
+			.setEmail(ValueUtil.validateNull(customerBankAccount.getA_EMail()))
+			.setDriverLicense(ValueUtil.validateNull(customerBankAccount.getA_Ident_DL()))
+			.setSocialSecurityNumber(ValueUtil.validateNull(customerBankAccount.getA_Ident_SSN()))
+			.setName(ValueUtil.validateNull(customerBankAccount.getA_Name()))
+			.setState(ValueUtil.validateNull(customerBankAccount.getA_State()))
+			.setStreet(ValueUtil.validateNull(customerBankAccount.getA_Street()))
+			.setZip(ValueUtil.validateNull(customerBankAccount.getA_Zip()))
+			.setBankAccountType(ValueUtil.validateNull(customerBankAccount.getBankAccountType()));
+		if(customerBankAccount.getC_Bank_ID() > 0) {
+			MBank bank = MBank.get(Env.getCtx(), customerBankAccount.getC_Bank_ID());
+			builder.setBankUuid(ValueUtil.validateNull(bank.getUUID()));
+		}
+		MBPartner customer = MBPartner.get(Env.getCtx(), customerBankAccount.getC_BPartner_ID());
+		builder.setCustomerUuid(ValueUtil.validateNull(customer.getUUID()));
+		builder.setAddressVerified(ValueUtil.validateNull(customerBankAccount.getR_AvsAddr()))
+			.setZipVerified(ValueUtil.validateNull(customerBankAccount.getR_AvsZip()))
+			.setRoutingNo(ValueUtil.validateNull(customerBankAccount.getRoutingNo()))
+			.setIban(ValueUtil.validateNull(customerBankAccount.getIBAN())) ;
+		return builder;
+	}
+	
 	/**
 	 * Get Customer
 	 * @param request
@@ -1680,6 +1945,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				order.setDateOrdered(TimeUtil.getDay(System.currentTimeMillis()));
 				order.setDateAcct(TimeUtil.getDay(System.currentTimeMillis()));
 				order.setC_POS_ID(posId);
+				setCurrentDate(order);
 				order.saveEx();
 				//	Update Process if exists
 				if (!order.processIt(MOrder.DOCACTION_Complete)) {
@@ -1715,6 +1981,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					openAmount.updateAndGet(amount -> amount.subtract(convertedAmount));
 					payment.setOverUnderAmt(openAmount.get());
 					payment.setDocAction(MPayment.DOCACTION_Complete);
+					setCurrentDate(payment);
 					payment.saveEx(transactionName);
 					if (!payment.processIt(MPayment.DOCACTION_Complete)) {
 						log.warning("@ProcessFailed@ :" + payment.getProcessMsg());
@@ -2593,8 +2860,10 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		Trx.run(transactionName -> {
 			MOrder order = new MOrder(Env.getCtx(), orderId, transactionName);
 			//	Valid Complete
-			if (!DocumentUtil.isDrafted(order))
+			if (!DocumentUtil.isDrafted(order)) {
 				throw new AdempiereException("@C_Order_ID@ @IsDrafted@");
+			}
+			setCurrentDate(order);
 			// catch Exceptions at order.getLines()
 			Optional<MOrderLine> maybeOrderLine = Arrays.asList(order.getLines(true, "Line"))
 					.stream()
@@ -2655,6 +2924,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		Trx.run(transactionName -> {
 			MOrderLine orderLine = new MOrderLine(Env.getCtx(), orderLineId, transactionName);
 			MOrder order = orderLine.getParent();
+			setCurrentDate(order);
 			orderLine.setHeaderInfo(order);
 			//	Valid Complete
 			if (!DocumentUtil.isDrafted(order)) {
@@ -2929,6 +3199,34 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	}
 	
 	/**
+	 * Set current date to order
+	 * @param salesOrder
+	 * @return void
+	 */
+	private void setCurrentDate(MOrder salesOrder) {
+		if(!salesOrder.getDateOrdered().equals(getDate())
+				|| !salesOrder.getDateAcct().equals(getDate())) {
+			salesOrder.setDateOrdered(getDate());
+			salesOrder.setDateAcct(getDate());
+			salesOrder.saveEx();
+		}
+	}
+	
+	/**
+	 * Set current date to order
+	 * @param payment
+	 * @return void
+	 */
+	private void setCurrentDate(MPayment payment) {
+		if(!payment.getDateTrx().equals(getDate())
+				|| !payment.getDateAcct().equals(getDate())) {
+			payment.setDateTrx(getDate());
+			payment.setDateAcct(getDate());
+			payment.saveEx();
+		}
+	}
+	
+	/**
 	 * Set business partner from uuid
 	 * @param pos
 	 * @param salesOrder
@@ -3003,6 +3301,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		if(salesRepresentativeId > 0) {
 			salesOrder.setSalesRep_ID(salesRepresentativeId);
 		}
+		setCurrentDate(salesOrder);
 		//	Save Header
 		salesOrder.saveEx();
 		//	Load Price List Version
@@ -3123,6 +3422,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	        BigDecimal paymentAmount = ValueUtil.getBigDecimalFromDecimal(request.getAmount());
 	        payment.setPayAmt(paymentAmount);
 	        payment.setOverUnderAmt(Env.ZERO);
+	        setCurrentDate(payment);
 			payment.saveEx(transactionName);
 			maybePayment.set(payment);
 		});
@@ -3245,6 +3545,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		} else {
 			payment.setOverUnderAmt(salesOrder.getGrandTotal().subtract(convertedPaymentAmount));
 		}
+		setCurrentDate(salesOrder);
+		setCurrentDate(payment);
 		payment.saveEx(transactionName);
 		return payment;
 	}

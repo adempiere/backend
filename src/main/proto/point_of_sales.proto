@@ -89,6 +89,114 @@ service Store {
 	rpc GetAvailableRefund(GetAvailableRefundRequest) returns (AvailableRefund) {}
 	//	Print Ticket
 	rpc PrintTicket(PrintTicketRequest) returns (PrintTicketResponse) {}
+	//	Create Customer Account
+	rpc CreateCustomerBankAccount(CreateCustomerBankAccountRequest) returns (CustomerBankAccount) {}
+	//	Update Customer Account
+	rpc UpdateCustomerBankAccount(UpdateCustomerBankAccountRequest) returns (CustomerBankAccount) {}
+	//	Get Customer Account
+	rpc GetCustomerBankAccount(GetCustomerBankAccountRequest) returns (CustomerBankAccount) {}
+	//	Delete Customer Account
+	rpc DeleteCustomerBankAccount(DeleteCustomerBankAccountRequest) returns (Empty) {}
+	//	List Customer Accounts
+	rpc ListCustomerBankAccounts(ListCustomerBankAccountsRequest) returns (ListCustomerBankAccountsResponse) {}
+}
+
+//	List Customer Accounts Request
+message ListCustomerBankAccountsRequest {
+	ClientRequest client_request = 1;
+	string customer_uuid = 2;
+	int32 page_size = 3;
+	string page_token = 4;
+}
+
+//	List Customer Accounts Response
+message ListCustomerBankAccountsResponse {
+	int64 record_count = 1;
+	repeated CustomerBankAccount customer_bank_accounts = 2;
+	string next_page_token = 3;
+}
+
+//	Create Customer Account
+message CreateCustomerBankAccountRequest {
+	ClientRequest client_request = 1;
+	string customer_uuid = 2;
+	string pos_uuid = 3;
+	string city = 4;
+	string country = 5;
+	string email = 6;
+	string driver_license = 7;
+	string social_security_number = 8;
+	string name = 9;
+	string state = 10;
+	string street = 11;
+	string zip = 12;
+	string bank_account_type = 13;
+	string bank_uuid = 14;
+	bool is_ach = 15;
+	string address_verified = 16;
+	string zip_verified = 17;
+	string routing_no = 18;
+	string iban = 19;
+	bool is_payroll_account = 20;
+}
+
+//	Update Customer Account
+message UpdateCustomerBankAccountRequest {
+	ClientRequest client_request = 1;
+	string customer_bank_account_uuid = 2;
+	string city = 3;
+	string country = 4;
+	string email = 5;
+	string driver_license = 6;
+	string social_security_number = 7;
+	string name = 8;
+	string state = 9;
+	string street = 10;
+	string zip = 11;
+	string bank_account_type = 12;
+	string bank_uuid = 13;
+	bool is_ach = 14;
+	string address_verified = 15;
+	string zip_verified = 16;
+	string routing_no = 17;
+	string iban = 18;
+	bool is_payroll_account = 19;
+}
+
+//	Delete Customer Account
+message DeleteCustomerBankAccountRequest {
+	ClientRequest client_request = 1;
+	string customer_bank_account_uuid = 2;
+}
+
+//	Get Customer Account
+message GetCustomerBankAccountRequest {
+	ClientRequest client_request = 1;
+	string customer_bank_account_uuid = 2;
+}
+
+
+//	Customer Account
+message CustomerBankAccount {
+	string customer_uuid = 1;
+	string customer_bank_account_uuid = 2;
+	string city = 3;
+	string country = 4;
+	string email = 5;
+	string driver_license = 6;
+	string social_security_number = 7;
+	string name = 8;
+	string state = 9;
+	string street = 10;
+	string zip = 11;
+	string bank_account_type = 12;
+	string bank_uuid = 13;
+	bool is_ach = 14;
+	string address_verified = 15;
+	string zip_verified = 16;
+	string routing_no = 17;
+	string iban = 18;
+	bool is_payroll_account = 19;
 }
 
 //	Print Ticket
