@@ -368,6 +368,7 @@ message AvailablePaymentMethod {
 	Decimal maximum_refund_allowed = 10;
 	Decimal maximum_daily_refund_allowed = 11;
 	Currency refund_reference_currency = 12;
+	Currency reference_currency = 13;
 }
 
 // Available Document Type

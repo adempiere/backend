@@ -760,7 +760,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					request.getClientRequest().getLanguage(), 
 					request.getClientRequest().getOrganizationUuid(), 
 					request.getClientRequest().getWarehouseUuid());
-			ListAvailablePaymentMethodsResponse.Builder tenderTypes = listTenderTypes(request);
+			ListAvailablePaymentMethodsResponse.Builder tenderTypes = listPaymentMethods(request);
 			responseObserver.onNext(tenderTypes.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -1430,6 +1430,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			Optional.ofNullable(request.getAddress2()).ifPresent(address -> location.setAddress2(address));
 			Optional.ofNullable(request.getAddress3()).ifPresent(address -> location.setAddress3(address));
 			Optional.ofNullable(request.getAddress4()).ifPresent(address -> location.setAddress4(address));
+			Optional.ofNullable(request.getPostalCode()).ifPresent(postalCode -> location.setPostal(postalCode));
 			//	
 			location.saveEx(transactionName);
 			//	Create BP location
@@ -1561,6 +1562,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					Optional.ofNullable(request.getAddress2()).ifPresent(address -> location.setAddress2(address));
 					Optional.ofNullable(request.getAddress3()).ifPresent(address -> location.setAddress3(address));
 					Optional.ofNullable(request.getAddress4()).ifPresent(address -> location.setAddress4(address));
+					Optional.ofNullable(request.getPostalCode()).ifPresent(postalCode -> location.setPostal(postalCode));
 					//	Save
 					location.saveEx();
 				}
@@ -1761,7 +1763,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 * @param request
 	 * @return
 	 */
-	private ListAvailablePaymentMethodsResponse.Builder listTenderTypes(ListAvailablePaymentMethodsRequest request) {
+	private ListAvailablePaymentMethodsResponse.Builder listPaymentMethods(ListAvailablePaymentMethodsRequest request) {
 		if(Util.isEmpty(request.getPosUuid())) {
 			throw new AdempiereException("@C_POS_ID@ @NotFound@");
 		}
@@ -1806,6 +1808,9 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					.setMaximumDailyRefundAllowed(ValueUtil.getDecimalFromBigDecimal((BigDecimal) availablePaymentMethod.get_Value("MaximumDailyRefundAllowed")));
 					if(availablePaymentMethod.get_ValueAsInt("RefundReferenceCurrency_ID") > 0) {
 						tenderTypeValue.setRefundReferenceCurrency(ConvertUtil.convertCurrency(MCurrency.get(Env.getCtx(), availablePaymentMethod.get_ValueAsInt("RefundReferenceCurrency_ID"))));
+					}
+					if(availablePaymentMethod.get_ValueAsInt("ReferenceCurrency_ID") > 0) {
+						tenderTypeValue.setReferenceCurrency(ConvertUtil.convertCurrency(MCurrency.get(Env.getCtx(), availablePaymentMethod.get_ValueAsInt("ReferenceCurrency_ID"))));
 					}
 			builder.addPaymentMethods(tenderTypeValue);
 			//	
@@ -2945,10 +2950,9 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			BigDecimal priceToOrder = price;
 			if(price == null
 					|| price.equals(Env.ZERO)) {
-				priceToOrder = orderLine.getPriceEntered();
+				BigDecimal discountAmount = orderLine.getPriceList().multiply(Optional.ofNullable(discountRate).orElse(Env.ZERO).divide(Env.ONEHUNDRED));
+				priceToOrder = orderLine.getPriceList().subtract(discountAmount);
 			}
-			BigDecimal discountAmount = orderLine.getPriceList().multiply(Optional.ofNullable(discountRate).orElse(Env.ZERO).divide(Env.ONEHUNDRED));
-			priceToOrder = orderLine.getPriceList().subtract(discountAmount);
 			if(warehouseId > 0) {
 				orderLine.setM_Warehouse_ID(warehouseId);
 			}
@@ -3438,6 +3442,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 * @return
 	 */
 	private MPayment createPayment(MOrder salesOrder, CreatePaymentRequest request, MPOS pointOfSalesDefinition, String transactionName) {
+		setCurrentDate(salesOrder);
 		String tenderType = request.getTenderTypeCode();
 		if(Util.isEmpty(tenderType)) {
 			tenderType = MPayment.TENDERTYPE_Cash;
