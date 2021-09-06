@@ -3016,7 +3016,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		parameters.add(Env.getAD_Org_ID(Env.getCtx()));
 		parameters.add(salesRepresentativeId);
 		if(isListWithSharedPOS) {
-			whereClause = "AD_Org_ID = ? AND (IsSharedPOS = 'Y' OR SalesRep_ID = ? OR EXISTS(SELECT 1 FROM AD_User u WHERE u.AD_User_ID = ? AND IsPOSManager = 'Y'))";
+			whereClause = "AD_Org_ID = ? OR IsSharedPOS = 'Y' OR SalesRep_ID = ? OR EXISTS(SELECT 1 FROM AD_User u WHERE u.AD_User_ID = ? AND IsPOSManager = 'Y')";
 			parameters.add(salesRepresentativeId);
 		}
 		Query query = new Query(Env.getCtx() , I_C_POS.Table_Name , whereClause, null)
