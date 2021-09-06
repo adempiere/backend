@@ -22,6 +22,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -1970,7 +1971,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				int invoiceId = order.getC_Invoice_ID();
 				AtomicReference<BigDecimal> openAmount = new AtomicReference<BigDecimal>(order.getGrandTotal());
 				//	Process Payments
-				MPayment.getOfOrder(order).forEach(payment -> {
+				MPayment.getOfOrder(order).stream().sorted(Comparator.comparing(MPayment::getCreated)).forEach(payment -> {
 					if(invoiceId > 0) {
 						payment.setC_Invoice_ID(invoiceId);
 						MInvoice invoice = new MInvoice(Env.getCtx(), invoiceId, transactionName);
@@ -1983,8 +1984,12 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					}
 					BigDecimal convertedAmount = getConvetedAmount(order, payment);
 					//	Get current open amount
-					openAmount.updateAndGet(amount -> amount.subtract(convertedAmount));
-					payment.setOverUnderAmt(openAmount.get());
+					if(payment.isReceipt()) {
+						openAmount.updateAndGet(amount -> amount.subtract(convertedAmount));
+					} else {
+						openAmount.updateAndGet(amount -> amount.add(convertedAmount));
+					}
+					payment.setOverUnderAmt(getConvetedRemainingAmountToPaymentCurrency(openAmount.get(), order, payment));
 					payment.setDocAction(MPayment.DOCACTION_Complete);
 					setCurrentDate(payment);
 					payment.saveEx(transactionName);
@@ -1992,6 +1997,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 						log.warning("@ProcessFailed@ :" + payment.getProcessMsg());
 						throw new AdempiereException("@ProcessFailed@ :" + payment.getProcessMsg());
 					}
+					payment.saveEx(transactionName);
+					payment.testAllocation();
 					payment.saveEx(transactionName);
 					order.saveEx(transactionName);
 					MBankStatement.addPayment(payment);
@@ -2019,6 +2026,26 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		if(convertedAmount == null
 				|| convertedAmount.compareTo(Env.ZERO) == 0) {
 			throw new AdempiereException(MConversionRate.getErrorMessage(payment.getCtx(), "ErrorConvertingDocumentCurrencyToBaseCurrency", payment.getC_Currency_ID(), order.getC_Currency_ID(), payment.getC_ConversionType_ID(), payment.getDateTrx(), payment.get_TrxName()));
+		}
+		//	
+		return convertedAmount;
+	}
+	
+	/**
+	 * Get Converted Amount based on Payment currency
+	 * @param order
+	 * @param payment
+	 * @return
+	 * @return BigDecimal
+	 */
+	private BigDecimal getConvetedRemainingAmountToPaymentCurrency(BigDecimal remainingAmount, MOrder order, MPayment payment) {
+		if(payment.getC_Currency_ID() == order.getC_Currency_ID()) {
+			return remainingAmount;
+		}
+		BigDecimal convertedAmount = MConversionRate.convert(payment.getCtx(), remainingAmount, order.getC_Currency_ID(), payment.getC_Currency_ID(), payment.getDateTrx(), order.getC_ConversionType_ID(), order.getAD_Client_ID(), order.getAD_Org_ID());
+		if(convertedAmount == null
+				|| convertedAmount.compareTo(Env.ZERO) == 0) {
+			throw new AdempiereException(MConversionRate.getErrorMessage(payment.getCtx(), "ErrorConvertingDocumentCurrencyToBaseCurrency", order.getC_Currency_ID(), payment.getC_Currency_ID(), order.getC_ConversionType_ID(), payment.getDateTrx(), order.get_TrxName()));
 		}
 		//	
 		return convertedAmount;
@@ -2142,7 +2169,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), null);
 		boolean isWithAisleSeller = M_Element.get(Env.getCtx(), "IsAisleSeller") != null;
 		if(isWithAisleSeller && request.getIsAisleSeller()) {
-			whereClause.append("C_Order.C_POS_ID <> ? AND EXISTS(SELECT 1 FROM C_POS p WHERE p.C_POS_ID = C_Order.C_POS_ID AND p.IsAisleSeller = 'Y')");
+			whereClause.append("(C_Order.C_POS_ID = ? OR EXISTS(SELECT 1 FROM C_POS p WHERE p.C_POS_ID = C_Order.C_POS_ID AND p.IsAisleSeller = 'Y'))");
 			parameters.add(posId);
 		} else {
 			whereClause.append("C_Order.C_POS_ID = ?");
@@ -3364,6 +3391,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			.setOrderUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_Order.Table_Name, payment.getC_Order_ID())))
 			.setDocumentNo(ValueUtil.validateNull(payment.getDocumentNo()))
 			.setTenderTypeCode(ValueUtil.validateNull(payment.getTenderType()))
+			.setPaymentMethodUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_PaymentMethod.Table_Name, payment.get_ValueAsInt("C_PaymentMethod_ID"))))
 			.setReferenceNo(ValueUtil.validateNull(Optional.ofNullable(payment.getCheckNo()).orElse(payment.getDocumentNo())))
 			.setDescription(ValueUtil.validateNull(payment.getDescription()))
 			.setAmount(ValueUtil.getDecimalFromBigDecimal(payment.getPayAmt()))
@@ -3466,8 +3494,6 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		payment.setAD_Org_ID(salesOrder.getAD_Org_ID());
         String value = DB.getDocumentNo(payment.getC_DocType_ID(), transactionName, false,  payment);
         payment.setDocumentNo(value);
-        payment.setDateTrx(salesOrder.getDateOrdered());
-        payment.setDateAcct(salesOrder.getDateOrdered());
         if(!Util.isEmpty(request.getPaymentAccountDate())) {
         	Timestamp date = ValueUtil.getDateFromString(request.getPaymentAccountDate());
         	if(date != null) {
@@ -3479,6 +3505,9 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
         payment.setC_BPartner_ID (salesOrder.getC_BPartner_ID());
         payment.setC_Currency_ID(currencyId);
         payment.setC_POS_ID(pointOfSalesDefinition.getC_POS_ID());
+        if(salesOrder.getSalesRep_ID() > 0) {
+        	payment.set_ValueOfColumn("CollectingAgent_ID", salesOrder.getSalesRep_ID());
+        }
         if(pointOfSalesDefinition.get_ValueAsInt(I_C_ConversionType.COLUMNNAME_C_ConversionType_ID) > 0) {
         	payment.setC_ConversionType_ID(pointOfSalesDefinition.get_ValueAsInt(I_C_ConversionType.COLUMNNAME_C_ConversionType_ID));
         }
@@ -3543,6 +3572,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			payment.setDocumentNo(request.getReferenceNo());
 			payment.addDescription(request.getReferenceNo());
 		}
+		setCurrentDate(payment);
 		//	
 		BigDecimal convertedPaymentAmount = getConvetedAmount(salesOrder, payment);
 		if(paidAmount.isPresent()) {
@@ -3550,8 +3580,6 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		} else {
 			payment.setOverUnderAmt(salesOrder.getGrandTotal().subtract(convertedPaymentAmount));
 		}
-		setCurrentDate(salesOrder);
-		setCurrentDate(payment);
 		payment.saveEx(transactionName);
 		return payment;
 	}
@@ -3618,7 +3646,11 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), null);
 		MPOS pos = MPOS.get(Env.getCtx(), posId);
 		//	Validate Price List
-		MPriceList priceList = MPriceList.get(Env.getCtx(), pos.getM_PriceList_ID(), null);
+		int priceListId = pos.getM_PriceList_ID();
+		if(!Util.isEmpty(request.getPriceListUuid())) {
+			priceListId = RecordUtil.getIdFromUuid(I_M_PriceList.Table_Name, request.getPriceListUuid(), null);
+		}
+		MPriceList priceList = MPriceList.get(Env.getCtx(), priceListId, null);
 		//	Get Valid From
 		AtomicReference<Timestamp> validFrom = new AtomicReference<>();
 		if(!Util.isEmpty(request.getValidFrom())) {
@@ -3665,8 +3697,11 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	Add parameters
 		parameters.add(priceList.getM_PriceList_ID());
 		parameters.add(TimeUtil.getDay(validFrom.get()));
+		AtomicInteger warehouseId = new AtomicInteger(pos.getM_Warehouse_ID());
+		if(!Util.isEmpty(request.getWarehouseUuid())) {
+			warehouseId.set(RecordUtil.getIdFromUuid(I_M_Warehouse.Table_Name, request.getWarehouseUuid(), null));
+		}
 		int businessPartnerId = RecordUtil.getIdFromUuid(I_C_BPartner.Table_Name, request.getBusinessPartnerUuid(), null);
-		int warehouseId = pos.getM_Warehouse_ID();
 		int displayCurrencyId = pos.get_ValueAsInt("DisplayCurrency_ID");
 		int conversionTypeId = pos.get_ValueAsInt("C_ConversionType_ID");
 		//	Get Product list
@@ -3684,7 +3719,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					product, 
 					businessPartnerId, 
 					priceList, 
-					warehouseId, 
+					warehouseId.get(), 
 					validFrom.get(),
 					displayCurrencyId,
 					conversionTypeId,
@@ -3848,7 +3883,15 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), null);
 		MPOS pos = MPOS.get(Env.getCtx(), posId);
 		//	Validate Price List
-		MPriceList priceList = MPriceList.get(Env.getCtx(), pos.getM_PriceList_ID(), null);
+		int priceListId = pos.getM_PriceList_ID();
+		if(!Util.isEmpty(request.getPriceListUuid())) {
+			priceListId = RecordUtil.getIdFromUuid(I_M_PriceList.Table_Name, request.getPriceListUuid(), null);
+		}
+		MPriceList priceList = MPriceList.get(Env.getCtx(), priceListId, null);
+		AtomicInteger warehouseId = new AtomicInteger(pos.getM_Warehouse_ID());
+		if(!Util.isEmpty(request.getWarehouseUuid())) {
+			warehouseId.set(RecordUtil.getIdFromUuid(I_M_Warehouse.Table_Name, request.getWarehouseUuid(), null));
+		}
 		//	Get Valid From
 		AtomicReference<Timestamp> validFrom = new AtomicReference<>();
 		if(!Util.isEmpty(request.getValidFrom())) {
@@ -3857,14 +3900,13 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			validFrom.set(TimeUtil.getDay(System.currentTimeMillis()));
 		}
 		int businessPartnerId = RecordUtil.getIdFromUuid(I_C_BPartner.Table_Name, request.getBusinessPartnerUuid(), null);
-		int warehouseId = pos.getM_Warehouse_ID();
 		int displayCurrencyId = pos.get_ValueAsInt("DisplayCurrency_ID");
 		int conversionTypeId = pos.get_ValueAsInt("C_ConversionType_ID");
 		return convertProductPrice(
 				product, 
 				businessPartnerId, 
 				priceList, 
-				warehouseId, 
+				warehouseId.get(), 
 				validFrom.get(),
 				displayCurrencyId,
 				conversionTypeId,

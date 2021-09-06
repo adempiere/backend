@@ -528,10 +528,12 @@ message ListProductPriceRequest {
 	string business_partner_uuid = 3;
 	string valid_from = 4;
 	string pos_uuid = 5;
+	string price_list_uuid = 6;
+	string warehouse_uuid = 7;
 	// Query
-	Criteria criteria = 6;
-	int32 page_size = 7;
-	string page_token = 8;
+	Criteria criteria = 8;
+	int32 page_size = 9;
+	string page_token = 10;
 }
 
 // POS from user uuid
@@ -683,6 +685,7 @@ message Payment {
 	string tender_type_code = 16;
 	string currency_uuid = 17;
 	bool is_refund = 18;
+	string payment_method_uuid = 19;
 }
 
 // Request for delete a order
@@ -788,6 +791,8 @@ message GetProductPriceRequest {
 	string business_partner_uuid = 6;
 	string valid_from = 7;
 	string pos_uuid = 8;
+	string price_list_uuid = 9;
+	string warehouse_uuid = 10;
 }
 
 // Layout for POS
