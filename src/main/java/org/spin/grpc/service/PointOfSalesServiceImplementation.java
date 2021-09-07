@@ -2019,7 +2019,9 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 * @return BigDecimal
 	 */
 	private BigDecimal getConvetedAmount(MOrder order, MPayment payment) {
-		if(payment.getC_Currency_ID() == order.getC_Currency_ID()) {
+		if(payment.getC_Currency_ID() == order.getC_Currency_ID()
+				|| payment.getPayAmt() == null
+				|| payment.getPayAmt().compareTo(Env.ZERO) == 0) {
 			return payment.getPayAmt();
 		}
 		BigDecimal convertedAmount = MConversionRate.convert(payment.getCtx(), payment.getPayAmt(), payment.getC_Currency_ID(), order.getC_Currency_ID(), payment.getDateTrx(), payment.getC_ConversionType_ID(), payment.getAD_Client_ID(), payment.getAD_Org_ID());
@@ -2039,7 +2041,9 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 * @return BigDecimal
 	 */
 	private BigDecimal getConvetedRemainingAmountToPaymentCurrency(BigDecimal remainingAmount, MOrder order, MPayment payment) {
-		if(payment.getC_Currency_ID() == order.getC_Currency_ID()) {
+		if(payment.getC_Currency_ID() == order.getC_Currency_ID()
+				|| remainingAmount == null
+				|| remainingAmount.compareTo(Env.ZERO) == 0) {
 			return remainingAmount;
 		}
 		BigDecimal convertedAmount = MConversionRate.convert(payment.getCtx(), remainingAmount, order.getC_Currency_ID(), payment.getC_Currency_ID(), payment.getDateTrx(), order.getC_ConversionType_ID(), order.getAD_Client_ID(), order.getAD_Org_ID());
