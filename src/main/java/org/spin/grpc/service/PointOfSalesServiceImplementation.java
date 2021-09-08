@@ -1331,34 +1331,26 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			businessPartner.setIsVendor (false);
 			businessPartner.set_TrxName(transactionName);
 			//	Set Value
-			String value = request.getValue();
-			if(Util.isEmpty(value)) {
-				value = DB.getDocumentNo(Env.getAD_Client_ID(Env.getCtx()), "C_BPartner", transactionName, businessPartner);
+			String code = request.getValue();
+			if(Util.isEmpty(code)) {
+				code = DB.getDocumentNo(Env.getAD_Client_ID(Env.getCtx()), "C_BPartner", transactionName, businessPartner);
 			}
 			//	
-			businessPartner.setValue(value);
+			businessPartner.setValue(code);
+			//	Set Value
+			Optional.ofNullable(request.getValue()).ifPresent(value -> businessPartner.setValue(value));			
 			//	Tax Id
-			if(!Util.isEmpty(request.getTaxId())) {
-				businessPartner.setTaxID(request.getTaxId());
-			}
+			Optional.ofNullable(request.getTaxId()).ifPresent(value -> businessPartner.setTaxID(value));
 			//	Duns
-			if(!Util.isEmpty(request.getDuns())) {
-				businessPartner.setDUNS(request.getDuns());
-			}
+			Optional.ofNullable(request.getDuns()).ifPresent(value -> businessPartner.setDUNS(value));
 			//	Naics
-			if(!Util.isEmpty(request.getNaics())) {
-				businessPartner.setNAICS(request.getNaics());
-			}
+			Optional.ofNullable(request.getNaics()).ifPresent(value -> businessPartner.setNAICS(value));
 			//	Name
-			businessPartner.setName(request.getName());
+			Optional.ofNullable(request.getName()).ifPresent(value -> businessPartner.setName(value));
 			//	Last name
-			if(!Util.isEmpty(request.getLastName())) {
-				businessPartner.setName2(request.getLastName());
-			}
+			Optional.ofNullable(request.getLastName()).ifPresent(value -> businessPartner.setName2(value));
 			//	Description
-			if(!Util.isEmpty(request.getDescription())) {
-				businessPartner.setDescription(request.getDescription());
-			}
+			Optional.ofNullable(request.getDescription()).ifPresent(value -> businessPartner.setDescription(value));
 			//	Business partner group
 			if(!Util.isEmpty(request.getBusinessPartnerGroupUuid())) {
 				int businessPartnerGroupId = RecordUtil.getIdFromUuid(I_C_BP_Group.Table_Name, request.getBusinessPartnerGroupUuid(), transactionName);
@@ -2039,6 +2031,12 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				paymentAllocationLine.setPaymentInfo(payment.getC_Payment_ID(), 0);
 				paymentAllocationLine.saveEx();
 			});
+			//	Add write off
+			if(openAmount.get().compareTo(Env.ZERO) != 0) {
+				MAllocationLine paymentAllocationLine = new MAllocationLine (paymentAllocation, Env.ZERO, Env.ZERO, openAmount.get(), Env.ZERO);
+				paymentAllocationLine.setDocInfo(salesOrder.getC_BPartner_ID(), salesOrder.getC_Order_ID(), invoiceId);
+				paymentAllocationLine.saveEx();
+			}
 			//	Complete
 			if (!paymentAllocation.processIt(MAllocationHdr.DOCACTION_Complete)) {
 				log.warning("@ProcessFailed@ :" + paymentAllocation.getProcessMsg());
@@ -2066,10 +2064,10 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				|| amount.compareTo(Env.ZERO) == 0) {
 			return amount;
 		}
-		BigDecimal convertedAmount = MConversionRate.convert(payment.getCtx(), amount, payment.getC_Currency_ID(), order.getC_Currency_ID(), payment.getDateTrx(), payment.getC_ConversionType_ID(), payment.getAD_Client_ID(), payment.getAD_Org_ID());
+		BigDecimal convertedAmount = MConversionRate.convert(payment.getCtx(), amount, payment.getC_Currency_ID(), order.getC_Currency_ID(), payment.getDateAcct(), payment.getC_ConversionType_ID(), payment.getAD_Client_ID(), payment.getAD_Org_ID());
 		if(convertedAmount == null
 				|| convertedAmount.compareTo(Env.ZERO) == 0) {
-			throw new AdempiereException(MConversionRate.getErrorMessage(payment.getCtx(), "ErrorConvertingDocumentCurrencyToBaseCurrency", payment.getC_Currency_ID(), order.getC_Currency_ID(), payment.getC_ConversionType_ID(), payment.getDateTrx(), payment.get_TrxName()));
+			throw new AdempiereException(MConversionRate.getErrorMessage(payment.getCtx(), "ErrorConvertingDocumentCurrencyToBaseCurrency", payment.getC_Currency_ID(), order.getC_Currency_ID(), payment.getC_ConversionType_ID(), payment.getDateAcct(), payment.get_TrxName()));
 		}
 		//	
 		return convertedAmount;
@@ -2088,10 +2086,9 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				|| remainingAmount.compareTo(Env.ZERO) == 0) {
 			return remainingAmount;
 		}
-		BigDecimal convertedAmount = MConversionRate.convert(payment.getCtx(), remainingAmount, order.getC_Currency_ID(), payment.getC_Currency_ID(), payment.getDateTrx(), order.getC_ConversionType_ID(), order.getAD_Client_ID(), order.getAD_Org_ID());
-		if(convertedAmount == null
-				|| convertedAmount.compareTo(Env.ZERO) == 0) {
-			throw new AdempiereException(MConversionRate.getErrorMessage(payment.getCtx(), "ErrorConvertingDocumentCurrencyToBaseCurrency", order.getC_Currency_ID(), payment.getC_Currency_ID(), order.getC_ConversionType_ID(), payment.getDateTrx(), order.get_TrxName()));
+		BigDecimal convertedAmount = MConversionRate.convert(payment.getCtx(), remainingAmount, order.getC_Currency_ID(), payment.getC_Currency_ID(), payment.getDateAcct(), order.getC_ConversionType_ID(), order.getAD_Client_ID(), order.getAD_Org_ID());
+		if(convertedAmount == null) {
+			convertedAmount = Env.ZERO;
 		}
 		//	
 		return convertedAmount;
@@ -3266,6 +3263,10 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			//	Invoice Rule
 			if (pos.getInvoiceRule() != null) {
 				salesOrder.setInvoiceRule(pos.getInvoiceRule());
+			}
+			//	Conversion Type
+			if(pos.get_ValueAsInt(MOrder.COLUMNNAME_C_ConversionType_ID) > 0) {
+				salesOrder.setC_ConversionType_ID(pos.get_ValueAsInt(MOrder.COLUMNNAME_C_ConversionType_ID));
 			}
 			//	Set business partner
 			setBPartner(pos, salesOrder, request.getCustomerUuid(), request.getSalesRepresentativeUuid(), transactionName);
