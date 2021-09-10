@@ -230,6 +230,30 @@ message TenderTypeRefund {
 	Decimal refund = 2;
 }
 
+//	Address information for request
+message AddressRequest {
+	int32 id = 1;
+	string uuid = 2;
+	string first_name = 3;
+	string last_name = 4;
+	string address1 = 5;
+	string address2 = 6;
+	string address3 = 7;
+	string address4 = 8;
+	string city_uuid = 9;
+	string city_name = 10;
+	string postal_code = 11;
+	string region_uuid = 12;
+	string region_name = 13;
+	string country_uuid = 14;
+	string description = 15;
+	bool is_default_billing = 16;
+	bool is_default_shipping = 17;
+	string contact_name = 18;
+	string email = 19;
+	string phone = 20;
+}
+
 // Request for create Customer
 message CreateCustomerRequest {
 	ClientRequest client_request = 1;
@@ -240,22 +264,10 @@ message CreateCustomerRequest {
 	string name = 6;
 	string last_name = 7;
 	string description = 8;
-	string contact_name = 9;
-	string email = 10;
-	string phone = 11;
 	string business_partner_group_uuid = 12;
+	string pos_uuid = 13;
 	//	Location
-	string address1 = 13;
-	string address2 = 14;
-	string address3 = 15;
-	string address4 = 16;
-	string city_uuid = 17;
-	string city_name = 18;
-	string postal_code = 19;
-	string region_uuid = 20;
-	string region_name = 21;
-	string country_uuid = 22;
-	string pos_uuid = 23;
+	repeated AddressRequest addresses = 14;
 }
 
 // Request for update Customer
@@ -269,22 +281,8 @@ message UpdateCustomerRequest {
 	string name = 7;
 	string last_name = 8;
 	string description = 9;
-	string contact_name = 10;
-	string email = 11;
-	string phone = 12;
 	//	Location
-	string address1 = 13;
-	string address2 = 14;
-	string address3 = 15;
-	string address4 = 16;
-	string city_uuid = 17;
-	string city_name = 18;
-	string postal_code = 19;
-	string region_uuid = 20;
-	string region_name = 21;
-	string country_uuid = 22;
-	string pos_uuid = 23;
-	string address_uuid = 24;
+	repeated AddressRequest addresses = 10;
 }
 
 // Request Get a Customer
@@ -329,6 +327,11 @@ message Address {
 	string country_code = 12;
 	bool is_default_shipping = 13;
 	bool is_default_billing = 14;
+	string contact_name = 17;
+	string email = 18;
+	string description = 19;
+	string first_name = 20;
+	string last_name = 21;
 }
 
 //	City

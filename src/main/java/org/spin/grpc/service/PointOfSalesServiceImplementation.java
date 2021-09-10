@@ -832,7 +832,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			log.fine("Create customer = " + request.getPosUuid());
+			log.fine("Create customer = " + request);
 			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
 					request.getClientRequest().getLanguage(), 
 					request.getClientRequest().getOrganizationUuid(), 
@@ -1360,94 +1360,86 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			}
 			//	Save it
 			businessPartner.saveEx(transactionName);
-			MUser contact = null;
-			//	Contact
-			if(!Util.isEmpty(request.getContactName()) || !Util.isEmpty(request.getEmail()) || !Util.isEmpty(request.getPhone())) {
-				contact = new MUser(businessPartner);
-				//	Name
-				if(!Util.isEmpty(request.getContactName())) {
-					contact.setName(request.getContactName());
-				}
-				//	EMail
-				if(!Util.isEmpty(request.getEmail())) {
-					contact.setEMail(request.getEmail());
-				}
-				//	Phone
-				if(!Util.isEmpty(request.getPhone())) {
-					contact.setPhone(request.getPhone());
-				}
-				//	Description
-				if(!Util.isEmpty(request.getDescription())) {
-					contact.setDescription(request.getDescription());
-				}
-				//	Save
-				contact.saveEx(transactionName);
-	 		}
 			//	Location
-			int countryId = 0;
-			if(!Util.isEmpty(request.getCountryUuid())) {
-				countryId = RecordUtil.getIdFromUuid(I_C_Country.Table_Name, request.getCountryUuid(), transactionName);
-			}
-			//	Instance it
-			MLocation location = new MLocation(Env.getCtx(), 0, transactionName);
-			if(countryId > 0) {
-				int regionId = 0;
-				int cityId = 0;
-				String cityName = null;
+			request.getAddressesList().forEach(address -> {
+				int countryId = 0;
+				if(!Util.isEmpty(address.getCountryUuid())) {
+					countryId = RecordUtil.getIdFromUuid(I_C_Country.Table_Name, address.getCountryUuid(), transactionName);
+				}
+				//	Instance it
+				MLocation location = new MLocation(Env.getCtx(), 0, transactionName);
+				if(countryId > 0) {
+					int regionId = 0;
+					int cityId = 0;
+					String cityName = null;
+					//	
+					if(!Util.isEmpty(address.getRegionUuid())) {
+						regionId = RecordUtil.getIdFromUuid(I_C_Region.Table_Name, address.getRegionUuid(), transactionName);
+					}
+					//	City Name
+					if(!Util.isEmpty(address.getCityName())) {
+						cityName = address.getCityName();
+					}
+					//	City Reference
+					if(!Util.isEmpty(address.getCityUuid())) {
+						cityId = RecordUtil.getIdFromUuid(I_C_City.Table_Name, address.getRegionUuid(), transactionName);
+					}
+					location.setC_Country_ID(countryId);
+					location.setC_Region_ID(regionId);
+					location.setCity(cityName);
+					if(cityId > 0) {
+						location.setC_City_ID(cityId);
+					}
+				} else {
+					//	Copy
+					PO.copyValues(templateLocation, location);
+				}
+				//	Postal Code
+				if(!Util.isEmpty(address.getPostalCode())) {
+					location.setPostal(address.getPostalCode());
+				}
+				//	Address
+				Optional.ofNullable(address.getAddress1()).ifPresent(addressValue -> location.setAddress1(addressValue));
+				Optional.ofNullable(address.getAddress2()).ifPresent(addressValue -> location.setAddress2(addressValue));
+				Optional.ofNullable(address.getAddress3()).ifPresent(addressValue -> location.setAddress3(addressValue));
+				Optional.ofNullable(address.getAddress4()).ifPresent(addressValue -> location.setAddress4(addressValue));
+				Optional.ofNullable(address.getPostalCode()).ifPresent(postalCode -> location.setPostal(postalCode));
 				//	
-				if(!Util.isEmpty(request.getRegionUuid())) {
-					regionId = RecordUtil.getIdFromUuid(I_C_Region.Table_Name, request.getRegionUuid(), transactionName);
-				}
-				//	City Name
-				if(!Util.isEmpty(request.getCityName())) {
-					cityName = request.getCityName();
-				}
-				//	City Reference
-				if(!Util.isEmpty(request.getCityUuid())) {
-					cityId = RecordUtil.getIdFromUuid(I_C_City.Table_Name, request.getRegionUuid(), transactionName);
-				}
-				location.setC_Country_ID(countryId);
-				location.setC_Region_ID(regionId);
-				location.setCity(cityName);
-				if(cityId > 0) {
-					location.setC_City_ID(cityId);
-				}
-			} else {
-				//	Copy
-				PO.copyValues(templateLocation, location);
-			}
-			//	Postal Code
-			if(!Util.isEmpty(request.getPostalCode())) {
-				location.setPostal(request.getPostalCode());
-			}
-			//	Address
-			Optional.ofNullable(request.getAddress1()).ifPresent(address -> location.setAddress1(address));
-			Optional.ofNullable(request.getAddress2()).ifPresent(address -> location.setAddress2(address));
-			Optional.ofNullable(request.getAddress3()).ifPresent(address -> location.setAddress3(address));
-			Optional.ofNullable(request.getAddress4()).ifPresent(address -> location.setAddress4(address));
-			Optional.ofNullable(request.getPostalCode()).ifPresent(postalCode -> location.setPostal(postalCode));
-			//	
-			location.saveEx(transactionName);
-			//	Create BP location
-			MBPartnerLocation businessPartnerLocation = new MBPartnerLocation(businessPartner);
-			businessPartnerLocation.setC_Location_ID(location.getC_Location_ID());
-			//	Phone
-			if(!Util.isEmpty(request.getPhone())) {
-				businessPartnerLocation.setPhone(request.getPhone());
-			}
-			//	Contact
-			if(!Util.isEmpty(request.getContactName())) {
-				businessPartnerLocation.setContactPerson(request.getContactName());
-			}
-			//	Default
-			businessPartnerLocation.setIsBillTo(true);
-			businessPartnerLocation.setIsShipTo(true);
-			//	Save
-			businessPartnerLocation.saveEx(transactionName);
-			//	Set Location
-			Optional.ofNullable(contact).ifPresent(contactToSave -> {
-				contactToSave.setC_BPartner_Location_ID(businessPartnerLocation.getC_BPartner_Location_ID());
-				contactToSave.saveEx(transactionName);
+				location.saveEx(transactionName);
+				//	Create BP location
+				MBPartnerLocation businessPartnerLocation = new MBPartnerLocation(businessPartner);
+				businessPartnerLocation.setC_Location_ID(location.getC_Location_ID());
+				//	Default
+				businessPartnerLocation.setIsBillTo(address.getIsDefaultBilling());
+				businessPartnerLocation.set_ValueOfColumn(VueStoreFrontUtil.COLUMNNAME_IsDefaultBilling, address.getIsDefaultBilling());
+				businessPartnerLocation.setIsShipTo(address.getIsDefaultShipping());
+				businessPartnerLocation.set_ValueOfColumn(VueStoreFrontUtil.COLUMNNAME_IsDefaultShipping, address.getIsDefaultShipping());
+				Optional.ofNullable(address.getContactName()).ifPresent(contactName -> businessPartnerLocation.set_ValueOfColumn("ContactName", contactName));
+				Optional.ofNullable(address.getContactName()).ifPresent(contact -> businessPartnerLocation.setContactPerson(contact));
+				Optional.ofNullable(address.getFirstName()).ifPresent(firstName -> businessPartnerLocation.set_ValueOfColumn("FirstName", firstName));
+				Optional.ofNullable(address.getLastName()).ifPresent(lastName -> businessPartnerLocation.set_ValueOfColumn("LastName", lastName));
+				Optional.ofNullable(address.getEmail()).ifPresent(email -> businessPartnerLocation.setEMail(email));
+				Optional.ofNullable(address.getPhone()).ifPresent(phome -> businessPartnerLocation.setPhone(phome));
+				Optional.ofNullable(address.getDescription()).ifPresent(description -> businessPartnerLocation.set_ValueOfColumn("Description", description));
+				businessPartnerLocation.saveEx(transactionName);
+				//	Contact
+				if(!Util.isEmpty(address.getContactName()) || !Util.isEmpty(address.getEmail()) || !Util.isEmpty(address.getPhone())) {
+					MUser contact = new MUser(businessPartner);
+					Optional.ofNullable(address.getEmail()).ifPresent(email -> contact.setEMail(email));
+					Optional.ofNullable(address.getPhone()).ifPresent(phome -> contact.setPhone(phome));
+					Optional.ofNullable(address.getDescription()).ifPresent(description -> contact.setDescription(description));
+					String contactName = address.getContactName();
+					if(Util.isEmpty(contactName)) {
+						contactName = address.getEmail();
+					}
+					if(Util.isEmpty(contactName)) {
+						contactName = address.getPhone();
+					}
+					contact.setName(contactName);
+					//	Save
+					contact.setC_BPartner_Location_ID(businessPartnerLocation.getC_BPartner_Location_ID());
+					contact.saveEx(transactionName);
+		 		}
 			});
 		});
 		//	Default return
@@ -1486,86 +1478,115 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			Optional.ofNullable(request.getDescription()).ifPresent(value -> businessPartner.setDescription(value));
 			//	Save it
 			businessPartner.saveEx(transactionName);
-			//	Contact
-			if(!Util.isEmpty(request.getContactName()) || !Util.isEmpty(request.getEmail()) || !Util.isEmpty(request.getPhone())) {
-				Optional<MUser> maybeContact = Arrays.asList(businessPartner.getContacts(true)).stream().filter(customerLocation -> customerLocation.isActive()).sorted(Comparator.comparing(MUser::getCreated).reversed()).findFirst();
-				maybeContact.ifPresent(contact -> {
-					if(!Util.isEmpty(request.getContactName())) {
-						contact.setName(request.getContactName());
-					}
-					//	EMail
-					if(!Util.isEmpty(request.getEmail())) {
-						contact.setEMail(request.getEmail());
-					}
-					//	Phone
-					if(!Util.isEmpty(request.getPhone())) {
-						contact.setPhone(request.getPhone());
-					}
-					//	Description
-					if(!Util.isEmpty(request.getDescription())) {
-						contact.setDescription(request.getDescription());
-					}
-					//	Save
-					contact.saveEx(transactionName);
-				});
-	 		}
 			//	Location
-			int countryId = 0;
-			if(!Util.isEmpty(request.getCountryUuid())) {
-				countryId = RecordUtil.getIdFromUuid(I_C_Country.Table_Name, request.getCountryUuid(), transactionName);
-			}
-			//	
-			int regionId = 0;
-			if(!Util.isEmpty(request.getRegionUuid())) {
-				regionId = RecordUtil.getIdFromUuid(I_C_Region.Table_Name, request.getRegionUuid(), transactionName);
-			}
-			String cityName = null;
-			int cityId = 0;
-			//	City Name
-			if(!Util.isEmpty(request.getCityName())) {
-				cityName = request.getCityName();
-			}
-			//	City Reference
-			if(!Util.isEmpty(request.getCityUuid())) {
-				cityId = RecordUtil.getIdFromUuid(I_C_City.Table_Name, request.getRegionUuid(), transactionName);
-			}
-			//	Validate it
-			if(countryId > 0
-					|| regionId > 0
-					|| cityId > 0
-					|| !Util.isEmpty(cityName)) {
-				//	Find it
-				Optional<MBPartnerLocation> maybeCustomerLocation = Arrays.asList(businessPartner.getLocations(true)).stream().filter(customerLocation -> ValueUtil.validateNull(customerLocation.getUUID()).equals(ValueUtil.validateNull(request.getAddressUuid()))).findFirst();
-				if(maybeCustomerLocation.isPresent()) {
-					MLocation location = maybeCustomerLocation.get().getLocation(true);
-					location.set_TrxName(transactionName);
-					if(countryId > 0) {
-						location.setC_Country_ID(countryId);
-					}
-					if(regionId > 0) {
-						location.setC_Region_ID(regionId);
-					}
-					if(cityId > 0) {
-						location.setC_City_ID(cityId);
-					}
-					Optional.ofNullable(cityName).ifPresent(city -> location.setCity(city));
-					if(countryId > 0) {
-						location.setC_Country_ID(countryId);
-					}
-					//	Address
-					Optional.ofNullable(request.getAddress1()).ifPresent(address -> location.setAddress1(address));
-					Optional.ofNullable(request.getAddress2()).ifPresent(address -> location.setAddress2(address));
-					Optional.ofNullable(request.getAddress3()).ifPresent(address -> location.setAddress3(address));
-					Optional.ofNullable(request.getAddress4()).ifPresent(address -> location.setAddress4(address));
-					Optional.ofNullable(request.getPostalCode()).ifPresent(postalCode -> location.setPostal(postalCode));
-					//	Save
-					location.saveEx();
+			request.getAddressesList().forEach(address -> {
+				int countryId = 0;
+				if(!Util.isEmpty(address.getCountryUuid())) {
+					countryId = RecordUtil.getIdFromUuid(I_C_Country.Table_Name, address.getCountryUuid(), transactionName);
 				}
-				customer.set(businessPartner);
-			}
+				//	
+				int regionId = 0;
+				if(!Util.isEmpty(address.getRegionUuid())) {
+					regionId = RecordUtil.getIdFromUuid(I_C_Region.Table_Name, address.getRegionUuid(), transactionName);
+				}
+				String cityName = null;
+				int cityId = 0;
+				//	City Name
+				if(!Util.isEmpty(address.getCityName())) {
+					cityName = address.getCityName();
+				}
+				//	City Reference
+				if(!Util.isEmpty(address.getCityUuid())) {
+					cityId = RecordUtil.getIdFromUuid(I_C_City.Table_Name, address.getRegionUuid(), transactionName);
+				}
+				//	Validate it
+				if(countryId > 0
+						|| regionId > 0
+						|| cityId > 0
+						|| !Util.isEmpty(cityName)) {
+					//	Find it
+					Optional<MBPartnerLocation> maybeCustomerLocation = Arrays.asList(businessPartner.getLocations(true)).stream().filter(customerLocation -> ValueUtil.validateNull(customerLocation.getUUID()).equals(ValueUtil.validateNull(address.getUuid()))).findFirst();
+					if(maybeCustomerLocation.isPresent()) {
+						MBPartnerLocation businessPartnerLocation = maybeCustomerLocation.get();
+						MLocation location = businessPartnerLocation.getLocation(true);
+						location.set_TrxName(transactionName);
+						if(countryId > 0) {
+							location.setC_Country_ID(countryId);
+						}
+						if(regionId > 0) {
+							location.setC_Region_ID(regionId);
+						}
+						if(cityId > 0) {
+							location.setC_City_ID(cityId);
+						}
+						Optional.ofNullable(cityName).ifPresent(city -> location.setCity(city));
+						if(countryId > 0) {
+							location.setC_Country_ID(countryId);
+						}
+						//	Address
+						Optional.ofNullable(address.getAddress1()).ifPresent(addressValue -> location.setAddress1(addressValue));
+						Optional.ofNullable(address.getAddress2()).ifPresent(addressValue -> location.setAddress2(addressValue));
+						Optional.ofNullable(address.getAddress3()).ifPresent(addressValue -> location.setAddress3(addressValue));
+						Optional.ofNullable(address.getAddress4()).ifPresent(addressValue -> location.setAddress4(addressValue));
+						Optional.ofNullable(address.getPostalCode()).ifPresent(postalCode -> location.setPostal(postalCode));
+						//	Save
+						location.saveEx();
+						//	Update business partner location
+						businessPartnerLocation.setIsBillTo(address.getIsDefaultBilling());
+						businessPartnerLocation.set_ValueOfColumn(VueStoreFrontUtil.COLUMNNAME_IsDefaultBilling, address.getIsDefaultBilling());
+						businessPartnerLocation.setIsShipTo(address.getIsDefaultShipping());
+						businessPartnerLocation.set_ValueOfColumn(VueStoreFrontUtil.COLUMNNAME_IsDefaultShipping, address.getIsDefaultShipping());
+						Optional.ofNullable(address.getContactName()).ifPresent(contactName -> businessPartnerLocation.set_ValueOfColumn("ContactName", contactName));
+						Optional.ofNullable(address.getContactName()).ifPresent(contact -> businessPartnerLocation.setContactPerson(contact));
+						Optional.ofNullable(address.getFirstName()).ifPresent(firstName -> businessPartnerLocation.set_ValueOfColumn("FirstName", firstName));
+						Optional.ofNullable(address.getLastName()).ifPresent(lastName -> businessPartnerLocation.set_ValueOfColumn("LastName", lastName));
+						Optional.ofNullable(address.getEmail()).ifPresent(email -> businessPartnerLocation.setEMail(email));
+						Optional.ofNullable(address.getPhone()).ifPresent(phome -> businessPartnerLocation.setPhone(phome));
+						Optional.ofNullable(address.getDescription()).ifPresent(description -> businessPartnerLocation.set_ValueOfColumn("Description", description));
+						businessPartnerLocation.saveEx(transactionName);
+						//	Contact
+						AtomicReference<MUser> contactReference = new AtomicReference<MUser>(getOfBusinessPartnerLocation(businessPartnerLocation, transactionName));
+						if(contactReference.get() == null
+								|| contactReference.get().getAD_User_ID() <= 0) {
+							contactReference.set(new MUser(businessPartner));
+						}
+						if(!Util.isEmpty(address.getContactName()) || !Util.isEmpty(address.getEmail()) || !Util.isEmpty(address.getPhone())) {
+							MUser contact = contactReference.get();
+							Optional.ofNullable(address.getEmail()).ifPresent(email -> contact.setEMail(email));
+							Optional.ofNullable(address.getPhone()).ifPresent(phome -> contact.setPhone(phome));
+							Optional.ofNullable(address.getDescription()).ifPresent(description -> contact.setDescription(description));
+							String contactName = address.getContactName();
+							if(Util.isEmpty(contactName)) {
+								contactName = address.getEmail();
+							}
+							if(Util.isEmpty(contactName)) {
+								contactName = address.getPhone();
+							}
+							contact.setName(contactName);
+							//	Save
+							contact.setC_BPartner_Location_ID(businessPartnerLocation.getC_BPartner_Location_ID());
+							contact.saveEx(transactionName);
+				 		}
+					}
+					customer.set(businessPartner);
+				}
+			});
 		});
 		//	Default return
 		return convertCustomer(customer.get());
+	}
+	
+	/**
+	 * 
+	 * @param businessPartnerLocation
+	 * @param transactionName
+	 * @return
+	 * @return MUser
+	 */
+	private MUser getOfBusinessPartnerLocation(MBPartnerLocation businessPartnerLocation, String transactionName) {
+		return new Query(businessPartnerLocation.getCtx(), MUser.Table_Name, "C_BPartner_Location_ID = ?", transactionName)
+				.setParameters(businessPartnerLocation.getC_BPartner_Location_ID())
+				.first();
 	}
 	
 	/**
@@ -1613,9 +1634,15 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				.setAddress3(ValueUtil.validateNull(location.getAddress3()))
 				.setAddress4(ValueUtil.validateNull(location.getAddress4()))
 				.setPostalCode(ValueUtil.validateNull(location.getPostal()))
+				.setDescription(ValueUtil.validateNull(businessPartnerLocation.get_ValueAsString("Description")))
+				.setFirstName(ValueUtil.validateNull(businessPartnerLocation.get_ValueAsString("FirstName")))
+				.setLastName(ValueUtil.validateNull(businessPartnerLocation.get_ValueAsString("LastName")))
+				.setContactName(ValueUtil.validateNull(businessPartnerLocation.get_ValueAsString("ContactName")))
+				.setEmail(ValueUtil.validateNull(businessPartnerLocation.getEMail()))
+				.setPhone(ValueUtil.validateNull(businessPartnerLocation.getPhone()))
 				.setCountryCode(ValueUtil.validateNull(MCountry.get(Env.getCtx(), location.getC_Country_ID()).getCountryCode()))
-				.setIsDefaultShipping(businessPartnerLocation.isShipTo() && businessPartnerLocation.get_ValueAsBoolean(VueStoreFrontUtil.COLUMNNAME_IsDefaultShipping))
-				.setIsDefaultShipping(businessPartnerLocation.isBillTo() && businessPartnerLocation.get_ValueAsBoolean(VueStoreFrontUtil.COLUMNNAME_IsDefaultBilling));
+				.setIsDefaultShipping(businessPartnerLocation.get_ValueAsBoolean(VueStoreFrontUtil.COLUMNNAME_IsDefaultShipping))
+				.setIsDefaultShipping(businessPartnerLocation.get_ValueAsBoolean(VueStoreFrontUtil.COLUMNNAME_IsDefaultBilling));
 		//	Get user from location
 		MUser user = new Query(Env.getCtx(), I_AD_User.Table_Name, I_AD_User.COLUMNNAME_C_BPartner_Location_ID + " = ?", businessPartnerLocation.get_TrxName())
 				.setParameters(businessPartnerLocation.getC_BPartner_Location_ID())
