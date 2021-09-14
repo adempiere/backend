@@ -602,7 +602,8 @@ message ProcessOrderRequest {
 	string pos_uuid = 2;
 	string order_uuid = 3;
 	bool create_payments = 4;
-	repeated CreatePaymentRequest payments = 5;
+	bool is_open_refund = 5;
+	repeated CreatePaymentRequest payments = 6;
 }
 
 //	Create Payment

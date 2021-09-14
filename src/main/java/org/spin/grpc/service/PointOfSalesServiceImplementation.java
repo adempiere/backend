@@ -1416,8 +1416,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				businessPartnerLocation.set_ValueOfColumn(VueStoreFrontUtil.COLUMNNAME_IsDefaultShipping, address.getIsDefaultShipping());
 				Optional.ofNullable(address.getContactName()).ifPresent(contactName -> businessPartnerLocation.set_ValueOfColumn("ContactName", contactName));
 				Optional.ofNullable(address.getContactName()).ifPresent(contact -> businessPartnerLocation.setContactPerson(contact));
-				Optional.ofNullable(address.getFirstName()).ifPresent(firstName -> businessPartnerLocation.set_ValueOfColumn("FirstName", firstName));
-				Optional.ofNullable(address.getLastName()).ifPresent(lastName -> businessPartnerLocation.set_ValueOfColumn("LastName", lastName));
+				Optional.ofNullable(address.getFirstName()).ifPresent(firstName -> businessPartnerLocation.setName(firstName));
+				Optional.ofNullable(address.getLastName()).ifPresent(lastName -> businessPartnerLocation.set_ValueOfColumn("Name2", lastName));
 				Optional.ofNullable(address.getEmail()).ifPresent(email -> businessPartnerLocation.setEMail(email));
 				Optional.ofNullable(address.getPhone()).ifPresent(phome -> businessPartnerLocation.setPhone(phome));
 				Optional.ofNullable(address.getDescription()).ifPresent(description -> businessPartnerLocation.set_ValueOfColumn("Description", description));
@@ -1538,8 +1538,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 						businessPartnerLocation.set_ValueOfColumn(VueStoreFrontUtil.COLUMNNAME_IsDefaultShipping, address.getIsDefaultShipping());
 						Optional.ofNullable(address.getContactName()).ifPresent(contactName -> businessPartnerLocation.set_ValueOfColumn("ContactName", contactName));
 						Optional.ofNullable(address.getContactName()).ifPresent(contact -> businessPartnerLocation.setContactPerson(contact));
-						Optional.ofNullable(address.getFirstName()).ifPresent(firstName -> businessPartnerLocation.set_ValueOfColumn("FirstName", firstName));
-						Optional.ofNullable(address.getLastName()).ifPresent(lastName -> businessPartnerLocation.set_ValueOfColumn("LastName", lastName));
+						Optional.ofNullable(address.getFirstName()).ifPresent(firstName -> businessPartnerLocation.setName(firstName));
+						Optional.ofNullable(address.getLastName()).ifPresent(lastName -> businessPartnerLocation.set_ValueOfColumn("Name2", lastName));
 						Optional.ofNullable(address.getEmail()).ifPresent(email -> businessPartnerLocation.setEMail(email));
 						Optional.ofNullable(address.getPhone()).ifPresent(phome -> businessPartnerLocation.setPhone(phome));
 						Optional.ofNullable(address.getDescription()).ifPresent(description -> businessPartnerLocation.set_ValueOfColumn("Description", description));
@@ -1635,8 +1635,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				.setAddress4(ValueUtil.validateNull(location.getAddress4()))
 				.setPostalCode(ValueUtil.validateNull(location.getPostal()))
 				.setDescription(ValueUtil.validateNull(businessPartnerLocation.get_ValueAsString("Description")))
-				.setFirstName(ValueUtil.validateNull(businessPartnerLocation.get_ValueAsString("FirstName")))
-				.setLastName(ValueUtil.validateNull(businessPartnerLocation.get_ValueAsString("LastName")))
+				.setFirstName(ValueUtil.validateNull(businessPartnerLocation.getName()))
+				.setLastName(ValueUtil.validateNull(businessPartnerLocation.get_ValueAsString("Name2")))
 				.setContactName(ValueUtil.validateNull(businessPartnerLocation.get_ValueAsString("ContactName")))
 				.setEmail(ValueUtil.validateNull(businessPartnerLocation.getEMail()))
 				.setPhone(ValueUtil.validateNull(businessPartnerLocation.getPhone()))
@@ -1986,7 +1986,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					//	Create
 					request.getPaymentsList().forEach(paymentRequest -> createPayment(salesOrder, paymentRequest, pos, transactionName));
 				}
-				processPayments(salesOrder, pos, transactionName);
+				processPayments(salesOrder, pos, request.getIsOpenRefund(), transactionName);
 				//	Create
 				orderReference.set(salesOrder);
 			});
@@ -2001,10 +2001,11 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 * Process payment of Order
 	 * @param salesOrder
 	 * @param pos
+	 * @param isOpenRefund
 	 * @param transactionName
 	 * @return void
 	 */
-	private void processPayments(MOrder salesOrder, MPOS pos, String transactionName) {
+	private void processPayments(MOrder salesOrder, MPOS pos, boolean isOpenRefund, String transactionName) {
 		//	Get invoice if exists
 		int invoiceId = salesOrder.getC_Invoice_ID();
 		AtomicReference<BigDecimal> openAmount = new AtomicReference<BigDecimal>(salesOrder.getGrandTotal());
@@ -2059,10 +2060,12 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				paymentAllocationLine.saveEx();
 			});
 			//	Add write off
-			if(openAmount.get().compareTo(Env.ZERO) != 0) {
-				MAllocationLine paymentAllocationLine = new MAllocationLine (paymentAllocation, Env.ZERO, Env.ZERO, openAmount.get(), Env.ZERO);
-				paymentAllocationLine.setDocInfo(salesOrder.getC_BPartner_ID(), salesOrder.getC_Order_ID(), invoiceId);
-				paymentAllocationLine.saveEx();
+			if(!isOpenRefund) {
+				if(openAmount.get().compareTo(Env.ZERO) != 0) {
+					MAllocationLine paymentAllocationLine = new MAllocationLine (paymentAllocation, Env.ZERO, Env.ZERO, openAmount.get(), Env.ZERO);
+					paymentAllocationLine.setDocInfo(salesOrder.getC_BPartner_ID(), salesOrder.getC_Order_ID(), invoiceId);
+					paymentAllocationLine.saveEx();
+				}
 			}
 			//	Complete
 			if (!paymentAllocation.processIt(MAllocationHdr.DOCACTION_Complete)) {
