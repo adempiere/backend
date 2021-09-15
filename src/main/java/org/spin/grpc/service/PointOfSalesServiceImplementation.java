@@ -2586,7 +2586,16 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				}
 			});
 		}
-	
+		//	Change for payments
+		MPayment.getOfOrder(order).forEach(payment -> {
+			if(DocumentUtil.isCompleted(payment)
+					|| DocumentUtil.isVoided(payment)) {
+				throw new AdempiereException("@C_Payment_ID@ @Processed@ " + payment.getDocumentNo());
+			}
+			//	Change Business Partner
+			payment.setC_BPartner_ID(order.getC_BPartner_ID());
+			payment.saveEx(transactionName);
+		});
 	}
 	
 	/**
