@@ -29,6 +29,12 @@ package wms;
 service WarehouseManagement {
  	//	Create OutBound Order
 	rpc CreateOutBoundOrder(CreateOutBoundOrderRequest) returns (OutBoundOrder) {}
+	//	Delete OutBound Order
+	rpc DeleteOutBoundOrder(DeleteOutBoundOrderRequest) returns (data.Empty) {}
+	//	Get a OutBound Order
+	rpc GetOutBoundOrder(GetOutBoundOrderRequest) returns (OutBoundOrder) {}
+	//	List OutBound Orders
+	rpc ListOutBoundOrders(ListOutBoundOrdersRequest) returns (ListOutBoundOrdersResponse) {}
 }
 
 //	OutBound Order request to create
@@ -48,4 +54,37 @@ message OutBoundOrder {
 	data.SalesRepresentative sales_representative = 5;
 	data.DocumentStatus document_status = 6;
 	string date_ordered = 7;
+}
+
+// Request for delete a outbound order
+message DeleteOutBoundOrderRequest {
+	data.ClientRequest client_request = 1;
+	string order_uuid = 2;
+}
+
+// Request for get a outbound order
+message GetOutBoundOrderRequest {
+	data.ClientRequest client_request = 1;
+	string order_uuid = 2;
+}
+
+// List OutBound Orders Request
+message ListOutBoundOrdersRequest {
+	data.ClientRequest client_request = 1;
+	string warehouse_uuid = 2;
+	string document_no = 3;
+	string order_reference_uuid = 4;
+	bool is_processed = 8;
+	string pick_date_from = 11;
+	string pick_date_to = 12;
+	string sales_representative_uuid = 13;
+	int32 page_size = 14;
+	string page_token = 15;
+}
+
+//	List OutBound Orders Response
+message ListOutBoundOrdersResponse {
+	int64 record_count = 1;
+	repeated OutBoundOrder outbound_orders = 2;
+	string next_page_token = 3;
 }
