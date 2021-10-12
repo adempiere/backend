@@ -27,8 +27,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.adempiere.exceptions.AdempiereException;
 import org.adempiere.model.I_AD_Browse;
@@ -684,7 +682,7 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 				orderByClause = " ORDER BY " + orderByClause;
 			}
 			//	Count records
-			count = countRecords(parsedSQL, criteria.getTableName(), params);
+			count = RecordUtil.countRecords(parsedSQL, criteria.getTableName(), params);
 			//	Add Row Number
 			parsedSQL = parsedSQL + " AND ROWNUM >= " + offset + " AND ROWNUM <= " + limit;
 			//	Add Order By
@@ -768,24 +766,5 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 		builder.setRecordCount(recordCount);
 		//	Return
 		return builder;
-	}
-	
-	/**
-	 * Count records
-	 * @param sql
-	 * @param tableName
-	 * @param parameters
-	 * @return
-	 */
-	private int countRecords(String sql, String tableName, List<Object> parameters) {
-		Matcher matcher = Pattern.compile("\\b(?:FROM+)+\\s+" + tableName + " AS " + tableName, Pattern.CASE_INSENSITIVE | Pattern.DOTALL).matcher(sql);
-		int positionFrom = -1;
-		if(matcher.find()) {
-			positionFrom = matcher.start();
-		} else {
-			return 0;
-		}
-		String queryCount = "SELECT COUNT(*) " + sql.substring(positionFrom, sql.length());
-		return DB.getSQLValueEx(null, queryCount, parameters);
 	}
 }

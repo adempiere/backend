@@ -186,7 +186,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	/**	Logger			*/
 	private CLogger log = CLogger.getCLogger(PointOfSalesServiceImplementation.class);
 	/**	Product Cache	*/
-	private static CCache<String, MProduct> productCache = new CCache<String, MProduct>(I_M_Product.Table_Name, 30, 0);	//	no time-out
+	private static CCache<String, MProduct> productCache = new CCache<String, MProduct>(I_M_Product.Table_Name, 30, 20);	//	no time-out
 	
 	@Override
 	public void getProductPrice(GetProductPriceRequest request, StreamObserver<ProductPrice> responseObserver) {
@@ -1383,7 +1383,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					}
 					//	City Reference
 					if(!Util.isEmpty(address.getCityUuid())) {
-						cityId = RecordUtil.getIdFromUuid(I_C_City.Table_Name, address.getRegionUuid(), transactionName);
+						cityId = RecordUtil.getIdFromUuid(I_C_City.Table_Name, address.getCityUuid(), transactionName);
 					}
 					location.setC_Country_ID(countryId);
 					location.setC_Region_ID(regionId);
@@ -1498,7 +1498,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				}
 				//	City Reference
 				if(!Util.isEmpty(address.getCityUuid())) {
-					cityId = RecordUtil.getIdFromUuid(I_C_City.Table_Name, address.getRegionUuid(), transactionName);
+					cityId = RecordUtil.getIdFromUuid(I_C_City.Table_Name, address.getCityUuid(), transactionName);
 				}
 				//	Validate it
 				if(countryId > 0
@@ -1521,9 +1521,6 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 							location.setC_City_ID(cityId);
 						}
 						Optional.ofNullable(cityName).ifPresent(city -> location.setCity(city));
-						if(countryId > 0) {
-							location.setC_Country_ID(countryId);
-						}
 						//	Address
 						Optional.ofNullable(address.getAddress1()).ifPresent(addressValue -> location.setAddress1(addressValue));
 						Optional.ofNullable(address.getAddress2()).ifPresent(addressValue -> location.setAddress2(addressValue));
@@ -1641,9 +1638,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				.setContactName(ValueUtil.validateNull(businessPartnerLocation.get_ValueAsString("ContactName")))
 				.setEmail(ValueUtil.validateNull(businessPartnerLocation.getEMail()))
 				.setPhone(ValueUtil.validateNull(businessPartnerLocation.getPhone()))
-				.setCountryCode(ValueUtil.validateNull(MCountry.get(Env.getCtx(), location.getC_Country_ID()).getCountryCode()))
 				.setIsDefaultShipping(businessPartnerLocation.get_ValueAsBoolean(VueStoreFrontUtil.COLUMNNAME_IsDefaultShipping))
-				.setIsDefaultShipping(businessPartnerLocation.get_ValueAsBoolean(VueStoreFrontUtil.COLUMNNAME_IsDefaultBilling));
+				.setIsDefaultBilling(businessPartnerLocation.get_ValueAsBoolean(VueStoreFrontUtil.COLUMNNAME_IsDefaultBilling));
 		//	Get user from location
 		MUser user = new Query(Env.getCtx(), I_AD_User.Table_Name, I_AD_User.COLUMNNAME_C_BPartner_Location_ID + " = ?", businessPartnerLocation.get_TrxName())
 				.setParameters(businessPartnerLocation.getC_BPartner_Location_ID())
@@ -1651,17 +1647,27 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				.first();
 		String phone = null;
 		if(user != null
-				&& user.getAD_User_ID() > 0
-				&& Util.isEmpty(user.getPhone())) {
-			phone = user.getPhone();
+				&& user.getAD_User_ID() > 0) {
+			if(Util.isEmpty(user.getPhone())) {
+				phone = user.getPhone();
+			}
+			if(!Util.isEmpty(user.getName())
+					&& Util.isEmpty(builder.getContactName())) {
+				builder.setContactName(user.getName());
+			}
 		}
 		//	
 		builder.setPhone(ValueUtil.validateNull(Optional.ofNullable(businessPartnerLocation.getPhone()).orElse(Optional.ofNullable(phone).orElse(""))));
+		MCountry country = MCountry.get(Env.getCtx(), location.getC_Country_ID());
+		builder.setCountryCode(ValueUtil.validateNull(country.getCountryCode()))
+			.setCountryUuid(ValueUtil.validateNull(country.getUUID()))
+			.setCountryId(country.getC_Country_ID());
 		//	City
 		if(location.getC_City_ID() > 0) {
 			MCity city = MCity.get(Env.getCtx(), location.getC_City_ID());
 			builder.setCity(City.newBuilder()
 					.setId(city.getC_City_ID())
+					.setUuid(ValueUtil.validateNull(city.getUUID()))
 					.setName(ValueUtil.validateNull(city.getName())));
 		} else {
 			builder.setCity(City.newBuilder()
@@ -1672,10 +1678,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			MRegion region = MRegion.get(Env.getCtx(), location.getC_Region_ID());
 			builder.setRegion(Region.newBuilder()
 					.setId(region.getC_Region_ID())
+					.setUuid(ValueUtil.validateNull(region.getUUID()))
 					.setName(ValueUtil.validateNull(region.getName())));
-		} else {
-			builder.setCity(City.newBuilder()
-					.setName(ValueUtil.validateNull(location.getCity())));
 		}
 		//	
 		return builder;
@@ -2632,7 +2636,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 * @param userPin
      */
 	private Empty.Builder validatePIN(ValidatePINRequest request) {
-		MPOS pos = getPOSFromUuid(request.getPosUuid());
+		MPOS pos = getPOSFromUuid(request.getPosUuid(), false);
 		if(Util.isEmpty(request.getPin())) {
 			throw new AdempiereException("@UserPIN@ @IsMandatory@");
 		}
@@ -3086,6 +3090,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		if(Util.isEmpty(request.getUserUuid())) {
 			throw new AdempiereException("@SalesRep_ID@ @NotFound@");
 		}
+		//	Clear cache
+		productCache.clear();
 		int salesRepresentativeId = RecordUtil.getIdFromUuid(I_AD_User.Table_Name,request.getUserUuid(), null);
 		//	Get page and count
 		String nexPageToken = null;
@@ -3131,7 +3137,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 * @return
 	 */
 	private PointOfSales.Builder getPosBuilder(PointOfSalesRequest request) {
-		return convertPointOfSales(getPOSFromUuid(request.getPosUuid()));
+		return convertPointOfSales(getPOSFromUuid(request.getPosUuid(), true));
 	}
 	
 	/**
@@ -3139,10 +3145,13 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 * @param uuid
 	 * @return
 	 */
-	private MPOS getPOSFromUuid(String uuid) {
+	private MPOS getPOSFromUuid(String uuid, boolean requery) {
 		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, uuid, null);
 		if(posId <= 0) {
 			throw new AdempiereException("@C_POS_ID@ @NotFound@");
+		}
+		if(requery) {
+			return new MPOS(Env.getCtx(), posId, null);
 		}
 		return MPOS.get(Env.getCtx(), posId);
 	}

@@ -67,6 +67,7 @@ import org.compiere.util.Env;
 import org.compiere.util.Language;
 import org.compiere.util.Util;
 import org.spin.base.util.ContextManager;
+import org.spin.base.util.DictionaryUtil;
 import org.spin.base.util.RecordUtil;
 import org.spin.base.util.ReferenceInfo;
 import org.spin.base.util.ReferenceUtil;
@@ -715,7 +716,7 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 				.setIsView(table.isView())
 				.setTabLevel(tab.getTabLevel())
 				.setTableName(ValueUtil.validateNull(table.getTableName()))
-				.setQuery(ValueUtil.validateNull(getQueryWithReferencesFromTab(tab)))
+				.setQuery(ValueUtil.validateNull(DictionaryUtil.getQueryWithReferencesFromTab(tab)))
 				.setWhereClause(whereClause.toString())
 				.setOrderByClause(ValueUtil.validateNull(tab.getOrderByClause()))
 				.setParentTabUuid(ValueUtil.validateNull(parentTabUuid))
@@ -958,48 +959,6 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 				ReferenceInfo referenceInfo = ReferenceUtil.getInstance(Env.getCtx()).getReferenceInfo(displayTypeId, referenceValueId, columnName, Env.getAD_Language(Env.getCtx()), tableName);
 				if(referenceInfo != null) {
 					queryToAdd.append(referenceInfo.getDisplayValue(browseField.getAD_View_Column().getColumnName()));
-					joinsToAdd.append(referenceInfo.getJoinValue(columnName, tableName));
-				}
-			}
-		}
-		queryToAdd.append(joinsToAdd);
-		return queryToAdd.toString();
-	}
-	
-	/**
-	 * Add references to original query from tab
-	 * @param originalQuery
-	 * @return
-	 */
-	private String getQueryWithReferencesFromTab(MTab tab) {
-		MTable table = MTable.get(Env.getCtx(), tab.getAD_Table_ID());
-		String originalQuery = "SELECT " + table.getTableName() + ".* FROM " + table.getTableName() + " AS " + table.getTableName() + " ";
-		int fromIndex = originalQuery.toUpperCase().indexOf(" FROM ");
-		StringBuffer queryToAdd = new StringBuffer(originalQuery.substring(0, fromIndex));
-		StringBuffer joinsToAdd = new StringBuffer(originalQuery.substring(fromIndex, originalQuery.length() - 1));
-		Language language = Language.getLanguage(Env.getAD_Language(Env.getCtx()));
-		for (MField field : tab.getFields(false, null)) {
-			if(!field.isDisplayed()) {
-				continue;
-			}
-			MColumn column = MColumn.get(Env.getCtx(), field.getAD_Column_ID());
-			int displayTypeId = field.getAD_Reference_ID();
-			if(displayTypeId == 0) {
-				displayTypeId = column.getAD_Reference_ID();
-			}
-			if(DisplayType.isLookup(displayTypeId)) {
-				//	Reference Value
-				int referenceValueId = field.getAD_Reference_Value_ID();
-				if(referenceValueId == 0) {
-					referenceValueId = column.getAD_Reference_Value_ID();
-				}
-				//	Validation Code
-				String columnName = column.getColumnName();
-				String tableName = table.getTableName();
-				queryToAdd.append(", ");
-				ReferenceInfo referenceInfo = ReferenceUtil.getInstance(Env.getCtx()).getReferenceInfo(displayTypeId, referenceValueId, columnName, language.getAD_Language(), tableName);
-				if(referenceInfo != null) {
-					queryToAdd.append(referenceInfo.getDisplayValue(columnName));
 					joinsToAdd.append(referenceInfo.getJoinValue(columnName, tableName));
 				}
 			}

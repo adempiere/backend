@@ -41,8 +41,6 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.script.ScriptEngine;
 
@@ -111,6 +109,7 @@ import org.compiere.util.Trx;
 import org.compiere.util.Util;
 import org.spin.base.util.ContextManager;
 import org.spin.base.util.ConvertUtil;
+import org.spin.base.util.DictionaryUtil;
 import org.spin.base.util.RecordUtil;
 import org.spin.base.util.ValueUtil;
 import org.spin.grpc.util.Attachment;
@@ -903,20 +902,27 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 		int count = 0;
 		ListTabEntitiesResponse.Builder builder = ListTabEntitiesResponse.newBuilder();
 		//	
-		Query query = new Query(context, tableName, whereClause.toString(), null)
-				.setParameters(params);
-		count = query.count();
-		if(!Util.isEmpty(criteria.getOrderByClause())) {
-			query.setOrderBy(criteria.getOrderByClause());
+		StringBuilder sql = new StringBuilder(DictionaryUtil.getQueryWithReferencesFromTab(tab));
+		if (whereClause.length() > 0) {
+			sql.append(" WHERE ").append(whereClause); // includes first AND
 		}
-		List<PO> entityList = query
-				.setLimit(limit, offset)
-				.<PO>list();
 		//	
-		for(PO entity : entityList) {
-			Entity.Builder valueObject = ConvertUtil.convertEntity(entity);
-			builder.addRecords(valueObject.build());
+		String parsedSQL = MRole.getDefault().addAccessSQL(sql.toString(),
+				null, MRole.SQL_FULLYQUALIFIED,
+				MRole.SQL_RO);
+		String orderByClause = criteria.getOrderByClause();
+		if(Util.isEmpty(orderByClause)) {
+			orderByClause = "";
+		} else {
+			orderByClause = " ORDER BY " + orderByClause;
 		}
+		//	Count records
+		count = RecordUtil.countRecords(parsedSQL, tableName, params);
+		//	Add Row Number
+		parsedSQL = parsedSQL + " AND ROWNUM >= " + offset + " AND ROWNUM <= " + limit;
+		//	Add Order By
+		parsedSQL = parsedSQL + orderByClause;
+		builder = convertListEntitiesResult(MTable.get(context, tableName), parsedSQL, params);
 		//	
 		builder.setRecordCount(count);
 		//	Set page token
@@ -925,6 +931,73 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 		}
 		//	Set next page
 		builder.setNextPageToken(ValueUtil.validateNull(nexPageToken));
+		//	Return
+		return builder;
+	}
+	
+	/**
+	 * Convert Entities List
+	 * @param table
+	 * @param sql
+	 * @return
+	 */
+	private ListTabEntitiesResponse.Builder convertListEntitiesResult(MTable table, String sql, List<Object> params) {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		ListTabEntitiesResponse.Builder builder = ListTabEntitiesResponse.newBuilder();
+		long recordCount = 0;
+		try {
+			LinkedHashMap<String, MColumn> columnsMap = new LinkedHashMap<>();
+			//	Add field to map
+			for(MColumn column: table.getColumnsAsList()) {
+				columnsMap.put(column.getColumnName().toUpperCase(), column);
+			}
+			//	SELECT Key, Value, Name FROM ...
+			pstmt = DB.prepareStatement(sql, null);
+			AtomicInteger parameterIndex = new AtomicInteger(1);
+			for(Object value : params) {
+				ValueUtil.setParameterFromObject(pstmt, value, parameterIndex.getAndIncrement());
+			} 
+			//	Get from Query
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				Entity.Builder valueObjectBuilder = Entity.newBuilder();
+				ResultSetMetaData metaData = rs.getMetaData();
+				for (int index = 1; index <= metaData.getColumnCount(); index++) {
+					try {
+						String columnName = metaData.getColumnName (index);
+						MColumn field = columnsMap.get(columnName.toUpperCase());
+						Value.Builder valueBuilder = Value.newBuilder();
+						//	Display Columns
+						if(field == null) {
+							String value = rs.getString(index);
+							if(!Util.isEmpty(value)) {
+								valueBuilder = ValueUtil.getValueFromString(value);
+								valueObjectBuilder.putValues(columnName, valueBuilder.build());
+							}
+							continue;
+						}
+						//	From field
+						String fieldColumnName = field.getColumnName();
+						valueBuilder = ValueUtil.getValueFromReference(rs.getObject(index), field.getAD_Reference_ID());
+						if(!valueBuilder.getValueType().equals(Value.ValueType.UNRECOGNIZED)) {
+							valueObjectBuilder.putValues(fieldColumnName, valueBuilder.build());
+						}
+					} catch (Exception e) {
+						log.severe(e.getLocalizedMessage());
+					}
+				}
+				//	
+				builder.addRecords(valueObjectBuilder.build());
+				recordCount++;
+			}
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+		} finally {
+			DB.close(rs, pstmt);
+		}
+		//	Set record counts
+		builder.setRecordCount(recordCount);
 		//	Return
 		return builder;
 	}
@@ -2410,7 +2483,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 			orderByClause = " ORDER BY " + orderByClause;
 		}
 		//	Count records
-		int count = countRecords(parsedSQL, tableName, values);
+		int count = RecordUtil.countRecords(parsedSQL, tableName, values);
 		String nexPageToken = null;
 		int pageMultiplier = page == 0? 1: page;
 		if(count > (RecordUtil.PAGE_SIZE * pageMultiplier)) {
@@ -2430,25 +2503,6 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 		builder.setNextPageToken(ValueUtil.validateNull(nexPageToken));
 		//	Return
 		return builder;
-	}
-	
-	/**
-	 * Count records
-	 * @param sql
-	 * @param tableName
-	 * @param parameters
-	 * @return
-	 */
-	private int countRecords(String sql, String tableName, List<Object> parameters) {
-		Matcher matcher = Pattern.compile("[[FROM]+[\\s]?]" + tableName, Pattern.CASE_INSENSITIVE | Pattern.DOTALL).matcher(sql);
-		int positionFrom = -1;
-		if(matcher.find()) {
-			positionFrom = matcher.start();
-		} else {
-			return 0;
-		}
-		String queryCount = "SELECT COUNT(*) FROM " + sql.substring(positionFrom, sql.length());
-		return DB.getSQLValueEx(null, queryCount, parameters);
 	}
 	
 	/**

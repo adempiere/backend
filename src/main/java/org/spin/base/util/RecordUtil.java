@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.adempiere.exceptions.AdempiereException;
 import org.adempiere.pipo.IDFinder;
@@ -28,6 +30,7 @@ import org.compiere.model.MClientInfo;
 import org.compiere.model.MConversionRate;
 import org.compiere.model.PO;
 import org.compiere.model.Query;
+import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.compiere.util.TimeUtil;
 import org.compiere.util.Util;
@@ -227,5 +230,24 @@ public class RecordUtil {
 		}
 		//	
 		return null;
+	}
+	
+	/**
+	 * Count records
+	 * @param sql
+	 * @param tableName
+	 * @param parameters
+	 * @return
+	 */
+	public static int countRecords(String sql, String tableName, List<Object> parameters) {
+		Matcher matcher = Pattern.compile("\\b(?:FROM+)+\\s+" + tableName + " AS " + tableName, Pattern.CASE_INSENSITIVE | Pattern.DOTALL).matcher(sql);
+		int positionFrom = -1;
+		if(matcher.find()) {
+			positionFrom = matcher.start();
+		} else {
+			return 0;
+		}
+		String queryCount = "SELECT COUNT(*) " + sql.substring(positionFrom, sql.length());
+		return DB.getSQLValueEx(null, queryCount, parameters);
 	}
 }

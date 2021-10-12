@@ -325,8 +325,10 @@ message Address {
 	string phone = 10;
 	string postal_code = 11;
 	string country_code = 12;
-	bool is_default_shipping = 13;
-	bool is_default_billing = 14;
+	string country_uuid = 13;
+	int32 country_id = 14;
+	bool is_default_shipping = 15;
+	bool is_default_billing = 16;
 	string contact_name = 17;
 	string email = 18;
 	string description = 19;
