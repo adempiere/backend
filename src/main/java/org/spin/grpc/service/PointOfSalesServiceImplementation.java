@@ -2463,7 +2463,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				//	Document Type
 				if(!Util.isEmpty(request.getDocumentTypeUuid())) {
 					int documentTypeId = RecordUtil.getIdFromUuid(I_C_DocType.Table_Name, request.getDocumentTypeUuid(), transactionName);
-					if(documentTypeId > 0) {
+					if(documentTypeId > 0
+							&& documentTypeId != salesOrder.getC_DocTypeTarget_ID()) {
 						salesOrder.setC_DocTypeTarget_ID(documentTypeId);
 						salesOrder.setC_DocType_ID(documentTypeId);
 						//	Set Sequenced No
