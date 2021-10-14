@@ -99,6 +99,104 @@ service Store {
 	rpc DeleteCustomerBankAccount(DeleteCustomerBankAccountRequest) returns (Empty) {}
 	//	List Customer Accounts
 	rpc ListCustomerBankAccounts(ListCustomerBankAccountsRequest) returns (ListCustomerBankAccountsResponse) {}
+	//	shipment
+	//	Create Shipment
+	rpc CreateShipment(CreateShipmentRequest) returns (Shipment) {}
+	//	Delete Shipment
+	rpc DeleteShipment(DeleteShipmentRequest) returns (Empty) {}
+	//	Create Shipment Line
+	rpc CreateShipmentLine(CreateShipmentLineRequest) returns (ShipmentLine) {}
+	//	Delete Shipment Line
+	rpc DeleteShipmentLine(DeleteShipmentLineRequest) returns (Empty) {}
+	//	Update Order Line
+	rpc UpdateShipmentLine(UpdateShipmentLineRequest) returns (ShipmentLine) {}
+	//	Get a Open Shipment
+	rpc GetOpenShipment(GetOpenShipmentRequest) returns (Shipment) {}
+	//	List Shipment Line
+	rpc ListShipmentLines(ListShipmentLinesRequest) returns (ListShipmentLinesResponse) {}
+}
+
+// Request for create a Shipment from Order
+message CreateShipmentRequest {
+	ClientRequest client_request = 1;
+	string order_uuid = 2;
+	string sales_representative_uuid = 3;
+}
+
+// Request for create a Shipment from Order
+message GetOpenShipmentRequest {
+	ClientRequest client_request = 1;
+	string order_uuid = 2;
+	string pos_uuid = 3;
+}
+
+// Request for delete a Shipment
+message DeleteShipmentRequest {
+	ClientRequest client_request = 1;
+	string shipment_uuid = 2;
+}
+
+// Request for delete a Shipment Line
+message DeleteShipmentLineRequest {
+	ClientRequest client_request = 1;
+	string shipment_line_uuid = 2;
+}
+
+// Request for delete a Shipment Line
+message UpdateShipmentLineRequest {
+	ClientRequest client_request = 1;
+	string shipment_line_uuid = 2;
+	string description = 5;
+	Decimal quantity = 6;
+}
+
+// Request for Create a Shipment Line
+message CreateShipmentLineRequest {
+	ClientRequest client_request = 1;
+	string shipment_uuid = 2;
+	string order_line_uuid = 3;
+	string description = 5;
+	Decimal quantity = 6;	
+}
+
+//	List Shipment Lines Request
+message ListShipmentLinesRequest {
+	ClientRequest client_request = 1;
+	string shipment_uuid = 2;
+	int32 page_size = 3;
+	string page_token = 4;
+}
+
+//	List shipment Lines
+message ListShipmentLinesResponse {
+	int64 record_count = 1;
+	repeated ShipmentLine shipment_lines = 2;
+	string next_page_token = 3;
+}
+
+// Shipment
+message Shipment {
+	string uuid = 1;
+	int32 id = 2;
+	string document_no = 3;
+	DocumentType document_type = 4;
+	SalesRepresentative sales_representative = 5;
+	DocumentStatus document_status = 6;
+	Warehouse warehouse = 7;
+	string movement_date = 8;
+	string order_uuid = 9;
+}
+
+// Sales Shipment Line
+message ShipmentLine {
+	int32 id = 1;
+	string uuid = 2;
+	string order_line_uuid = 3;
+	Product product = 4;
+	Charge charge = 5;
+	string description = 6;
+	Decimal quantity = 7;
+	int32 line = 8;
 }
 
 //	List Customer Accounts Request
@@ -580,11 +678,13 @@ message PointOfSales {
 	bool is_allows_return_order = 21;
 	bool is_allows_collect_order = 22;
 	bool is_allows_create_order = 23;
-	bool is_display_tax_amount = 24;
-	bool is_display_discount = 25;
-	Decimal maximum_refund_allowed = 26;
-	Decimal maximum_daily_refund_allowed = 27;
-	Currency refund_reference_currency = 28;
+	bool is_allows_confirm_shipment = 24;
+	bool is_display_tax_amount = 25;
+	bool is_display_discount = 26;
+	Decimal maximum_refund_allowed = 27;
+	Decimal maximum_daily_refund_allowed = 28;
+	Currency refund_reference_currency = 29;
+	DocumentType return_document_type = 30;
 }
 
 // Request for create a order
@@ -763,10 +863,12 @@ message Order {
 	DocumentType document_type = 4;
 	SalesRepresentative sales_representative = 5;
 	DocumentStatus document_status = 6;
-	Decimal total_lines = 7;
-	Decimal grand_total = 8;
-	string date_ordered = 9;
-	Customer customer = 10;
+	PriceList price_list = 7;
+	Warehouse warehouse = 8;
+	Decimal total_lines = 9;
+	Decimal grand_total = 10;
+	string date_ordered = 11;
+	Customer customer = 12;
 }
 
 // Sales Order Line

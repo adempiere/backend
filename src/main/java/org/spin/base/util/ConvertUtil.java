@@ -15,58 +15,91 @@
  *************************************************************************************/
 package org.spin.base.util;
 
+import java.util.Arrays;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.compiere.model.I_AD_Element;
+import org.compiere.model.I_AD_Ref_List;
+import org.compiere.model.I_AD_User;
 import org.compiere.model.I_C_ConversionType;
+import org.compiere.model.I_C_Order;
+import org.compiere.model.I_C_POSKeyLayout;
 import org.compiere.model.MAttachment;
+import org.compiere.model.MBPBankAccount;
 import org.compiere.model.MBPartner;
+import org.compiere.model.MBPartnerLocation;
+import org.compiere.model.MBank;
 import org.compiere.model.MBankAccount;
 import org.compiere.model.MCharge;
 import org.compiere.model.MChatEntry;
+import org.compiere.model.MCity;
 import org.compiere.model.MClientInfo;
 import org.compiere.model.MConversionRate;
 import org.compiere.model.MCountry;
 import org.compiere.model.MCurrency;
 import org.compiere.model.MDocType;
+import org.compiere.model.MInOut;
+import org.compiere.model.MInOutLine;
 import org.compiere.model.MLanguage;
+import org.compiere.model.MLocation;
+import org.compiere.model.MOrder;
+import org.compiere.model.MOrderLine;
 import org.compiere.model.MOrg;
 import org.compiere.model.MOrgInfo;
+import org.compiere.model.MPOSKey;
+import org.compiere.model.MPOSKeyLayout;
 import org.compiere.model.MPriceList;
 import org.compiere.model.MProduct;
 import org.compiere.model.MProductCategory;
+import org.compiere.model.MRefList;
+import org.compiere.model.MRegion;
 import org.compiere.model.MTax;
 import org.compiere.model.MUOM;
 import org.compiere.model.MUser;
 import org.compiere.model.MWarehouse;
 import org.compiere.model.PO;
 import org.compiere.model.POInfo;
+import org.compiere.model.Query;
 import org.compiere.util.Env;
 import org.compiere.util.MimeType;
 import org.compiere.util.Util;
+import org.spin.grpc.util.Address;
 import org.spin.grpc.util.Attachment;
 import org.spin.grpc.util.BankAccount;
 import org.spin.grpc.util.BusinessPartner;
 import org.spin.grpc.util.Charge;
 import org.spin.grpc.util.ChatEntry;
+import org.spin.grpc.util.City;
 import org.spin.grpc.util.ConversionRate;
 import org.spin.grpc.util.Country;
 import org.spin.grpc.util.Currency;
+import org.spin.grpc.util.Customer;
+import org.spin.grpc.util.CustomerBankAccount;
 import org.spin.grpc.util.DocumentAction;
 import org.spin.grpc.util.DocumentStatus;
 import org.spin.grpc.util.DocumentType;
 import org.spin.grpc.util.Entity;
+import org.spin.grpc.util.Key;
+import org.spin.grpc.util.KeyLayout;
+import org.spin.grpc.util.Order;
+import org.spin.grpc.util.OrderLine;
 import org.spin.grpc.util.Organization;
 import org.spin.grpc.util.PriceList;
 import org.spin.grpc.util.Product;
+import org.spin.grpc.util.Region;
 import org.spin.grpc.util.ResourceReference;
+import org.spin.grpc.util.SalesRepresentative;
+import org.spin.grpc.util.Shipment;
+import org.spin.grpc.util.ShipmentLine;
 import org.spin.grpc.util.TaxRate;
 import org.spin.grpc.util.Value;
 import org.spin.grpc.util.Warehouse;
 import org.spin.grpc.util.ChatEntry.ModeratorStatus;
 import org.spin.model.MADAttachmentReference;
 import org.spin.util.AttachmentUtil;
+import org.spin.util.VueStoreFrontUtil;
 
 /**
  * Class for convert any document
@@ -434,6 +467,353 @@ public class ConvertUtil {
 			.setIsEnforcePriceLimit(priceList.isEnforcePriceLimit())
 			.setIsNetPrice(priceList.isNetPrice())
 			.setPricePrecision(priceList.getPricePrecision());
+	}
+	
+	/**
+	 * Convert Order from entity
+	 * @param order
+	 * @return
+	 */
+	public static  Order.Builder convertOrder(MOrder order) {
+		Order.Builder builder = Order.newBuilder();
+		if(order == null) {
+			return builder;
+		}
+		MRefList reference = MRefList.get(Env.getCtx(), MOrder.DOCSTATUS_AD_REFERENCE_ID, order.getDocStatus(), null);
+		//	Convert
+		return builder
+			.setUuid(ValueUtil.validateNull(order.getUUID()))
+			.setId(order.getC_Order_ID())
+			.setDocumentType(ConvertUtil.convertDocumentType(MDocType.get(Env.getCtx(), order.getC_DocTypeTarget_ID())))
+			.setDocumentNo(ValueUtil.validateNull(order.getDocumentNo()))
+			.setSalesRepresentative(convertSalesRepresentative(MUser.get(Env.getCtx(), order.getSalesRep_ID())))
+			.setDocumentStatus(ConvertUtil.convertDocumentStatus(
+					ValueUtil.validateNull(order.getDocStatus()), 
+					ValueUtil.validateNull(ValueUtil.getTranslation(reference, I_AD_Ref_List.COLUMNNAME_Name)), 
+					ValueUtil.validateNull(ValueUtil.getTranslation(reference, I_AD_Ref_List.COLUMNNAME_Description))))
+			.setPriceList(ConvertUtil.convertPriceList(MPriceList.get(Env.getCtx(), order.getM_PriceList_ID(), order.get_TrxName())))
+			.setWarehouse(convertWarehouse(order.getM_Warehouse_ID()))
+			.setTotalLines(ValueUtil.getDecimalFromBigDecimal(order.getTotalLines()))
+			.setGrandTotal(ValueUtil.getDecimalFromBigDecimal(order.getGrandTotal()))
+			.setDateOrdered(ValueUtil.convertDateToString(order.getDateOrdered()))
+			.setCustomer(convertCustomer((MBPartner) order.getC_BPartner()));
+	}
+	
+	/**
+	 * Convert customer bank account
+	 * @param customerBankAccount
+	 * @return
+	 * @return CustomerBankAccount.Builder
+	 */
+	public static CustomerBankAccount.Builder convertCustomerBankAccount(MBPBankAccount customerBankAccount) {
+		CustomerBankAccount.Builder builder = CustomerBankAccount.newBuilder();
+		builder.setCustomerBankAccountUuid(ValueUtil.validateNull(customerBankAccount.getUUID()))
+			.setCity(ValueUtil.validateNull(customerBankAccount.getA_City()))
+			.setCountry(ValueUtil.validateNull(customerBankAccount.getA_Country()))
+			.setEmail(ValueUtil.validateNull(customerBankAccount.getA_EMail()))
+			.setDriverLicense(ValueUtil.validateNull(customerBankAccount.getA_Ident_DL()))
+			.setSocialSecurityNumber(ValueUtil.validateNull(customerBankAccount.getA_Ident_SSN()))
+			.setName(ValueUtil.validateNull(customerBankAccount.getA_Name()))
+			.setState(ValueUtil.validateNull(customerBankAccount.getA_State()))
+			.setStreet(ValueUtil.validateNull(customerBankAccount.getA_Street()))
+			.setZip(ValueUtil.validateNull(customerBankAccount.getA_Zip()))
+			.setBankAccountType(ValueUtil.validateNull(customerBankAccount.getBankAccountType()));
+		if(customerBankAccount.getC_Bank_ID() > 0) {
+			MBank bank = MBank.get(Env.getCtx(), customerBankAccount.getC_Bank_ID());
+			builder.setBankUuid(ValueUtil.validateNull(bank.getUUID()));
+		}
+		MBPartner customer = MBPartner.get(Env.getCtx(), customerBankAccount.getC_BPartner_ID());
+		builder.setCustomerUuid(ValueUtil.validateNull(customer.getUUID()));
+		builder.setAddressVerified(ValueUtil.validateNull(customerBankAccount.getR_AvsAddr()))
+			.setZipVerified(ValueUtil.validateNull(customerBankAccount.getR_AvsZip()))
+			.setRoutingNo(ValueUtil.validateNull(customerBankAccount.getRoutingNo()))
+			.setIban(ValueUtil.validateNull(customerBankAccount.getIBAN())) ;
+		return builder;
+	}
+	
+	/**
+	 * Convert Order from entity
+	 * @param shipment
+	 * @return
+	 */
+	public static  Shipment.Builder convertShipment(MInOut shipment) {
+		Shipment.Builder builder = Shipment.newBuilder();
+		if(shipment == null) {
+			return builder;
+		}
+		MRefList reference = MRefList.get(Env.getCtx(), MOrder.DOCSTATUS_AD_REFERENCE_ID, shipment.getDocStatus(), null);
+		MOrder order = (MOrder) shipment.getC_Order();
+		//	Convert
+		return builder
+			.setUuid(ValueUtil.validateNull(shipment.getUUID()))
+			.setOrderUuid(ValueUtil.validateNull(order.getUUID()))
+			.setId(shipment.getM_InOut_ID())
+			.setDocumentType(ConvertUtil.convertDocumentType(MDocType.get(Env.getCtx(), shipment.getC_DocType_ID())))
+			.setDocumentNo(ValueUtil.validateNull(shipment.getDocumentNo()))
+			.setSalesRepresentative(convertSalesRepresentative(MUser.get(Env.getCtx(), shipment.getSalesRep_ID())))
+			.setDocumentStatus(ConvertUtil.convertDocumentStatus(
+					ValueUtil.validateNull(shipment.getDocStatus()), 
+					ValueUtil.validateNull(ValueUtil.getTranslation(reference, I_AD_Ref_List.COLUMNNAME_Name)), 
+					ValueUtil.validateNull(ValueUtil.getTranslation(reference, I_AD_Ref_List.COLUMNNAME_Description))))
+			.setWarehouse(convertWarehouse(shipment.getM_Warehouse_ID()))
+			.setMovementDate(ValueUtil.convertDateToString(shipment.getMovementDate()));
+	}
+	
+	/**
+	 * Convert order line to stub
+	 * @param orderLine
+	 * @return
+	 */
+	public static OrderLine.Builder convertOrderLine(MOrderLine orderLine) {
+		OrderLine.Builder builder = OrderLine.newBuilder();
+		if(orderLine == null) {
+			return builder;
+		}
+		//	Convert
+		return builder
+				.setUuid(ValueUtil.validateNull(orderLine.getUUID()))
+				.setOrderUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_Order.Table_Name, orderLine.getC_Order_ID())))
+				.setLine(orderLine.getLine())
+				.setDescription(ValueUtil.validateNull(orderLine.getDescription()))
+				.setLineDescription(ValueUtil.validateNull(orderLine.getName()))
+				.setProduct(convertProduct(orderLine.getM_Product_ID()))
+				.setCharge(convertCharge(orderLine.getC_Charge_ID()))
+				.setWarehouse(convertWarehouse(orderLine.getM_Warehouse_ID()))
+				.setQuantity(ValueUtil.getDecimalFromBigDecimal(orderLine.getQtyOrdered()))
+				.setPrice(ValueUtil.getDecimalFromBigDecimal(orderLine.getPriceActual()))
+				.setPriceList(ValueUtil.getDecimalFromBigDecimal(orderLine.getPriceList()))
+				.setDiscountRate(ValueUtil.getDecimalFromBigDecimal(orderLine.getDiscount()))
+				.setTaxRate(ConvertUtil.convertTaxRate(MTax.get(Env.getCtx(), orderLine.getC_Tax_ID())))
+				.setLineNetAmount(ValueUtil.getDecimalFromBigDecimal(orderLine.getLineNetAmt()));
+	}
+	
+	/**
+	 * Convert shipment line to stub
+	 * @param shipmentLine
+	 * @return
+	 */
+	public static ShipmentLine.Builder convertShipmentLine(MInOutLine shipmentLine) {
+		ShipmentLine.Builder builder = ShipmentLine.newBuilder();
+		if(shipmentLine == null) {
+			return builder;
+		}
+		MOrderLine orderLine = (MOrderLine) shipmentLine.getC_OrderLine();
+		//	Convert
+		return builder
+				.setUuid(ValueUtil.validateNull(shipmentLine.getUUID()))
+				.setOrderLineUuid(ValueUtil.validateNull(orderLine.getUUID()))
+				.setId(shipmentLine.getM_InOutLine_ID())
+				.setLine(shipmentLine.getLine())
+				.setDescription(ValueUtil.validateNull(shipmentLine.getDescription()))
+				.setProduct(convertProduct(shipmentLine.getM_Product_ID()))
+				.setCharge(convertCharge(shipmentLine.getC_Charge_ID()))
+				.setQuantity(ValueUtil.getDecimalFromBigDecimal(shipmentLine.getMovementQty()));
+	}
+	
+	/**
+	 * Convert product
+	 * @param productId
+	 * @return
+	 */
+	public static Product.Builder convertProduct(int productId) {
+		Product.Builder builder = Product.newBuilder();
+		if(productId <= 0) {
+			return builder;
+		}
+		return ConvertUtil.convertProduct(MProduct.get(Env.getCtx(), productId));
+	}
+	
+	/**
+	 * Convert charge
+	 * @param chargeId
+	 * @return
+	 */
+	public static Charge.Builder convertCharge(int chargeId) {
+		Charge.Builder builder = Charge.newBuilder();
+		if(chargeId <= 0) {
+			return builder;
+		}
+		return ConvertUtil.convertCharge(MCharge.get(Env.getCtx(), chargeId));
+	}
+	
+	/**
+	 * convert warehouse from id
+	 * @param warehouseId
+	 * @return
+	 */
+	public static Warehouse.Builder convertWarehouse(int warehouseId) {
+		Warehouse.Builder builder = Warehouse.newBuilder();
+		if(warehouseId <= 0) {
+			return builder;
+		}
+		return ConvertUtil.convertWarehouse(MWarehouse.get(Env.getCtx(), warehouseId));
+	}
+	
+	/**
+	 * Convert key layout from id
+	 * @param keyLayoutId
+	 * @return
+	 */
+	public static KeyLayout.Builder convertKeyLayout(int keyLayoutId) {
+		KeyLayout.Builder builder = KeyLayout.newBuilder();
+		if(keyLayoutId <= 0) {
+			return builder;
+		}
+		return convertKeyLayout(MPOSKeyLayout.get(Env.getCtx(), keyLayoutId));
+	}
+	
+	/**
+	 * Convert Key Layout from PO
+	 * @param keyLayout
+	 * @return
+	 */
+	public static KeyLayout.Builder convertKeyLayout(MPOSKeyLayout keyLayout) {
+		KeyLayout.Builder builder = KeyLayout.newBuilder()
+				.setUuid(ValueUtil.validateNull(keyLayout.getUUID()))
+				.setId(keyLayout.getC_POSKeyLayout_ID())
+				.setName(ValueUtil.validateNull(keyLayout.getName()))
+				.setDescription(ValueUtil.validateNull(keyLayout.getDescription()))
+				.setHelp(ValueUtil.validateNull(keyLayout.getHelp()))
+				.setLayoutType(ValueUtil.validateNull(keyLayout.getPOSKeyLayoutType()))
+				.setColumns(keyLayout.getColumns());
+				//	TODO: Color
+		//	Add keys
+		Arrays.asList(keyLayout.getKeys(false)).stream().filter(key -> key.isActive()).forEach(key -> builder.addKeys(convertKey(key)));
+		return builder;
+	}
+	
+	/**
+	 * Convet key for layout
+	 * @param key
+	 * @return
+	 */
+	public static Key.Builder convertKey(MPOSKey key) {
+		String productValue = null;
+		if(key.getM_Product_ID() > 0) {
+			productValue = MProduct.get(Env.getCtx(), key.getM_Product_ID()).getValue();
+		}
+		return Key.newBuilder()
+				.setUuid(ValueUtil.validateNull(key.getUUID()))
+				.setId(key.getC_POSKeyLayout_ID())
+				.setName(ValueUtil.validateNull(key.getName()))
+				//	TODO: Color
+				.setSequence(key.getSeqNo())
+				.setSpanX(key.getSpanX())
+				.setSpanY(key.getSpanY())
+				.setSubKeyLayoutUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_POSKeyLayout.Table_Name, key.getSubKeyLayout_ID())))
+				.setQuantity(ValueUtil.getDecimalFromBigDecimal(Optional.ofNullable(key.getQty()).orElse(Env.ZERO)))
+				.setProductValue(ValueUtil.validateNull(productValue))
+				.setResourceReference(ConvertUtil.convertResourceReference(RecordUtil.getResourceFromImageId(key.getAD_Image_ID())));
+	}
+	
+	/**
+	 * Convert Sales Representative
+	 * @param salesRepresentative
+	 * @return
+	 */
+	public static SalesRepresentative.Builder convertSalesRepresentative(MUser salesRepresentative) {
+		return SalesRepresentative.newBuilder()
+				.setUuid(ValueUtil.validateNull(salesRepresentative.getUUID()))
+				.setId(salesRepresentative.getAD_User_ID())
+				.setName(ValueUtil.validateNull(salesRepresentative.getName()))
+				.setDescription(ValueUtil.validateNull(salesRepresentative.getDescription()));
+	}
+	
+	/**
+	 * Convert customer
+	 * @param businessPartner
+	 * @return
+	 */
+	public static Customer.Builder convertCustomer(MBPartner businessPartner) {
+		if(businessPartner == null) {
+			return Customer.newBuilder();
+		}
+		Customer.Builder customer = Customer.newBuilder()
+				.setUuid(ValueUtil.validateNull(businessPartner.getUUID()))
+				.setId(businessPartner.getC_BPartner_ID())
+				.setValue(ValueUtil.validateNull(businessPartner.getValue()))
+				.setTaxId(ValueUtil.validateNull(businessPartner.getTaxID()))
+				.setDuns(ValueUtil.validateNull(businessPartner.getDUNS()))
+				.setNaics(ValueUtil.validateNull(businessPartner.getNAICS()))
+				.setName(ValueUtil.validateNull(businessPartner.getName()))
+				.setLastName(ValueUtil.validateNull(businessPartner.getName2()))
+				.setDescription(ValueUtil.validateNull(businessPartner.getDescription()));
+		//	Add Address
+		Arrays.asList(businessPartner.getLocations(true)).stream().filter(customerLocation -> customerLocation.isActive()).forEach(address -> customer.addAddresses(convertCustomerAddress(address)));
+		return customer;
+	}
+	
+	/**
+	 * Convert Address
+	 * @param businessPartnerLocation
+	 * @return
+	 * @return Address.Builder
+	 */
+	public static Address.Builder convertCustomerAddress(MBPartnerLocation businessPartnerLocation) {
+		if(businessPartnerLocation == null) {
+			return Address.newBuilder();
+		}
+		MLocation location = businessPartnerLocation.getLocation(true);
+		Address.Builder builder =  Address.newBuilder()
+				.setUuid(ValueUtil.validateNull(businessPartnerLocation.getUUID()))
+				.setId(businessPartnerLocation.getC_BPartner_Location_ID())
+				.setPostalCode(ValueUtil.validateNull(location.getPostal()))
+				.setAddress1(ValueUtil.validateNull(location.getAddress1()))
+				.setAddress2(ValueUtil.validateNull(location.getAddress2()))
+				.setAddress3(ValueUtil.validateNull(location.getAddress3()))
+				.setAddress4(ValueUtil.validateNull(location.getAddress4()))
+				.setPostalCode(ValueUtil.validateNull(location.getPostal()))
+				.setDescription(ValueUtil.validateNull(businessPartnerLocation.get_ValueAsString("Description")))
+				.setFirstName(ValueUtil.validateNull(businessPartnerLocation.getName()))
+				.setLastName(ValueUtil.validateNull(businessPartnerLocation.get_ValueAsString("Name2")))
+				.setContactName(ValueUtil.validateNull(businessPartnerLocation.get_ValueAsString("ContactName")))
+				.setEmail(ValueUtil.validateNull(businessPartnerLocation.getEMail()))
+				.setPhone(ValueUtil.validateNull(businessPartnerLocation.getPhone()))
+				.setIsDefaultShipping(businessPartnerLocation.get_ValueAsBoolean(VueStoreFrontUtil.COLUMNNAME_IsDefaultShipping))
+				.setIsDefaultBilling(businessPartnerLocation.get_ValueAsBoolean(VueStoreFrontUtil.COLUMNNAME_IsDefaultBilling));
+		//	Get user from location
+		MUser user = new Query(Env.getCtx(), I_AD_User.Table_Name, I_AD_User.COLUMNNAME_C_BPartner_Location_ID + " = ?", businessPartnerLocation.get_TrxName())
+				.setParameters(businessPartnerLocation.getC_BPartner_Location_ID())
+				.setOnlyActiveRecords(true)
+				.first();
+		String phone = null;
+		if(user != null
+				&& user.getAD_User_ID() > 0) {
+			if(Util.isEmpty(user.getPhone())) {
+				phone = user.getPhone();
+			}
+			if(!Util.isEmpty(user.getName())
+					&& Util.isEmpty(builder.getContactName())) {
+				builder.setContactName(user.getName());
+			}
+		}
+		//	
+		builder.setPhone(ValueUtil.validateNull(Optional.ofNullable(businessPartnerLocation.getPhone()).orElse(Optional.ofNullable(phone).orElse(""))));
+		MCountry country = MCountry.get(Env.getCtx(), location.getC_Country_ID());
+		builder.setCountryCode(ValueUtil.validateNull(country.getCountryCode()))
+			.setCountryUuid(ValueUtil.validateNull(country.getUUID()))
+			.setCountryId(country.getC_Country_ID());
+		//	City
+		if(location.getC_City_ID() > 0) {
+			MCity city = MCity.get(Env.getCtx(), location.getC_City_ID());
+			builder.setCity(City.newBuilder()
+					.setId(city.getC_City_ID())
+					.setUuid(ValueUtil.validateNull(city.getUUID()))
+					.setName(ValueUtil.validateNull(city.getName())));
+		} else {
+			builder.setCity(City.newBuilder()
+					.setName(ValueUtil.validateNull(location.getCity())));
+		}
+		//	Region
+		if(location.getC_Region_ID() > 0) {
+			MRegion region = MRegion.get(Env.getCtx(), location.getC_Region_ID());
+			builder.setRegion(Region.newBuilder()
+					.setId(region.getC_Region_ID())
+					.setUuid(ValueUtil.validateNull(region.getUUID()))
+					.setName(ValueUtil.validateNull(region.getName())));
+		}
+		//	
+		return builder;
 	}
 	
 	/**

@@ -48,6 +48,8 @@ import org.compiere.model.I_C_POS;
 import org.compiere.model.I_C_POSKeyLayout;
 import org.compiere.model.I_C_Payment;
 import org.compiere.model.I_C_Region;
+import org.compiere.model.I_M_InOut;
+import org.compiere.model.I_M_InOutLine;
 import org.compiere.model.I_M_PriceList;
 import org.compiere.model.I_M_Product;
 import org.compiere.model.I_M_Warehouse;
@@ -59,19 +61,16 @@ import org.compiere.model.MBPartnerLocation;
 import org.compiere.model.MBank;
 import org.compiere.model.MBankAccount;
 import org.compiere.model.MBankStatement;
-import org.compiere.model.MCharge;
-import org.compiere.model.MCity;
 import org.compiere.model.MConversionRate;
-import org.compiere.model.MCountry;
 import org.compiere.model.MCurrency;
 import org.compiere.model.MDocType;
+import org.compiere.model.MInOut;
+import org.compiere.model.MInOutLine;
 import org.compiere.model.MInvoice;
 import org.compiere.model.MLocation;
 import org.compiere.model.MOrder;
 import org.compiere.model.MOrderLine;
 import org.compiere.model.MPOS;
-import org.compiere.model.MPOSKey;
-import org.compiere.model.MPOSKeyLayout;
 import org.compiere.model.MPayment;
 import org.compiere.model.MPriceList;
 import org.compiere.model.MPriceListVersion;
@@ -79,7 +78,6 @@ import org.compiere.model.MProduct;
 import org.compiere.model.MProductPrice;
 import org.compiere.model.MProductPricing;
 import org.compiere.model.MRefList;
-import org.compiere.model.MRegion;
 import org.compiere.model.MStorage;
 import org.compiere.model.MTable;
 import org.compiere.model.MTax;
@@ -102,25 +100,25 @@ import org.spin.base.util.ConvertUtil;
 import org.spin.base.util.DocumentUtil;
 import org.spin.base.util.RecordUtil;
 import org.spin.base.util.ValueUtil;
-import org.spin.grpc.util.Address;
 import org.spin.grpc.util.AvailableDocumentType;
 import org.spin.grpc.util.AvailablePaymentMethod;
 import org.spin.grpc.util.AvailablePriceList;
 import org.spin.grpc.util.AvailableRefund;
 import org.spin.grpc.util.AvailableWarehouse;
-import org.spin.grpc.util.Charge;
-import org.spin.grpc.util.City;
 import org.spin.grpc.util.CreateCustomerBankAccountRequest;
 import org.spin.grpc.util.CreateCustomerRequest;
 import org.spin.grpc.util.CreateOrderLineRequest;
 import org.spin.grpc.util.CreateOrderRequest;
 import org.spin.grpc.util.CreatePaymentRequest;
+import org.spin.grpc.util.CreateShipmentLineRequest;
+import org.spin.grpc.util.CreateShipmentRequest;
 import org.spin.grpc.util.Customer;
 import org.spin.grpc.util.CustomerBankAccount;
 import org.spin.grpc.util.DeleteCustomerBankAccountRequest;
 import org.spin.grpc.util.DeleteOrderLineRequest;
 import org.spin.grpc.util.DeleteOrderRequest;
 import org.spin.grpc.util.DeletePaymentRequest;
+import org.spin.grpc.util.DeleteShipmentLineRequest;
 import org.spin.grpc.util.Empty;
 import org.spin.grpc.util.GetAvailableRefundRequest;
 import org.spin.grpc.util.GetCustomerBankAccountRequest;
@@ -128,7 +126,6 @@ import org.spin.grpc.util.GetCustomerRequest;
 import org.spin.grpc.util.GetKeyLayoutRequest;
 import org.spin.grpc.util.GetOrderRequest;
 import org.spin.grpc.util.GetProductPriceRequest;
-import org.spin.grpc.util.Key;
 import org.spin.grpc.util.KeyLayout;
 import org.spin.grpc.util.ListAvailableCurrenciesRequest;
 import org.spin.grpc.util.ListAvailableCurrenciesResponse;
@@ -152,6 +149,8 @@ import org.spin.grpc.util.ListPointOfSalesRequest;
 import org.spin.grpc.util.ListPointOfSalesResponse;
 import org.spin.grpc.util.ListProductPriceRequest;
 import org.spin.grpc.util.ListProductPriceResponse;
+import org.spin.grpc.util.ListShipmentLinesRequest;
+import org.spin.grpc.util.ListShipmentLinesResponse;
 import org.spin.grpc.util.Order;
 import org.spin.grpc.util.OrderLine;
 import org.spin.grpc.util.Payment;
@@ -160,10 +159,9 @@ import org.spin.grpc.util.PointOfSalesRequest;
 import org.spin.grpc.util.PrintTicketRequest;
 import org.spin.grpc.util.PrintTicketResponse;
 import org.spin.grpc.util.ProcessOrderRequest;
-import org.spin.grpc.util.Product;
 import org.spin.grpc.util.ProductPrice;
-import org.spin.grpc.util.Region;
-import org.spin.grpc.util.SalesRepresentative;
+import org.spin.grpc.util.Shipment;
+import org.spin.grpc.util.ShipmentLine;
 import org.spin.grpc.util.StoreGrpc.StoreImplBase;
 import org.spin.grpc.util.UpdateCustomerBankAccountRequest;
 import org.spin.grpc.util.UpdateCustomerRequest;
@@ -171,7 +169,6 @@ import org.spin.grpc.util.UpdateOrderLineRequest;
 import org.spin.grpc.util.UpdateOrderRequest;
 import org.spin.grpc.util.UpdatePaymentRequest;
 import org.spin.grpc.util.ValidatePINRequest;
-import org.spin.grpc.util.Warehouse;
 import org.spin.model.I_C_PaymentMethod;
 import org.spin.util.VueStoreFrontUtil;
 
@@ -415,7 +412,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					request.getClientRequest().getLanguage(), 
 					request.getClientRequest().getOrganizationUuid(), 
 					request.getClientRequest().getWarehouseUuid());
-			Order.Builder order = convertOrder(getOrder(request.getOrderUuid(), null));
+			Order.Builder order = ConvertUtil.convertOrder(getOrder(request.getOrderUuid(), null));
 			responseObserver.onNext(order.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -583,7 +580,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					request.getClientRequest().getLanguage(), 
 					request.getClientRequest().getOrganizationUuid(), 
 					request.getClientRequest().getWarehouseUuid());
-			KeyLayout.Builder keyLayout = convertKeyLayout(RecordUtil.getIdFromUuid(I_C_POSKeyLayout.Table_Name, request.getKeyLayoutUuid(), null));
+			KeyLayout.Builder keyLayout = ConvertUtil.convertKeyLayout(RecordUtil.getIdFromUuid(I_C_POSKeyLayout.Table_Name, request.getKeyLayoutUuid(), null));
 			responseObserver.onNext(keyLayout.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -607,7 +604,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					request.getClientRequest().getLanguage(), 
 					request.getClientRequest().getOrganizationUuid(), 
 					request.getClientRequest().getWarehouseUuid());
-			Order.Builder order = convertOrder(updateOrder(request));
+			Order.Builder order = ConvertUtil.convertOrder(updateOrder(request));
 			responseObserver.onNext(order.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -665,7 +662,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					request.getClientRequest().getLanguage(), 
 					request.getClientRequest().getOrganizationUuid(), 
 					request.getClientRequest().getWarehouseUuid());
-			Order.Builder order = convertOrder(processOrder(request));
+			Order.Builder order = ConvertUtil.convertOrder(processOrder(request));
 			responseObserver.onNext(order.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -985,7 +982,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				businessPartnerBankAccount.setBankAccountType(request.getBankAccountType());
 			}
 			businessPartnerBankAccount.saveEx();
-			responseObserver.onNext(convertCustomerBankAccount(businessPartnerBankAccount).build());
+			responseObserver.onNext(ConvertUtil.convertCustomerBankAccount(businessPartnerBankAccount).build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
@@ -1039,7 +1036,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				businessPartnerBankAccount.setBankAccountType(request.getBankAccountType());
 			}
 			businessPartnerBankAccount.saveEx();
-			responseObserver.onNext(convertCustomerBankAccount(businessPartnerBankAccount).build());
+			responseObserver.onNext(ConvertUtil.convertCustomerBankAccount(businessPartnerBankAccount).build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
@@ -1068,7 +1065,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			}
 			//	For data
 			MBPBankAccount businessPartnerBankAccount = new MBPBankAccount(Env.getCtx(), RecordUtil.getIdFromUuid(I_C_BP_BankAccount.Table_Name, request.getCustomerBankAccountUuid(), null), null);
-			responseObserver.onNext(convertCustomerBankAccount(businessPartnerBankAccount).build());
+			responseObserver.onNext(ConvertUtil.convertCustomerBankAccount(businessPartnerBankAccount).build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
@@ -1143,12 +1140,12 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			.setLimit(limit, offset)
 			.<MBPBankAccount>list()
 			.forEach(customerBankAccount -> {
-				builder.addCustomerBankAccounts(convertCustomerBankAccount(customerBankAccount));
+				builder.addCustomerBankAccounts(ConvertUtil.convertCustomerBankAccount(customerBankAccount));
 			});
 			//	
 			builder.setRecordCount(count);
 			//	Set page token
-			if(count > offset && count > limit) {
+			if(RecordUtil.isValidNextPageToken(count, offset, limit)) {
 				nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
 			}
 			//	Set next page
@@ -1165,36 +1162,291 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		}
 	}
 	
-	/**
-	 * Convert customer bank account
-	 * @param customerBankAccount
-	 * @return
-	 * @return CustomerBankAccount.Builder
-	 */
-	private CustomerBankAccount.Builder convertCustomerBankAccount(MBPBankAccount customerBankAccount) {
-		CustomerBankAccount.Builder builder = CustomerBankAccount.newBuilder();
-		builder.setCustomerBankAccountUuid(ValueUtil.validateNull(customerBankAccount.getUUID()))
-			.setCity(ValueUtil.validateNull(customerBankAccount.getA_City()))
-			.setCountry(ValueUtil.validateNull(customerBankAccount.getA_Country()))
-			.setEmail(ValueUtil.validateNull(customerBankAccount.getA_EMail()))
-			.setDriverLicense(ValueUtil.validateNull(customerBankAccount.getA_Ident_DL()))
-			.setSocialSecurityNumber(ValueUtil.validateNull(customerBankAccount.getA_Ident_SSN()))
-			.setName(ValueUtil.validateNull(customerBankAccount.getA_Name()))
-			.setState(ValueUtil.validateNull(customerBankAccount.getA_State()))
-			.setStreet(ValueUtil.validateNull(customerBankAccount.getA_Street()))
-			.setZip(ValueUtil.validateNull(customerBankAccount.getA_Zip()))
-			.setBankAccountType(ValueUtil.validateNull(customerBankAccount.getBankAccountType()));
-		if(customerBankAccount.getC_Bank_ID() > 0) {
-			MBank bank = MBank.get(Env.getCtx(), customerBankAccount.getC_Bank_ID());
-			builder.setBankUuid(ValueUtil.validateNull(bank.getUUID()));
+	@Override
+	public void createShipment(CreateShipmentRequest request, StreamObserver<Shipment> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Create Shipment = " + request.getOrderUuid());
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			Shipment.Builder shipment = createShipment(request);
+			responseObserver.onNext(shipment.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
 		}
-		MBPartner customer = MBPartner.get(Env.getCtx(), customerBankAccount.getC_BPartner_ID());
-		builder.setCustomerUuid(ValueUtil.validateNull(customer.getUUID()));
-		builder.setAddressVerified(ValueUtil.validateNull(customerBankAccount.getR_AvsAddr()))
-			.setZipVerified(ValueUtil.validateNull(customerBankAccount.getR_AvsZip()))
-			.setRoutingNo(ValueUtil.validateNull(customerBankAccount.getRoutingNo()))
-			.setIban(ValueUtil.validateNull(customerBankAccount.getIBAN())) ;
+	}
+	
+	@Override
+	public void createShipmentLine(CreateShipmentLineRequest request, StreamObserver<ShipmentLine> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Add Line for Order = " + request.getShipmentUuid());
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			ShipmentLine.Builder shipmentLine = createAndConvertShipmentLine(request);
+			responseObserver.onNext(shipmentLine.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void deleteShipmentLine(DeleteShipmentLineRequest request, StreamObserver<Empty> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Delete Shipment Line = " + request.getShipmentLineUuid());
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			Empty.Builder nothing = deleteShipmentLine(request);
+			responseObserver.onNext(nothing.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void listShipmentLines(ListShipmentLinesRequest request, StreamObserver<ListShipmentLinesResponse> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("List Shipment Lines from order = " + request.getShipmentUuid());
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			ListShipmentLinesResponse.Builder shipmentLinesList = listShipmentLines(request);
+			responseObserver.onNext(shipmentLinesList.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	/**
+	 * List shipment Lines from Order UUID
+	 * @param request
+	 * @return
+	 */
+	private ListShipmentLinesResponse.Builder listShipmentLines(ListShipmentLinesRequest request) {
+		if(Util.isEmpty(request.getShipmentUuid())) {
+			throw new AdempiereException("@M_InOut_ID@ @NotFound@");
+		}
+		ListShipmentLinesResponse.Builder builder = ListShipmentLinesResponse.newBuilder();
+		String nexPageToken = null;
+		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
+		int limit = RecordUtil.PAGE_SIZE;
+		int offset = pageNumber * RecordUtil.PAGE_SIZE;
+		int shipmentId = RecordUtil.getIdFromUuid(I_M_InOut.Table_Name, request.getShipmentUuid(), null);
+		//	Get Product list
+		Query query = new Query(Env.getCtx(), I_M_InOutLine.Table_Name, I_M_InOutLine.COLUMNNAME_M_InOut_ID + " = ?", null)
+				.setParameters(shipmentId)
+				.setClient_ID()
+				.setOnlyActiveRecords(true);
+		int count = query.count();
+		query
+		.setLimit(limit, offset)
+		.<MInOutLine>list()
+		.forEach(order -> {
+			builder.addShipmentLines(ConvertUtil.convertShipmentLine(order));
+		});
+		//	
+		builder.setRecordCount(count);
+		//	Set page token
+		if(RecordUtil.isValidNextPageToken(count, offset, limit)) {
+			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
+		}
+		//	Set next page
+		builder.setNextPageToken(ValueUtil.validateNull(nexPageToken));
 		return builder;
+	}
+	
+	/**
+	 * Delete shipment line from uuid
+	 * @param request
+	 * @return
+	 */
+	private Empty.Builder deleteShipmentLine(DeleteShipmentLineRequest request) {
+		if(Util.isEmpty(request.getShipmentLineUuid())) {
+			throw new AdempiereException("@M_InOutLine_ID@ @NotFound@");
+		}
+		Trx.run(transactionName -> {
+			MInOutLine shipmentLine = new Query(Env.getCtx(), I_M_InOutLine.Table_Name, I_M_InOutLine.COLUMNNAME_UUID + " = ?", transactionName)
+					.setParameters(request.getShipmentLineUuid())
+					.setClient_ID()
+					.first();
+			if(shipmentLine != null
+					&& shipmentLine.getM_InOutLine_ID() != 0) {
+				//	Validate processed Order
+				if(shipmentLine.isProcessed()) {
+					throw new AdempiereException("@M_InOutLine_ID@ @Processed@");
+				}
+				if(shipmentLine != null
+						&& shipmentLine.getM_InOutLine_ID() >= 0) {
+					shipmentLine.deleteEx(true);
+				}
+			}
+		});
+		//	Return
+		return Empty.newBuilder();
+	}
+	
+	/**
+	 * Create shipment line and return this
+	 * @param request
+	 * @return
+	 */
+	private ShipmentLine.Builder createAndConvertShipmentLine(CreateShipmentLineRequest request) {
+		//	Validate Order
+		if(Util.isEmpty(request.getShipmentUuid())) {
+			throw new AdempiereException("@M_InOut_ID@ @NotFound@");
+		}
+		//	Validate Product and charge
+		if(Util.isEmpty(request.getOrderLineUuid())) {
+			throw new AdempiereException("@C_OrderLine_ID@ @NotFound@");
+		}
+		int shipmentId = RecordUtil.getIdFromUuid(I_M_InOut.Table_Name, request.getShipmentUuid(), null);
+		int salesOrderLineId = RecordUtil.getIdFromUuid(I_C_OrderLine.Table_Name, request.getOrderLineUuid(), null);
+		if(shipmentId <= 0) {
+			return ShipmentLine.newBuilder();
+		}
+		if(salesOrderLineId <= 0) {
+			throw new AdempiereException("@C_OrderLine_ID@ @NotFound@");
+		}
+		MInOut shipmentHeader = new MInOut(Env.getCtx(), shipmentId, null);
+		if(!DocumentUtil.isDrafted(shipmentHeader)) {
+			throw new AdempiereException("@M_InOut_ID@ @Processed@");
+		}
+		//	Quantity
+		MOrderLine salesOrderLine = new MOrderLine(Env.getCtx(), salesOrderLineId, null);
+		Optional<MInOutLine> maybeOrderLine = Arrays.asList(shipmentHeader.getLines(true))
+				.stream()
+				.filter(shipmentLineTofind -> shipmentLineTofind.getC_OrderLine_ID() == salesOrderLine.getC_OrderLine_ID())
+				.findFirst();
+		AtomicReference<MInOutLine> shipmentLineReference = new AtomicReference<MInOutLine>();
+		BigDecimal quantity = ValueUtil.getBigDecimalFromDecimal(request.getQuantity());
+		//	Validate available
+		if(salesOrderLine.getQtyOrdered().subtract(salesOrderLine.getQtyDelivered()).compareTo(Optional.ofNullable(quantity).orElse(Env.ONE)) < 0) {
+			throw new AdempiereException("@QtyInsufficient@");
+		}
+		if(maybeOrderLine.isPresent()) {
+			MInOutLine shipmentLine = maybeOrderLine.get();
+			//	Set Quantity
+			BigDecimal quantityToOrder = quantity;
+			if(quantity == null) {
+				quantityToOrder = shipmentLine.getMovementQty();
+				quantityToOrder = quantityToOrder.add(Env.ONE);
+			}
+			//	Validate available
+			if(salesOrderLine.getQtyOrdered().subtract(salesOrderLine.getQtyDelivered()).compareTo(quantityToOrder) < 0) {
+				throw new AdempiereException("@QtyInsufficient@");
+			}
+			shipmentLine.setQty(quantityToOrder);
+			shipmentLine.saveEx();
+			shipmentLineReference.set(shipmentLine);
+		} else {
+			MInOutLine shipmentLine = new MInOutLine(shipmentHeader);
+			BigDecimal quantityToOrder = quantity;
+			if(quantity == null) {
+				quantityToOrder = Env.ONE;
+			}
+	        //create new line
+			shipmentLine.setOrderLine(salesOrderLine, 0, quantityToOrder);
+			Optional.ofNullable(request.getDescription()).ifPresent(description -> shipmentLine.setDescription(description));
+			//	Save Line
+			shipmentLine.saveEx();
+			shipmentLineReference.set(shipmentLine);
+		}
+		//	Convert Line
+		return ConvertUtil.convertShipmentLine(shipmentLineReference.get());
+	}
+	
+	/**
+	 * Create  from request
+	 * @param context
+	 * @param request
+	 * @return
+	 */
+	private Shipment.Builder createShipment(CreateShipmentRequest request) {
+		if(Util.isEmpty(request.getOrderUuid())) {
+			throw new AdempiereException("@C_Order_ID@ @NotFound@");
+		}
+		AtomicReference<MInOut> maybeShipment = new AtomicReference<MInOut>();
+		Trx.run(transactionName -> {
+			int orderId = RecordUtil.getIdFromUuid(I_C_Order.Table_Name, request.getOrderUuid(), transactionName);
+			int salesRepresentativeId = RecordUtil.getIdFromUuid(I_AD_User.Table_Name, request.getSalesRepresentativeUuid(), transactionName);
+			if(orderId <= 0) {
+				throw new AdempiereException("@C_Order_ID@ @NotFound@");
+			}
+			if(salesRepresentativeId <= 0) {
+				throw new AdempiereException("@SalesRep_ID@ @NotFound@");
+			}
+			MOrder salesOrder = new MOrder(Env.getCtx(), orderId, transactionName);
+			if(salesOrder.isDelivered()) {
+				throw new AdempiereException("@C_Order_ID@ @IsDelivered@");
+			}
+			//	
+			MInOut shipment = new Query(Env.getCtx(), I_M_InOut.Table_Name, 
+					"DocStatus = 'DR' "
+					+ "AND C_Order_ID = ? "
+					+ "AND SalesRep_ID = ?", transactionName)
+					.setParameters(salesOrder.getC_Order_ID(), salesRepresentativeId)
+					.first();
+			//	Validate
+			if(shipment == null) {
+				shipment = new MInOut(salesOrder, 0, RecordUtil.getDate());
+			} else {
+				shipment.setDateOrdered(RecordUtil.getDate());
+				shipment.setDateAcct(RecordUtil.getDate());
+				shipment.setDateReceived(RecordUtil.getDate());
+				shipment.setMovementDate(RecordUtil.getDate());
+			}
+			//	Default values
+			shipment.setC_POS_ID(salesOrder.getC_POS_ID());
+			//	Valid if has a Order
+			if(!DocumentUtil.isCompleted(salesOrder)) {
+				throw new AdempiereException("@C_Order_ID@ @IsCompleted@");
+			}
+			shipment.saveEx(transactionName);
+			maybeShipment.set(shipment);
+		});
+		//	Convert order
+		return ConvertUtil.convertShipment(maybeShipment.get());
 	}
 	
 	/**
@@ -1290,7 +1542,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				.setOnlyActiveRecords(true)
 				.first();
 		//	Default return
-		return convertCustomer(businessPartner);
+		return ConvertUtil.convertCustomer(businessPartner);
 	}
 	
 	/**
@@ -1444,7 +1696,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			});
 		});
 		//	Default return
-		return convertCustomer(businessPartner);
+		return ConvertUtil.convertCustomer(businessPartner);
 	}
 	
 	/**
@@ -1571,7 +1823,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			});
 		});
 		//	Default return
-		return convertCustomer(customer.get());
+		return ConvertUtil.convertCustomer(customer.get());
 	}
 	
 	/**
@@ -1586,105 +1838,6 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				.setParameters(businessPartnerLocation.getC_BPartner_Location_ID())
 				.first();
 	}
-	
-	/**
-	 * Convert customer
-	 * @param businessPartner
-	 * @return
-	 */
-	private Customer.Builder convertCustomer(MBPartner businessPartner) {
-		if(businessPartner == null) {
-			return Customer.newBuilder();
-		}
-		Customer.Builder customer = Customer.newBuilder()
-				.setUuid(ValueUtil.validateNull(businessPartner.getUUID()))
-				.setId(businessPartner.getC_BPartner_ID())
-				.setValue(ValueUtil.validateNull(businessPartner.getValue()))
-				.setTaxId(ValueUtil.validateNull(businessPartner.getTaxID()))
-				.setDuns(ValueUtil.validateNull(businessPartner.getDUNS()))
-				.setNaics(ValueUtil.validateNull(businessPartner.getNAICS()))
-				.setName(ValueUtil.validateNull(businessPartner.getName()))
-				.setLastName(ValueUtil.validateNull(businessPartner.getName2()))
-				.setDescription(ValueUtil.validateNull(businessPartner.getDescription()));
-		//	Add Address
-		Arrays.asList(businessPartner.getLocations(true)).stream().filter(customerLocation -> customerLocation.isActive()).forEach(address -> customer.addAddresses(convertCustomerAddress(address)));
-		return customer;
-	}
-	
-	
-	/**
-	 * Convert Address
-	 * @param businessPartnerLocation
-	 * @return
-	 * @return Address.Builder
-	 */
-	private Address.Builder convertCustomerAddress(MBPartnerLocation businessPartnerLocation) {
-		if(businessPartnerLocation == null) {
-			return Address.newBuilder();
-		}
-		MLocation location = businessPartnerLocation.getLocation(true);
-		Address.Builder builder =  Address.newBuilder()
-				.setUuid(ValueUtil.validateNull(businessPartnerLocation.getUUID()))
-				.setId(businessPartnerLocation.getC_BPartner_Location_ID())
-				.setPostalCode(ValueUtil.validateNull(location.getPostal()))
-				.setAddress1(ValueUtil.validateNull(location.getAddress1()))
-				.setAddress2(ValueUtil.validateNull(location.getAddress2()))
-				.setAddress3(ValueUtil.validateNull(location.getAddress3()))
-				.setAddress4(ValueUtil.validateNull(location.getAddress4()))
-				.setPostalCode(ValueUtil.validateNull(location.getPostal()))
-				.setDescription(ValueUtil.validateNull(businessPartnerLocation.get_ValueAsString("Description")))
-				.setFirstName(ValueUtil.validateNull(businessPartnerLocation.getName()))
-				.setLastName(ValueUtil.validateNull(businessPartnerLocation.get_ValueAsString("Name2")))
-				.setContactName(ValueUtil.validateNull(businessPartnerLocation.get_ValueAsString("ContactName")))
-				.setEmail(ValueUtil.validateNull(businessPartnerLocation.getEMail()))
-				.setPhone(ValueUtil.validateNull(businessPartnerLocation.getPhone()))
-				.setIsDefaultShipping(businessPartnerLocation.get_ValueAsBoolean(VueStoreFrontUtil.COLUMNNAME_IsDefaultShipping))
-				.setIsDefaultBilling(businessPartnerLocation.get_ValueAsBoolean(VueStoreFrontUtil.COLUMNNAME_IsDefaultBilling));
-		//	Get user from location
-		MUser user = new Query(Env.getCtx(), I_AD_User.Table_Name, I_AD_User.COLUMNNAME_C_BPartner_Location_ID + " = ?", businessPartnerLocation.get_TrxName())
-				.setParameters(businessPartnerLocation.getC_BPartner_Location_ID())
-				.setOnlyActiveRecords(true)
-				.first();
-		String phone = null;
-		if(user != null
-				&& user.getAD_User_ID() > 0) {
-			if(Util.isEmpty(user.getPhone())) {
-				phone = user.getPhone();
-			}
-			if(!Util.isEmpty(user.getName())
-					&& Util.isEmpty(builder.getContactName())) {
-				builder.setContactName(user.getName());
-			}
-		}
-		//	
-		builder.setPhone(ValueUtil.validateNull(Optional.ofNullable(businessPartnerLocation.getPhone()).orElse(Optional.ofNullable(phone).orElse(""))));
-		MCountry country = MCountry.get(Env.getCtx(), location.getC_Country_ID());
-		builder.setCountryCode(ValueUtil.validateNull(country.getCountryCode()))
-			.setCountryUuid(ValueUtil.validateNull(country.getUUID()))
-			.setCountryId(country.getC_Country_ID());
-		//	City
-		if(location.getC_City_ID() > 0) {
-			MCity city = MCity.get(Env.getCtx(), location.getC_City_ID());
-			builder.setCity(City.newBuilder()
-					.setId(city.getC_City_ID())
-					.setUuid(ValueUtil.validateNull(city.getUUID()))
-					.setName(ValueUtil.validateNull(city.getName())));
-		} else {
-			builder.setCity(City.newBuilder()
-					.setName(ValueUtil.validateNull(location.getCity())));
-		}
-		//	Region
-		if(location.getC_Region_ID() > 0) {
-			MRegion region = MRegion.get(Env.getCtx(), location.getC_Region_ID());
-			builder.setRegion(Region.newBuilder()
-					.setId(region.getC_Region_ID())
-					.setUuid(ValueUtil.validateNull(region.getUUID()))
-					.setName(ValueUtil.validateNull(region.getName())));
-		}
-		//	
-		return builder;
-	}
-	
 	
 	/**
 	 * List Warehouses from POS UUID
@@ -1727,7 +1880,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	
 		builder.setRecordCount(count);
 		//	Set page token
-		if(count > offset && count > limit) {
+		if(RecordUtil.isValidNextPageToken(count, offset, limit)) {
 			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
 		}
 		//	Set next page
@@ -1777,7 +1930,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	
 		builder.setRecordCount(count);
 		//	Set page token
-		if(count > offset && count > limit) {
+		if(RecordUtil.isValidNextPageToken(count, offset, limit)) {
 			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
 		}
 		//	Set next page
@@ -1845,7 +1998,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	
 		builder.setRecordCount(count);
 		//	Set page token
-		if(count > offset && count > limit) {
+		if(RecordUtil.isValidNextPageToken(count, offset, limit)) {
 			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
 		}
 		//	Set next page
@@ -1895,7 +2048,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	
 		builder.setRecordCount(count);
 		//	Set page token
-		if(count > offset && count > limit) {
+		if(RecordUtil.isValidNextPageToken(count, offset, limit)) {
 			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
 		}
 		//	Set next page
@@ -1939,7 +2092,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	
 		builder.setRecordCount(count);
 		//	Set page token
-		if(count > offset && count > limit) {
+		if(RecordUtil.isValidNextPageToken(count, offset, limit)) {
 			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
 		}
 		//	Set next page
@@ -2042,7 +2195,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		if(paymentsIds.size() > 0) {
 			String description = Msg.parseTranslation(Env.getCtx(), "@C_POS_ID@: " + pos.getName() + " - " + salesOrder.getDocumentNo());
 			//	
-			MAllocationHdr paymentAllocation = new MAllocationHdr (Env.getCtx(), true, getDate(), salesOrder.getC_Currency_ID(), description, transactionName);
+			MAllocationHdr paymentAllocation = new MAllocationHdr (Env.getCtx(), true, RecordUtil.getDate(), salesOrder.getC_Currency_ID(), description, transactionName);
 			paymentAllocation.setAD_Org_ID(salesOrder.getAD_Org_ID());
 			//	Set Description
 			paymentAllocation.saveEx();
@@ -2316,12 +2469,12 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		.setLimit(limit, offset)
 		.<MOrder>list()
 		.forEach(order -> {
-			builder.addOrders(convertOrder(order));
+			builder.addOrders(ConvertUtil.convertOrder(order));
 		});
 		//	
 		builder.setRecordCount(count);
 		//	Set page token
-		if(count > offset && count > limit) {
+		if(RecordUtil.isValidNextPageToken(count, offset, limit)) {
 			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
 		}
 		//	Set next page
@@ -2378,7 +2531,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	
 		builder.setRecordCount(count);
 		//	Set page token
-		if(count > offset && count > limit) {
+		if(RecordUtil.isValidNextPageToken(count, offset, limit)) {
 			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
 		}
 		//	Set next page
@@ -2401,8 +2554,9 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		int limit = RecordUtil.PAGE_SIZE;
 		int offset = pageNumber * RecordUtil.PAGE_SIZE;
 		//	Get Product list
-		Query query = new Query(Env.getCtx(), I_C_OrderLine.Table_Name, "EXISTS(SELECT 1 FROM C_Order o WHERE o.C_Order_ID = C_OrderLine.C_Order_ID AND o.UUID = ?)", null)
-				.setParameters(request.getOrderUuid())
+		int orderId = RecordUtil.getIdFromUuid(I_C_Order.Table_Name, request.getOrderUuid(), null);
+		Query query = new Query(Env.getCtx(), I_C_OrderLine.Table_Name, I_C_OrderLine.COLUMNNAME_C_Order_ID + " = ?", null)
+				.setParameters(orderId)
 				.setClient_ID()
 				.setOnlyActiveRecords(true);
 		int count = query.count();
@@ -2410,12 +2564,12 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		.setLimit(limit, offset)
 		.<MOrderLine>list()
 		.forEach(order -> {
-			builder.addOrderLines(convertOrderLine(order));
+			builder.addOrderLines(ConvertUtil.convertOrderLine(order));
 		});
 		//	
 		builder.setRecordCount(count);
 		//	Set page token
-		if(count > offset && count > limit) {
+		if(RecordUtil.isValidNextPageToken(count, offset, limit)) {
 			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
 		}
 		//	Set next page
@@ -2801,7 +2955,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			return OrderLine.newBuilder();
 		}
 		//	Quantity
-		return convertOrderLine(
+		return ConvertUtil.convertOrderLine(
 				updateOrderLine(orderLineId, 
 						ValueUtil.getBigDecimalFromDecimal(request.getQuantity()), 
 						ValueUtil.getBigDecimalFromDecimal(request.getPrice()), 
@@ -2830,136 +2984,12 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			return OrderLine.newBuilder();
 		}
 		//	Quantity
-		return convertOrderLine(
+		return ConvertUtil.convertOrderLine(
 				addOrderLine(orderId, 
 						RecordUtil.getIdFromUuid(I_M_Product.Table_Name, request.getProductUuid(), null), 
 						RecordUtil.getIdFromUuid(I_C_Charge.Table_Name, request.getChargeUuid(), null), 
 						RecordUtil.getIdFromUuid(I_M_Warehouse.Table_Name, request.getWarehouseUuid(), null), 
 						ValueUtil.getBigDecimalFromDecimal(request.getQuantity())));
-	}
-	
-	/**
-	 * Convert order line to stub
-	 * @param orderLine
-	 * @return
-	 */
-	private OrderLine.Builder convertOrderLine(MOrderLine orderLine) {
-		OrderLine.Builder builder = OrderLine.newBuilder();
-		if(orderLine == null) {
-			return builder;
-		}
-		//	Convert
-		return builder
-				.setUuid(ValueUtil.validateNull(orderLine.getUUID()))
-				.setOrderUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_Order.Table_Name, orderLine.getC_Order_ID())))
-				.setLine(orderLine.getLine())
-				.setDescription(ValueUtil.validateNull(orderLine.getDescription()))
-				.setLineDescription(ValueUtil.validateNull(orderLine.getName()))
-				.setProduct(convertProduct(orderLine.getM_Product_ID()))
-				.setCharge(convertCharge(orderLine.getC_Charge_ID()))
-				.setWarehouse(convertWarehouse(orderLine.getM_Warehouse_ID()))
-				.setQuantity(ValueUtil.getDecimalFromBigDecimal(orderLine.getQtyOrdered()))
-				.setPrice(ValueUtil.getDecimalFromBigDecimal(orderLine.getPriceActual()))
-				.setPriceList(ValueUtil.getDecimalFromBigDecimal(orderLine.getPriceList()))
-				.setDiscountRate(ValueUtil.getDecimalFromBigDecimal(orderLine.getDiscount()))
-				.setTaxRate(ConvertUtil.convertTaxRate(MTax.get(Env.getCtx(), orderLine.getC_Tax_ID())))
-				.setLineNetAmount(ValueUtil.getDecimalFromBigDecimal(orderLine.getLineNetAmt()));
-	}
-	
-	/**
-	 * Convert product
-	 * @param productId
-	 * @return
-	 */
-	private Product.Builder convertProduct(int productId) {
-		Product.Builder builder = Product.newBuilder();
-		if(productId <= 0) {
-			return builder;
-		}
-		return ConvertUtil.convertProduct(MProduct.get(Env.getCtx(), productId));
-	}
-	
-	/**
-	 * Convert charge
-	 * @param chargeId
-	 * @return
-	 */
-	private Charge.Builder convertCharge(int chargeId) {
-		Charge.Builder builder = Charge.newBuilder();
-		if(chargeId <= 0) {
-			return builder;
-		}
-		return ConvertUtil.convertCharge(MCharge.get(Env.getCtx(), chargeId));
-	}
-	
-	/**
-	 * convert warehouse from id
-	 * @param warehouseId
-	 * @return
-	 */
-	private Warehouse.Builder convertWarehouse(int warehouseId) {
-		Warehouse.Builder builder = Warehouse.newBuilder();
-		if(warehouseId <= 0) {
-			return builder;
-		}
-		return ConvertUtil.convertWarehouse(MWarehouse.get(Env.getCtx(), warehouseId));
-	}
-	
-	/**
-	 * Convert key layout from id
-	 * @param keyLayoutId
-	 * @return
-	 */
-	private KeyLayout.Builder convertKeyLayout(int keyLayoutId) {
-		KeyLayout.Builder builder = KeyLayout.newBuilder();
-		if(keyLayoutId <= 0) {
-			return builder;
-		}
-		return convertKeyLayout(MPOSKeyLayout.get(Env.getCtx(), keyLayoutId));
-	}
-	
-	/**
-	 * Convert Key Layout from PO
-	 * @param keyLayout
-	 * @return
-	 */
-	private KeyLayout.Builder convertKeyLayout(MPOSKeyLayout keyLayout) {
-		KeyLayout.Builder builder = KeyLayout.newBuilder()
-				.setUuid(ValueUtil.validateNull(keyLayout.getUUID()))
-				.setId(keyLayout.getC_POSKeyLayout_ID())
-				.setName(ValueUtil.validateNull(keyLayout.getName()))
-				.setDescription(ValueUtil.validateNull(keyLayout.getDescription()))
-				.setHelp(ValueUtil.validateNull(keyLayout.getHelp()))
-				.setLayoutType(ValueUtil.validateNull(keyLayout.getPOSKeyLayoutType()))
-				.setColumns(keyLayout.getColumns());
-				//	TODO: Color
-		//	Add keys
-		Arrays.asList(keyLayout.getKeys(false)).stream().filter(key -> key.isActive()).forEach(key -> builder.addKeys(convertKey(key)));
-		return builder;
-	}
-	
-	/**
-	 * Convet key for layout
-	 * @param key
-	 * @return
-	 */
-	private Key.Builder convertKey(MPOSKey key) {
-		String productValue = null;
-		if(key.getM_Product_ID() > 0) {
-			productValue = MProduct.get(Env.getCtx(), key.getM_Product_ID()).getValue();
-		}
-		return Key.newBuilder()
-				.setUuid(ValueUtil.validateNull(key.getUUID()))
-				.setId(key.getC_POSKeyLayout_ID())
-				.setName(ValueUtil.validateNull(key.getName()))
-				//	TODO: Color
-				.setSequence(key.getSeqNo())
-				.setSpanX(key.getSpanX())
-				.setSpanY(key.getSpanY())
-				.setSubKeyLayoutUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_POSKeyLayout.Table_Name, key.getSubKeyLayout_ID())))
-				.setQuantity(ValueUtil.getDecimalFromBigDecimal(Optional.ofNullable(key.getQty()).orElse(Env.ZERO)))
-				.setProductValue(ValueUtil.validateNull(productValue))
-				.setResourceReference(ConvertUtil.convertResourceReference(RecordUtil.getResourceFromImageId(key.getAD_Image_ID())));
 	}
 	
 	/***
@@ -2981,7 +3011,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			MOrder order = new MOrder(Env.getCtx(), orderId, transactionName);
 			//	Valid Complete
 			if (!DocumentUtil.isDrafted(order)) {
-				throw new AdempiereException("@C_Order_ID@ @IsDrafted@");
+				throw new AdempiereException("@C_Order_ID@ @Processed@");
 			}
 			setCurrentDate(order);
 			// catch Exceptions at order.getLines()
@@ -3123,7 +3153,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	
 		builder.setRecordCount(count);
 		//	Set page token
-		if(count > offset && count > limit) {
+		if(RecordUtil.isValidNextPageToken(count, offset, limit)) {
 			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
 		}
 		//	Set next page
@@ -3171,7 +3201,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				.setHelp(ValueUtil.validateNull(pos.getHelp()))
 				.setIsModifyPrice(pos.isModifyPrice())
 				.setIsPosRequiredPin(pos.isPOSRequiredPIN())
-				.setSalesRepresentative(convertSalesRepresentative(MUser.get(pos.getCtx(), pos.getSalesRep_ID())))
+				.setSalesRepresentative(ConvertUtil.convertSalesRepresentative(MUser.get(pos.getCtx(), pos.getSalesRep_ID())))
 				.setTemplateBusinessPartner(ConvertUtil.convertBusinessPartner(pos.getBPartner()))
 				.setKeyLayoutUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_POSKeyLayout.Table_Name, pos.getC_POSKeyLayout_ID())))
 				.setIsAisleSeller(pos.get_ValueAsBoolean("IsAisleSeller"))
@@ -3185,6 +3215,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			.setIsAllowsCreateOrder(pos.get_ValueAsBoolean("IsAllowsCreateOrder"))
 			.setIsDisplayTaxAmount(pos.get_ValueAsBoolean("IsDisplayTaxAmount"))
 			.setIsDisplayDiscount(pos.get_ValueAsBoolean("IsDisplayDiscount"))
+			.setIsAllowsConfirmShipment(pos.get_ValueAsBoolean("IsAllowsConfirmShipment"))
 			.setMaximumRefundAllowed(ValueUtil.getDecimalFromBigDecimal((BigDecimal) pos.get_Value("MaximumRefundAllowed")))
 			.setMaximumDailyRefundAllowed(ValueUtil.getDecimalFromBigDecimal((BigDecimal) pos.get_Value("MaximumDailyRefundAllowed")));
 		if(pos.get_ValueAsInt("RefundReferenceCurrency_ID") > 0) {
@@ -3217,20 +3248,11 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		if(pos.getC_DocType_ID() > 0) {
 			builder.setDocumentType(ConvertUtil.convertDocumentType(MDocType.get(Env.getCtx(), pos.getC_DocType_ID())));
 		}
+		//	Return Document Type
+		if(pos.get_ValueAsInt("C_DocTypeRMA_ID") > 0) {
+			builder.setReturnDocumentType(ConvertUtil.convertDocumentType(MDocType.get(Env.getCtx(), pos.get_ValueAsInt("C_DocTypeRMA_ID"))));
+		}
 		return builder;
-	}
-	
-	/**
-	 * Convert Sales Representative
-	 * @param salesRepresentative
-	 * @return
-	 */
-	private SalesRepresentative.Builder convertSalesRepresentative(MUser salesRepresentative) {
-		return SalesRepresentative.newBuilder()
-				.setUuid(ValueUtil.validateNull(salesRepresentative.getUUID()))
-				.setId(salesRepresentative.getAD_User_ID())
-				.setName(ValueUtil.validateNull(salesRepresentative.getName()))
-				.setDescription(ValueUtil.validateNull(salesRepresentative.getDescription()));
 	}
 	
 	/**
@@ -3256,16 +3278,16 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					+ "AND C_POS_ID = ? "
 					+ "AND NOT EXISTS(SELECT 1 "
 					+ "					FROM C_OrderLine ol "
-					+ "					WHERE ol.C_Order_ID = C_Order.C_Order_ID) ", null)
+					+ "					WHERE ol.C_Order_ID = C_Order.C_Order_ID) ", transactionName)
 					.setParameters(pos.getC_POS_ID())
 					.first();
 			//	Validate
 			if(salesOrder == null) {
-				salesOrder = new MOrder(Env.getCtx(), 0, null);
+				salesOrder = new MOrder(Env.getCtx(), 0, transactionName);
 			} else {
-				salesOrder.setDateOrdered(getDate());
-				salesOrder.setDateAcct(getDate());
-				salesOrder.setDatePromised(getDate());
+				salesOrder.setDateOrdered(RecordUtil.getDate());
+				salesOrder.setDateAcct(RecordUtil.getDate());
+				salesOrder.setDatePromised(RecordUtil.getDate());
 			}
 			//	Default values
 			salesOrder.setIsSOTrx(true);
@@ -3324,7 +3346,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			maybeOrder.set(salesOrder);
 		});
 		//	Convert order
-		return convertOrder(maybeOrder.get());
+		return ConvertUtil.convertOrder(maybeOrder.get());
 	}
 	
 	/**
@@ -3333,10 +3355,10 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 * @return void
 	 */
 	private void setCurrentDate(MOrder salesOrder) {
-		if(!salesOrder.getDateOrdered().equals(getDate())
-				|| !salesOrder.getDateAcct().equals(getDate())) {
-			salesOrder.setDateOrdered(getDate());
-			salesOrder.setDateAcct(getDate());
+		if(!salesOrder.getDateOrdered().equals(RecordUtil.getDate())
+				|| !salesOrder.getDateAcct().equals(RecordUtil.getDate())) {
+			salesOrder.setDateOrdered(RecordUtil.getDate());
+			salesOrder.setDateAcct(RecordUtil.getDate());
 			salesOrder.saveEx();
 		}
 	}
@@ -3347,8 +3369,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 * @return void
 	 */
 	private void setCurrentDate(MPayment payment) {
-		if(!payment.getDateTrx().equals(getDate())) {
-			payment.setDateTrx(getDate());
+		if(!payment.getDateTrx().equals(RecordUtil.getDate())) {
+			payment.setDateTrx(RecordUtil.getDate());
 			payment.saveEx();
 		}
 	}
@@ -3434,7 +3456,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	Load Price List Version
 		MPriceList priceList = MPriceList.get(Env.getCtx(), salesOrder.getM_PriceList_ID(), transactionName);
 		//
-		MPriceListVersion priceListVersion = priceList.getPriceListVersion (getDate());
+		MPriceListVersion priceListVersion = priceList.getPriceListVersion (RecordUtil.getDate());
 		List<MProductPrice> productPrices = Arrays.asList(priceListVersion.getProductPrice("AND EXISTS("
 				+ "SELECT 1 "
 				+ "FROM C_OrderLine ol "
@@ -3461,14 +3483,6 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	}
 	
 	/**
-	 * Get Date
-	 * @return
-	 */
-	private Timestamp getDate() {
-		return TimeUtil.getDay(System.currentTimeMillis());
-	}
-	
-	/**
 	 * Convert payment
 	 * @param payment
 	 * @return
@@ -3492,7 +3506,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			.setDescription(ValueUtil.validateNull(payment.getDescription()))
 			.setAmount(ValueUtil.getDecimalFromBigDecimal(payment.getPayAmt()))
 			.setBankUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_Bank.Table_Name, payment.getC_Bank_ID())))
-			.setCustomer(convertCustomer((MBPartner) payment.getC_BPartner()))
+			.setCustomer(ConvertUtil.convertCustomer((MBPartner) payment.getC_BPartner()))
 			.setCurrencyUuid(RecordUtil.getUuidFromId(I_C_Currency.Table_Name, payment.getC_Currency_ID()))
 			.setPaymentDate(ValueUtil.convertDateToString(payment.getDateTrx()))
 			.setIsRefund(!payment.isReceipt())
@@ -3701,34 +3715,6 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	}
 	
 	/**
-	 * Convert Order from entity
-	 * @param order
-	 * @return
-	 */
-	private Order.Builder convertOrder(MOrder order) {
-		Order.Builder builder = Order.newBuilder();
-		if(order == null) {
-			return builder;
-		}
-		MRefList reference = MRefList.get(Env.getCtx(), MOrder.DOCSTATUS_AD_REFERENCE_ID, order.getDocStatus(), null);
-		//	Convert
-		return builder
-			.setUuid(ValueUtil.validateNull(order.getUUID()))
-			.setId(order.getC_Order_ID())
-			.setDocumentType(ConvertUtil.convertDocumentType(MDocType.get(Env.getCtx(), order.getC_DocTypeTarget_ID())))
-			.setDocumentNo(ValueUtil.validateNull(order.getDocumentNo()))
-			.setSalesRepresentative(convertSalesRepresentative(MUser.get(Env.getCtx(), order.getSalesRep_ID())))
-			.setDocumentStatus(ConvertUtil.convertDocumentStatus(
-					ValueUtil.validateNull(order.getDocStatus()), 
-					ValueUtil.validateNull(ValueUtil.getTranslation(reference, I_AD_Ref_List.COLUMNNAME_Name)), 
-					ValueUtil.validateNull(ValueUtil.getTranslation(reference, I_AD_Ref_List.COLUMNNAME_Description))))
-			.setTotalLines(ValueUtil.getDecimalFromBigDecimal(order.getTotalLines()))
-			.setGrandTotal(ValueUtil.getDecimalFromBigDecimal(order.getGrandTotal()))
-			.setDateOrdered(ValueUtil.convertDateToString(order.getDateOrdered()))
-			.setCustomer(convertCustomer((MBPartner) order.getC_BPartner()));
-	}
-	
-	/**
 	 * Get Product Price Method
 	 * @param context
 	 * @param request
@@ -3829,7 +3815,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	
 		builder.setRecordCount(count);
 		//	Set page token
-		if(count > offset && count > limit) {
+		if(RecordUtil.isValidNextPageToken(count, offset, limit)) {
 			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
 		}
 		//	Set next page
@@ -3884,7 +3870,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			if(displayCurrencyId > 0) {
 				builder.setDisplayCurrency(ConvertUtil.convertCurrency(MCurrency.get(Env.getCtx(), displayCurrencyId)));
 				//	Get
-				BigDecimal conversionRate = Optional.ofNullable(MConversionRate.getRate(priceList.getC_Currency_ID(), displayCurrencyId, getDate(), conversionTypeId, Env.getAD_Client_ID(Env.getCtx()), Env.getAD_Org_ID(Env.getCtx())))
+				BigDecimal conversionRate = Optional.ofNullable(MConversionRate.getRate(priceList.getC_Currency_ID(), displayCurrencyId, RecordUtil.getDate(), conversionTypeId, Env.getAD_Client_ID(Env.getCtx()), Env.getAD_Org_ID(Env.getCtx())))
 						.orElse(Env.ZERO);
 				builder.setDisplayPriceList(ValueUtil.getDecimalFromBigDecimal(Optional.ofNullable(productPricing.getPriceList()).orElse(Env.ZERO).multiply(conversionRate, MathContext.DECIMAL128)));
 				builder.setDisplayPriceStandard(ValueUtil.getDecimalFromBigDecimal(Optional.ofNullable(productPricing.getPriceStd()).orElse(Env.ZERO).multiply(conversionRate, MathContext.DECIMAL128)));

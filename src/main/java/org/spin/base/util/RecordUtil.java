@@ -77,6 +77,18 @@ public class RecordUtil {
 	}
 	
 	/**
+	 * Validate if can have a next page token
+	 * @param count
+	 * @param offset
+	 * @param limit
+	 * @return
+	 * @return boolean
+	 */
+	public static boolean isValidNextPageToken(int count, int offset, int limit) {
+		return count > (offset + limit) && count > limit;
+	}
+	
+	/**
 	 * get Entity from Table and (UUID / Record ID)
 	 * @param context
 	 * @param tableName
@@ -249,5 +261,13 @@ public class RecordUtil {
 		}
 		String queryCount = "SELECT COUNT(*) " + sql.substring(positionFrom, sql.length());
 		return DB.getSQLValueEx(null, queryCount, parameters);
+	}
+	
+	/**
+	 * Get Date
+	 * @return
+	 */
+	public static Timestamp getDate() {
+		return TimeUtil.getDay(System.currentTimeMillis());
 	}
 }

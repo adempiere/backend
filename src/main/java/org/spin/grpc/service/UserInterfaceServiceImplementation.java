@@ -926,7 +926,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 		//	
 		builder.setRecordCount(count);
 		//	Set page token
-		if(count > offset && count > limit) {
+		if(RecordUtil.isValidNextPageToken(count, offset, limit)) {
 			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
 		}
 		//	Set next page
