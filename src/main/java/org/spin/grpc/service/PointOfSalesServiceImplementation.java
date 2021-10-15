@@ -2397,11 +2397,14 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		List<Object> parameters = new ArrayList<Object>();
 		//	Aisle Seller
 		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), null);
+		int orgId = Env.getAD_Org_ID(Env.getCtx());
 		boolean isWithAisleSeller = M_Element.get(Env.getCtx(), "IsAisleSeller") != null;
 		if(isWithAisleSeller 
 				&& request.getIsAisleSeller()) {
-			whereClause.append("(C_Order.C_POS_ID = ? OR EXISTS(SELECT 1 FROM C_POS p WHERE p.C_POS_ID = C_Order.C_POS_ID AND p.IsAisleSeller = 'Y'))");
+			whereClause.append("(C_Order.C_POS_ID = ? OR C_Order.AD_Org_ID = ? OR EXISTS(SELECT 1 FROM C_POS p WHERE p.C_POS_ID = C_Order.C_POS_ID AND p.IsAisleSeller = 'Y'))");
 			parameters.add(posId);
+			parameters.add(orgId);
+			parameters.add(orgId);
 		} else {
 			whereClause.append("C_Order.C_POS_ID = ?");
 			parameters.add(posId);
