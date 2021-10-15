@@ -114,6 +114,11 @@ service Store {
 	rpc GetOpenShipment(GetOpenShipmentRequest) returns (Shipment) {}
 	//	List Shipment Line
 	rpc ListShipmentLines(ListShipmentLinesRequest) returns (ListShipmentLinesResponse) {}
+	//	Process Shipment
+	rpc ProcessShipment(ProcessShipmentRequest) returns (Shipment) {}
+	//	Return Order
+	//	Reverse Sales Transaction
+	rpc ReverseSales(ReverseSalesRequest) returns (Order) {}
 }
 
 // Request for create a Shipment from Order
@@ -185,6 +190,22 @@ message Shipment {
 	Warehouse warehouse = 7;
 	string movement_date = 8;
 	string order_uuid = 9;
+}
+
+// Request for Process a Shipment
+message ProcessShipmentRequest {
+	ClientRequest client_request = 1;
+	string shipment_uuid = 2;
+	string description = 3;
+	string document_action = 4;
+}
+
+// Request for Reverse a Sales Transaction
+message ReverseSalesRequest {
+	ClientRequest client_request = 1;
+	string pos_uuid = 2;
+	string order_uuid = 3;
+	string description = 4;
 }
 
 // Sales Shipment Line

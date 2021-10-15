@@ -28,6 +28,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import org.adempiere.exceptions.AdempiereException;
+import org.adempiere.pos.process.ReverseTheSalesTransaction;
 import org.adempiere.pos.service.CPOS;
 import org.adempiere.pos.util.POSTicketHandler;
 import org.compiere.model.I_AD_Ref_List;
@@ -87,6 +88,7 @@ import org.compiere.model.M_Element;
 import org.compiere.model.PO;
 import org.compiere.model.Query;
 import org.compiere.process.DocAction;
+import org.compiere.process.ProcessInfo;
 import org.compiere.util.CCache;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
@@ -95,6 +97,7 @@ import org.compiere.util.Msg;
 import org.compiere.util.TimeUtil;
 import org.compiere.util.Trx;
 import org.compiere.util.Util;
+import org.eevolution.service.dsl.ProcessBuilder;
 import org.spin.base.util.ContextManager;
 import org.spin.base.util.ConvertUtil;
 import org.spin.base.util.DocumentUtil;
@@ -159,7 +162,9 @@ import org.spin.grpc.util.PointOfSalesRequest;
 import org.spin.grpc.util.PrintTicketRequest;
 import org.spin.grpc.util.PrintTicketResponse;
 import org.spin.grpc.util.ProcessOrderRequest;
+import org.spin.grpc.util.ProcessShipmentRequest;
 import org.spin.grpc.util.ProductPrice;
+import org.spin.grpc.util.ReverseSalesRequest;
 import org.spin.grpc.util.Shipment;
 import org.spin.grpc.util.ShipmentLine;
 import org.spin.grpc.util.StoreGrpc.StoreImplBase;
@@ -1256,6 +1261,119 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					.withCause(e)
 					.asRuntimeException());
 		}
+	}
+	
+	@Override
+	public void processShipment(ProcessShipmentRequest request, StreamObserver<Shipment> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Create customer = " + request);
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			Shipment.Builder shipment = processShipment(request);
+			responseObserver.onNext(shipment.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void reverseSales(ReverseSalesRequest request, StreamObserver<Order> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Create customer = " + request);
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			Order.Builder order = reverseSalesTransaction(request);
+			responseObserver.onNext(order.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	/**
+	 * Process a Shipment
+	 * @param request
+	 * @return
+	 * @return Shipment.Builder
+	 */
+	private Order.Builder reverseSalesTransaction(ReverseSalesRequest request) {
+		if(Util.isEmpty(request.getOrderUuid())) {
+			throw new AdempiereException("@C_Order_ID@ @NotFound@");
+		}
+		MPOS pointOfSales = getPOSFromUuid(request.getPosUuid(), true);
+		if(pointOfSales.get_ValueAsInt("C_DocTypeRMA_ID") <= 0) {
+			throw new AdempiereException("@C_DocTypeRMA_ID@ @NotFound@");
+		}
+		AtomicReference<MOrder> returnOrderReference = new AtomicReference<MOrder>();
+		Trx.run(transactionName -> {
+			int orderId = RecordUtil.getIdFromUuid(I_C_Order.Table_Name, request.getOrderUuid(), transactionName);
+			ProcessInfo infoProcess = ProcessBuilder
+				.create(Env.getCtx())
+				.process(ReverseTheSalesTransaction.getProcessId())
+				.withoutTransactionClose()
+				.withRecordId(MOrder.Table_ID, orderId)
+		        .withParameter(ReverseTheSalesTransaction.C_ORDER_ID, orderId)
+		        .withParameter(ReverseTheSalesTransaction.ISCANCELLED, true)
+		        .withParameter(ReverseTheSalesTransaction.C_DOCTYPERMA_ID, pointOfSales.get_ValueAsInt("C_DocTypeRMA_ID"))
+				.execute(transactionName);
+			returnOrderReference.set(new MOrder(Env.getCtx(), infoProcess.getRecord_ID(), transactionName));
+		});
+		//	Default
+		return ConvertUtil.convertOrder(returnOrderReference.get());
+	}
+	
+	/**
+	 * Process a Shipment
+	 * @param request
+	 * @return
+	 * @return Shipment.Builder
+	 */
+	private Shipment.Builder processShipment(ProcessShipmentRequest request) {
+		if(Util.isEmpty(request.getShipmentUuid())) {
+			throw new AdempiereException("@M_InOut_ID@ @NotFound@");
+		}
+		if(Util.isEmpty(request.getDocumentAction())) {
+			throw new AdempiereException("@DocStatus@ @IsMandatory@");
+		}
+		if(!request.getDocumentAction().equals(MInOut.ACTION_Complete)
+				&& !request.getDocumentAction().equals(MInOut.ACTION_Reverse_Accrual)
+				&& !request.getDocumentAction().equals(MInOut.ACTION_Reverse_Correct)) {
+			throw new AdempiereException("@DocStatus@ @Invalid@");
+		}
+		AtomicReference<MInOut> shipmentReference = new AtomicReference<MInOut>();
+		Trx.run(transactionName -> {
+			int shipmentId = RecordUtil.getIdFromUuid(I_M_InOut.Table_Name, request.getShipmentUuid(), transactionName);
+			MInOut shipment = new MInOut(Env.getCtx(), shipmentId, transactionName);
+			if (!shipment.processIt(request.getDocumentAction())) {
+				log.warning("@ProcessFailed@ :" + shipment.getProcessMsg());
+				throw new AdempiereException("@ProcessFailed@ :" + shipment.getProcessMsg());
+			}
+			shipment.saveEx();
+			shipmentReference.set(shipment);
+		});
+		//	Default
+		return ConvertUtil.convertShipment(shipmentReference.get());
 	}
 	
 	/**
