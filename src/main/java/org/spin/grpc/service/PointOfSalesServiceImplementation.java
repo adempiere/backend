@@ -1333,9 +1333,9 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				.process(ReverseTheSalesTransaction.getProcessId())
 				.withoutTransactionClose()
 				.withRecordId(MOrder.Table_ID, orderId)
-		        .withParameter(ReverseTheSalesTransaction.C_ORDER_ID, orderId)
-		        .withParameter(ReverseTheSalesTransaction.ISCANCELLED, true)
-		        .withParameter(ReverseTheSalesTransaction.C_DOCTYPERMA_ID, pointOfSales.get_ValueAsInt("C_DocTypeRMA_ID"))
+		        .withParameter("C_Order_ID", orderId)
+		        .withParameter("IsCancelled", true)
+		        .withParameter("C_DocTypeRMA_ID", pointOfSales.get_ValueAsInt("C_DocTypeRMA_ID"))
 				.execute(transactionName);
 			returnOrderReference.set(new MOrder(Env.getCtx(), infoProcess.getRecord_ID(), transactionName));
 		});
