@@ -2519,7 +2519,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		boolean isWithAisleSeller = M_Element.get(Env.getCtx(), "IsAisleSeller") != null;
 		if(isWithAisleSeller 
 				&& request.getIsAisleSeller()) {
-			whereClause.append("(C_Order.C_POS_ID = ? OR C_Order.AD_Org_ID = ? OR EXISTS(SELECT 1 FROM C_POS p WHERE p.C_POS_ID = C_Order.C_POS_ID AND p.IsAisleSeller = 'Y'))");
+			whereClause.append("(C_Order.C_POS_ID = ? OR C_Order.AD_Org_ID = ? OR EXISTS(SELECT 1 FROM C_POS p WHERE p.C_POS_ID = C_Order.C_POS_ID AND p.IsAisleSeller = 'Y' AND p.AD_Org_ID = ?))");
 			parameters.add(posId);
 			parameters.add(orgId);
 			parameters.add(orgId);
