@@ -2519,10 +2519,12 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		boolean isWithAisleSeller = M_Element.get(Env.getCtx(), "IsAisleSeller") != null;
 		if(isWithAisleSeller 
 				&& request.getIsAisleSeller()) {
-			whereClause.append("(C_Order.C_POS_ID = ? OR C_Order.AD_Org_ID = ? OR EXISTS(SELECT 1 FROM C_POS p WHERE p.C_POS_ID = C_Order.C_POS_ID AND p.IsAisleSeller = 'Y' AND p.AD_Org_ID = ?))");
+			int salesRepresentativeId = RecordUtil.getIdFromUuid(I_AD_User.Table_Name,request.getSalesRepresentativeUuid(), null);
+			whereClause.append("(C_Order.C_POS_ID = ? OR C_Order.AD_Org_ID = ? OR EXISTS(SELECT 1 FROM C_POS p WHERE p.C_POS_ID = C_Order.C_POS_ID AND p.IsAisleSeller = 'Y' AND p.AD_Org_ID = ?) OR EXISTS(SELECT 1 FROM AD_User u WHERE u.AD_User_ID = ? AND IsPOSManager = 'Y'))");
 			parameters.add(posId);
 			parameters.add(orgId);
 			parameters.add(orgId);
+			parameters.add(salesRepresentativeId);
 		} else {
 			whereClause.append("C_Order.C_POS_ID = ?");
 			parameters.add(posId);
