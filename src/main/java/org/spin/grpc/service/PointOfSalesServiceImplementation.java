@@ -1328,12 +1328,14 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		AtomicReference<MOrder> returnOrderReference = new AtomicReference<MOrder>();
 		Trx.run(transactionName -> {
 			int orderId = RecordUtil.getIdFromUuid(I_C_Order.Table_Name, request.getOrderUuid(), transactionName);
+			MOrder order = new MOrder(Env.getCtx(), orderId, transactionName);
 			ProcessInfo infoProcess = ProcessBuilder
 				.create(Env.getCtx())
 				.process(ReverseTheSalesTransaction.getProcessId())
 				.withoutTransactionClose()
 				.withRecordId(MOrder.Table_ID, orderId)
 		        .withParameter("C_Order_ID", orderId)
+		        .withParameter("Bill_BPartner_ID", order.getC_BPartner_ID())
 		        .withParameter("IsCancelled", true)
 		        .withParameter("C_DocTypeRMA_ID", pointOfSales.get_ValueAsInt("C_DocTypeRMA_ID"))
 				.execute(transactionName);
@@ -2519,9 +2521,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		boolean isWithAisleSeller = M_Element.get(Env.getCtx(), "IsAisleSeller") != null;
 		if(isWithAisleSeller 
 				&& request.getIsAisleSeller()) {
-			whereClause.append("(C_Order.C_POS_ID = ? OR C_Order.AD_Org_ID = ? OR EXISTS(SELECT 1 FROM C_POS p WHERE p.C_POS_ID = C_Order.C_POS_ID AND p.IsAisleSeller = 'Y'))");
+			whereClause.append("(C_Order.C_POS_ID = ? OR (C_Order.AD_Org_ID = ? AND EXISTS(SELECT 1 FROM C_POS p WHERE p.C_POS_ID = C_Order.C_POS_ID AND p.IsAisleSeller = 'Y')))");
 			parameters.add(posId);
-			parameters.add(orgId);
 			parameters.add(orgId);
 		} else {
 			whereClause.append("C_Order.C_POS_ID = ?");
