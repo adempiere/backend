@@ -1557,6 +1557,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				shipment.setMovementDate(RecordUtil.getDate());
 			}
 			//	Default values
+			shipment.setC_Order_ID(orderId);
+			shipment.setSalesRep_ID(salesRepresentativeId);
 			shipment.setC_POS_ID(salesOrder.getC_POS_ID());
 			//	Valid if has a Order
 			if(!DocumentUtil.isCompleted(salesOrder)) {
