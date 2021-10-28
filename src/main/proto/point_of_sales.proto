@@ -913,9 +913,16 @@ message OrderLine {
 	Decimal discount_amount = 12;
 	Decimal tax_amount = 13;
 	TaxRate tax_rate = 14;
-	Decimal line_net_amount = 15;
-	Decimal total_line_amount = 16;
-	int32 line = 17;
+	Decimal price_list_with_tax = 15;
+	Decimal price_with_tax = 16;
+	//	Totals
+	Decimal total_discount_amount = 17;
+	Decimal total_tax_amount = 18;
+	Decimal total_base_amount = 19;
+	Decimal total_base_amount_with_tax = 20;
+	Decimal total_amount = 21;
+	Decimal total_amount_with_tax = 22;
+	int32 line = 23;
 }
 
 // Request Product Price
