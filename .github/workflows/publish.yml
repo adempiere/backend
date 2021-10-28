@@ -27,7 +27,7 @@ jobs:
 
       - name: get adempiere source
         run: |
-          download_repo="https://github.com/erpcya/adempiere/releases/download/3.9.3-rs-4.0/Adempiere_393LTS.tar.gz"
+          download_repo="https://github.com/erpcya/adempiere/releases/download/3.9.3-rs-4.3/Adempiere_393LTS.tar.gz"
           wget $download_repo -c -O Adempiere.tar.gz
 
       - name: uncompress file
