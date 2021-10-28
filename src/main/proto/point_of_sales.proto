@@ -689,7 +689,7 @@ message PointOfSales {
 	BankAccount cash_bank_account = 11;
 	BankAccount cash_transfer_bank_account = 12;
 	SalesRepresentative sales_representative = 13;
-	BusinessPartner template_business_partner = 14;
+	Customer template_customer = 14;
 	PriceList price_list = 15;
 	Warehouse warehouse = 16;
 	Currency display_currency = 17;
@@ -888,8 +888,13 @@ message Order {
 	Warehouse warehouse = 8;
 	Decimal total_lines = 9;
 	Decimal grand_total = 10;
-	string date_ordered = 11;
-	Customer customer = 12;
+	Decimal tax_amount = 12;
+	Decimal discount_amount = 13;
+	string date_ordered = 14;
+	Customer customer = 15;
+	bool is_delivered = 16;
+	string order_reference = 17;
+	string description = 18;
 }
 
 // Sales Order Line
@@ -905,9 +910,12 @@ message OrderLine {
 	Decimal price_list = 9;
 	Decimal price = 10;
 	Decimal discount_rate = 11;
-	TaxRate tax_rate = 12;
-	Decimal line_net_amount = 13;
-	int32 line = 14;
+	Decimal discount_amount = 12;
+	Decimal tax_amount = 13;
+	TaxRate tax_rate = 14;
+	Decimal line_net_amount = 15;
+	Decimal total_line_amount = 16;
+	int32 line = 17;
 }
 
 // Request Product Price

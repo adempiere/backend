@@ -1339,7 +1339,12 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		        .withParameter("IsCancelled", true)
 		        .withParameter("C_DocTypeRMA_ID", pointOfSales.get_ValueAsInt("C_DocTypeRMA_ID"))
 				.execute(transactionName);
-			returnOrderReference.set(new MOrder(Env.getCtx(), infoProcess.getRecord_ID(), transactionName));
+			MOrder returnOrder = new MOrder(Env.getCtx(), infoProcess.getRecord_ID(), transactionName);
+			if(!Util.isEmpty(request.getDescription())) {
+				returnOrder.setDescription(request.getDescription());
+				returnOrder.saveEx();
+			}
+			returnOrderReference.set(returnOrder);
 		});
 		//	Default
 		return ConvertUtil.convertOrder(returnOrderReference.get());
@@ -2249,7 +2254,6 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				}
 				//	Set default values
 				salesOrder.setDocAction(DocAction.ACTION_Complete);
-				salesOrder.setC_POS_ID(posId);
 				setCurrentDate(salesOrder);
 				salesOrder.saveEx();
 				//	Update Process if exists
@@ -2734,7 +2738,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				//	POS
 				if(!Util.isEmpty(request.getPosUuid())) {
 					int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), transactionName);
-					if(posId > 0) {
+					if(posId > 0 && salesOrder.getC_POS_ID() <= 0) {
 						salesOrder.setC_POS_ID(posId);
 					}
 				}
@@ -3326,7 +3330,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				.setIsModifyPrice(pos.isModifyPrice())
 				.setIsPosRequiredPin(pos.isPOSRequiredPIN())
 				.setSalesRepresentative(ConvertUtil.convertSalesRepresentative(MUser.get(pos.getCtx(), pos.getSalesRep_ID())))
-				.setTemplateBusinessPartner(ConvertUtil.convertBusinessPartner(pos.getBPartner()))
+				.setTemplateCustomer(ConvertUtil.convertCustomer(pos.getBPartner()))
 				.setKeyLayoutUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_POSKeyLayout.Table_Name, pos.getC_POSKeyLayout_ID())))
 				.setIsAisleSeller(pos.get_ValueAsBoolean("IsAisleSeller"))
 				.setIsSharedPos(pos.get_ValueAsBoolean("IsSharedPOS"))

@@ -351,7 +351,7 @@ public class AccessServiceImplementation extends SecurityImplBase {
 			warehouseId = RecordUtil.getIdFromUuid(I_M_Warehouse.Table_Name, request.getWarehouseUuid(), null);
 		}
 		if(organizationId < 0) {
-			organizationId = 0;
+			throw new AdempiereException("@AD_User_ID@: @AD_Org_ID@ @NotFound@");
 		}
 		if(warehouseId < 0) {
 			warehouseId = 0;
