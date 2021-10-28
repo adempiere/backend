@@ -783,7 +783,8 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 		});
 		//	All Payments
 		if(paymentAmount.get().compareTo(Env.ZERO) >= 0
-				&& salesOrder.getGrandTotal().subtract(paymentAmount.get()).compareTo(Env.ZERO) > 0) {
+				&& salesOrder.getGrandTotal().subtract(paymentAmount.get()).compareTo(Env.ZERO) > 0
+				&& defaultPaymentMethod != null) {
 			//	e-Commerce cash waiting for collect is generated as draft documents
 			processPayment(salesOrder, defaultPaymentMethod.getTenderType(), salesOrder.getC_Currency_ID(), salesOrder.getGrandTotal().subtract(paymentAmount.get()), null, transactionName);
 		}
