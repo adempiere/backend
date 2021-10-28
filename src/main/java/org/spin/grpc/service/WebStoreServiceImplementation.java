@@ -29,6 +29,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.adempiere.exceptions.AdempiereException;
 import org.compiere.model.I_AD_User;
 import org.compiere.model.I_C_City;
+import org.compiere.model.I_C_Order;
 import org.compiere.model.I_C_Region;
 import org.compiere.model.I_M_Product;
 import org.compiere.model.I_M_Storage;
@@ -112,6 +113,8 @@ import org.spin.grpc.store.GetCustomerRequest;
 import org.spin.grpc.store.GetResourceRequest;
 import org.spin.grpc.store.GetShippingInformationRequest;
 import org.spin.grpc.store.GetStockRequest;
+import org.spin.grpc.store.ListOrdersRequest;
+import org.spin.grpc.store.ListOrdersResponse;
 import org.spin.grpc.store.ListPaymentMethodsRequest;
 import org.spin.grpc.store.ListPaymentMethodsResponse;
 import org.spin.grpc.store.ListProductsRequest;
@@ -144,13 +147,13 @@ import org.spin.grpc.store.UpdateCartRequest;
 import org.spin.grpc.store.UpdateCustomerRequest;
 import org.spin.grpc.store.WebStoreGrpc.WebStoreImplBase;
 import org.spin.model.I_AD_AttachmentReference;
-import org.spin.model.I_W_DeliveryViaRuleAllocation;
 import org.spin.model.I_C_PaymentMethod;
+import org.spin.model.I_W_DeliveryViaRuleAllocation;
 import org.spin.model.MADAttachmentReference;
 import org.spin.model.MADToken;
 import org.spin.model.MADTokenDefinition;
-import org.spin.model.MWDeliveryViaRuleAllocation;
 import org.spin.model.MCPaymentMethod;
+import org.spin.model.MWDeliveryViaRuleAllocation;
 import org.spin.util.AttachmentUtil;
 import org.spin.util.TokenGeneratorHandler;
 import org.spin.util.VueStoreFrontUtil;
@@ -638,6 +641,30 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 		}
 	}
 	
+	@Override
+	public void listOrders(ListOrdersRequest request, StreamObserver<ListOrdersResponse> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Object Requested = " + request.getClientRequest().getSessionUuid());
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			ListOrdersResponse.Builder orders = listOrders(request);
+			responseObserver.onNext(orders.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
 	/**
 	 * Create Order from Request
 	 * @param request
@@ -705,6 +732,7 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 		//	Set Shipping Address
 		salesOrder.setC_BPartner_Location_ID(shippingLocationId);
 		salesOrder.set_ValueOfColumn(I_W_Store.COLUMNNAME_W_Store_ID, store.getW_Store_ID());
+		salesOrder.set_ValueOfColumn(I_W_Basket.COLUMNNAME_W_Basket_ID, basket.getW_Basket_ID());
 		//	Warehouse
 		salesOrder.setM_Warehouse_ID(store.getM_Warehouse_ID());
 		//	Price List
@@ -924,6 +952,34 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 			.setCarrierCode(request.getCarrierCode())
 			.setMethodCode(request.getMethodCode())
 			.setPaymentMethodCode(request.getPaymentMethodCode())
+			.setShippingAddress(convertAddress(MUser.get(Env.getCtx(), salesOrder.getAD_User_ID()), ((MBPartnerLocation) salesOrder.getC_BPartner_Location()), transactionName))
+			.setShippingAddress(convertAddress(MUser.get(Env.getCtx(), salesOrder.getAD_User_ID()), ((MBPartnerLocation) salesOrder.getBill_Location()), transactionName));
+		//	Add Lines
+		Arrays.asList(salesOrder.getLines(true, null)).forEach(orderLine -> {
+			MProduct product = MProduct.get(Env.getCtx(), orderLine.getM_Product_ID());
+			builder.addOrderLines(OrderLine.newBuilder()
+					.setSku(ValueUtil.validateNull(product.getSKU()))
+					.setName(ValueUtil.validateNull(product.getName()))
+					.setPrice(orderLine.getPriceActual().doubleValue())
+					.setQuantity(orderLine.getQtyOrdered().doubleValue()));
+		});
+		return builder;
+	}
+	
+	/**
+	 * Convert Order
+	 * @param request
+	 * @param salesOrder
+	 * @param transactionName
+	 * @return
+	 */
+	private Order.Builder convertOrder(MOrder salesOrder, String transactionName) {
+		Order.Builder builder = Order.newBuilder();
+		builder.setId(salesOrder.getC_Order_ID())
+			.setDocumentNo(ValueUtil.validateNull(salesOrder.getDocumentNo()))
+			.setCreated(dateConverter.format(salesOrder.getCreated()))
+			.setUpdated(dateConverter.format(salesOrder.getUpdated()))
+			.setTransmited(dateConverter.format(salesOrder.getUpdated()))
 			.setShippingAddress(convertAddress(MUser.get(Env.getCtx(), salesOrder.getAD_User_ID()), ((MBPartnerLocation) salesOrder.getC_BPartner_Location()), transactionName))
 			.setShippingAddress(convertAddress(MUser.get(Env.getCtx(), salesOrder.getAD_User_ID()), ((MBPartnerLocation) salesOrder.getBill_Location()), transactionName));
 		//	Add Lines
@@ -1290,6 +1346,41 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * List Orders from POS UUID
+	 * @param request
+	 * @return
+	 */
+	private ListOrdersResponse.Builder listOrders(ListOrdersRequest request) {
+		ListOrdersResponse.Builder builder = ListOrdersResponse.newBuilder();
+		String nexPageToken = null;
+		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
+		int limit = RecordUtil.PAGE_SIZE;
+		int offset = pageNumber * RecordUtil.PAGE_SIZE;
+		//	Get Orders list
+		Query query = new Query(Env.getCtx(), I_C_Order.Table_Name, "EXISTS(SELECT 1 FROM W_Basket b WHERE b.W_Basket_ID = C_Order.W_Basket_ID AND b.AD_User_ID = ?)", null)
+				.setParameters(Env.getAD_User_ID(Env.getCtx()))
+				.setClient_ID()
+				.setOnlyActiveRecords(true)
+				.setOrderBy(I_C_Order.COLUMNNAME_DateOrdered + " DESC");
+		int count = query.count();
+		query
+		.setLimit(limit, offset)
+		.<MOrder>list()
+		.forEach(order -> {
+			builder.addOrders(convertOrder(order, null));
+		});
+		//	
+		builder.setRecordCount(count);
+		//	Set page token
+		if(RecordUtil.isValidNextPageToken(count, offset, limit)) {
+			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
+		}
+		//	Set next page
+		builder.setNextPageToken(ValueUtil.validateNull(nexPageToken));
+		return builder;
 	}
 	
 	/**
