@@ -327,6 +327,9 @@ public class AccessServiceImplementation extends SecurityImplBase {
 			//	Organization
 			if(organizationId < 0) {
 				organizationId = SessionManager.getDefaultOrganizationId(roleId, userId);
+				if(organizationId < 0) {
+					organizationId = 0;
+				}
 			}
 			warehouseId = DB.getSQLValue(null, "SELECT M_Warehouse_ID FROM M_Warehouse WHERE IsActive = 'Y' AND AD_Org_ID = ?", organizationId);
 		} else {
