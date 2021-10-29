@@ -738,7 +738,10 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 		//	Price List
 		salesOrder.setM_PriceList_ID(store.getM_PriceList_ID());
 		//	Document Type
-		int documeDocTypeId = MDocType.getDocTypeBaseOnSubType(store.getAD_Org_ID(), MDocType.DOCBASETYPE_SalesOrder, MDocType.DOCSUBTYPESO_InvoiceOrder);
+		int documeDocTypeId = store.get_ValueAsInt("C_DocType_ID");
+		if(documeDocTypeId <= 0) {
+			documeDocTypeId = MDocType.getDocTypeBaseOnSubType(store.getAD_Org_ID(), MDocType.DOCBASETYPE_SalesOrder, MDocType.DOCSUBTYPESO_InvoiceOrder);
+		}
 		//	Validate
 		if(documeDocTypeId <= 0) {
 			throw new AdempiereException("@C_DocType_ID@ @IsMandatory@");
