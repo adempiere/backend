@@ -3261,10 +3261,9 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		boolean isListWithSharedPOS = M_Element.get(Env.getCtx(), "IsSharedPOS") != null;
 		String whereClause = "(AD_Org_ID = ? OR SalesRep_ID = ?)";
 		List<Object> parameters = new ArrayList<>();
-		parameters.add(Env.getAD_Org_ID(Env.getCtx()));
 		parameters.add(salesRepresentativeId);
 		if(isListWithSharedPOS) {
-			whereClause = "AD_Org_ID = ? OR SalesRep_ID = ? OR EXISTS(SELECT 1 FROM AD_User u WHERE u.AD_User_ID = ? AND IsPOSManager = 'Y') OR (AD_Org_ID = ? AND IsSharedPOS = 'Y')";
+			whereClause = "SalesRep_ID = ? OR EXISTS(SELECT 1 FROM AD_User u WHERE u.AD_User_ID = ? AND IsPOSManager = 'Y') OR (AD_Org_ID = ? AND IsSharedPOS = 'Y')";
 			parameters.add(salesRepresentativeId);
 			parameters.add(Env.getAD_Org_ID(Env.getCtx()));
 		}
