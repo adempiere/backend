@@ -132,15 +132,13 @@ message Tab {
 	string parent_column_name = 26;
 	string display_logic = 27;
 	string commit_warning = 28;
-	string query = 29;
-	string where_clause = 30;
-	string order_by_clause = 31;
 	string parent_tab_uuid = 32;
+	repeated string context_column_names = 33;
 	// External Info
-	ContextInfo context_info = 33;
-	repeated Process processes = 34;
-	repeated Field fields = 35;
-	FieldGroup field_group = 36;
+	ContextInfo context_info = 34;
+	repeated Process processes = 35;
+	repeated Field fields = 36;
+	FieldGroup field_group = 37;
 }
 
 // Field
@@ -292,21 +290,19 @@ message Browser {
 	string description = 5;
 	string help = 6;
 	int32 access_level = 8;
-	string query = 9;
-	string where_clause = 10;
-	string order_by_clause = 11;
-	bool is_updateable = 12;
-	bool is_deleteable = 13;
-	bool is_selected_by_default = 14;
-	bool is_collapsible_by_default = 15;
-	bool is_executed_query_by_default = 16;
-	bool is_show_total = 17;
-	string view_uuid = 18;
+	repeated string context_column_names = 9;
+	bool is_updateable = 10;
+	bool is_deleteable = 11;
+	bool is_selected_by_default = 12;
+	bool is_collapsible_by_default = 13;
+	bool is_executed_query_by_default = 14;
+	bool is_show_total = 15;
+	string view_uuid = 16;
 	// External Reference
-	Window window = 19;
-	Process process = 20;
-	repeated Field fields = 21;
-	bool is_active = 22;
+	Window window = 17;
+	Process process = 18;
+	repeated Field fields = 19;
+	bool is_active = 20;
 }
 
 // Zoom Window

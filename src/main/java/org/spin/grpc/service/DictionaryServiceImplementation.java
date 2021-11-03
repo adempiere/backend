@@ -27,7 +27,6 @@ import org.adempiere.exceptions.AdempiereException;
 import org.adempiere.model.I_AD_Browse;
 import org.adempiere.model.MBrowse;
 import org.adempiere.model.MBrowseField;
-import org.adempiere.model.MView;
 import org.compiere.model.I_AD_Column;
 import org.compiere.model.I_AD_Element;
 import org.compiere.model.I_AD_Field;
@@ -69,12 +68,11 @@ import org.compiere.util.Util;
 import org.spin.base.util.ContextManager;
 import org.spin.base.util.DictionaryUtil;
 import org.spin.base.util.RecordUtil;
-import org.spin.base.util.ReferenceInfo;
-import org.spin.base.util.ReferenceUtil;
 import org.spin.base.util.ValueUtil;
 import org.spin.grpc.util.ApplicationRequest;
 import org.spin.grpc.util.Browser;
 import org.spin.grpc.util.ContextInfo;
+import org.spin.grpc.util.DictionaryGrpc.DictionaryImplBase;
 import org.spin.grpc.util.EntityRequest;
 import org.spin.grpc.util.Field;
 import org.spin.grpc.util.FieldCondition;
@@ -91,7 +89,6 @@ import org.spin.grpc.util.Tab;
 import org.spin.grpc.util.ValidationRule;
 import org.spin.grpc.util.Window;
 import org.spin.grpc.util.ZoomWindow;
-import org.spin.grpc.util.DictionaryGrpc.DictionaryImplBase;
 import org.spin.model.MADContextInfo;
 import org.spin.model.MADFieldCondition;
 import org.spin.model.MADFieldDefinition;
@@ -716,12 +713,10 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 				.setIsView(table.isView())
 				.setTabLevel(tab.getTabLevel())
 				.setTableName(ValueUtil.validateNull(table.getTableName()))
-				.setQuery(ValueUtil.validateNull(DictionaryUtil.getQueryWithReferencesFromTab(tab)))
-				.setWhereClause(whereClause.toString())
-				.setOrderByClause(ValueUtil.validateNull(tab.getOrderByClause()))
 				.setParentTabUuid(ValueUtil.validateNull(parentTabUuid))
 				.setIsChangeLog(table.isChangeLog())
-				.setIsActive(tab.isActive());
+				.setIsActive(tab.isActive())
+				.addAllContextColumnNames(DictionaryUtil.getContextColumnNames(Optional.ofNullable(whereClause.toString()).orElse("") + Optional.ofNullable(tab.getOrderByClause()).orElse("")));
 		//	For link
 		if(contextInfoId > 0) {
 			ContextInfo.Builder contextInfoBuilder = convertContextInfo(context, contextInfoId);
@@ -888,8 +883,8 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 	 * @return
 	 */
 	private Browser.Builder convertBrowser(Properties context, MBrowse browser, boolean withFields) {
-		String query = addQueryReferencesFromBrowser(browser, MView.getSQLFromView(browser.getAD_View_ID(), null));
-		String orderByClause = getSQLOrderBy(browser);
+		String query = DictionaryUtil.addQueryReferencesFromBrowser(browser);
+		String orderByClause = DictionaryUtil.getSQLOrderBy(browser);
 		Browser.Builder builder = Browser.newBuilder()
 				.setId(browser.getAD_Process_ID())
 				.setUuid(ValueUtil.validateNull(browser.getUUID()))
@@ -905,9 +900,7 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 				.setIsSelectedByDefault(browser.isSelectedByDefault())
 				.setIsShowTotal(browser.isShowTotal())
 				.setIsUpdateable(browser.isUpdateable())
-				.setQuery(ValueUtil.validateNull(query))
-				.setWhereClause(ValueUtil.validateNull(browser.getWhereClause()))
-				.setOrderByClause(ValueUtil.validateNull(orderByClause));
+				.addAllContextColumnNames(DictionaryUtil.getContextColumnNames(Optional.ofNullable(query).orElse("") + Optional.ofNullable(browser.getWhereClause()).orElse("") + Optional.ofNullable(orderByClause).orElse("")));
 		//	Set View UUID
 		if(browser.getAD_View_ID() > 0) {
 			builder.setViewUuid(ValueUtil.validateNull(browser.getAD_View().getUUID()));
@@ -933,77 +926,6 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 		//	Add to recent Item
 		addToRecentItem(MMenu.ACTION_SmartBrowse, browser.getAD_Window_ID());
 		return builder;
-	}
-	
-	/**
-	 * Add references to original query from smart browser
-	 * @param originalQuery
-	 * @return
-	 */
-	private String addQueryReferencesFromBrowser(MBrowse browser, String originalQuery) {
-		int fromIndex = originalQuery.toUpperCase().indexOf(" FROM ");
-		StringBuffer queryToAdd = new StringBuffer(originalQuery.substring(0, fromIndex));
-		StringBuffer joinsToAdd = new StringBuffer(originalQuery.substring(fromIndex, originalQuery.length() - 1));
-		for (MBrowseField browseField : browser.getDisplayFields()) {
-			int displayTypeId = browseField.getAD_Reference_ID();
-			if(DisplayType.isLookup(displayTypeId)) {
-				//	Reference Value
-				int referenceValueId = browseField.getAD_Reference_Value_ID();
-				//	Validation Code
-				String columnName = browseField.getAD_Element().getColumnName();
-				String tableName = browseField.getAD_View_Column().getAD_View_Definition().getTableAlias();
-				if(browseField.getAD_View_Column().getAD_Column_ID() > 0) {
-					columnName = browseField.getAD_View_Column().getAD_Column().getColumnName();
-				}
-				queryToAdd.append(", ");
-				ReferenceInfo referenceInfo = ReferenceUtil.getInstance(Env.getCtx()).getReferenceInfo(displayTypeId, referenceValueId, columnName, Env.getAD_Language(Env.getCtx()), tableName);
-				if(referenceInfo != null) {
-					queryToAdd.append(referenceInfo.getDisplayValue(browseField.getAD_View_Column().getColumnName()));
-					joinsToAdd.append(referenceInfo.getJoinValue(columnName, tableName));
-				}
-			}
-		}
-		queryToAdd.append(joinsToAdd);
-		return queryToAdd.toString();
-	}
-	
-	/**
-	 * Get Order By
-	 * @param browser
-	 * @return
-	 */
-	public String getSQLOrderBy(MBrowse browser) {
-		StringBuilder sqlOrderBy = new StringBuilder();
-		for (MBrowseField field : browser.getOrderByFields()) {
-			if (field.isOrderBy()) {
-				int orderByPosition = getOrderByPosition(browser, field);
-				if (orderByPosition <= 0)
-					continue;
-
-				if (sqlOrderBy.length() > 0) {
-					sqlOrderBy.append(",");
-				}
-				sqlOrderBy.append(orderByPosition);
-			}
-		}
-		return sqlOrderBy.length() > 0 ? sqlOrderBy.toString(): "";
-	}
-	
-	/**
-	 * Get Order By Postirion for SB
-	 * @param BrowserField
-	 * @return
-	 */
-	private int getOrderByPosition(MBrowse browser, MBrowseField BrowserField) {
-		int colOffset = 1; // columns start with 1
-		int col = 0;
-		for (MBrowseField field : browser.getFields()) {
-			int sortBySqlNo = col + colOffset;
-			if (BrowserField.getAD_Browse_Field_ID() == field.getAD_Browse_Field_ID())
-				return sortBySqlNo;
-			col ++;
-		}
-		return -1;
 	}
 	
 	/**

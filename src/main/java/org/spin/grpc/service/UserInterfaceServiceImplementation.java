@@ -131,6 +131,7 @@ import org.spin.grpc.util.GetRecordAccessRequest;
 import org.spin.grpc.util.GetReportOutputRequest;
 import org.spin.grpc.util.GetResourceReferenceRequest;
 import org.spin.grpc.util.GetResourceRequest;
+import org.spin.grpc.util.KeyValue;
 import org.spin.grpc.util.ListBrowserItemsRequest;
 import org.spin.grpc.util.ListBrowserItemsResponse;
 import org.spin.grpc.util.ListDrillTablesRequest;
@@ -854,7 +855,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 		MTab tab = MTab.get(context, tabId);
 		String tableName = MTable.getTableName(context, tab.getAD_Table_ID());
 		Env.clearWinContext(request.getWindowNo());
-		Map<String, Object> attributes = ValueUtil.convertValuesToObjects(request.getAttributesList());
+		Map<String, Object> attributes = ValueUtil.convertValuesToObjects(request.getContextAttributesList());
 		//	Fill context
 		attributes.entrySet().forEach(attribute -> {
 			if(attribute.getValue() instanceof Integer) {
@@ -2341,10 +2342,17 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 	 * @param values
 	 * @return
 	 */
-	private String getBrowserWhereClause(MBrowse browser, String parsedWhereClause, HashMap<String, Object> parameterMap, List<Object> values) {
+	private String getBrowserWhereClause(MBrowse browser, String parsedWhereClause, List<KeyValue> contextAttributes, HashMap<String, Object> parameterMap, List<Object> values) {
 		StringBuilder browserWhereClause = new StringBuilder();
 		List<MBrowseField> fields = ASPUtil.getInstance().getBrowseFields(browser.getAD_Browse_ID());
 		LinkedHashMap<String, MBrowseField> fieldsMap = new LinkedHashMap<>();
+		AtomicReference<String> convertedWhereClause = new AtomicReference<String>(parsedWhereClause);
+		if(parsedWhereClause != null
+				&& contextAttributes != null) {
+			contextAttributes.forEach(contextValue -> {
+				convertedWhereClause.set(convertedWhereClause.get().replaceAll("@" + contextValue.getKey() + "@", String.valueOf(ValueUtil.getObjectFromValue(contextValue.getValue()))));
+			});
+		}
 		//	Add field to map
 		for(MBrowseField field: fields) {
 			fieldsMap.put(field.getAD_View_Column().getColumnName(), field);
@@ -2432,8 +2440,8 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 		//	
 		String whereClause = null;
 		//	
-		if(!Util.isEmpty(parsedWhereClause)) {
-			whereClause = parsedWhereClause.toString();
+		if(!Util.isEmpty(convertedWhereClause.get())) {
+			whereClause = convertedWhereClause.get();
 		}
 		if(browserWhereClause.length() > 0) {
 			if(Util.isEmpty(whereClause)) {
@@ -2461,12 +2469,16 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 		//	Populate map
 		criteria.getConditionsList().forEach(condition -> parameterMap.put(condition.getColumnName(), ValueUtil.getObjectFromValue(condition.getValue())));
 		List<Object> values = new ArrayList<Object>();
-		String whereClause = getBrowserWhereClause(browser, criteria.getWhereClause(), parameterMap, values);
+		String whereClause = getBrowserWhereClause(browser, browser.getWhereClause(), request.getContextAttributesList(), parameterMap, values);
 		//	Page prefix
 		int page = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
-		StringBuilder sql = new StringBuilder(criteria.getQuery());
+		String query = DictionaryUtil.addQueryReferencesFromBrowser(browser);
+		String orderByClause = DictionaryUtil.getSQLOrderBy(browser);
+		StringBuilder sql = new StringBuilder(query);
 		if (!Util.isEmpty(whereClause)) {
 			sql.append(" WHERE ").append(whereClause); // includes first AND
+		} else {
+			sql.append(" WHERE 1=1");
 		}
 		MView view = browser.getAD_View();
 		MViewDefinition parentDefinition = view.getParentViewDefinition();
@@ -2476,7 +2488,6 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 		String parsedSQL = MRole.getDefault().addAccessSQL(sql.toString(),
 				tableNameAlias, MRole.SQL_FULLYQUALIFIED,
 				MRole.SQL_RO);
-		String orderByClause = criteria.getOrderByClause();
 		if(Util.isEmpty(orderByClause)) {
 			orderByClause = "";
 		} else {
@@ -2490,11 +2501,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (page + 1);
 		}
 		//	Add Row Number
-		if(!Util.isEmpty(whereClause)) {
-			parsedSQL = parsedSQL + " AND ROWNUM >= " + page + " AND ROWNUM <= " + RecordUtil.PAGE_SIZE;
-		} else {
-			parsedSQL = parsedSQL + " WHERE ROWNUM >= " + page + " AND ROWNUM <= " + RecordUtil.PAGE_SIZE;	
-		}
+		parsedSQL = parsedSQL + " AND ROWNUM >= " + page + " AND ROWNUM <= " + RecordUtil.PAGE_SIZE;
 		//	Add Order By
 		parsedSQL = parsedSQL + orderByClause;
 		//	Return
@@ -2639,7 +2646,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 				gridTab.clearSelection();
 				gridTab.dataNew(false);
 				//	load values
-				Map<String, Object> attributes = ValueUtil.convertValuesToObjects(request.getAttributesList());
+				Map<String, Object> attributes = ValueUtil.convertValuesToObjects(request.getContextAttributesList());
 				for(Entry<String, Object> attribute : attributes.entrySet()) {
 					gridTab.setValue(attribute.getKey(), attribute.getValue());
 				}
