@@ -1801,6 +1801,9 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				Optional.ofNullable(address.getEmail()).ifPresent(email -> businessPartnerLocation.setEMail(email));
 				Optional.ofNullable(address.getPhone()).ifPresent(phome -> businessPartnerLocation.setPhone(phome));
 				Optional.ofNullable(address.getDescription()).ifPresent(description -> businessPartnerLocation.set_ValueOfColumn("Description", description));
+				if(Util.isEmpty(businessPartnerLocation.getName())) {
+					businessPartnerLocation.setName(".");
+				}
 				businessPartnerLocation.saveEx(transactionName);
 				//	Contact
 				if(!Util.isEmpty(address.getContactName()) || !Util.isEmpty(address.getEmail()) || !Util.isEmpty(address.getPhone())) {
@@ -2778,7 +2781,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				if(!Util.isEmpty(request.getPriceListUuid())) {
 					priceListId = RecordUtil.getIdFromUuid(I_M_PriceList.Table_Name, request.getPriceListUuid(), transactionName);
 				}
-				if(priceListId > 0) {
+				if(priceListId > 0 && priceListId != salesOrder.getM_PriceList_ID()) {
 					salesOrder.setM_PriceList_ID(priceListId);
 					salesOrder.saveEx(transactionName);
 					configurePriceList(salesOrder);
