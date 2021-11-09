@@ -617,17 +617,18 @@ message ListOrdersRequest {
 	string business_partner_uuid = 4;
 	Decimal grand_total = 5;
 	Decimal open_amount = 6;
-	bool is_paid = 7;
-	bool is_processed = 8;
-	bool is_aisle_seller = 9;
-	bool is_invoiced = 10;
-	string date_ordered_from = 11;
-	string date_ordered_to = 12;
-	string sales_representative_uuid = 13;
-	int32 page_size = 14;
-	string page_token = 15;
+	bool is_waiting_for_pay = 7;
+	bool is_only_processed = 8;
+	bool is_only_aisle_seller = 9;
+	bool is_waiting_for_invoice = 10;
+	bool is_waiting_for_shipment = 11;
+	string date_ordered_from = 12;
+	string date_ordered_to = 13;
+	string sales_representative_uuid = 14;
+	int32 page_size = 15;
+	string page_token = 16;
 	// Query
-	Criteria criteria = 16;
+	Criteria criteria = 17;
 }
 
 //	List Order Lines Response
@@ -717,6 +718,7 @@ message CreateOrderRequest {
 	string price_list_uuid = 5;
 	string warehouse_uuid = 6;
 	string sales_representative_uuid = 7;
+	string campaign_uuid = 8;
 }
 
 // Request for process a order
@@ -813,6 +815,7 @@ message Payment {
 	string currency_uuid = 17;
 	bool is_refund = 18;
 	string payment_method_uuid = 19;
+	Decimal order_currency_rate = 20;
 }
 
 // Request for delete a order
@@ -850,6 +853,7 @@ message UpdateOrderRequest {
 	string price_list_uuid = 6;
 	string warehouse_uuid = 7;
 	string description = 8;
+	string campaign_uuid = 9;
 }
 
 // Request for update a order line
@@ -895,6 +899,11 @@ message Order {
 	bool is_delivered = 16;
 	string order_reference = 17;
 	string description = 18;
+	string campaign_uuid = 19;
+	Decimal display_currency_rate = 20;
+	Decimal open_amount = 21;
+	Decimal payment_amount = 22;
+	Decimal refund_amount = 23;
 }
 
 // Sales Order Line

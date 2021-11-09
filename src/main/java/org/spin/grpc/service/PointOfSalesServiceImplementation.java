@@ -37,6 +37,7 @@ import org.compiere.model.I_C_BP_BankAccount;
 import org.compiere.model.I_C_BP_Group;
 import org.compiere.model.I_C_BPartner;
 import org.compiere.model.I_C_Bank;
+import org.compiere.model.I_C_Campaign;
 import org.compiere.model.I_C_Charge;
 import org.compiere.model.I_C_City;
 import org.compiere.model.I_C_ConversionType;
@@ -78,7 +79,6 @@ import org.compiere.model.MPriceListVersion;
 import org.compiere.model.MProduct;
 import org.compiere.model.MProductPrice;
 import org.compiere.model.MProductPricing;
-import org.compiere.model.MRefList;
 import org.compiere.model.MStorage;
 import org.compiere.model.MTable;
 import org.compiere.model.MTax;
@@ -442,7 +442,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					request.getClientRequest().getLanguage(), 
 					request.getClientRequest().getOrganizationUuid(), 
 					request.getClientRequest().getWarehouseUuid());
-			Payment.Builder payment = convertPayment(createPayment(request));
+			Payment.Builder payment = ConvertUtil.convertPayment(createPayment(request));
 			responseObserver.onNext(payment.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -466,7 +466,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					request.getClientRequest().getLanguage(), 
 					request.getClientRequest().getOrganizationUuid(), 
 					request.getClientRequest().getWarehouseUuid());
-			Payment.Builder payment = convertPayment(updatePayment(request));
+			Payment.Builder payment = ConvertUtil.convertPayment(updatePayment(request));
 			responseObserver.onNext(payment.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -2557,7 +2557,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		int orgId = Env.getAD_Org_ID(Env.getCtx());
 		boolean isWithAisleSeller = M_Element.get(Env.getCtx(), "IsAisleSeller") != null;
 		if(isWithAisleSeller 
-				&& request.getIsAisleSeller()) {
+				&& request.getIsOnlyAisleSeller()) {
 			whereClause.append("(C_Order.C_POS_ID = ? OR (C_Order.AD_Org_ID = ? AND EXISTS(SELECT 1 FROM C_POS p WHERE p.C_POS_ID = C_Order.C_POS_ID AND p.IsAisleSeller = 'Y')))");
 			parameters.add(posId);
 			parameters.add(orgId);
@@ -2593,13 +2593,20 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			parameters.add(openAmount);
 			parameters.add(openAmount);
 		}
-		whereClause.append(" AND Processed = ?");
-		parameters.add(request.getIsProcessed()? "Y": "N");
+		if(request.getIsOnlyProcessed()) {
+			whereClause.append(" AND Processed = ?");
+			parameters.add("Y");
+		}
 		//	Is Invoiced
-		if(request.getIsInvoiced()
-				|| request.getIsPaid()) {
-			whereClause.append(" AND EXISTS(SELECT 1 FROM C_Invoice i WHERE i.C_Order_ID = C_Order.C_Order_ID AND i.DocStatus IN('CO', 'CL') AND i.IsPaid = ?)");
-			parameters.add(request.getIsPaid()? "Y": "N");
+		if(request.getIsWaitingForInvoice()) {
+			whereClause.append(" AND NOT EXISTS(SELECT 1 FROM C_Invoice i WHERE i.C_Order_ID = C_Order.C_Order_ID AND i.DocStatus IN('CO', 'CL'))");
+		}
+		//	for payment
+		if(request.getIsWaitingForPay()) {
+			whereClause.append(" AND NOT EXISTS(SELECT 1 FROM C_Payment p WHERE p.C_Order_ID = C_Order.C_Order_ID)");
+		}
+		if(request.getIsWaitingForShipment()) {
+			whereClause.append(" AND NOT EXISTS(SELECT 1 FROM M_InOut io WHERE io.C_Order_ID = C_Order.C_Order_ID AND io.DocStatus IN('CO', 'CL'))");
 		}
 		//	Date Order From
 		if(!Util.isEmpty(request.getDateOrderedFrom())) {
@@ -2685,7 +2692,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		.setLimit(limit, offset)
 		.<MPayment>list()
 		.forEach(payment -> {
-			builder.addPayments(convertPayment(payment));
+			builder.addPayments(ConvertUtil.convertPayment(payment));
 		});
 		//	
 		builder.setRecordCount(count);
@@ -2802,6 +2809,10 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				//	Warehouse
 				int warehouseId = 0;
 				int priceListId = 0;
+				int campaignId = RecordUtil.getIdFromUuid(I_C_Campaign.Table_Name, request.getCampaignUuid(), transactionName);
+				if(campaignId > 0 && campaignId != salesOrder.getC_Campaign_ID()) {
+					salesOrder.setC_Campaign_ID(campaignId);
+				}
 				if(!Util.isEmpty(request.getWarehouseUuid())) {
 					warehouseId = RecordUtil.getIdFromUuid(I_M_Warehouse.Table_Name, request.getWarehouseUuid(), transactionName);
 				}
@@ -3447,6 +3458,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				salesOrder.setDateAcct(RecordUtil.getDate());
 				salesOrder.setDatePromised(RecordUtil.getDate());
 			}
+			//	Set campaign
 			//	Default values
 			salesOrder.setIsSOTrx(true);
 			salesOrder.setAD_Org_ID(pos.getAD_Org_ID());
@@ -3498,6 +3510,10 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			//	Conversion Type
 			if(pos.get_ValueAsInt(MOrder.COLUMNNAME_C_ConversionType_ID) > 0) {
 				salesOrder.setC_ConversionType_ID(pos.get_ValueAsInt(MOrder.COLUMNNAME_C_ConversionType_ID));
+			}
+			int campaignId = RecordUtil.getIdFromUuid(I_C_Campaign.Table_Name, request.getCampaignUuid(), transactionName);
+			if(campaignId > 0 && campaignId != salesOrder.getC_Campaign_ID()) {
+				salesOrder.setC_Campaign_ID(campaignId);
 			}
 			//	Set business partner
 			setBPartner(pos, salesOrder, request.getCustomerUuid(), request.getSalesRepresentativeUuid(), transactionName);
@@ -3638,42 +3654,6 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					orderLine.deleteEx(true);
 				}
 			});
-	}
-	
-	/**
-	 * Convert payment
-	 * @param payment
-	 * @return
-	 */
-	private Payment.Builder convertPayment(MPayment payment) {
-		Payment.Builder builder = Payment.newBuilder();
-		if(payment == null) {
-			return builder;
-		}
-		//	
-		MRefList reference = MRefList.get(Env.getCtx(), MPayment.DOCSTATUS_AD_REFERENCE_ID, payment.getDocStatus(), null);
-		//	Convert
-		builder
-			.setId(payment.getC_Payment_ID())
-			.setUuid(ValueUtil.validateNull(payment.getUUID()))
-			.setOrderUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_Order.Table_Name, payment.getC_Order_ID())))
-			.setDocumentNo(ValueUtil.validateNull(payment.getDocumentNo()))
-			.setTenderTypeCode(ValueUtil.validateNull(payment.getTenderType()))
-			.setPaymentMethodUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_PaymentMethod.Table_Name, payment.get_ValueAsInt("C_PaymentMethod_ID"))))
-			.setReferenceNo(ValueUtil.validateNull(Optional.ofNullable(payment.getCheckNo()).orElse(payment.getDocumentNo())))
-			.setDescription(ValueUtil.validateNull(payment.getDescription()))
-			.setAmount(ValueUtil.getDecimalFromBigDecimal(payment.getPayAmt()))
-			.setBankUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_Bank.Table_Name, payment.getC_Bank_ID())))
-			.setCustomer(ConvertUtil.convertCustomer((MBPartner) payment.getC_BPartner()))
-			.setCurrencyUuid(RecordUtil.getUuidFromId(I_C_Currency.Table_Name, payment.getC_Currency_ID()))
-			.setPaymentDate(ValueUtil.convertDateToString(payment.getDateTrx()))
-			.setIsRefund(!payment.isReceipt())
-			.setPaymentAccountDate(ValueUtil.convertDateToString(payment.getDateAcct()))
-			.setDocumentStatus(ConvertUtil.convertDocumentStatus(ValueUtil.validateNull(payment.getDocStatus()), 
-					ValueUtil.validateNull(ValueUtil.getTranslation(reference, I_AD_Ref_List.COLUMNNAME_Name)), 
-					ValueUtil.validateNull(ValueUtil.getTranslation(reference, I_AD_Ref_List.COLUMNNAME_Description))))
-		;
-		return builder;
 	}
 	
 	/**

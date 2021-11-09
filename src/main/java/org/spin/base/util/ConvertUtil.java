@@ -20,11 +20,15 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import org.compiere.model.I_AD_Element;
 import org.compiere.model.I_AD_Ref_List;
 import org.compiere.model.I_AD_User;
+import org.compiere.model.I_C_Bank;
+import org.compiere.model.I_C_Campaign;
 import org.compiere.model.I_C_ConversionType;
+import org.compiere.model.I_C_Currency;
 import org.compiere.model.I_C_Order;
 import org.compiere.model.I_C_POSKeyLayout;
 import org.compiere.model.MAttachment;
@@ -49,8 +53,10 @@ import org.compiere.model.MOrder;
 import org.compiere.model.MOrderLine;
 import org.compiere.model.MOrg;
 import org.compiere.model.MOrgInfo;
+import org.compiere.model.MPOS;
 import org.compiere.model.MPOSKey;
 import org.compiere.model.MPOSKeyLayout;
+import org.compiere.model.MPayment;
 import org.compiere.model.MPriceList;
 import org.compiere.model.MProduct;
 import org.compiere.model.MProductCategory;
@@ -87,6 +93,7 @@ import org.spin.grpc.util.KeyLayout;
 import org.spin.grpc.util.Order;
 import org.spin.grpc.util.OrderLine;
 import org.spin.grpc.util.Organization;
+import org.spin.grpc.util.Payment;
 import org.spin.grpc.util.PriceList;
 import org.spin.grpc.util.Product;
 import org.spin.grpc.util.Region;
@@ -98,6 +105,7 @@ import org.spin.grpc.util.TaxRate;
 import org.spin.grpc.util.Value;
 import org.spin.grpc.util.Warehouse;
 import org.spin.grpc.util.ChatEntry.ModeratorStatus;
+import org.spin.model.I_C_PaymentMethod;
 import org.spin.model.MADAttachmentReference;
 import org.spin.util.AttachmentUtil;
 import org.spin.util.VueStoreFrontUtil;
@@ -483,6 +491,16 @@ public class ConvertUtil {
 		MRefList reference = MRefList.get(Env.getCtx(), MOrder.DOCSTATUS_AD_REFERENCE_ID, order.getDocStatus(), null);
 		MPriceList priceList = MPriceList.get(Env.getCtx(), order.getM_PriceList_ID(), order.get_TrxName());
 		BigDecimal baseAmount = Arrays.asList(order.getLines()).stream().map(orderLine -> Optional.ofNullable(orderLine.getPriceList()).orElse(Env.ZERO)).reduce(BigDecimal.ZERO, BigDecimal::add);
+		Optional<BigDecimal> paidAmount = MPayment.getOfOrder(order).stream().map(payment -> getConvetedAmount(order, payment, payment.getPayAmt())).collect(Collectors.reducing(BigDecimal::add));
+		BigDecimal grandTotal = order.getGrandTotal();
+		BigDecimal totalLines = order.getTotalLines();
+		BigDecimal paymentAmount = Env.ZERO;
+		if(paidAmount.isPresent()) {
+			paymentAmount = paidAmount.get();
+		}
+		BigDecimal openAmount = (grandTotal.subtract(paymentAmount).compareTo(Env.ZERO) < 0? Env.ZERO: grandTotal.subtract(paymentAmount));
+		BigDecimal refundAmount = (grandTotal.subtract(paymentAmount).compareTo(Env.ZERO) > 0? Env.ZERO: grandTotal.subtract(paymentAmount).negate());
+		BigDecimal displayCurrencyRate = getDisplayConversionRateFromOrder(order);
 		//	Convert
 		return builder
 			.setUuid(ValueUtil.validateNull(order.getUUID()))
@@ -499,12 +517,110 @@ public class ConvertUtil {
 			.setPriceList(ConvertUtil.convertPriceList(MPriceList.get(Env.getCtx(), order.getM_PriceList_ID(), order.get_TrxName())))
 			.setWarehouse(convertWarehouse(order.getM_Warehouse_ID()))
 			.setIsDelivered(order.isDelivered())
-			.setDiscountAmount(ValueUtil.getDecimalFromBigDecimal(order.getTotalLines().subtract(Optional.ofNullable(baseAmount).orElse(Env.ZERO).setScale(priceList.getStandardPrecision(), BigDecimal.ROUND_HALF_UP))))
-			.setTaxAmount(ValueUtil.getDecimalFromBigDecimal(order.getGrandTotal().subtract(order.getTotalLines()).setScale(priceList.getStandardPrecision(), BigDecimal.ROUND_HALF_UP)))
-			.setTotalLines(ValueUtil.getDecimalFromBigDecimal(order.getTotalLines().setScale(priceList.getStandardPrecision(), BigDecimal.ROUND_HALF_UP)))
-			.setGrandTotal(ValueUtil.getDecimalFromBigDecimal(order.getGrandTotal().setScale(priceList.getStandardPrecision(), BigDecimal.ROUND_HALF_UP)))
+			.setDiscountAmount(ValueUtil.getDecimalFromBigDecimal(totalLines.subtract(Optional.ofNullable(baseAmount).orElse(Env.ZERO).setScale(priceList.getStandardPrecision(), BigDecimal.ROUND_HALF_UP))))
+			.setTaxAmount(ValueUtil.getDecimalFromBigDecimal(grandTotal.subtract(totalLines).setScale(priceList.getStandardPrecision(), BigDecimal.ROUND_HALF_UP)))
+			.setTotalLines(ValueUtil.getDecimalFromBigDecimal(totalLines.setScale(priceList.getStandardPrecision(), BigDecimal.ROUND_HALF_UP)))
+			.setGrandTotal(ValueUtil.getDecimalFromBigDecimal(grandTotal.setScale(priceList.getStandardPrecision(), BigDecimal.ROUND_HALF_UP)))
+			.setDisplayCurrencyRate(ValueUtil.getDecimalFromBigDecimal(displayCurrencyRate.setScale(priceList.getStandardPrecision(), BigDecimal.ROUND_HALF_UP)))
+			.setPaymentAmount(ValueUtil.getDecimalFromBigDecimal(paymentAmount.setScale(priceList.getStandardPrecision(), BigDecimal.ROUND_HALF_UP)))
+			.setOpenAmount(ValueUtil.getDecimalFromBigDecimal(openAmount.setScale(priceList.getStandardPrecision(), BigDecimal.ROUND_HALF_UP)))
+			.setRefundAmount(ValueUtil.getDecimalFromBigDecimal(refundAmount.setScale(priceList.getStandardPrecision(), BigDecimal.ROUND_HALF_UP)))
 			.setDateOrdered(ValueUtil.convertDateToString(order.getDateOrdered()))
-			.setCustomer(convertCustomer((MBPartner) order.getC_BPartner()));
+			.setCustomer(convertCustomer((MBPartner) order.getC_BPartner()))
+			.setCampaignUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_Campaign.Table_Name, order.getC_Campaign_ID())));
+	}
+	
+	/**
+	 * Get Converted Amount based on Order currency
+	 * @param order
+	 * @param payment
+	 * @return
+	 * @return BigDecimal
+	 */
+	private static BigDecimal getConvetedAmount(MOrder order, MPayment payment, BigDecimal amount) {
+		if(payment.getC_Currency_ID() == order.getC_Currency_ID()
+				|| amount == null
+				|| amount.compareTo(Env.ZERO) == 0) {
+			return amount;
+		}
+		BigDecimal convertedAmount = MConversionRate.convert(payment.getCtx(), amount, payment.getC_Currency_ID(), order.getC_Currency_ID(), payment.getDateAcct(), payment.getC_ConversionType_ID(), payment.getAD_Client_ID(), payment.getAD_Org_ID());
+		//	
+		return Optional.ofNullable(convertedAmount).orElse(Env.ZERO);
+	}
+	
+	/**
+	 * Get Display Currency rate from Sales Order
+	 * @param order
+	 * @return
+	 * @return BigDecimal
+	 */
+	private static BigDecimal getDisplayConversionRateFromOrder(MOrder order) {
+		MPOS pos = MPOS.get(order.getCtx(), order.getC_POS_ID());
+		if(order.getC_Currency_ID() == pos.get_ValueAsInt("DisplayCurrency_ID")
+				|| pos.get_ValueAsInt("DisplayCurrency_ID") <= 0) {
+			return Env.ONE;
+		}
+		BigDecimal conversionRate = MConversionRate.getRate(order.getC_Currency_ID(), pos.get_ValueAsInt("DisplayCurrency_ID"), order.getDateAcct(), order.getC_ConversionType_ID(), order.getAD_Client_ID(), order.getAD_Org_ID());
+		//	
+		return Optional.ofNullable(conversionRate).orElse(Env.ZERO);
+	}
+	
+	/**
+	 * Convert payment
+	 * @param payment
+	 * @return
+	 */
+	public static Payment.Builder convertPayment(MPayment payment) {
+		Payment.Builder builder = Payment.newBuilder();
+		if(payment == null) {
+			return builder;
+		}
+		//	
+		MRefList reference = MRefList.get(Env.getCtx(), MPayment.DOCSTATUS_AD_REFERENCE_ID, payment.getDocStatus(), payment.get_TrxName());
+		int presicion = MCurrency.getStdPrecision(payment.getCtx(), payment.getC_Currency_ID());
+		BigDecimal orderConversionRate = getOrderConversionRateFromPayment(payment);
+		//	Convert
+		builder
+			.setId(payment.getC_Payment_ID())
+			.setUuid(ValueUtil.validateNull(payment.getUUID()))
+			.setOrderUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_Order.Table_Name, payment.getC_Order_ID())))
+			.setDocumentNo(ValueUtil.validateNull(payment.getDocumentNo()))
+			.setTenderTypeCode(ValueUtil.validateNull(payment.getTenderType()))
+			.setPaymentMethodUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_PaymentMethod.Table_Name, payment.get_ValueAsInt("C_PaymentMethod_ID"))))
+			.setReferenceNo(ValueUtil.validateNull(Optional.ofNullable(payment.getCheckNo()).orElse(payment.getDocumentNo())))
+			.setDescription(ValueUtil.validateNull(payment.getDescription()))
+			.setAmount(ValueUtil.getDecimalFromBigDecimal(payment.getPayAmt().setScale(presicion, BigDecimal.ROUND_HALF_UP)))
+			.setOrderCurrencyRate(ValueUtil.getDecimalFromBigDecimal(orderConversionRate))
+			.setBankUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_Bank.Table_Name, payment.getC_Bank_ID())))
+			.setCustomer(ConvertUtil.convertCustomer((MBPartner) payment.getC_BPartner()))
+			.setCurrencyUuid(RecordUtil.getUuidFromId(I_C_Currency.Table_Name, payment.getC_Currency_ID()))
+			.setPaymentDate(ValueUtil.convertDateToString(payment.getDateTrx()))
+			.setIsRefund(!payment.isReceipt())
+			.setPaymentAccountDate(ValueUtil.convertDateToString(payment.getDateAcct()))
+			.setDocumentStatus(ConvertUtil.convertDocumentStatus(ValueUtil.validateNull(payment.getDocStatus()), 
+					ValueUtil.validateNull(ValueUtil.getTranslation(reference, I_AD_Ref_List.COLUMNNAME_Name)), 
+					ValueUtil.validateNull(ValueUtil.getTranslation(reference, I_AD_Ref_List.COLUMNNAME_Description))))
+		;
+		return builder;
+	}
+	
+	/**
+	 * Get Order conversion rate for payment
+	 * @param payment
+	 * @return
+	 * @return BigDecimal
+	 */
+	private static BigDecimal getOrderConversionRateFromPayment(MPayment payment) {
+		if(payment.getC_Order_ID() <= 0) {
+			return Env.ONE;
+		}
+		MOrder order = (MOrder) payment.getC_Order();
+		if(payment.getC_Currency_ID() == order.getC_Currency_ID()) {
+			return Env.ONE;
+		}
+		BigDecimal conversionRate = MConversionRate.getRate(payment.getC_Currency_ID(), order.getC_Currency_ID(), payment.getDateAcct(), payment.getC_ConversionType_ID(), payment.getAD_Client_ID(), payment.getAD_Org_ID());
+		//	
+		return Optional.ofNullable(conversionRate).orElse(Env.ZERO);
 	}
 	
 	/**
