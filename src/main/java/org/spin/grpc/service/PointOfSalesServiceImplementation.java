@@ -2231,7 +2231,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	Dynamic where clause
 		String whereClause = "EXISTS(SELECT 1 FROM C_Conversion_Rate cr "
 				+ "WHERE (cr.C_Currency_ID = C_Currency.C_Currency_ID  OR cr.C_Currency_ID_To = C_Currency.C_Currency_ID) "
-				+ "AND cr.C_ConversionType_ID = ? AND cr.ValidFrom >= ? AND cr.ValidTo <= ?)";
+				+ "AND cr.C_ConversionType_ID = ? AND ? >= cr.ValidFrom AND ? <= cr.ValidTo)";
 		//	Aisle Seller
 		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), null);
 		MPOS pos = MPOS.get(Env.getCtx(), posId);
