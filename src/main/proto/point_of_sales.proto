@@ -119,6 +119,102 @@ service Store {
 	//	Return Order
 	//	Reverse Sales Transaction
 	rpc ReverseSales(ReverseSalesRequest) returns (Order) {}
+	//	Cash Management
+	rpc cashOpening(CashOpeningRequest) returns (Empty) {}
+	//	Cash Withdrawal
+	rpc cashWithdrawal(CashWithdrawalRequest) returns (Empty) {}
+	//	Cash Closing
+	rpc cashClosing(CashClosingRequest) returns (CashClosing) {}
+	//	List all cash movements
+	rpc ListCashMovements(ListCashMovementsRequest) returns (ListCashMovementsResponse) {}
+	//	List Cash Summary
+	rpc ListCashSummaryMovements(ListCashSummaryMovementsRequest) returns (ListCashSummaryMovementsResponse) {}
+}
+
+//	Payment Summary
+message PaymentSummary {
+	string payment_method_uuid = 1;
+	string tender_type_code = 2;
+	string currency_uuid = 3;
+	bool is_refund = 4;
+	Decimal amount = 5;
+}
+
+//	List Cash Movements Request
+message ListCashMovementsRequest {
+	ClientRequest client_request = 1;
+	string pos_uuid = 2;
+	string business_partner_uuid = 3;
+	bool is_only_processed = 4;
+	bool is_only_refund = 5;
+	string sales_representative_uuid = 6;
+	int32 page_size = 7;
+	string page_token = 8;
+}
+
+//	List cash movements
+message ListCashMovementsResponse {
+	int64 record_count = 1;
+	repeated Payment cash_movements = 2;
+	string next_page_token = 3;
+}
+
+//	List Cash Summary Movements Request
+message ListCashSummaryMovementsRequest {
+	ClientRequest client_request = 1;
+	string pos_uuid = 2;
+	bool is_only_processed = 3;
+	bool is_only_refund = 4;
+	int32 page_size = 5;
+	string page_token = 6;
+}
+
+//	List cash summary movements
+message ListCashSummaryMovementsResponse {
+	int64 record_count = 1;
+	int32 id = 2;
+	string uuid = 3;
+	repeated PaymentSummary cash_movements = 4;
+	string next_page_token = 5;
+}
+
+//	Cash closing
+message CashClosing {
+	ClientRequest client_request = 1;
+	string uuid = 2;
+	int32 id = 3;
+	string document_no = 4;
+	DocumentType document_type = 5;
+	DocumentStatus document_status = 6;
+	string description = 7;
+}
+
+//	Request for create cash closing
+message CashClosingRequest {
+	ClientRequest client_request = 1;
+	string pos_uuid = 2;
+	string uuid = 3;
+	int32 id = 4;
+	string collecting_agent_uuid = 5;
+	string description = 6;
+}
+
+//	Request for create cash withdrawal
+message CashWithdrawalRequest {
+	ClientRequest client_request = 1;
+	string pos_uuid = 2;
+	string collecting_agent_uuid = 3;
+	string description = 4;
+	repeated CreatePaymentRequest payments = 5;
+}
+
+//	Request for create cash opening
+message CashOpeningRequest {
+	ClientRequest client_request = 1;
+	string pos_uuid = 2;
+	string collecting_agent_uuid = 3;
+	string description = 4;
+	repeated CreatePaymentRequest payments = 5;
 }
 
 // Request for create a Shipment from Order
@@ -707,6 +803,11 @@ message PointOfSales {
 	Decimal maximum_daily_refund_allowed = 28;
 	Currency refund_reference_currency = 29;
 	DocumentType return_document_type = 30;
+	string default_campaign_uuid = 31;
+	string default_opening_charge_uuid = 32;
+	string default_withdrawal_charge_uuid = 33;
+	Decimal maximum_discount_allowed = 34;
+	Decimal write_off_amount_tolerance = 35;
 }
 
 // Request for create a order
@@ -734,19 +835,23 @@ message ProcessOrderRequest {
 //	Create Payment
 message CreatePaymentRequest {
 	ClientRequest client_request = 1;
-	string pos_uuid = 2;
-	string order_uuid = 3;
-	string invoice_uuid = 4;
-	string bank_uuid = 5;
-	string reference_no = 6;
-	string description = 7;
-	Decimal amount = 8;
-	string payment_date = 9;
-	string tender_type_code = 10;
-	string currency_uuid = 11;
-	string payment_method_uuid = 12;
-	string payment_account_date = 13;
-	bool is_refund = 14;
+	string uuid = 2;
+	int32 id = 3;
+	string pos_uuid = 4;
+	string order_uuid = 5;
+	string invoice_uuid = 6;
+	string bank_uuid = 7;
+	string reference_no = 8;
+	string description = 9;
+	Decimal amount = 10;
+	string payment_date = 11;
+	string tender_type_code = 12;
+	string currency_uuid = 13;
+	string payment_method_uuid = 14;
+	string payment_account_date = 15;
+	bool is_refund = 16;
+	string charge_uuid = 17;
+	string collecting_agent_uuid = 18;
 }
 
 //	Update Payment
@@ -774,10 +879,12 @@ message ListPaymentsRequest {
 	ClientRequest client_request = 1;
 	string pos_uuid = 2;
 	string order_uuid = 3;
-	int32 page_size = 4;
-	string page_token = 5;
+	bool is_only_refund = 4;
+	bool is_only_receipt = 5;
+	int32 page_size = 6;
+	string page_token = 7;
 	// Query
-	Criteria criteria = 6;
+	Criteria criteria = 8;
 }
 
 // Validate PIN Request

@@ -21,7 +21,7 @@ repositories {
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
-def libraryVersion = '1.1.7'
+def libraryVersion = '1.1.8'
 // IMPORTANT: You probably want the non-SNAPSHOT version of gRPC. Make sure you
 // are looking at a tagged version of the example and not "master"!
 
@@ -126,7 +126,7 @@ publishing {
     publications {
 		mavenJava(MavenPublication) {
         	groupId 'org.erpya.adempiere.grpc'
-            artifactId 'adempiere-grpc-server'
+            artifactId 'adempiere-backend-grpc-server'
             version libraryVersion
            	from components.java
            	pom {
