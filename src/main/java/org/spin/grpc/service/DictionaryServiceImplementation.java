@@ -1139,10 +1139,18 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 	 * @return
 	 */
 	private Field.Builder convertField(Properties context, String uuid) {
-		MField field = new Query(context, I_AD_Field.Table_Name, I_AD_Field.COLUMNNAME_UUID + " = ?", null)
-				.setParameters(uuid)
+		MField field = new Query(context, I_AD_Field.Table_Name, I_AD_Field.COLUMNNAME_AD_Field_ID + " = ?", null)
+				.setParameters(RecordUtil.getIdFromUuid(I_AD_Field.Table_Name, uuid, null))
 				.setOnlyActiveRecords(true)
 				.first();
+		int fieldId = field.getAD_Field_ID();
+		List<MField> customFields = ASPUtil.getInstance(context).getWindowFields(field.getAD_Tab_ID());
+		if(customFields != null) {
+			Optional<MField> maybeField = customFields.stream().filter(customField -> customField.getAD_Field_ID() == fieldId).findFirst();
+			if(maybeField.isPresent()) {
+				field = maybeField.get();
+			}
+		}
 		//	Convert
 		return convertField(context, field, true);
 	}
@@ -1294,9 +1302,9 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 		Field.Builder builder = Field.newBuilder()
 				.setId(field.getAD_Field_ID())
 				.setUuid(ValueUtil.validateNull(field.getUUID()))
-				.setName(ValueUtil.validateNull(ValueUtil.getTranslation(field, MField.COLUMNNAME_Name)))
-				.setDescription(ValueUtil.validateNull(ValueUtil.getTranslation(field, MField.COLUMNNAME_Description)))
-				.setHelp(ValueUtil.validateNull(ValueUtil.getTranslation(field, MField.COLUMNNAME_Help)))
+				.setName(ValueUtil.validateNull(field.getName()))
+				.setDescription(ValueUtil.validateNull(field.getDescription()))
+				.setHelp(ValueUtil.validateNull(field.getHelp()))
 				.setCallout(ValueUtil.validateNull(column.getCallout()))
 				.setColumnName(ValueUtil.validateNull(column.getColumnName()))
 				.setElementName(ValueUtil.validateNull(column.getColumnName()))
