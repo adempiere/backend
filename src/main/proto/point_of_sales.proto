@@ -120,11 +120,11 @@ service Store {
 	//	Reverse Sales Transaction
 	rpc ReverseSales(ReverseSalesRequest) returns (Order) {}
 	//	Cash Management
-	rpc cashOpening(CashOpeningRequest) returns (Empty) {}
+	rpc ProcessCashOpening(CashOpeningRequest) returns (Empty) {}
 	//	Cash Withdrawal
-	rpc cashWithdrawal(CashWithdrawalRequest) returns (Empty) {}
+	rpc ProcessCashWithdrawal(CashWithdrawalRequest) returns (Empty) {}
 	//	Cash Closing
-	rpc cashClosing(CashClosingRequest) returns (CashClosing) {}
+	rpc ProcessCashClosing(CashClosingRequest) returns (CashClosing) {}
 	//	List all cash movements
 	rpc ListCashMovements(ListCashMovementsRequest) returns (ListCashMovementsResponse) {}
 	//	List Cash Summary
@@ -134,10 +134,11 @@ service Store {
 //	Payment Summary
 message PaymentSummary {
 	string payment_method_uuid = 1;
-	string tender_type_code = 2;
-	string currency_uuid = 3;
-	bool is_refund = 4;
-	Decimal amount = 5;
+	string payment_method_name = 2;
+	string tender_type_code = 3;
+	Currency currency = 4;
+	bool is_refund = 5;
+	Decimal amount = 6;
 }
 
 //	List Cash Movements Request

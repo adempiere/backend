@@ -16,6 +16,8 @@ package org.spin.grpc.service;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,6 +39,7 @@ import org.compiere.model.I_C_BP_BankAccount;
 import org.compiere.model.I_C_BP_Group;
 import org.compiere.model.I_C_BPartner;
 import org.compiere.model.I_C_Bank;
+import org.compiere.model.I_C_BankStatement;
 import org.compiere.model.I_C_Campaign;
 import org.compiere.model.I_C_Charge;
 import org.compiere.model.I_C_City;
@@ -166,6 +169,7 @@ import org.spin.grpc.util.ListShipmentLinesResponse;
 import org.spin.grpc.util.Order;
 import org.spin.grpc.util.OrderLine;
 import org.spin.grpc.util.Payment;
+import org.spin.grpc.util.PaymentSummary;
 import org.spin.grpc.util.PointOfSales;
 import org.spin.grpc.util.PointOfSalesRequest;
 import org.spin.grpc.util.PrintTicketRequest;
@@ -1321,7 +1325,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	}
 	
 	@Override
-	public void cashOpening(CashOpeningRequest request, StreamObserver<Empty> responseObserver) {
+	public void processCashOpening(CashOpeningRequest request, StreamObserver<Empty> responseObserver) {
 		try {
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
@@ -1345,7 +1349,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	}
 	
 	@Override
-	public void cashWithdrawal(CashWithdrawalRequest request, StreamObserver<Empty> responseObserver) {
+	public void processCashWithdrawal(CashWithdrawalRequest request, StreamObserver<Empty> responseObserver) {
 		try {
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
@@ -1369,20 +1373,127 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	}
 	
 	@Override
-	public void cashClosing(CashClosingRequest request, StreamObserver<CashClosing> responseObserver) {
-		super.cashClosing(request, responseObserver);
+	public void processCashClosing(CashClosingRequest request, StreamObserver<CashClosing> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Cash Withdrawal = " + request.getPosUuid());
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			CashClosing.Builder closing = cashClosing(request);
+			responseObserver.onNext(closing.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
 	}
 	
 	@Override
-	public void listCashMovements(ListCashMovementsRequest request,
-			StreamObserver<ListCashMovementsResponse> responseObserver) {
-		super.listCashMovements(request, responseObserver);
+	public void listCashMovements(ListCashMovementsRequest request, StreamObserver<ListCashMovementsResponse> responseObserver) {
+		
 	}
 	
 	@Override
-	public void listCashSummaryMovements(ListCashSummaryMovementsRequest request,
-			StreamObserver<ListCashSummaryMovementsResponse> responseObserver) {
-		super.listCashSummaryMovements(request, responseObserver);
+	public void listCashSummaryMovements(ListCashSummaryMovementsRequest request, StreamObserver<ListCashSummaryMovementsResponse> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Cash Summary Movements = " + request.getPosUuid());
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			ListCashSummaryMovementsResponse.Builder response = listCashSummaryMovements(request);
+			responseObserver.onNext(response.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	/**
+	 * List all movements from cash
+	 * @return
+	 */
+	private ListCashSummaryMovementsResponse.Builder listCashSummaryMovements(ListCashSummaryMovementsRequest request) {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		ListCashSummaryMovementsResponse.Builder builder = ListCashSummaryMovementsResponse.newBuilder();
+		if(Util.isEmpty(request.getPosUuid())) {
+			throw new AdempiereException("@C_POS_ID@ @NotFound@");
+		}
+		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), null);
+		MBankStatement cashClosing = getCurrentCashclosing(posId, null);
+		if(cashClosing == null
+				|| cashClosing.getC_BankStatement_ID() <= 0) {
+			throw new AdempiereException("@C_BankStatement_ID@ @NotFound@");
+		}
+		builder
+			.setId(cashClosing.getC_BankStatement_ID())
+			.setUuid(ValueUtil.validateNull(cashClosing.getUUID()));
+		String nexPageToken = null;
+		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
+		int limit = RecordUtil.PAGE_SIZE;
+		int offset = pageNumber * RecordUtil.PAGE_SIZE;
+		int count = 0;
+		try {
+			String sql = "SELECT pm.UUID AS PaymentMethodUUID, pm.Name AS PaymentMethodName, pm.TenderType AS TenderTypeCode, p.C_Currency_ID, p.IsReceipt, (SUM(p.PayAmt) * CASE WHEN p.IsReceipt = 'Y' THEN 1 ELSE -1 END) AS PaymentAmount "
+					+ "FROM C_Payment p "
+					+ "INNER JOIN C_PaymentMethod pm ON(pm.C_PaymentMethod_ID = p.C_PaymentMethod_ID) "
+					+ "WHERE p.DocStatus IN('CO', 'CL') "
+					+ "AND p.C_POS_ID = ? "
+					+ "AND EXISTS(SELECT 1 FROM C_BankStatementLine bsl WHERE bsl.C_Payment_ID = p.C_Payment_ID AND bsl.C_BankStatement_ID = ?) "
+					+ "GROUP BY pm.UUID, pm.Name, pm.TenderType, p.C_Currency_ID, p.IsReceipt";
+			//	Count records
+			List<Object> parameters = new ArrayList<Object>();
+			parameters.add(posId);
+			count = RecordUtil.countRecords(sql, "C_Payment p", parameters);
+			pstmt = DB.prepareStatement(sql, null);
+			pstmt.setInt(1, posId);
+			pstmt.setInt(2, cashClosing.getC_BankStatement_ID());
+			//	Get from Query
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				PaymentSummary.Builder paymentSummary = PaymentSummary.newBuilder()
+						.setPaymentMethodUuid(ValueUtil.validateNull(rs.getString("PaymentMethodUUID")))
+						.setPaymentMethodName(ValueUtil.validateNull(rs.getString("PaymentMethodName")))
+						.setTenderTypeCode(ValueUtil.validateNull(rs.getString("TenderTypeCode")))
+						.setCurrency(ConvertUtil.convertCurrency(MCurrency.get(Env.getCtx(), rs.getInt("C_Currency_ID"))))
+						.setIsRefund(rs.getString("IsReceipt").equals("Y")? false: true)
+						.setAmount(ValueUtil.getDecimalFromBigDecimal(rs.getBigDecimal("PaymentAmount")));
+				//	
+				builder.addCashMovements(paymentSummary.build());
+				count++;
+			}
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+		} finally {
+			DB.close(rs, pstmt);
+		}
+		//	
+		builder.setRecordCount(count);
+		//	Set page token
+		if(RecordUtil.isValidNextPageToken(count, offset, limit)) {
+			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
+		}
+		//	Set netxt page
+		builder.setNextPageToken(ValueUtil.validateNull(nexPageToken));
+		//	Return
+		return builder;
 	}
 	
 	/**
@@ -1411,9 +1522,97 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			if(cashAccount.get_ValueAsInt("DefaultOpeningCharge_ID") <= 0) {
 				throw new AdempiereException("@DefaultOpeningCharge_ID@ @NotFound@");	
 			}
-			request.getPaymentsList().forEach(paymentRequest -> createPaymentFromCharge(cashAccount.get_ValueAsInt("DefaultOpeningCharge_ID"), paymentRequest, pos, transactionName));
+			request.getPaymentsList().forEach(paymentRequest -> {
+				MPayment payment = createPaymentFromCharge(cashAccount.get_ValueAsInt("DefaultOpeningCharge_ID"), paymentRequest, pos, transactionName);
+				processPayment(payment);
+			});
 		});
 		return Empty.newBuilder();
+	}
+	
+	/**
+	 * Process or complete payment and add to bank statement
+	 * @param payment
+	 * @return void
+	 */
+	private void processPayment(MPayment payment) {
+		//	Process It
+		if(!payment.isProcessed()) {
+			payment.setDocStatus(MPayment.DOCSTATUS_Drafted);
+			payment.setDocAction(MPayment.ACTION_Complete);
+		}
+		payment.saveEx();
+		//	Complete It
+		if(!payment.isProcessed()) {
+			if(!payment.processIt(MPayment.ACTION_Complete)) {
+				throw new AdempiereException(payment.getProcessMsg());
+			}
+			payment.saveEx();
+		}
+		MBankStatement.addPayment(payment);
+	}
+	
+	/**
+	 * Get Current bank statement
+	 * @param posId
+	 * @param transactionName
+	 * @return
+	 * @return MBankStatement
+	 */
+	private MBankStatement getCurrentCashclosing(int posId, String transactionName) {
+		return new Query(Env.getCtx(), I_C_BankStatement.Table_Name, "Processed = 'N' "
+				+ "AND EXISTS(SELECT 1 FROM C_BankStatementLine bsl "
+				+ "INNER JOIN C_Payment p ON(p.C_Payment_ID = bsl.C_Payment_ID) "
+				+ "WHERE bsl.C_BankStatement_ID = C_BankStatement.C_BankStatement_ID "
+				+ "AND p.DocStatus IN('CO', 'CL') "
+				+ "AND p.C_POS_ID = ?)", transactionName)
+				.setParameters(posId)
+				.first();
+	}
+	
+	/**
+	 * Closing
+	 * @param request
+	 * @return
+	 */
+	private CashClosing.Builder cashClosing(CashClosingRequest request) {
+		if(Util.isEmpty(request.getPosUuid())) {
+			throw new AdempiereException("@C_POS_ID@ @NotFound@");
+		}
+		CashClosing.Builder cashClosing = CashClosing.newBuilder();
+		Trx.run(transactionName -> {
+			int bankStatementId = request.getId();
+			if(bankStatementId <= 0
+					&& Util.isEmpty(request.getUuid())) {
+				throw new AdempiereException("@C_BankStatement_ID@ @NotFound@");
+			}
+			if(bankStatementId <= 0) {
+				bankStatementId = RecordUtil.getIdFromUuid(I_C_BankStatement.Table_Name, request.getUuid(), transactionName);
+			}
+			MBankStatement bankStatement = new MBankStatement(Env.getCtx(), bankStatementId, transactionName);
+			if(bankStatement.isProcessed()) {
+				throw new AdempiereException("@C_BankStatement_ID@ @Processed@");
+			}
+			if(!Util.isEmpty(request.getDescription())) {
+				bankStatement.addDescription(request.getDescription());
+			}
+			bankStatement.setDocStatus(MBankStatement.DOCSTATUS_Drafted);
+			bankStatement.setDocAction(MBankStatement.ACTION_Complete);
+			bankStatement.saveEx();
+			if(!bankStatement.processIt(DocAction.ACTION_Complete)) {
+				throw new AdempiereException(bankStatement.getProcessMsg());
+			}
+	        bankStatement.saveEx();
+	        //	Set
+	        cashClosing
+	        	.setId(bankStatement.getC_BankStatement_ID())
+	        	.setUuid(ValueUtil.validateNull(bankStatement.getUUID()))
+	        	.setDocumentNo(ValueUtil.validateNull(bankStatement.getDocumentNo()))
+	        	.setDescription(ValueUtil.validateNull(bankStatement.getDescription()))
+	        	.setDocumentStatus(ConvertUtil.convertDocumentStatus(bankStatement.getDocStatus(), bankStatement.getDocStatus(), bankStatement.getDocStatus()))
+	        	.setDocumentType(ConvertUtil.convertDocumentType(MDocType.get(Env.getCtx(), bankStatement.getC_DocType_ID())));
+		});
+		return cashClosing;
 	}
 	
 	/**
@@ -1442,7 +1641,10 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			if(cashAccount.get_ValueAsInt("DefaultWithdrawalCharge_ID") <= 0) {
 				throw new AdempiereException("@DefaultWithdrawalCharge_ID@ @NotFound@");	
 			}
-			request.getPaymentsList().forEach(paymentRequest -> createPaymentFromCharge(cashAccount.get_ValueAsInt("DefaultWithdrawalCharge_ID"), paymentRequest, pos, transactionName));
+			request.getPaymentsList().forEach(paymentRequest -> {
+				MPayment payment = createPaymentFromCharge(cashAccount.get_ValueAsInt("DefaultWithdrawalCharge_ID"), paymentRequest, pos, transactionName);
+				processPayment(payment);
+			});
 		});
 		return Empty.newBuilder();
 	}
@@ -4125,18 +4327,6 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			}
 			if(!Util.isEmpty(request.getCollectingAgentUuid())) {
 				payment.set_ValueOfColumn("CollectAgent_ID", RecordUtil.getIdFromUuid(I_AD_User.Table_Name, request.getCollectingAgentUuid(), transactionName));
-			}
-			if(!payment.isProcessed()) {
-				payment.setDocStatus(MPayment.DOCSTATUS_Drafted);
-				payment.setDocAction(MPayment.ACTION_Complete);
-			}
-			payment.saveEx();
-			//	Complete It
-			if(!payment.isProcessed()) {
-				if(!payment.processIt(MPayment.ACTION_Complete)) {
-					throw new AdempiereException(payment.getProcessMsg());
-				}
-				payment.saveEx();
 			}
 		}
 		return payment;
