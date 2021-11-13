@@ -3049,7 +3049,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		.forEach(payment -> {
 			builder.addPayments(ConvertUtil.convertPayment(payment));
 		});
-		//	
+		//	TODO: add real counter
 		builder.setRecordCount(count);
 		//	Set page token
 		if(RecordUtil.isValidNextPageToken(count, offset, limit)) {
