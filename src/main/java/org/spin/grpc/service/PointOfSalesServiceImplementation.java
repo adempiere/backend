@@ -33,6 +33,7 @@ import org.adempiere.exceptions.AdempiereException;
 import org.adempiere.pos.process.ReverseTheSalesTransaction;
 import org.adempiere.pos.service.CPOS;
 import org.adempiere.pos.util.POSTicketHandler;
+import org.compiere.model.I_AD_PrintFormatItem;
 import org.compiere.model.I_AD_Ref_List;
 import org.compiere.model.I_AD_User;
 import org.compiere.model.I_C_BP_BankAccount;
@@ -2358,7 +2359,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		Query query = new Query(Env.getCtx(), TABLE_NAME, "C_POS_ID = ?", null)
 				.setParameters(posId)
 				.setClient_ID()
-				.setOnlyActiveRecords(true);
+				.setOnlyActiveRecords(true)
+				.setOrderBy(I_AD_PrintFormatItem.COLUMNNAME_SeqNo);
 		int count = query.count();
 		query
 		.setLimit(limit, offset)
@@ -2408,7 +2410,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		Query query = new Query(Env.getCtx(), TABLE_NAME, "C_POS_ID = ?", null)
 				.setParameters(posId)
 				.setClient_ID()
-				.setOnlyActiveRecords(true);
+				.setOnlyActiveRecords(true)
+				.setOrderBy(I_AD_PrintFormatItem.COLUMNNAME_SeqNo);
 		int count = query.count();
 		query
 		.setLimit(limit, offset)
@@ -2463,7 +2466,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	Get Product list
 		Query query = new Query(Env.getCtx(), TABLE_NAME, "C_POS_ID = ?", null)
 				.setParameters(posId)
-				.setOnlyActiveRecords(true);
+				.setOnlyActiveRecords(true)
+				.setOrderBy(I_AD_PrintFormatItem.COLUMNNAME_SeqNo);
 		int count = query.count();
 		query
 		.setLimit(limit, offset)
@@ -2526,7 +2530,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		Query query = new Query(Env.getCtx(), TABLE_NAME, "C_POS_ID = ?", null)
 				.setParameters(posId)
 				.setClient_ID()
-				.setOnlyActiveRecords(true);
+				.setOnlyActiveRecords(true)
+				.setOrderBy(I_AD_PrintFormatItem.COLUMNNAME_SeqNo);
 		int count = query.count();
 		query
 		.setLimit(limit, offset)
