@@ -78,6 +78,8 @@ service Store {
 	rpc ListAvailableCurrencies(ListAvailableCurrenciesRequest) returns (ListAvailableCurrenciesResponse) {}
 	//	List of Available Document Types
 	rpc ListAvailableDocumentTypes(ListAvailableDocumentTypesRequest) returns (ListAvailableDocumentTypesResponse) {}
+	//	List of Available Discounts
+	rpc ListAvailableDiscounts(ListAvailableDiscountsRequest) returns (ListAvailableDiscountsResponse) {}
 	//	Customer
 	//	Create Customer
 	rpc CreateCustomer(CreateCustomerRequest) returns (Customer) {}
@@ -129,6 +131,15 @@ service Store {
 	rpc ListCashMovements(ListCashMovementsRequest) returns (ListCashMovementsResponse) {}
 	//	List Cash Summary
 	rpc ListCashSummaryMovements(ListCashSummaryMovementsRequest) returns (ListCashSummaryMovementsResponse) {}
+	//	Allocate Seller
+	rpc AllocateSeller(AllocateSellerRequest) returns (Empty) {}
+}
+
+//	Allocate Seller Request
+message AllocateSellerRequest {
+	ClientRequest client_request = 1;
+	string pos_uuid = 2;
+	string sales_representative_uuid = 3;
 }
 
 //	Payment Summary
@@ -592,6 +603,30 @@ message AvailablePaymentMethod {
 	Currency reference_currency = 13;
 }
 
+//	List discount schema for POS
+message ListAvailableDiscountsRequest {
+	ClientRequest client_request = 1;
+	string pos_uuid = 2;
+	int32 page_size = 3;
+	string page_token = 4;
+}
+
+//	Discounts Response
+message ListAvailableDiscountsResponse {
+	int64 record_count = 1;
+	repeated AvailableDiscount discounts = 2;
+	string next_page_token = 3;
+}
+
+// Available Discounts
+message AvailableDiscount {
+	int32 id = 2;
+	string uuid = 3;
+	string key = 4;
+	string name = 5;
+	bool is_pos_required_pin = 6;
+}
+
 // Available Document Type
 message AvailableDocumentType {
 	int32 id = 2;
@@ -655,7 +690,7 @@ message ListAvailableDocumentTypesResponse {
 	string next_page_token = 3;
 }
 
-//	List warehouses for POS
+//	List price list for POS
 message ListAvailablePriceListRequest {
 	ClientRequest client_request = 1;
 	string pos_uuid = 2;
@@ -809,6 +844,8 @@ message PointOfSales {
 	string default_withdrawal_charge_uuid = 33;
 	Decimal maximum_discount_allowed = 34;
 	Decimal write_off_amount_tolerance = 35;
+	bool is_allows_allocate_seller = 36;
+	bool is_allows_concurrent_use = 37;
 }
 
 // Request for create a order

@@ -30,6 +30,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import org.adempiere.exceptions.AdempiereException;
+import org.adempiere.model.GenericPO;
 import org.adempiere.pos.process.ReverseTheSalesTransaction;
 import org.adempiere.pos.service.CPOS;
 import org.adempiere.pos.util.POSTicketHandler;
@@ -108,6 +109,7 @@ import org.spin.base.util.DocumentUtil;
 import org.spin.base.util.RecordUtil;
 import org.spin.base.util.ValueUtil;
 import org.spin.grpc.util.AddressRequest;
+import org.spin.grpc.util.AllocateSellerRequest;
 import org.spin.grpc.util.AvailableDocumentType;
 import org.spin.grpc.util.AvailablePaymentMethod;
 import org.spin.grpc.util.AvailablePriceList;
@@ -1426,6 +1428,75 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		}
 	}
 	
+	@Override
+	public void allocateSeller(AllocateSellerRequest request, StreamObserver<Empty> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Cash Withdrawal = " + request.getPosUuid());
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			Empty.Builder empty = allocateSeller(request);
+			responseObserver.onNext(empty.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	/**
+	 * Allocate a seller to point of sales
+	 * @param request
+	 * @return
+	 */
+	private Empty.Builder allocateSeller(AllocateSellerRequest request) {
+		if(Util.isEmpty(request.getPosUuid())) {
+			throw new AdempiereException("@C_POS_ID@ @IsMandatory@");
+		}
+		if(Util.isEmpty(request.getSalesRepresentativeUuid())) {
+			throw new AdempiereException("@SalesRep_ID@ @NotFound@");
+		}
+		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), null);
+		int salesRepresentativeId = RecordUtil.getIdFromUuid(I_AD_User.Table_Name, request.getSalesRepresentativeUuid(), null);
+		MPOS pointOfSales = new MPOS(Env.getCtx(), posId, null);
+		if(!pointOfSales.get_ValueAsBoolean("IsAllowsAllocateSeller")) {
+			throw new AdempiereException("@ActionNotAllowedHere@");
+		}
+		Trx.run(transactionName -> {
+			List<Integer> allocatedSellersIds = new Query(Env.getCtx(), "C_POSSellerAllocation", "C_POS_ID = ?", transactionName).setParameters(posId).getIDsAsList();
+			if(!pointOfSales.get_ValueAsBoolean("IsAllowsConcurrentUse")) {
+				allocatedSellersIds
+				.forEach(allocatedSellerId -> {
+					PO allocatedSeller = new GenericPO("C_POSSellerAllocation", Env.getCtx(), allocatedSellerId, transactionName);
+					if(allocatedSeller.get_ValueAsInt("SalesRep_ID") != salesRepresentativeId) {
+						allocatedSeller.set_ValueOfColumn("IsActive", false);
+						allocatedSeller.saveEx();
+					}
+				});
+			}
+			//	For add seller
+			PO seller = new Query(Env.getCtx(), "C_POSSellerAllocation", "C_POS_ID = ? AND SalesRep_ID = ?", transactionName).setParameters(posId, salesRepresentativeId).first();
+			if(seller == null
+					|| seller.get_ID() <= 0) {
+				seller = new GenericPO("C_POSSellerAllocation", Env.getCtx(), 0, transactionName);
+				seller.set_ValueOfColumn("C_POS_ID", posId);
+				seller.set_ValueOfColumn("SalesRep_ID", salesRepresentativeId);
+			}
+			seller.set_ValueOfColumn("IsActive", true);
+			seller.saveEx();
+		});
+		//	Return
+		return Empty.newBuilder();
+	}
+	
 	/**
 	 * List all movements from cash
 	 * @return
@@ -1435,7 +1506,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		ResultSet rs = null;
 		ListCashSummaryMovementsResponse.Builder builder = ListCashSummaryMovementsResponse.newBuilder();
 		if(Util.isEmpty(request.getPosUuid())) {
-			throw new AdempiereException("@C_POS_ID@ @NotFound@");
+			throw new AdempiereException("@C_POS_ID@ @IsMandatory@");
 		}
 		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), null);
 		MBankStatement cashClosing = getCurrentCashclosing(posId, null);
@@ -2886,7 +2957,11 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 */
 	private ListOrdersResponse.Builder listOrders(ListOrdersRequest request) {
 		if(Util.isEmpty(request.getPosUuid())) {
-			throw new AdempiereException("@C_POS_ID@ @NotFound@");
+			throw new AdempiereException("@C_POS_ID@ @IsMandatory@");
+		}
+		//	Sales Representative
+		if(Util.isEmpty(request.getSalesRepresentativeUuid())) {
+			throw new AdempiereException("@SalesRep_ID@ @IsMandatory@");
 		}
 		ListOrdersResponse.Builder builder = ListOrdersResponse.newBuilder();
 		String nexPageToken = null;
@@ -2898,13 +2973,20 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		List<Object> parameters = new ArrayList<Object>();
 		//	Aisle Seller
 		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), null);
+		int salesRepresentativeId = RecordUtil.getIdFromUuid(I_AD_User.Table_Name, request.getSalesRepresentativeUuid(), null);
 		int orgId = Env.getAD_Org_ID(Env.getCtx());
 		boolean isWithAisleSeller = M_Element.get(Env.getCtx(), "IsAisleSeller") != null;
+		boolean isAppliedNewFeaturesPOS = M_Element.get(Env.getCtx(), "IsSharedPOS") != null && M_Element.get(Env.getCtx(), "IsAllowsAllocateSeller") != null;
 		if(isWithAisleSeller 
 				&& request.getIsOnlyAisleSeller()) {
 			whereClause.append("(C_Order.C_POS_ID = ? OR (C_Order.AD_Org_ID = ? AND EXISTS(SELECT 1 FROM C_POS p WHERE p.C_POS_ID = C_Order.C_POS_ID AND p.IsAisleSeller = 'Y')))");
 			parameters.add(posId);
 			parameters.add(orgId);
+		} else if(isAppliedNewFeaturesPOS) {
+			whereClause.append("C_Order.C_POS_ID = ? AND ((C_Order.AD_Org_ID = ? AND C_Order.SalesRep_ID = ?) OR EXISTS(SELECT 1 FROM C_POS p WHERE p.C_POS_ID = C_Order.C_POS_ID AND p.IsSharedPOS = 'N'))");
+			parameters.add(posId);
+			parameters.add(orgId);
+			parameters.add(salesRepresentativeId);
 		} else {
 			whereClause.append("C_Order.C_POS_ID = ?");
 			parameters.add(posId);
@@ -2961,12 +3043,6 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		if(!Util.isEmpty(request.getDateOrderedTo())) {
 			whereClause.append(" AND DateOrdered <= ?");
 			parameters.add(TimeUtil.getDay(ValueUtil.convertStringToDate(request.getDateOrderedTo())));
-		}
-		//	Sales Representative
-		if(!Util.isEmpty(request.getSalesRepresentativeUuid())) {
-			int salesRepresentativeId = RecordUtil.getIdFromUuid(I_AD_User.Table_Name, request.getSalesRepresentativeUuid(), null);
-			whereClause.append(" AND SalesRep_ID = ?");
-			parameters.add(salesRepresentativeId);
 		}
 		//	Get Product list
 		Query query = new Query(Env.getCtx(), I_C_Order.Table_Name, whereClause.toString(), null)
@@ -3660,16 +3736,21 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		int limit = RecordUtil.PAGE_SIZE;
 		int offset = pageNumber * RecordUtil.PAGE_SIZE;
 		//	Get POS List
-		boolean isListWithSharedPOS = M_Element.get(Env.getCtx(), "IsSharedPOS") != null;
-		String whereClause = "(AD_Org_ID = ? OR SalesRep_ID = ?)";
+		boolean isAppliedNewFeaturesPOS = M_Element.get(Env.getCtx(), "IsSharedPOS") != null && M_Element.get(Env.getCtx(), "IsAllowsAllocateSeller") != null;
+		StringBuffer whereClause = new StringBuffer("SalesRep_ID = ? OR EXISTS(SELECT 1 FROM AD_User u WHERE u.AD_User_ID = ? AND IsPOSManager = 'Y')");
 		List<Object> parameters = new ArrayList<>();
 		parameters.add(salesRepresentativeId);
-		if(isListWithSharedPOS) {
-			whereClause = "SalesRep_ID = ? OR EXISTS(SELECT 1 FROM AD_User u WHERE u.AD_User_ID = ? AND IsPOSManager = 'Y') OR (AD_Org_ID = ? AND IsSharedPOS = 'Y')";
-			parameters.add(salesRepresentativeId);
+		parameters.add(salesRepresentativeId);
+		//	applies for Shared pos
+		if(isAppliedNewFeaturesPOS) {
+			//	Shared POS
+			whereClause.append(" OR (AD_Org_ID = ? AND IsSharedPOS = 'Y' AND IsAllowsAllocateSeller = 'N')");
+			//	Allocation by Seller Allocation table
+			whereClause.append(" OR (IsAllowsAllocateSeller = 'Y' AND EXISTS(SELECT 1 FROM C_POSSellerAllocation sa WHERE sa.C_POS_ID = C_POS.C_POS_ID AND sa.SalesRep_ID = ? AND sa.IsActive = 'Y'))");
 			parameters.add(Env.getAD_Org_ID(Env.getCtx()));
+			parameters.add(salesRepresentativeId);
 		}
-		Query query = new Query(Env.getCtx() , I_C_POS.Table_Name , whereClause, null)
+		Query query = new Query(Env.getCtx() , I_C_POS.Table_Name , whereClause.toString(), null)
 				.setClient_ID()
 				.setOnlyActiveRecords(true)
 				.setParameters(parameters)
