@@ -1462,7 +1462,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			throw new AdempiereException("@C_POS_ID@ @IsMandatory@");
 		}
 		if(Util.isEmpty(request.getSalesRepresentativeUuid())) {
-			throw new AdempiereException("@SalesRep_ID@ @NotFound@");
+			throw new AdempiereException("@SalesRep_ID@ @IsMandatory@");
 		}
 		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), null);
 		int salesRepresentativeId = RecordUtil.getIdFromUuid(I_AD_User.Table_Name, request.getSalesRepresentativeUuid(), null);
