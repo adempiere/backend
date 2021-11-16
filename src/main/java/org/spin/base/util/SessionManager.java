@@ -187,7 +187,7 @@ public class SessionManager {
 					+ "OR (r.IsUseUserOrgAccess='N' AND EXISTS(SELECT 1 FROM AD_Role_OrgAccess ra WHERE ra.AD_Org_ID = o.AD_Org_ID AND ra.AD_Role_ID = r.AD_Role_ID AND ra.IsActive='Y')) "
 					+ "OR (r.IsUseUserOrgAccess='Y' AND EXISTS(SELECT 1 FROM AD_User_OrgAccess ua WHERE ua.AD_Org_ID = o.AD_Org_ID AND ua.AD_User_ID = ? AND ua.IsActive='Y'))"
 					+ ") "
-				+ "ORDER BY o.Name";
+				+ "ORDER BY o.AD_Org_ID DESC, o.Name";
 		return DB.getSQLValue(null, organizationSQL, roleId, userId);
 	}
 	
