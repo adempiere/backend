@@ -491,7 +491,13 @@ public class ConvertUtil {
 		MRefList reference = MRefList.get(Env.getCtx(), MOrder.DOCSTATUS_AD_REFERENCE_ID, order.getDocStatus(), null);
 		MPriceList priceList = MPriceList.get(Env.getCtx(), order.getM_PriceList_ID(), order.get_TrxName());
 		BigDecimal baseAmount = Arrays.asList(order.getLines()).stream().map(orderLine -> Optional.ofNullable(orderLine.getPriceList()).orElse(Env.ZERO)).reduce(BigDecimal.ZERO, BigDecimal::add);
-		Optional<BigDecimal> paidAmount = MPayment.getOfOrder(order).stream().map(payment -> getConvetedAmount(order, payment, payment.getPayAmt())).collect(Collectors.reducing(BigDecimal::add));
+		Optional<BigDecimal> paidAmount = MPayment.getOfOrder(order).stream().map(payment -> {
+			BigDecimal paymentAmount = payment.getPayAmt();
+			if(!payment.isReceipt()) {
+				paymentAmount = payment.getPayAmt().negate();
+			}
+			return getConvetedAmount(order, payment, paymentAmount);
+		}).collect(Collectors.reducing(BigDecimal::add));
 		BigDecimal grandTotal = order.getGrandTotal();
 		BigDecimal totalLines = order.getTotalLines();
 		BigDecimal paymentAmount = Env.ZERO;

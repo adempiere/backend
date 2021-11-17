@@ -2283,12 +2283,23 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 		Optional<MStorage> maybeStorage = Arrays.asList(MStorage.getOfProduct(Env.getCtx(), product.getM_Product_ID(), null))
 				.stream()
 				.filter(storage -> storage.getQtyOnHand().signum() > 0)
-				.findFirst();
+				.reduce(StockSummary::add);
 		if(maybeStorage.isPresent()) {
 			builder = convertStock(maybeStorage.get());
 		}
 		//	
 		return builder;
+	}
+	
+	/**
+	 * Summarize stock
+	 */
+	private static final class StockSummary {
+		public static MStorage add(MStorage previousValue, MStorage newValue) {
+			previousValue.setQtyOnHand(previousValue.getQtyOnHand().add(newValue.getQtyOnHand()));
+			previousValue.setQtyOnHand(previousValue.getQtyReserved().add(newValue.getQtyReserved()));
+			return previousValue;
+		}
 	}
 	
 	/**

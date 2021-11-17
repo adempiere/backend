@@ -4185,7 +4185,18 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	
 		MPayment payment = new MPayment(Env.getCtx(), 0, transactionName);
 		payment.setC_BankAccount_ID(pointOfSalesDefinition.getC_BankAccount_ID());
-		payment.setC_DocType_ID(!request.getIsRefund());
+		//	Get from POS
+		int documentTypeId;
+		if(!request.getIsRefund()) {
+			documentTypeId = pointOfSalesDefinition.get_ValueAsInt("POSCollectingDocumentType_ID");
+		} else {
+			documentTypeId = pointOfSalesDefinition.get_ValueAsInt("POSRefundDocumentType_ID");
+		}
+		if(documentTypeId > 0) {
+			payment.setC_DocType_ID(documentTypeId);
+		} else {
+			payment.setC_DocType_ID(!request.getIsRefund());
+		}
 		payment.setAD_Org_ID(salesOrder.getAD_Org_ID());
         String value = DB.getDocumentNo(payment.getC_DocType_ID(), transactionName, false,  payment);
         payment.setDocumentNo(value);
@@ -4313,18 +4324,16 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			}
 			payment = new MPayment(Env.getCtx(), 0, transactionName);
 			payment.setC_BankAccount_ID(pointOfSalesDefinition.getC_BankAccount_ID());
+			int documentTypeId;
 			if(!request.getIsRefund()) {
-				if(cashAccount.get_ValueAsInt("DepositDocumentType_ID") > 0) {
-					payment.setC_DocType_ID(cashAccount.get_ValueAsInt("DepositDocumentType_ID"));
-				} else {
-					payment.setC_DocType_ID(true);
-				}
+				documentTypeId = pointOfSalesDefinition.get_ValueAsInt("POSOpeningDocumentType_ID");
 			} else {
-				if(cashAccount.get_ValueAsInt("WithdrawalDocumentType_ID") > 0) {
-					payment.setC_DocType_ID(cashAccount.get_ValueAsInt("WithdrawalDocumentType_ID"));
-				} else {
-					payment.setC_DocType_ID(false);
-				}
+				documentTypeId = pointOfSalesDefinition.get_ValueAsInt("POSWithdrawalDocumentType_ID");
+			}
+			if(documentTypeId > 0) {
+				payment.setC_DocType_ID(documentTypeId);
+			} else {
+				payment.setC_DocType_ID(!request.getIsRefund());
 			}
 			payment.setAD_Org_ID(pointOfSalesDefinition.getAD_Org_ID());
 	        String value = DB.getDocumentNo(payment.getC_DocType_ID(), transactionName, false,  payment);
