@@ -1492,6 +1492,19 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				seller.set_ValueOfColumn("SalesRep_ID", salesRepresentativeId);
 			}
 			seller.set_ValueOfColumn("IsActive", true);
+			seller.set_ValueOfColumn("IsAllowsModifyQuantity", pointOfSales.get_ValueAsBoolean("IsAllowsModifyQuantity"));
+			seller.set_ValueOfColumn("IsAllowsReturnOrder", pointOfSales.get_ValueAsBoolean("IsAllowsReturnOrder"));
+			seller.set_ValueOfColumn("IsAllowsCollectOrder", pointOfSales.get_ValueAsBoolean("IsAllowsCollectOrder"));
+			seller.set_ValueOfColumn("IsAllowsCreateOrder", pointOfSales.get_ValueAsBoolean("IsAllowsCreateOrder"));
+			seller.set_ValueOfColumn("IsDisplayTaxAmount", pointOfSales.get_ValueAsBoolean("IsDisplayTaxAmount"));
+			seller.set_ValueOfColumn("IsDisplayDiscount", pointOfSales.get_ValueAsBoolean("IsDisplayDiscount"));
+			seller.set_ValueOfColumn("IsAllowsConfirmShipment", pointOfSales.get_ValueAsBoolean("IsAllowsConfirmShipment"));
+			seller.set_ValueOfColumn("IsConfirmCompleteShipment", pointOfSales.get_ValueAsBoolean("IsConfirmCompleteShipment"));
+			seller.set_ValueOfColumn("IsAllowsAllocateSeller", pointOfSales.get_ValueAsBoolean("IsAllowsAllocateSeller"));
+			seller.set_ValueOfColumn("IsAllowsConcurrentUse", pointOfSales.get_ValueAsBoolean("IsAllowsConcurrentUse"));
+			seller.set_ValueOfColumn("IsAllowsCashOpening", pointOfSales.get_ValueAsBoolean("IsAllowsCashOpening"));
+			seller.set_ValueOfColumn("IsAllowsCashClosing", pointOfSales.get_ValueAsBoolean("IsAllowsCashClosing"));
+			seller.set_ValueOfColumn("IsAllowsCashWithdrawal", pointOfSales.get_ValueAsBoolean("IsAllowsCashWithdrawal"));
 			seller.saveEx();
 		});
 		//	Return
