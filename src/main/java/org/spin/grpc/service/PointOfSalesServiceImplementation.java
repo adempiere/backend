@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -3820,6 +3821,12 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	Special values
 		builder
 			.setDefaultCampaignUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_Campaign.Table_Name, pos.get_ValueAsInt("DefaultCampaign_ID"))))
+			.setMaximumRefundAllowed(ValueUtil.getDecimalFromBigDecimal((BigDecimal) pos.get_Value("MaximumRefundAllowed")))
+			.setMaximumDailyRefundAllowed(ValueUtil.getDecimalFromBigDecimal((BigDecimal) pos.get_Value("MaximumDailyRefundAllowed")))
+			.setMaximumDiscountAllowed(ValueUtil.getDecimalFromBigDecimal((BigDecimal) pos.get_Value("MaximumDiscountAllowed")))
+			.setWriteOffAmountTolerance(ValueUtil.getDecimalFromBigDecimal((BigDecimal) pos.get_Value("WriteOffAmtTolerance")));
+		if(!pos.get_ValueAsBoolean("IsAllowsAllocateSeller")) {
+			builder
 			.setIsAllowsModifyQuantity(pos.get_ValueAsBoolean("IsAllowsModifyQuantity"))
 			.setIsAllowsReturnOrder(pos.get_ValueAsBoolean("IsAllowsReturnOrder"))
 			.setIsAllowsCollectOrder(pos.get_ValueAsBoolean("IsAllowsCollectOrder"))
@@ -3827,10 +3834,33 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			.setIsDisplayTaxAmount(pos.get_ValueAsBoolean("IsDisplayTaxAmount"))
 			.setIsDisplayDiscount(pos.get_ValueAsBoolean("IsDisplayDiscount"))
 			.setIsAllowsConfirmShipment(pos.get_ValueAsBoolean("IsAllowsConfirmShipment"))
-			.setMaximumRefundAllowed(ValueUtil.getDecimalFromBigDecimal((BigDecimal) pos.get_Value("MaximumRefundAllowed")))
-			.setMaximumDailyRefundAllowed(ValueUtil.getDecimalFromBigDecimal((BigDecimal) pos.get_Value("MaximumDailyRefundAllowed")))
-			.setMaximumDiscountAllowed(ValueUtil.getDecimalFromBigDecimal((BigDecimal) pos.get_Value("MaximumDiscountAllowed")))
-			.setWriteOffAmountTolerance(ValueUtil.getDecimalFromBigDecimal((BigDecimal) pos.get_Value("WriteOffAmtTolerance")));
+			.setIsConfirmCompleteShipment(pos.get_ValueAsBoolean("IsConfirmCompleteShipment"))
+			.setIsAllowsAllocateSeller(pos.get_ValueAsBoolean("IsAllowsAllocateSeller"))
+			.setIsAllowsConcurrentUse(pos.get_ValueAsBoolean("IsAllowsConcurrentUse"))
+			.setIsAllowsCashOpening(pos.get_ValueAsBoolean("IsAllowsCashOpening"))
+			.setIsAllowsCashClosing(pos.get_ValueAsBoolean("IsAllowsCashClosing"))
+			.setIsAllowsCashWithdrawal(pos.get_ValueAsBoolean("IsAllowsCashWithdrawal"));
+		} else {	//	Get from user
+			PO userAllocated = getUserAllowed(pos.getCtx(), pos.getC_POS_ID(), Env.getAD_User_ID(pos.getCtx()), null);
+			if(userAllocated != null
+					&& userAllocated.get_ID() > 0) {
+				//	Get from user access
+				builder
+				.setIsAllowsModifyQuantity(userAllocated.get_ValueAsBoolean("IsAllowsModifyQuantity"))
+				.setIsAllowsReturnOrder(userAllocated.get_ValueAsBoolean("IsAllowsReturnOrder"))
+				.setIsAllowsCollectOrder(userAllocated.get_ValueAsBoolean("IsAllowsCollectOrder"))
+				.setIsAllowsCreateOrder(userAllocated.get_ValueAsBoolean("IsAllowsCreateOrder"))
+				.setIsDisplayTaxAmount(userAllocated.get_ValueAsBoolean("IsDisplayTaxAmount"))
+				.setIsDisplayDiscount(userAllocated.get_ValueAsBoolean("IsDisplayDiscount"))
+				.setIsAllowsConfirmShipment(userAllocated.get_ValueAsBoolean("IsAllowsConfirmShipment"))
+				.setIsConfirmCompleteShipment(userAllocated.get_ValueAsBoolean("IsConfirmCompleteShipment"))
+				.setIsAllowsAllocateSeller(userAllocated.get_ValueAsBoolean("IsAllowsAllocateSeller"))
+				.setIsAllowsConcurrentUse(userAllocated.get_ValueAsBoolean("IsAllowsConcurrentUse"))
+				.setIsAllowsCashOpening(userAllocated.get_ValueAsBoolean("IsAllowsCashOpening"))
+				.setIsAllowsCashClosing(userAllocated.get_ValueAsBoolean("IsAllowsCashClosing"))
+				.setIsAllowsCashWithdrawal(userAllocated.get_ValueAsBoolean("IsAllowsCashWithdrawal"));
+			}
+		}
 		if(pos.get_ValueAsInt("RefundReferenceCurrency_ID") > 0) {
 			builder.setRefundReferenceCurrency(ConvertUtil.convertCurrency(MCurrency.get(Env.getCtx(), pos.get_ValueAsInt("RefundReferenceCurrency_ID"))));
 		}
@@ -3869,6 +3899,21 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			builder.setReturnDocumentType(ConvertUtil.convertDocumentType(MDocType.get(Env.getCtx(), pos.get_ValueAsInt("C_DocTypeRMA_ID"))));
 		}
 		return builder;
+	}
+	
+	/**
+	 * Validate if is allowed user
+	 * @param context
+	 * @param userId
+	 * @param transactionName
+	 * @return
+	 */
+	public static PO getUserAllowed(Properties context, int posId, int userId, String transactionName) {
+		return new Query(context, "C_POSSellerAllocation", "C_POS_ID = ?  AND SalesRep_ID = ?", transactionName)
+			.setParameters(posId, userId)
+			.setOnlyActiveRecords(true)
+			.setClient_ID()
+			.first();
 	}
 	
 	/**

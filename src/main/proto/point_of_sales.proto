@@ -846,6 +846,10 @@ message PointOfSales {
 	Decimal write_off_amount_tolerance = 35;
 	bool is_allows_allocate_seller = 36;
 	bool is_allows_concurrent_use = 37;
+	bool is_confirm_complete_shipment = 38;
+	bool is_allows_cash_closing = 39;
+	bool is_allows_cash_opening = 40;
+	bool is_allows_cash_withdrawal = 41;
 }
 
 // Request for create a order
