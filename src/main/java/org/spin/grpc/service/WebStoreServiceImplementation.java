@@ -772,12 +772,16 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 		MCPaymentMethod paymentMethod = MCPaymentMethod.getByValue(Env.getCtx(), request.getPaymentMethodCode(), transactionName);
 		salesOrder.setDocStatus(MOrder.DOCSTATUS_Drafted);
 		salesOrder.setDocAction(MOrder.ACTION_Complete);
+		salesOrder.set_ValueOfColumn("W_Store_ID", store.getW_Store_ID());
 		salesOrder.saveEx();
 		//	Add Lines
 		request.getProductsList().forEach(product -> addLinesToOrder(salesOrder, product, transactionName));
 		//	Process it
 		if(!salesOrder.processIt(MOrder.ACTION_Complete)) {
 			throw new AdempiereException("@Error@ " + salesOrder.getProcessMsg());
+		}
+		if(request.getUserId() > 0) {
+			salesOrder.setAD_User_ID(request.getUserId());
 		}
 		//	
 		salesOrder.saveEx();
