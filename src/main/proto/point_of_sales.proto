@@ -133,6 +133,10 @@ service Store {
 	rpc ListCashSummaryMovements(ListCashSummaryMovementsRequest) returns (ListCashSummaryMovementsResponse) {}
 	//	Allocate Seller
 	rpc AllocateSeller(AllocateSellerRequest) returns (Empty) {}
+	//	Create Refund Reference
+	rpc CreateRefundReference(CreateRefundReferenceRequest) returns (RefundReference) {}
+	//	List Refund References
+	rpc ListRefundReferences(ListRefundReferencesRequest) returns (ListRefundReferencesResponse) {}
 }
 
 //	Allocate Seller Request
@@ -140,6 +144,56 @@ message AllocateSellerRequest {
 	ClientRequest client_request = 1;
 	string pos_uuid = 2;
 	string sales_representative_uuid = 3;
+}
+
+//	Refund reference request
+message CreateRefundReferenceRequest {
+	ClientRequest client_request = 1;
+	string pos_uuid = 2;
+	string sales_representative_uuid = 3;
+	string description = 4;
+	Decimal amount = 5;
+	string payment_date = 6;
+	string tender_type_code = 7;
+	string currency_uuid = 8;
+	string conversion_type_uuid = 9;
+	string payment_method_uuid = 10;
+	string payment_account_date = 11;
+	string customer_bank_account_uuid = 12;
+}
+
+//	Refund Reference
+message RefundReference {
+	int32 id = 1;
+	string uuid = 2;
+	string pos_uuid = 3;
+	SalesRepresentative sales_representative = 4;
+	string description = 5;
+	Decimal amount = 6;
+	string payment_date = 7;
+	string tender_type_code = 8;
+	Currency currency = 9;
+	string payment_method_uuid = 10;
+	string payment_account_date = 11;
+	string customer_bank_account_uuid = 12;
+	string order_uuid = 13;
+	bool is_paid = 14;
+}
+
+//	List Refund Reference Request
+message ListRefundReferencesRequest {
+	ClientRequest client_request = 1;
+	string pos_uuid = 2;
+	string business_partner_uuid = 3;
+	int32 page_size = 7;
+	string page_token = 8;
+}
+
+//	List Refund Reference Response
+message ListRefundReferencesResponse {
+	int64 record_count = 1;
+	repeated RefundReference refund_references = 2;
+	string next_page_token = 3;
 }
 
 //	Payment Summary

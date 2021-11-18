@@ -125,6 +125,7 @@ import org.spin.grpc.util.CreateCustomerRequest;
 import org.spin.grpc.util.CreateOrderLineRequest;
 import org.spin.grpc.util.CreateOrderRequest;
 import org.spin.grpc.util.CreatePaymentRequest;
+import org.spin.grpc.util.CreateRefundReferenceRequest;
 import org.spin.grpc.util.CreateShipmentLineRequest;
 import org.spin.grpc.util.CreateShipmentRequest;
 import org.spin.grpc.util.Customer;
@@ -181,6 +182,7 @@ import org.spin.grpc.util.PrintTicketResponse;
 import org.spin.grpc.util.ProcessOrderRequest;
 import org.spin.grpc.util.ProcessShipmentRequest;
 import org.spin.grpc.util.ProductPrice;
+import org.spin.grpc.util.RefundReference;
 import org.spin.grpc.util.ReverseSalesRequest;
 import org.spin.grpc.util.Shipment;
 import org.spin.grpc.util.ShipmentLine;
@@ -1452,6 +1454,32 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					.asRuntimeException());
 		}
 	}
+	
+	@Override
+	public void createRefundReference(CreateRefundReferenceRequest request, StreamObserver<RefundReference> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Cash Withdrawal = " + request.getPosUuid());
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			RefundReference.Builder refund = RefundReference.newBuilder();//createRefundReference(request);
+			responseObserver.onNext(refund.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	
 	
 	/**
 	 * Allocate a seller to point of sales
@@ -3937,7 +3965,10 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 */
 	private Order.Builder createOrder(CreateOrderRequest request) {
 		if(Util.isEmpty(request.getPosUuid())) {
-			throw new AdempiereException("@C_POS_ID@ @NotFound@");
+			throw new AdempiereException("@C_POS_ID@ @IsMandatory@");
+		}
+		if(Util.isEmpty(request.getSalesRepresentativeUuid())) {
+			throw new AdempiereException("@SalesRep_ID@ @IsMandatory@");
 		}
 		AtomicReference<MOrder> maybeOrder = new AtomicReference<MOrder>();
 		Trx.run(transactionName -> {
@@ -3946,14 +3977,22 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				throw new AdempiereException("@C_POS_ID@ @NotFound@");
 			}
 			MPOS pos = MPOS.get(Env.getCtx(), posId);
-			//	
-			MOrder salesOrder = new Query(Env.getCtx(), I_C_Order.Table_Name, 
-					"DocStatus = 'DR' "
+			StringBuffer whereClause = new StringBuffer("DocStatus = 'DR' "
 					+ "AND C_POS_ID = ? "
 					+ "AND NOT EXISTS(SELECT 1 "
 					+ "					FROM C_OrderLine ol "
-					+ "					WHERE ol.C_Order_ID = C_Order.C_Order_ID) ", transactionName)
-					.setParameters(pos.getC_POS_ID())
+					+ "					WHERE ol.C_Order_ID = C_Order.C_Order_ID)");
+			//	
+			List<Object> parameters = new ArrayList<Object>();
+			parameters.add(pos.getC_POS_ID());
+			if(pos.get_ValueAsBoolean("IsSharedPOS")) {
+				whereClause.append(" AND SalesRep_ID = ?");
+				parameters.add(RecordUtil.getIdFromUuid(I_AD_User.Table_Name, request.getSalesRepresentativeUuid(), transactionName));
+			}
+			//	Allocation by Seller Allocation table
+			MOrder salesOrder = new Query(Env.getCtx(), I_C_Order.Table_Name, 
+					whereClause.toString(), transactionName)
+					.setParameters(parameters)
 					.first();
 			//	Validate
 			if(salesOrder == null) {

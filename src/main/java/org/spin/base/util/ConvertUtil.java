@@ -938,7 +938,7 @@ public class ConvertUtil {
 		String phone = null;
 		if(user != null
 				&& user.getAD_User_ID() > 0) {
-			if(Util.isEmpty(user.getPhone())) {
+			if(!Util.isEmpty(user.getPhone())) {
 				phone = user.getPhone();
 			}
 			if(!Util.isEmpty(user.getName())
