@@ -169,6 +169,8 @@ import org.spin.grpc.util.ListPointOfSalesRequest;
 import org.spin.grpc.util.ListPointOfSalesResponse;
 import org.spin.grpc.util.ListProductPriceRequest;
 import org.spin.grpc.util.ListProductPriceResponse;
+import org.spin.grpc.util.ListRefundReferencesRequest;
+import org.spin.grpc.util.ListRefundReferencesResponse;
 import org.spin.grpc.util.ListShipmentLinesRequest;
 import org.spin.grpc.util.ListShipmentLinesResponse;
 import org.spin.grpc.util.Order;
@@ -1479,7 +1481,29 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		}
 	}
 	
-	
+	@Override
+	public void listRefundReferences(ListRefundReferencesRequest request, StreamObserver<ListRefundReferencesResponse> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Get Refund Reference List = " + request.getCustomerUuid());
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			ListRefundReferencesResponse.Builder refundReferenceList = ListRefundReferencesResponse.newBuilder();//convertPointOfSalesList(request);
+			responseObserver.onNext(refundReferenceList.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
 	
 	/**
 	 * Allocate a seller to point of sales

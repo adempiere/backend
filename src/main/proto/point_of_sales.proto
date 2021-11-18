@@ -160,6 +160,7 @@ message CreateRefundReferenceRequest {
 	string payment_method_uuid = 10;
 	string payment_account_date = 11;
 	string customer_bank_account_uuid = 12;
+	string order_uuid = 13;
 }
 
 //	Refund Reference
@@ -184,9 +185,10 @@ message RefundReference {
 message ListRefundReferencesRequest {
 	ClientRequest client_request = 1;
 	string pos_uuid = 2;
-	string business_partner_uuid = 3;
-	int32 page_size = 7;
-	string page_token = 8;
+	string customer_uuid = 3;
+	string order_uuid = 4;
+	int32 page_size = 5;
+	string page_token = 6;
 }
 
 //	List Refund Reference Response
