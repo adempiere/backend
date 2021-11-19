@@ -374,36 +374,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 	 * @param responseObserver
 	 */
 	public void lockPrivateAccess(LockPrivateAccessRequest request, StreamObserver<PrivateAccess> responseObserver) {
-		setPrivateAccess(request, responseObserver, true);
-	}
-	
-	@Override
-	/**
-	 * TODO: Replace UnlockPrivateAccessRequest with GetPrivateAccessRequest
-	 * @param request
-	 * @param responseObserver
-	 */
-	public void unlockPrivateAccess(UnlockPrivateAccessRequest request, StreamObserver<PrivateAccess> responseObserver) {
-		setPrivateAccess(request, responseObserver, false);
-	}
-
-	/**
-	 * TODO: Use GetPrivateAccessRequest as request
-	 * @param request
-	 * @param responseObserver
-	 * @param isPrivateAccess
-	 */
-	public void setPrivateAccess(Object requestGeneric,
-		StreamObserver<PrivateAccess> responseObserver,
-		boolean isPrivateAccess) {
 		try {
-			Object request = null;
-			if (requestGeneric instanceof UnlockPrivateAccessRequest) {
-				request = (UnlockPrivateAccessRequest) requestGeneric;
-			} else if (requestGeneric instanceof LockPrivateAccessRequest) {
-				request = (LockPrivateAccessRequest) requestGeneric;
-			}
-
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
@@ -420,7 +391,44 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 
 			MUser user = MUser.get(context);
-			PrivateAccess.Builder privateaccess = lockUnlockPrivateAccess(context, request.getTableName(), recordId, user.getAD_User_ID(), isPrivateAccess, null);
+			PrivateAccess.Builder privateaccess = lockUnlockPrivateAccess(context, request.getTableName(), recordId, user.getAD_User_ID(), true, null);
+			responseObserver.onNext(privateaccess.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	/**
+	 * TODO: Replace UnlockPrivateAccessRequest with GetPrivateAccessRequest
+	 * @param request
+	 * @param responseObserver
+	 */
+	public void unlockPrivateAccess(UnlockPrivateAccessRequest request, StreamObserver<PrivateAccess> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+
+			int recordId = request.getId();
+			if (recordId <= 0
+					&& Util.isEmpty(request.getUuid())) {
+				throw new AdempiereException("@Record_ID@ / @UUID@ @NotFound@");
+			}
+			if (recordId <= 0) {
+				recordId = RecordUtil.getIdFromUuid(request.getTableName(), request.getUuid(), null);
+			}
+
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
+
+			MUser user = MUser.get(context);
+			PrivateAccess.Builder privateaccess = lockUnlockPrivateAccess(context, request.getTableName(), recordId, user.getAD_User_ID(), false, null);
 			responseObserver.onNext(privateaccess.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
