@@ -369,15 +369,15 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 	
 	@Override
 	public void lockPrivateAccess(LockPrivateAccessRequest request, StreamObserver<PrivateAccess> responseObserver) {
-		setPrivateAccess(request, responseObserver, true);
+		setPrivateAccess((GetPrivateAccessRequest) request, responseObserver, true);
 	}
 	
 	@Override
 	public void unlockPrivateAccess(UnlockPrivateAccessRequest request, StreamObserver<PrivateAccess> responseObserver) {
-		setPrivateAccess(request, responseObserver, false);
+		setPrivateAccess((GetPrivateAccessRequest) request, responseObserver, false);
 	}
 
-	public void setPrivateAccess(UnlockPrivateAccessRequest request,
+	public void setPrivateAccess(GetPrivateAccessRequest request,
 		StreamObserver<PrivateAccess> responseObserver,
 		boolean isPrivateAccess) {
 		try {
