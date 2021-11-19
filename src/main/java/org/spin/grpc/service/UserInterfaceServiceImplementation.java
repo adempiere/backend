@@ -368,19 +368,42 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 	}
 	
 	@Override
+	/**
+	 * TODO: Replace LockPrivateAccessRequest with GetPrivateAccessRequest
+	 * @param request
+	 * @param responseObserver
+	 */
 	public void lockPrivateAccess(LockPrivateAccessRequest request, StreamObserver<PrivateAccess> responseObserver) {
-		setPrivateAccess((GetPrivateAccessRequest) request, responseObserver, true);
+		setPrivateAccess(request, responseObserver, true);
 	}
 	
 	@Override
+	/**
+	 * TODO: Replace UnlockPrivateAccessRequest with GetPrivateAccessRequest
+	 * @param request
+	 * @param responseObserver
+	 */
 	public void unlockPrivateAccess(UnlockPrivateAccessRequest request, StreamObserver<PrivateAccess> responseObserver) {
-		setPrivateAccess((GetPrivateAccessRequest) request, responseObserver, false);
+		setPrivateAccess(request, responseObserver, false);
 	}
 
-	public void setPrivateAccess(GetPrivateAccessRequest request,
+	/**
+	 * TODO: Use GetPrivateAccessRequest as request
+	 * @param request
+	 * @param responseObserver
+	 * @param isPrivateAccess
+	 */
+	public void setPrivateAccess(Object requestGeneric,
 		StreamObserver<PrivateAccess> responseObserver,
 		boolean isPrivateAccess) {
 		try {
+			Object request = null;
+			if (requestGeneric instanceof UnlockPrivateAccessRequest) {
+				request = (UnlockPrivateAccessRequest) requestGeneric;
+			} else if (requestGeneric instanceof LockPrivateAccessRequest) {
+				request = (LockPrivateAccessRequest) requestGeneric
+			}
+
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
