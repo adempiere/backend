@@ -135,8 +135,17 @@ service Store {
 	rpc AllocateSeller(AllocateSellerRequest) returns (Empty) {}
 	//	Create Refund Reference
 	rpc CreateRefundReference(CreateRefundReferenceRequest) returns (RefundReference) {}
+	//	Delete Refund Reference
+	rpc DeleteRefundReference(DeleteRefundReferenceRequest) returns (Empty) {}
 	//	List Refund References
 	rpc ListRefundReferences(ListRefundReferencesRequest) returns (ListRefundReferencesResponse) {}
+}
+
+//	Delete Refund reference request
+message DeleteRefundReferenceRequest {
+	ClientRequest client_request = 1;
+	int32 id = 2;
+	string uuid = 3;
 }
 
 //	Allocate Seller Request

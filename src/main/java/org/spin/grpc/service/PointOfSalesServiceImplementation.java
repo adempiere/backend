@@ -134,6 +134,7 @@ import org.spin.grpc.util.DeleteCustomerBankAccountRequest;
 import org.spin.grpc.util.DeleteOrderLineRequest;
 import org.spin.grpc.util.DeleteOrderRequest;
 import org.spin.grpc.util.DeletePaymentRequest;
+import org.spin.grpc.util.DeleteRefundReferenceRequest;
 import org.spin.grpc.util.DeleteShipmentLineRequest;
 import org.spin.grpc.util.Empty;
 import org.spin.grpc.util.GetAvailableRefundRequest;
@@ -1468,8 +1469,32 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					request.getClientRequest().getLanguage(), 
 					request.getClientRequest().getOrganizationUuid(), 
 					request.getClientRequest().getWarehouseUuid());
-			RefundReference.Builder refund = RefundReference.newBuilder();//createRefundReference(request);
+			RefundReference.Builder refund = createRefundReference(request);
 			responseObserver.onNext(refund.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void deleteRefundReference(DeleteRefundReferenceRequest request, StreamObserver<Empty> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Delete Refund Reference = " + request.getUuid());
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			Empty.Builder orderLine = deleteRefundReference(request);
+			responseObserver.onNext(orderLine.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
@@ -1492,7 +1517,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					request.getClientRequest().getLanguage(), 
 					request.getClientRequest().getOrganizationUuid(), 
 					request.getClientRequest().getWarehouseUuid());
-			ListRefundReferencesResponse.Builder refundReferenceList = ListRefundReferencesResponse.newBuilder();//convertPointOfSalesList(request);
+			ListRefundReferencesResponse.Builder refundReferenceList = listRefundReferencesLines(request);
 			responseObserver.onNext(refundReferenceList.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -1542,21 +1567,21 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				seller = new GenericPO("C_POSSellerAllocation", Env.getCtx(), 0, transactionName);
 				seller.set_ValueOfColumn("C_POS_ID", posId);
 				seller.set_ValueOfColumn("SalesRep_ID", salesRepresentativeId);
+				seller.set_ValueOfColumn("IsAllowsModifyQuantity", pointOfSales.get_ValueAsBoolean("IsAllowsModifyQuantity"));
+				seller.set_ValueOfColumn("IsAllowsReturnOrder", pointOfSales.get_ValueAsBoolean("IsAllowsReturnOrder"));
+				seller.set_ValueOfColumn("IsAllowsCollectOrder", pointOfSales.get_ValueAsBoolean("IsAllowsCollectOrder"));
+				seller.set_ValueOfColumn("IsAllowsCreateOrder", pointOfSales.get_ValueAsBoolean("IsAllowsCreateOrder"));
+				seller.set_ValueOfColumn("IsDisplayTaxAmount", pointOfSales.get_ValueAsBoolean("IsDisplayTaxAmount"));
+				seller.set_ValueOfColumn("IsDisplayDiscount", pointOfSales.get_ValueAsBoolean("IsDisplayDiscount"));
+				seller.set_ValueOfColumn("IsAllowsConfirmShipment", pointOfSales.get_ValueAsBoolean("IsAllowsConfirmShipment"));
+				seller.set_ValueOfColumn("IsConfirmCompleteShipment", pointOfSales.get_ValueAsBoolean("IsConfirmCompleteShipment"));
+				seller.set_ValueOfColumn("IsAllowsAllocateSeller", pointOfSales.get_ValueAsBoolean("IsAllowsAllocateSeller"));
+				seller.set_ValueOfColumn("IsAllowsConcurrentUse", pointOfSales.get_ValueAsBoolean("IsAllowsConcurrentUse"));
+				seller.set_ValueOfColumn("IsAllowsCashOpening", pointOfSales.get_ValueAsBoolean("IsAllowsCashOpening"));
+				seller.set_ValueOfColumn("IsAllowsCashClosing", pointOfSales.get_ValueAsBoolean("IsAllowsCashClosing"));
+				seller.set_ValueOfColumn("IsAllowsCashWithdrawal", pointOfSales.get_ValueAsBoolean("IsAllowsCashWithdrawal"));
 			}
 			seller.set_ValueOfColumn("IsActive", true);
-			seller.set_ValueOfColumn("IsAllowsModifyQuantity", pointOfSales.get_ValueAsBoolean("IsAllowsModifyQuantity"));
-			seller.set_ValueOfColumn("IsAllowsReturnOrder", pointOfSales.get_ValueAsBoolean("IsAllowsReturnOrder"));
-			seller.set_ValueOfColumn("IsAllowsCollectOrder", pointOfSales.get_ValueAsBoolean("IsAllowsCollectOrder"));
-			seller.set_ValueOfColumn("IsAllowsCreateOrder", pointOfSales.get_ValueAsBoolean("IsAllowsCreateOrder"));
-			seller.set_ValueOfColumn("IsDisplayTaxAmount", pointOfSales.get_ValueAsBoolean("IsDisplayTaxAmount"));
-			seller.set_ValueOfColumn("IsDisplayDiscount", pointOfSales.get_ValueAsBoolean("IsDisplayDiscount"));
-			seller.set_ValueOfColumn("IsAllowsConfirmShipment", pointOfSales.get_ValueAsBoolean("IsAllowsConfirmShipment"));
-			seller.set_ValueOfColumn("IsConfirmCompleteShipment", pointOfSales.get_ValueAsBoolean("IsConfirmCompleteShipment"));
-			seller.set_ValueOfColumn("IsAllowsAllocateSeller", pointOfSales.get_ValueAsBoolean("IsAllowsAllocateSeller"));
-			seller.set_ValueOfColumn("IsAllowsConcurrentUse", pointOfSales.get_ValueAsBoolean("IsAllowsConcurrentUse"));
-			seller.set_ValueOfColumn("IsAllowsCashOpening", pointOfSales.get_ValueAsBoolean("IsAllowsCashOpening"));
-			seller.set_ValueOfColumn("IsAllowsCashClosing", pointOfSales.get_ValueAsBoolean("IsAllowsCashClosing"));
-			seller.set_ValueOfColumn("IsAllowsCashWithdrawal", pointOfSales.get_ValueAsBoolean("IsAllowsCashWithdrawal"));
 			seller.saveEx();
 		});
 		//	Return
@@ -1632,6 +1657,64 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		builder.setNextPageToken(ValueUtil.validateNull(nexPageToken));
 		//	Return
 		return builder;
+	}
+	
+	/**
+	 * Create Refund Reference
+	 * @param request
+	 * @return
+	 */
+	private RefundReference.Builder createRefundReference(CreateRefundReferenceRequest request) {
+		if(Util.isEmpty(request.getPosUuid())) {
+			throw new AdempiereException("@C_POS_ID@ @IsMandatory@");
+		}
+		if(Util.isEmpty(request.getOrderUuid())) {
+			throw new AdempiereException("@C_Order_ID@ @IsMandatory@");
+		}
+		if(Util.isEmpty(request.getSalesRepresentativeUuid())) {
+			throw new AdempiereException("@SalesRep_ID@ @IsMandatory@");
+		}
+		if(Util.isEmpty(request.getCurrencyUuid())) {
+			throw new AdempiereException("@C_Currency_ID@ @IsMandatory@");
+		}
+		if(Util.isEmpty(request.getCustomerBankAccountUuid())) {
+			throw new AdempiereException("@C_BP_BankAccount_ID@ @IsMandatory@");
+		}
+		if(request.getAmount() == null) {
+			throw new AdempiereException("@Amount@ @IsMandatory@");
+		}
+		AtomicReference<PO> refundReference = new AtomicReference<PO>();
+		Trx.run(transactionName -> {
+			GenericPO refundReferenceToCreate = new GenericPO("C_OrderPOSBankAccount", Env.getCtx(), 0, transactionName);
+			refundReferenceToCreate.set_ValueOfColumn("Amount", ValueUtil.getBigDecimalFromDecimal(request.getAmount()));
+			refundReferenceToCreate.set_ValueOfColumn("C_BP_BankAccount_ID", RecordUtil.getIdFromUuid(I_C_BP_BankAccount.Table_Name, request.getCustomerBankAccountUuid(), transactionName));
+			int id = RecordUtil.getIdFromUuid(I_C_ConversionType.Table_Name, request.getConversionTypeUuid(), transactionName);
+			if(id > 0) {
+				refundReferenceToCreate.set_ValueOfColumn("C_ConversionType_ID", id);
+			}
+			id = RecordUtil.getIdFromUuid(I_C_Currency.Table_Name, request.getCurrencyUuid(), transactionName);
+			if(id > 0) {
+				refundReferenceToCreate.set_ValueOfColumn("C_Currency_ID", id);
+			}
+			refundReferenceToCreate.set_ValueOfColumn("C_Order_ID", RecordUtil.getIdFromUuid(I_C_Order.Table_Name, request.getOrderUuid(), transactionName));
+			id = RecordUtil.getIdFromUuid(I_C_PaymentMethod.Table_Name, request.getPaymentMethodUuid(), transactionName);
+			if(id > 0) {
+				refundReferenceToCreate.set_ValueOfColumn("C_PaymentMethod_ID", id);
+			}
+			id = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), transactionName);
+			if(id > 0) {
+				refundReferenceToCreate.set_ValueOfColumn("C_POS_ID", id);
+			}
+			id = RecordUtil.getIdFromUuid(I_AD_User.Table_Name, request.getSalesRepresentativeUuid(), transactionName);
+			if(id > 0) {
+				refundReferenceToCreate.set_ValueOfColumn("SalesRep_ID", id);
+			}
+			refundReferenceToCreate.set_ValueOfColumn("TenderType", request.getTenderTypeCode());
+			refundReferenceToCreate.set_ValueOfColumn("Description", request.getDescription());
+			refundReferenceToCreate.saveEx();
+			refundReference.set(refundReferenceToCreate);
+		});
+		return convertRefundReference(refundReference.get());
 	}
 	
 	/**
@@ -1894,6 +1977,88 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		}
 		//	Set next page
 		builder.setNextPageToken(ValueUtil.validateNull(nexPageToken));
+		return builder;
+	}
+	
+	/**
+	 * List refund references from Order UUID
+	 * @param request
+	 * @return
+	 */
+	private ListRefundReferencesResponse.Builder listRefundReferencesLines(ListRefundReferencesRequest request) {
+		if(Util.isEmpty(request.getCustomerUuid())
+				&& Util.isEmpty(request.getOrderUuid())) {
+			throw new AdempiereException("@C_BPartner_ID@ / @C_Order_ID@ @IsMandatory@");
+		}
+		ListRefundReferencesResponse.Builder builder = ListRefundReferencesResponse.newBuilder();
+		if(MTable.get(Env.getCtx(), "C_OrderPOSBankAccount") == null) {
+			return builder;
+		}
+		String nexPageToken = null;
+		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
+		int limit = RecordUtil.PAGE_SIZE;
+		int offset = pageNumber * RecordUtil.PAGE_SIZE;
+		List<Object> parameters = new ArrayList<Object>();
+		StringBuffer whereClause = new StringBuffer("");
+		if(!Util.isEmpty(request.getOrderUuid())) {
+			parameters.add(RecordUtil.getIdFromUuid(I_C_Order.Table_Name, request.getOrderUuid(), null));
+			whereClause.append("C_Order_ID = ?");
+		} else if(!Util.isEmpty(request.getCustomerUuid())) {
+			parameters.add(RecordUtil.getIdFromUuid(I_C_BPartner.Table_Name, request.getCustomerUuid(), null));
+			whereClause.append("EXISTS(SELECT 1 FROM C_BP_BankAccount ba WHERE ba.C_BP_BankAccount_ID = C_OrderPOSBankAccount.C_BP_BankAccount_ID AND ba.C_BPartner_ID = ?)");
+		} else if(!Util.isEmpty(request.getPosUuid())) {
+			parameters.add(RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), null));
+			whereClause.append("C_POS_ID = ?");
+		}
+		//	Get Refund Reference list
+		Query query = new Query(Env.getCtx(), "C_OrderPOSBankAccount", whereClause.toString(), null)
+				.setParameters(parameters)
+				.setClient_ID()
+				.setOnlyActiveRecords(true);
+		int count = query.count();
+		query
+		.setLimit(limit, offset)
+		.list()
+		.forEach(refundReference -> {
+			builder.addRefundReferences(convertRefundReference(refundReference));
+		});
+		//	
+		builder.setRecordCount(count);
+		//	Set page token
+		if(RecordUtil.isValidNextPageToken(count, offset, limit)) {
+			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
+		}
+		//	Set next page
+		builder.setNextPageToken(ValueUtil.validateNull(nexPageToken));
+		return builder;
+	}
+	
+	/**
+	 * Conver Refund Reference to gRPC stub object
+	 * @param refundReference
+	 * @return
+	 * @return RefundReference.Builder
+	 */
+	private RefundReference.Builder convertRefundReference(PO refundReference) {
+		RefundReference.Builder builder = RefundReference.newBuilder();
+		if(refundReference != null
+				&& refundReference.get_ID() > 0) {
+			builder.setAmount(ValueUtil.getDecimalFromBigDecimal((BigDecimal) refundReference.get_Value("Amount")))
+			.setDescription(ValueUtil.validateNull(refundReference.get_ValueAsString("Description")))
+			.setIsPaid(refundReference.get_ValueAsBoolean("IsPaid"))
+			.setTenderTypeCode(ValueUtil.validateNull(refundReference.get_ValueAsString("TenderType")))
+			.setCurrency(ConvertUtil.convertCurrency(MCurrency.get(Env.getCtx(), refundReference.get_ValueAsInt("C_Currency_ID"))))
+			.setCustomerBankAccountUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_BP_BankAccount.Table_Name, refundReference.get_ValueAsInt("C_BP_BankAccount_ID"))))
+			.setOrderUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_Order.Table_Name, refundReference.get_ValueAsInt("C_Order_ID"))))
+			.setPosUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_POS.Table_Name, refundReference.get_ValueAsInt("C_POS_ID"))))
+			.setSalesRepresentative(ConvertUtil.convertSalesRepresentative(MUser.get(Env.getCtx(), refundReference.get_ValueAsInt("SalesRep_ID"))))
+			.setId(refundReference.get_ID())
+			.setUuid(ValueUtil.validateNull(refundReference.get_UUID()))
+			.setPaymentMethodUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_PaymentMethod.Table_Name, refundReference.get_ValueAsInt("C_PaymentMethod_ID"))))
+			.setPaymentDate(ValueUtil.validateNull(ValueUtil.convertDateToString((Timestamp) refundReference.get_Value("PayDate"))));
+			
+		}
+		//	
 		return builder;
 	}
 	
@@ -3534,6 +3699,33 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 						&& orderLine.getC_Order_ID() >= 0) {
 					orderLine.deleteEx(true);
 				}
+			}
+		});
+		//	Return
+		return Empty.newBuilder();
+	}
+	
+	/**
+	 * Delete order line from uuid
+	 * @param request
+	 * @return
+	 */
+	private Empty.Builder deleteRefundReference(DeleteRefundReferenceRequest request) {
+		if(Util.isEmpty(request.getUuid())
+				&& request.getId() <= 0) {
+			throw new AdempiereException("@C_OrderPOSBankAccount_ID@ @IsMandatory@");
+		}
+		if(MTable.get(Env.getCtx(), "C_OrderPOSBankAccount") == null) {
+			return Empty.newBuilder();
+		}
+		Trx.run(transactionName -> {
+			PO refundReference = RecordUtil.getEntity(Env.getCtx(), "C_OrderPOSBankAccount", request.getUuid(), request.getId(), transactionName);
+			if(refundReference != null
+					&& refundReference.get_ID() != 0) {
+				//	Validate processed Order
+				refundReference.deleteEx(true);
+			} else {
+				throw new AdempiereException("@C_OrderPOSBankAccount_ID@ @NotFound@");
 			}
 		});
 		//	Return
