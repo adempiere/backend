@@ -369,69 +369,68 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 	
 	@Override
 	public void lockPrivateAccess(LockPrivateAccessRequest request, StreamObserver<PrivateAccess> responseObserver) {
-		try {
-			if(request == null) {
-				throw new AdempiereException("Object Request Null");
-			}
-			if(request.getId() <= 0
-					&& Util.isEmpty(request.getUuid())) {
-				throw new AdempiereException("@Record_ID@ / @UUID@ @NotFound@");
-			}
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
-			int recordId = request.getId();
-			if(recordId <= 0) {
-				recordId = RecordUtil.getIdFromUuid(request.getTableName(), request.getUuid(), null);
-			}
-			MUser user = MUser.get(context);
-			PrivateAccess.Builder privateaccess = lockUnlockPrivateAccess(context, request.getTableName(), recordId, user.getAD_User_ID(), true, null);
-			responseObserver.onNext(privateaccess.build());
-			responseObserver.onCompleted();
-		} catch (Exception e) {
-			log.severe(e.getLocalizedMessage());
-			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getLocalizedMessage())
-					.augmentDescription(e.getLocalizedMessage())
-					.withCause(e)
-					.asRuntimeException());
-		}
+		setPrivateAccess(request, responseObserver, true);
 	}
 	
 	@Override
-	public void unlockPrivateAccess(UnlockPrivateAccessRequest request,
-			StreamObserver<PrivateAccess> responseObserver) {
+	public void unlockPrivateAccess(UnlockPrivateAccessRequest request, StreamObserver<PrivateAccess> responseObserver) {
+		setPrivateAccess(request, responseObserver, false);
+	}
+
+	public void setPrivateAccess(UnlockPrivateAccessRequest request,
+		StreamObserver<PrivateAccess> responseObserver,
+		boolean isPrivateAccess) {
 		try {
-			if(request == null) {
+			if (request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
+
+			int recordId = request.getId();
+			if (recordId <= 0 && Util.isEmpty(request.getUuid())) {
+				throw new AdempiereException("@Record_ID@ / @UUID@ @NotFound@");
+			}
+			if (recordId <= 0) {
+				recordId = RecordUtil.getIdFromUuid(request.getTableName(), request.getUuid(), null);
+			}
+
 			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
+
 			MUser user = MUser.get(context);
-			PrivateAccess.Builder privateaccess = lockUnlockPrivateAccess(context, request.getTableName(), request.getId(), user.getAD_User_ID(), false, null);
+			PrivateAccess.Builder privateaccess = lockUnlockPrivateAccess(context, request.getTableName(), recordId, user.getAD_User_ID(), isPrivateAccess, null);
 			responseObserver.onNext(privateaccess.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getLocalizedMessage())
-					.augmentDescription(e.getLocalizedMessage())
-					.withCause(e)
-					.asRuntimeException());
+				.withDescription(e.getLocalizedMessage())
+				.augmentDescription(e.getLocalizedMessage())
+				.withCause(e)
+				.asRuntimeException());
 		}
 	}
 	
 	@Override
 	public void getPrivateAccess(GetPrivateAccessRequest request, StreamObserver<PrivateAccess> responseObserver) {
 		try {
-			if(request == null) {
+			if (request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
+
+			int recordId = request.getId();
+			if (recordId <= 0 && Util.isEmpty(request.getUuid())) {
+				throw new AdempiereException("@Record_ID@ / @UUID@ @NotFound@");
+			}
+			if (recordId <= 0) {
+				recordId = RecordUtil.getIdFromUuid(request.getTableName(), request.getUuid(), null);
+			}
+
 			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			MUser user = MUser.get(context);
-			MPrivateAccess privateAccess = getPrivateAccess(context, request.getTableName(), request.getId(), user.getAD_User_ID(), null);
-			if(privateAccess == null
-					|| privateAccess.getAD_Table_ID() == 0) {
+			MPrivateAccess privateAccess = getPrivateAccess(context, request.getTableName(), recordId, user.getAD_User_ID(), null);
+			if (privateAccess == null || privateAccess.getAD_Table_ID() == 0) {
 				MTable table = MTable.get(context, request.getTableName());
 				//	Set values
-				privateAccess = new MPrivateAccess(context, user.getAD_User_ID(), table.getAD_Table_ID(), request.getId());
+				privateAccess = new MPrivateAccess(context, user.getAD_User_ID(), table.getAD_Table_ID(), recordId);
 				privateAccess.setIsActive(false);
 			}
 			PrivateAccess.Builder privateaccess = convertPrivateAccess(context, privateAccess);
@@ -440,10 +439,10 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-					.withDescription(e.getLocalizedMessage())
-					.augmentDescription(e.getLocalizedMessage())
-					.withCause(e)
-					.asRuntimeException());
+				.withDescription(e.getLocalizedMessage())
+				.augmentDescription(e.getLocalizedMessage())
+				.withCause(e)
+				.asRuntimeException());
 		}
 	}
 	
