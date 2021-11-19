@@ -381,12 +381,13 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 		StreamObserver<PrivateAccess> responseObserver,
 		boolean isPrivateAccess) {
 		try {
-			if (request == null) {
+			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
 
 			int recordId = request.getId();
-			if (recordId <= 0 && Util.isEmpty(request.getUuid())) {
+			if (recordId <= 0
+					&& Util.isEmpty(request.getUuid())) {
 				throw new AdempiereException("@Record_ID@ / @UUID@ @NotFound@");
 			}
 			if (recordId <= 0) {
@@ -412,7 +413,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 	@Override
 	public void getPrivateAccess(GetPrivateAccessRequest request, StreamObserver<PrivateAccess> responseObserver) {
 		try {
-			if (request == null) {
+			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
 
@@ -427,7 +428,8 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			MUser user = MUser.get(context);
 			MPrivateAccess privateAccess = getPrivateAccess(context, request.getTableName(), recordId, user.getAD_User_ID(), null);
-			if (privateAccess == null || privateAccess.getAD_Table_ID() == 0) {
+			if(privateAccess == null
+					|| privateAccess.getAD_Table_ID() == 0) {
 				MTable table = MTable.get(context, request.getTableName());
 				//	Set values
 				privateAccess = new MPrivateAccess(context, user.getAD_User_ID(), table.getAD_Table_ID(), recordId);
