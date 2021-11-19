@@ -402,10 +402,10 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-				.withDescription(e.getLocalizedMessage())
-				.augmentDescription(e.getLocalizedMessage())
-				.withCause(e)
-				.asRuntimeException());
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
 		}
 	}
 	
@@ -439,10 +439,10 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
 			responseObserver.onError(Status.INTERNAL
-				.withDescription(e.getLocalizedMessage())
-				.augmentDescription(e.getLocalizedMessage())
-				.withCause(e)
-				.asRuntimeException());
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
 		}
 	}
 	
