@@ -368,20 +368,28 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 	}
 	
 	@Override
+	/**
+	 * TODO: Replace LockPrivateAccessRequest with GetPrivateAccessRequest
+	 * @param request
+	 * @param responseObserver
+	 */
 	public void lockPrivateAccess(LockPrivateAccessRequest request, StreamObserver<PrivateAccess> responseObserver) {
 		try {
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
-			if(request.getId() <= 0
+
+			int recordId = request.getId();
+			if (recordId <= 0
 					&& Util.isEmpty(request.getUuid())) {
 				throw new AdempiereException("@Record_ID@ / @UUID@ @NotFound@");
 			}
-			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
-			int recordId = request.getId();
 			if(recordId <= 0) {
 				recordId = RecordUtil.getIdFromUuid(request.getTableName(), request.getUuid(), null);
 			}
+
+			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
+
 			MUser user = MUser.get(context);
 			PrivateAccess.Builder privateaccess = lockUnlockPrivateAccess(context, request.getTableName(), recordId, user.getAD_User_ID(), true, null);
 			responseObserver.onNext(privateaccess.build());
@@ -397,15 +405,30 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 	}
 	
 	@Override
-	public void unlockPrivateAccess(UnlockPrivateAccessRequest request,
-			StreamObserver<PrivateAccess> responseObserver) {
+	/**
+	 * TODO: Replace UnlockPrivateAccessRequest with GetPrivateAccessRequest
+	 * @param request
+	 * @param responseObserver
+	 */
+	public void unlockPrivateAccess(UnlockPrivateAccessRequest request, StreamObserver<PrivateAccess> responseObserver) {
 		try {
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
+
+			int recordId = request.getId();
+			if (recordId <= 0
+					&& Util.isEmpty(request.getUuid())) {
+				throw new AdempiereException("@Record_ID@ / @UUID@ @NotFound@");
+			}
+			if (recordId <= 0) {
+				recordId = RecordUtil.getIdFromUuid(request.getTableName(), request.getUuid(), null);
+			}
+
 			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
+
 			MUser user = MUser.get(context);
-			PrivateAccess.Builder privateaccess = lockUnlockPrivateAccess(context, request.getTableName(), request.getId(), user.getAD_User_ID(), false, null);
+			PrivateAccess.Builder privateaccess = lockUnlockPrivateAccess(context, request.getTableName(), recordId, user.getAD_User_ID(), false, null);
 			responseObserver.onNext(privateaccess.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -424,14 +447,23 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 			if(request == null) {
 				throw new AdempiereException("Object Request Null");
 			}
+
+			int recordId = request.getId();
+			if (recordId <= 0 && Util.isEmpty(request.getUuid())) {
+				throw new AdempiereException("@Record_ID@ / @UUID@ @NotFound@");
+			}
+			if (recordId <= 0) {
+				recordId = RecordUtil.getIdFromUuid(request.getTableName(), request.getUuid(), null);
+			}
+
 			Properties context = ContextManager.getContext(request.getClientRequest().getSessionUuid(), request.getClientRequest().getLanguage(), request.getClientRequest().getOrganizationUuid(), request.getClientRequest().getWarehouseUuid());
 			MUser user = MUser.get(context);
-			MPrivateAccess privateAccess = getPrivateAccess(context, request.getTableName(), request.getId(), user.getAD_User_ID(), null);
+			MPrivateAccess privateAccess = getPrivateAccess(context, request.getTableName(), recordId, user.getAD_User_ID(), null);
 			if(privateAccess == null
 					|| privateAccess.getAD_Table_ID() == 0) {
 				MTable table = MTable.get(context, request.getTableName());
 				//	Set values
-				privateAccess = new MPrivateAccess(context, user.getAD_User_ID(), table.getAD_Table_ID(), request.getId());
+				privateAccess = new MPrivateAccess(context, user.getAD_User_ID(), table.getAD_Table_ID(), recordId);
 				privateAccess.setIsActive(false);
 			}
 			PrivateAccess.Builder privateaccess = convertPrivateAccess(context, privateAccess);
