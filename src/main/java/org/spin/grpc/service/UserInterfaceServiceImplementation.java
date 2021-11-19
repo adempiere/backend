@@ -401,7 +401,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 			if (requestGeneric instanceof UnlockPrivateAccessRequest) {
 				request = (UnlockPrivateAccessRequest) requestGeneric;
 			} else if (requestGeneric instanceof LockPrivateAccessRequest) {
-				request = (LockPrivateAccessRequest) requestGeneric
+				request = (LockPrivateAccessRequest) requestGeneric;
 			}
 
 			if(request == null) {
