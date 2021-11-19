@@ -384,7 +384,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 					&& Util.isEmpty(request.getUuid())) {
 				throw new AdempiereException("@Record_ID@ / @UUID@ @NotFound@");
 			}
-			if (recordId <= 0) {
+			if(recordId <= 0) {
 				recordId = RecordUtil.getIdFromUuid(request.getTableName(), request.getUuid(), null);
 			}
 
