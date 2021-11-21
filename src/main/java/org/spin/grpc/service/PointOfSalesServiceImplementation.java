@@ -1931,6 +1931,9 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		Trx.run(transactionName -> {
 			int shipmentId = RecordUtil.getIdFromUuid(I_M_InOut.Table_Name, request.getShipmentUuid(), transactionName);
 			MInOut shipment = new MInOut(Env.getCtx(), shipmentId, transactionName);
+			if(shipment.isProcessed()) {
+				throw new AdempiereException("@M_InOut_ID@ @Processed@");
+			}
 			if (!shipment.processIt(request.getDocumentAction())) {
 				log.warning("@ProcessFailed@ :" + shipment.getProcessMsg());
 				throw new AdempiereException("@ProcessFailed@ :" + shipment.getProcessMsg());

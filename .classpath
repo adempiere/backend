@@ -30,5 +30,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/Fiscal-Printer"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Fiscal-Printer-API"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/CST-STD"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Material-Management-Improvements"/>
 	<classpathentry kind="output" path="bin/default"/>
 </classpath>
