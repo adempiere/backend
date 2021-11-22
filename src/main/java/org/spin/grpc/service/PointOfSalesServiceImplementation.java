@@ -143,6 +143,7 @@ import org.spin.grpc.util.GetCustomerRequest;
 import org.spin.grpc.util.GetKeyLayoutRequest;
 import org.spin.grpc.util.GetOrderRequest;
 import org.spin.grpc.util.GetProductPriceRequest;
+import org.spin.grpc.util.HoldOrderRequest;
 import org.spin.grpc.util.KeyLayout;
 import org.spin.grpc.util.ListAvailableCurrenciesRequest;
 import org.spin.grpc.util.ListAvailableCurrenciesResponse;
@@ -186,6 +187,7 @@ import org.spin.grpc.util.ProcessOrderRequest;
 import org.spin.grpc.util.ProcessShipmentRequest;
 import org.spin.grpc.util.ProductPrice;
 import org.spin.grpc.util.RefundReference;
+import org.spin.grpc.util.ReleaseOrderRequest;
 import org.spin.grpc.util.ReverseSalesRequest;
 import org.spin.grpc.util.Shipment;
 import org.spin.grpc.util.ShipmentLine;
@@ -632,6 +634,54 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					request.getClientRequest().getOrganizationUuid(), 
 					request.getClientRequest().getWarehouseUuid());
 			Order.Builder order = ConvertUtil.convertOrder(updateOrder(request));
+			responseObserver.onNext(order.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void releaseOrder(ReleaseOrderRequest request, StreamObserver<Order> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Update Order = " + request.getOrderUuid());
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			Order.Builder order = ConvertUtil.convertOrder(changeOrderAssigned(request.getOrderUuid(), null));
+			responseObserver.onNext(order.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	@Override
+	public void holdOrder(HoldOrderRequest request, StreamObserver<Order> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Update Order = " + request.getOrderUuid());
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			Order.Builder order = ConvertUtil.convertOrder(changeOrderAssigned(request.getOrderUuid(), request.getSalesRepresentativeUuid()));
 			responseObserver.onNext(order.build());
 			responseObserver.onCompleted();
 		} catch (Exception e) {
@@ -2211,7 +2261,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			shipment.setC_POS_ID(salesOrder.getC_POS_ID());
 			//	Valid if has a Order
 			if(!DocumentUtil.isCompleted(salesOrder)) {
-				throw new AdempiereException("@C_Order_ID@ @IsCompleted@");
+				throw new AdempiereException("@Invalid@ @C_Order_ID@ " + salesOrder.getDocumentNo());
 			}
 			shipment.saveEx(transactionName);
 			maybeShipment.set(shipment);
@@ -2919,7 +2969,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					throw new AdempiereException("@C_Order_ID@ @NotFound@");
 				}
 				if(!DocumentUtil.isDrafted(salesOrder)) {
-					throw new AdempiereException("@C_Order_ID@ @IsCompleted@");
+					throw new AdempiereException("@C_Order_ID@ @Processed@");
 				}
 				int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), transactionName);
 				if(posId <= 0) {
@@ -3203,26 +3253,37 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		int limit = RecordUtil.PAGE_SIZE;
 		int offset = pageNumber * RecordUtil.PAGE_SIZE;
 		//	Dynamic where clause
-		StringBuffer whereClause = new StringBuffer();
-		List<Object> parameters = new ArrayList<Object>();
-		//	Aisle Seller
 		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), null);
 		int salesRepresentativeId = RecordUtil.getIdFromUuid(I_AD_User.Table_Name, request.getSalesRepresentativeUuid(), null);
 		int orgId = Env.getAD_Org_ID(Env.getCtx());
-		boolean isWithAisleSeller = M_Element.get(Env.getCtx(), "IsAisleSeller") != null;
+		MUser salesRepresentative = MUser.get(Env.getCtx(), salesRepresentativeId);
 		boolean isAppliedNewFeaturesPOS = M_Element.get(Env.getCtx(), "IsSharedPOS") != null && M_Element.get(Env.getCtx(), "IsAllowsAllocateSeller") != null;
-		if(isWithAisleSeller 
-				&& request.getIsOnlyAisleSeller()) {
-			whereClause.append("(C_Order.C_POS_ID = ? OR (C_Order.AD_Org_ID = ? AND EXISTS(SELECT 1 FROM C_POS p WHERE p.C_POS_ID = C_Order.C_POS_ID AND p.IsAisleSeller = 'Y')))");
-			parameters.add(posId);
+		StringBuffer whereClause = new StringBuffer();
+		List<Object> parameters = new ArrayList<Object>();
+		if(!salesRepresentative.get_ValueAsBoolean("IsPOSManager")) {
+			whereClause.append("C_Order.AD_Org_ID = ?");
 			parameters.add(orgId);
-		} else if(isAppliedNewFeaturesPOS) {
-			whereClause.append("C_Order.C_POS_ID = ? AND ((C_Order.AD_Org_ID = ? AND C_Order.SalesRep_ID = ?) OR EXISTS(SELECT 1 FROM C_POS p WHERE p.C_POS_ID = C_Order.C_POS_ID AND p.IsSharedPOS = 'N'))");
-			parameters.add(posId);
-			parameters.add(orgId);
-			parameters.add(salesRepresentativeId);
+			//	New features
+			if(isAppliedNewFeaturesPOS) {
+				//	Shared POS
+				if(request.getIsOnlyAisleSeller()) {
+					whereClause.append(" AND ((C_Order.SalesRep_ID = ? OR COALESCE(C_Order.AssignedSalesRep_ID, ?) = ?) AND EXISTS(SELECT 1 FROM C_POS p WHERE p.C_POS_ID = C_Order.C_POS_ID AND p.IsAisleSeller = 'Y'))");
+					parameters.add(salesRepresentativeId);
+					parameters.add(salesRepresentativeId);
+					parameters.add(salesRepresentativeId);
+				} else {
+					whereClause.append(" AND ((C_Order.SalesRep_ID = ? OR COALESCE(C_Order.AssignedSalesRep_ID, ?) = ?) AND EXISTS(SELECT 1 FROM C_POS p WHERE p.C_POS_ID = C_Order.C_POS_ID AND p.IsSharedPOS = 'Y'))");
+					parameters.add(salesRepresentativeId);
+					parameters.add(salesRepresentativeId);
+					parameters.add(salesRepresentativeId);
+				}	
+			} else {
+				whereClause.append(" AND C_Order.C_POS_ID = ?");
+				parameters.add(posId);
+			}
+			
 		} else {
-			whereClause.append("C_Order.C_POS_ID = ?");
+			whereClause.append(" C_Order.C_POS_ID = ?");
 			parameters.add(posId);
 		}
 		//	Document No
@@ -3427,6 +3488,38 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 * @param request
 	 * @return
 	 */
+	private MOrder changeOrderAssigned(String orderUuid, String salesRepresentativeUuid) {
+		AtomicReference<MOrder> orderReference = new AtomicReference<MOrder>();
+		if(!Util.isEmpty(orderUuid)) {
+			Trx.run(transactionName -> {
+				MOrder salesOrder = getOrder(orderUuid, transactionName);
+				if(salesOrder == null) {
+					throw new AdempiereException("@C_Order_ID@ @NotFound@");
+				}
+				if(!DocumentUtil.isDrafted(salesOrder)) {
+					throw new AdempiereException("@C_Order_ID@ @Processed@");
+				}
+				if(!Util.isEmpty(salesRepresentativeUuid)) {
+					if(salesOrder.get_ValueAsInt("AssignedSalesRep_ID") > 0) {
+						throw new AdempiereException("@POS.SalesRepAssigned@");
+					}
+				}
+				int salesRepresentativeId = RecordUtil.getIdFromUuid(I_AD_User.Table_Name, salesRepresentativeUuid, transactionName);
+				salesOrder.set_ValueOfColumn("AssignedSalesRep_ID", salesRepresentativeId);
+				//	Save
+				salesOrder.saveEx(transactionName);
+				orderReference.set(salesOrder);
+			});
+		}
+		//	Return order
+		return orderReference.get();
+	}
+	
+	/**
+	 * Update Order from UUID
+	 * @param request
+	 * @return
+	 */
 	private MOrder updateOrder(UpdateOrderRequest request) {
 		AtomicReference<MOrder> orderReference = new AtomicReference<MOrder>();
 		if(!Util.isEmpty(request.getOrderUuid())) {
@@ -3436,7 +3529,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					throw new AdempiereException("@C_Order_ID@ @NotFound@");
 				}
 				if(!DocumentUtil.isDrafted(salesOrder)) {
-					throw new AdempiereException("@C_Order_ID@ @IsCompleted@");
+					throw new AdempiereException("@C_Order_ID@ @Processed@");
 				}
 				//	Update Date Ordered
 				Timestamp now = TimeUtil.getDay(System.currentTimeMillis());
@@ -4386,6 +4479,9 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	Set
 		if(salesRepresentativeId > 0) {
 			salesOrder.setSalesRep_ID(salesRepresentativeId);
+			if(salesOrder.get_ValueAsInt("AssignedSalesRep_ID") <= 0) {
+				salesOrder.set_ValueOfColumn("AssignedSalesRep_ID", salesRepresentativeId);
+			}
 		}
 		setCurrentDate(salesOrder);
 		//	Save Header

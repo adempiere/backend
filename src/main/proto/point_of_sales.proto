@@ -45,6 +45,10 @@ service Store {
 	rpc DeleteOrderLine(DeleteOrderLineRequest) returns (Empty) {}
 	//	Update Order
 	rpc UpdateOrder(UpdateOrderRequest) returns (Order) {}
+	//	Release Order
+	rpc ReleaseOrder(ReleaseOrderRequest) returns (Order) {}
+	//	Hold Order
+	rpc HoldOrder(HoldOrderRequest) returns (Order) {}
 	//	Update Order Line
 	rpc UpdateOrderLine(UpdateOrderLineRequest) returns (OrderLine) {}
 	//	Get a Order
@@ -927,6 +931,22 @@ message CreateOrderRequest {
 	string warehouse_uuid = 6;
 	string sales_representative_uuid = 7;
 	string campaign_uuid = 8;
+}
+
+// Request for release a order
+message ReleaseOrderRequest {
+	ClientRequest client_request = 1;
+	string pos_uuid = 2;
+	string sales_representative_uuid = 3;
+	string order_uuid = 4;
+}
+
+// Request for hold a order
+message HoldOrderRequest {
+	ClientRequest client_request = 1;
+	string pos_uuid = 2;
+	string sales_representative_uuid = 3;
+	string order_uuid = 4;
 }
 
 // Request for process a order
