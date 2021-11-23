@@ -2989,6 +2989,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					log.warning("@ProcessFailed@ :" + salesOrder.getProcessMsg());
 					throw new AdempiereException("@ProcessFailed@ :" + salesOrder.getProcessMsg());
 				}
+				//	Release Order
+				salesOrder.set_ValueOfColumn("AssignedSalesRep_ID", -1);
 				salesOrder.saveEx();
 				//	Create or process payments
 				if(request.getCreatePayments()) {
@@ -3023,7 +3025,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		AtomicReference<BigDecimal> openAmount = new AtomicReference<BigDecimal>(salesOrder.getGrandTotal());
 		List<Integer> paymentsIds = new ArrayList<Integer>();
 		//	Complete Payments
-		MPayment.getOfOrder(salesOrder).stream().sorted(Comparator.comparing(MPayment::getCreated)).forEach(payment -> {
+		List<MPayment> payments = MPayment.getOfOrder(salesOrder);
+		payments.stream().sorted(Comparator.comparing(MPayment::getCreated)).forEach(payment -> {
 			if(DocumentUtil.isDrafted(payment)) {
 				payment.setIsPrepayment(true);
 				BigDecimal convertedAmount = getConvetedAmount(salesOrder, payment, payment.getPayAmt());
@@ -3047,6 +3050,11 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			}
 			MBankStatement.addPayment(payment);
 		});
+		//	Validate Write Off Amount
+		BigDecimal writeOffAmtTolerance = Optional.ofNullable((BigDecimal) pos.get_Value("WriteOffAmtTolerance")).orElse(Env.ZERO);
+		if(writeOffAmtTolerance.compareTo(Env.ZERO) > 0 && openAmount.get().abs().compareTo(writeOffAmtTolerance) >= 0) {
+			throw new AdempiereException("@POS.WriteOffAmtToleranceExceeded@");
+		}
 		//	Allocate all payments
 		if(paymentsIds.size() > 0) {
 			String description = Msg.parseTranslation(Env.getCtx(), "@C_POS_ID@: " + pos.getName() + " - " + salesOrder.getDocumentNo());
@@ -3384,22 +3392,14 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	Aisle Seller
 		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), null);
 		int orderId = RecordUtil.getIdFromUuid(I_C_Order.Table_Name, request.getOrderUuid(), null);
-		if(posId > 0) {
-			whereClause.append("C_Payment.C_POS_ID = ?");
-			parameters.add(posId);
-		}
 		//	For order
 		if(orderId > 0) {
-			if(whereClause.length() > 0) {
-				whereClause.append(" AND ");
-			}
 			whereClause.append("C_Payment.C_Order_ID = ?");
 			parameters.add(orderId);
 		} else {
-			if(whereClause.length() > 0) {
-				whereClause.append(" AND ");
-			}
-			whereClause.append("C_Payment.C_Charge_ID IS NOT NULL AND C_Payment.Processed = 'N'");
+			whereClause.append("C_Payment.C_POS_ID = ?");
+			parameters.add(posId);
+			whereClause.append(" AND C_Payment.C_Charge_ID IS NOT NULL AND C_Payment.Processed = 'N'");
 		}
 		if(request.getIsOnlyRefund()) {
 			if(whereClause.length() > 0) {
@@ -3531,6 +3531,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				if(!DocumentUtil.isDrafted(salesOrder)) {
 					throw new AdempiereException("@C_Order_ID@ @Processed@");
 				}
+				validateOrderReleased(salesOrder);
 				//	Update Date Ordered
 				Timestamp now = TimeUtil.getDay(System.currentTimeMillis());
 				salesOrder.setDateOrdered(now);
@@ -3793,6 +3794,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				}
 				if(orderLine != null
 						&& orderLine.getC_Order_ID() >= 0) {
+					validateOrderReleased(orderLine.getParent());
 					orderLine.deleteEx(true);
 				}
 			}
@@ -3845,7 +3847,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				.first();
 		if(order == null
 				|| order.getC_Order_ID() == 0) {
-			return Empty.newBuilder();
+			throw new AdempiereException("@C_Order_ID@ @NotFound@");
 		}
 		//	Validate drafted
 		if(!DocumentUtil.isDrafted(order)) {
@@ -3858,6 +3860,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	
 		if(order != null
 				&& order.getC_Order_ID() >= 0) {
+			validateOrderReleased(order);
 			order.deleteEx(true);
 		}
 		//	Return
@@ -3893,6 +3896,10 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	
 		if(payment != null
 				&& payment.getC_Payment_ID() >= 0) {
+			if(payment.getC_Order_ID() > 0) {
+				MOrder salesOrder = new MOrder(Env.getCtx(), payment.getC_Order_ID(), null);
+				validateOrderReleased(salesOrder);
+			}
 			payment.deleteEx(true);
 		}
 		//	Return
@@ -4016,6 +4023,18 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			
 	} //	addOrUpdateLine
 	
+	/**
+	 * Validate if a order is released
+	 * @param salesOrder
+	 * @return void
+	 */
+	private void validateOrderReleased(MOrder salesOrder) {
+		if(salesOrder.get_ValueAsInt("AssignedSalesRep_ID") > 0
+				&& salesOrder.get_ValueAsInt("AssignedSalesRep_ID") != Env.getAD_User_ID(Env.getCtx())) {
+			throw new AdempiereException("@POS.SalesRepAssigned@");
+		}
+	}
+	
 	/***
 	 * Update order line
 	 * @param orderLineId
@@ -4034,6 +4053,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		Trx.run(transactionName -> {
 			MOrderLine orderLine = new MOrderLine(Env.getCtx(), orderLineId, transactionName);
 			MOrder order = orderLine.getParent();
+			validateOrderReleased(order);
 			setCurrentDate(order);
 			orderLine.setHeaderInfo(order);
 			//	Valid Complete
@@ -4529,6 +4549,10 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				throw new AdempiereException("@C_Payment_ID@ @NotFound@");
 			}
 			MPayment payment = new MPayment(Env.getCtx(), paymentId, transactionName);
+			if(payment.getC_Order_ID() > 0) {
+				MOrder salesOrder = new MOrder(Env.getCtx(), payment.getC_Order_ID(), transactionName);
+				validateOrderReleased(salesOrder);
+			}
 			if(!Util.isEmpty(tenderType)) {
 				payment.setTenderType(tenderType);
 			}
@@ -4577,6 +4601,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 * @return
 	 */
 	private MPayment createPaymentFromOrder(MOrder salesOrder, CreatePaymentRequest request, MPOS pointOfSalesDefinition, String transactionName) {
+		validateOrderReleased(salesOrder);
 		setCurrentDate(salesOrder);
 		String tenderType = request.getTenderTypeCode();
 		if(Util.isEmpty(tenderType)) {

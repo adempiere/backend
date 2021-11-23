@@ -16,8 +16,6 @@
 package org.spin.base.util;
 
 import java.sql.Timestamp;
-import java.util.Arrays;
-import java.util.Optional;
 import java.util.Properties;
 
 import org.adempiere.exceptions.AdempiereException;
@@ -146,13 +144,10 @@ public class ContextManager {
 	public static MCountry getDefaultCountry() {
 		MClient client = MClient.get (Env.getCtx());
 		MLanguage language = MLanguage.get(Env.getCtx(), client.getAD_Language());
-		Optional<MCountry> maybeCountry = Arrays.asList(MCountry.getCountries(Env.getCtx()))
-			.stream()
-			.filter(country -> language.getCountryCode().equals(country.getCountryCode()))
-			.findFirst();
+		MCountry country = MCountry.get(Env.getCtx(), language.getCountryCode());
 		//	Verify
-		if(maybeCountry.isPresent()) {
-			return maybeCountry.get();
+		if(country != null) {
+			return country;
 		}
 		//	Default
 		return MCountry.getDefault(Env.getCtx());
