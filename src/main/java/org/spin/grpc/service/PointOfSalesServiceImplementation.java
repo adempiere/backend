@@ -3500,12 +3500,14 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					throw new AdempiereException("@C_Order_ID@ @Processed@");
 				}
 				if(!Util.isEmpty(salesRepresentativeUuid)) {
-					if(salesOrder.get_ValueAsInt("AssignedSalesRep_ID") > 0) {
+					int salesRepresentativeId = RecordUtil.getIdFromUuid(I_AD_User.Table_Name, salesRepresentativeUuid, transactionName);
+					if(salesOrder.get_ValueAsInt("AssignedSalesRep_ID") > 0 && salesRepresentativeId != salesOrder.get_ValueAsInt("AssignedSalesRep_ID")) {
 						throw new AdempiereException("@POS.SalesRepAssigned@");
 					}
+					salesOrder.set_ValueOfColumn("AssignedSalesRep_ID", salesRepresentativeId);
+				} else {
+					salesOrder.set_ValueOfColumn("AssignedSalesRep_ID", null);
 				}
-				int salesRepresentativeId = RecordUtil.getIdFromUuid(I_AD_User.Table_Name, salesRepresentativeUuid, transactionName);
-				salesOrder.set_ValueOfColumn("AssignedSalesRep_ID", salesRepresentativeId);
 				//	Save
 				salesOrder.saveEx(transactionName);
 				orderReference.set(salesOrder);
