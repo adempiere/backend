@@ -2301,7 +2301,7 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 	private static final class StockSummary {
 		public static MStorage add(MStorage previousValue, MStorage newValue) {
 			previousValue.setQtyOnHand(previousValue.getQtyOnHand().add(newValue.getQtyOnHand()));
-			previousValue.setQtyOnHand(previousValue.getQtyReserved().add(newValue.getQtyReserved()));
+			previousValue.setQtyReserved(previousValue.getQtyReserved().add(newValue.getQtyReserved()));
 			return previousValue;
 		}
 	}
