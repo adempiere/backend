@@ -436,14 +436,16 @@ message GetCustomerRequest {
 message GetStockRequest {
 	data.ClientRequest client_request = 1;
 	string sku = 2;
+	string store_code = 3;
 }
 
 //	https://docs.storefrontapi.com/guide/default-modules/api.html#get-api-stock-list
 message ListStocksRequest {
 	data.ClientRequest client_request = 1;
 	string sku = 2;
-	int32 page_size = 3;
-	string page_token = 4;
+	string store_code = 3;
+	int32 page_size = 4;
+	string page_token = 5;
 }
 
 //	List of Stock
