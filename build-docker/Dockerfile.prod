@@ -1,19 +1,8 @@
-FROM adoptopenjdk/openjdk8:jre8u275-b01-alpine
+FROM openjdk:8-jdk-alpine
 
 
 LABEL	maintainer="ysenih@erpya.com; EdwinBetanc0urt@outlook.com" \
 	description="ADempiere gRPC All In One Server used as ADempiere backend"
-
-
-# Add operative system dependencies
-RUN	echo "https://dl-cdn.alpinelinux.org/alpine/latest-stable/main" > /etc/apk/repositories && \
-	echo "https://dl-cdn.alpinelinux.org/alpine/latest-stable/community" >> /etc/apk/repositories && \
-	rm -rf /var/cache/apk/* && \
-	apk update && \
-	apk add \
-		bash \
-	 	fontconfig \
-		ttf-dejavu
 
 
 # Init ENV with default values
