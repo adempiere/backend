@@ -1,8 +1,19 @@
-FROM openjdk:8-jdk-alpine
+FROM adoptopenjdk/openjdk8:jre8u275-b01-alpine
 
 
 LABEL	maintainer="ysenih@erpya.com; EdwinBetanc0urt@outlook.com" \
 	description="ADempiere gRPC All In One Server used as ADempiere backend"
+
+
+# Add operative system dependencies
+#RUN apk add --no-cache libc6-compat fontconfig ttf-dejavu
+RUN	rm -rf /var/cache/apk/* && \
+    rm /usr/glibc-compat/lib/ld-linux-x86-64.so.2 && /usr/glibc-compat/sbin/ldconfig && \
+	apk update && \
+	apk add \
+		bash \
+	 	fontconfig \
+		ttf-dejavu
 
 
 # Init ENV with default values

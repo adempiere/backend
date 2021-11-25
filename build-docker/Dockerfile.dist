@@ -1,16 +1,15 @@
 FROM adoptopenjdk/openjdk8:jre8u275-b01-alpine
 
+
 LABEL	maintainer="ysenih@erpya.com; EdwinBetanc0urt@outlook.com" \
 	description="ADempiere gRPC All In One Server used as ADempiere backend"
 
+
 # Add operative system dependencies
-RUN	echo "https://dl-cdn.alpinelinux.org/alpine/latest-stable/main" > /etc/apk/repositories && \
-	echo "https://dl-cdn.alpinelinux.org/alpine/latest-stable/community" >> /etc/apk/repositories && \
-	rm -rf /var/cache/apk/* && \
+#RUN apk add --no-cache libc6-compat fontconfig ttf-dejavu
+RUN	rm -rf /var/cache/apk/* && \
+    rm /usr/glibc-compat/lib/ld-linux-x86-64.so.2 && /usr/glibc-compat/sbin/ldconfig && \
 	apk update && \
-	apk add --virtual .build-deps \
-	 	ca-certificates \
-	 	curl && \
 	apk add \
 		bash \
 	 	fontconfig \
