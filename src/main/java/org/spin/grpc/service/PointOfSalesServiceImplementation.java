@@ -2990,7 +2990,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					throw new AdempiereException("@ProcessFailed@ :" + salesOrder.getProcessMsg());
 				}
 				//	Release Order
-				salesOrder.set_ValueOfColumn("AssignedSalesRep_ID", -1);
+				salesOrder.set_ValueOfColumn("AssignedSalesRep_ID", null);
 				salesOrder.saveEx();
 				//	Create or process payments
 				if(request.getCreatePayments()) {
