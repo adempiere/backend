@@ -246,14 +246,15 @@ message CreateOrderRequest {
 	data.ClientRequest client_request = 1;
 	int32 cart_id = 2;
 	string cart_uuid = 3;
-	int32 user_id = 4;
-	AddressRequest shipping_address = 5;
-	AddressRequest billing_address = 6;
-	string method_code = 7;
-	string carrier_code = 8;
-	string payment_method_code = 9;
-	repeated ProductOrderLine products = 10;
-	repeated PaymentRequest payments = 11;
+	int32 customer_id = 4;
+	int32 user_id = 5;
+	AddressRequest shipping_address = 6;
+	AddressRequest billing_address = 7;
+	string method_code = 8;
+	string carrier_code = 9;
+	string payment_method_code = 10;
+	repeated ProductOrderLine products = 11;
+	repeated PaymentRequest payments = 12;
 }
 
 //	Product used for create order line

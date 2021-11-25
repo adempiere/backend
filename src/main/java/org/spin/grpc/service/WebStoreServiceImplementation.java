@@ -703,13 +703,21 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 		}
 		//	
 		MBPartner businessPartner = null;
-		if(basket.getC_BPartner_ID() <= 0) {
-			businessPartner = VueStoreFrontUtil.getTemplate(Env.getCtx(), store.get_ValueAsInt(VueStoreFrontUtil.COLUMNNAME_C_TemplateBPartner_ID), transactionName);
-			businessPartner.setName(request.getBillingAddress().getFirstName());
-			businessPartner.setName2(request.getBillingAddress().getLastName());
-			businessPartner.saveEx(transactionName);
+		if(request.getCustomerId() > 0) {
+			businessPartner = new MBPartner(Env.getCtx(), request.getCustomerId(), transactionName);
+			if(request.getCustomerId() != basket.getC_BPartner_ID()) {
+				basket.setC_BPartner_ID(request.getCustomerId());
+				basket.saveEx(transactionName);
+			}
 		} else {
-			businessPartner = ((MBPartner) basket.getC_BPartner());
+			if(basket.getC_BPartner_ID() <= 0) {
+				businessPartner = VueStoreFrontUtil.getTemplate(Env.getCtx(), store.get_ValueAsInt(VueStoreFrontUtil.COLUMNNAME_C_TemplateBPartner_ID), transactionName);
+				businessPartner.setName(request.getBillingAddress().getFirstName());
+				businessPartner.setName2(request.getBillingAddress().getLastName());
+				businessPartner.saveEx(transactionName);
+			} else {
+				businessPartner = ((MBPartner) basket.getC_BPartner());
+			}
 		}
 		businessPartner.set_TrxName(transactionName);
 		int shippingLocationId = findAddress(businessPartner, request.getShippingAddress(), false, transactionName);
