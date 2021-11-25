@@ -30,7 +30,8 @@ public enum Services {
     LOG("log"),
     STORE("store"),
     POS("pos"),
-    UPDATER("updater");
+    UPDATER("updater"),
+    EXTENSION("extension");
 
 	/**	Service Name	*/
     private final String serviceName;
