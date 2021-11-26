@@ -130,6 +130,7 @@ import org.spin.grpc.util.CreateShipmentLineRequest;
 import org.spin.grpc.util.CreateShipmentRequest;
 import org.spin.grpc.util.Customer;
 import org.spin.grpc.util.CustomerBankAccount;
+import org.spin.grpc.util.DeallocateSellerRequest;
 import org.spin.grpc.util.DeleteCustomerBankAccountRequest;
 import org.spin.grpc.util.DeleteOrderLineRequest;
 import org.spin.grpc.util.DeleteOrderRequest;
@@ -1578,6 +1579,61 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					.withCause(e)
 					.asRuntimeException());
 		}
+	}
+	
+	@Override
+	public void deallocateSeller(DeallocateSellerRequest request, StreamObserver<Empty> responseObserver) {
+		try {
+			if(request == null) {
+				throw new AdempiereException("Object Request Null");
+			}
+			log.fine("Cash Withdrawal = " + request.getPosUuid());
+			ContextManager.getContext(request.getClientRequest().getSessionUuid(), 
+					request.getClientRequest().getLanguage(), 
+					request.getClientRequest().getOrganizationUuid(), 
+					request.getClientRequest().getWarehouseUuid());
+			Empty.Builder empty = deallocateSeller(request);
+			responseObserver.onNext(empty.build());
+			responseObserver.onCompleted();
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+			responseObserver.onError(Status.INTERNAL
+					.withDescription(e.getLocalizedMessage())
+					.augmentDescription(e.getLocalizedMessage())
+					.withCause(e)
+					.asRuntimeException());
+		}
+	}
+	
+	/**
+	 * Allocate a seller to point of sales
+	 * @param request
+	 * @return
+	 */
+	private Empty.Builder deallocateSeller(DeallocateSellerRequest request) {
+		if(Util.isEmpty(request.getPosUuid())) {
+			throw new AdempiereException("@C_POS_ID@ @IsMandatory@");
+		}
+		if(Util.isEmpty(request.getSalesRepresentativeUuid())) {
+			throw new AdempiereException("@SalesRep_ID@ @IsMandatory@");
+		}
+		int posId = RecordUtil.getIdFromUuid(I_C_POS.Table_Name, request.getPosUuid(), null);
+		int salesRepresentativeId = RecordUtil.getIdFromUuid(I_AD_User.Table_Name, request.getSalesRepresentativeUuid(), null);
+		MPOS pointOfSales = new MPOS(Env.getCtx(), posId, null);
+		if(!pointOfSales.get_ValueAsBoolean("IsAllowsAllocateSeller")) {
+			throw new AdempiereException("@ActionNotAllowedHere@");
+		}
+		Trx.run(transactionName -> {
+			PO seller = new Query(Env.getCtx(), "C_POSSellerAllocation", "C_POS_ID = ? AND SalesRep_ID = ?", transactionName).setParameters(posId, salesRepresentativeId).first();
+			if(seller == null
+					|| seller.get_ID() <= 0) {
+				throw new AdempiereException("@SalesRep_ID@ @NotFound@");
+			}
+			seller.set_ValueOfColumn("IsActive", false);
+			seller.saveEx();
+		});
+		//	Return
+		return Empty.newBuilder();
 	}
 	
 	/**

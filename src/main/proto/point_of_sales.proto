@@ -84,6 +84,8 @@ service Store {
 	rpc ListAvailableDocumentTypes(ListAvailableDocumentTypesRequest) returns (ListAvailableDocumentTypesResponse) {}
 	//	List of Available Discounts
 	rpc ListAvailableDiscounts(ListAvailableDiscountsRequest) returns (ListAvailableDiscountsResponse) {}
+	//	List of Available Sellers
+	rpc ListAvailableSellers(ListAvailableSellersRequest) returns (ListAvailableSellersResponse) {}
 	//	Customer
 	//	Create Customer
 	rpc CreateCustomer(CreateCustomerRequest) returns (Customer) {}
@@ -137,6 +139,8 @@ service Store {
 	rpc ListCashSummaryMovements(ListCashSummaryMovementsRequest) returns (ListCashSummaryMovementsResponse) {}
 	//	Allocate Seller
 	rpc AllocateSeller(AllocateSellerRequest) returns (Empty) {}
+	//	Allocate Seller
+	rpc DeallocateSeller(DeallocateSellerRequest) returns (Empty) {}
 	//	Create Refund Reference
 	rpc CreateRefundReference(CreateRefundReferenceRequest) returns (RefundReference) {}
 	//	Delete Refund Reference
@@ -157,6 +161,41 @@ message AllocateSellerRequest {
 	ClientRequest client_request = 1;
 	string pos_uuid = 2;
 	string sales_representative_uuid = 3;
+}
+
+//	Deallocate Seller Request
+message DeallocateSellerRequest {
+	ClientRequest client_request = 1;
+	string pos_uuid = 2;
+	string sales_representative_uuid = 3;
+}
+
+//	List allocated sellers for POS
+message ListAvailableSellersRequest {
+	ClientRequest client_request = 1;
+	bool is_only_allocated = 2;
+	string pos_uuid = 3;
+	int32 page_size = 4;
+	string page_token = 5;
+}
+
+//	Discounts Response
+message ListAvailableSellersResponse {
+	int64 record_count = 1;
+	repeated AvailableSeller sellers = 2;
+	string next_page_token = 3;
+}
+
+// Available Discounts
+message AvailableSeller {
+	int32 id = 2;
+	string uuid = 3;
+	string key = 4;
+	string name = 5;
+	bool is_pos_required_pin = 6;
+	string description = 7;
+	string comments = 8;
+	string image = 9;
 }
 
 //	Refund reference request
