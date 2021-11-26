@@ -3324,9 +3324,9 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		boolean isAppliedNewFeaturesPOS = M_Element.get(Env.getCtx(), "IsSharedPOS") != null && M_Element.get(Env.getCtx(), "IsAllowsAllocateSeller") != null;
 		StringBuffer whereClause = new StringBuffer();
 		List<Object> parameters = new ArrayList<Object>();
+		whereClause.append("C_Order.AD_Org_ID = ?");
+		parameters.add(orgId);
 		if(!salesRepresentative.get_ValueAsBoolean("IsPOSManager")) {
-			whereClause.append("C_Order.AD_Org_ID = ?");
-			parameters.add(orgId);
 			//	New features
 			if(isAppliedNewFeaturesPOS) {
 				//	Shared POS
@@ -3345,10 +3345,6 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				whereClause.append(" AND C_Order.C_POS_ID = ?");
 				parameters.add(posId);
 			}
-			
-		} else {
-			whereClause.append(" C_Order.C_POS_ID = ?");
-			parameters.add(posId);
 		}
 		//	Document No
 		if(!Util.isEmpty(request.getDocumentNo())) {
@@ -3379,19 +3375,18 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			parameters.add(openAmount);
 		}
 		if(request.getIsOnlyProcessed()) {
-			whereClause.append(" AND Processed = ?");
-			parameters.add("Y");
+			whereClause.append(" AND DocStatus IN('CO')");
 		}
 		//	Is Invoiced
 		if(request.getIsWaitingForInvoice()) {
-			whereClause.append(" AND NOT EXISTS(SELECT 1 FROM C_Invoice i WHERE i.C_Order_ID = C_Order.C_Order_ID AND i.DocStatus IN('CO', 'CL'))");
+			whereClause.append(" AND C_Order.Processed = 'N' AND NOT EXISTS(SELECT 1 FROM C_Invoice i WHERE i.C_Order_ID = C_Order.C_Order_ID AND i.DocStatus IN('CO', 'CL'))");
 		}
 		//	for payment
 		if(request.getIsWaitingForPay()) {
-			whereClause.append(" AND NOT EXISTS(SELECT 1 FROM C_Payment p WHERE p.C_Order_ID = C_Order.C_Order_ID)");
+			whereClause.append(" AND AND C_Order.Processed = 'N' AND NOT EXISTS(SELECT 1 FROM C_Payment p WHERE p.C_Order_ID = C_Order.C_Order_ID)");
 		}
 		if(request.getIsWaitingForShipment()) {
-			whereClause.append(" AND NOT EXISTS(SELECT 1 FROM M_InOut io WHERE io.C_Order_ID = C_Order.C_Order_ID AND io.DocStatus IN('CO', 'CL'))");
+			whereClause.append(" AND DocStatus IN('CO') AND NOT EXISTS(SELECT 1 FROM M_InOut io WHERE io.C_Order_ID = C_Order.C_Order_ID AND io.DocStatus IN('CO', 'CL'))");
 		}
 		//	Date Order From
 		if(!Util.isEmpty(request.getDateOrderedFrom())) {
@@ -3408,7 +3403,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				.setParameters(parameters)
 				.setClient_ID()
 				.setOnlyActiveRecords(true)
-				.setOrderBy(I_C_Order.COLUMNNAME_DateOrdered);
+				.setOrderBy(I_C_Order.COLUMNNAME_DateOrdered + " DESC");
 		int count = query.count();
 		query
 		.setLimit(limit, offset)
