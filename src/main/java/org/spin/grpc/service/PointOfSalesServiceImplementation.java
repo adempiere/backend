@@ -3383,7 +3383,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		}
 		//	for payment
 		if(request.getIsWaitingForPay()) {
-			whereClause.append(" AND AND C_Order.Processed = 'N' AND NOT EXISTS(SELECT 1 FROM C_Payment p WHERE p.C_Order_ID = C_Order.C_Order_ID)");
+			whereClause.append(" AND C_Order.Processed = 'N' AND NOT EXISTS(SELECT 1 FROM C_Payment p WHERE p.C_Order_ID = C_Order.C_Order_ID)");
 		}
 		if(request.getIsWaitingForShipment()) {
 			whereClause.append(" AND DocStatus IN('CO') AND NOT EXISTS(SELECT 1 FROM M_InOut io WHERE io.C_Order_ID = C_Order.C_Order_ID AND io.DocStatus IN('CO', 'CL'))");
