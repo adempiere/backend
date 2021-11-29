@@ -51,9 +51,13 @@ jobs:
           name: adempiere-gRPC-Server.zip
           path: build/release/adempiere-gRPC-Server.zip
       
-      - name: move artifact
-        run: mv build/release/adempiere-gRPC-Server.zip build-docker/
-
+      - name: move and unzip artifact
+        run: |
+          mkdir dist 
+          mv build/release/adempiere-gRPC-Server.zip dist/
+          cd dist
+          unzip -o adempiere-gRPC-Server.zip
+          
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
