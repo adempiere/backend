@@ -51,7 +51,45 @@ jobs:
           name: adempiere-gRPC-Server.zip
           path: build/release/adempiere-gRPC-Server.zip
 
+  publish-binaries:
+    name: Upload Binaries ADempiere-gRPC-Server
+    needs: build-app
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
 
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v2
+
+      - name: Upload zip
+        uses: skx/github-action-publish-binaries@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          args: adempiere-gRPC-Server.zip/adempiere-gRPC-Server.zip
+
+      - name: Upload zip.MD5
+        uses: skx/github-action-publish-binaries@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          args: adempiere-gRPC-Server.zip.MD5/adempiere-gRPC-Server.zip.MD5
+
+      - name: Upload tar
+        uses: skx/github-action-publish-binaries@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          args: adempiere-gRPC-Server.tar/adempiere-gRPC-Server.tar
+
+      - name: Upload tar.MD5
+        uses: skx/github-action-publish-binaries@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          args: adempiere-gRPC-Server.tar.MD5/adempiere-gRPC-Server.tar.MD5
+          
   # Publish docker image in Github Container Registry to application
   push-imame-ghcr:
     name: Push Docker image to GitHub Container
