@@ -261,6 +261,7 @@ message CreateOrderRequest {
 message ProductOrderLine {
 	int32 id = 1;
 	double quantity = 2;
+	string sku = 3;
 }
 
 //	Payment detail for request

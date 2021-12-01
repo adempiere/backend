@@ -3324,8 +3324,9 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		boolean isAppliedNewFeaturesPOS = M_Element.get(Env.getCtx(), "IsSharedPOS") != null && M_Element.get(Env.getCtx(), "IsAllowsAllocateSeller") != null;
 		StringBuffer whereClause = new StringBuffer();
 		List<Object> parameters = new ArrayList<Object>();
-		whereClause.append("C_Order.AD_Org_ID = ?");
+		whereClause.append("(C_Order.AD_Org_ID = ? OR C_Order.C_POS_ID = ?)");
 		parameters.add(orgId);
+		parameters.add(posId);
 		if(!salesRepresentative.get_ValueAsBoolean("IsPOSManager")) {
 			//	New features
 			if(isAppliedNewFeaturesPOS) {
