@@ -262,6 +262,7 @@ message ProductOrderLine {
 	int32 id = 1;
 	double quantity = 2;
 	string sku = 3;
+	repeated ConfigurableItemOption configurable_item_options = 4;
 }
 
 //	Payment detail for request
@@ -325,6 +326,13 @@ message UpdateCartRequest {
 	bool is_guest = 4;
 	string sku = 5;
 	double quantity = 6;
+	repeated ConfigurableItemOption configurable_item_options = 7;
+}
+
+//	Configurable Product Options
+message ConfigurableItemOption {
+	string id = 1;
+	string value = 2;
 }
 
 //	https://docs.storefrontapi.com/guide/default-modules/api.html#get-api-cart-pull
@@ -395,6 +403,7 @@ message CartItem {
 	double price_incl_tax = 13;
 	double row_total_incl_tax = 14;
 	double base_row_total_incl_tax = 15;
+	repeated ConfigurableItemOption configurable_item_options = 16;
 }
 
 // https://docs.storefrontapi.com/guide/default-modules/api.html#image-module

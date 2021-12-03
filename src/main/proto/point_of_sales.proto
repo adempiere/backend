@@ -473,6 +473,7 @@ message CreateCustomerBankAccountRequest {
 	string routing_no = 18;
 	string iban = 19;
 	bool is_payroll_account = 20;
+	string account_no = 21;
 }
 
 //	Update Customer Account
@@ -496,6 +497,7 @@ message UpdateCustomerBankAccountRequest {
 	string routing_no = 17;
 	string iban = 18;
 	bool is_payroll_account = 19;
+	string account_no = 20;
 }
 
 //	Delete Customer Account
@@ -532,6 +534,7 @@ message CustomerBankAccount {
 	string routing_no = 17;
 	string iban = 18;
 	bool is_payroll_account = 19;
+	string account_no = 20;
 }
 
 //	Print Ticket

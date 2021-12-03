@@ -16,7 +16,9 @@
 package org.spin.base.util;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
@@ -62,6 +64,7 @@ import org.compiere.model.MProduct;
 import org.compiere.model.MProductCategory;
 import org.compiere.model.MRefList;
 import org.compiere.model.MRegion;
+import org.compiere.model.MTable;
 import org.compiere.model.MTax;
 import org.compiere.model.MUOM;
 import org.compiere.model.MUser;
@@ -479,6 +482,20 @@ public class ConvertUtil {
 	}
 	
 	/**
+	 * Get Refund references from order
+	 * @param order
+	 * @return
+	 * @return List<PO>
+	 */
+	private static List<PO> getRefundReferences(MOrder order) {
+		if(MTable.get(Env.getCtx(), "C_OrderPOSBankAccount") == null) {
+			return new ArrayList<PO>();
+		}
+		//	
+		return new Query(order.getCtx(), "C_OrderPOSBankAccount", "C_Order_ID = ?", order.get_TrxName()).setParameters(order.getC_Order_ID()).list();
+	}
+	
+	/**
 	 * Convert Order from entity
 	 * @param order
 	 * @return
@@ -498,11 +515,17 @@ public class ConvertUtil {
 			}
 			return getConvetedAmount(order, payment, paymentAmount);
 		}).collect(Collectors.reducing(BigDecimal::add));
+		Optional<BigDecimal> refundReferenceAmount = getRefundReferences(order).stream().map(refundReference -> {
+			return getConvetedAmount(order, refundReference, ((BigDecimal) refundReference.get_Value("Amount")));
+		}).collect(Collectors.reducing(BigDecimal::add));
 		BigDecimal grandTotal = order.getGrandTotal();
 		BigDecimal totalLines = order.getTotalLines();
 		BigDecimal paymentAmount = Env.ZERO;
 		if(paidAmount.isPresent()) {
 			paymentAmount = paidAmount.get();
+		}
+		if(refundReferenceAmount.isPresent()) {
+			paymentAmount = paymentAmount.subtract(refundReferenceAmount.get());
 		}
 		BigDecimal openAmount = (grandTotal.subtract(paymentAmount).compareTo(Env.ZERO) < 0? Env.ZERO: grandTotal.subtract(paymentAmount));
 		BigDecimal refundAmount = (grandTotal.subtract(paymentAmount).compareTo(Env.ZERO) > 0? Env.ZERO: grandTotal.subtract(paymentAmount).negate());
@@ -534,6 +557,24 @@ public class ConvertUtil {
 			.setDateOrdered(ValueUtil.convertDateToString(order.getDateOrdered()))
 			.setCustomer(convertCustomer((MBPartner) order.getC_BPartner()))
 			.setCampaignUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_Campaign.Table_Name, order.getC_Campaign_ID())));
+	}
+	
+	/**
+	 * Get Converted Amount based on Order currency
+	 * @param order
+	 * @param payment
+	 * @return
+	 * @return BigDecimal
+	 */
+	private static BigDecimal getConvetedAmount(MOrder order, PO payment, BigDecimal amount) {
+		if(payment.get_ValueAsInt("C_Currency_ID") == order.getC_Currency_ID()
+				|| amount == null
+				|| amount.compareTo(Env.ZERO) == 0) {
+			return amount;
+		}
+		BigDecimal convertedAmount = MConversionRate.convert(payment.getCtx(), amount, payment.get_ValueAsInt("C_Currency_ID"), order.getC_Currency_ID(), order.getDateAcct(), payment.get_ValueAsInt("C_ConversionType_ID"), payment.getAD_Client_ID(), payment.getAD_Org_ID());
+		//	
+		return Optional.ofNullable(convertedAmount).orElse(Env.ZERO);
 	}
 	
 	/**
@@ -657,6 +698,7 @@ public class ConvertUtil {
 		builder.setAddressVerified(ValueUtil.validateNull(customerBankAccount.getR_AvsAddr()))
 			.setZipVerified(ValueUtil.validateNull(customerBankAccount.getR_AvsZip()))
 			.setRoutingNo(ValueUtil.validateNull(customerBankAccount.getRoutingNo()))
+			.setAccountNo(ValueUtil.validateNull(customerBankAccount.getAccountNo()))
 			.setIban(ValueUtil.validateNull(customerBankAccount.getIBAN())) ;
 		return builder;
 	}
