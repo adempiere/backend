@@ -3091,10 +3091,11 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				//	Get current open amount
 				if(payment.isReceipt()) {
 					openAmount.updateAndGet(amount -> amount.subtract(convertedAmount));
+					payment.setOverUnderAmt(Env.ZERO);
 				} else {
-					openAmount.set(convertedAmount.negate());
+					openAmount.updateAndGet(amount -> amount.subtract(convertedAmount.negate()));
+					payment.setOverUnderAmt(Env.ZERO);
 				}
-				payment.setOverUnderAmt(getConvetedRemainingAmountToPaymentCurrency(openAmount.get(), salesOrder, payment));
 				payment.setDocAction(MPayment.DOCACTION_Complete);
 				setCurrentDate(payment);
 				payment.saveEx(transactionName);
@@ -3183,26 +3184,26 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		return convertedAmount;
 	}
 	
-	/**
-	 * Get Converted Amount based on Payment currency
-	 * @param order
-	 * @param payment
-	 * @return
-	 * @return BigDecimal
-	 */
-	private BigDecimal getConvetedRemainingAmountToPaymentCurrency(BigDecimal remainingAmount, MOrder order, MPayment payment) {
-		if(payment.getC_Currency_ID() == order.getC_Currency_ID()
-				|| remainingAmount == null
-				|| remainingAmount.compareTo(Env.ZERO) == 0) {
-			return remainingAmount;
-		}
-		BigDecimal convertedAmount = MConversionRate.convert(payment.getCtx(), remainingAmount, order.getC_Currency_ID(), payment.getC_Currency_ID(), payment.getDateAcct(), order.getC_ConversionType_ID(), order.getAD_Client_ID(), order.getAD_Org_ID());
-		if(convertedAmount == null) {
-			convertedAmount = Env.ZERO;
-		}
-		//	
-		return convertedAmount;
-	}
+//	/**
+//	 * Get Converted Amount based on Payment currency
+//	 * @param order
+//	 * @param payment
+//	 * @return
+//	 * @return BigDecimal
+//	 */
+//	private BigDecimal getConvetedRemainingAmountToPaymentCurrency(BigDecimal remainingAmount, MOrder order, MPayment payment) {
+//		if(payment.getC_Currency_ID() == order.getC_Currency_ID()
+//				|| remainingAmount == null
+//				|| remainingAmount.compareTo(Env.ZERO) == 0) {
+//			return remainingAmount;
+//		}
+//		BigDecimal convertedAmount = MConversionRate.convert(payment.getCtx(), remainingAmount, order.getC_Currency_ID(), payment.getC_Currency_ID(), payment.getDateAcct(), order.getC_ConversionType_ID(), order.getAD_Client_ID(), order.getAD_Org_ID());
+//		if(convertedAmount == null) {
+//			convertedAmount = Env.ZERO;
+//		}
+//		//	
+//		return convertedAmount;
+//	}
 	
 //	/**
 //	 * Processes different kinds of payment types
@@ -4773,12 +4774,6 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		}
 		setCurrentDate(payment);
 		//	
-		BigDecimal convertedPaymentAmount = getConvetedAmount(salesOrder, payment, payment.getPayAmt());
-		if(paidAmount.isPresent()) {
-			payment.setOverUnderAmt(salesOrder.getGrandTotal().subtract(paidAmount.get().add(convertedPaymentAmount)));
-		} else {
-			payment.setOverUnderAmt(salesOrder.getGrandTotal().subtract(convertedPaymentAmount));
-		}
 		payment.saveEx(transactionName);
 		return payment;
 	}
