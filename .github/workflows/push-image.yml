@@ -10,6 +10,7 @@ on:
     branches:
       - develop
       - master
+      - action-**
 
 jobs:
 
@@ -27,19 +28,21 @@ jobs:
           distribution: 'adopt-hotspot'
           java-version: 8
 
-      - name: get adempiere source
+      - name: Get adempiere binaries
         run: |
           download_repo="https://github.com/erpcya/adempiere/releases/download/3.9.3-rs-4.3/Adempiere_393LTS.tar.gz"
           wget $download_repo -c -O Adempiere.tar.gz
 
-      - name: uncompress file
+      - name: Uncompress file
         run: tar -xzf Adempiere.tar.gz
 
-      - name: create dependences folder
-        run: mkdir dependences
-      - name: move dependences
+      - name: Create dependencies folder
+        run: mkdir -p dependences
+
+      - name: Move dependencies
         run: mv Adempiere/lib/*.jar dependences/
-      - name: move packages
+
+      - name: Move packages
         run: mv Adempiere/packages/*/lib/*.jar dependences/
 
       - name: Build with Gradle
@@ -50,26 +53,50 @@ jobs:
         with:
           name: adempiere-gRPC-Server.zip
           path: build/release/adempiere-gRPC-Server.zip
-      
-      - name: move and unzip artifact
+
+
+  # Publish container image in Docker Hub registry to application
+  push-imame-dhr:
+    name: Push Docker image to Docker Hub
+    needs:
+      - build-app
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+
+      - name: Download build dist app
+        uses: actions/download-artifact@v2
+        with:
+          name: adempiere-gRPC-Server.zip
+          path: dist
+
+      - name: Unzip dist file
         run: |
-          mkdir dist 
-          mv build/release/adempiere-gRPC-Server.zip dist/
           cd dist
           unzip -o adempiere-gRPC-Server.zip
-          
-      - name: Login to GitHub Container Registry
+
+      - name: Login to Docker Hub Registry
         uses: docker/login-action@v1
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          # CONFIGURE DOCKER SECRETS INTO REPOSITORY
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Set Lower Case to owner and repository
         run: |
+          ORG=$OWNER
+          if [ -n "${{ secrets.DOCKERHUB_ORG }}" ]; then
+            echo "Set secret DOCKERHUB_ORG as namespace"
+            ORG=${{ secrets.DOCKERHUB_ORG }}
+          else
+            echo "Set OWNER ($OWNER) as namespace "
+          fi
+          echo "ORG_LC=${ORG,,}" >> ${GITHUB_ENV}
           echo "OWNER_LC=${OWNER,,}" >> ${GITHUB_ENV}
           echo "REPO_LC=${NAME,,}" >> ${GITHUB_ENV}
         env:
+          # to docker image namespace
           OWNER: '${{ github.repository_owner }}'
           NAME: '${{ github.event.repository.name }}'
 
@@ -77,18 +104,16 @@ jobs:
         id: branch-name
         uses: tj-actions/branch-names@v4.8
 
-      - name: Push image in GH Container
+      - name: Push image in Docker Hub
         uses: docker/build-push-action@v2
         with:
           context: .
           file: ./build-docker/Dockerfile.prod
           push: true
-          # load: true
           tags: |
-            ghcr.io/${{ env.OWNER_LC }}/${{ env.REPO_LC }}:${{ github.sha }}
-            ghcr.io/${{ env.OWNER_LC }}/${{ env.REPO_LC }}:${{ steps.branch-name.outputs.current_branch }}
+            ${{ env.ORG_LC }}/${{ env.REPO_LC }}:latest
+            ${{ env.ORG_LC }}/${{ env.REPO_LC }}:${{ github.sha }}
+            ${{ env.ORG_LC }}/${{ env.REPO_LC }}:${{ steps.branch-name.outputs.current_branch }}
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
-
-
