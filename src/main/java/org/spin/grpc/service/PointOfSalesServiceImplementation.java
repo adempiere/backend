@@ -4675,7 +4675,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		if(currencyId <= 0) {
 			currencyId = salesOrder.getC_Currency_ID();
 		}
-		Optional<BigDecimal> paidAmount = MPayment.getOfOrder(salesOrder).stream().map(payment -> getConvetedAmount(salesOrder, payment, payment.getPayAmt())).collect(Collectors.reducing(BigDecimal::add));
+//		Optional<BigDecimal> paidAmount = MPayment.getOfOrder(salesOrder).stream().map(payment -> getConvetedAmount(salesOrder, payment, payment.getPayAmt())).collect(Collectors.reducing(BigDecimal::add));
 		//	
 		MPayment payment = new MPayment(Env.getCtx(), 0, transactionName);
 		payment.setC_BankAccount_ID(pointOfSalesDefinition.getC_BankAccount_ID());
