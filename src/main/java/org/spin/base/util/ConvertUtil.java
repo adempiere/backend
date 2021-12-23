@@ -77,6 +77,7 @@ import org.compiere.util.MimeType;
 import org.compiere.util.Util;
 import org.spin.grpc.util.Address;
 import org.spin.grpc.util.Attachment;
+import org.spin.grpc.util.AvailableSeller;
 import org.spin.grpc.util.BankAccount;
 import org.spin.grpc.util.BusinessPartner;
 import org.spin.grpc.util.Charge;
@@ -118,6 +119,29 @@ import org.spin.util.VueStoreFrontUtil;
  * @author Yamel Senih, ysenih@erpya.com , http://www.erpya.com
  */
 public class ConvertUtil {
+	
+	/**
+	 * Convert User entity
+	 * @param user
+	 * @return
+	 */
+	public static AvailableSeller.Builder convertSeller(MUser user) {
+		AvailableSeller.Builder sellerInfo = AvailableSeller.newBuilder();
+		sellerInfo.setId(user.getAD_User_ID());
+		sellerInfo.setUuid(ValueUtil.validateNull(user.getUUID()));
+		sellerInfo.setName(ValueUtil.validateNull(user.getName()));
+		sellerInfo.setDescription(ValueUtil.validateNull(user.getDescription()));
+		sellerInfo.setComments(ValueUtil.validateNull(user.getComments()));
+		if(user.getLogo_ID() > 0 && AttachmentUtil.getInstance().isValidForClient(user.getAD_Client_ID())) {
+			MClientInfo clientInfo = MClientInfo.get(Env.getCtx(), user.getAD_Client_ID());
+			MADAttachmentReference attachmentReference = MADAttachmentReference.getByImageId(user.getCtx(), clientInfo.getFileHandler_ID(), user.getLogo_ID(), null);
+			if(attachmentReference != null
+					&& attachmentReference.getAD_AttachmentReference_ID() > 0) {
+				sellerInfo.setImage(ValueUtil.validateNull(attachmentReference.getValidFileName()));
+			}
+		}
+		return sellerInfo;
+	}
 	
 	/**
 	 * Convert PO class from Chat Entry process to builder
