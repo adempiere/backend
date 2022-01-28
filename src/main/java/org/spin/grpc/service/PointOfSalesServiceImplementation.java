@@ -3425,7 +3425,16 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		}
 		//	Document No
 		if(!Util.isEmpty(request.getDocumentNo())) {
-			whereClause.append(" AND UPPER(DocumentNo) LIKE '%' || UPPER(?) || '%'");
+			whereClause.append(" AND (UPPER(DocumentNo) LIKE '%' || UPPER(?) || '%'");
+			whereClause.append(" OR EXISTS(");
+			whereClause.append("SELECT 1 ");
+			whereClause.append("FROM C_Invoice i ");
+			whereClause.append("JOIN C_InvoiceLine il ON i.C_Invoice_ID=il.C_Invoice_ID ");
+			whereClause.append("JOIN C_OrderLine ol ON il.C_OrderLine_ID=ol.C_OrderLine_ID ");
+			whereClause.append("WHERE ol.C_Order_ID=C_Order.C_Order_ID ");
+			whereClause.append("AND UPPER(i.DocumentNo) = UPPER(?)");
+			whereClause.append("))");
+			parameters.add(request.getDocumentNo());
 			parameters.add(request.getDocumentNo());
 		}
 		//	Business Partner
