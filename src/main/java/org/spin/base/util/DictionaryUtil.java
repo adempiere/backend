@@ -175,16 +175,10 @@ public class DictionaryUtil {
 	public static String getSQLOrderBy(MBrowse browser) {
 		StringBuilder sqlOrderBy = new StringBuilder();
 		for (MBrowseField field : ASPUtil.getInstance().getBrowseOrderByFields(browser.getAD_Browse_ID())) {
-			if (field.isOrderBy()) {
-				int orderByPosition = getOrderByPosition(browser, field);
-				if (orderByPosition <= 0)
-					continue;
-
-				if (sqlOrderBy.length() > 0) {
-					sqlOrderBy.append(",");
-				}
-				sqlOrderBy.append(orderByPosition);
+			if (sqlOrderBy.length() > 0) {
+				sqlOrderBy.append(",");
 			}
+			sqlOrderBy.append(field.getAD_View_Column().getColumnSQL());
 		}
 		return sqlOrderBy.length() > 0 ? sqlOrderBy.toString(): "";
 	}
