@@ -28,6 +28,7 @@ import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import org.adempiere.exceptions.AdempiereException;
 import org.adempiere.model.GenericPO;
@@ -3129,7 +3130,11 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					//	Create
 					request.getPaymentsList().forEach(paymentRequest -> createPaymentFromOrder(salesOrder, paymentRequest, pos, transactionName));
 				}
-				processPayments(salesOrder, pos, request.getIsOpenRefund(), transactionName);
+				boolean isOpenRefund = request.getIsOpenRefund();
+				if(getRefundReferenceAmount(salesOrder).compareTo(Env.ZERO) != 0) {
+					isOpenRefund = true;
+				}
+				processPayments(salesOrder, pos, isOpenRefund, transactionName);
 				//	Create
 				orderReference.set(salesOrder);
 			});
@@ -3233,6 +3238,54 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				payment.saveEx();
 			});
 		}
+	}
+	
+	/**
+	 * Get Refund references from order
+	 * @param order
+	 * @return
+	 * @return List<PO>
+	 */
+	private static List<PO> getRefundReferences(MOrder order) {
+		if(MTable.get(Env.getCtx(), "C_OrderPOSBankAccount") == null) {
+			return new ArrayList<PO>();
+		}
+		//	
+		return new Query(order.getCtx(), "C_OrderPOSBankAccount", "C_Order_ID = ?", order.get_TrxName()).setParameters(order.getC_Order_ID()).list();
+	}
+	
+	/**
+	 * Get Refund Reference Amount
+	 * @param order
+	 * @return
+	 * @return BigDecimal
+	 */
+	private static BigDecimal getRefundReferenceAmount(MOrder order) {
+		Optional<BigDecimal> refundReferenceAmount = getRefundReferences(order).stream().map(refundReference -> {
+			return getConvetedAmount(order, refundReference, ((BigDecimal) refundReference.get_Value("Amount")));
+		}).collect(Collectors.reducing(BigDecimal::add));
+		if(refundReferenceAmount.isPresent()) {
+			return refundReferenceAmount.get();
+		}
+		return Env.ZERO;
+	}
+	
+	/**
+	 * Get Converted Amount based on Order currency
+	 * @param order
+	 * @param payment
+	 * @return
+	 * @return BigDecimal
+	 */
+	private static BigDecimal getConvetedAmount(MOrder order, PO payment, BigDecimal amount) {
+		if(payment.get_ValueAsInt("C_Currency_ID") == order.getC_Currency_ID()
+				|| amount == null
+				|| amount.compareTo(Env.ZERO) == 0) {
+			return amount;
+		}
+		BigDecimal convertedAmount = MConversionRate.convert(payment.getCtx(), amount, payment.get_ValueAsInt("C_Currency_ID"), order.getC_Currency_ID(), order.getDateAcct(), payment.get_ValueAsInt("C_ConversionType_ID"), payment.getAD_Client_ID(), payment.getAD_Org_ID());
+		//	
+		return Optional.ofNullable(convertedAmount).orElse(Env.ZERO);
 	}
 	
 	/**
