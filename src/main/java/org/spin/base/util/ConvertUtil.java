@@ -511,12 +511,12 @@ public class ConvertUtil {
 	 * @return
 	 * @return List<PO>
 	 */
-	private static List<PO> getRefundReferences(MOrder order) {
-		if(MTable.get(Env.getCtx(), "C_OrderPOSBankAccount") == null) {
+	private static List<PO> getPaymentReferences(MOrder order) {
+		if(MTable.get(Env.getCtx(), "C_POSPaymentReference") == null) {
 			return new ArrayList<PO>();
 		}
 		//	
-		return new Query(order.getCtx(), "C_OrderPOSBankAccount", "C_Order_ID = ?", order.get_TrxName()).setParameters(order.getC_Order_ID()).list();
+		return new Query(order.getCtx(), "C_POSPaymentReference", "C_Order_ID = ?", order.get_TrxName()).setParameters(order.getC_Order_ID()).list();
 	}
 	
 	/**
@@ -539,7 +539,7 @@ public class ConvertUtil {
 			}
 			return getConvetedAmount(order, payment, paymentAmount);
 		}).collect(Collectors.reducing(BigDecimal::add));
-		Optional<BigDecimal> refundReferenceAmount = getRefundReferences(order).stream().map(refundReference -> {
+		Optional<BigDecimal> refundReferenceAmount = getPaymentReferences(order).stream().map(refundReference -> {
 			return getConvetedAmount(order, refundReference, ((BigDecimal) refundReference.get_Value("Amount")));
 		}).collect(Collectors.reducing(BigDecimal::add));
 		BigDecimal grandTotal = order.getGrandTotal();

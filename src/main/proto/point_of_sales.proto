@@ -142,15 +142,15 @@ service Store {
 	//	Allocate Seller
 	rpc DeallocateSeller(DeallocateSellerRequest) returns (Empty) {}
 	//	Create Refund Reference
-	rpc CreateRefundReference(CreateRefundReferenceRequest) returns (RefundReference) {}
+	rpc CreatePaymentReference(CreatePaymentReferenceRequest) returns (PaymentReference) {}
 	//	Delete Refund Reference
-	rpc DeleteRefundReference(DeleteRefundReferenceRequest) returns (Empty) {}
+	rpc DeletePaymentReference(DeletePaymentReferenceRequest) returns (Empty) {}
 	//	List Refund References
-	rpc ListRefundReferences(ListRefundReferencesRequest) returns (ListRefundReferencesResponse) {}
+	rpc ListPaymentReferences(ListPaymentReferencesRequest) returns (ListPaymentReferencesResponse) {}
 }
 
 //	Delete Refund reference request
-message DeleteRefundReferenceRequest {
+message DeletePaymentReferenceRequest {
 	ClientRequest client_request = 1;
 	int32 id = 2;
 	string uuid = 3;
@@ -199,24 +199,27 @@ message AvailableSeller {
 }
 
 //	Refund reference request
-message CreateRefundReferenceRequest {
+message CreatePaymentReferenceRequest {
 	ClientRequest client_request = 1;
 	string pos_uuid = 2;
 	string sales_representative_uuid = 3;
 	string description = 4;
-	Decimal amount = 5;
-	string payment_date = 6;
-	string tender_type_code = 7;
-	string currency_uuid = 8;
-	string conversion_type_uuid = 9;
-	string payment_method_uuid = 10;
-	string payment_account_date = 11;
-	string customer_bank_account_uuid = 12;
-	string order_uuid = 13;
+	Decimal source_amount = 5;
+	Decimal amount = 6;
+	string payment_date = 7;
+	string tender_type_code = 8;
+	string currency_uuid = 9;
+	string conversion_type_uuid = 10;
+	string payment_method_uuid = 11;
+	string payment_account_date = 12;
+	string customer_bank_account_uuid = 13;
+	string order_uuid = 14;
+	string customer_uuid = 15;
+	bool is_receipt = 16;
 }
 
 //	Refund Reference
-message RefundReference {
+message PaymentReference {
 	int32 id = 1;
 	string uuid = 2;
 	string pos_uuid = 3;
@@ -231,10 +234,12 @@ message RefundReference {
 	string customer_bank_account_uuid = 12;
 	string order_uuid = 13;
 	bool is_paid = 14;
+	bool is_receipt = 15;
+	Decimal source_amount = 16;
 }
 
 //	List Refund Reference Request
-message ListRefundReferencesRequest {
+message ListPaymentReferencesRequest {
 	ClientRequest client_request = 1;
 	string pos_uuid = 2;
 	string customer_uuid = 3;
@@ -244,9 +249,9 @@ message ListRefundReferencesRequest {
 }
 
 //	List Refund Reference Response
-message ListRefundReferencesResponse {
+message ListPaymentReferencesResponse {
 	int64 record_count = 1;
-	repeated RefundReference refund_references = 2;
+	repeated PaymentReference payment_references = 2;
 	string next_page_token = 3;
 }
 
