@@ -49,6 +49,7 @@ import org.compiere.model.MCurrency;
 import org.compiere.model.MDocType;
 import org.compiere.model.MInOut;
 import org.compiere.model.MInOutLine;
+import org.compiere.model.MInvoice;
 import org.compiere.model.MLanguage;
 import org.compiere.model.MLocation;
 import org.compiere.model.MOrder;
@@ -539,8 +540,12 @@ public class ConvertUtil {
 			}
 			return getConvetedAmount(order, payment, paymentAmount);
 		}).collect(Collectors.reducing(BigDecimal::add));
-		Optional<BigDecimal> refundReferenceAmount = getPaymentReferences(order).stream().map(refundReference -> {
-			return getConvetedAmount(order, refundReference, ((BigDecimal) refundReference.get_Value("Amount")));
+		Optional<BigDecimal> paymentReferenceAmount = getPaymentReferences(order).stream().map(refundReference -> {
+			BigDecimal amount = ((BigDecimal) refundReference.get_Value("Amount"));
+			if(refundReference.get_ValueAsBoolean("IsReceipt")) {
+				amount = amount.negate();
+			}
+			return getConvetedAmount(order, refundReference, amount);
 		}).collect(Collectors.reducing(BigDecimal::add));
 		BigDecimal grandTotal = order.getGrandTotal();
 		BigDecimal totalLines = order.getTotalLines();
@@ -548,8 +553,8 @@ public class ConvertUtil {
 		if(paidAmount.isPresent()) {
 			paymentAmount = paidAmount.get();
 		}
-		if(refundReferenceAmount.isPresent()) {
-			paymentAmount = paymentAmount.subtract(refundReferenceAmount.get());
+		if(paymentReferenceAmount.isPresent()) {
+			paymentAmount = paymentAmount.subtract(paymentReferenceAmount.get());
 		}
 		BigDecimal openAmount = (grandTotal.subtract(paymentAmount).compareTo(Env.ZERO) < 0? Env.ZERO: grandTotal.subtract(paymentAmount));
 		BigDecimal refundAmount = (grandTotal.subtract(paymentAmount).compareTo(Env.ZERO) > 0? Env.ZERO: grandTotal.subtract(paymentAmount).negate());
@@ -650,6 +655,15 @@ public class ConvertUtil {
 		MRefList reference = MRefList.get(Env.getCtx(), MPayment.DOCSTATUS_AD_REFERENCE_ID, payment.getDocStatus(), payment.get_TrxName());
 		int presicion = MCurrency.getStdPrecision(payment.getCtx(), payment.getC_Currency_ID());
 		BigDecimal orderConversionRate = getOrderConversionRateFromPayment(payment);
+		BigDecimal paymentAmount = payment.getPayAmt();
+		if(payment.getTenderType().equals(MPayment.TENDERTYPE_CreditMemo)
+				&& paymentAmount.compareTo(Env.ZERO) == 0) {
+			MInvoice creditMemo = new Query(payment.getCtx(), MInvoice.Table_Name, "C_Payment_ID = ?", payment.get_TrxName()).setParameters(payment.getC_Payment_ID()).first();
+			if(creditMemo != null) {
+				paymentAmount = creditMemo.getGrandTotal();
+			}
+		}
+		paymentAmount = paymentAmount.setScale(presicion, BigDecimal.ROUND_HALF_UP);
 		//	Convert
 		builder
 			.setId(payment.getC_Payment_ID())
@@ -660,7 +674,7 @@ public class ConvertUtil {
 			.setPaymentMethodUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_PaymentMethod.Table_Name, payment.get_ValueAsInt("C_PaymentMethod_ID"))))
 			.setReferenceNo(ValueUtil.validateNull(Optional.ofNullable(payment.getCheckNo()).orElse(payment.getDocumentNo())))
 			.setDescription(ValueUtil.validateNull(payment.getDescription()))
-			.setAmount(ValueUtil.getDecimalFromBigDecimal(payment.getPayAmt().setScale(presicion, BigDecimal.ROUND_HALF_UP)))
+			.setAmount(ValueUtil.getDecimalFromBigDecimal(paymentAmount))
 			.setOrderCurrencyRate(ValueUtil.getDecimalFromBigDecimal(orderConversionRate))
 			.setBankUuid(ValueUtil.validateNull(RecordUtil.getUuidFromId(I_C_Bank.Table_Name, payment.getC_Bank_ID())))
 			.setCustomer(ConvertUtil.convertCustomer((MBPartner) payment.getC_BPartner()))

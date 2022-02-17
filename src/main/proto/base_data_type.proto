@@ -170,15 +170,17 @@ message Entity {
 //	Response with log and values from server
 message ProcessLog {
 	string uuid = 1;
-	string instance_uuid = 2;
-	bool is_error = 3;
-	string summary = 4;
-	string result_table_name = 5;
-	bool is_processing = 6;
-	int64 last_run = 7;
-	repeated ProcessInfoLog logs = 8;
-	map<string, Value> parameters = 9;
-	ReportOutput output = 10;
+	string name = 2;
+	string description = 3;
+	string instance_uuid = 4;
+	bool is_error = 5;
+	string summary = 6;
+	string result_table_name = 7;
+	bool is_processing = 8;
+	int64 last_run = 9;
+	repeated ProcessInfoLog logs = 10;
+	map<string, Value> parameters = 11;
+	ReportOutput output = 12;
 }
 
 //	BusinessProcess Log result

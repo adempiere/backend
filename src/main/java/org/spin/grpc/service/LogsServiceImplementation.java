@@ -746,6 +746,8 @@ public class LogsServiceImplementation extends LogsImplBase {
 		//	for report
 		MProcess process = MProcess.get(Env.getCtx(), instance.getAD_Process_ID());
 		builder.setUuid(ValueUtil.validateNull(process.getUUID()));
+		builder.setName(ValueUtil.validateNull(process.getName()));
+		builder.setDescription(ValueUtil.validateNull(process.getDescription()));
 		if(process.isReport()) {
 			ReportOutput.Builder outputBuilder = ReportOutput.newBuilder();
 			outputBuilder.setReportType(ValueUtil.validateNull(instance.getReportType()));
