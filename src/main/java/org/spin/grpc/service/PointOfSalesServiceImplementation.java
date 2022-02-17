@@ -3115,6 +3115,10 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					if (salesOrder.getDocStatus().equalsIgnoreCase(MOrder.STATUS_Invalid))  {
 						salesOrder.setDocStatus(MOrder.STATUS_InProgress);
 					}
+					boolean isOpenRefund = request.getIsOpenRefund();
+					if(getRefundReferenceAmount(salesOrder).compareTo(Env.ZERO) != 0) {
+						isOpenRefund = true;
+					}
 					//	Set default values
 					salesOrder.setDocAction(DocAction.ACTION_Complete);
 					setCurrentDate(salesOrder);
@@ -3134,10 +3138,6 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 						}
 						//	Create
 						request.getPaymentsList().forEach(paymentRequest -> createPaymentFromOrder(salesOrder, paymentRequest, pos, transactionName));
-					}
-					boolean isOpenRefund = request.getIsOpenRefund();
-					if(getRefundReferenceAmount(salesOrder).compareTo(Env.ZERO) != 0) {
-						isOpenRefund = true;
 					}
 					processPayments(salesOrder, pos, isOpenRefund, transactionName);
 				} else {
@@ -4819,6 +4819,9 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				throw new AdempiereException("@C_Payment_ID@ @NotFound@");
 			}
 			MPayment payment = new MPayment(Env.getCtx(), paymentId, transactionName);
+			if(!DocumentUtil.isDrafted(payment)) {
+				throw new AdempiereException("@C_Payment_ID@ @Processed@");
+			}
 			if(payment.getC_Order_ID() > 0) {
 				MOrder salesOrder = new MOrder(Env.getCtx(), payment.getC_Order_ID(), transactionName);
 				validateOrderReleased(salesOrder);
