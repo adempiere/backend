@@ -35,6 +35,7 @@ import org.compiere.model.MMenu;
 import org.compiere.model.MProcess;
 import org.compiere.model.MRole;
 import org.compiere.model.MSession;
+import org.compiere.model.MSysConfig;
 import org.compiere.model.MTree;
 import org.compiere.model.MTreeNode;
 import org.compiere.model.MUser;
@@ -588,6 +589,23 @@ public class AccessServiceImplementation extends SecurityImplBase {
 				userInfo.setImage(ValueUtil.validateNull(attachmentReference.getValidFileName()));
 			}
 		}
+		Object value = user.get_Value("ConnectionTimeout");
+		long sessionTimeout = 0;
+		if(value == null) {
+			String sessionTimeoutAsString = MSysConfig.getValue("WEBUI_DEFAULT_TIMEOUT", Env.getAD_Client_ID(Env.getCtx()), 0);
+			try {
+				sessionTimeout = Long.parseLong(sessionTimeoutAsString);
+			} catch (Exception e) {
+				log.severe(e.getLocalizedMessage());
+			}
+		} else {
+			try {
+				sessionTimeout = Long.parseLong(String.valueOf(value));
+			} catch (Exception e) {
+				log.severe(e.getLocalizedMessage());
+			}
+		}
+		userInfo.setConnectionTimeout(sessionTimeout);
 		return userInfo;
 	}
 	

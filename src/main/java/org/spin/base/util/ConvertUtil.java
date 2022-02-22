@@ -977,6 +977,19 @@ public class ConvertUtil {
 				.setName(ValueUtil.validateNull(businessPartner.getName()))
 				.setLastName(ValueUtil.validateNull(businessPartner.getName2()))
 				.setDescription(ValueUtil.validateNull(businessPartner.getDescription()));
+		//	Additional Attributes
+		MTable.get(Env.getCtx(), businessPartner.get_Table_ID()).getColumnsAsList().stream().map(column -> column.getColumnName()).filter(columnName -> {
+			return !columnName.equals(MBPartner.COLUMNNAME_UUID)
+					&& !columnName.equals(MBPartner.COLUMNNAME_Value)
+					&& !columnName.equals(MBPartner.COLUMNNAME_TaxID)
+					&& !columnName.equals(MBPartner.COLUMNNAME_DUNS)
+					&& !columnName.equals(MBPartner.COLUMNNAME_NAICS)
+					&& !columnName.equals(MBPartner.COLUMNNAME_Name)
+					&& !columnName.equals(MBPartner.COLUMNNAME_Name2)
+					&& !columnName.equals(MBPartner.COLUMNNAME_Description);
+		}).forEach(columnName -> {
+			customer.putAdditionalAttributes(columnName, ValueUtil.getValueFromObject(businessPartner.get_Value(columnName)).build());
+		});
 		//	Add Address
 		Arrays.asList(businessPartner.getLocations(true)).stream().filter(customerLocation -> customerLocation.isActive()).forEach(address -> customer.addAddresses(convertCustomerAddress(address)));
 		return customer;
@@ -1051,6 +1064,14 @@ public class ConvertUtil {
 					.setUuid(ValueUtil.validateNull(region.getUUID()))
 					.setName(ValueUtil.validateNull(region.getName())));
 		}
+		//	Additional Attributes
+		MTable.get(Env.getCtx(), businessPartnerLocation.get_Table_ID()).getColumnsAsList().stream().map(column -> column.getColumnName()).filter(columnName -> {
+			return !columnName.equals(MBPartnerLocation.COLUMNNAME_UUID)
+					&& !columnName.equals(MBPartnerLocation.COLUMNNAME_Phone)
+					&& !columnName.equals(MBPartnerLocation.COLUMNNAME_Name);
+		}).forEach(columnName -> {
+			builder.putAdditionalAttributes(columnName, ValueUtil.getValueFromObject(businessPartnerLocation.get_Value(columnName)).build());
+		});
 		//	
 		return builder;
 	}

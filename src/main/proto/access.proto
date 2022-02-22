@@ -113,6 +113,7 @@ message UserInfo {
 	string description = 4;
 	string comments = 5;
 	string image = 6;
+	int64 connection_timeout = 7;
 }
 
 

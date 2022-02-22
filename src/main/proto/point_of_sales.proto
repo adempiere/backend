@@ -236,6 +236,8 @@ message PaymentReference {
 	bool is_paid = 14;
 	bool is_receipt = 15;
 	Decimal source_amount = 16;
+	bool is_automatic = 17;
+	bool is_processed = 18;
 }
 
 //	List Refund Reference Request
@@ -595,6 +597,7 @@ message AddressRequest {
 	string contact_name = 18;
 	string email = 19;
 	string phone = 20;
+	repeated KeyValue additional_attributes = 21;
 }
 
 // Request for create Customer
@@ -611,6 +614,7 @@ message CreateCustomerRequest {
 	string pos_uuid = 13;
 	//	Location
 	repeated AddressRequest addresses = 14;
+	repeated KeyValue additional_attributes = 15;
 }
 
 // Request for update Customer
@@ -626,6 +630,7 @@ message UpdateCustomerRequest {
 	string description = 9;
 	//	Location
 	repeated AddressRequest addresses = 10;
+	repeated KeyValue additional_attributes = 11;
 }
 
 // Request Get a Customer
@@ -652,6 +657,7 @@ message Customer {
 	string last_name = 8;
 	string description = 9;
 	repeated Address addresses = 10;
+	map<string, Value> additional_attributes = 11;
 }
 
 //	Address
@@ -677,6 +683,7 @@ message Address {
 	string description = 19;
 	string first_name = 20;
 	string last_name = 21;
+	map<string, Value> additional_attributes = 22;
 }
 
 //	City
@@ -717,6 +724,7 @@ message AvailablePaymentMethod {
 	Decimal maximum_daily_refund_allowed = 11;
 	Currency refund_reference_currency = 12;
 	Currency reference_currency = 13;
+	bool is_payment_reference = 14;
 }
 
 //	List discount schema for POS
