@@ -1798,6 +1798,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		int offset = pageNumber * RecordUtil.PAGE_SIZE;
 		int count = 0;
 		try {
+			//	Get Bank statement
 			String sql = "SELECT pm.UUID AS PaymentMethodUUID, pm.Name AS PaymentMethodName, pm.TenderType AS TenderTypeCode, p.C_Currency_ID, p.IsReceipt, (SUM(p.PayAmt) * CASE WHEN p.IsReceipt = 'Y' THEN 1 ELSE -1 END) AS PaymentAmount "
 					+ "FROM C_Payment p "
 					+ "INNER JOIN C_PaymentMethod pm ON(pm.C_PaymentMethod_ID = p.C_PaymentMethod_ID) "
@@ -3158,13 +3159,14 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					throw new AdempiereException("@C_POS_ID@ @NotFound@");
 				}
 				MPOS pos = MPOS.get(Env.getCtx(), posId);
+				List<PO> paymentReferences = getPaymentReferences(salesOrder);
 				if(DocumentUtil.isDrafted(salesOrder)) {
 					// In case the Order is Invalid, set to In Progress; otherwise it will not be completed
 					if (salesOrder.getDocStatus().equalsIgnoreCase(MOrder.STATUS_Invalid))  {
 						salesOrder.setDocStatus(MOrder.STATUS_InProgress);
 					}
 					boolean isOpenRefund = request.getIsOpenRefund();
-					if(getPaymentReferenceAmount(salesOrder).compareTo(Env.ZERO) != 0) {
+					if(getPaymentReferenceAmount(salesOrder, paymentReferences).compareTo(Env.ZERO) != 0) {
 						isOpenRefund = true;
 					}
 					//	Set default values
@@ -3190,11 +3192,13 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					processPayments(salesOrder, pos, isOpenRefund, transactionName);
 				} else {
 					boolean isOpenRefund = request.getIsOpenRefund();
-					if(getPaymentReferenceAmount(salesOrder).compareTo(Env.ZERO) != 0) {
+					if(getPaymentReferenceAmount(salesOrder, paymentReferences).compareTo(Env.ZERO) != 0) {
 						isOpenRefund = true;
 					}
 					processPayments(salesOrder, pos, isOpenRefund, transactionName);
 				}
+				//	Process all references
+				processPaymentReferences(salesOrder, pos, paymentReferences, transactionName);
 				//	Create
 				orderReference.set(salesOrder);
 			});
@@ -3203,6 +3207,26 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		}
 		//	Return order
 		return orderReference.get();
+	}
+	
+	/**
+	 * Process Payment references
+	 * @param salesOrder
+	 * @param pos
+	 * @param paymentReferences
+	 * @param transactionName
+	 */
+	private void processPaymentReferences(MOrder salesOrder, MPOS pos, List<PO> paymentReferences, String transactionName) {
+		paymentReferences.stream().filter(paymentReference -> {
+			PO paymentMethodAlocation = getPaymentMethodAllocation(paymentReference.get_ValueAsInt("C_PaymentMethod_ID"), paymentReference.get_ValueAsInt("C_POS_ID"), paymentReference.get_TrxName());
+			if(paymentMethodAlocation == null) {
+				return false;
+			}
+			return paymentMethodAlocation.get_ValueAsBoolean("IsPaymentReference");
+		}).forEach(paymentReference -> {
+			paymentReference.set_ValueOfColumn("Processed", true);
+			paymentReference.saveEx();
+		});
 	}
 	
 	/**
@@ -3342,12 +3366,12 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 * @return
 	 * @return PO
 	 */
-	private PO getPaymentMethodAllocation(MPayment payment) {
+	private PO getPaymentMethodAllocation(int paymentMethodId, int posId, String transactionName) {
 		if(MTable.get(Env.getCtx(), "C_POSPaymentTypeAllocation") == null) {
 			return null;
 		}
-		return new Query(payment.getCtx(), "C_POSPaymentTypeAllocation", "C_POS_ID = ? AND C_PaymentMethod_ID = ?", payment.get_TrxName())
-				.setParameters(payment.getC_POS_ID(), payment.get_ValueAsInt("C_PaymentMethod_ID"))
+		return new Query(Env.getCtx(), "C_POSPaymentTypeAllocation", "C_POS_ID = ? AND C_PaymentMethod_ID = ?", transactionName)
+				.setParameters(posId, paymentMethodId)
 				.setOnlyActiveRecords(true)
 				.first();
 	}
@@ -3375,7 +3399,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			}
 			creditMemo.setM_PriceList_ID(priceList.getM_PriceList_ID());
 		}
-		PO paymentTypeAllocation = getPaymentMethodAllocation(payment);
+		PO paymentTypeAllocation = getPaymentMethodAllocation(payment.get_ValueAsInt("C_PaymentMethod_ID"), payment.getC_POS_ID(), payment.get_TrxName());
 		int chargeId = 0;
 		if(paymentTypeAllocation != null) {
 			chargeId = paymentTypeAllocation.get_ValueAsInt("C_Charge_ID");
@@ -3444,12 +3468,12 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 * @return
 	 * @return BigDecimal
 	 */
-	private static BigDecimal getPaymentReferenceAmount(MOrder order) {
-		Optional<BigDecimal> refundReferenceAmount = getPaymentReferences(order).stream().map(refundReference -> {
+	private static BigDecimal getPaymentReferenceAmount(MOrder order, List<PO> paymentReferences) {
+		Optional<BigDecimal> paymentReferenceAmount = paymentReferences.stream().map(refundReference -> {
 			return getConvetedAmount(order, refundReference, ((BigDecimal) refundReference.get_Value("Amount")));
 		}).collect(Collectors.reducing(BigDecimal::add));
-		if(refundReferenceAmount.isPresent()) {
-			return refundReferenceAmount.get();
+		if(paymentReferenceAmount.isPresent()) {
+			return paymentReferenceAmount.get();
 		}
 		return Env.ZERO;
 	}
@@ -3790,7 +3814,6 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		.forEach(payment -> {
 			builder.addPayments(ConvertUtil.convertPayment(payment));
 		});
-		//	TODO: add real counter
 		builder.setRecordCount(count);
 		//	Set page token
 		if(RecordUtil.isValidNextPageToken(count, offset, limit)) {
@@ -3961,6 +3984,11 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					salesOrder.saveEx(transactionName);
 					configureWarehouse(salesOrder);
 				}
+				//	Discount Amount
+				BigDecimal discountRate = ValueUtil.getBigDecimalFromDecimal(request.getDiscountRate());
+				if(discountRate  != null) {
+					configureDiscount(salesOrder, discountRate);
+				}
 				//	Save
 				salesOrder.saveEx(transactionName);
 				orderReference.set(salesOrder);
@@ -4067,6 +4095,23 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		Arrays.asList(order.getLines())
 		.forEach(orderLine -> {
 			orderLine.setM_Warehouse_ID(order.getM_Warehouse_ID());
+			orderLine.saveEx();
+		});
+	}
+	
+	/**
+	 * Configure Discount for all lines
+	 * @param order
+	 */
+	private void configureDiscount(MOrder order, BigDecimal discountRate) {
+		Arrays.asList(order.getLines())
+		.forEach(orderLine -> {
+			BigDecimal discountAmount = orderLine.getPriceList().multiply(Optional.ofNullable(discountRate).orElse(Env.ZERO).divide(Env.ONEHUNDRED));
+			BigDecimal price = orderLine.getPriceList().subtract(discountAmount);
+			//	Set values
+			orderLine.setPrice(price); 
+			//	sets List/limit
+			orderLine.setTax();
 			orderLine.saveEx();
 		});
 	}

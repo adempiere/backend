@@ -540,12 +540,14 @@ public class ConvertUtil {
 			}
 			return getConvetedAmount(order, payment, paymentAmount);
 		}).collect(Collectors.reducing(BigDecimal::add));
-		Optional<BigDecimal> paymentReferenceAmount = getPaymentReferences(order).stream().map(refundReference -> {
-			BigDecimal amount = ((BigDecimal) refundReference.get_Value("Amount"));
-			if(refundReference.get_ValueAsBoolean("IsReceipt")) {
+		Optional<BigDecimal> paymentReferenceAmount = getPaymentReferences(order).stream()
+				.filter(paymentReference -> !paymentReference.get_ValueAsBoolean("Processed") && !paymentReference.get_ValueAsBoolean("IsPaid"))
+				.map(paymentReference -> {
+			BigDecimal amount = ((BigDecimal) paymentReference.get_Value("Amount"));
+			if(paymentReference.get_ValueAsBoolean("IsReceipt")) {
 				amount = amount.negate();
 			}
-			return getConvetedAmount(order, refundReference, amount);
+			return getConvetedAmount(order, paymentReference, amount);
 		}).collect(Collectors.reducing(BigDecimal::add));
 		BigDecimal grandTotal = order.getGrandTotal();
 		BigDecimal totalLines = order.getTotalLines();
