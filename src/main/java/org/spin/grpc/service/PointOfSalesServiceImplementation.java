@@ -1762,6 +1762,11 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				seller.set_ValueOfColumn("IsAllowsCashOpening", pointOfSales.get_ValueAsBoolean("IsAllowsCashOpening"));
 				seller.set_ValueOfColumn("IsAllowsCashClosing", pointOfSales.get_ValueAsBoolean("IsAllowsCashClosing"));
 				seller.set_ValueOfColumn("IsAllowsCashWithdrawal", pointOfSales.get_ValueAsBoolean("IsAllowsCashWithdrawal"));
+				seller.set_ValueOfColumn("IsAllowsApplyDiscount", pointOfSales.get_ValueAsBoolean("IsAllowsApplyDiscount"));
+				seller.set_ValueOfColumn("MaximumRefundAllowed", pointOfSales.get_ValueAsBoolean("MaximumRefundAllowed"));
+				seller.set_ValueOfColumn("MaximumDailyRefundAllowed", pointOfSales.get_ValueAsBoolean("MaximumDailyRefundAllowed"));
+				seller.set_ValueOfColumn("MaximumDiscountAllowed", pointOfSales.get_ValueAsBoolean("MaximumDiscountAllowed"));
+				seller.set_ValueOfColumn("WriteOffAmtTolerance", pointOfSales.get_ValueAsBoolean("WriteOffAmtTolerance"));
 			}
 			seller.set_ValueOfColumn("IsActive", true);
 			seller.saveEx();
@@ -4004,8 +4009,13 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				}
 				//	Discount Amount
 				BigDecimal discountRate = ValueUtil.getBigDecimalFromDecimal(request.getDiscountRate());
-				if(discountRate  != null) {
-					configureDiscount(salesOrder, discountRate);
+				if(discountRate != null) {
+					configureDiscount(salesOrder, discountRate, transactionName);
+				}
+				//	Discount Off
+				BigDecimal discountRateOff = ValueUtil.getBigDecimalFromDecimal(request.getDiscountRateOff());
+				if(discountRateOff != null) {
+					configureDiscountOff(salesOrder, discountRateOff, transactionName);
 				}
 				//	Save
 				salesOrder.saveEx(transactionName);
@@ -4121,7 +4131,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 * Configure Discount for all lines
 	 * @param order
 	 */
-	private void configureDiscount(MOrder order, BigDecimal discountRate) {
+	private void configureDiscount(MOrder order, BigDecimal discountRate, String transactionName) {
 		Arrays.asList(order.getLines())
 		.forEach(orderLine -> {
 			BigDecimal discountAmount = orderLine.getPriceList().multiply(Optional.ofNullable(discountRate).orElse(Env.ZERO).divide(Env.ONEHUNDRED));
@@ -4130,8 +4140,52 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			orderLine.setPrice(price); 
 			//	sets List/limit
 			orderLine.setTax();
-			orderLine.saveEx();
+			orderLine.saveEx(transactionName);
 		});
+	}
+	
+	/**
+	 * Configure Discount Off for order
+	 * @param order
+	 */
+	private void configureDiscountOff(MOrder order, BigDecimal discountRateOff, String transactionName) {
+		MPOS pos = new MPOS(order.getCtx(), order.getC_POS_ID(), order.get_TrxName());
+		if(pos.get_ValueAsInt("DefaultDiscountCharge_ID") <= 0) {
+			throw new AdempiereException("@DefaultDiscountCharge_ID@ @NotFound@");
+		}
+		Optional<BigDecimal> baseAmount = Arrays.asList(order.getLines()).stream()
+				.filter(ordeLine -> ordeLine.getC_Charge_ID() != pos.get_ValueAsInt("DefaultDiscountCharge_ID"))
+				.map(ordeLine -> ordeLine.getLineNetAmt())
+		.collect(Collectors.reducing(BigDecimal::add));
+		//	Get Base amount
+		if(baseAmount.isPresent()
+				&& baseAmount.get().compareTo(Env.ZERO) > 0) {
+			int precision = MCurrency.getStdPrecision(order.getCtx(), order.getC_Currency_ID());
+			BigDecimal basePrice = Optional.ofNullable(baseAmount.get()).orElse(Env.ZERO);
+			discountRateOff = Optional.ofNullable(discountRateOff).orElse(Env.ZERO);
+			//	A = 100 - discount
+			BigDecimal multiplier = Env.ONE.subtract(discountRateOff.divide(Env.ONEHUNDRED, MathContext.DECIMAL128));
+			//	B = A / 100
+			BigDecimal finalPrice = basePrice.multiply(multiplier);
+			finalPrice = finalPrice.setScale(precision, BigDecimal.ROUND_HALF_UP);
+			//	
+			Optional<MOrderLine> maybeOrderLine = Arrays.asList(order.getLines()).stream()
+					.filter(ordeLine -> ordeLine.getC_Charge_ID() == pos.get_ValueAsInt("DefaultDiscountCharge_ID"))
+					.findFirst();
+			MOrderLine discountOrderLine = null;
+			if(maybeOrderLine.isPresent()) {
+				discountOrderLine = maybeOrderLine.get();
+				discountOrderLine.setQty(Env.ONE);
+				discountOrderLine.setPrice(finalPrice.negate());
+			} else {
+				discountOrderLine = new MOrderLine(order);
+				discountOrderLine.setQty(Env.ONE);
+				discountOrderLine.setC_Charge_ID(pos.get_ValueAsInt("DefaultDiscountCharge_ID"));
+				discountOrderLine.setPrice(finalPrice.negate());
+			}
+			//	
+			discountOrderLine.saveEx(transactionName);
+		}
 	}
 	
 	/**
@@ -4428,7 +4482,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				}
 				orderLine.setQty(quantityToOrder);
 				orderLine.setPrice(currentPrice); //	sets List/limit
-				orderLine.saveEx();
+				orderLine.saveEx(transactionName);
 				orderLineReference.set(orderLine);
 			} else {
 				BigDecimal quantityToOrder = quantity;
@@ -4445,7 +4499,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				orderLine.setQty(quantityToOrder);
 				orderLine.setPrice();
 				//	Save Line
-				orderLine.saveEx();
+				orderLine.saveEx(transactionName);
 				orderLineReference.set(orderLine);
 			}
 		});
@@ -4642,7 +4696,9 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			.setIsAllowsConcurrentUse(pos.get_ValueAsBoolean("IsAllowsConcurrentUse"))
 			.setIsAllowsCashOpening(pos.get_ValueAsBoolean("IsAllowsCashOpening"))
 			.setIsAllowsCashClosing(pos.get_ValueAsBoolean("IsAllowsCashClosing"))
-			.setIsAllowsCashWithdrawal(pos.get_ValueAsBoolean("IsAllowsCashWithdrawal"));
+			.setIsAllowsCashWithdrawal(pos.get_ValueAsBoolean("IsAllowsCashWithdrawal"))
+			.setIsAllowsApplyDiscount(pos.get_ValueAsBoolean("IsAllowsApplyDiscount"))
+			;
 		} else {	//	Get from user
 			PO userAllocated = getUserAllowed(pos.getCtx(), pos.getC_POS_ID(), Env.getAD_User_ID(pos.getCtx()), null);
 			if(userAllocated != null
@@ -4661,7 +4717,21 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				.setIsAllowsConcurrentUse(userAllocated.get_ValueAsBoolean("IsAllowsConcurrentUse"))
 				.setIsAllowsCashOpening(userAllocated.get_ValueAsBoolean("IsAllowsCashOpening"))
 				.setIsAllowsCashClosing(userAllocated.get_ValueAsBoolean("IsAllowsCashClosing"))
-				.setIsAllowsCashWithdrawal(userAllocated.get_ValueAsBoolean("IsAllowsCashWithdrawal"));
+				.setIsAllowsCashWithdrawal(userAllocated.get_ValueAsBoolean("IsAllowsCashWithdrawal"))
+				.setIsAllowsApplyDiscount(userAllocated.get_ValueAsBoolean("IsAllowsApplyDiscount"));
+				//	If is applied
+				if(userAllocated.get_Value("MaximumRefundAllowed") != null) {
+					builder.setMaximumRefundAllowed(ValueUtil.getDecimalFromBigDecimal((BigDecimal) userAllocated.get_Value("MaximumRefundAllowed")));
+				}
+				if(userAllocated.get_Value("MaximumDailyRefundAllowed") != null) {
+					builder.setMaximumDailyRefundAllowed(ValueUtil.getDecimalFromBigDecimal((BigDecimal) userAllocated.get_Value("MaximumDailyRefundAllowed")));
+				}
+				if(userAllocated.get_Value("MaximumDiscountAllowed") != null) {
+					builder.setMaximumDiscountAllowed(ValueUtil.getDecimalFromBigDecimal((BigDecimal) userAllocated.get_Value("MaximumDiscountAllowed")));
+				}
+				if(userAllocated.get_Value("WriteOffAmtTolerance") != null) {
+					builder.setWriteOffAmountTolerance(ValueUtil.getDecimalFromBigDecimal((BigDecimal) userAllocated.get_Value("WriteOffAmtTolerance")));
+				}
 			}
 		}
 		if(pos.get_ValueAsInt("RefundReferenceCurrency_ID") > 0) {

@@ -974,6 +974,8 @@ message PointOfSales {
 	bool is_allows_cash_closing = 39;
 	bool is_allows_cash_opening = 40;
 	bool is_allows_cash_withdrawal = 41;
+	bool is_allows_apply_discount = 42;
+	
 }
 
 // Request for create a order
@@ -1144,6 +1146,7 @@ message UpdateOrderRequest {
 	string description = 8;
 	string campaign_uuid = 9;
 	Decimal discount_rate = 10;
+	Decimal discount_rate_off = 11;
 }
 
 // Request for update a order line
