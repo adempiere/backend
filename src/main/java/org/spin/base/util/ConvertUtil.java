@@ -530,9 +530,17 @@ public class ConvertUtil {
 		if(order == null) {
 			return builder;
 		}
+		MPOS pos = new MPOS(Env.getCtx(), order.getC_POS_ID(), order.get_TrxName());
+		int defaultDiscountChargeId = pos.get_ValueAsInt("DefaultDiscountCharge_ID");
 		MRefList reference = MRefList.get(Env.getCtx(), MOrder.DOCSTATUS_AD_REFERENCE_ID, order.getDocStatus(), null);
 		MPriceList priceList = MPriceList.get(Env.getCtx(), order.getM_PriceList_ID(), order.get_TrxName());
-		BigDecimal baseAmount = Arrays.asList(order.getLines()).stream().map(orderLine -> Optional.ofNullable(orderLine.getPriceList()).orElse(Env.ZERO)).reduce(BigDecimal.ZERO, BigDecimal::add);
+		List<MOrderLine> orderLines = Arrays.asList(order.getLines());
+		BigDecimal totalLines = orderLines.stream()
+				.filter(orderLine -> orderLine.getC_Charge_ID() != defaultDiscountChargeId || defaultDiscountChargeId == 0)
+				.map(orderLine -> Optional.ofNullable(orderLine.getPriceList()).orElse(Env.ZERO)).reduce(BigDecimal.ZERO, BigDecimal::add);
+		BigDecimal discountAmount = orderLines.stream()
+				.filter(orderLine -> orderLine.getC_Charge_ID() == defaultDiscountChargeId)
+				.map(orderLine -> Optional.ofNullable(orderLine.getPriceActual()).orElse(Env.ZERO)).reduce(BigDecimal.ZERO, BigDecimal::add);
 		Optional<BigDecimal> paidAmount = MPayment.getOfOrder(order).stream().map(payment -> {
 			BigDecimal paymentAmount = payment.getPayAmt();
 			if(!payment.isReceipt()) {
@@ -550,7 +558,6 @@ public class ConvertUtil {
 			return getConvetedAmount(order, paymentReference, amount);
 		}).collect(Collectors.reducing(BigDecimal::add));
 		BigDecimal grandTotal = order.getGrandTotal();
-		BigDecimal totalLines = order.getTotalLines();
 		BigDecimal paymentAmount = Env.ZERO;
 		if(paidAmount.isPresent()) {
 			paymentAmount = paidAmount.get();
@@ -577,8 +584,8 @@ public class ConvertUtil {
 			.setPriceList(ConvertUtil.convertPriceList(MPriceList.get(Env.getCtx(), order.getM_PriceList_ID(), order.get_TrxName())))
 			.setWarehouse(convertWarehouse(order.getM_Warehouse_ID()))
 			.setIsDelivered(order.isDelivered())
-			.setDiscountAmount(ValueUtil.getDecimalFromBigDecimal(totalLines.subtract(Optional.ofNullable(baseAmount).orElse(Env.ZERO).setScale(priceList.getStandardPrecision(), BigDecimal.ROUND_HALF_UP))))
-			.setTaxAmount(ValueUtil.getDecimalFromBigDecimal(grandTotal.subtract(totalLines).setScale(priceList.getStandardPrecision(), BigDecimal.ROUND_HALF_UP)))
+			.setDiscountAmount(ValueUtil.getDecimalFromBigDecimal(Optional.ofNullable(discountAmount).orElse(Env.ZERO).setScale(priceList.getStandardPrecision(), BigDecimal.ROUND_HALF_UP)))
+			.setTaxAmount(ValueUtil.getDecimalFromBigDecimal(grandTotal.subtract(totalLines.add(discountAmount)).setScale(priceList.getStandardPrecision(), BigDecimal.ROUND_HALF_UP)))
 			.setTotalLines(ValueUtil.getDecimalFromBigDecimal(totalLines.setScale(priceList.getStandardPrecision(), BigDecimal.ROUND_HALF_UP)))
 			.setGrandTotal(ValueUtil.getDecimalFromBigDecimal(grandTotal.setScale(priceList.getStandardPrecision(), BigDecimal.ROUND_HALF_UP)))
 			.setDisplayCurrencyRate(ValueUtil.getDecimalFromBigDecimal(displayCurrencyRate.setScale(priceList.getStandardPrecision(), BigDecimal.ROUND_HALF_UP)))

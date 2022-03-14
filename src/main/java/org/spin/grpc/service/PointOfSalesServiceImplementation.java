@@ -3253,6 +3253,42 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	}
 	
 	/**
+	 * Get Boolean value from POS
+	 * @param pos
+	 * @param userId
+	 * @param columnName
+	 * @return
+	 */
+	private boolean getBooleanValueFromPOS(MPOS pos, int userId, String columnName) {
+		if(!pos.get_ValueAsBoolean("IsAllowsAllocateSeller")) {
+			return pos.get_ValueAsBoolean(columnName);
+		}
+		PO userAllocated = getUserAllowed(Env.getCtx(), pos.getC_POS_ID(), userId, null);
+		if(userAllocated != null) {
+			return userAllocated.get_ValueAsBoolean(columnName);
+		}
+		return false;
+	}
+	
+	/**
+	 * Get Decimal value from pos
+	 * @param pos
+	 * @param userId
+	 * @param columnName
+	 * @return
+	 */
+	private BigDecimal getBigDecimalValueFromPOS(MPOS pos, int userId, String columnName) {
+		if(!pos.get_ValueAsBoolean("IsAllowsAllocateSeller")) {
+			return Optional.ofNullable((BigDecimal) pos.get_Value(columnName)).orElse(Env.ZERO);
+		}
+		PO userAllocated = getUserAllowed(Env.getCtx(), pos.getC_POS_ID(), userId, null);
+		if(userAllocated != null) {
+			return Optional.ofNullable((BigDecimal) userAllocated.get_Value(columnName)).orElse(Env.ZERO);
+		}
+		return Env.ZERO;
+	}
+	
+	/**
 	 * Process payment of Order
 	 * @param salesOrder
 	 * @param pos
@@ -3300,8 +3336,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		});
 		//	Validate Write Off Amount
 		if(!isOpenRefund) {
-			BigDecimal writeOffAmtTolerance = Optional.ofNullable((BigDecimal) pos.get_Value("WriteOffAmtTolerance")).orElse(Env.ZERO);
-			if(writeOffAmtTolerance.compareTo(Env.ZERO) > 0 && openAmount.get().abs().compareTo(writeOffAmtTolerance) >= 0) {
+			BigDecimal writeOffAmtTolerance = getBigDecimalValueFromPOS(pos, salesOrder.getSalesRep_ID(), "WriteOffAmtTolerance");
+			if(writeOffAmtTolerance.compareTo(Env.ZERO) > 0 && openAmount.get().abs().compareTo(writeOffAmtTolerance) > 0) {
 				throw new AdempiereException("@POS.WriteOffAmtToleranceExceeded@");
 			}
 		}
@@ -3856,23 +3892,32 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		if(Util.isEmpty(request.getOrderUuid())) {
 			throw new AdempiereException("@C_Order_ID@ @NotFound@");
 		}
+		int orderId = RecordUtil.getIdFromUuid(I_C_Order.Table_Name, request.getOrderUuid(), null);
+		MOrder order = new MOrder(Env.getCtx(), orderId, null);
+		MPOS pos = new MPOS(Env.getCtx(), order.getC_POS_ID(), order.get_TrxName());
 		ListOrderLinesResponse.Builder builder = ListOrderLinesResponse.newBuilder();
 		String nexPageToken = null;
 		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
 		int limit = RecordUtil.PAGE_SIZE;
 		int offset = pageNumber * RecordUtil.PAGE_SIZE;
+		StringBuffer whereClause = new StringBuffer(I_C_OrderLine.COLUMNNAME_C_Order_ID + " = ?");
+		List<Object> parameters = new ArrayList<>();
+		parameters.add(orderId);
+		if(pos.get_ValueAsInt("DefaultDiscountCharge_ID") > 0) {
+			parameters.add(pos.get_ValueAsInt("DefaultDiscountCharge_ID"));
+			whereClause.append(" AND (C_Charge_ID IS NULL OR C_Charge_ID <> ?)");
+		}
 		//	Get Product list
-		int orderId = RecordUtil.getIdFromUuid(I_C_Order.Table_Name, request.getOrderUuid(), null);
-		Query query = new Query(Env.getCtx(), I_C_OrderLine.Table_Name, I_C_OrderLine.COLUMNNAME_C_Order_ID + " = ?", null)
-				.setParameters(orderId)
+		Query query = new Query(Env.getCtx(), I_C_OrderLine.Table_Name, whereClause.toString(), null)
+				.setParameters(parameters)
 				.setClient_ID()
 				.setOnlyActiveRecords(true);
 		int count = query.count();
 		query
 		.setLimit(limit, offset)
 		.<MOrderLine>list()
-		.forEach(order -> {
-			builder.addOrderLines(ConvertUtil.convertOrderLine(order));
+		.forEach(orderLine -> {
+			builder.addOrderLines(ConvertUtil.convertOrderLine(orderLine));
 		});
 		//	
 		builder.setRecordCount(count);
@@ -4152,6 +4197,14 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		MPOS pos = new MPOS(order.getCtx(), order.getC_POS_ID(), order.get_TrxName());
 		if(pos.get_ValueAsInt("DefaultDiscountCharge_ID") <= 0) {
 			throw new AdempiereException("@DefaultDiscountCharge_ID@ @NotFound@");
+		}
+		boolean isAllowsApplyDiscount = getBooleanValueFromPOS(pos, order.getSalesRep_ID(), "IsAllowsApplyDiscount");
+		if(!isAllowsApplyDiscount) {
+			throw new AdempiereException("@ActionNotAllowedHere@");
+		}
+		BigDecimal maximumDiscountAllowed = getBigDecimalValueFromPOS(pos, order.getSalesRep_ID(), "MaximumDiscountAllowed");
+		if(maximumDiscountAllowed.compareTo(Env.ZERO) > 0 && discountRateOff.compareTo(maximumDiscountAllowed) > 0) {
+			throw new AdempiereException("@POS.MaximumDiscountAllowedExceeded@");
 		}
 		Optional<BigDecimal> baseAmount = Arrays.asList(order.getLines()).stream()
 				.filter(ordeLine -> ordeLine.getC_Charge_ID() != pos.get_ValueAsInt("DefaultDiscountCharge_ID"))
