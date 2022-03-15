@@ -4059,8 +4059,11 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				}
 				//	Discount Off
 				BigDecimal discountRateOff = ValueUtil.getBigDecimalFromDecimal(request.getDiscountRateOff());
+				BigDecimal discountAmountOff = ValueUtil.getBigDecimalFromDecimal(request.getDiscountAmountOff());
 				if(discountRateOff != null) {
-					configureDiscountOff(salesOrder, discountRateOff, transactionName);
+					configureDiscountRateOff(salesOrder, discountRateOff, transactionName);
+				} else if(discountAmountOff != null) {
+					configureDiscountAmountOff(salesOrder, discountAmountOff, transactionName);
 				}
 				//	Save
 				salesOrder.saveEx(transactionName);
@@ -4193,16 +4196,19 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 	 * Configure Discount Off for order
 	 * @param order
 	 */
-	private void configureDiscountOff(MOrder order, BigDecimal discountRateOff, String transactionName) {
+	private void configureDiscountRateOff(MOrder order, BigDecimal discountRateOff, String transactionName) {
+		if(discountRateOff == null) {
+			return;
+		}
 		MPOS pos = new MPOS(order.getCtx(), order.getC_POS_ID(), order.get_TrxName());
 		if(pos.get_ValueAsInt("DefaultDiscountCharge_ID") <= 0) {
 			throw new AdempiereException("@DefaultDiscountCharge_ID@ @NotFound@");
 		}
-		boolean isAllowsApplyDiscount = getBooleanValueFromPOS(pos, order.getSalesRep_ID(), "IsAllowsApplyDiscount");
+		boolean isAllowsApplyDiscount = getBooleanValueFromPOS(pos, Env.getAD_User_ID(Env.getCtx()), "IsAllowsApplyDiscount");
 		if(!isAllowsApplyDiscount) {
 			throw new AdempiereException("@ActionNotAllowedHere@");
 		}
-		BigDecimal maximumDiscountAllowed = getBigDecimalValueFromPOS(pos, order.getSalesRep_ID(), "MaximumDiscountAllowed");
+		BigDecimal maximumDiscountAllowed = getBigDecimalValueFromPOS(pos, Env.getAD_User_ID(Env.getCtx()), "MaximumDiscountAllowed");
 		if(maximumDiscountAllowed.compareTo(Env.ZERO) > 0 && discountRateOff.compareTo(maximumDiscountAllowed) > 0) {
 			throw new AdempiereException("@POS.MaximumDiscountAllowedExceeded@");
 		}
@@ -4214,31 +4220,131 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		if(baseAmount.isPresent()
 				&& baseAmount.get().compareTo(Env.ZERO) > 0) {
 			int precision = MCurrency.getStdPrecision(order.getCtx(), order.getC_Currency_ID());
-			BigDecimal basePrice = Optional.ofNullable(baseAmount.get()).orElse(Env.ZERO);
-			discountRateOff = Optional.ofNullable(discountRateOff).orElse(Env.ZERO);
-			//	A = 100 - discount
-			BigDecimal multiplier = Env.ONE.subtract(discountRateOff.divide(Env.ONEHUNDRED, MathContext.DECIMAL128));
-			//	B = A / 100
-			BigDecimal finalPrice = basePrice.multiply(multiplier);
-			finalPrice = finalPrice.setScale(precision, BigDecimal.ROUND_HALF_UP);
-			//	
-			Optional<MOrderLine> maybeOrderLine = Arrays.asList(order.getLines()).stream()
-					.filter(ordeLine -> ordeLine.getC_Charge_ID() == pos.get_ValueAsInt("DefaultDiscountCharge_ID"))
-					.findFirst();
-			MOrderLine discountOrderLine = null;
-			if(maybeOrderLine.isPresent()) {
-				discountOrderLine = maybeOrderLine.get();
-				discountOrderLine.setQty(Env.ONE);
-				discountOrderLine.setPrice(finalPrice.negate());
-			} else {
-				discountOrderLine = new MOrderLine(order);
-				discountOrderLine.setQty(Env.ONE);
-				discountOrderLine.setC_Charge_ID(pos.get_ValueAsInt("DefaultDiscountCharge_ID"));
-				discountOrderLine.setPrice(finalPrice.negate());
-			}
-			//	
-			discountOrderLine.saveEx(transactionName);
+			BigDecimal finalPrice = getFinalPrice(baseAmount.get(), discountRateOff, precision);
+			createDiscountLine(pos, order, baseAmount.get().subtract(finalPrice), transactionName);
+			//	Set Discount Rate
+			order.set_ValueOfColumn("Discount", discountRateOff);
+			order.saveEx(transactionName);
+		} else {
+			deleteDiscountLine(pos, order, transactionName);
 		}
+	}
+	
+	/**
+	 * Get final price based on base price and discount applied
+	 * @param basePrice
+	 * @param discount
+	 * @return
+	 */
+	public static BigDecimal getFinalPrice(BigDecimal basePrice, BigDecimal discount, int precision) {
+		basePrice = Optional.ofNullable(basePrice).orElse(Env.ZERO);
+		discount = Optional.ofNullable(discount).orElse(Env.ZERO);
+		//	A = 100 - discount
+		BigDecimal multiplier = Env.ONE.subtract(discount.divide(Env.ONEHUNDRED, MathContext.DECIMAL128));
+		//	B = A / 100
+		BigDecimal finalPrice = basePrice.multiply(multiplier);
+		finalPrice = finalPrice.setScale(precision, BigDecimal.ROUND_HALF_UP);
+		return finalPrice;
+	}
+	
+	/**
+	 * Get discount based on base price and price list
+	 * @param finalPrice
+	 * @param basePrice
+	 * @param precision
+	 * @return
+	 */
+	public static BigDecimal getDiscount(BigDecimal basePrice, BigDecimal finalPrice, int precision) {
+		finalPrice = Optional.ofNullable(finalPrice).orElse(Env.ZERO);
+		basePrice = Optional.ofNullable(basePrice).orElse(Env.ZERO);
+		BigDecimal discount = Env.ZERO;
+		if (basePrice.compareTo(Env.ZERO) != 0) {
+			discount = basePrice.subtract(finalPrice);
+			discount = discount.divide(basePrice, MathContext.DECIMAL128);
+			discount = discount.multiply(Env.ONEHUNDRED);
+		}
+		if (discount.scale() > precision) {
+			discount = discount.setScale(precision, BigDecimal.ROUND_HALF_UP);
+		}
+		return discount.negate();
+	}
+	
+	/**
+	 * Configure Discount Off for order
+	 * @param order
+	 */
+	private void configureDiscountAmountOff(MOrder order, BigDecimal discountAmountOff, String transactionName) {
+		if(discountAmountOff == null) {
+			return;
+		}
+		MPOS pos = new MPOS(order.getCtx(), order.getC_POS_ID(), order.get_TrxName());
+		if(pos.get_ValueAsInt("DefaultDiscountCharge_ID") <= 0) {
+			throw new AdempiereException("@DefaultDiscountCharge_ID@ @NotFound@");
+		}
+		int defaultDiscountChargeId = pos.get_ValueAsInt("DefaultDiscountCharge_ID");
+		boolean isAllowsApplyDiscount = getBooleanValueFromPOS(pos, Env.getAD_User_ID(Env.getCtx()), "IsAllowsApplyDiscount");
+		if(!isAllowsApplyDiscount) {
+			throw new AdempiereException("@ActionNotAllowedHere@");
+		}
+		BigDecimal maximumDiscountAllowed = getBigDecimalValueFromPOS(pos, Env.getAD_User_ID(Env.getCtx()), "MaximumDiscountAllowed");
+		BigDecimal baseAmount = Optional.ofNullable(Arrays.asList(order.getLines()).stream()
+				.filter(orderLine -> orderLine.getC_Charge_ID() != defaultDiscountChargeId || defaultDiscountChargeId == 0)
+				.map(ordeLine -> ordeLine.getLineNetAmt())
+				.reduce(BigDecimal.ZERO, BigDecimal::add)).orElse(Env.ZERO);
+		if(baseAmount.compareTo(Env.ZERO) <= 0) {
+			deleteDiscountLine(pos, order, transactionName);
+			return;
+		}
+		//	
+		int precision = MCurrency.getStdPrecision(order.getCtx(), order.getC_Currency_ID());
+		BigDecimal discountRateOff = getDiscount(baseAmount, baseAmount.add(discountAmountOff), precision);
+		if(maximumDiscountAllowed.compareTo(Env.ZERO) > 0 && discountRateOff.compareTo(maximumDiscountAllowed) > 0) {
+			throw new AdempiereException("@POS.MaximumDiscountAllowedExceeded@");
+		}
+		//	Create Discount line
+		createDiscountLine(pos, order, discountAmountOff, transactionName);
+		//	Set Discount Rate
+		order.set_ValueOfColumn("Discount", discountRateOff);
+		order.saveEx(transactionName);
+	}
+	
+	/**
+	 * Delete Discount Line
+	 * @param pos
+	 * @param order
+	 * @param transactionName
+	 */
+	private void deleteDiscountLine(MPOS pos, MOrder order, String transactionName) {
+		Optional<MOrderLine> maybeOrderLine = Arrays.asList(order.getLines()).stream()
+				.filter(ordeLine -> ordeLine.getC_Charge_ID() == pos.get_ValueAsInt("DefaultDiscountCharge_ID"))
+				.findFirst();
+		maybeOrderLine.ifPresent(discountLine -> discountLine.deleteEx(true,transactionName));
+	}
+	
+	/**
+	 * Create Discount Line
+	 * @param pos
+	 * @param order
+	 * @param amount
+	 * @param transactionName
+	 */
+	private void createDiscountLine(MPOS pos, MOrder order, BigDecimal amount, String transactionName) {
+		Optional<MOrderLine> maybeOrderLine = Arrays.asList(order.getLines()).stream()
+				.filter(ordeLine -> ordeLine.getC_Charge_ID() == pos.get_ValueAsInt("DefaultDiscountCharge_ID"))
+				.findFirst();
+		MOrderLine discountOrderLine = null;
+		if(maybeOrderLine.isPresent()) {
+			discountOrderLine = maybeOrderLine.get();
+			discountOrderLine.setQty(Env.ONE);
+			discountOrderLine.setPrice(amount.negate());
+		} else {
+			discountOrderLine = new MOrderLine(order);
+			discountOrderLine.setQty(Env.ONE);
+			discountOrderLine.setC_Charge_ID(pos.get_ValueAsInt("DefaultDiscountCharge_ID"));
+			discountOrderLine.setPrice(amount.negate());
+		}
+		//	
+		discountOrderLine.saveEx(transactionName);
 	}
 	
 	/**
@@ -4331,8 +4437,11 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				}
 				if(orderLine != null
 						&& orderLine.getC_Order_ID() >= 0) {
-					validateOrderReleased(orderLine.getParent());
+					MOrder order = orderLine.getParent();
+					validateOrderReleased(order);
 					orderLine.deleteEx(true);
+					//	Apply Discount from order
+					configureDiscountRateOff(order, (BigDecimal) order.get_Value("Discount"), transactionName);
 				}
 			}
 		});
@@ -4553,6 +4662,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				orderLine.setPrice();
 				//	Save Line
 				orderLine.saveEx(transactionName);
+				//	Apply Discount from order
+				configureDiscountRateOff(order, (BigDecimal) order.get_Value("Discount"), transactionName);
 				orderLineReference.set(orderLine);
 			}
 		});
@@ -4623,6 +4734,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			orderLine.setQty(quantityToOrder);
 			orderLine.setTax();
 			orderLine.saveEx();
+			//	Apply Discount from order
+			configureDiscountRateOff(order, (BigDecimal) order.get_Value("Discount"), transactionName);
 			maybeOrderLine.set(orderLine);
 		});
 		return maybeOrderLine.get();

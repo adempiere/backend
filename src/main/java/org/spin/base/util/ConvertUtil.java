@@ -537,10 +537,10 @@ public class ConvertUtil {
 		List<MOrderLine> orderLines = Arrays.asList(order.getLines());
 		BigDecimal totalLines = orderLines.stream()
 				.filter(orderLine -> orderLine.getC_Charge_ID() != defaultDiscountChargeId || defaultDiscountChargeId == 0)
-				.map(orderLine -> Optional.ofNullable(orderLine.getPriceList()).orElse(Env.ZERO)).reduce(BigDecimal.ZERO, BigDecimal::add);
+				.map(orderLine -> Optional.ofNullable(orderLine.getLineNetAmt()).orElse(Env.ZERO)).reduce(BigDecimal.ZERO, BigDecimal::add);
 		BigDecimal discountAmount = orderLines.stream()
 				.filter(orderLine -> orderLine.getC_Charge_ID() == defaultDiscountChargeId)
-				.map(orderLine -> Optional.ofNullable(orderLine.getPriceActual()).orElse(Env.ZERO)).reduce(BigDecimal.ZERO, BigDecimal::add);
+				.map(orderLine -> Optional.ofNullable(orderLine.getLineNetAmt()).orElse(Env.ZERO)).reduce(BigDecimal.ZERO, BigDecimal::add);
 		Optional<BigDecimal> paidAmount = MPayment.getOfOrder(order).stream().map(payment -> {
 			BigDecimal paymentAmount = payment.getPayAmt();
 			if(!payment.isReceipt()) {
