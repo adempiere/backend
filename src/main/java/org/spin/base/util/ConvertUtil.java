@@ -539,7 +539,7 @@ public class ConvertUtil {
 				.filter(orderLine -> orderLine.getC_Charge_ID() != defaultDiscountChargeId || defaultDiscountChargeId == 0)
 				.map(orderLine -> Optional.ofNullable(orderLine.getLineNetAmt()).orElse(Env.ZERO)).reduce(BigDecimal.ZERO, BigDecimal::add);
 		BigDecimal discountAmount = orderLines.stream()
-				.filter(orderLine -> orderLine.getC_Charge_ID() == defaultDiscountChargeId)
+				.filter(orderLine -> orderLine.getC_Charge_ID() > 0 && orderLine.getC_Charge_ID() == defaultDiscountChargeId)
 				.map(orderLine -> Optional.ofNullable(orderLine.getLineNetAmt()).orElse(Env.ZERO)).reduce(BigDecimal.ZERO, BigDecimal::add);
 		Optional<BigDecimal> paidAmount = MPayment.getOfOrder(order).stream().map(payment -> {
 			BigDecimal paymentAmount = payment.getPayAmt();
