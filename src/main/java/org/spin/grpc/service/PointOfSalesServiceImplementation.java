@@ -4223,7 +4223,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			BigDecimal finalPrice = getFinalPrice(baseAmount.get(), discountRateOff, precision);
 			createDiscountLine(pos, order, baseAmount.get().subtract(finalPrice), transactionName);
 			//	Set Discount Rate
-			order.set_ValueOfColumn("Discount", discountRateOff);
+			order.set_ValueOfColumn("FlatDiscount", discountRateOff);
 			order.saveEx(transactionName);
 		} else {
 			deleteDiscountLine(pos, order, transactionName);
@@ -4304,7 +4304,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		//	Create Discount line
 		createDiscountLine(pos, order, discountAmountOff, transactionName);
 		//	Set Discount Rate
-		order.set_ValueOfColumn("Discount", discountRateOff);
+		order.set_ValueOfColumn("FlatDiscount", discountRateOff);
 		order.saveEx(transactionName);
 	}
 	
@@ -4441,7 +4441,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 					validateOrderReleased(order);
 					orderLine.deleteEx(true);
 					//	Apply Discount from order
-					configureDiscountRateOff(order, (BigDecimal) order.get_Value("Discount"), transactionName);
+					configureDiscountRateOff(order, (BigDecimal) order.get_Value("FlatDiscount"), transactionName);
 				}
 			}
 		});
@@ -4663,7 +4663,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 				//	Save Line
 				orderLine.saveEx(transactionName);
 				//	Apply Discount from order
-				configureDiscountRateOff(order, (BigDecimal) order.get_Value("Discount"), transactionName);
+				configureDiscountRateOff(order, (BigDecimal) order.get_Value("FlatDiscount"), transactionName);
 				orderLineReference.set(orderLine);
 			}
 		});
@@ -4735,7 +4735,7 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 			orderLine.setTax();
 			orderLine.saveEx();
 			//	Apply Discount from order
-			configureDiscountRateOff(order, (BigDecimal) order.get_Value("Discount"), transactionName);
+			configureDiscountRateOff(order, (BigDecimal) order.get_Value("FlatDiscount"), transactionName);
 			maybeOrderLine.set(orderLine);
 		});
 		return maybeOrderLine.get();
