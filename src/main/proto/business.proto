@@ -615,7 +615,9 @@ message Chart {
 	string description = 4;
 	string x_axis_label = 5;
 	string y_axis_label = 6;
-	repeated ChartSerie series = 7;
+	Decimal measure_target = 7;
+	repeated ColorSchema color_schemas = 8;
+	repeated ChartSerie series = 9;
 }
 
 //	Serie
@@ -628,6 +630,13 @@ message ChartSerie {
 message ChartData {
 	string name = 1;
 	Decimal value = 2;
+}
+
+//	Color Schema
+message ColorSchema {
+	string name = 1;
+	string color = 2;
+	Decimal percent = 3;
 }
 
 // Dashboards Request

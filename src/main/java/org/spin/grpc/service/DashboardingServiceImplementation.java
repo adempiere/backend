@@ -33,6 +33,7 @@ import org.compiere.model.I_AD_User;
 import org.compiere.model.I_PA_DashboardContent;
 import org.compiere.model.I_PA_Goal;
 import org.compiere.model.MChart;
+import org.compiere.model.MColorSchema;
 import org.compiere.model.MDashboardContent;
 import org.compiere.model.MForm;
 import org.compiere.model.MGoal;
@@ -43,6 +44,7 @@ import org.compiere.model.MTable;
 import org.compiere.model.MWindow;
 import org.compiere.model.Query;
 import org.compiere.model.X_AD_TreeNodeMM;
+import org.compiere.print.MPrintColor;
 import org.compiere.util.CLogger;
 import org.compiere.util.Env;
 import org.compiere.util.Util;
@@ -53,6 +55,7 @@ import org.spin.base.util.ValueUtil;
 import org.spin.grpc.util.Chart;
 import org.spin.grpc.util.ChartData;
 import org.spin.grpc.util.ChartSerie;
+import org.spin.grpc.util.ColorSchema;
 import org.spin.grpc.util.Criteria;
 import org.spin.grpc.util.Dashboard;
 import org.spin.grpc.util.DashboardingGrpc.DashboardingImplBase;
@@ -222,11 +225,49 @@ public class DashboardingServiceImplementation extends DashboardingImplBase {
 				chartSeries.put(key, serie);
 			});
 		}
+		//	Add measure color
+		MColorSchema colorSchema = goal.getColorSchema();
+		builder.setMeasureTarget(ValueUtil.getDecimalFromBigDecimal(goal.getMeasureTarget()));
+		//	Add first mark
+		builder.addColorSchemas(ColorSchema.newBuilder()
+				.setPercent(ValueUtil.getDecimalFromBigDecimal(new BigDecimal(colorSchema.getMark1Percent())))
+				.setColor(getColorAsHex(colorSchema.getAD_PrintColor1_ID())));
+		//	Second Mark
+		builder.addColorSchemas(ColorSchema.newBuilder()
+				.setPercent(ValueUtil.getDecimalFromBigDecimal(new BigDecimal(colorSchema.getMark2Percent())))
+				.setColor(getColorAsHex(colorSchema.getAD_PrintColor2_ID())));
+		//	Third Mark
+		builder.addColorSchemas(ColorSchema.newBuilder()
+				.setPercent(ValueUtil.getDecimalFromBigDecimal(new BigDecimal(colorSchema.getMark3Percent())))
+				.setColor(getColorAsHex(colorSchema.getAD_PrintColor3_ID())));
+		//	Four Mark
+		builder.addColorSchemas(ColorSchema.newBuilder()
+				.setPercent(ValueUtil.getDecimalFromBigDecimal(new BigDecimal(colorSchema.getMark4Percent())))
+				.setColor(getColorAsHex(colorSchema.getAD_PrintColor4_ID())));
 		//	Add all
 		chartSeries.keySet().stream().sorted().forEach(serie -> {
 			builder.addSeries(ChartSerie.newBuilder().setName(serie).addAllDataSet(chartSeries.get(serie)));
 		});
 		return builder;
+	}
+	
+	/**
+	 * Get color as hex
+	 * @param printColorId
+	 * @return
+	 */
+	private String getColorAsHex(int printColorId) {
+		if(printColorId <= 0) {
+			return "";
+		}
+		MPrintColor printColor = MPrintColor.get(Env.getCtx(), printColorId);
+		int color = 0;
+		try {
+			color = Integer.parseInt(printColor.getCode());
+		} catch (Exception e) {
+			log.severe(e.getLocalizedMessage());
+		}
+		return String.format("#%06X", (0xFFFFFF & color));
 	}
 	
 	/**
