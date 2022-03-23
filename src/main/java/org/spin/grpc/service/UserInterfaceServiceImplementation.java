@@ -38,6 +38,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
@@ -46,6 +47,7 @@ import javax.script.ScriptEngine;
 
 import org.adempiere.exceptions.AdempiereException;
 import org.adempiere.model.I_AD_Browse;
+import org.adempiere.model.I_AD_Browse_Field;
 import org.adempiere.model.MBrowse;
 import org.adempiere.model.MBrowseField;
 import org.adempiere.model.MView;
@@ -60,13 +62,17 @@ import org.compiere.model.GridWindow;
 import org.compiere.model.GridWindowVO;
 import org.compiere.model.I_AD_ChangeLog;
 import org.compiere.model.I_AD_Client;
+import org.compiere.model.I_AD_Column;
 import org.compiere.model.I_AD_Element;
+import org.compiere.model.I_AD_Field;
 import org.compiere.model.I_AD_Org;
 import org.compiere.model.I_AD_Preference;
 import org.compiere.model.I_AD_PrintFormat;
 import org.compiere.model.I_AD_Private_Access;
 import org.compiere.model.I_AD_Process;
+import org.compiere.model.I_AD_Process_Para;
 import org.compiere.model.I_AD_Record_Access;
+import org.compiere.model.I_AD_Reference;
 import org.compiere.model.I_AD_ReportView;
 import org.compiere.model.I_AD_Role;
 import org.compiere.model.I_AD_Tab;
@@ -80,9 +86,11 @@ import org.compiere.model.MChatEntry;
 import org.compiere.model.MClientInfo;
 import org.compiere.model.MColumn;
 import org.compiere.model.MField;
+import org.compiere.model.MLookupInfo;
 import org.compiere.model.MMessage;
 import org.compiere.model.MPreference;
 import org.compiere.model.MPrivateAccess;
+import org.compiere.model.MProcessPara;
 import org.compiere.model.MQuery;
 import org.compiere.model.MRecordAccess;
 import org.compiere.model.MReportView;
@@ -111,6 +119,7 @@ import org.spin.base.util.ContextManager;
 import org.spin.base.util.ConvertUtil;
 import org.spin.base.util.DictionaryUtil;
 import org.spin.base.util.RecordUtil;
+import org.spin.base.util.ReferenceUtil;
 import org.spin.base.util.ValueUtil;
 import org.spin.grpc.util.Attachment;
 import org.spin.grpc.util.ChatEntry;
@@ -886,21 +895,22 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 		//	
 		MTab tab = MTab.get(context, tabId);
 		String tableName = MTable.getTableName(context, tab.getAD_Table_ID());
-		Env.clearWinContext(request.getWindowNo());
+		int windowNo = ThreadLocalRandom.current().nextInt(1, 8996 + 1);
+		Env.clearWinContext(windowNo);
 		Map<String, Object> attributes = ValueUtil.convertValuesToObjects(request.getContextAttributesList());
 		//	Fill context
 		attributes.entrySet().forEach(attribute -> {
 			if(attribute.getValue() instanceof Integer) {
-				Env.setContext(context, attribute.getKey(), (Integer) attribute.getValue());
+				Env.setContext(context, windowNo, attribute.getKey(), (Integer) attribute.getValue());
 			} else if(attribute.getValue() instanceof Timestamp) {
-				Env.setContext(context, attribute.getKey(), (Timestamp) attribute.getValue());
+				Env.setContext(context, windowNo, attribute.getKey(), (Timestamp) attribute.getValue());
 			} else if(attribute.getValue() instanceof Boolean) {
-				Env.setContext(context, attribute.getKey(), (Boolean) attribute.getValue());
+				Env.setContext(context, windowNo, attribute.getKey(), (Boolean) attribute.getValue());
 			} else if(attribute.getValue() instanceof String) {
-				Env.setContext(context, attribute.getKey(), (String) attribute.getValue());
+				Env.setContext(context, windowNo, attribute.getKey(), (String) attribute.getValue());
 			}
 		});
-		String where = Env.parseContext(context, request.getWindowNo(), tab.getWhereClause(), false);
+		String where = Env.parseContext(context, windowNo, tab.getWhereClause(), false);
 		if(Util.isEmpty(where)
 				&& !Util.isEmpty(tab.getWhereClause())) {
 			throw new AdempiereException("@AD_Tab_ID@ @WhereClause@ @Unparseable@");
@@ -2199,33 +2209,124 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 	}
 	
 	/**
+	 * Get reference Info from request
+	 * @param request
+	 * @return
+	 */
+	private MLookupInfo getInfoFromRequest(ListLookupItemsRequest request) {
+		int referenceId = 0;
+		int referenceValueId = 0;
+		int validationRuleId = 0;
+		String columnName = null;
+		String tableName = null;
+		if(!Util.isEmpty(request.getReferenceUuid())) {
+			referenceId = RecordUtil.getIdFromUuid(I_AD_Reference.Table_Name, request.getReferenceUuid(), null);
+		} else if(!Util.isEmpty(request.getFieldUuid())) {
+			MField field = (MField) RecordUtil.getEntity(Env.getCtx(), I_AD_Field.Table_Name, request.getFieldUuid(), 0, null);
+			int fieldId = field.getAD_Field_ID();
+			List<MField> customFields = ASPUtil.getInstance(Env.getCtx()).getWindowFields(field.getAD_Tab_ID());
+			if(customFields != null) {
+				Optional<MField> maybeField = customFields.stream().filter(customField -> customField.getAD_Field_ID() == fieldId).findFirst();
+				if(maybeField.isPresent()) {
+					field = maybeField.get();
+					MColumn column = MColumn.get(Env.getCtx(), field.getAD_Column_ID());
+					//	Display Type
+					referenceId = column.getAD_Reference_ID();
+					referenceValueId = column.getAD_Reference_Value_ID();
+					validationRuleId = column.getAD_Val_Rule_ID();
+					if(field.getAD_Reference_ID() > 0) {
+						referenceId = field.getAD_Reference_ID();
+					}
+					if(field.getAD_Reference_Value_ID() > 0) {
+						referenceValueId = field.getAD_Reference_Value_ID();
+					}
+					if(field.getAD_Val_Rule_ID() > 0) {
+						validationRuleId = field.getAD_Val_Rule_ID();
+					}
+				}
+			}
+		} else if(!Util.isEmpty(request.getBrowseFieldUuid())) {
+			MBrowseField browseField = (MBrowseField) RecordUtil.getEntity(Env.getCtx(), I_AD_Browse_Field.Table_Name, request.getBrowseFieldUuid(), 0, null);
+			int browseFieldId = browseField.getAD_Browse_Field_ID();
+			List<MBrowseField> customFields = ASPUtil.getInstance(Env.getCtx()).getBrowseFields(browseField.getAD_Browse_ID());
+			if(customFields != null) {
+				Optional<MBrowseField> maybeField = customFields.stream().filter(customField -> customField.getAD_Browse_Field_ID() == browseFieldId).findFirst();
+				if(maybeField.isPresent()) {
+					browseField = maybeField.get();
+					referenceId = browseField.getAD_Reference_ID();
+					referenceValueId = browseField.getAD_Reference_Value_ID();
+					validationRuleId = browseField.getAD_Val_Rule_ID();
+				}
+			}
+		} else if(!Util.isEmpty(request.getProcessParameterUuid())) {
+			MProcessPara processParameter = (MProcessPara) RecordUtil.getEntity(Env.getCtx(), I_AD_Process_Para.Table_Name, request.getProcessParameterUuid(), 0, null);
+			int processParameterId = processParameter.getAD_Process_Para_ID();
+			List<MProcessPara> customParameters = ASPUtil.getInstance(Env.getCtx()).getProcessParameters(processParameter.getAD_Process_ID());
+			if(customParameters != null) {
+				Optional<MProcessPara> maybeParameter = customParameters.stream().filter(customField -> customField.getAD_Process_Para_ID() == processParameterId).findFirst();
+				if(maybeParameter.isPresent()) {
+					processParameter = maybeParameter.get();
+					referenceId = processParameter.getAD_Reference_ID();
+					referenceValueId = processParameter.getAD_Reference_Value_ID();
+					validationRuleId = processParameter.getAD_Val_Rule_ID();
+				}
+			}
+		} else if(!Util.isEmpty(request.getColumnUuid())) {
+			int columnId = RecordUtil.getIdFromUuid(I_AD_Column.Table_Name, request.getColumnUuid(), null);
+			if(columnId > 0) {
+				MColumn column = MColumn.get(Env.getCtx(), columnId);
+				referenceId = column.getAD_Reference_ID();
+				referenceValueId = column.getAD_Reference_Value_ID();
+				validationRuleId = column.getAD_Val_Rule_ID();
+				columnName = column.getColumnName();
+			}
+		} else if(!Util.isEmpty(request.getColumnName())) {
+			referenceId = DisplayType.TableDir;
+			columnName = request.getColumnName();
+		} else if(!Util.isEmpty(request.getTableName())) {	//	Is a Table Direct
+			referenceId = DisplayType.TableDir;
+			columnName = request.getTableName() + "_ID";
+		} else {
+			throw new AdempiereException("@AD_Reference_ID@ / @AD_Column_ID@ / @AD_Table_ID@ / @AD_Process_Para_ID@ / @IsMandatory@");
+		}
+		return ReferenceUtil.getReferenceLookupInfo(referenceId, referenceValueId, columnName, validationRuleId, tableName);
+	}
+	
+	/**
 	 * Convert Object to list
 	 * @param request
 	 * @return
 	 */
 	private ListLookupItemsResponse.Builder convertLookupItemsList(ListLookupItemsRequest request) {
-		Criteria criteria = request.getCriteria();
-		String sql = criteria.getQuery();
-		List<Object> params = new ArrayList<>();
-		criteria.getConditionsList().forEach(condition -> params.add(ValueUtil.getObjectFromValue(condition.getValue())));
-		//	For dynamic condition
-		String dynamicWhere = ValueUtil.getWhereClauseFromCriteria(criteria, params);
-		if(!Util.isEmpty(dynamicWhere)) {
-			int positionFrom = sql.lastIndexOf(" FROM ");
-			boolean hasWhereClause = sql.indexOf(" WHERE ", positionFrom) != -1;
-			//
-			int positionOrder = sql.lastIndexOf(" ORDER BY ");
-			if (positionOrder != -1) {
-				sql = sql.substring(0, positionOrder) 
-						+ (hasWhereClause ? " AND " : " WHERE ") 
-						+ dynamicWhere
-						+ sql.substring(positionOrder);
-			} else {			
-				sql += (hasWhereClause ? " AND " : " WHERE ") + dynamicWhere;
+		MLookupInfo reference = getInfoFromRequest(request);
+		if(reference == null) {
+			throw new AdempiereException("@AD_Reference_ID@ @NotFound@");
+		}
+		String sql = reference.Query;
+//		List<Object> params = new ArrayList<>();
+		Properties context = Env.getCtx();
+		int windowNo = ThreadLocalRandom.current().nextInt(1, 8996 + 1);
+		Env.clearWinContext(windowNo);
+		Map<String, Object> attributes = ValueUtil.convertValuesToObjects(request.getContextAttributesList());
+		//	Fill context
+		attributes.entrySet().forEach(attribute -> {
+			if(attribute.getValue() instanceof Integer) {
+				Env.setContext(context, windowNo, attribute.getKey(), (Integer) attribute.getValue());
+			} else if(attribute.getValue() instanceof Timestamp) {
+				Env.setContext(context, windowNo, attribute.getKey(), (Timestamp) attribute.getValue());
+			} else if(attribute.getValue() instanceof Boolean) {
+				Env.setContext(context, windowNo, attribute.getKey(), (Boolean) attribute.getValue());
+			} else if(attribute.getValue() instanceof String) {
+				Env.setContext(context, windowNo, attribute.getKey(), (String) attribute.getValue());
 			}
+		});
+		sql = Env.parseContext(context, windowNo, sql, false);
+		if(Util.isEmpty(sql)
+				&& !Util.isEmpty(reference.Query)) {
+			throw new AdempiereException("@AD_Tab_ID@ @WhereClause@ @Unparseable@");
 		}
 		sql = MRole.getDefault(Env.getCtx(), false).addAccessSQL(sql,
-				criteria.getTableName(), MRole.SQL_FULLYQUALIFIED, MRole.SQL_RO);
+				reference.TableName, MRole.SQL_FULLYQUALIFIED, MRole.SQL_RO);
 		ListLookupItemsResponse.Builder builder = ListLookupItemsResponse.newBuilder();
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -2233,10 +2334,6 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 		try {
 			//	SELECT Key, Value, Name FROM ...
 			pstmt = DB.prepareStatement(sql, null);
-			AtomicInteger parameterIndex = new AtomicInteger(1);
-			for(Object value : params) {
-				ValueUtil.setParameterFromObject(pstmt, value, parameterIndex.getAndIncrement());
-			}
 			//	Get from Query
 			rs = pstmt.executeQuery();
 			while(rs.next()) {

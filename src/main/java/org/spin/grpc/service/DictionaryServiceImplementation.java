@@ -1051,8 +1051,7 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 				.setVFormat(ValueUtil.validateNull(browseField.getVFormat()))
 				.setIsActive(browseField.isActive())
 				.setCallout(ValueUtil.validateNull(browseField.getCallout()))
-				.setFieldLength(browseField.getFieldLength())
-				.setDisplayType(browseField.getAD_Reference_ID());
+				.setFieldLength(browseField.getFieldLength());
 		builder.setColumnName(ValueUtil.validateNull(browseField.getAD_View_Column().getColumnName()));
 		String elementName = null;
 		if(browseField.getAD_View_Column().getAD_Column_ID() != 0) {

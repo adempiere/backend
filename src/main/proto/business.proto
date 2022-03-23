@@ -387,11 +387,19 @@ message LookupItem {
 
 // List Lookup Item
 message ListLookupItemsRequest {
-	ClientRequest client_request = 3;
+	ClientRequest client_request = 1;
 	// Query
-	Criteria criteria = 4;
-	int32 page_size = 5;
-	string page_token = 6;
+	string process_parameter_uuid = 2;
+	string field_uuid = 3;
+	string browse_field_uuid = 4;
+	string reference_uuid = 5;
+	string column_uuid = 6;
+	string column_name = 7;
+	string table_name = 8;
+	string search_value = 9;
+	repeated KeyValue context_attributes = 10;
+	int32 page_size = 11;
+	string page_token = 12;
 }
 
 // List Lookup Item Response
