@@ -171,7 +171,7 @@ public class UpdateManager {
 	 * @param pageToken
 	 * @return
 	 */
-	public ListStepsResponse listSteps(String updateUuid, String pageToken) {
+	public ListStepsResponse listSteps(String updateUuid, String pageToken, int fromStep) {
 		try {
 			buildConnection();
 			return blockingStub.listSteps(
@@ -179,6 +179,7 @@ public class UpdateManager {
 				  	.setToken(getToken())
 				  	.setPageToken(ValueUtil.validateNull(pageToken))
 				  	.setUpdateUuid(updateUuid)
+				  	.setFromStep(fromStep)
 				  	.build());
 		} catch (Exception e) {
 			throw e;

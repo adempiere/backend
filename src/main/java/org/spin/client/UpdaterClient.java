@@ -45,7 +45,7 @@ public class UpdaterClient {
 		  	.withHost("localhost")
 	    	.withPort(50059)
 	    	.withToken(args[0])
-	    	.listSteps("0a229f92-8933-499b-9ad0-56489dd9fbf9", null)
+	    	.listSteps("0a229f92-8933-499b-9ad0-56489dd9fbf9", null, 0)
 	    	.getStepsList().forEach(packageValue -> logger.info("Steps: " + packageValue));
 		  
 	  }
