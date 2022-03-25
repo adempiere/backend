@@ -2141,38 +2141,41 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 	 * @return
 	 */
 	private LookupItem.Builder convertLookupItem(GetLookupItemRequest request) {
-		Criteria criteria = request.getCriteria();
-		String sql = criteria.getQuery();
-		List<Object> params = new ArrayList<>();
-		criteria.getConditionsList().forEach(condition -> params.add(ValueUtil.getObjectFromValue(condition.getValue())));
-		//	For dynamic condition
-		String dynamicWhere = ValueUtil.getWhereClauseFromCriteria(criteria, params);
-		if(!Util.isEmpty(dynamicWhere)) {
-			int positionFrom = sql.lastIndexOf(" FROM ");
-			boolean hasWhereClause = sql.indexOf(" WHERE ", positionFrom) != -1;
-			//
-			int positionOrder = sql.lastIndexOf(" ORDER BY ");
-			if (positionOrder != -1) {
-				sql = sql.substring(0, positionOrder) 
-						+ (hasWhereClause ? " AND " : " WHERE ") 
-						+ dynamicWhere
-						+ sql.substring(positionOrder);
-			} else {			
-				sql += (hasWhereClause ? " AND " : " WHERE ") + dynamicWhere;
+		MLookupInfo reference = getInfoFromRequest(request.getReferenceUuid(), request.getFieldUuid(), request.getProcessParameterUuid(), request.getBrowseFieldUuid(), request.getColumnUuid(), request.getColumnName(), request.getTableName());
+		if(reference == null) {
+			throw new AdempiereException("@AD_Reference_ID@ @NotFound@");
+		}
+		String sql = reference.Query;
+		Properties context = Env.getCtx();
+		int windowNo = ThreadLocalRandom.current().nextInt(1, 8996 + 1);
+		Env.clearWinContext(windowNo);
+		Map<String, Object> attributes = ValueUtil.convertValuesToObjects(request.getContextAttributesList());
+		//	Fill context
+		attributes.entrySet().forEach(attribute -> {
+			if(attribute.getValue() instanceof Integer) {
+				Env.setContext(context, windowNo, attribute.getKey(), (Integer) attribute.getValue());
+			} else if(attribute.getValue() instanceof Timestamp) {
+				Env.setContext(context, windowNo, attribute.getKey(), (Timestamp) attribute.getValue());
+			} else if(attribute.getValue() instanceof Boolean) {
+				Env.setContext(context, windowNo, attribute.getKey(), (Boolean) attribute.getValue());
+			} else if(attribute.getValue() instanceof String) {
+				Env.setContext(context, windowNo, attribute.getKey(), (String) attribute.getValue());
 			}
+		});
+		sql = Env.parseContext(context, windowNo, sql, false);
+		if(Util.isEmpty(sql)
+				&& !Util.isEmpty(reference.Query)) {
+			throw new AdempiereException("@AD_Tab_ID@ @WhereClause@ @Unparseable@");
 		}
 		sql = MRole.getDefault(Env.getCtx(), false).addAccessSQL(sql,
-				criteria.getTableName(), MRole.SQL_FULLYQUALIFIED, MRole.SQL_RO);
+				reference.TableName, MRole.SQL_FULLYQUALIFIED, MRole.SQL_RO);
 		LookupItem.Builder builder = LookupItem.newBuilder();
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
 			//	SELECT Key, Value, Name FROM ...
 			pstmt = DB.prepareStatement(sql.toString(), null);
-			AtomicInteger parameterIndex = new AtomicInteger(1);
-			for(Object value : params) {
-				ValueUtil.setParameterFromObject(pstmt, value, parameterIndex.getAndIncrement());
-			}
+			ValueUtil.setParameterFromObject(pstmt, request.getId(), 1);
 			//	Get from Query
 			rs = pstmt.executeQuery();
 			if (rs.next()) {
@@ -2214,16 +2217,14 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 	 * @param request
 	 * @return
 	 */
-	private MLookupInfo getInfoFromRequest(ListLookupItemsRequest request) {
+	private MLookupInfo getInfoFromRequest(String referenceUuid, String fieldUuid, String processParameterUuid, String browseFieldUuid, String columnUuid, String columnName, String tableName) {
 		int referenceId = 0;
 		int referenceValueId = 0;
 		int validationRuleId = 0;
-		String columnName = null;
-		String tableName = null;
-		if(!Util.isEmpty(request.getReferenceUuid())) {
-			referenceId = RecordUtil.getIdFromUuid(I_AD_Reference.Table_Name, request.getReferenceUuid(), null);
-		} else if(!Util.isEmpty(request.getFieldUuid())) {
-			MField field = (MField) RecordUtil.getEntity(Env.getCtx(), I_AD_Field.Table_Name, request.getFieldUuid(), 0, null);
+		if(!Util.isEmpty(referenceUuid)) {
+			referenceId = RecordUtil.getIdFromUuid(I_AD_Reference.Table_Name, referenceUuid, null);
+		} else if(!Util.isEmpty(fieldUuid)) {
+			MField field = (MField) RecordUtil.getEntity(Env.getCtx(), I_AD_Field.Table_Name, fieldUuid, 0, null);
 			int fieldId = field.getAD_Field_ID();
 			List<MField> customFields = ASPUtil.getInstance(Env.getCtx()).getWindowFields(field.getAD_Tab_ID());
 			if(customFields != null) {
@@ -2247,8 +2248,8 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 					}
 				}
 			}
-		} else if(!Util.isEmpty(request.getBrowseFieldUuid())) {
-			MBrowseField browseField = (MBrowseField) RecordUtil.getEntity(Env.getCtx(), I_AD_Browse_Field.Table_Name, request.getBrowseFieldUuid(), 0, null);
+		} else if(!Util.isEmpty(browseFieldUuid)) {
+			MBrowseField browseField = (MBrowseField) RecordUtil.getEntity(Env.getCtx(), I_AD_Browse_Field.Table_Name, browseFieldUuid, 0, null);
 			int browseFieldId = browseField.getAD_Browse_Field_ID();
 			List<MBrowseField> customFields = ASPUtil.getInstance(Env.getCtx()).getBrowseFields(browseField.getAD_Browse_ID());
 			if(customFields != null) {
@@ -2266,8 +2267,8 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 					}
 				}
 			}
-		} else if(!Util.isEmpty(request.getProcessParameterUuid())) {
-			MProcessPara processParameter = (MProcessPara) RecordUtil.getEntity(Env.getCtx(), I_AD_Process_Para.Table_Name, request.getProcessParameterUuid(), 0, null);
+		} else if(!Util.isEmpty(processParameterUuid)) {
+			MProcessPara processParameter = (MProcessPara) RecordUtil.getEntity(Env.getCtx(), I_AD_Process_Para.Table_Name, processParameterUuid, 0, null);
 			int processParameterId = processParameter.getAD_Process_Para_ID();
 			List<MProcessPara> customParameters = ASPUtil.getInstance(Env.getCtx()).getProcessParameters(processParameter.getAD_Process_ID());
 			if(customParameters != null) {
@@ -2280,8 +2281,8 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 					columnName = processParameter.getColumnName();
 				}
 			}
-		} else if(!Util.isEmpty(request.getColumnUuid())) {
-			int columnId = RecordUtil.getIdFromUuid(I_AD_Column.Table_Name, request.getColumnUuid(), null);
+		} else if(!Util.isEmpty(columnUuid)) {
+			int columnId = RecordUtil.getIdFromUuid(I_AD_Column.Table_Name, columnUuid, null);
 			if(columnId > 0) {
 				MColumn column = MColumn.get(Env.getCtx(), columnId);
 				referenceId = column.getAD_Reference_ID();
@@ -2289,12 +2290,11 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 				validationRuleId = column.getAD_Val_Rule_ID();
 				columnName = column.getColumnName();
 			}
-		} else if(!Util.isEmpty(request.getColumnName())) {
+		} else if(!Util.isEmpty(columnName)) {
 			referenceId = DisplayType.TableDir;
-			columnName = request.getColumnName();
-		} else if(!Util.isEmpty(request.getTableName())) {	//	Is a Table Direct
+		} else if(!Util.isEmpty(tableName)) {	//	Is a Table Direct
 			referenceId = DisplayType.TableDir;
-			columnName = request.getTableName() + "_ID";
+			columnName = tableName + "_ID";
 		} else {
 			throw new AdempiereException("@AD_Reference_ID@ / @AD_Column_ID@ / @AD_Table_ID@ / @AD_Process_Para_ID@ / @IsMandatory@");
 		}
@@ -2307,7 +2307,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 	 * @return
 	 */
 	private ListLookupItemsResponse.Builder convertLookupItemsList(ListLookupItemsRequest request) {
-		MLookupInfo reference = getInfoFromRequest(request);
+		MLookupInfo reference = getInfoFromRequest(request.getReferenceUuid(), request.getFieldUuid(), request.getProcessParameterUuid(), request.getBrowseFieldUuid(), request.getColumnUuid(), request.getColumnName(), request.getTableName());
 		if(reference == null) {
 			throw new AdempiereException("@AD_Reference_ID@ @NotFound@");
 		}

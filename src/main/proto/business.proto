@@ -357,8 +357,14 @@ message GetLookupItemRequest {
 	int32 id = 1;
 	string uuid = 2;
 	ClientRequest client_request = 3;
-	// Query
-	Criteria criteria = 4;
+	string process_parameter_uuid = 4;
+	string field_uuid = 5;
+	string browse_field_uuid = 6;
+	string reference_uuid = 7;
+	string column_uuid = 8;
+	string column_name = 9;
+	string table_name = 10;
+	repeated KeyValue context_attributes = 11;
 }
 
 // Get Default Value Request
