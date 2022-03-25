@@ -51,6 +51,7 @@ import org.adempiere.model.I_AD_Browse_Field;
 import org.adempiere.model.MBrowse;
 import org.adempiere.model.MBrowseField;
 import org.adempiere.model.MView;
+import org.adempiere.model.MViewColumn;
 import org.adempiere.model.MViewDefinition;
 import org.adempiere.model.ZoomInfoFactory;
 import org.compiere.model.Callout;
@@ -2234,6 +2235,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 					referenceId = column.getAD_Reference_ID();
 					referenceValueId = column.getAD_Reference_Value_ID();
 					validationRuleId = column.getAD_Val_Rule_ID();
+					columnName = column.getColumnName();
 					if(field.getAD_Reference_ID() > 0) {
 						referenceId = field.getAD_Reference_ID();
 					}
@@ -2256,6 +2258,12 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 					referenceId = browseField.getAD_Reference_ID();
 					referenceValueId = browseField.getAD_Reference_Value_ID();
 					validationRuleId = browseField.getAD_Val_Rule_ID();
+					MViewColumn viewColumn = browseField.getAD_View_Column();
+					if(viewColumn.getAD_Column_ID() > 0) {
+						columnName = MColumn.getColumnName(Env.getCtx(), viewColumn.getAD_Column_ID());
+					} else {
+						columnName = browseField.getAD_Element().getColumnName();
+					}
 				}
 			}
 		} else if(!Util.isEmpty(request.getProcessParameterUuid())) {
@@ -2269,6 +2277,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 					referenceId = processParameter.getAD_Reference_ID();
 					referenceValueId = processParameter.getAD_Reference_Value_ID();
 					validationRuleId = processParameter.getAD_Val_Rule_ID();
+					columnName = processParameter.getColumnName();
 				}
 			}
 		} else if(!Util.isEmpty(request.getColumnUuid())) {
@@ -2303,7 +2312,6 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 			throw new AdempiereException("@AD_Reference_ID@ @NotFound@");
 		}
 		String sql = reference.Query;
-//		List<Object> params = new ArrayList<>();
 		Properties context = Env.getCtx();
 		int windowNo = ThreadLocalRandom.current().nextInt(1, 8996 + 1);
 		Env.clearWinContext(windowNo);

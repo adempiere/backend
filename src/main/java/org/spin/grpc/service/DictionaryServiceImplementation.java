@@ -1521,28 +1521,9 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 				.setTableName(ValueUtil.validateNull(info.TableName))
 				.setKeyColumnName(ValueUtil.validateNull(info.KeyColumn))
 				.setDisplayColumnName(ValueUtil.validateNull(info.DisplayColumn))
-				.setDirectQuery(ValueUtil.validateNull(getQueryWithUuid(info.TableName, info.QueryDirect)))
-				.setValidationCode(ValueUtil.validateNull(info.ValidationCode));
-		//	For validation
-		String queryForLookup = info.Query;
-		if(!Util.isEmpty(info.ValidationCode)) {
-			int positionFrom = queryForLookup.lastIndexOf(" FROM ");
-			boolean hasWhereClause = queryForLookup.indexOf(" WHERE ", positionFrom) != -1;
-			//
-			int positionOrder = queryForLookup.lastIndexOf(" ORDER BY ");
-			if (positionOrder != -1) {
-				queryForLookup = queryForLookup.substring(0, positionOrder) 
-						+ (hasWhereClause ? " AND " : " WHERE ") 
-						+ info.ValidationCode
-						+ queryForLookup.substring(positionOrder);
-			} else {			
-				queryForLookup += (hasWhereClause ? " AND " : " WHERE ") + info.ValidationCode;
-			}
-		}
-		//	Add support to UUID
-		queryForLookup = getQueryWithUuid(info.TableName, queryForLookup);
-		//	For Query
-		builder.setQuery(ValueUtil.validateNull(queryForLookup));
+				.addAllContextColumnNames(
+						DictionaryUtil.getContextColumnNames(Optional.ofNullable(info.QueryDirect).orElse("") + Optional.ofNullable(info.Query).orElse("") + Optional.ofNullable(info.ValidationCode).orElse(""))
+				);
 		//	Window Reference
 		if(info.ZoomWindow > 0) {
 			builder.addZoomWindows(convertZoomWindow(context, info.ZoomWindow).build());
@@ -1552,18 +1533,6 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 		}
 		//	Return
 		return builder;
-	}
-	
-	/**
-	 * Get Query with UUID
-	 * @param tableName
-	 * @param query
-	 * @return
-	 */
-	private String getQueryWithUuid(String tableName, String query) {
-		//	Add support to UUID
-		int positionFrom = query.indexOf(" FROM ");
-		return query.substring(0, positionFrom) + ", " + tableName + ".UUID" + query.substring(positionFrom);
 	}
 	
 	/**
