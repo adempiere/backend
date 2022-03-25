@@ -2145,7 +2145,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 		if(reference == null) {
 			throw new AdempiereException("@AD_Reference_ID@ @NotFound@");
 		}
-		String sql = reference.Query;
+		String sql = reference.QueryDirect;
 		Properties context = Env.getCtx();
 		int windowNo = ThreadLocalRandom.current().nextInt(1, 8996 + 1);
 		Env.clearWinContext(windowNo);
@@ -2164,7 +2164,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 		});
 		sql = Env.parseContext(context, windowNo, sql, false);
 		if(Util.isEmpty(sql)
-				&& !Util.isEmpty(reference.Query)) {
+				&& !Util.isEmpty(reference.QueryDirect)) {
 			throw new AdempiereException("@AD_Tab_ID@ @WhereClause@ @Unparseable@");
 		}
 		sql = MRole.getDefault(Env.getCtx(), false).addAccessSQL(sql,
