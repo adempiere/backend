@@ -127,7 +127,7 @@ public class ReferenceUtil {
 	 * @param validationRuleId
 	 * @return
 	 */
-	public static MLookupInfo getReferenceLookupInfo(int referenceId, int referenceValueId, String columnName, int validationRuleId, String tableName) {
+	public static MLookupInfo getReferenceLookupInfo(int referenceId, int referenceValueId, String columnName, int validationRuleId) {
 		if(!validateReference(referenceId, referenceValueId, columnName)) {
 			return null;
 		}

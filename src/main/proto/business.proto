@@ -49,7 +49,7 @@ service UserInterface {
 	//	Request Translations List
 	rpc ListTranslations(ListTranslationsRequest) returns (ListTranslationsResponse) {}
 	// Get Default Value
-	rpc GetDefaultValue(GetDefaultValueRequest) returns (Value) {}
+	rpc GetDefaultValue(GetDefaultValueRequest) returns (DefaultValue) {}
 	// Get Lookup Item
 	rpc GetLookupItem(GetLookupItemRequest) returns (LookupItem) {}
 	// List Lookup Item
@@ -370,8 +370,20 @@ message GetLookupItemRequest {
 // Get Default Value Request
 message GetDefaultValueRequest {
 	ClientRequest client_request = 1;
-	// Query
-	string query = 2;
+	// References
+	string process_parameter_uuid = 2;
+	string field_uuid = 3;
+	string browse_field_uuid = 4;
+	string column_uuid = 5;
+	repeated KeyValue context_attributes = 6;
+	
+}
+
+// Default Value Response
+message DefaultValue {
+	int32 id = 1;
+	string uuid = 2;
+	map<string, Value> values = 3;
 }
 
 // Get Lookup Item
@@ -394,7 +406,7 @@ message LookupItem {
 // List Lookup Item
 message ListLookupItemsRequest {
 	ClientRequest client_request = 1;
-	// Query
+	// References
 	string process_parameter_uuid = 2;
 	string field_uuid = 3;
 	string browse_field_uuid = 4;
