@@ -670,7 +670,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 	 */
 	private void getResource(String resourceUuid, String resourceName, StreamObserver<Resource> responseObserver) throws Exception {
 		if(!AttachmentUtil.getInstance().isValidForClient(Env.getAD_Client_ID(Env.getCtx()))) {
-			responseObserver.onCompleted();
+			responseObserver.onError(new AdempiereException("@NotFound@"));
 			return;
 		}
 		//	Validate by name
@@ -682,12 +682,12 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 					.first();
 			if(reference == null
 					|| reference.getAD_AttachmentReference_ID() <= 0) {
-				responseObserver.onCompleted();
+				responseObserver.onError(new AdempiereException("@NotFound@"));
 				return;
 			}
 			resourceUuid = reference.getUUID();
 		} else if(Util.isEmpty(resourceUuid)) {
-			responseObserver.onCompleted();
+			responseObserver.onError(new AdempiereException("@NotFound@"));
 			return;
 		}
 		byte[] data = AttachmentUtil.getInstance()
@@ -695,7 +695,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 			.withAttachmentReferenceId(RecordUtil.getIdFromUuid(I_AD_AttachmentReference.Table_Name, resourceUuid, null))
 			.getAttachment();
 		if(data == null) {
-			responseObserver.onCompleted();
+			responseObserver.onError(new AdempiereException("@NotFound@"));
 			return;
 		}
 		//	For all
