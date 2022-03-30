@@ -2714,10 +2714,8 @@ public class PointOfSalesServiceImplementation extends StoreImplBase {
 		businessPartnerLocation.set_ValueOfColumn(VueStoreFrontUtil.COLUMNNAME_IsDefaultBilling, address.getIsDefaultBilling());
 		businessPartnerLocation.setIsShipTo(address.getIsDefaultShipping());
 		businessPartnerLocation.set_ValueOfColumn(VueStoreFrontUtil.COLUMNNAME_IsDefaultShipping, address.getIsDefaultShipping());
-		Optional.ofNullable(address.getContactName()).ifPresent(contactName -> businessPartnerLocation.set_ValueOfColumn("ContactName", contactName));
 		Optional.ofNullable(address.getContactName()).ifPresent(contact -> businessPartnerLocation.setContactPerson(contact));
 		Optional.ofNullable(address.getFirstName()).ifPresent(firstName -> businessPartnerLocation.setName(firstName));
-		Optional.ofNullable(address.getLastName()).ifPresent(lastName -> businessPartnerLocation.set_ValueOfColumn("Name2", lastName));
 		Optional.ofNullable(address.getEmail()).ifPresent(email -> businessPartnerLocation.setEMail(email));
 		Optional.ofNullable(address.getPhone()).ifPresent(phome -> businessPartnerLocation.setPhone(phome));
 		Optional.ofNullable(address.getDescription()).ifPresent(description -> businessPartnerLocation.set_ValueOfColumn("Description", description));
