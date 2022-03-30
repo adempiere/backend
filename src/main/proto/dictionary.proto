@@ -198,6 +198,7 @@ message Field {
 	// Process Parameter Compatibility
 	string default_value_to = 51;
 	int32 field_length = 52;
+	repeated string context_column_names = 53;
 }
 
 // Context Info

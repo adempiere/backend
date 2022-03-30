@@ -992,7 +992,10 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 				.setValueMin(ValueUtil.validateNull(processParameter.getValueMin()))
 				.setVFormat(ValueUtil.validateNull(processParameter.getVFormat()))
 				.setFieldLength(processParameter.getFieldLength())
-				.setIsActive(processParameter.isActive());
+				.setIsActive(processParameter.isActive())
+				.addAllContextColumnNames(
+						DictionaryUtil.getContextColumnNames(Optional.ofNullable(processParameter.getDefaultValue()).orElse("") + Optional.ofNullable(processParameter.getDefaultValue2()).orElse(""))
+				);
 		//	
 		int displayTypeId = processParameter.getAD_Reference_ID();
 		if(DisplayType.isLookup(displayTypeId)) {
@@ -1051,7 +1054,10 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 				.setVFormat(ValueUtil.validateNull(browseField.getVFormat()))
 				.setIsActive(browseField.isActive())
 				.setCallout(ValueUtil.validateNull(browseField.getCallout()))
-				.setFieldLength(browseField.getFieldLength());
+				.setFieldLength(browseField.getFieldLength())
+				.addAllContextColumnNames(
+						DictionaryUtil.getContextColumnNames(Optional.ofNullable(browseField.getDefaultValue()).orElse("") + Optional.ofNullable(browseField.getDefaultValue2()).orElse(""))
+				);
 		builder.setColumnName(ValueUtil.validateNull(browseField.getAD_View_Column().getColumnName()));
 		String elementName = null;
 		if(browseField.getAD_View_Column().getAD_Column_ID() != 0) {
@@ -1200,7 +1206,10 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 				.setValueMax(ValueUtil.validateNull(column.getValueMax()))
 				.setValueMin(ValueUtil.validateNull(column.getValueMin()))
 				.setFieldLength(column.getFieldLength())
-				.setIsActive(column.isActive());
+				.setIsActive(column.isActive())
+				.addAllContextColumnNames(
+						DictionaryUtil.getContextColumnNames(Optional.ofNullable(column.getDefaultValue()).orElse(""))
+				);
 		//	Process
 		if(column.getAD_Process_ID() > 0) {
 			MProcess process = MProcess.get(context, column.getAD_Process_ID());
@@ -1338,7 +1347,10 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 				.setValueMax(ValueUtil.validateNull(column.getValueMax()))
 				.setValueMin(ValueUtil.validateNull(column.getValueMin()))
 				.setFieldLength(column.getFieldLength())
-				.setIsActive(field.isActive());
+				.setIsActive(field.isActive())
+				.addAllContextColumnNames(
+						DictionaryUtil.getContextColumnNames(Optional.ofNullable(field.getDefaultValue()).orElse(Optional.ofNullable(field.getDefaultValue()).orElse("")))
+				);
 		//	Context Info
 		if(field.getAD_ContextInfo_ID() > 0) {
 			ContextInfo.Builder contextInfoBuilder = convertContextInfo(context, field.getAD_ContextInfo_ID());
