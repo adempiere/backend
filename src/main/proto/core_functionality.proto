@@ -360,6 +360,7 @@ message ProductPrice {
 	Decimal display_price_list = 16;
 	Decimal display_price_standard = 17;
 	Decimal display_price_limit = 18;
+	ConversionRate conversion_rate = 19;
 }
 
 // Language Item
