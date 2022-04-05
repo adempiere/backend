@@ -886,7 +886,7 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 		String query = DictionaryUtil.addQueryReferencesFromBrowser(browser);
 		String orderByClause = DictionaryUtil.getSQLOrderBy(browser);
 		Browser.Builder builder = Browser.newBuilder()
-				.setId(browser.getAD_Process_ID())
+				.setId(browser.getAD_Browse_ID())
 				.setUuid(ValueUtil.validateNull(browser.getUUID()))
 				.setValue(ValueUtil.validateNull(browser.getValue()))
 				.setName(browser.getName())
