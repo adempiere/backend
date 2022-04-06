@@ -60,7 +60,6 @@ import org.compiere.model.Query;
 import org.compiere.model.X_AD_FieldGroup;
 import org.compiere.model.X_AD_Reference;
 import org.compiere.util.CLogger;
-import org.compiere.util.DB;
 import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
 import org.compiere.util.Language;
@@ -450,7 +449,7 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 		}
 		//	With Tabs
 		if(withTabs) {
-			List<Tab.Builder> tabListForGroup = new ArrayList<>();
+//			List<Tab.Builder> tabListForGroup = new ArrayList<>();
 			List<MTab> tabs = ASPUtil.getInstance(context).getWindowTabs(window.getAD_Window_ID());
 			for(MTab tab : tabs) {
 				if(!tab.isActive()) {
@@ -458,23 +457,25 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 				}
 				Tab.Builder tabBuilder = convertTab(context, tab, tabs, withTabs);
 				builder.addTabs(tabBuilder.build());
-				//	Get field group
-				int [] fieldGroupIdArray = getFieldGroupIdsFromTab(tab.getAD_Tab_ID());
-				if(fieldGroupIdArray != null) {
-					for(int fieldGroupId : fieldGroupIdArray) {
-						Tab.Builder tabFieldGroup = convertTab(context, tab, false);
-						FieldGroup.Builder fieldGroup = convertFieldGroup(context, fieldGroupId);
-						tabFieldGroup.setFieldGroup(fieldGroup);
-						tabFieldGroup.setName(fieldGroup.getName());
-						//	Add to list
-						tabListForGroup.add(tabFieldGroup);
-					}
-				}
+//				//	Get field group
+//				int [] fieldGroupIdArray = getFieldGroupIdsFromTab(tab.getAD_Tab_ID());
+//				if(fieldGroupIdArray != null) {
+//					for(int fieldGroupId : fieldGroupIdArray) {
+//						Tab.Builder tabFieldGroup = convertTab(context, tab, false);
+//						FieldGroup.Builder fieldGroup = convertFieldGroup(context, fieldGroupId);
+//						tabFieldGroup.setFieldGroup(fieldGroup);
+//						tabFieldGroup.setName(fieldGroup.getName());
+//						tabFieldGroup.setDescription("");
+//						tabFieldGroup.setUuid(tabFieldGroup.getUuid() + "---");
+//						//	Add to list
+//						tabListForGroup.add(tabFieldGroup);
+//					}
+//				}
 			}
 			//	Add Field Group Tabs
-			for(Tab.Builder tabFieldGroup : tabListForGroup) {
-				builder.addTabs(tabFieldGroup.build());
-			}
+//			for(Tab.Builder tabFieldGroup : tabListForGroup) {
+//				builder.addTabs(tabFieldGroup.build());
+//			}
 		}
 		//	Add to recent Item
 		addToRecentItem(MMenu.ACTION_Window, window.getAD_Window_ID());
@@ -510,19 +511,19 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 		MRecentItem.addMenuOption(Env.getCtx(), menuId, optionId);
 	}
 	
-	/**
-	 * Get Field group from Tab
-	 * @param tabId
-	 * @return
-	 */
-	private int[] getFieldGroupIdsFromTab(int tabId) {
-		return DB.getIDsEx(null, "SELECT f.AD_FieldGroup_ID "
-				+ "FROM AD_Field f "
-				+ "INNER JOIN AD_FieldGroup fg ON(fg.AD_FieldGroup_ID = f.AD_FieldGroup_ID) "
-				+ "WHERE f.AD_Tab_ID = ? "
-				+ "AND fg.FieldGroupType = ? "
-				+ "GROUP BY f.AD_FieldGroup_ID", tabId, X_AD_FieldGroup.FIELDGROUPTYPE_Tab);
-	}
+//	/**
+//	 * Get Field group from Tab
+//	 * @param tabId
+//	 * @return
+//	 */
+//	private int[] getFieldGroupIdsFromTab(int tabId) {
+//		return DB.getIDsEx(null, "SELECT f.AD_FieldGroup_ID "
+//				+ "FROM AD_Field f "
+//				+ "INNER JOIN AD_FieldGroup fg ON(fg.AD_FieldGroup_ID = f.AD_FieldGroup_ID) "
+//				+ "WHERE f.AD_Tab_ID = ? "
+//				+ "AND fg.FieldGroupType = ? "
+//				+ "GROUP BY f.AD_FieldGroup_ID", tabId, X_AD_FieldGroup.FIELDGROUPTYPE_Tab);
+//	}
 	
 	/**
 	 * Convert Tabs from UUID
@@ -1349,7 +1350,7 @@ public class DictionaryServiceImplementation extends DictionaryImplBase {
 				.setFieldLength(column.getFieldLength())
 				.setIsActive(field.isActive())
 				.addAllContextColumnNames(
-						DictionaryUtil.getContextColumnNames(Optional.ofNullable(field.getDefaultValue()).orElse(Optional.ofNullable(field.getDefaultValue()).orElse("")))
+						DictionaryUtil.getContextColumnNames(Optional.ofNullable(field.getDefaultValue()).orElse(Optional.ofNullable(column.getDefaultValue()).orElse("")))
 				);
 		//	Context Info
 		if(field.getAD_ContextInfo_ID() > 0) {

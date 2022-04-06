@@ -18,6 +18,8 @@ package org.spin.base.util;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.compiere.model.I_AD_Reference;
 import org.compiere.model.MLookupFactory;
@@ -191,9 +193,13 @@ public class ReferenceUtil {
 	 * @return
 	 */
 	private static String getQueryWithUuid(String tableName, String query) {
-		//	Add support to UUID
-		int positionFrom = query.indexOf(" FROM ");
-		return query.substring(0, positionFrom) + ", " + tableName + ".UUID" + query.substring(positionFrom);
+		Matcher matcher = Pattern.compile("\\s+(FROM)\\s+(" + tableName + ")", Pattern.CASE_INSENSITIVE | Pattern.DOTALL).matcher(query);
+		int positionFrom = -1;
+		if(matcher.find()) {
+			positionFrom = matcher.start();
+			query = query.substring(0, positionFrom) + ", " + tableName + ".UUID" + query.substring(positionFrom);
+		}
+		return query;
 	}
 	
 	/**

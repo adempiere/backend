@@ -2546,10 +2546,19 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 		}
 		sql = MRole.getDefault(Env.getCtx(), false).addAccessSQL(sql,
 				reference.TableName, MRole.SQL_FULLYQUALIFIED, MRole.SQL_RO);
+		//	Get page and count
+		String nexPageToken = null;
+		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
+		int limit = RecordUtil.PAGE_SIZE;
+		int offset = pageNumber * RecordUtil.PAGE_SIZE;
+		int count = 0;
+		//	Count records
+		count = RecordUtil.countRecords(sql, reference.TableName, null);
+		//	Add Row Number
+		sql = RecordUtil.getQueryWithLimit(sql, limit, offset);
 		ListLookupItemsResponse.Builder builder = ListLookupItemsResponse.newBuilder();
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		long recordCount = 0;
 		try {
 			//	SELECT Key, Value, Name FROM ...
 			pstmt = DB.prepareStatement(sql, null);
@@ -2580,7 +2589,6 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 				//	
 				LookupItem.Builder valueObject = convertObjectFromResult(keyValue, uuid, rs.getString(2), rs.getString(3));
 				builder.addRecords(valueObject.build());
-				recordCount++;
 			}
 		} catch (Exception e) {
 			log.severe(e.getLocalizedMessage());
@@ -2588,8 +2596,14 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 		} finally {
 			DB.close(rs, pstmt);
 		}
-		//	Set record counts
-		builder.setRecordCount(recordCount);
+		//	
+		builder.setRecordCount(count);
+		//	Set page token
+		if(RecordUtil.isValidNextPageToken(count, offset, limit)) {
+			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (pageNumber + 1);
+		}
+		//	Set next page
+		builder.setNextPageToken(ValueUtil.validateNull(nexPageToken));
 		//	Return
 		return builder;
 	}

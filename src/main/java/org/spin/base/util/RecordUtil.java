@@ -252,7 +252,7 @@ public class RecordUtil {
 	 * @return
 	 */
 	public static int countRecords(String sql, String tableName, List<Object> parameters) {
-		Matcher matcher = Pattern.compile("\\b(?:FROM+)+\\s+" + tableName + " AS " + tableName, Pattern.CASE_INSENSITIVE | Pattern.DOTALL).matcher(sql);
+		Matcher matcher = Pattern.compile("\\s+(FROM)\\s+(" + tableName + ")", Pattern.CASE_INSENSITIVE | Pattern.DOTALL).matcher(sql);
 		int positionFrom = -1;
 		if(matcher.find()) {
 			positionFrom = matcher.start();
@@ -260,7 +260,33 @@ public class RecordUtil {
 			return 0;
 		}
 		String queryCount = "SELECT COUNT(*) " + sql.substring(positionFrom, sql.length());
+		matcher = Pattern.compile("\\s+(ORDER BY)\\s+", Pattern.CASE_INSENSITIVE | Pattern.DOTALL).matcher(queryCount);
+		if(matcher.find()) {
+			positionFrom = matcher.start();
+			queryCount = queryCount.substring(0, positionFrom);
+		}
+		if(parameters == null
+				|| parameters.size() == 0) {
+			return DB.getSQLValueEx(null, queryCount);
+		}
 		return DB.getSQLValueEx(null, queryCount, parameters);
+	}
+	
+	/**
+	 * Get Query with limit
+	 * @param query
+	 * @param limit
+	 * @param offset
+	 * @return
+	 */
+	public static String getQueryWithLimit(String query, int limit, int offset) {
+		Matcher matcher = Pattern.compile("\\s+(ORDER BY)\\s+", Pattern.CASE_INSENSITIVE | Pattern.DOTALL).matcher(query);
+		int positionFrom = -1;
+		if(matcher.find()) {
+			positionFrom = matcher.start();
+			query = query.substring(0, positionFrom) + " AND ROWNUM >= " + offset + " AND ROWNUM <= " + limit + " " + query.substring(positionFrom);
+		}
+		return query;
 	}
 	
 	/**
