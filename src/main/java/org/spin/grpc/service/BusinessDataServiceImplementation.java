@@ -646,8 +646,8 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 		//	Get page and count
 		String nexPageToken = null;
 		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
-		int limit = RecordUtil.PAGE_SIZE;
-		int offset = pageNumber * RecordUtil.PAGE_SIZE;
+		int limit = RecordUtil.getPageSize(request.getPageSize());
+		int offset = pageNumber * RecordUtil.getPageSize(request.getPageSize());
 		int count = 0;
 		ListEntitiesResponse.Builder builder = ListEntitiesResponse.newBuilder();
 		//	
@@ -684,7 +684,7 @@ public class BusinessDataServiceImplementation extends BusinessDataImplBase {
 			//	Count records
 			count = RecordUtil.countRecords(parsedSQL, criteria.getTableName(), params);
 			//	Add Row Number
-			parsedSQL = parsedSQL + " AND ROWNUM >= " + offset + " AND ROWNUM <= " + limit;
+			parsedSQL = RecordUtil.getQueryWithLimit(parsedSQL, limit, offset);
 			//	Add Order By
 			parsedSQL = parsedSQL + orderByClause;
 			builder = convertListEntitiesResult(MTable.get(context, criteria.getTableName()), parsedSQL, params);

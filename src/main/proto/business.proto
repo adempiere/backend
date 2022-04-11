@@ -436,8 +436,9 @@ message ListTabEntitiesRequest {
 	Criteria filters = 5;
 	repeated KeyValue context_attributes = 6;
 	repeated string columns = 7;
-	int32 page_size = 8;
-	string page_token = 9;
+	string search_value = 8;
+	int32 page_size = 9;
+	string page_token = 10;
 }
 
 // List Entities Response

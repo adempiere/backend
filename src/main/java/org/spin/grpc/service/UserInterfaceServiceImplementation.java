@@ -943,8 +943,8 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 		//	Get page and count
 		String nexPageToken = null;
 		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
-		int limit = RecordUtil.PAGE_SIZE;
-		int offset = pageNumber * RecordUtil.PAGE_SIZE;
+		int limit = RecordUtil.getPageSize(request.getPageSize());
+		int offset = pageNumber * RecordUtil.getPageSize(request.getPageSize());
 		int count = 0;
 		ListTabEntitiesResponse.Builder builder = ListTabEntitiesResponse.newBuilder();
 		//	
@@ -953,7 +953,8 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 			sql.append(" WHERE ").append(whereClause); // includes first AND
 		}
 		//	
-		String parsedSQL = MRole.getDefault().addAccessSQL(sql.toString(),
+		String parsedSQL = RecordUtil.addSearchValueAndGet(sql.toString(), tableName, request.getSearchValue(), params);
+		parsedSQL = MRole.getDefault().addAccessSQL(parsedSQL,
 				null, MRole.SQL_FULLYQUALIFIED,
 				MRole.SQL_RO);
 		String orderByClause = criteria.getOrderByClause();
@@ -965,7 +966,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 		//	Count records
 		count = RecordUtil.countRecords(parsedSQL, tableName, params);
 		//	Add Row Number
-		parsedSQL = parsedSQL + " AND ROWNUM >= " + offset + " AND ROWNUM <= " + limit;
+		parsedSQL = RecordUtil.getQueryWithLimit(parsedSQL, limit, offset);
 		//	Add Order By
 		parsedSQL = parsedSQL + orderByClause;
 		builder = convertListEntitiesResult(MTable.get(context, tableName), parsedSQL, params);
@@ -2544,16 +2545,18 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 				&& !Util.isEmpty(reference.Query)) {
 			throw new AdempiereException("@AD_Tab_ID@ @WhereClause@ @Unparseable@");
 		}
+		List<Object> parameters = new ArrayList<>();
+		sql = RecordUtil.addSearchValueAndGet(sql, reference.TableName, request.getSearchValue(), parameters);
 		sql = MRole.getDefault(Env.getCtx(), false).addAccessSQL(sql,
 				reference.TableName, MRole.SQL_FULLYQUALIFIED, MRole.SQL_RO);
 		//	Get page and count
 		String nexPageToken = null;
 		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
-		int limit = RecordUtil.PAGE_SIZE;
-		int offset = pageNumber * RecordUtil.PAGE_SIZE;
+		int limit = RecordUtil.getPageSize(request.getPageSize());
+		int offset = pageNumber * RecordUtil.getPageSize(request.getPageSize());
 		int count = 0;
 		//	Count records
-		count = RecordUtil.countRecords(sql, reference.TableName, null);
+		count = RecordUtil.countRecords(sql, reference.TableName, parameters);
 		//	Add Row Number
 		sql = RecordUtil.getQueryWithLimit(sql, limit, offset);
 		ListLookupItemsResponse.Builder builder = ListLookupItemsResponse.newBuilder();
@@ -2562,6 +2565,10 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 		try {
 			//	SELECT Key, Value, Name FROM ...
 			pstmt = DB.prepareStatement(sql, null);
+			AtomicInteger parameterIndex = new AtomicInteger(1);
+			for(Object value : parameters) {
+				ValueUtil.setParameterFromObject(pstmt, value, parameterIndex.getAndIncrement());
+			} 
 			//	Get from Query
 			rs = pstmt.executeQuery();
 			while(rs.next()) {
@@ -2622,31 +2629,6 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 			}
 		}
 		return -1;
-	}
-	
-	/**
-	 * Set Parameter for Statement from object
-	 * @param pstmt
-	 * @param value
-	 * @param index
-	 * @throws SQLException
-	 */
-	private void setParameterFromObject(PreparedStatement pstmt, Object value, int index) throws SQLException {
-		if(value instanceof Integer) {
-			pstmt.setInt(index, (Integer) value);
-		} else if(value instanceof Double) {
-			pstmt.setDouble(index, (Double) value);
-		} else if(value instanceof Long) {
-			pstmt.setLong(index, (Long) value);
-		} else if(value instanceof BigDecimal) {
-			pstmt.setBigDecimal(index, (BigDecimal) value);
-		} else if(value instanceof String) {
-			pstmt.setString(index, (String) value);
-		} else if(value instanceof Timestamp) {
-			pstmt.setTimestamp(index, (Timestamp) value);
-		} else if(value instanceof Boolean) {
-			pstmt.setString(index, ((Boolean) value)? "Y": "N");
-		}
 	}
 	
 	/**
@@ -2859,11 +2841,11 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 		int count = RecordUtil.countRecords(parsedSQL, tableName, values);
 		String nexPageToken = null;
 		int pageMultiplier = page == 0? 1: page;
-		if(count > (RecordUtil.PAGE_SIZE * pageMultiplier)) {
+		if(count > (RecordUtil.getPageSize(request.getPageSize()) * pageMultiplier)) {
 			nexPageToken = RecordUtil.getPagePrefix(request.getClientRequest().getSessionUuid()) + (page + 1);
 		}
 		//	Add Row Number
-		parsedSQL = parsedSQL + " AND ROWNUM >= " + page + " AND ROWNUM <= " + RecordUtil.PAGE_SIZE;
+		parsedSQL = RecordUtil.getQueryWithLimit(parsedSQL, count, RecordUtil.getPageSize(request.getPageSize()));
 		//	Add Order By
 		parsedSQL = parsedSQL + orderByClause;
 		//	Return
@@ -2897,7 +2879,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 			pstmt = DB.prepareStatement(sql, null);
 			AtomicInteger parameterIndex = new AtomicInteger(1);
 			for(Object value : values) {
-				setParameterFromObject(pstmt, value, parameterIndex.getAndIncrement());
+				ValueUtil.setParameterFromObject(pstmt, value, parameterIndex.getAndIncrement());
 			} 
 			//	Get from Query
 			rs = pstmt.executeQuery();

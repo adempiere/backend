@@ -28,9 +28,11 @@ import org.adempiere.pipo.IDFinder;
 import org.compiere.model.I_AD_Element;
 import org.compiere.model.MClientInfo;
 import org.compiere.model.MConversionRate;
+import org.compiere.model.MTable;
 import org.compiere.model.PO;
 import org.compiere.model.Query;
 import org.compiere.util.DB;
+import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
 import org.compiere.util.TimeUtil;
 import org.compiere.util.Util;
@@ -43,7 +45,16 @@ import org.spin.util.AttachmentUtil;
  */
 public class RecordUtil {
 	/**	Page Size	*/
-	public static final int PAGE_SIZE = 50;
+	private static final int PAGE_SIZE = 50;
+	
+	/**
+	 * Get Page Size from client, else from default
+	 * @param pageSize
+	 * @return
+	 */
+	public static int getPageSize(int pageSize) {
+		return pageSize > 0? pageSize: PAGE_SIZE;
+	}
 	
 	/**
 	 * Get Page Number
@@ -245,6 +256,52 @@ public class RecordUtil {
 	}
 	
 	/**
+	 * Add where clause with search value and return the new complete SQL
+	 * @param sql
+	 * @param tableName
+	 * @param searchValue
+	 * @param parameters
+	 * @return
+	 */
+	public static String addSearchValueAndGet(String sql, String tableName, String searchValue, List<Object> parameters) {
+		if(Util.isEmpty(searchValue)) {
+			return sql;
+		}
+		MTable table = MTable.get(Env.getCtx(), tableName);
+		if(table == null) {
+			return sql;
+		}
+		StringBuffer whereClause = new StringBuffer();
+		table.getColumnsAsList().stream().filter(column -> (column.isIdentifier() || column.isSelectionColumn()) && Util.isEmpty(column.getColumnSQL()) && DisplayType.isText(column.getAD_Reference_ID())).forEach(column -> {
+			if(whereClause.length() > 0) {
+				whereClause.append(" OR ");
+			}
+			whereClause.append("UPPER(").append(tableName).append(".").append(column.getColumnName()).append(")").append(" LIKE ").append("'%'|| UPPER(?) || '%'");
+			parameters.add(searchValue);
+		});
+		//	Order by
+		//	Validate and return
+		if(whereClause.length() > 0) {
+			Matcher matcher = Pattern.compile("\\s+(FROM)\\s+(" + tableName + ")\\s+(WHERE)", Pattern.CASE_INSENSITIVE | Pattern.DOTALL).matcher(sql);
+			Matcher matcherOrderBy = Pattern.compile("\\s+(ORDER BY)\\s+", Pattern.CASE_INSENSITIVE | Pattern.DOTALL).matcher(sql);
+			int positionFrom = -1;
+			if(matcherOrderBy.find()) {
+				positionFrom = matcherOrderBy.start();
+			}
+			String conditional = " WHERE ";
+			if(matcher.find()) {
+				conditional = " AND ";
+			}
+			if(positionFrom > 0) {
+				sql = sql.substring(0, positionFrom) + conditional + "(" + whereClause + ")" + sql.substring(positionFrom);
+			} else {
+				sql = sql + conditional + "(" + whereClause + ")";
+			}
+		}
+		return sql;
+	}
+	
+	/**
 	 * Count records
 	 * @param sql
 	 * @param tableName
@@ -252,7 +309,7 @@ public class RecordUtil {
 	 * @return
 	 */
 	public static int countRecords(String sql, String tableName, List<Object> parameters) {
-		Matcher matcher = Pattern.compile("\\s+(FROM)\\s+(" + tableName + ")", Pattern.CASE_INSENSITIVE | Pattern.DOTALL).matcher(sql);
+		Matcher matcher = Pattern.compile("\\s+(FROM)\\s+(" + tableName + ")(\\s+)", Pattern.CASE_INSENSITIVE | Pattern.DOTALL).matcher(sql);
 		int positionFrom = -1;
 		if(matcher.find()) {
 			positionFrom = matcher.start();
@@ -285,6 +342,8 @@ public class RecordUtil {
 		if(matcher.find()) {
 			positionFrom = matcher.start();
 			query = query.substring(0, positionFrom) + " AND ROWNUM >= " + offset + " AND ROWNUM <= " + limit + " " + query.substring(positionFrom);
+		} else {
+			query = query + " AND ROWNUM >= " + offset + " AND ROWNUM <= " + limit;
 		}
 		return query;
 	}

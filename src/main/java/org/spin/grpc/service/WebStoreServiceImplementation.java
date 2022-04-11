@@ -1372,8 +1372,8 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 		ListOrdersResponse.Builder builder = ListOrdersResponse.newBuilder();
 		String nexPageToken = null;
 		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
-		int limit = RecordUtil.PAGE_SIZE;
-		int offset = pageNumber * RecordUtil.PAGE_SIZE;
+		int limit = RecordUtil.getPageSize(request.getPageSize());
+		int offset = pageNumber * RecordUtil.getPageSize(request.getPageSize());
 		//	Get Orders list
 		Query query = new Query(Env.getCtx(), I_C_Order.Table_Name, "EXISTS(SELECT 1 FROM W_Basket b WHERE b.W_Basket_ID = C_Order.W_Basket_ID AND b.AD_User_ID = ?)", null)
 				.setParameters(Env.getAD_User_ID(Env.getCtx()))
@@ -1417,8 +1417,8 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 		//	Validate Price List
 		String nexPageToken = null;
 		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
-		int limit = RecordUtil.PAGE_SIZE;
-		int offset = pageNumber * RecordUtil.PAGE_SIZE;
+		int limit = RecordUtil.getPageSize(request.getPageSize());
+		int offset = pageNumber * RecordUtil.getPageSize(request.getPageSize());
 		StringBuffer whereClause = new StringBuffer(I_M_Product.COLUMNNAME_SKU + " IN(");
 		whereClause.append(")");
 		Query query = new Query(Env.getCtx(), I_W_DeliveryViaRuleAllocation.Table_Name, I_W_DeliveryViaRuleAllocation.COLUMNNAME_W_Store_ID + " = ?", null)
@@ -1593,8 +1593,8 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 		//	Validate Price List
 		String nexPageToken = null;
 		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
-		int limit = RecordUtil.PAGE_SIZE;
-		int offset = pageNumber * RecordUtil.PAGE_SIZE;
+		int limit = RecordUtil.getPageSize(request.getPageSize());
+		int offset = pageNumber * RecordUtil.getPageSize(request.getPageSize());
 		Query query = new Query(Env.getCtx(), I_C_PaymentMethod.Table_Name, "EXISTS(SELECT 1 FROM C_PaymentMethodAllocation a "
 				+ "WHERE a.C_PaymentMethod_ID = C_PaymentMethod.C_PaymentMethod_ID "
 				+ "AND a.W_Store_ID = ?)" , null)
@@ -2335,8 +2335,8 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 		Timestamp validFrom = TimeUtil.getDay(System.currentTimeMillis());
 		String nexPageToken = null;
 		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
-		int limit = RecordUtil.PAGE_SIZE;
-		int offset = pageNumber * RecordUtil.PAGE_SIZE;
+		int limit = RecordUtil.getPageSize(request.getPageSize());
+		int offset = pageNumber * RecordUtil.getPageSize(request.getPageSize());
 		StringBuffer whereClause = new StringBuffer(I_M_Product.COLUMNNAME_SKU + " IN(");
 		AtomicBoolean first = new AtomicBoolean(true);
 		List<Object> parameters = new ArrayList<>();
@@ -2393,8 +2393,8 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 		Timestamp validFrom = TimeUtil.getDay(System.currentTimeMillis());
 		String nexPageToken = null;
 		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
-		int limit = RecordUtil.PAGE_SIZE;
-		int offset = pageNumber * RecordUtil.PAGE_SIZE;
+		int limit = RecordUtil.getPageSize(request.getPageSize());
+		int offset = pageNumber * RecordUtil.getPageSize(request.getPageSize());
 		StringBuffer whereClause = new StringBuffer(I_M_Product.COLUMNNAME_SKU + " IN(");
 		AtomicBoolean first = new AtomicBoolean(true);
 		List<Object> parameters = new ArrayList<>();
@@ -2627,8 +2627,8 @@ public class WebStoreServiceImplementation extends WebStoreImplBase {
 		ListStocksResponse.Builder builder = ListStocksResponse.newBuilder();
 		String nexPageToken = null;
 		int pageNumber = RecordUtil.getPageNumber(request.getClientRequest().getSessionUuid(), request.getPageToken());
-		int limit = RecordUtil.PAGE_SIZE;
-		int offset = pageNumber * RecordUtil.PAGE_SIZE;
+		int limit = RecordUtil.getPageSize(request.getPageSize());
+		int offset = pageNumber * RecordUtil.getPageSize(request.getPageSize());
 		Query query = new Query(Env.getCtx(), I_M_Storage.Table_Name, 
 				I_M_Storage.COLUMNNAME_M_Product_ID + " = ? "
 						+ "AND " + I_M_Storage.COLUMNNAME_QtyOnHand + " > 0", null)
