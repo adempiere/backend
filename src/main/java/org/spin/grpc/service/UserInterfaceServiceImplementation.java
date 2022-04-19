@@ -2595,6 +2595,7 @@ public class UserInterfaceServiceImplementation extends UserInterfaceImplBase {
 				}
 				//	
 				LookupItem.Builder valueObject = convertObjectFromResult(keyValue, uuid, rs.getString(2), rs.getString(3));
+				valueObject.setTableName(ValueUtil.validateNull(reference.TableName));
 				builder.addRecords(valueObject.build());
 			}
 		} catch (Exception e) {

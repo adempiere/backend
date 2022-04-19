@@ -283,13 +283,15 @@ public class RecordUtil {
 		//	Validate and return
 		if(whereClause.length() > 0) {
 			Matcher matcher = Pattern.compile("\\s+(FROM)\\s+(" + tableName + ")\\s+(WHERE)", Pattern.CASE_INSENSITIVE | Pattern.DOTALL).matcher(sql);
+			Matcher matcherJoin = Pattern.compile("JOIN(\\w|\\s)*(\\((\\w|\\.|\\s|=|\\')*\\))(\\s*)(WHERE)", Pattern.CASE_INSENSITIVE | Pattern.DOTALL).matcher(sql);
 			Matcher matcherOrderBy = Pattern.compile("\\s+(ORDER BY)\\s+", Pattern.CASE_INSENSITIVE | Pattern.DOTALL).matcher(sql);
 			int positionFrom = -1;
 			if(matcherOrderBy.find()) {
 				positionFrom = matcherOrderBy.start();
 			}
 			String conditional = " WHERE ";
-			if(matcher.find()) {
+			if(matcher.find()
+					|| matcherJoin.find()) {
 				conditional = " AND ";
 			}
 			if(positionFrom > 0) {
