@@ -20,7 +20,7 @@ repositories {
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
-def libraryVersion = '1.6.8'
+def libraryVersion = '1.6.9'
 // IMPORTANT: You probably want the non-SNAPSHOT version of gRPC. Make sure you
 // are looking at a tagged version of the example and not "master"!
 
@@ -53,6 +53,7 @@ dependencies {
 	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.11.0'
 	implementation 'com.itextpdf:itext-pdfa:5.5.2'
 	implementation 'com.lowagie:itext:2.1.7'
+	implementation 'org.telegram:telegrambots:6.0.1'
 }
 
 protobuf {

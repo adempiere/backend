@@ -63,6 +63,7 @@ message PackageVersion {
 	string name = 5;
 	string description = 6;
 	string help = 7;
+	string main_version = 8;
 }
 
 //	List Packages Response

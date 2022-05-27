@@ -372,6 +372,7 @@ public class UpdateImplementation extends UpdateCenterImplBase {
 				.setName(ValueUtil.validateNull(modification.getName()))
 				.setDescription(ValueUtil.validateNull(modification.getDescription()))
 				.setHelp(ValueUtil.validateNull(modification.getHelp()))
-				.setVersion(ValueUtil.validateNull(modification.getVersion()));
+				.setVersion(ValueUtil.validateNull(modification.getVersion()))
+				.setMainVersion(ValueUtil.validateNull("ReleaseMainVersion"));
 	}
 }
