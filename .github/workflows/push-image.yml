@@ -102,7 +102,7 @@ jobs:
 
       - name: Get branch name
         id: branch-name
-        uses: tj-actions/branch-names@v4.8
+        uses: tj-actions/branch-names@v7.0.7
 
       - name: Push image in Docker Hub
         uses: docker/build-push-action@v2
