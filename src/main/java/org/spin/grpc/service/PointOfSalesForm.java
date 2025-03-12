@@ -1942,7 +1942,7 @@ public class PointOfSalesForm extends StoreImplBase {
 						)
 					)
 					.setIsRefund(
-						BooleanManager.getBooleanFromString(
+						!BooleanManager.getBooleanFromString(
 							rs.getString("IsReceipt")
 						)
 					)

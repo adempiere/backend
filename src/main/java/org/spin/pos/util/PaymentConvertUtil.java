@@ -172,7 +172,7 @@ public class PaymentConvertUtil {
 		//	
 		MRefList reference = MRefList.get(Env.getCtx(), MPayment.DOCSTATUS_AD_REFERENCE_ID, payment.getDocStatus(), payment.get_TrxName());
 		int presicion = MCurrency.getStdPrecision(payment.getCtx(), payment.getC_Currency_ID());
-		BigDecimal paymentAmount = payment.getPayAmt();
+		BigDecimal paymentAmount = payment.getPayAmt(true);
 		if(payment.getTenderType().equals(MPayment.TENDERTYPE_CreditMemo)
 				&& paymentAmount.compareTo(Env.ZERO) == 0) {
 			MInvoice creditMemo = new Query(payment.getCtx(), MInvoice.Table_Name, "C_Payment_ID = ?", payment.get_TrxName()).setParameters(payment.getC_Payment_ID()).first();
